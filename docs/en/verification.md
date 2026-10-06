@@ -1,0 +1,7 @@
+# Documentation validation — 2026-10-06
+
+Inventoried all three Word archives and the previous setup page. OOXML extraction preserved paragraph order, explicit line breaks, code snippets and tables; no embedded images or substantive footnote/endnote text were present. The study topics cover ENV Auditor (110), Go Image Optimizer (32 questions plus summaries/tables) and URL Shortener (75). English versions consolidate repetitive prose while retaining distinct technical content and literal examples. Brazilian Portuguese versions retain the original study questions and examples, with source-verified corrections and current documentation references.
+
+The subject projects' source/configuration were reviewed for key claims. Corrected Go dependency mounts and lazy Redis counter timing; clarified secret-blocked synchronization versus cleanup, non-transactional writes, startup schema/role side effects, default-versus-hypothetical consistency and historical validation. Proposed improvements/tests remain proposals. Executable project results belong to those projects' validation pages, not new runtime results here.
+
+Language filenames, local Markdown links/anchors, topic counts, balanced fences and table structure were checked. No DOCX was authored or delivered, and Word visual rendering was not performed: Markdown is the maintained output. Docker, runtime suites, dependency installation, services and databases are not applicable; no containers or persisted data were modified. No required-location documentation exceptions remain.

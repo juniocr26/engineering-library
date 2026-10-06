@@ -1,0 +1,7 @@
+# Validação documental — 2026-10-06
+
+Inventariados os três arquivos Word e a página anterior de setup. Extração OOXML preservou ordem dos parágrafos, quebras explícitas, exemplos de código e tabelas; não havia imagens incorporadas nem texto substantivo em notas de rodapé/finais. Tópicos: ENV Auditor (110), Go Image Optimizer (32 perguntas mais resumos/tabelas) e URL Shortener (75). Inglês consolida prosa repetitiva mantendo conteúdo técnico distinto e exemplos literais. Português preserva perguntas/exemplos originais com correções verificadas e referências atuais.
+
+Fontes/configurações dos projetos estudados foram revisadas para afirmações centrais. Corrigidos mounts Go e inicialização lazy do contador Redis; esclarecidos bloqueio de sync versus cleanup, escritas não transacionais, efeitos de schema/roles no startup, consistência padrão versus hipotética e resultados históricos. Melhorias/testes sugeridos continuam propostas. Resultados de execução pertencem às páginas de validação dos projetos, não a novas execuções aqui.
+
+Pares de idiomas, links/âncoras locais, contagem de tópicos, fences e tabelas foram conferidos. Nenhum DOCX foi criado/entregue nem houve renderização visual Word: Markdown é o formato mantido. Docker, suítes runtime, instalação, serviços e bancos não se aplicam; nenhum container ou dado persistido foi modificado. Não restam exceções de documentação em localização obrigatória.
