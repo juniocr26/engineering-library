@@ -1,6 +1,6 @@
 # Leitura e recuperação dos guias
 
-Este repositório contém guias Markdown de entrevista sobre ENV Auditor, Go Image Optimizer e URL Shortener. Não há aplicação executável, Dockerfile, serviços Compose, manifest, lockfile, script de startup ou configuração gerada. Leia no GitHub ou em leitor Markdown; não é necessário instalar pacotes.
+Este repositório contém guias Markdown de entrevista sobre ENV Auditor, Go Image Optimizer, URL Shortener, Rust Event Relay e Payment Reconciliation Lab. Não há aplicação executável, Dockerfile, serviços Compose, manifest, lockfile, script de startup ou configuração gerada. Leia no GitHub ou em leitor Markdown; não é necessário instalar pacotes.
 
 Comandos e referências de fonte pertencem à raiz do projeto estudado, não a este repositório. Use a documentação de instalação/testes desse projeto para configuração de runtime. Startup Docker, persistência de dependências, aplicação/banco, conflitos de porta e parada não se aplicam aqui. Nenhum container foi iniciado.
 

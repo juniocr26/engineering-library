@@ -319,3 +319,13 @@ For preview, compare a message-only UI, client decoders and server thumbnails. C
 For Resize, explain linear percentages versus bytes, then trace math.Round, pixel ceiling, Catmull–Rom, family encoding and independent test decoding. Larger output remains valid and honestly presented. Locate cooperative checks and non-interruptible calls.
 
 Review scope in the subject README, contracts/trade-offs in architecture, environment in Docker/development setup, checks versus results in testing/verification and physical sample inventory in testing. Read the referenced implementations before defending a decision.
+
+## Source-review follow-ups and ordered study — 2026-10-09
+
+The [Resize contract](../../../go-image-optimizer/docs/en/architecture.md) distinguishes defaults precisely: omitted or empty `axis` uses `width`; an explicitly empty `keepAspectRatio` is rejected. Required numeric fields still reject empty values. Do not infer one universal empty-field policy from the shared modal or handler helpers.
+
+**Question: Is the 50 MiB client file check identical to the server limit?** Model answer: “The proxy checks image.size after parsing FormData, while Go caps the entire multipart request body. Multipart overhead counts on the backend, so a file near the boundary can pass the file check and fail the request limit. Neither check establishes a total process-memory cap.”
+
+**Deeper questions:** Why do socket timeouts not stop codecs? Can a no-op Resize preserve metadata even when real resizing does not? Why do identical bytes in two Blobs create distinct preview cache entries? What do calculation/cache tests fail to establish about browser focus and downloads?
+
+Study order: original/result/display bytes and HTTP contracts → byte detection/variant policies → use-case interfaces and errors → dimension math/orientation/alpha/animation → native codecs and cancellation/resource boundaries → frontend state/preview lifetimes → tests and historical evidence → conditional alternatives. No extra product features are planned, and this study sequence marks no completed topics. This audit used source inspection only; historical tests/builds above were not repeated.

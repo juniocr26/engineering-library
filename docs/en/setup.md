@@ -1,6 +1,6 @@
 # Study guide setup and recovery
 
-This repository contains Markdown interview guides about ENV Auditor, Go Image Optimizer and URL Shortener. It has no executable application, Dockerfile, Compose services, dependency manifest, lockfile, startup script or generated configuration. Read the guides on GitHub or in any Markdown reader; no package installation is required.
+This repository contains Markdown interview guides about ENV Auditor, Go Image Optimizer, URL Shortener, Rust Event Relay and Payment Reconciliation Lab. It has no executable application, Dockerfile, Compose services, dependency manifest, lockfile, startup script or generated configuration. Read the guides on GitHub or in any Markdown reader; no package installation is required.
 
 Commands and source references inside each guide belong to its subject project's root, not this repository. Use that project's setup and testing documentation for runtime configuration. Docker startup, dependency persistence, application/database checks, port conflicts and shutdown are not applicable here. No containers were started.
 

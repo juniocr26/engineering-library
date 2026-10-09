@@ -325,6 +325,18 @@ Problem → requirement → alternatives → choice → guarantee → cost → p
 
 A mature answer explains why a choice fits this project's goals, the problems it solves, costs it introduces and conditions that would warrant alternatives. Demonstrate system understanding, responsibility boundaries, distributed-systems distinctions, honest measurements and transferable learning. Do not try to prove every choice uniquely correct or the architecture perfect.
 
+## Source-grounded follow-ups and study order — 2026-10-09
+
+The [authoritative architecture](../../../url-shortener/docs/en/architecture.md) documents two implementation limits: literal `0` padding assumes a zero-first alphabet, and the Redis generator does not reinitialize after losing its counter key in an already-initialized process. Helpers use global settings even when the service has injected settings. These are static findings, not executed regression results; no application tests ran in this audit.
+
+**Question: Does a custom alphabet automatically work?** Model answer: “Validation accepts 62 unique characters, but fixed `0` padding can represent a nonzero digit or invalid character. I would retain the default alphabet and treat generalized padding/versioning as a separate code change, with round-trip tests.”
+
+**Question: Are ID gaps and reuse equivalent?** Model answer: “Allocation followed by persistence failure consumes an ID and leaves a gap. Losing allocator state while mappings survive can reuse an ID and overwrite its Cassandra mapping. The latter is a correctness issue; AOF and the local initialization lock do not create a cross-store recovery protocol.”
+
+**Deeper questions:** What happens if a counter key disappears after `_initialized=true`? Why can injected service Settings differ from helper settings? How would you preserve old links while rotating codec configuration? What does a fake counter test prove about live Redis concurrency?
+
+Study order: HTTP/authentication and payload validation → service flow → Base62/modular inverse with the default alphabet → Redis initialization and failure windows → Cassandra lookup/replication versus consistency → lifespan/configuration → fake tests versus real dependency evidence → recovery alternatives and HTTP cache semantics. This is suggested study, not completed progress. Alternatives discussed for learning were not necessarily evaluated during development.
+
 ## Literal examples from the study notes
 
 The following literal snippets retain commands, configuration, identifiers, pseudocode and placeholder values. Labels/comments inside snippets remain as originally written; explanation is in the English topics above.

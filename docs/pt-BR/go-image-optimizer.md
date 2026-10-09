@@ -395,3 +395,13 @@ Exemplo aplicado à prévia: o problema é o navegador não abrir HEIC/TIFF. O r
 Exercício aplicado a Resize: explique por que 50% menores reduz cada dimensão e não os bytes; depois mostre math.Round, o teto de pixels, Catmull–Rom, o encoder da família e a decodificação independente do teste. Se a saída ficar maior, a resposta continua válida e a interface informa o aumento. Identifique o ponto em que cancelamento é verificado e a etapa que não pode ser interrompida à força.
 
 Referências para revisão: README.pt-BR.md apresenta escopo e fluxos; docs/pt-BR/architecture.md detalha contratos e trade-offs; docs/pt-BR/docker.md descreve ambiente; docs/pt-BR/testing.md separa testes existentes de verificações executadas; docs/pt-BR/testing.md registra as amostras físicas. Ao estudar, percorra também as implementações e os testes citados, verificando o que realmente acontece antes de defender uma decisão.
+
+## Aprofundamentos e estudo ordenado — 2026-10-09
+
+O [contrato Resize](../../../go-image-optimizer/docs/pt-BR/architecture.md) diferencia padrões: `axis` omitido ou vazio usa `width`; `keepAspectRatio` explicitamente vazio é rejeitado. Números obrigatórios rejeitam vazio. Modal/helpers compartilhados não criam política universal de campo vazio.
+
+**Pergunta: A checagem cliente de 50 MiB é igual ao limite do servidor?** Resposta modelo: “Proxy verifica image.size após parsing FormData; Go limita o corpo multipart inteiro. Overhead conta no backend, então arquivo próximo ao limite pode passar no cliente e falhar no servidor. Nenhuma checagem limita memória total do processo.”
+
+**Aprofundamento:** Por que timeout de socket não interrompe codec? Como Resize sem mudança preserva metadados quando resize real não preserva tudo? Por que bytes iguais em dois Blobs criam entradas diferentes no cache? O que testes de cálculo/cache não provam sobre foco/download no navegador?
+
+Ordem: bytes original/resultado/display e contratos HTTP → detecção/variantes → interfaces/erros → dimensões/orientação/alpha/animação → codecs/cancelamento/recursos → estado frontend/lifetimes → testes/evidência histórica → alternativas condicionais. Nenhuma feature extra é planejada e nenhum assunto é marcado concluído. Auditoria somente por leitura; testes/builds anteriores não foram repetidos.

@@ -1665,3 +1665,16 @@ O objetivo é demonstrar que eu:
 - 		consigo transferir os aprendizados para outros sistemas.
 
 Esse é o nível de entendimento que torna o projeto defensável em uma entrevista técnica.
+
+## Aprofundamentos e ordem de estudo — 2026-10-09
+
+A [arquitetura autoritativa](../../../url-shortener/docs/pt-BR/architecture.md) registra dois limites: preenchimento `0` assume alfabeto iniciado em zero, e o gerador Redis não reinicializa após perder a chave num processo já inicializado. Helpers usam settings globais mesmo com settings injetados no serviço. São achados estáticos, não regressões executadas; nenhum teste da aplicação rodou aqui.
+
+**Pergunta: Qualquer alfabeto customizado funciona?** Resposta modelo: “Validação aceita 62 caracteres únicos, mas `0` fixo pode representar dígito não zero ou caractere inválido. Manteria o padrão e trataria padding/versão geral em tarefa de código separada com round-trips.”
+
+**Pergunta: Lacuna e reutilização de ID são iguais?** Resposta modelo: “Falha na persistência após alocação consome ID e deixa lacuna. Perder estado do contador com mappings preservados pode reutilizar ID e sobrescrever Cassandra. É problema de correção; AOF e lock local não implementam recuperação entre stores.”
+
+**Aprofundamento:** E se a chave desaparecer após `_initialized=true`? Por que Settings injetado diverge de helpers? Como rotacionar configuração preservando links? O que fake prova sobre concorrência Redis real?
+
+Ordem: HTTP/auth/payload → serviço → Base62/inverso modular padrão → inicialização Redis/janelas de falha → lookup/replicação/consistência Cassandra → lifespan/configuração → fakes versus evidência real → alternativas de recuperação/cache HTTP. Sugestão, sem marcar progresso. Alternativas de estudo não são necessariamente avaliações históricas.
+
