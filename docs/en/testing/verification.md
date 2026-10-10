@@ -1,3 +1,5 @@
+Historical records: the dated sections below describe their own snapshots. The current restructuring/tooling result is in the [2026-10-10 completion report](../operations/workspace-completion.md). Statements about absent tools/tests in older records do not describe the current repository.
+
 # Documentation validation — 2026-10-06
 
 This dated section records the earlier Word-to-Markdown conversion. Its 110-topic auditor count and retired behavior describe that snapshot, not the current guide; the 2026-10-09 review below supersedes those technical claims.
@@ -12,7 +14,7 @@ Language filenames, local Markdown links/anchors, topic counts, balanced fences 
 
 ### Coverage and conventions
 
-The shared root is `Portifólio`; discovered projects are env-auditor, go-image-optimizer, url-shortener, payment-reconciliation-lab, rust-event-relay and the Markdown-only tecnical-interview. No additional application project was found under that root. No applicable project AGENTS.md was found outside dependency directories. Existing README/en/pt-BR paths, numbered Rust ADRs/milestones and relative cross-project navigation were retained. The historical Portuguese handoff is an intentional language-scope difference and a generated PDF is outside the maintained Markdown audit.
+The shared root is `Portifólio`; discovered projects are env-auditor, go-image-optimizer, url-shortener, payment-reconciliation-lab, rust-event-relay and the Markdown-only engineering-library. No additional application project was found under that root. No applicable project AGENTS.md was found outside dependency directories. Existing README/en/pt-BR paths, numbered Rust ADRs/milestones and relative cross-project navigation were retained. The historical Portuguese handoff is an intentional language-scope difference and a generated PDF is outside the maintained Markdown audit.
 
 Reviewed current Markdown navigation/structure across the workspace and checked important current claims against source, manifests, configuration, migrations, tests and available CI definitions. Historical execution records remain records of previous checks; this audit did not independently reproduce their results or inspect live state. Public environment examples were inspected for contract keys only where relevant; runtime environment files and backups were not read or changed. Dependencies, caches, generated output, persisted database storage and Git internals were excluded from the substantive review. No ancestors beyond the shared root were scanned.
 
@@ -20,12 +22,12 @@ Reviewed current Markdown navigation/structure across the workspace and checked 
 
 | Project | Main corrections / authoritative reference |
 | --- | --- |
-| ENV Auditor | Replaced obsolete interview behavior; explained literal planning, authoritative references, root/discovery, preview aliases, backup/replace and failure limits. [Contract](../../../env-auditor/README.md), [architecture](../../../env-auditor/docs/en/architecture.md) |
-| Go Image Optimizer | Corrected empty-axis default, condensed duplicated guide detail, separated byte/file/body limits and added deeper study questions. [Architecture](../../../go-image-optimizer/docs/en/architecture.md) |
-| URL Shortener | Documented custom-alphabet padding/global settings and initialized-counter recovery limits; updated configuration and study material. [Architecture](../../../url-shortener/docs/en/architecture.md) |
-| Payment Reconciliation Lab | Replaced active commerce roadmap/claims with current transition scope, removed policy/seed claims, documented startup rejection and current test inventory. [Architecture](../../../payment-reconciliation-lab/docs/en/architecture.md) |
-| Rust Event Relay | Reconciled stale publisher/ownership status, error/dependency/CI descriptions and ADR navigation without changing milestone progress. [Architecture](../../../rust-event-relay/docs/en/architecture.md) |
-| Technical Interview | Added bilingual Rust/Payment guides, rebuilt auditor guide, expanded existing project follow-ups and prerequisite study order. [Index](../../README.md) |
+| ENV Auditor | Replaced obsolete interview behavior; explained literal planning, authoritative references, root/discovery, preview aliases, backup/replace and failure limits. [Contract](../../../../env-auditor/README.md), [architecture](../../../../env-auditor/docs/en/architecture/overview.md) |
+| Go Image Optimizer | Corrected empty-axis default, condensed duplicated guide detail, separated byte/file/body limits and added deeper study questions. [Architecture](../../../../go-image-optimizer/docs/en/architecture/overview.md) |
+| URL Shortener | Documented custom-alphabet padding/global settings and initialized-counter recovery limits; updated configuration and study material. [Architecture](../../../../url-shortener/docs/en/architecture/overview.md) |
+| Payment Reconciliation Lab | Replaced active commerce roadmap/claims with current transition scope, removed policy/seed claims, documented startup rejection and current test inventory. [Architecture](../../../../payment-reconciliation-lab/docs/en/architecture/overview.md) |
+| Rust Event Relay | Reconciled stale publisher/ownership status, error/dependency/CI descriptions and ADR navigation without changing milestone progress. [Architecture](../../../../rust-event-relay/docs/en/architecture/overview.md) |
+| Engineering Library (former interview collection) | Added bilingual Rust/Payment guides, rebuilt auditor guide, expanded existing project follow-ups and prerequisite study order. [Index](../../../README.md) |
 
 Rationale that is not historically documented is framed as architectural interpretation. Alternatives are study comparisons, not purported development experiments. First-person answers do not claim production incidents, performance or users. No study progress marker was added or marked complete.
 

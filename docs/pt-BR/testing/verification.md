@@ -1,3 +1,5 @@
+Registros históricos: seções datadas abaixo descrevem seus próprios snapshots. Resultado atual de reestruturação/ferramentas está no [relatório de conclusão de 2026-10-10](../operations/workspace-completion.md). Ausência de ferramentas/testes em registros antigos não descreve o repositório atual.
+
 # Validação documental — 2026-10-06
 
 Esta seção datada registra a conversão anterior Word→Markdown. Contagem de 110 tópicos do auditor e comportamento removido descrevem aquele snapshot, não o guia atual; a revisão de 2026-10-09 abaixo substitui essas afirmações técnicas.
@@ -12,7 +14,7 @@ Pares de idiomas, links/âncoras locais, contagem de tópicos, fences e tabelas 
 
 ### Cobertura e convenções
 
-Raiz compartilhada: `Portifólio`; projetos descobertos: env-auditor, go-image-optimizer, url-shortener, payment-reconciliation-lab, rust-event-relay e tecnical-interview somente Markdown. Nenhum projeto de aplicação adicional encontrado abaixo da raiz. Nenhum AGENTS.md aplicável fora das dependências. Caminhos README/en/pt-BR, ADRs/marcos Rust e links relativos mantidos. Handoff histórico somente português é diferença intencional; PDF gerado fica fora da auditoria Markdown mantida.
+Raiz compartilhada: `Portifólio`; projetos descobertos: env-auditor, go-image-optimizer, url-shortener, payment-reconciliation-lab, rust-event-relay e engineering-library somente Markdown. Nenhum projeto de aplicação adicional encontrado abaixo da raiz. Nenhum AGENTS.md aplicável fora das dependências. Caminhos README/en/pt-BR, ADRs/marcos Rust e links relativos mantidos. Handoff histórico somente português é diferença intencional; PDF gerado fica fora da auditoria Markdown mantida.
 
 Navegação/estrutura Markdown revisadas no workspace; afirmações atuais importantes conferidas em fontes, manifestos, configuração, migrações, testes e CI disponível. Registros históricos continuam como verificações anteriores, sem reprodução dos resultados/estado runtime. Exemplos públicos de ambiente foram inspecionados para chaves quando relevantes; ambientes reais/backups não foram lidos/alterados. Dependências, caches, saídas geradas, dados de banco e internos Git ficaram fora da revisão substantiva. Não houve varredura de ancestrais acima da raiz.
 
@@ -20,12 +22,12 @@ Navegação/estrutura Markdown revisadas no workspace; afirmações atuais impor
 
 | Projeto | Correções principais / referência |
 | --- | --- |
-| ENV Auditor | Guia de entrevista obsoleto substituído; plano literal, referências autoritativas, raiz/descoberta, aliases, backup/replace/falhas. [Contrato](../../../env-auditor/README.pt-BR.md), [arquitetura](../../../env-auditor/docs/pt-BR/architecture.md) |
-| Go Image Optimizer | Default axis vazio, guia sem repetição longa, limites arquivo/body e aprofundamentos. [Arquitetura](../../../go-image-optimizer/docs/pt-BR/architecture.md) |
-| URL Shortener | Padding/settings globais e recuperação do contador inicializado; configuração/estudo. [Arquitetura](../../../url-shortener/docs/pt-BR/architecture.md) |
-| Payment Reconciliation Lab | Escopo de transição no lugar do roadmap ativo de comércio; remoção de política/seed, falha de startup e testes atuais. [Arquitetura](../../../payment-reconciliation-lab/docs/pt-BR/architecture.md) |
-| Rust Event Relay | Estado publisher/ownership, erros/dependências/CI e ADRs, sem alterar progresso dos marcos. [Arquitetura](../../../rust-event-relay/docs/pt-BR/architecture.md) |
-| Technical Interview | Novos guias Rust/Payment bilíngues, auditor refeito, aprofundamentos e pré-requisitos. [Índice](../../README.pt-BR.md) |
+| ENV Auditor | Guia de entrevista obsoleto substituído; plano literal, referências autoritativas, raiz/descoberta, aliases, backup/replace/falhas. [Contrato](../../../../env-auditor/README.pt-BR.md), [arquitetura](../../../../env-auditor/docs/pt-BR/architecture/overview.md) |
+| Go Image Optimizer | Default axis vazio, guia sem repetição longa, limites arquivo/body e aprofundamentos. [Arquitetura](../../../../go-image-optimizer/docs/pt-BR/architecture/overview.md) |
+| URL Shortener | Padding/settings globais e recuperação do contador inicializado; configuração/estudo. [Arquitetura](../../../../url-shortener/docs/pt-BR/architecture/overview.md) |
+| Payment Reconciliation Lab | Escopo de transição no lugar do roadmap ativo de comércio; remoção de política/seed, falha de startup e testes atuais. [Arquitetura](../../../../payment-reconciliation-lab/docs/pt-BR/architecture/overview.md) |
+| Rust Event Relay | Estado publisher/ownership, erros/dependências/CI e ADRs, sem alterar progresso dos marcos. [Arquitetura](../../../../rust-event-relay/docs/pt-BR/architecture/overview.md) |
+| Engineering Library (former interview collection) | Novos guias Rust/Payment bilíngues, auditor refeito, aprofundamentos e pré-requisitos. [Índice](../../../README.pt-BR.md) |
 
 Justificativas sem histórico explícito são interpretações arquiteturais. Alternativas são estudo, não experimentos de desenvolvimento alegados. Primeira pessoa não inventa incidentes produtivos, desempenho ou usuários. Nenhum marcador de estudo acrescentado/concluído.
 

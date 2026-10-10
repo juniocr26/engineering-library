@@ -1,6 +1,6 @@
 # Go Image Optimizer Guia de Estudo para Entrevista Técnica
 
-[English](../en/go-image-optimizer.md) | [Português brasileiro](go-image-optimizer.md)
+[English](../../en/interviews/go-image-optimizer.md) | [Português brasileiro](go-image-optimizer.md)
 
 As verificações de 2026-10-04 são históricas. A configuração de desenvolvimento atual usa o override Compose e binds do host, não volumes nomeados de node_modules/.next. Paths citados são relativos ao projeto go-image-optimizer, não a este repositório.
 
@@ -22,6 +22,8 @@ Aprofundamento: Por que encerrar o escopo? Eu consigo explicar e verificar o flu
 
 Referências: README.pt-BR.md; frontend/app/components/image-upload/image-upload-form.tsx.
 
+**Aprofundamento:** Por que saída maior satisfaz contrato? Operação retorna bytes válidos da família escolhida; economia é observação. Rejeitar crescimento exigiria outra política de manter/rejeitar/ajustar.
+
 ### 2 Por que Go se minha experiência principal é PHP e Laravel
 
 Resposta possível: Eu escolhi Go como aprendizado prático de outra linguagem de backend. Minha experiência em PHP/Laravel me ajuda a reconhecer responsabilidades de transporte, aplicação e infraestrutura, mas preciso aprender como Go expressa essas fronteiras: pacotes, interfaces pequenas, construtores explícitos, erros retornados e gerenciamento de recursos. Este projeto permite exercitar isso em processamento real de imagens e em uma API pequena.
@@ -31,6 +33,8 @@ Explicação técnica: O backend usa net/http, sem framework HTTP ou container d
 Aprofundamento: Go garante que seja mais rápido? Eu não afirmaria isso sem benchmark. O custo inclui decodificação, escala, encoding, upload e bibliotecas nativas. O projeto demonstra comportamento testado, não superioridade medida sobre PHP.
 
 Referências: backend/internal/infrastructure/http/router.go; backend/internal/application/imagecompression/usecase.go.
+
+**Aprofundamento:** Go sozinho explica velocidade? Não; upload/decode/transform/encode/nativo contribuem. Comparação exige medições representativas ausentes.
 
 ### 3 Por que Next.js e React
 
@@ -42,6 +46,8 @@ Alternativa e custo: Uma interface mais simples ou um backend que servisse HTML 
 
 Referências: frontend/app/api/images/forward-image-request.ts; frontend/app/components/image-upload/.
 
+**Aprofundamento:** Mesma origem elimina checks? Não; clientes arbitrários chamam direto. Proxy interpreta/materializa antes de checar tamanho e não autentica.
+
 ### 4 Isso é Clean Architecture ou microsserviços
 
 Resposta possível: Eu descreveria como uma arquitetura pequena em camadas. O handler resolve HTTP; o caso de uso coordena regras da operação; a infraestrutura trata pixels e codecs. Não preciso afirmar que implementei todas as camadas formais de Clean Architecture. Os containers Next.js e Go separam necessidades de build e runtime; isso, sozinho, não torna o projeto um sistema de microsserviços.
@@ -50,7 +56,9 @@ Explicação técnica: As interfaces Compressor, Decoder/Source e Processor est�
 
 Aprofundamento: Quando separar outro serviço? Eu partiria de requisitos independentes de operação, isolamento ou escala e de medições. Não existe esse compromisso no escopo atual.
 
-Referências: docs/pt-BR/architecture.md; backend/internal/application/; backend/internal/infrastructure/.
+Referências: docs/pt-BR/architecture/overview.md; backend/internal/application/; backend/internal/infrastructure/.
+
+**Aprofundamento:** Quando justificar outro serviço? Necessidade demonstrada de operação/isolamento/escala. Dois contêineres/interfaces não provam microsserviço ou desacoplamento útil.
 
 ## 2 Fluxos de ponta a ponta
 
@@ -64,6 +72,8 @@ Aprofundamento: Por que não salvar o upload? A resposta já contém o resultado
 
 Referências: backend/internal/infrastructure/http/handler/compress_image/handler.go; backend/internal/infrastructure/imaging/compress/compressor.go.
 
+**Aprofundamento:** Cancelamento dentro do codec? Caso de uso percebe depois; interface não interrompe compressão nativa. Cancelar transporte difere de parar CPU.
+
 ### 6 Como funciona a inspeção e a configuração de Resize
 
 Resposta possível: Eu abro o modal, envio o original para /api/images/resize/info e recebo dimensões orientadas, família, MIME e quantidade de frames. Em pixels posso manter a proporção ou definir largura e altura independentes. Em porcentagem escolho 25%, 50% ou 75% menores. O frontend mostra a previsão, mas o servidor recalcula a saída a partir dos bytes enviados.
@@ -73,6 +83,8 @@ Explicação técnica: A inspeção decodifica a origem. Não é apenas leitura 
 Aprofundamento: Qual é o custo das duas requisições? O original é enviado e decodificado novamente na execução. Isso evita IDs e cache de uploads no servidor, aceitando mais rede e processamento.
 
 Referências: frontend/app/components/image-resize/image-resize-modal.tsx; resize-options.ts; backend/internal/application/imageresize/usecase.go.
+
+**Aprofundamento:** Por que não reutilizar pixels? Evitar upload/decode exige estado servidor ou novo contrato. Trabalho extra mantém operação efêmera sem IDs persistentes.
 
 ### 7 O que acontece ao executar e baixar Resize
 
@@ -84,6 +96,8 @@ Aprofundamento: A operação usa um resultado anterior? O fluxo da interface env
 
 Referências: backend/internal/application/imageresize/usecase.go; backend/internal/infrastructure/imaging/resize/decoder.go; frontend/app/components/image-upload/image-result-modal.tsx.
 
+**Aprofundamento:** Resize sem alteração prova metadados universais? Não. Só branch no-op conserva bytes; escala real recodifica/metadados/paleta.
+
 ### 8 Como acontece a conversão de formatos
 
 Resposta possível: Eu inspeciono o original, escolho uma família diferente e envio image e targetFormat. O backend aceita os destinos canônicos jpeg, png, webp, avif, heif, gif, bmp e tiff. Converte uma imagem estática suportada mantendo dimensões orientadas, retorna MIME e extensão coerentes e deixa disponível o resultado mesmo se tiver mais bytes.
@@ -94,6 +108,8 @@ Aprofundamento: Quantas decodificações existem? Há inspeção da interface e 
 
 Referências: backend/internal/application/imageconversion/usecase.go; backend/internal/infrastructure/imaging/convert/processor.go.
 
+**Aprofundamento:** Por que rejeitar animação? Achatar silenciosamente perde significado. Rejeição expõe variante; suporte exigiria contratos de duração/loop/disposal/fixtures.
+
 ### 9 Como a prévia funciona quando o navegador não abre o formato
 
 Resposta possível: Eu tento primeiro abrir bytes no navegador, inclusive corrigindo o MIME apenas para exibição de algumas assinaturas conhecidas. Se a carga falhar, envio o File ou Blob real para /api/images/preview. O backend produz uma imagem proporcional limitada a 1200 × 1200, sem ampliar: PNG se houver transparência ou JPEG se os pixels forem opacos. A falha de prévia não bloqueia processamento nem download.
@@ -103,6 +119,8 @@ Explicação técnica: O fallback usa o decoder de conversão e suas restriçõe
 Aprofundamento: Gerar uma miniatura significa ter uma operação de thumbnails? Aqui ela serve à compatibilidade de exibição. Não há configuração independente de thumbnails, recorte ou composição oferecida ao usuário.
 
 Referências: frontend/app/components/image-upload/browser-image-preview.tsx; preview-cache.ts; backend/internal/infrastructure/imaging/convert/preview.go.
+
+**Aprofundamento:** Fallback vira download? Não; encoding/dimensões diferem. Blobs separados impedem compatibilidade visual de alterar resultado.
 
 ## 3 Bytes pixels e codecs
 
@@ -116,6 +134,8 @@ Aprofundamento: Por que isso importa para nomes? O helper de download remove dir
 
 Referências: backend/internal/infrastructure/imaging/detection.go; backend/internal/infrastructure/http/handler/imagehttp/filename.go.
 
+**Aprofundamento:** Assinatura prova validade? Não; escolhe parser, depois decode/variante/recursos validam. Sanitizar nome trata outra fronteira.
+
 ### 11 Como diferenciar decode transformação e encode
 
 Resposta possível: Eu decodifico bytes em pixels, aplico a transformação necessária e codifico esses pixels em um arquivo de saída. Na compressão, a transformação pode incluir orientação; no Resize inclui escala; na conversão muda o encoder e pode compor transparência. Essa separação explica por que família, pixels e tamanho de arquivo são medidas diferentes.
@@ -125,6 +145,8 @@ Explicação técnica: image.Image descreve pixels e limites de coordenadas. ima
 Aprofundamento: Por que um codec lossless não torna Resize lossless em relação ao original? Ele codifica sem perda os novos pixels; a interpolação já alterou o conteúdo. Preciso identificar a etapa à qual a garantia se aplica.
 
 Referências: backend/internal/infrastructure/imaging/resize/decoder.go; convert/processor.go; imaging/heif.go.
+
+**Aprofundamento:** Por que saída lossless não é resize lossless? Encoder conserva destino, mas interpolação já mudou origem. Bytes e pixels são equivalências distintas.
 
 ### 12 Por que diminuir pixels não garante diminuir bytes
 
@@ -136,6 +158,8 @@ Aprofundamento: Se o objetivo fosse nunca aumentar bytes, o contrato seria outro
 
 Referências: frontend/app/components/image-convert/size-change.ts; frontend/tests/conversion-size.test.mjs; backend/internal/infrastructure/http/conversion_test.go.
 
+**Aprofundamento:** Metade de dimensões reduz trabalho/bytes pela metade? Área cai cerca de quatro vezes; custos fixos/nativos/encoding/conteúdo variam. Geometria não mede vazão.
+
 ### 13 Quais padrões de qualidade e compressão são usados
 
 Resposta possível: Eu uso JPEG e WebP com qualidade 82, AVIF e HEVC com qualidade 60. WebP estático usa método 4 e qualidade de alfa 100; AVIF usa alfa 100 e velocidade 6. PNG usa BestCompression e TIFF usa Deflate com predictor. GIF trabalha com paleta; BMP não oferece a mesma expectativa de redução de um encoder moderno.
@@ -145,6 +169,8 @@ Explicação técnica: As escalas de qualidade não são comparáveis entre code
 Aprofundamento: Por que esses números? São os padrões presentes no código, permitindo comportamento previsível. Não afirmo que vieram de um estudo perceptual ou benchmark histórico. Se precisasse justificá-los para outro requisito, compararia qualidade visual, bytes e custo de encoding em um conjunto representativo.
 
 Referências: backend/internal/infrastructure/imaging/compress/compressor.go; resize/decoder.go; convert/processor.go.
+
+**Aprofundamento:** Quality 60 compara codecs? Não como escore perceptual igual. Algoritmos/escalas exigem avaliação visual/custo; defaults são política, não benchmark.
 
 ### 14 Como funcionam proporção arredondamento e ampliação
 
@@ -156,6 +182,8 @@ Aprofundamento: Ampliar melhora detalhe? A interpolação estima valores interme
 
 Referências: backend/internal/application/imageresize/usecase.go; frontend/app/components/image-resize/resize-options.ts.
 
+**Aprofundamento:** Por que validar antes de float→int? Fora de faixa causa overflow/trabalho excessivo. Arredondamento/mínimo um ainda muda proporção em dimensões ímpares.
+
 ### 15 Qual algoritmo de reamostragem é usado e qual seu custo
 
 Resposta possível: Eu uso draw.CatmullRom.Scale de golang.org/x/image/draw, com destino RGBA pré-multiplicado e draw.Src. Catmull–Rom oferece interpolação suave e costuma preservar melhor transições do que vizinho mais próximo. Aceito maior processamento e possível ringing em bordas, sem prometer melhoria de detalhe ou qualidade universal.
@@ -165,6 +193,8 @@ Explicação técnica: Alfa pré-multiplicado representa componentes de cor asso
 Alternativas: Vizinho mais próximo é simples e adequado a pixel art, mas pode ficar serrilhado em fotografias. Bilinear é mais simples, com tendência a suavizar. Uma escolha diferente exigiria avaliação visual e custo medido; não existe uma comparação experimental desses algoritmos no projeto.
 
 Referências: backend/internal/infrastructure/imaging/resize/decoder.go, scaleImage; backend/internal/infrastructure/imaging/convert/preview.go.
+
+**Aprofundamento:** Quando nearest-neighbor? Pixel art pode preferir amostras discretas. Catmull–Rom suaviza/pode gerar ringing; projeto não prova vencedor universal.
 
 ### 16 O que acontece com transparência
 
@@ -176,6 +206,8 @@ Aprofundamento: A prévia PNG garante preservar o arquivo original? Ela preserva
 
 Referências: backend/internal/infrastructure/imaging/convert/processor.go; resize/animation.go; resize/resize_test.go.
 
+**Aprofundamento:** Por que toda família não conserva alpha parcial? JPEG/outros destinos não têm mesmo contrato. Composição/quantização explícita expõe perda em vez de prometer fidelidade ausente.
+
 ### 17 Como orientação metadados e perfis de cor são tratados
 
 Resposta possível: Eu normalizo orientação quando o caminho oferece suporte: JPEG aplica EXIF aos pixels; AVIF usa autorrotação; HEIF usa transformações do codec. A conversão e a prévia também tentam aplicar EXIF reconhecido em outras famílias estáticas. Não prometo copiar universalmente EXIF, XMP ou ICC nem preservar toda fidelidade de cor.
@@ -185,6 +217,8 @@ Explicação técnica: Resize JPEG calcula alvos depois de orientar a imagem. Se
 Aprofundamento: Orientar é preservar metadados? É aplicar uma instrução aos pixels para que sejam exibidos na direção correta. Isso não equivale a reter o campo original ou todos os outros metadados. Prévia compatível e preservação documental são requisitos diferentes.
 
 Referências: backend/internal/infrastructure/imaging/orientation.go; resize/decoder.go; convert/processor.go; compress/webp.go.
+
+**Aprofundamento:** Por que EXIF antes de dimensões? Orientação troca largura/altura/pixels. Copiar metadados deixa geometria ambígua; transformar não conserva tudo.
 
 ### 18 Como animações e variantes são tratadas
 
@@ -196,6 +230,8 @@ Aprofundamento: Por que rejeitar em vez de aproximar? Evita perda silenciosa de 
 
 Referências: backend/internal/infrastructure/imaging/resize/animation.go; variants.go; compress/avif.go; convert/processor.go.
 
+**Aprofundamento:** Suportar GIF prova toda animação? Não. Reconstrução normaliza paleta/disposal. Testes precisam duração/loop/pixels, não só nome/família.
+
 ### 19 Quais bibliotecas fazem o trabalho real
 
 Resposta possível: Eu uso image/jpeg, image/png e image/gif da biblioteca padrão; golang.org/x/image para BMP, TIFF e escala; deepteams/webp para WebP; gen2brain/avif para AVIF; e o binding Go de strukturag/libheif para HEIF. GoMetadata ajuda a ler orientação EXIF. Essas dependências têm responsabilidades reais, não são apenas nomes na lista de tecnologias.
@@ -205,6 +241,8 @@ Explicação técnica: go.mod declara Go 1.27 e as bibliotecas diretas. WebP e A
 Aprofundamento: Um formato detectado pode falhar por codec? Sim. A família pode ser conhecida e o conteúdo válido, mas o encoder/decoder necessário estar indisponível. ErrCodecUnavailable é distinto de ErrUnsupportedFormat e ErrInvalidImage.
 
 Referências: backend/go.mod; backend/internal/infrastructure/imaging/heif.go; backend/internal/infrastructure/http/handler/imagehttp/errors.go.
+
+**Aprofundamento:** Build aprovado pode falhar codec runtime? Sim; bibliotecas/plugins/plataforma importam. Nativas precisam combinar com artefatos, além dos módulos Go.
 
 ## 4 Contratos recursos e linguagem
 
@@ -218,6 +256,8 @@ Aprofundamento: Os validadores são idênticos? Não. Conversão rejeita campos 
 
 Referências: backend/internal/infrastructure/http/router.go; handler/resize_image/handler.go; handler/convert_image/handler.go.
 
+**Aprofundamento:** Por que separar JSON/bytes? Proxy encaminha ambos; cliente usa Content-Type/rota. Presumir imagem em todo sucesso interpreta metadados errado.
+
 ### 21 Como erros e nomes de arquivos são tratados
 
 Resposta possível: Eu retorno erros JSON com o campo error, usando 400 para entrada/opções inválidas, 413 para limites, 415 para família não suportada, 422 para variante rejeitada e 500 para falhas internas ou de codec. O proxy retorna 502 se não consegue acessar o backend. O nome de download é montado com base segura, sufixo da operação e extensão coerente com os bytes.
@@ -227,6 +267,8 @@ Explicação técnica: Erros sentinela e errors.Is permitem mapear categorias se
 Aprofundamento: Sanitizar nome valida a imagem? Não. O helper elimina caminhos e serializa o header; a detecção e o decoder validam conteúdo em outra camada. Posso receber foto.jpg e responder foto_converted.png quando o destino é PNG.
 
 Referências: backend/internal/infrastructure/http/handler/imagehttp/; handler/compress_image/filename.go.
+
+**Aprofundamento:** Recover captura toda falha nativa? Não. OOM/processo/faults podem escapar. JSON não isola processo ou garante continuidade.
 
 ### 22 Quais limites existem e o que eles não garantem
 
@@ -238,6 +280,8 @@ Aprofundamento: E cem uploads simultâneos? Não há controle global de admissã
 
 Referências: backend/internal/infrastructure/imaging/limits.go; backend/internal/application/imageresize/usecase.go; convert/processor.go.
 
+**Aprofundamento:** Entrada válida cabe na memória concorrente? Não. Limites multiplicam e excluem buffers nativos/proxy. Admissão é hipotética.
+
 ### 23 Cancelamento e timeout interrompem imediatamente os codecs
 
 Resposta possível: Eu uso cancelamento cooperativo. O frontend aborta requisições obsoletas e o proxy encaminha o signal. Go verifica ctx.Err em pontos da operação e entre frames em Resize. Entretanto, uma chamada nativa ou uma escala em andamento não é encerrada à força. A interface Compressor sequer recebe contexto; o caso de uso verifica antes/depois.
@@ -247,6 +291,8 @@ Explicação técnica: O servidor configura ReadHeaderTimeout de 5 segundos, Rea
 Aprofundamento: O que eu faria com um requisito rígido de isolamento? Primeiro definiria o orçamento e mediria o comportamento. Isolamento de processo e admissão poderiam ser alternativas, mas não são funcionalidades implementadas nem próximas etapas assumidas.
 
 Referências: backend/internal/infrastructure/http/server.go; backend/cmd/api/main.go; application/imagecompression/usecase.go.
+
+**Aprofundamento:** Timeout write de dois minutos mata encoder? Não; limita I/O. Código/nativo precisa de cancelamento/isolamento/medições separados.
 
 ### 24 Como acontece limpeza e gerenciamento de recursos
 
@@ -258,6 +304,8 @@ Comparação útil: Em PHP/Laravel também preciso fechar recursos e decidir sob
 
 Referências: backend/internal/infrastructure/imaging/heif.go; handler/convert_image/handler.go; handler/resize_image/handler.go.
 
+**Aprofundamento:** Defer garante limpeza após morte abrupta? Não; retorno/erro difere de crash. Memória/arquivos nativos exigem modelo/teste próprio.
+
 ### 25 Qual a diferença entre File Blob e Object URL
 
 Resposta possível: Eu trato File como um Blob com informações como nome e tipo. Blob guarda bytes do resultado ou da prévia. Object URL é uma referência temporária criada pelo navegador para exibir ou baixar esses bytes; não é um endereço público do servidor. Original, resultado e prévia têm identidades e responsabilidades diferentes.
@@ -268,6 +316,8 @@ Aprofundamento: Por que não reutilizar bytes de prévia no download? Podem ser 
 
 Referências: frontend/app/components/image-upload/preview-cache.ts; browser-image-preview.tsx; image-upload-form.tsx.
 
+**Aprofundamento:** Por que identidade Blob importa? Bytes iguais em objetos diferentes são chaves distintas. Reuso é objeto de sessão, não deduplicação por conteúdo/histórico.
+
 ### 26 Como interfaces erros e construção de dependências aparecem em Go
 
 Resposta possível: Eu defino interfaces pequenas a partir da responsabilidade que o caso de uso precisa. Compressor recebe bytes e retorna resultado; Decoder produz Source para inspecionar/redimensionar; Processor inspeciona e converte. NewRouter cria as implementações e injeta pelos construtores. Erros são valores retornados e classificados com errors.Is.
@@ -277,6 +327,8 @@ Explicação técnica: Implementação de interface em Go é implícita pela cor
 Comparação útil: O conceito lembra serviços e contratos em Laravel, mas não depende do container do framework. Tipos comuns têm aliases no pacote de compressão para compatibilidade. A separação facilita testes com doubles onde necessário; não torna cada pacote totalmente independente de toda infraestrutura.
 
 Referências: backend/internal/application/imageprocessing/image.go; imagecompression/usecase.go; imageresize/usecase.go; imageconversion/usecase.go; imaging/convert/processor.go.
+
+**Aprofundamento:** Por que não ocultar tudo com ports? Só fronteira útil justifica. Conversão depende de acesso concreto a pixels, sem desacoplamento universal.
 
 ## 5 Docker testes e evidências
 
@@ -290,15 +342,19 @@ Aprofundamento: Separar containers reduz complexidade de produto? Ajuda a separa
 
 Referências: backend/Dockerfile; frontend/Dockerfile; docs/pt-BR/adr/001-native-image-codecs.md.
 
+**Aprofundamento:** Por que CGO_ENABLED não basta? Binário precisa de libs/plugins compatíveis. Multi-stage mantém runtime sem compilador desnecessário.
+
 ### 28 Como reproduzir desenvolvimento e verificações
 
-Resposta possível: Eu uso docker compose -f docker-compose.yml -f compose.development.yaml --profile dev up -d backend frontend-dev para desenvolvimento, com fontes e dependências montadas do host conforme docs/pt-BR/docker-development-setup.md. Para backend, docker compose run --rm backend-test executa go test -v ./... no estágio de build, com as amostras montadas somente para leitura. O backend de runtime não contém o toolchain de testes.
+Resposta possível: Eu uso docker compose -f docker-compose.yml -f compose.development.yaml --profile dev up -d backend frontend-dev para desenvolvimento, com fontes e dependências montadas do host conforme docs/pt-BR/docker/development.md. Para backend, docker compose run --rm backend-test executa go test -v ./... no estágio de build, com as amostras montadas somente para leitura. O backend de runtime não contém o toolchain de testes.
 
 Explicação técnica: Para frontend, executo node --test nos três arquivos de regressão, npx tsc --noEmit e npm run build com NODE_ENV=production no serviço frontend-dev. Quando dependências ou Dockerfiles mudam, reconstruo a imagem apropriada; npm ci usa o lockfile. Os binds do frontend guardam dependências/artefatos no host, não uploads ou histórico de processamento.
 
 Aprofundamento: O que foi executado nesta conclusão? Houve suíte backend de base, testes ampliados dos codecs, suíte completa final, 12 testes frontend, TypeScript e build de produção. Não houve teste manual de navegador, carga ou nova execução com race detector.
 
-Referências: docker-compose.yml; docs/pt-BR/testing.md; docs/pt-BR/docker.md.
+Referências: docker-compose.yml; docs/pt-BR/testing/strategy.md; docs/pt-BR/docker/runtime.md.
+
+**Aprofundamento:** Comandos provam execução hoje? Não; são reprodução. Histórico tem datas. Esta revisão só executou ferramentas documentais.
 
 ### 29 O que os novos testes de amostras reais verificam
 
@@ -310,6 +366,8 @@ Aprofundamento: E variantes? Testes sintéticos separados verificam EXIF, alfa p
 
 Referências: backend/internal/infrastructure/imaging/resize/resize_test.go; convert/real_fixtures_test.go; backend/internal/infrastructure/http/conversion_test.go.
 
+**Aprofundamento:** Por que decode independente? Cabeçalhos iguais podem esconder bytes ruins. Decode verifica família/dimensões; percepção/variantes são outras lacunas.
+
 ### 30 O que testes passando não provam
 
 Resposta possível: Eu posso dizer que os comportamentos cobertos passaram no ambiente Docker usado. Não posso transformar isso em compatibilidade universal, qualidade visual perfeita, segurança concorrente comprovada ou capacidade de produção. Amostras estáticas quadradas são úteis, mas não representam toda imagem existente nem substituem os casos sintéticos de orientação e animação.
@@ -318,7 +376,9 @@ Explicação técnica: Testes frontend de funções e cache não verificam layou
 
 Aprofundamento: Como ampliar evidência sem inventar garantia? Eu escolheria um requisito concreto, casos representativos e métricas adequadas. Separaria regressão funcional, verificação visual, interação browser, concorrência e desempenho, relatando exatamente o que cada execução observou.
 
-Referências: docs/pt-BR/testing.md; frontend/tests/; docs/pt-BR/docker.md.
+Referências: docs/pt-BR/testing/strategy.md; frontend/tests/; docs/pt-BR/docker/runtime.md.
+
+**Aprofundamento:** O que apoia exposição pública? Inputs hostis/variantes, navegador, memória concorrente/falhas nativas e recuperação de deploy. Fixtures não implicam tudo.
 
 ## 6 Decisões e limites do produto
 
@@ -330,7 +390,9 @@ Explicação técnica: Síncrono reduz componentes, aceitando que processamento 
 
 Aprofundamento: Isso impede produção para sempre? Não é uma afirmação sobre todo futuro. Se surgisse requisito de jobs longos ou recuperação posterior, eu analisaria alternativas e custos. Hoje não há nova infraestrutura planejada e o projeto não declara prontidão para produção.
 
-Referências: README.pt-BR.md; docs/pt-BR/architecture.md, seção Trade-offs.
+Referências: README.pt-BR.md; docs/pt-BR/architecture/overview.md, seção Trade-offs.
+
+**Aprofundamento:** Quando persistir? Recuperação posterior/jobs/retomada exigiriam identidade, retenção, segurança storage e retries além do resultado direto.
 
 ### 32 Quais lições e limitações eu destacaria
 
@@ -340,7 +402,9 @@ Explicação técnica: O escopo está concluído, com limites de compatibilidade
 
 Aprofundamento: Se perguntarem sobre IA, como responder? Eu explicaria com honestidade a assistência que efetivamente usei e que consigo confirmar, sem inventar um histórico. Consigo demonstrar compreensão percorrendo handler, regra de aplicação, codec e teste, incluindo pontos em que a abstração é limitada.
 
-Referências: docs/pt-BR/architecture.md; backend/internal/infrastructure/imaging/; docs/pt-BR/testing.md.
+Referências: docs/pt-BR/architecture/overview.md; backend/internal/infrastructure/imaging/; docs/pt-BR/testing/strategy.md.
+
+**Aprofundamento:** Como defender aprendizado sem inventar? Trace handler/caso/codec/teste e limites. Portfólio demonstra compreensão; produção profissional exige evidência própria.
 
 ## 7 Resumos para entrevista
 
@@ -394,14 +458,49 @@ Exemplo aplicado à prévia: o problema é o navegador não abrir HEIC/TIFF. O r
 
 Exercício aplicado a Resize: explique por que 50% menores reduz cada dimensão e não os bytes; depois mostre math.Round, o teto de pixels, Catmull–Rom, o encoder da família e a decodificação independente do teste. Se a saída ficar maior, a resposta continua válida e a interface informa o aumento. Identifique o ponto em que cancelamento é verificado e a etapa que não pode ser interrompida à força.
 
-Referências para revisão: README.pt-BR.md apresenta escopo e fluxos; docs/pt-BR/architecture.md detalha contratos e trade-offs; docs/pt-BR/docker.md descreve ambiente; docs/pt-BR/testing.md separa testes existentes de verificações executadas; docs/pt-BR/testing.md registra as amostras físicas. Ao estudar, percorra também as implementações e os testes citados, verificando o que realmente acontece antes de defender uma decisão.
+Referências para revisão: README.pt-BR.md apresenta escopo e fluxos; docs/pt-BR/architecture/overview.md detalha contratos e trade-offs; docs/pt-BR/docker/runtime.md descreve ambiente; docs/pt-BR/testing/strategy.md separa testes existentes de verificações executadas; docs/pt-BR/testing/strategy.md registra as amostras físicas. Ao estudar, percorra também as implementações e os testes citados, verificando o que realmente acontece antes de defender uma decisão.
 
 ## Aprofundamentos e estudo ordenado — 2026-10-09
 
-O [contrato Resize](../../../go-image-optimizer/docs/pt-BR/architecture.md) diferencia padrões: `axis` omitido ou vazio usa `width`; `keepAspectRatio` explicitamente vazio é rejeitado. Números obrigatórios rejeitam vazio. Modal/helpers compartilhados não criam política universal de campo vazio.
+O [contrato Resize](../../../../go-image-optimizer/docs/pt-BR/architecture/overview.md) diferencia padrões: `axis` omitido ou vazio usa `width`; `keepAspectRatio` explicitamente vazio é rejeitado. Números obrigatórios rejeitam vazio. Modal/helpers compartilhados não criam política universal de campo vazio.
 
 **Pergunta: A checagem cliente de 50 MiB é igual ao limite do servidor?** Resposta modelo: “Proxy verifica image.size após parsing FormData; Go limita o corpo multipart inteiro. Overhead conta no backend, então arquivo próximo ao limite pode passar no cliente e falhar no servidor. Nenhuma checagem limita memória total do processo.”
 
 **Aprofundamento:** Por que timeout de socket não interrompe codec? Como Resize sem mudança preserva metadados quando resize real não preserva tudo? Por que bytes iguais em dois Blobs criam entradas diferentes no cache? O que testes de cálculo/cache não provam sobre foco/download no navegador?
 
 Ordem: bytes original/resultado/display e contratos HTTP → detecção/variantes → interfaces/erros → dimensões/orientação/alpha/animação → codecs/cancelamento/recursos → estado frontend/lifetimes → testes/evidência histórica → alternativas condicionais. Nenhuma feature extra é planejada e nenhum assunto é marcado concluído. Auditoria somente por leitura; testes/builds anteriores não foram repetidos.
+
+## Aprofundamentos adicionais de entrevista fundamentados no código
+
+Perguntas e respostas originais acima foram preservadas. IDs abaixo identificam a sequência adicional; não renumeram material retido. Níveis orientam estudo, não status implementado. Aprofundamentos incluem respostas para manter a sequência autossuficiente.
+
+### Q001 — Introdutória: Por que compressão, resize, conversão e preview são operações separadas?
+
+**Resposta:** Implementado: compressão recodifica na família detectada preservando dimensões orientadas; resize muda dimensões em famílias suportadas; conversão muda família; preview cria bytes exibíveis no navegador sem substituir download. Assim a UI explica a mudança e conserva o original para operações posteriores. Preview pode parecer semelhante, mas é artefato distinto com codificação/metadados diferentes. Teoria: representação, geometria e compatibilidade de exibição são preocupações separadas. Operação única reduziria requisições, mas precisaria de contrato combinado para orientação, alpha, animação, tamanho e formato; endpoints focados isolam políticas.
+
+Aprofundamento: Compressão precisa reduzir bytes? Não. Entrada já eficiente, parâmetros de codec ou mudanças de metadados/representação podem aumentar saída. A UI informa bytes reais, não economia presumida. Aprofundamento: Mesmas dimensões implicam mesmos pixels ou fidelidade de cor? Não. Perda, quantização, perfis e política de frames podem alterar conteúdo. Matriz de variantes e fixtures são evidência limitada, não equivalência visual universal.
+
+### Q002 — Intermediária: O que o proxy Next.js muda nas fronteiras de confiança e memória?
+
+**Resposta:** Implementado: o navegador chama rotas `/api/images` da mesma origem. Next.js interpreta multipart em FormData e encaminha a URL do backend no servidor. Propaga status/corpo de erro e cabeçalhos selecionados, materializa bytes bem-sucedidos em ArrayBuffer e retorna no-store. Isso remove dependência do navegador do hostname backend, mas acrescenta processo com bytes não confiáveis e outra fronteira de buffering. O proxy não adiciona token ou autorização. A verificação de arquivo de 50 MiB ocorre após parsing; o limite Go inclui corpo e overhead. Assim arquivo próximo do limite pode passar no proxy e falhar no backend.
+
+Aprofundamento: É streaming? Não ponta a ponta: parsing e ArrayBuffer materializam dados. Streaming reduziria cópias, mas exigiria cuidado com metadados, cancelamento e multipart. Aprofundamento: request.signal prova que CPU backend para? Não. Pode cancelar transporte; codec síncrono já pode estar executando e o caso de uso só verifica contexto antes/depois. Proxy é fronteira arquitetural, não sandbox nativa.
+
+### Q003 — Desafiadora: Por que limites de pixels não garantem memória total segura?
+
+**Resposta:** Implementado: trabalho estático tem limite de 32 milhões de pixels e animação de 64 milhões de pixels de canvas-frames. Verificações por divisão evitam overflow de multiplicação. Entretanto uma imagem RGBA no limite já ocupa aproximadamente 128 milhões de bytes, antes de origem/destino, frames, entrada/saída codificada, alocações nativas e cópias do proxy. Arquivo comprimido pequeno pode decodificar dimensões grandes; limite de bytes trata outro recurso. Verificações por variante não fornecem garantia global de pico de memória, e trabalho nativo pode preceder checks posteriores.
+
+Aprofundamento: E dez uploads válidos concorrentes? Não há admissão global, então trabalho válido por requisição multiplica pressão de memória/CPU. Semáforo ponderado, fila ou worker isolado são hipotéticos; trocam latência, justiça, complexidade operacional e isolamento. Aprofundamento: Timeout libera memória nativa imediatamente? Não necessariamente. Timeouts HTTP limitam rede; chamadas nativas síncronas podem não observar contexto. Medição de formatos representativos e picos concorrentes é lacuna; limites numéricos são constantes, não capacidade medida.
+
+### Q004 — Intermediária: O que interfaces Go e testes fake comprovam aqui?
+
+**Resposta:** Implementado: o caso de uso de compressão depende da interface pequena Compressor; HTTP consome fronteira Execute. O router conecta implementação de imagens concreta sem container de framework. Isso separa multipart/status, validação/contexto e codec. Fake pode verificar rejeição de entrada vazia, propagação de contexto e mapeamento de respostas sem CGO. Não prova validade de saída nativa, preservação de alpha/orientação ou ABI. Testes de imagens reais e HTTP com casos de uso cobrem outras fronteiras.
+
+Aprofundamento: Toda interface prova Clean Architecture? Não. Verifique direção das dependências e responsabilidades reais, não rótulos. Interface só de encaminhamento pode acrescentar custo sem isolar comportamento. Aprofundamento: Mais mocks provariam aplicação completa? Não. Composição, dependências nativas e ciclo de object URLs no navegador exigem evidências próprias. Testes/builds históricos continuam úteis, mas não foram repetidos. A limitação nativa de race/checkptr permanece; interface não elimina riscos de memória nativa. Dependência concreta única simplifica código, mas reduz substituição focada nos testes.
+
+### Q005 — Desafiadora: Como raciocinar sobre atualização produtiva e requisições com falha?
+
+**Resposta:** Implementado: resultados são por requisição, sem banco, job durável ou histórico servidor. Falha do proxy vira 502; falhas de processamento têm status explícitos; codec/inesperadas viram 500. Retry repete trabalho e pode aumentar carga mesmo com entrada igual. Não há garantia de entrega de download interrompido após processamento. Compose/Dockerfiles locais documentam dependências, não SLO medido ou pipeline de rollout. Atualizar backend exige bibliotecas nativas compatíveis; frontend precisa preservar expectativas de metadados/erros.
+
+Aprofundamento: Rollback exigiria restauração de banco? Não há banco de uploads, mas seriam necessários artefatos antigos e contratos de proxy compatíveis. Não há ensaio de rollback evidenciado. Aprofundamento: O que coletar no diagnóstico? Status em cada salto, logs sanitizados, formato/variante detectado, dimensões e reproducer mínimo não sensível. Evite conteúdo de usuário nos logs. Worker separado mudaria persistência/retry dos resultados; proponha apenas para requisitos demonstrados. Não houve gráfico de desempenho, carga, navegador ou implantação runtime nesta revisão.
+
