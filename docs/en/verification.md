@@ -47,3 +47,7 @@ No Docker/Compose, services, database/broker calls, application requests, tests,
 ### Final static results
 
 Validated 127 Markdown files and 972 local inline links (including local fragments): zero broken links, unclosed code fences or missing EN/PT counterparts. The pre-edit file-hash comparison found 78 changed Markdown files, no removed paths and no changes to non-documentation files in the reviewed inventory. These checks validate document structure and change scope; they do not execute the documented software.
+
+## ENV terminal presentation update — 2026-10-10
+
+Updated only the directly affected English/Portuguese ENV interview guides: complete tables, project versus discovery grouping, initial comparison counts versus actual writes, summary action outcomes, unsupported no-backup/usage modes and the current 22-test suite. The audit suite was executed successfully; all writes were in temporary fixtures. Existing historical static-review evidence above is retained. No interview code or tests exist in this Markdown-only repository; other project material is unchanged.

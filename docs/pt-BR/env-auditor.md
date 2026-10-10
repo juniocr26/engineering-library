@@ -81,6 +81,10 @@ O parser rejeita UTF-8 inválido, NUL, atribuições malformadas, aspas sem fech
 
 Prévia não testa permissões futuras de escrita ou sucesso de backup/substituição. Mudanças propostas não falham: saída 0. Erros tratados de descoberta/pares dão 1; raiz inválida/argumentos dão 2. Referências ausentes e links ignorados não falham sozinhos. Relatórios exibem raiz absoluta, caminhos, pares, nomes/contagens de chaves, resultados e totais; não há redação geral de metadados.
 
+A saída completa agora contém uma tabela Unicode por par validado: `Variável | Situação | Ação prevista`. Mostra todas as chaves iniciais, na ordem só no exemplo, só no alvo e compartilhadas, com ordenação alfabética dentro de cada categoria. Caminhos de alvo/referência identificam pares; o resumo agrupa diretórios aninhados pelo primeiro componente relativo (pares na raiz usam `.`). A descoberta continua agrupada por diretório.
+
+O resumo final omite compartilhadas e preserva diferenças iniciais. Prévia usa `Proposta:`; escrita bem-sucedida, `Concluída:`. Pares com falha distinguem `Falhou:` de ações conhecidas marcadas `Não aplicada:`. Projetos sem achados imprimem `Nenhuma pendência de sincronização.` Alvos ausentes (inclusive com exemplo vazio), referências ausentes e erros permanecem visíveis. `added`/`removed`/`shared` incluem comparações planejadas mesmo após falha de escrita; `actual_created`/`actual_updated` contam somente escritas bem-sucedidas. Sincronização sem backup e classificações de baixo uso/ausência de referências no código continuam indisponíveis. Ausência no exemplo não prova desuso. Veja [exemplos sintéticos do terminal](../../../env-auditor/docs/pt-BR/terminal-report.md).
+
 `--strict`, `--strict-unused`, `--show-usage` e `--no-backup` foram removidos e são rejeitados. `.env-audit.json` é ignorado com aviso. Notas antigas sobre uso strong/weak, heurísticas de secrets, união de chaves, strict e propagação real→exemplo estão substituídas por este guia.
 
 ## 7. BACKUPS E SUBSTITUIÇÃO ATÔMICA
@@ -107,7 +111,7 @@ O stream temporário recebe flush, chmod e fsync antes de `os.replace`. Atomicid
 
 A maioria dos OSErrors de descoberta/processamento é tratada. Nem toda exceção é capturada por `run`: recursão excessiva ou falhas de saída podem escapar. Não prometa 0/1/2 para qualquer falha ambiental. Falha de limpeza pode deixar temporário; nomes/caminhos não são uma fronteira completa de sigilo.
 
-Há 17 casos `unittest`: raiz real/diretórios do chamador, overrides, recursão/ocultos/ignorados, exclusões, links, precedência/criação, blocos/backups/permissões/idempotência, entradas inválidas/ilegíveis, continuidade, falhas injetadas de backup/replace, snapshots de prévia, colisões e recursos removidos. Os testes foram lidos, não executados aqui. [Verificação](../../../env-auditor/docs/pt-BR/verification.md) mantém resultados anteriores separados. Alguns casos lançam subprocessos Python ou sincronizam fixtures; nenhum foi executado nesta auditoria.
+Há 22 casos `unittest`: raiz real/diretórios do chamador, overrides, recursão/ocultos/ignorados, exclusões, links, precedência/criação, blocos/backups/permissões/idempotência, entradas inválidas/ilegíveis, continuidade, falhas injetadas de backup/replace, snapshots de prévia, colisões e recursos removidos. Na atualização da apresentação em 2026-10-10, os 22 passaram em execução com fixtures temporárias isoladas. [Verificação](../../../env-auditor/docs/pt-BR/verification.md) mantém resultados anteriores separados. Alguns casos lançam subprocessos Python ou sincronizam somente fixtures temporárias; nenhum ambiente real foi sincronizado.
 
 ## 9. DECISÕES E ALTERNATIVAS
 
@@ -126,7 +130,7 @@ Há 17 casos `unittest`: raiz real/diretórios do chamador, overrides, recursão
 2. Resolva no papel referências base/específicas, alvos/referências ausentes e exemplo vazio.
 3. Siga `parse` e `plan` com vazios, duplicatas e multilinha; separe conjunto de chaves de valores.
 4. Siga prévia, backups e replace; explique atomicidade individual, continuidade e saídas.
-5. Leia os 17 testes e separe suas asserções de resultados históricos e concorrência/crash não cobertos.
+5. Leia os 22 testes e separe suas asserções de resultados históricos e concorrência/crash não cobertos.
 6. Discuta schemas, bibliotecas de parsing, locks, filtros e retenção depois de explicar os limites atuais.
 
 A ordem é sugestão de estudo; não marca assuntos como estudados, dominados ou concluídos.

@@ -47,3 +47,7 @@ Sem Docker/Compose, serviços, banco/broker, requests, testes, builds, migraçõ
 ### Resultados estáticos finais
 
 Validados 127 arquivos Markdown e 972 links locais inline (incluindo âncoras): nenhum link quebrado, bloco de código aberto ou par EN/PT ausente. A comparação de hashes com o inventário anterior encontrou 78 arquivos Markdown alterados, nenhum caminho removido e nenhuma alteração em arquivo que não seja documentação no inventário revisado. As verificações validam estrutura documental e escopo das alterações; não executam os programas documentados.
+
+## Atualização do terminal ENV — 2026-10-10
+
+Atualizados somente os guias de entrevista ENV diretamente afetados em inglês/português: tabelas completas, agrupamento de projeto versus descoberta, comparação inicial versus escritas reais, resultados das ações, modos sem backup/uso indisponíveis e suíte atual com 22 testes. A suíte do auditor passou; todas as escritas ocorreram em fixtures temporárias. Evidências históricas de revisão estática acima foram preservadas. Este repositório somente Markdown não tem código ou testes de entrevista; material dos outros projetos permanece intacto.

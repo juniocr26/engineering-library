@@ -81,6 +81,10 @@ Parsing rejects invalid UTF-8, NULs, malformed assignments, unterminated quoted 
 
 A preview does not verify future write permissions or successful backup/replace operations. A proposed change alone is success: exit 0. Discovery or handled pair errors yield 1; invalid root and CLI arguments yield 2. Missing references and skipped links alone do not cause failure. Reports show the absolute root, paths, pairs, key names/counts, outcomes and totals. Paths and key names remain visible; this is not general diagnostic redaction.
 
+Complete output now contains one Unicode bordered table per validated pair: `Variável | Situação | Ação prevista`. It shows all initial keys, sorted example-only, target-only, then shared, alphabetically inside each category. Target/reference paths identify pairs; project summaries group nested directories by the first relative path component (root pairs use `.`). Discovery itself still groups by directory.
+
+The final summary omits shared keys and retains initial differences. Preview actions say `Proposta:`; successful writes say `Concluída:`. Failed pairs distinguish `Falhou:` from known actions marked `Não aplicada:`. Projects without findings print `Nenhuma pendência de sincronização.` Missing targets (even with empty examples), missing references and processing/discovery errors remain visible. `added`/`removed`/`shared` include successfully planned comparisons even if writing fails; `actual_created`/`actual_updated` count successful writes only. No-backup synchronization and low-use/no-reference source classifications remain unsupported. Example absence does not prove non-use. See [synthetic terminal examples](../../../env-auditor/docs/en/terminal-report.md).
+
 Retired flags `--strict`, `--strict-unused`, `--show-usage`, `--no-backup` are rejected. `.env-audit.json` is ignored with a notice. Old study notes describing usage classification, secret heuristics, key union, strict policy and real-to-example propagation are superseded by this guide.
 
 ## 7 Backups, permissions and atomic replacement
@@ -107,7 +111,7 @@ The temporary stream is flushed, chmodded and fsynced before `os.replace`. This 
 
 Most discovery/processing OSErrors are handled. `run` does not wrap every possible exception: recursion exhaustion in very deep trees or output failures can escape; do not promise an exit 0/1/2 mapping for every environmental failure. A cleanup failure can leave a temporary file. Filename/key metadata is not a complete secrecy boundary.
 
-The checked-in suite has 17 `unittest` cases covering caller directories/default root, overrides, recursive/ignored/hidden discovery, exclusions, symlinks, variant precedence/creation, exact blocks and backups, permissions, idempotence, malformed/unreadable input, failure continuation, injected backup/replace failures, preview snapshots, collision-safe backups and retired flags/settings. These are source-inspected tests, not executions in this audit. [Verification](../../../env-auditor/docs/en/verification.md) retains previously recorded executions separately. Some test cases launch Python subprocesses or exercise synchronization; none were run here.
+The checked-in suite has 22 `unittest` cases covering caller directories/default root, overrides, recursive/ignored/hidden discovery, exclusions, symlinks, variant precedence/creation, exact blocks and backups, permissions, idempotence, malformed/unreadable input, failure continuation, injected backup/replace failures, preview snapshots, collision-safe backups and retired flags/settings. The presentation update on 2026-10-10 executed all 22 successfully using isolated temporary fixtures. [Verification](../../../env-auditor/docs/en/verification.md) retains previously recorded executions separately. Some test cases launch Python subprocesses or exercise synchronization only inside temporary fixtures; no real environments were synchronized.
 
 ## 9 Decisions, alternatives and limits
 
@@ -126,7 +130,7 @@ The checked-in suite has 17 `unittest` cases covering caller directories/default
 2. Work through base/specific references, missing targets/references and empty examples on paper.
 3. Trace `parse` and `plan` with empty, duplicate and multiline assignments; distinguish key membership from values.
 4. Trace preview, backups and replacement; explain per-file atomicity, failure continuation and exits.
-5. Read the 17 tests and separate their assertions from historical results and untested concurrency/crash behavior.
+5. Read the 22 tests and separate their assertions from historical results and untested concurrency/crash behavior.
 6. Rehearse alternatives only after explaining current limits: typed schemas, parser libraries, locks, include policies and retention.
 
 This ordering is suggested study work. It creates no studied/mastered/completed markers.
