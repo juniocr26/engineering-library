@@ -174,3 +174,28 @@ Aprofundamento: Workflow prova CI aprovado? Não. Execuções históricas são r
 **Resposta:** Marco 2.3 implementa ports de adquirir/concluir/liberar em transações Read Committed curtas; reader permanece observação. Aquisição retorna posse somente após confirmação do commit; commit incerto retorna erro mesmo que lease/contador já estejam persistidos. Completion/release também podem ter confirmado antes de perder resposta. Rejeição ordinária pelo servidor é diferente: fixture real com constraint diferida demonstra rollback e OperationFailed. Transporte/protocolo perdido no commit é conservadoramente CommitUncertain; posse incompatível continua OwnershipLost. Não há retry oculto ou conflito convertido em sucesso anterior.
 
 Aprofundamento: Publicar após aquisição incerta? Não há claim ordinário confirmado. Inspecionar lease durável operacionalmente ou aguardar expiração e usar pedido novo, preservando ID do evento. Aprofundamento: Completion incerto? Processed pode estar persistido; repetição/republicação cegas podem interpretar estado incorretamente ou duplicar. Use case precisa expor incerteza e definir reconciliação; token não aplica fencing no RabbitMQ. Aprofundamento: Cancelar future prova rollback? Não. SQLx enfileira rollback da transação aberta descartada, mas commit pode ter ocorrido e cancelamento pode não retornar erro classificado. Testes cobrem cancelamento bloqueado pré-mutação/classificação, e proxy isolado de confirmação perdida nas três operações; cancelamento durante COMMIT continua não verificado. Proxy perde resposta após observar conclusão no servidor e consulta estado independente, demonstrando um resultado incerto confirmado sem generalizar para toda incerteza.
+
+
+## Recuperação integrada — Perguntas de aprofundamento, Marco 2.6
+
+### Por que confirmar publicação antes de processed ainda permite duplicatas?
+
+Porque RabbitMQ e PostgreSQL não compartilham uma transação. No caso B, aceitação foi confirmada e o processo morreu antes de completion. O banco permaneceu pending; outro worker recuperou após expiração e publicou o mesmo ID. Confirm-before-complete evita concluir sem aceitação confirmada, mas não elimina a janela entre sistemas. Consumidor precisa tratar duplicatas; o experimento não implementa essa regra de negócio.
+
+### O que CommitUncertain permite concluir?
+
+Somente que o chamador não recebeu resultado durável conhecido. O proxy de teste perdeu a resposta após observar COMMIT no servidor: pool independente viu processed e o restart não adquiriu. Outro schedule incerto pode ter resultado diferente. Não liberar ou republicar cegamente evita compensar uma conclusão que já ocorreu; inspeção/reconciliação precisam de evidência própria.
+
+### Token novo impede o worker antigo de enviar ao broker?
+
+Não. A complete/release de A foi rejeitada quando B possuía token novo, mas o publisher anterior ainda enviou o envelope original. SQL protege transição local, e RabbitMQ não verifica esse token. Lease expirado não significa que o processo antigo parou; separar autoridade durável de fencing externo explica duplicação mesmo sem posse SQL sobreposta.
+
+### Como comprovar concorrência sem contar apenas mensagens?
+
+Segurar completion com advisory lock isolado, iniciar dois binários e observar duas posses commitadas com tokens distintos/count 1/leases vivos e duas esperas SQL. Conferir o conjunto de IDs do broker separadamente, liberar barreira e verificar processed. Isso sustenta o schedule observado, não fairness, ordem de negócio ou ausência universal de duplicatas.
+
+### Quando chamar a pipeline de fundação pelo menos uma vez?
+
+Após relacionar código e experimentos a eventos duráveis válidos, recuperação de trabalho pending e aceitação confirmada antes de completion. A formulação exige disponibilidade eventual, worker ativo/reiniciado, falhas resolvíveis, storage suportado e tratamento downstream de duplicatas. Exclui poison, rejeição permanente, count esgotado, power loss e efeitos exactly-once não testados. Dizer exatamente quais processos são originais e quais adapters/lifecycles são instrumentados torna a afirmação revisável.
+
+[Evidência e fronteiras](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-6.md) | [Aceitação e premissas](../../../../rust-event-relay/docs/pt-BR/operations/milestone-2-review.md).

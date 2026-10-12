@@ -69,3 +69,8 @@ Follow-up: Is a green health response readiness? Not by itself. Rust's fixed hea
 
 Follow-up: Is a migration down an undo? It may remove schema/data rather than recover original business state. Reapplying schema does not restore rows. Follow-up: What should a reviewable production procedure specify? Artifact/schema compatibility, backup identity, tested restore, failure triggers, safe forward-fix/rollback and bounded observable checks. Current local Compose reload/caches/health are development facts; no production TLS/HA rollout, restore exercise or measured RTO/RPO is verified. Naming a project or volume is not a data migration. These comparisons are independent projects, not a shared production platform.
 
+
+
+## Cross-system recovery evidence
+
+Transport confirmation, SQL durability and business effects are separate facts. A crash between accept and completion can repeat an ID; lost SQL acknowledgement can hide an already durable processed state. SQL tokens do not fence external systems. Use the [Rust follow-ups](rust-event-relay.md) to explain finite-schedule limits, actual expiration and reconciliation without blind compensation.

@@ -69,3 +69,8 @@ Aprofundamento: Health verde é readiness? Não sozinho. Health fixo Rust testa 
 
 Aprofundamento: Down desfaz tudo? Pode remover schema/dados em vez de recuperar estado original. Reaplicar schema não restaura linhas. Aprofundamento: O que procedimento produtivo revisável especifica? Compatibilidade de artefatos/schema, identidade de backup, restore testado, gatilhos de falha, rollback/correção e checks observáveis limitados. Reload/caches/health locais são fatos dev; não há rollout TLS/HA, restore ou RTO/RPO medido. Nomear projeto/volume não migra dados. São projetos independentes, não plataforma produtiva compartilhada.
 
+
+
+## Evidência de recuperação entre sistemas
+
+Confirmação de transporte, durabilidade SQL e efeito de negócio são fatos distintos. Crash entre accept e completion pode repetir o ID; ACK SQL perdido pode ocultar processed já durável. Token SQL não faz fencing externo. Use o [aprofundamento Rust](rust-event-relay.md) para explicar limites de schedules finitos, expiração real e reconciliação sem compensação cega.

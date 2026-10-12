@@ -63,3 +63,14 @@ Não há setas de HTTP para leitor/publisher ou snapshot para publicação porqu
 ## Sincronização de filesystem
 
 ENV Auditor descobre pares no mesmo diretório, interpreta blocos, calcula plano e apresenta prévia ou faz backup/substituição. Não troca payload HTTP/evento com aplicação. Mudanças de chaves podem afetar startup posterior, mas CLI não fornece verificação runtime ou orquestração. Continuação por arquivo e backups não criam transação de workspace.
+
+
+## Marco 2.6 — Recuperação demonstrada, 2026-10-12
+
+Experimentos Rust com PostgreSQL/RabbitMQ reais e processos próprios observaram pending após SIGKILL antes do envio e após confirmação; expiração real seguida de token novo/count 2 e processed. A segunda janela produziu duas mensagens com o ID original. Perder confirm AMQP deixou pending e Uncertain enquanto um observador independente já tinha a mensagem; o worker substituiu a conexão sem repetir o claim vivo. Perder resposta COMMIT de completion produziu CommitUncertain apesar de processed durável/count 1; reinício não adquiriu o evento.
+
+Dois binários foram bloqueados em completion após publicar: tokens distintos duráveis e leases vivos sustentaram a afirmação de posse concorrente neste schedule. Owner antigo não concluiu/liberou após B adquirir; publisher anterior ainda conseguiu enviar. Banco protege autoridade de transição, não fencing externo. Rejeição/deadline SQL e cancelamento TERM preservaram pending recuperável; restauração/expiração/reinício concluíram. ACK do observador é só fixture, não efeito de negócio.
+
+Esta evidência sustenta fechamento do escopo do Marco 2 como fundação pelo menos uma vez sob origem commitada, storage/contratos suportados, disponibilidade eventual, worker ativo e eventos válidos com falhas resolvíveis. Não prova entrega universal/exactly-once, fairness, ordenação, power loss, poison/rejeição permanente, contador esgotado ou HA/TLS produtivos. Rollout compartilhado permanece pendente/relay STOPPED. Próximo: decisões de retries duráveis/classificação/quarantine-dead-letter/replay auditável. Princípios são transferíveis sem alegar arquitetura privada de outro produto.
+
+[Evidência e fronteiras](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-6.md) | [Aceitação e premissas](../../../../rust-event-relay/docs/pt-BR/operations/milestone-2-review.md).

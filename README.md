@@ -28,3 +28,5 @@ Interview preparation is a core responsibility: retain and rehearse substantive 
 Start with ENV Auditor for local discovery/parsing/failure boundaries, then Go Image Optimizer for HTTP, interfaces and resource lifetimes. Study URL Shortener next for two-store partial failures, encoding and consistency; use the retained Payment Reconciliation Lab catalog to compare DTO/JPA/security boundaries and distinguish a domain transition from delivered workflows. Finish with Rust Event Relay for durable state, broker uncertainty and ownership contracts. Each guide orders its own prerequisites and follow-up questions. These are suggested study steps, with no topics marked completed.
 
 [Rust worker composition and operational lessons](docs/en/architecture/rust-event-relay.md).
+
+[Rust recovery and reliability limits](docs/en/architecture/rust-event-relay.md).

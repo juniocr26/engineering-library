@@ -63,3 +63,14 @@ There are deliberately no arrows from HTTP to reader/publisher or snapshot to pu
 ## Filesystem synchronization
 
 ENV Auditor discovers directory-local pairs, parses literal blocks, calculates one plan and either reports preview or backs up/replaces a target. It exchanges no HTTP/event payload with another application. Key membership changes can affect a future application startup, but no runtime verification or orchestration follows from the CLI. Per-file failure continuation and backups do not give a workspace transaction.
+
+
+## Milestone 2.6 — Demonstrated recovery, 2026-10-12
+
+Rust experiments with real PostgreSQL/RabbitMQ and owned processes observed pending state after SIGKILL before send and after confirmation; actual lease expiration followed by fresh token/count 2 and processed. The latter window produced two messages with the original ID. Lost AMQP confirmation left pending/Uncertain while an independent observer already had the message; the worker replaced its connection without replaying the live claim. Lost completion COMMIT response produced CommitUncertain despite durable processed/count 1; restart did not reacquire it.
+
+Two binaries were blocked in completion after publication: distinct durable tokens and live leases support concurrent ownership protection for this schedule. An old owner could not complete/release after B acquired; the former publisher could still send. Database authority protects transitions, not external fencing. SQL rejection/deadlines and TERM cancellation retained recoverable pending work; restored availability/expiration/restart completed it. Observer ACK is fixture behavior, not a business effect.
+
+This evidence supports Milestone 2 implemented-scope closure as an at-least-once foundation with committed source events, supported storage/contracts, eventual availability, a running worker and valid events whose failures resolve. It does not prove universal/exactly-once delivery, fairness, ordering, power-loss behavior, poison/permanent rejection, exhausted counters or productive HA/TLS. Shared rollout stays pending/relay STOPPED. Next: durable retry/classification/quarantine-dead-letter/auditable replay decisions. These principles transfer without claims about another product's private architecture.
+
+[Evidence and boundaries](../../../../rust-event-relay/docs/en/architecture/milestone-2-6.md) | [Acceptance and assumptions](../../../../rust-event-relay/docs/en/operations/milestone-2-review.md).

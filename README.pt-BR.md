@@ -28,3 +28,5 @@ Preparação para entrevistas é responsabilidade central: preserve e ensaie res
 Comece pelo ENV Auditor para descoberta/parsing/falhas locais, depois Go Image Optimizer para HTTP, interfaces e recursos. Siga URL Shortener para falhas entre stores, encoding e consistência; use o catálogo legado do Payment Reconciliation Lab para comparar DTO/JPA/segurança e separar transição de domínio de fluxos entregues. Termine em Rust Event Relay para estado durável, incerteza de broker e contratos de ownership. Cada guia ordena seus pré-requisitos/aprofundamentos. São sugestões, sem marcar assuntos concluídos.
 
 [Composição e lições operacionais do worker Rust](docs/pt-BR/architecture/rust-event-relay.md).
+
+[Recuperação Rust e limites de confiabilidade](docs/pt-BR/architecture/rust-event-relay.md).

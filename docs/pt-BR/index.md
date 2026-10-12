@@ -11,7 +11,7 @@ Componentes, fluxos e fronteiras implementadas.
 - [env-auditor: dossiê de implementação](architecture/env-auditor.md)
 - [go-image-optimizer: dossiê de implementação](architecture/go-image-optimizer.md)
 - [payment-reconciliation-lab: dossiê de implementação](architecture/payment-reconciliation-lab.md)
-- [rust-event-relay: dossiê e lições de posse do Marco 2.5](architecture/rust-event-relay.md)
+- [rust-event-relay: dossiê e evidência de recuperação/posse do Marco 2.6](architecture/rust-event-relay.md)
 - [url-shortener: dossiê de implementação](architecture/url-shortener.md)
 - [Catálogo do workspace e percursos de estudo](architecture/workspace-catalog.md)
 

@@ -174,3 +174,28 @@ Follow-up: Is workflow configuration proof of CI success? No. Historical executi
 **Answer:** Acquisition returns owned data only after acknowledged commit; an uncertain commit returns an error even though a lease/count may already be durable. Completion or release may likewise have committed before acknowledgement disappears. Ordinary server rejection differs: the real deferred-constraint fixture proves rollback and OperationFailed. Transport/protocol loss at commit conservatively maps to CommitUncertain; ownership mismatch remains OwnershipLost. These classifications preserve separate responsibilities rather than silently retrying or treating a conflict as previous success.
 
 Follow-up: Should the caller publish after uncertain acquisition? No ordinary confirmed claim is available. Inspect durable lease state operationally or allow expiry and use a fresh acquisition request; preserve event identity. Follow-up: What if completion is uncertain? Processed may already be durable; blind repetition or republishing can misinterpret the state or duplicate publication. The use case must surface uncertainty and define reconciliation, while tokens still cannot fence RabbitMQ. Follow-up: Does cancelling the future prove rollback? No. SQLx queues rollback for an open dropped transaction but commit can already have occurred, and cancellation may return no classified error. Tests cover blocked pre-mutation cancellation and error mapping, and an isolated lost-acknowledgement proxy for all three operations; cancellation during COMMIT remains unverified. The proxy loses the response after observing server completion and inspects durable state independently, demonstrating one committed uncertain outcome without generalizing it to all uncertainty.
+
+
+## Integrated recovery — Milestone 2.6 follow-ups
+
+### Why can confirm-before-processed still duplicate?
+
+RabbitMQ and PostgreSQL do not share a transaction. Case B confirmed acceptance, then the process died before completion. The row stayed pending; a restarted worker recovered after expiration and published the same ID. Confirm-before-complete prevents completion without confirmed acceptance but leaves a crash window between systems. Consumers need duplicate handling; this experiment does not implement business idempotency.
+
+### What does CommitUncertain establish?
+
+Only that the caller lacks a known durable acknowledgement. This proxy lost the response after observing server COMMIT; an independent pool saw processed and restart did not acquire. Another uncertain schedule can differ. Avoiding blind release/republication prevents compensating a completion that already occurred; inspection/reconciliation needs independent evidence.
+
+### Does a fresh token prevent an old worker from publishing?
+
+No. A's completion/release were rejected while B held a new token, but the former publisher still sent the original envelope. SQL protects a local transition; RabbitMQ does not validate that token. An expired lease does not stop a process. Separating durable authority from external fencing explains duplicates even without overlapping live SQL ownership.
+
+### How can concurrency be supported beyond message counts?
+
+Hold completion with an isolated advisory lock, start two binaries, and inspect two committed distinct tokens/count 1/live leases and two SQL waits. Inspect the exact broker ID set independently, release the barrier and verify processed. This supports the observed schedule, without inferring fairness, business ordering or universal duplicate absence.
+
+### When is at-least-once foundation a defensible description?
+
+When implementation and experiments connect valid durable source events, recoverable pending work and confirmed acceptance before completion. Qualify it with eventual availability, running/restarted workers, resolvable failures, supported storage and downstream duplicate handling. Exclude poison events, permanent rejection, exhausted counters, power-loss behavior and untested exactly-once effects. State which processes are original and which adapter/lifecycle boundaries are instrumented so the claim can be reviewed.
+
+[Evidence and boundaries](../../../../rust-event-relay/docs/en/architecture/milestone-2-6.md) | [Acceptance and assumptions](../../../../rust-event-relay/docs/en/operations/milestone-2-review.md).
