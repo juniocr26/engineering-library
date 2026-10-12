@@ -1,6 +1,10 @@
+## Validação da apresentação Vue — 2026-10-12
+
+Protótipo frontend local aprovado em type-check, build de produção e 12 testes Chromium Playwright no contêiner frontend existente. Cobertura: landing de viewport inteira e ausência de overflow/acessibilidade de controles no modal em 320, 375, 768, 1024 e 1920px; contenção/restauração de foco, Escape, Close, bloqueio nativo do fundo e scroll do body; cleanup do timer ao fechar durante playback; replay; estados dos cinco cenários; ausência de fetch/XHR durante playback; reduced motion. Referência renderizada, landing desktop/mobile e modal concluído foram inspecionados em screenshots. Testes usam tempo virtual nas etapas ilustrativas. Evidência local Chromium não valida outros browsers nem entrega real. Backend e dados compartilhados preservados. Veja [comandos e limites](../../../../rust-event-relay/frontend/README.md). Handoffs temporários não são artefatos documentais obrigatórios.
+
 ## Preparação estrutural — 2026-10-12
 
-Checks e resultados locais exatos: [handoff](../../../../rust-event-relay/Reports/FRONTEND_BACKEND_PREPARATION_HANDOFF.md). Checks básicos Rust, PostgreSQL isolado, publisher, três worker_smoke e 11 integrated_recovery passaram; frontend npm ci/type-check/build e smoke HTTP passaram. CI remoto apenas configurado. API de gestão autenticada com credenciais existentes no contêiner; credenciais .env divergentes são pendência operacional. Formulário browser não testado. Validação documental: zero erros, 18 avisos de fixtures restritas em outro projeto.
+Checks e resultados locais exatos: [handoff](../../../../rust-event-relay/frontend/README.md). Checks básicos Rust, PostgreSQL isolado, publisher, três worker_smoke e 11 integrated_recovery passaram; frontend npm ci/type-check/build e smoke HTTP passaram. CI remoto apenas configurado. API de gestão autenticada com credenciais existentes no contêiner; credenciais .env divergentes são pendência operacional. Formulário browser não testado. Validação documental: zero erros, 18 avisos de fixtures restritas em outro projeto.
 
 Registros históricos: seções datadas abaixo descrevem seus próprios snapshots. Resultado atual de reestruturação/ferramentas está no [relatório de conclusão de 2026-10-10](../operations/workspace-completion.md). Ausência de ferramentas/testes em registros antigos não descreve o repositório atual.
 
