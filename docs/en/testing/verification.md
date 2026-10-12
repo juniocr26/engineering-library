@@ -53,3 +53,7 @@ Validated 127 Markdown files and 972 local inline links (including local fragmen
 ## ENV terminal presentation update — 2026-10-10
 
 Updated only the directly affected English/Portuguese ENV interview guides: complete tables, project versus discovery grouping, initial comparison counts versus actual writes, summary action outcomes, unsupported no-backup/usage modes and the current 22-test suite. The audit suite was executed successfully; all writes were in temporary fixtures. Existing historical static-review evidence above is retained. No interview code or tests exist in this Markdown-only repository; other project material is unchanged.
+
+## Milestone 2.3 knowledge update — 2026-10-12
+
+The Rust dossier and interview now distinguish implemented ownership SQL, real contention/expiration evidence, deterministic model boundaries and the isolated lost-acknowledgement experiment and unverified cancellation-at-COMMIT scenarios. Existing entries/indexes were extended; no Library application code, dependency or runtime infrastructure changed. Rust execution results are recorded in the [project validation](../../../../rust-event-relay/docs/en/testing/validation-results.md#milestone-23--2026-10-12). Documentation checks for this update are recorded there separately; the previous audit results above remain historical.

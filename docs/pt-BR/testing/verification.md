@@ -53,3 +53,7 @@ Validados 127 arquivos Markdown e 972 links locais inline (incluindo âncoras): 
 ## Atualização do terminal ENV — 2026-10-10
 
 Atualizados somente os guias de entrevista ENV diretamente afetados em inglês/português: tabelas completas, agrupamento de projeto versus descoberta, comparação inicial versus escritas reais, resultados das ações, modos sem backup/uso indisponíveis e suíte atual com 22 testes. A suíte do auditor passou; todas as escritas ocorreram em fixtures temporárias. Evidências históricas de revisão estática acima foram preservadas. Este repositório somente Markdown não tem código ou testes de entrevista; material dos outros projetos permanece intacto.
+
+## Atualização de conhecimento do Marco 2.3 — 2026-10-12
+
+Dossiê e entrevista distinguem SQL implementado, contenção/expiração reais, limites determinísticos do modelo e experimento isolado de confirmação perdida e cancelamento no COMMIT não verificado. Entradas/índices existentes foram estendidos; código de aplicação, dependências e infraestrutura da Library preservados. Resultados Rust estão na [validação do projeto](../../../../rust-event-relay/docs/pt-BR/testing/validation-results.md#marco-23--2026-10-12). Checks documentais desta atualização constam ali separadamente; auditorias anteriores acima permanecem históricas.
