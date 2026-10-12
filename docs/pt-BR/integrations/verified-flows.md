@@ -1,5 +1,31 @@
 # Fluxos verificados e ausência de integrações
 
+## Atualização de engenharia — Marco 2.5, 2026-10-12
+
+O [worker Rust separado](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-5.md) compõe configuração validada, tracing JSON, pool/repositório PostgreSQL dedicado e lifecycle RabbitMQ. [Scheduling da aplicação](../../../../rust-event-relay/src/application/worker.rs) usa dispatch estático/dependências controladas; [composição](../../../../rust-event-relay/src/bin/relay.rs) constrói infraestrutura concreta. Admite uma entrega por vez, sem tarefas criadas pelo worker, com token novo por invocação. NoEvent espaça uma chamada, sem provar backlog vazio. Apenas aceitação confirmada e conclusão Applied permitem próxima admissão imediata.
+
+Lição geral: pacing entre invocações controla pressão operacional; não grava agenda durável de retry. Rust usa defaults de 1000 ms para idle/failure e 5000 ms para reconnect, preservando available_at/last_error/attempts. Eventos elegíveis inválidos/permanentemente falhos ainda podem obstruir progresso. Fairness, backoff/jitter, quarentena e DLQ exigem políticas/evidências próprias.
+
+Lição geral: conexão inutilizável é fato de lifecycle, sem autorizar repetição de efeito anterior. Rust fecha/substitui após Unavailable/Uncertain ou canal sabidamente aposentado/desconectado, sem adquirir quando falta publisher usável. Serialization/Unroutable/Rejected preservam conexão usável. Reconectar não reconcilia aceitação passada. Aquisição incerta não fornece claim confirmado; conclusão incerta pode esconder processed. Sem compensação ou republicação do claim anterior.
+
+Exemplo Rust concreto, abreviado do worker, com tipos dos ports existentes:
+
+```rust
+let request = AcquireRequest::new(config.lease); // token novo
+let outcome = deliver_once(repository, publisher, request).await;
+let action = decision(&outcome); // distingue publicação e conclusão
+// Continue, Idle, Pace ou Replace; esperas devem disputar com shutdown.
+```
+
+Lição geral: shutdown compartilha budget finito. Primeiro interrompe admissão, permite drain, cancela ao expirar esse prazo e fecha publisher/pool com o mesmo deadline absoluto. Descartar future pode ocultar efeitos persistidos/aceitos; release cego de claim abandonado é inseguro. Defaults Rust: drain 15 s dentro de 25 s total; Supervisor 30 s por filho; Compose 65 s para grupos sequenciais. Timeout de aquisição do pool não limita consultas: statement/lock de sessão dedicada são 5 s/3 s, distintos das esperas de rede RabbitMQ e do lease durável de 60 s. Esses tempos não garantem lease ativo.
+
+[Testes controlados](../../../../rust-event-relay/tests/worker.rs) demonstram política; [composição real isolada](../../../../rust-event-relay/tests/worker_smoke.rs) verifica entrega/conclusão e Supervisor individual/coletivo. Happy path não demonstra crash/recuperação. Migração compartilhada de posse continua pendente, autostart relay é false e /health prova liveness HTTP. Falha de configuração/setup encerra sanitizadamente; outage RabbitMQ em runtime reconecta explicitamente. Somente imagem/container app foram atualizados, preservando infraestrutura/dados compartilhados.
+
+Referência transferível para futuras melhorias do Viva Bem: limitar admissão, separar construção de infraestrutura e scheduling, distinguir aceitação externa e conclusão durável, preservar incerteza/erros primários e de cleanup e planejar encerramento finito. Trata-se de referência futura; não se afirma que Viva Bem utiliza essa arquitetura, nem se descreve/modifica implementação privada. Interface gráfica opcional só após conclusão do núcleo, se houver necessidade operacional concreta. Próximo Rust: 2.6, experimentos integrados de crash/falha/recuperação e fechamento do marco; sem alegações de throughput/fairness/efeitos do consumidor ou at-least-once ponta a ponta.
+
+Seções datadas preservam escopo histórico; status do worker é atualizado por esta seção.
+
+
 ## Caso de uso relay chamável — Marco 2.4
 
 Aquisição → publicação do envelope original → completion agora existe como caso de uso Rust chamável. Completion exige aceitação confirmada. Falhas definitivas tentam release uma vez; Uncertain mantém lease. Resultados principal/cleanup são distintos; expiração e cancelamento podem gerar duplicatas na recuperação. Consulte [dossiê atual](../architecture/rust-event-relay.md). Não há worker, produtor/consumidor ou integração runtime entre projetos; revisões anteriores preservam escopo datado.

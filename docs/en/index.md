@@ -11,7 +11,7 @@ Components, flows and implemented boundaries.
 - [env-auditor: implementation dossier](architecture/env-auditor.md)
 - [go-image-optimizer: implementation dossier](architecture/go-image-optimizer.md)
 - [payment-reconciliation-lab: implementation dossier](architecture/payment-reconciliation-lab.md)
-- [rust-event-relay: implementation dossier and Milestone 2.3 ownership lessons](architecture/rust-event-relay.md)
+- [rust-event-relay: implementation dossier and Milestone 2.5 worker/ownership lessons](architecture/rust-event-relay.md)
 - [url-shortener: implementation dossier](architecture/url-shortener.md)
 - [Workspace catalog and learning paths](architecture/workspace-catalog.md)
 

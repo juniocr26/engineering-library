@@ -1,5 +1,31 @@
 # Verified flows and non-integrations
 
+## Current engineering update — Milestone 2.5, 2026-10-12
+
+The [separate Rust worker](../../../../rust-event-relay/docs/en/architecture/milestone-2-5.md) composes validated configuration, JSON tracing, a dedicated PostgreSQL pool/repository and RabbitMQ lifecycle. [Application scheduling](../../../../rust-event-relay/src/application/worker.rs) uses static dispatch and controlled dependencies; [composition](../../../../rust-event-relay/src/bin/relay.rs) constructs concrete infrastructure. It admits one delivery at a time, creates no worker tasks and obtains a fresh acquisition token per invocation. NoEvent paces one invocation, without proving an empty backlog. Confirmed acceptance plus Applied completion alone permits immediate next admission.
+
+General lesson: pacing between invocations controls operational pressure; it does not write a durable retry schedule. Rust uses 1000 ms idle/failure waits and 5000 ms reconnect waits by default, preserving available_at/last_error/attempt semantics. Invalid or permanently failing eligible rows can still obstruct progress. Fairness, backoff/jitter, quarantine and DLQ need separate policies and evidence.
+
+General lesson: a unusable connection is a lifecycle fact, not a reason to replay a prior effect. Rust closes/replaces after Unavailable/Uncertain or a known retired/disconnected channel and acquires nothing while knowingly lacking a usable publisher. Serialization/Unroutable/Rejected keep a usable connection. Reconnection does not reconcile previous broker acceptance. Unknown acquisition has no confirmed claim; unknown completion may conceal processed state. No compensation or previous-claim republication is introduced.
+
+Concrete Rust pattern (abridged from the worker; meaningful types belong to existing ports):
+
+```rust
+let request = AcquireRequest::new(config.lease); // fresh ownership token
+let outcome = deliver_once(repository, publisher, request).await;
+let action = decision(&outcome); // inspect completion and publication separately
+// Continue, Idle, Pace or Replace; waits must race the shutdown signal.
+```
+
+General lesson: shutdown is one finite resource budget. Stop admission first, allow current work to drain, cancel only when its drain expires, then close publisher and pool using the same absolute deadline. Dropping a future can suppress the outcome after committed/accepted effects; blindly releasing an abandoned claim is unsafe. Rust defaults to 15 s drain within 25 s total, Supervisor 30 s per child and Compose 65 s for sequential groups. Pool acquisition timeout does not bound queries: dedicated session statement/lock defaults are 5 s/3 s, distinct from RabbitMQ network waits and the 60 s durable lease. These durations cannot guarantee that the lease remains live.
+
+[Controlled tests](../../../../rust-event-relay/tests/worker.rs) prove scheduling/lifecycle policy; [isolated real composition](../../../../rust-event-relay/tests/worker_smoke.rs) verifies delivery/completion and Supervisor named/collective operation. Happy-path evidence is not crash/recovery evidence. Shared ownership migration remains pending, relay autostart is false and /health proves HTTP liveness only. Configuration/setup failures terminate with sanitized diagnostics; RabbitMQ runtime outages reconnect explicitly. Only the app image/container was updated, preserving shared infrastructure/state.
+
+Transferable reference for future Viva Bem improvements: bound admission, keep infrastructure construction outside scheduling, separate external acceptance from durable completion, preserve uncertainty and primary/cleanup errors, and plan finite cleanup. This is a future engineering reference; no claim is made that Viva Bem uses this architecture, and no private implementation is described or modified. An optional graphical interface belongs after core completion if a concrete operational need exists. Next Rust scope: 2.6 integrated crash/failure/recovery experiments and milestone closure, with no throughput/fairness/consumer-effect or end-to-end at-least-once claim.
+
+Earlier dated sections retain historical scope and are superseded on worker status by this update.
+
+
 ## Callable relay use case — Milestone 2.4
 
 Acquisition → original-envelope publication → completion now exists as a callable Rust application use case. Completion requires confirmed broker acceptance. Definitive publication failures attempt release once, while Uncertain retains the lease. Primary/cleanup outcomes remain distinct; lease expiration and cancellation can lead to duplicate recovery. See the [current dossier](../architecture/rust-event-relay.md). No worker, producer/consumer or cross-project runtime integration is established; older reviews below describe their dated scope.

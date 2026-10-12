@@ -1,5 +1,31 @@
 # rust-event-relay: implementation dossier
 
+## Current engineering update — Milestone 2.5, 2026-10-12
+
+The [separate Rust worker](../../../../rust-event-relay/docs/en/architecture/milestone-2-5.md) composes validated configuration, JSON tracing, a dedicated PostgreSQL pool/repository and RabbitMQ lifecycle. [Application scheduling](../../../../rust-event-relay/src/application/worker.rs) uses static dispatch and controlled dependencies; [composition](../../../../rust-event-relay/src/bin/relay.rs) constructs concrete infrastructure. It admits one delivery at a time, creates no worker tasks and obtains a fresh acquisition token per invocation. NoEvent paces one invocation, without proving an empty backlog. Confirmed acceptance plus Applied completion alone permits immediate next admission.
+
+General lesson: pacing between invocations controls operational pressure; it does not write a durable retry schedule. Rust uses 1000 ms idle/failure waits and 5000 ms reconnect waits by default, preserving available_at/last_error/attempt semantics. Invalid or permanently failing eligible rows can still obstruct progress. Fairness, backoff/jitter, quarantine and DLQ need separate policies and evidence.
+
+General lesson: a unusable connection is a lifecycle fact, not a reason to replay a prior effect. Rust closes/replaces after Unavailable/Uncertain or a known retired/disconnected channel and acquires nothing while knowingly lacking a usable publisher. Serialization/Unroutable/Rejected keep a usable connection. Reconnection does not reconcile previous broker acceptance. Unknown acquisition has no confirmed claim; unknown completion may conceal processed state. No compensation or previous-claim republication is introduced.
+
+Concrete Rust pattern (abridged from the worker; meaningful types belong to existing ports):
+
+```rust
+let request = AcquireRequest::new(config.lease); // fresh ownership token
+let outcome = deliver_once(repository, publisher, request).await;
+let action = decision(&outcome); // inspect completion and publication separately
+// Continue, Idle, Pace or Replace; waits must race the shutdown signal.
+```
+
+General lesson: shutdown is one finite resource budget. Stop admission first, allow current work to drain, cancel only when its drain expires, then close publisher and pool using the same absolute deadline. Dropping a future can suppress the outcome after committed/accepted effects; blindly releasing an abandoned claim is unsafe. Rust defaults to 15 s drain within 25 s total, Supervisor 30 s per child and Compose 65 s for sequential groups. Pool acquisition timeout does not bound queries: dedicated session statement/lock defaults are 5 s/3 s, distinct from RabbitMQ network waits and the 60 s durable lease. These durations cannot guarantee that the lease remains live.
+
+[Controlled tests](../../../../rust-event-relay/tests/worker.rs) prove scheduling/lifecycle policy; [isolated real composition](../../../../rust-event-relay/tests/worker_smoke.rs) verifies delivery/completion and Supervisor named/collective operation. Happy-path evidence is not crash/recovery evidence. Shared ownership migration remains pending, relay autostart is false and /health proves HTTP liveness only. Configuration/setup failures terminate with sanitized diagnostics; RabbitMQ runtime outages reconnect explicitly. Only the app image/container was updated, preserving shared infrastructure/state.
+
+Transferable reference for future Viva Bem improvements: bound admission, keep infrastructure construction outside scheduling, separate external acceptance from durable completion, preserve uncertainty and primary/cleanup errors, and plan finite cleanup. This is a future engineering reference; no claim is made that Viva Bem uses this architecture, and no private implementation is described or modified. An optional graphical interface belongs after core completion if a concrete operational need exists. Next Rust scope: 2.6 integrated crash/failure/recovery experiments and milestone closure, with no throughput/fairness/consumer-effect or end-to-end at-least-once claim.
+
+Earlier dated sections retain historical scope and are superseded on worker status by this update.
+
+
 ## Current engineering update — Milestone 2.4, 2026-10-12
 
 The Rust library now offers [one-attempt delivery orchestration](../../../../rust-event-relay/docs/en/architecture/milestone-2-4.md), implemented in [application/delivery.rs](../../../../rust-event-relay/src/application/delivery.rs). It calls focused acquisition/publication/transition ports with static dispatch and native Send futures. The use case owns sequencing and a basic release policy; infrastructure owns SQL transactions and AMQP. No forwarding service or generic workflow engine is needed. The HTTP binary still composes no worker.
@@ -12,7 +38,7 @@ Project choice: Unavailable and Serialization are before-send failures; Unroutab
 
 General principle: leases recover abandoned claims but cannot fence an external publisher. PostgreSQL remains authoritative after locks; application wall-clock checks are omitted. Acknowledged acquisition may return expired. Cancellation during acquisition can conceal a committed lease; after acquisition it can abandon a claim; during publication it can conceal acceptance; after acceptance it can leave pending state; during completion/release commit it can conceal applied transitions. Dropping a future may yield no typed error and proves neither rollback nor nonacceptance. There is no detached cleanup or asynchronous Drop; recovery relies on durable expiration.
 
-Five [use-case fake tests](../../../../rust-event-relay/tests/delivery_use_case.rs) cover exact envelope preservation, every publication and transition category, original/cleanup error preservation, confirmation gating, cancellation with explicit synchronization and Send/static dispatch. They demonstrate application ordering and forbidden subsequent calls, not real database rollback or broker nonacceptance. See [dated Rust evidence](../../../../rust-event-relay/docs/en/testing/validation-results.md#milestone-24--2026-10-12) and [handoff (pt-BR)](../../../../rust-event-relay/Reports/MILESTONE_2_4_HANDOFF.md). Next is **2.5 worker composition and operation**, including polling, publisher lifecycle/reconnection and Supervisor integration; **2.6** covers end-to-end crash/recovery experiments. No end-to-end delivery or performance claim is made.
+Five [use-case fake tests](../../../../rust-event-relay/tests/delivery_use_case.rs) cover exact envelope preservation, every publication and transition category, original/cleanup error preservation, confirmation gating, cancellation with explicit synchronization and Send/static dispatch. They demonstrate application ordering and forbidden subsequent calls, not real database rollback or broker nonacceptance. See [dated Rust evidence](../../../../rust-event-relay/docs/en/testing/validation-results.md#milestone-24--2026-10-12) and 2.4 handoff (absent in the 2.5 checkout). Next is **2.5 worker composition and operation**, including polling, publisher lifecycle/reconnection and Supervisor integration; **2.6** covers end-to-end crash/recovery experiments. No end-to-end delivery or performance claim is made.
 
 Earlier dated sections retain their recorded scope; statements that 2.4 orchestration is absent are superseded by this update.
 
