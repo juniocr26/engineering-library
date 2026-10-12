@@ -54,3 +54,5 @@ Core interview questions, substantive answers and reasoning follow-ups.
 - [URL Shortener technical interview study guide](interviews/url-shortener.md)
 
 Category applicability and omissions are justified in the [completion checklist](operations/completion-checklist.md). No empty category is created.
+
+- [Current frontend/backend structure and validation](architecture/rust-event-relay.md) — 2026-10-12.

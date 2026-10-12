@@ -54,3 +54,5 @@ Perguntas centrais, respostas substanciais e aprofundamentos.
 - [URL Shortener — Guia de Estudo para Entrevista Técnica](interviews/url-shortener.md)
 
 Aplicabilidade e omissões estão justificadas no [checklist](operations/completion-checklist.md). Não há categorias vazias.
+
+- [Estrutura frontend/backend atual e validação](architecture/rust-event-relay.md) — 2026-10-12.
