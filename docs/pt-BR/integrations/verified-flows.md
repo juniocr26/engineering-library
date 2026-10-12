@@ -1,5 +1,10 @@
 # Fluxos verificados e ausência de integrações
 
+## Caso de uso relay chamável — Marco 2.4
+
+Aquisição → publicação do envelope original → completion agora existe como caso de uso Rust chamável. Completion exige aceitação confirmada. Falhas definitivas tentam release uma vez; Uncertain mantém lease. Resultados principal/cleanup são distintos; expiração e cancelamento podem gerar duplicatas na recuperação. Consulte [dossiê atual](../architecture/rust-event-relay.md). Não há worker, produtor/consumidor ou integração runtime entre projetos; revisões anteriores preservam escopo datado.
+
+
 Os fluxos permanecem em projetos independentes. Não há relação API/evento entre repositórios estabelecida. Ausência de produtor/consumidor/pagamentos é fronteira explícita, não etapa omitida de um ecossistema funcional.
 
 ## Requisição de imagem no navegador

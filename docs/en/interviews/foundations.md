@@ -1,5 +1,10 @@
 # Cross-cutting foundations interview
 
+## Application orchestration and uncertain effects — 2026-10-12
+
+General principle: an application use case sequences focused ports while adapters own protocols and transactions. Confirmation before local completion separates external acceptance from durable local acknowledgement and consumer effects. Preserve primary and cleanup failures independently; cancellation and unknown acknowledgements may hide effects rather than prove rollback. Leases permit recovery but do not fence an external destination. The [Rust 2.4 dossier](../architecture/rust-event-relay.md) explains the concrete choice to release definitive failures once and retain uncertain leases. These choices are project policy, not universal retry rules.
+
+
 These conceptual comparisons do not imply runtime integration. Implemented facts, general theory and hypothetical alternatives are explicitly separated.
 
 ### Q001 — Intermediate: How do atomicity, durability and idempotence differ across these projects?

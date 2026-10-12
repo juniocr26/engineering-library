@@ -1,12 +1,29 @@
 # rust-event-relay: dossiê de implementação
 
+## Atualização atual de engenharia — Marco 2.4, 2026-10-12
+
+A biblioteca Rust agora oferece [orquestração de uma tentativa de entrega](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-4.md), implementada em [application/delivery.rs](../../../../rust-event-relay/src/application/delivery.rs). Usa ports focados de aquisição/publicação/transição com despacho estático e futures nativas Send. O caso de uso possui sequência e política básica de liberação; infraestrutura possui transações SQL e AMQP. Não exige serviço de encaminhamento nem motor genérico de workflows. O binário HTTP continua sem compor worker.
+
+Princípio geral: separar autoridade reconhecida, aceitação externa confirmada, conclusão local durável e efeitos no consumidor. O caso de uso publica o envelope original emprestado somente após aquisição reconhecida; depois completa somente quando publisher confirma aceitação. `Published` registra um fato sobre o broker; sucesso da entrega exige também completion `Ok(Applied)`. Nenhum comprova processamento do consumidor ou efeitos exatamente uma vez. Erro de completion após aceitação pode gerar publicação duplicada na recuperação, preservando ID estável.
+
+Princípio geral: cleanup não pode apagar falha principal. `PublicationFailed` mantém PublishError original e `ReleaseOutcome` independente. Release pode reconhecer aplicação, perder posse, falhar ou ter commit incerto. Incerteza não pode ser tratada como prova de rollback ou não aceitação. CommitUncertain na aquisição não retorna claim e impede publicação; em completion ocorre após aceitação conhecida e pode ocultar estado processed. Repetir cegamente qualquer operação é inseguro.
+
+Escolha do projeto: Unavailable e Serialization falham antes do envio; Unroutable e Rejected são resultados definitivos do broker. Cada um dispara release protegido por ownership uma vez. Uncertain mantém lease, adiando recuperação sem reconciliar aceitação nem eliminar duplicatas. RabbitMQ aposenta canal incerto; a composição futura deve substituí-lo. Release preserva disponibilidade, contador e diagnóstico; elegibilidade imediata pode produzir falha repetida rápida sem política do worker. Não há retry, nova aquisição ou reconexão ocultos.
+
+Princípio geral: leases recuperam claims abandonados, mas não impedem publisher externo obsoleto. PostgreSQL permanece autoritativo depois dos locks; checagem pelo relógio da aplicação foi omitida. Aquisição reconhecida pode retornar expirada. Cancelamento durante aquisição pode ocultar lease persistido; depois da aquisição pode abandonar claim; durante publicação pode ocultar aceitação; após aceitação pode deixar pending; durante commit de completion/release pode ocultar transição aplicada. Descartar future pode não produzir erro tipado e não comprova rollback ou não aceitação. Não há cleanup destacado nem Drop assíncrono; recuperação depende de expiração durável.
+
+Cinco [testes com fakes](../../../../rust-event-relay/tests/delivery_use_case.rs) cobrem preservação completa do envelope, todas as categorias de publicação/transição, erros principal/cleanup, espera pela confirmação, cancelamento sincronizado e Send/despacho estático. Demonstram ordem e ausência de chamadas proibidas, não rollback real nem não aceitação do broker. Consulte [evidência Rust datada](../../../../rust-event-relay/docs/pt-BR/testing/validation-results.md#marco-24--2026-10-12) e [handoff](../../../../rust-event-relay/Reports/MILESTONE_2_4_HANDOFF.md). Próximo é **2.5, composição e operação do worker**, incluindo polling, lifecycle/reconexão do publisher e integração Supervisor; **2.6** cobre experimentos ponta a ponta de crash/recuperação. Nenhuma garantia ponta a ponta ou alegação de desempenho é feita.
+
+Seções datadas anteriores preservam seu escopo; afirmações de ausência da orquestração 2.4 são substituídas por esta atualização.
+
+
 [English](../../en/architecture/rust-event-relay.md) | [Português brasileiro](rust-event-relay.md)
 
 Revisão estática: 2026-10-10. Este projeto independente não tem chamadas runtime verificadas a outro repositório do portfólio. Links de evidência sustentam as explicações completas abaixo.
 
 ## Atualização de engenharia — Marco 2.3, 2026-10-12
 
-O Rust agora implementa aquisição/conclusão/liberação pelos ports existentes, com 12 casos de integração PostgreSQL isolados aprovados. [Implementação e instantes de decisão](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-3.md), [validação datada](../../../../rust-event-relay/docs/pt-BR/testing/validation-results.md#marco-23--2026-10-12) e [continuidade](../../../../rust-event-relay/Reports/MILESTONE_2_3_HANDOFF.md) distinguem evidência atual da revisão histórica abaixo. Metadados de schema/migração do banco de desenvolvimento foram consultados sem escrita: migração de posse continua pendente. Código de aplicação, dependências e infraestrutura da Library não mudaram.
+O Rust agora implementa aquisição/conclusão/liberação pelos ports existentes, com 12 casos de integração PostgreSQL isolados aprovados. [Implementação e instantes de decisão](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-3.md), [validação datada](../../../../rust-event-relay/docs/pt-BR/testing/validation-results.md#marco-23--2026-10-12) e continuidade (arquivo ausente no checkout 2.4) distinguem evidência atual da revisão histórica abaixo. Metadados de schema/migração do banco de desenvolvimento foram consultados sem escrita: migração de posse continua pendente. Código de aplicação, dependências e infraestrutura da Library não mudaram.
 
 ### Princípios gerais ilustrados pelo adapter Rust
 

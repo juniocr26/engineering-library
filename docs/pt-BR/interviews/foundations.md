@@ -1,5 +1,10 @@
 # Entrevista de fundamentos transversais
 
+## Orquestração e efeitos incertos — 2026-10-12
+
+Princípio geral: um caso de uso sequencia ports focados enquanto adaptadores possuem protocolos e transações. Confirmar antes de completar separa aceitação externa, reconhecimento local durável e efeitos do consumidor. Preserve falhas principal e de cleanup separadamente; cancelamento e confirmações desconhecidas podem ocultar efeitos, sem comprovar rollback. Leases permitem recuperação, mas não fazem fencing do destino externo. O [dossiê Rust 2.4](../architecture/rust-event-relay.md) explica a escolha concreta de liberar falhas definitivas uma vez e reter leases incertos. São políticas do projeto, não regras universais de retry.
+
+
 Comparações conceituais não implicam integração runtime. Fatos implementados, teoria e alternativas hipotéticas são separados explicitamente.
 
 ### Q001 — Intermediária: Como atomicidade, durabilidade e idempotência diferem nestes projetos?

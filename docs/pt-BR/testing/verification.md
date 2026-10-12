@@ -57,3 +57,9 @@ Atualizados somente os guias de entrevista ENV diretamente afetados em inglês/p
 ## Atualização de conhecimento do Marco 2.3 — 2026-10-12
 
 Dossiê e entrevista distinguem SQL implementado, contenção/expiração reais, limites determinísticos do modelo e experimento isolado de confirmação perdida e cancelamento no COMMIT não verificado. Entradas/índices existentes foram estendidos; código de aplicação, dependências e infraestrutura da Library preservados. Resultados Rust estão na [validação do projeto](../../../../rust-event-relay/docs/pt-BR/testing/validation-results.md#marco-23--2026-10-12). Checks documentais desta atualização constam ali separadamente; auditorias anteriores acima permanecem históricas.
+
+## Documentação de orquestração Rust — 2026-10-12
+
+Dossiê Rust, entrevista, fundamentos e fluxos atualizados nos dois idiomas para o Marco 2.4. Lições gerais cobrem sequência por ports focados, confirmação antes de completion, falhas principal/cleanup independentes, efeitos incertos e recuperação por lease/cancelamento. Escolhas concretas de liberação são políticas do projeto. Registros históricos continuam datados; links para handoff 2.3 ausente foram corrigidos sem inventar relatório histórico.
+
+Validação: o validador documental somente de leitura no workspace pai verificou 214 documentos, zero erros e 18 warnings preexistentes de fixtures restritos. Links de Reports/MILESTONE_2_4_HANDOFF.md verificados separadamente. git diff --check aprovado nos dois repositórios. Execução Rust separada registra 38 testes padrão aprovados (incluindo cinco testes do caso de uso com fakes), 31 integrações opt-in ignoradas, Clippy estrito, formatação, build e rustdoc estrito aprovados. Sem testes/runtime de aplicação, dependências ou código da Library alterados. Consulte [dossiê atual](../architecture/rust-event-relay.md) e [evidência Rust](../../../../rust-event-relay/docs/pt-BR/testing/validation-results.md#marco-24--2026-10-12). Sem commit/push.

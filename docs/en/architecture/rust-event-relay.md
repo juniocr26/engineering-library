@@ -1,12 +1,29 @@
 # rust-event-relay: implementation dossier
 
+## Current engineering update — Milestone 2.4, 2026-10-12
+
+The Rust library now offers [one-attempt delivery orchestration](../../../../rust-event-relay/docs/en/architecture/milestone-2-4.md), implemented in [application/delivery.rs](../../../../rust-event-relay/src/application/delivery.rs). It calls focused acquisition/publication/transition ports with static dispatch and native Send futures. The use case owns sequencing and a basic release policy; infrastructure owns SQL transactions and AMQP. No forwarding service or generic workflow engine is needed. The HTTP binary still composes no worker.
+
+General principle: separate acknowledged authority, confirmed external acceptance, durable local completion and consumer effects. The Rust use case publishes the borrowed original envelope only after acknowledged acquisition, then completes only after the publisher reports confirmed acceptance. `Published` is a fact about the broker; delivery success additionally requires completion `Ok(Applied)`. Neither establishes consumer processing or exactly-once effects. A completion error after acceptance can produce duplicate publication on later recovery, preserving the stable event ID.
+
+General principle: cleanup must not erase the primary failure. `PublicationFailed` retains the original PublishError and an independent `ReleaseOutcome`. Release can acknowledge application, lose ownership, fail or have an uncertain commit. General uncertainty cannot be treated as proof of rollback or nonacceptance. Acquisition CommitUncertain returns no claim and prevents publication; completion CommitUncertain follows known acceptance and may conceal processed state. Repeating either operation blindly is unsafe.
+
+Project choice: Unavailable and Serialization are before-send failures; Unroutable and Rejected are definitive broker failures. Each triggers one ownership-protected release. Uncertain retains the lease, delaying recovery without reconciling acceptance or eliminating duplicates. RabbitMQ retires its uncertain channel, so future composition must replace it. Release preserves availability, attempt count and diagnostics; immediate eligibility can cause rapid repeated failure without a worker scheduling policy. No hidden retry/reacquisition/reconnection exists.
+
+General principle: leases recover abandoned claims but cannot fence an external publisher. PostgreSQL remains authoritative after locks; application wall-clock checks are omitted. Acknowledged acquisition may return expired. Cancellation during acquisition can conceal a committed lease; after acquisition it can abandon a claim; during publication it can conceal acceptance; after acceptance it can leave pending state; during completion/release commit it can conceal applied transitions. Dropping a future may yield no typed error and proves neither rollback nor nonacceptance. There is no detached cleanup or asynchronous Drop; recovery relies on durable expiration.
+
+Five [use-case fake tests](../../../../rust-event-relay/tests/delivery_use_case.rs) cover exact envelope preservation, every publication and transition category, original/cleanup error preservation, confirmation gating, cancellation with explicit synchronization and Send/static dispatch. They demonstrate application ordering and forbidden subsequent calls, not real database rollback or broker nonacceptance. See [dated Rust evidence](../../../../rust-event-relay/docs/en/testing/validation-results.md#milestone-24--2026-10-12) and [handoff (pt-BR)](../../../../rust-event-relay/Reports/MILESTONE_2_4_HANDOFF.md). Next is **2.5 worker composition and operation**, including polling, publisher lifecycle/reconnection and Supervisor integration; **2.6** covers end-to-end crash/recovery experiments. No end-to-end delivery or performance claim is made.
+
+Earlier dated sections retain their recorded scope; statements that 2.4 orchestration is absent are superseded by this update.
+
+
 [English](rust-event-relay.md) | [Português brasileiro](../../pt-BR/architecture/rust-event-relay.md)
 
 Static review: 2026-10-10. This independent portfolio project has no verified runtime calls to another portfolio repository. Evidence links support the complete explanations below.
 
 ## Current engineering update — Milestone 2.3, 2026-10-12
 
-The Rust repository now implements acquisition, completion and release through its existing ports, with 12 passing isolated PostgreSQL integration cases. The [implementation and decision points](../../../../rust-event-relay/docs/en/architecture/milestone-2-3.md), [dated validation](../../../../rust-event-relay/docs/en/testing/validation-results.md#milestone-23--2026-10-12) and [continuity report (pt-BR)](../../../../rust-event-relay/Reports/MILESTONE_2_3_HANDOFF.md) distinguish current evidence from the historical review below. The development database was inspected through read-only schema/migration metadata: ownership migration remains pending. No library application code, dependencies or infrastructure changed.
+The Rust repository now implements acquisition, completion and release through its existing ports, with 12 passing isolated PostgreSQL integration cases. The [implementation and decision points](../../../../rust-event-relay/docs/en/architecture/milestone-2-3.md), [dated validation](../../../../rust-event-relay/docs/en/testing/validation-results.md#milestone-23--2026-10-12) and continuity report (pt-BR) (file absent in the 2.4 checkout) distinguish current evidence from the historical review below. The development database was inspected through read-only schema/migration metadata: ownership migration remains pending. No library application code, dependencies or infrastructure changed.
 
 ### General principles illustrated by the Rust adapter
 

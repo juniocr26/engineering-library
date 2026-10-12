@@ -1,5 +1,10 @@
 # Verified flows and non-integrations
 
+## Callable relay use case — Milestone 2.4
+
+Acquisition → original-envelope publication → completion now exists as a callable Rust application use case. Completion requires confirmed broker acceptance. Definitive publication failures attempt release once, while Uncertain retains the lease. Primary/cleanup outcomes remain distinct; lease expiration and cancellation can lead to duplicate recovery. See the [current dossier](../architecture/rust-event-relay.md). No worker, producer/consumer or cross-project runtime integration is established; older reviews below describe their dated scope.
+
+
 These flows stay within independent projects. No inter-repository API/event relationship is established. Missing producer/consumer/payment implementations are explicit boundaries, not omitted steps in a working ecosystem.
 
 ## Browser image request

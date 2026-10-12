@@ -1,5 +1,14 @@
 # Rust Event Relay technical interview study guide
 
+## Current 2.4 interview update — 2026-10-12
+
+Question: What happens when broker acceptance succeeds but completion fails?
+
+**Answer:** The callable `deliver_once` use case returns `Published` with the original claim and separate completion result. Only `Ok(Applied)` means acknowledged durable completion. OwnershipLost and persistence errors, including CommitUncertain, do not cause another send or release. Recovery may duplicate the stable event ID. Publication failures instead retain both the original error and cleanup result; definitive failures release once, Uncertain retains the lease. Cancellation can conceal effects without returning an error. See the [current dossier](../architecture/rust-event-relay.md) for ports, lease limits and evidence.
+
+Follow-up: Is this a running relay worker? No. 2.4 is a callable use case; 2.5 composes/operates polling, publisher lifecycle/reconnection and Supervisor. 2.6 tests end-to-end crash/recovery. Earlier sections retain their milestone scope.
+
+
 [English](rust-event-relay.md) | [Português brasileiro](../../pt-BR/interviews/rust-event-relay.md)
 
 This portfolio studies reliable event delivery under failure. Current facts come from the [README](../../../../rust-event-relay/README.md), [architecture](../../../../rust-event-relay/docs/en/architecture/overview.md), [ownership milestone](../../../../rust-event-relay/docs/en/architecture/milestone-2-3.md) and source. First-person answers describe implementation, not production experience. Alternatives are learning comparisons; ADR 007 separately records the selected ownership decision. The 2026-10-10 audit executed no runtime checks. This 2026-10-12 update uses the separately recorded Milestone 2.3 validation; see the [current dossier](../architecture/rust-event-relay.md).

@@ -1,5 +1,14 @@
 # Rust Event Relay — Guia de Estudo para Entrevista Técnica
 
+## Atualização de entrevista 2.4 — 2026-10-12
+
+Pergunta: O que acontece quando broker aceita, mas completion falha?
+
+**Resposta:** O caso de uso chamável `deliver_once` retorna `Published` com claim original e resultado separado de completion. Somente `Ok(Applied)` significa conclusão durável reconhecida. OwnershipLost e erros, incluindo CommitUncertain, não causam novo envio nem release. Recuperação pode duplicar ID estável. Falhas de publicação preservam erro original e cleanup; falhas definitivas liberam uma vez, Uncertain mantém lease. Cancelamento pode ocultar efeitos sem retornar erro. Consulte [dossiê atual](../architecture/rust-event-relay.md) para ports, limites do lease e evidência.
+
+Aprofundamento: Já é worker relay em execução? Não. 2.4 é caso de uso chamável; 2.5 compõe/opera polling, lifecycle/reconexão do publisher e Supervisor. 2.6 testa crash/recuperação ponta a ponta. Seções anteriores preservam escopo de seus marcos.
+
+
 [English](../../en/interviews/rust-event-relay.md) | [Português brasileiro](rust-event-relay.md)
 
 Estudo de portfólio sobre entrega confiável sob falhas. Fontes: [README](../../../../rust-event-relay/README.pt-BR.md), [arquitetura](../../../../rust-event-relay/docs/pt-BR/architecture/overview.md), [ownership](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-3.md) e código. Primeira pessoa descreve implementação, não produção. Alternativas são comparações de estudo; ADR 007 registra a decisão de ownership. Auditoria de 2026-10-10 não executou runtime. Atualização de 2026-10-12 usa validação separada do Marco 2.3; veja [dossiê atual](../architecture/rust-event-relay.md).
