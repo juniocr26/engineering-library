@@ -56,3 +56,8 @@ Perguntas centrais, respostas substanciais e aprofundamentos.
 Aplicabilidade e omissões estão justificadas no [checklist](operations/completion-checklist.md). Não há categorias vazias.
 
 - [Estrutura frontend/backend atual e validação](architecture/rust-event-relay.md) — 2026-10-12.
+
+
+## Marco 3.1 — política escolhida
+
+[Classification, scheduling, budgets, uncertainty, poison isolation and replay identity](architecture/durable-failure-policy.md). Princípios gerais separados das escolhas Rust; atualmente existem somente cálculos puros de política.

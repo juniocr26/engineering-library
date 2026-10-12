@@ -56,3 +56,8 @@ Core interview questions, substantive answers and reasoning follow-ups.
 Category applicability and omissions are justified in the [completion checklist](operations/completion-checklist.md). No empty category is created.
 
 - [Current frontend/backend structure and validation](architecture/rust-event-relay.md) — 2026-10-12.
+
+
+## Milestone 3.1 — selected policy
+
+[Classification, scheduling, budgets, uncertainty, poison isolation and replay identity](architecture/durable-failure-policy.md). General principles are separated from selected Rust defaults; only pure policy calculations exist today.

@@ -132,3 +132,8 @@ Dois binários foram bloqueados em completion após publicar: tokens distintos d
 Esta evidência sustenta fechamento do escopo do Marco 2 como fundação pelo menos uma vez sob origem commitada, storage/contratos suportados, disponibilidade eventual, worker ativo e eventos válidos com falhas resolvíveis. Não prova entrega universal/exactly-once, fairness, ordenação, power loss, poison/rejeição permanente, contador esgotado ou HA/TLS produtivos. Rollout compartilhado permanece pendente/relay STOPPED. Próximo: decisões de retries duráveis/classificação/quarantine-dead-letter/replay auditável. Princípios são transferíveis sem alegar arquitetura privada de outro produto.
 
 [Evidência e fronteiras](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-6.md) | [Aceitação e premissas](../../../../rust-event-relay/docs/pt-BR/operations/milestone-2-review.md).
+
+
+## Marco 3.1 — política escolhida
+
+[Classification, scheduling, budgets, uncertainty, poison isolation and replay identity](durable-failure-policy.md). Princípios gerais separados das escolhas Rust; atualmente existem somente cálculos puros de política.
