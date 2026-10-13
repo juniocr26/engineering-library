@@ -46,3 +46,13 @@ Semantic equivalence and factual completeness require manual review; complex Mar
 ## Durable integration — Milestone 3.3
 
 [Contextual decisions, unbiased jitter, separate pacing, finite maintenance and cancellation](../architecture/durable-failure-policy.md). Application integration is implemented and tested on isolated infrastructure; shared rollout remains pending. Prior milestone descriptions are historical. General poison scanning remains 3.4, replay 3.5 and full closure 3.6.
+
+## Authorized local relay rollout — 2026-10-13
+
+Process supervision and broker persistence are different ownership boundaries: stopping a publisher does not stop its independently managed broker. Dependency health gates startup but does not replace authenticated setup, schema prerequisites or runtime recovery. autostart applies at manager startup; autorestart=unexpected recovers nonzero failures after RUNNING, while intentional stop remains stopped until explicit start or a new manager start. Startup retries are finite; missing schema/artifacts can require operator repair. Migrations remain explicit operator actions, not repeated startup side effects.
+
+Reliable Event Relay now starts both http and relay automatically in Supervisor. Its existing service_healthy PostgreSQL/RabbitMQ dependencies remain; RabbitMQ management stays on localhost:15672. The existing publisher declares durable exchange/queue/binding after authentication, without demonstration messages. Both local pending ownership/retry migrations were explicitly authorized, SQL/state inspected and applied to the empty development outbox; all four migrations now report installed. Only app was rebuilt/recreated; broker/database/frontend and their data/credentials were preserved.
+
+Executed shared checks cover authenticated host management and configured topology, direct/interactive control through both aliases, intentional relay stop preserving HTTP/management/queue metadata and observed zero counts, and unexpected-exit recovery for both children. Empty shared queues do not demonstrate nonempty payload persistence; no messages were invented. Isolated worker smoke additionally checks auto-start from the real Supervisor configuration and test-owned delivery resources. Frontend simulations and Milestone 3.3 application semantics remain unchanged. Earlier pending/stopped records are historical; this local rollout does not establish production readiness or closure of 3.4–3.6.
+
+[Current project procedure and evidence](../../../../rust-event-relay/docs/en/operations/local-relay-rollout.md). Library changes remain documentation only; no Viva Bem changes, credentials, application/runtime dependency changes or public deployment. No staging, commit or push.

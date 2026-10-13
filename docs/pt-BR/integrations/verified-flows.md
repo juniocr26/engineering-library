@@ -78,3 +78,13 @@ Esta evidência sustenta fechamento do escopo do Marco 2 como fundação pelo me
 ## Integração durável — Marco 3.3
 
 [Decisões contextuais, jitter sem viés, pausas separadas, manutenção finita e cancelamento](../architecture/durable-failure-policy.md). Integração implementada e testada em infraestrutura isolada; rollout compartilhado permanece pendente. Descrições anteriores mantêm escopo histórico. Scanning geral fica em 3.4, replay em 3.5 e fechamento em 3.6.
+
+## Rollout local autorizado do relay — 2026-10-13
+
+Supervisão de processos e persistência do broker têm donos diferentes: parar publisher não para broker gerenciado separadamente. Health de dependência condiciona startup, sem substituir autenticação, pré-requisitos de schema ou recuperação runtime. autostart vale no início do manager; autorestart=unexpected recupera falhas não zero após RUNNING, enquanto stop intencional mantém parado até start explícito ou novo início do manager. Tentativas de startup são finitas; schema/artefatos ausentes podem exigir reparo. Migrations continuam ações explícitas, sem efeitos repetidos no startup.
+
+Reliable Event Relay agora inicia http/relay automaticamente pelo Supervisor. Dependências service_healthy de PostgreSQL/RabbitMQ preservadas; management permanece localhost:15672. Publisher existente declara exchange/fila/binding duráveis após autenticação, sem mensagens de demonstração. Duas migrations locais pendentes de ownership/retry autorizadas explicitamente, revisadas contra SQL/estado e aplicadas ao outbox vazio; as quatro agora instaladas. Somente app reconstruído/recriado; banco/broker/frontend e dados/credenciais preservados.
+
+Verificações compartilhadas executadas: management host/topologia autenticados, controle direto/interativo pelos dois aliases, stop intencional do relay preservando HTTP/management/metadados e contagens observadas zero, recuperação após saída inesperada de ambos. Filas vazias não demonstram persistência de payload não vazio; nenhuma mensagem inventada. Worker smoke isolado verifica autostart com configuração real e recursos de entrega próprios do teste. Simulações frontend e semântica 3.3 preservadas. Registros anteriores pendentes/parados são históricos; rollout local não prova prontidão produtiva ou fechamento de 3.4–3.6.
+
+[Procedimento e evidência atuais do projeto](../../../../rust-event-relay/docs/pt-BR/operations/local-relay-rollout.md). Library somente documentação; sem mudanças no Viva Bem, credenciais, aplicação/dependências runtime ou deployment público. Sem staging/commit/push.
