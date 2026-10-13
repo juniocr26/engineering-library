@@ -137,3 +137,7 @@ Esta evidência sustenta fechamento do escopo do Marco 2 como fundação pelo me
 ## Marco 3.1 — política escolhida
 
 [Classification, scheduling, budgets, uncertainty, poison isolation and replay identity](durable-failure-policy.md). Princípios gerais separados das escolhas Rust; atualmente existem somente cálculos puros de política.
+
+## Integração durável — Marco 3.3
+
+[Decisões contextuais, jitter sem viés, pausas separadas, manutenção finita e cancelamento](durable-failure-policy.md). Integração implementada e testada em infraestrutura isolada; rollout compartilhado permanece pendente. Descrições anteriores mantêm escopo histórico. Scanning geral fica em 3.4, replay em 3.5 e fechamento em 3.6.

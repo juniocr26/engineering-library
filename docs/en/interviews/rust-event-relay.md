@@ -199,3 +199,7 @@ Hold completion with an isolated advisory lock, start two binaries, and inspect 
 When implementation and experiments connect valid durable source events, recoverable pending work and confirmed acceptance before completion. Qualify it with eventual availability, running/restarted workers, resolvable failures, supported storage and downstream duplicate handling. Exclude poison events, permanent rejection, exhausted counters, power-loss behavior and untested exactly-once effects. State which processes are original and which adapter/lifecycle boundaries are instrumented so the claim can be reviewed.
 
 [Evidence and boundaries](../../../../rust-event-relay/docs/en/architecture/milestone-2-6.md) | [Acceptance and assumptions](../../../../rust-event-relay/docs/en/operations/milestone-2-review.md).
+
+## Durable integration — Milestone 3.3
+
+[Contextual decisions, unbiased jitter, separate pacing, finite maintenance and cancellation](../architecture/durable-failure-policy.md). Application integration is implemented and tested on isolated infrastructure; shared rollout remains pending. Prior milestone descriptions are historical. General poison scanning remains 3.4, replay 3.5 and full closure 3.6.

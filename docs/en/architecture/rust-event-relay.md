@@ -137,3 +137,7 @@ This evidence supports Milestone 2 implemented-scope closure as an at-least-once
 ## Milestone 3.1 — selected policy
 
 [Classification, scheduling, budgets, uncertainty, poison isolation and replay identity](durable-failure-policy.md). General principles are separated from selected Rust defaults; only pure policy calculations exist today.
+
+## Durable integration — Milestone 3.3
+
+[Contextual decisions, unbiased jitter, separate pacing, finite maintenance and cancellation](durable-failure-policy.md). Application integration is implemented and tested on isolated infrastructure; shared rollout remains pending. Prior milestone descriptions are historical. General poison scanning remains 3.4, replay 3.5 and full closure 3.6.

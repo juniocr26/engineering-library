@@ -74,3 +74,7 @@ Dois binários foram bloqueados em completion após publicar: tokens distintos d
 Esta evidência sustenta fechamento do escopo do Marco 2 como fundação pelo menos uma vez sob origem commitada, storage/contratos suportados, disponibilidade eventual, worker ativo e eventos válidos com falhas resolvíveis. Não prova entrega universal/exactly-once, fairness, ordenação, power loss, poison/rejeição permanente, contador esgotado ou HA/TLS produtivos. Rollout compartilhado permanece pendente/relay STOPPED. Próximo: decisões de retries duráveis/classificação/quarantine-dead-letter/replay auditável. Princípios são transferíveis sem alegar arquitetura privada de outro produto.
 
 [Evidência e fronteiras](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-6.md) | [Aceitação e premissas](../../../../rust-event-relay/docs/pt-BR/operations/milestone-2-review.md).
+
+## Integração durável — Marco 3.3
+
+[Decisões contextuais, jitter sem viés, pausas separadas, manutenção finita e cancelamento](../architecture/durable-failure-policy.md). Integração implementada e testada em infraestrutura isolada; rollout compartilhado permanece pendente. Descrições anteriores mantêm escopo histórico. Scanning geral fica em 3.4, replay em 3.5 e fechamento em 3.6.

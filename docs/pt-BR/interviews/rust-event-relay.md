@@ -199,3 +199,7 @@ Segurar completion com advisory lock isolado, iniciar dois binários e observar 
 Após relacionar código e experimentos a eventos duráveis válidos, recuperação de trabalho pending e aceitação confirmada antes de completion. A formulação exige disponibilidade eventual, worker ativo/reiniciado, falhas resolvíveis, storage suportado e tratamento downstream de duplicatas. Exclui poison, rejeição permanente, count esgotado, power loss e efeitos exactly-once não testados. Dizer exatamente quais processos são originais e quais adapters/lifecycles são instrumentados torna a afirmação revisável.
 
 [Evidência e fronteiras](../../../../rust-event-relay/docs/pt-BR/architecture/milestone-2-6.md) | [Aceitação e premissas](../../../../rust-event-relay/docs/pt-BR/operations/milestone-2-review.md).
+
+## Integração durável — Marco 3.3
+
+[Decisões contextuais, jitter sem viés, pausas separadas, manutenção finita e cancelamento](../architecture/durable-failure-policy.md). Integração implementada e testada em infraestrutura isolada; rollout compartilhado permanece pendente. Descrições anteriores mantêm escopo histórico. Scanning geral fica em 3.4, replay em 3.5 e fechamento em 3.6.

@@ -74,3 +74,7 @@ Two binaries were blocked in completion after publication: distinct durable toke
 This evidence supports Milestone 2 implemented-scope closure as an at-least-once foundation with committed source events, supported storage/contracts, eventual availability, a running worker and valid events whose failures resolve. It does not prove universal/exactly-once delivery, fairness, ordering, power-loss behavior, poison/permanent rejection, exhausted counters or productive HA/TLS. Shared rollout stays pending/relay STOPPED. Next: durable retry/classification/quarantine-dead-letter/auditable replay decisions. These principles transfer without claims about another product's private architecture.
 
 [Evidence and boundaries](../../../../rust-event-relay/docs/en/architecture/milestone-2-6.md) | [Acceptance and assumptions](../../../../rust-event-relay/docs/en/operations/milestone-2-review.md).
+
+## Durable integration — Milestone 3.3
+
+[Contextual decisions, unbiased jitter, separate pacing, finite maintenance and cancellation](../architecture/durable-failure-policy.md). Application integration is implemented and tested on isolated infrastructure; shared rollout remains pending. Prior milestone descriptions are historical. General poison scanning remains 3.4, replay 3.5 and full closure 3.6.

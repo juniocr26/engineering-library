@@ -42,3 +42,7 @@ Categories present in the index contain maintained content; categories covered e
 ## Remaining evidence-dependent gaps
 
 Semantic equivalence and factual completeness require manual review; complex Markdown and adversarial filesystem races remain tooling limits; external links unverified.
+
+## Durable integration — Milestone 3.3
+
+[Contextual decisions, unbiased jitter, separate pacing, finite maintenance and cancellation](../architecture/durable-failure-policy.md). Application integration is implemented and tested on isolated infrastructure; shared rollout remains pending. Prior milestone descriptions are historical. General poison scanning remains 3.4, replay 3.5 and full closure 3.6.

@@ -42,3 +42,7 @@ Categorias presentes no índice contêm conteúdo mantido; categorias tratadas e
 ## Lacunas restantes dependentes de evidência
 
 Equivalência semântica/completude exigem revisão humana; Markdown complexo/corridas adversariais são limites; links externos não verificados.
+
+## Integração durável — Marco 3.3
+
+[Decisões contextuais, jitter sem viés, pausas separadas, manutenção finita e cancelamento](../architecture/durable-failure-policy.md). Integração implementada e testada em infraestrutura isolada; rollout compartilhado permanece pendente. Descrições anteriores mantêm escopo histórico. Scanning geral fica em 3.4, replay em 3.5 e fechamento em 3.6.
