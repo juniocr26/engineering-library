@@ -109,3 +109,8 @@ Current rollout validation: 60 standard Rust tests and four isolated worker_smok
 ## Milestone 3.4 verification — 2026-10-13
 
 [Executed Rust evidence](../../../../rust-event-relay/docs/en/testing/validation-results.md): 65 standard tests; isolated discovery 7, retry 18, ownership 12, reader 15, ownership schema 1, worker smoke 4 and integrated target 15 passed. Strict formatting/Clippy/rustdoc and both binary builds passed. New real worker evidence observes an intact unsafe prefix, preserved dead_letter poison and independent original-ID broker delivery/database completion. Lost terminal commit acknowledgement and cancellation are checked with independent durable observation. Tests establish finite schedules, not universal fairness, payload byte bounds, consumer idempotency or remote CI. No new migration/shared restart; current local rollout preserved. Documentation checks: 236 documents, zero errors and 18 existing restricted-fixture warnings; 18 validator tests pass. Existing Library edits preserved; this milestone changes only documentation here.
+
+
+## Reliable Event Relay — Milestone 3.6, 2026-10-13
+
+[Current audit and evidence boundaries](../architecture/rust-event-relay.md): 69 standard Rust tests; 63 PostgreSQL; 3 broker; 5 smoke; 16 substantive integrated functions plus one helper; 13 Chromium browser functions; five SQLx migration upgrades/checksums and replay down/re-up. Formatting, strict Clippy/rustdoc, both binaries, frontend lockfile install/type-check/build, Compose and script syntax passed. Library validator/tests run locally; configured CI is not remote execution. Shared migration 5/API and Vite restart remain pending; frontend is presentation-only. Earlier records retain historical counts.

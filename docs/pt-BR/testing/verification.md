@@ -109,3 +109,8 @@ Validação deste rollout: 60 testes padrão Rust e quatro worker_smoke isolados
 ## Verificação do marco 3.4 — 13/10/2026
 
 [Evidência Rust executada](../../../../rust-event-relay/docs/pt-BR/testing/validation-results.md): 65 testes padrão; isolados descoberta 7, retry 18, ownership 12, reader 15, schema ownership 1, smoke worker 4 e target integrado 15 passaram. Formatação/Clippy/rustdoc estritos e build dos dois binários passaram. Worker real observa prefixo inseguro intacto, poison preservado em dead_letter e entrega independente do ID original no broker/conclusão no banco. Acknowledgement terminal perdido e cancelamento conferidos por observação durável independente. Schedules finitos não provam justiça universal, limite de bytes, idempotência de consumidor ou CI remoto. Sem migration nova/reinício compartilhado; rollout atual preservado. Documentação: 236 documentos, zero erros, 18 avisos anteriores de fixtures restritas; 18 testes do validador passaram. Edições anteriores da Library preservadas; neste marco somente documentação alterada aqui.
+
+
+## Reliable Event Relay — Marco 3.6, 13/10/2026
+
+[Auditoria atual e fronteiras da evidência](../architecture/rust-event-relay.md): 69 testes Rust padrão; 63 PostgreSQL; 3 broker; 5 smoke; 16 funções integradas substantivas e um helper; 13 funções Chromium; cinco upgrades/checksums SQLx e down/re-up replay. Formatação, Clippy/rustdoc estritos, dois binários, frontend instalação/type-check/build, Compose e sintaxe passaram. Validator/testes Library executados localmente; CI configurada não é execução remota. Migração 5/API e restart Vite compartilhados pendentes; frontend somente apresentação. Registros anteriores preservam contagens históricas.
