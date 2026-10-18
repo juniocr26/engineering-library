@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { getReadingSequence, getNextDocument } from '../lib/reading-order.ts';
 test('canonical bilingual discovery, README, substantive indexes and missing translations', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'el-docs-'));
   const previous = process.env.DOCUMENTATION_ROOT;
@@ -29,6 +30,12 @@ test('canonical bilingual discovery, README, substantive indexes and missing tra
     assert.ok(!en.some(e => e.id === 'architecture/index.md'));
     assert.ok(en.some(e => e.id === 'env/index.md'));
     assert.equal(pt.find(e => e.id === 'architecture/alpha.md')?.href, undefined);
+    const englishSequence = getReadingSequence('sample', 'en', en);
+    const portugueseSequence = getReadingSequence('sample', 'pt-BR', pt);
+    assert.deepEqual(portugueseSequence.map(entry => entry.id), englishSequence.filter(entry => entry.id === null || pt.some(localized => localized.id === entry.id && localized.href)).map(entry => entry.id));
+    assert.ok(!englishSequence.some(entry => entry.id === 'architecture/index.md'));
+    assert.ok(englishSequence.some(entry => entry.id === 'env/index.md'));
+    assert.equal(getNextDocument(englishSequence, 'architecture/overview.md')?.id, 'env/index.md');
     assert.equal(pt.find(e => e.id === 'architecture/overview.md')?.title, 'Visão geral');
     assert.equal(en.find(e => e.id === 'architecture/overview.md')?.href, '/projects/sample/docs/architecture/overview.md?lang=en');
     assert.equal(await documentationSource('sample', 'architecture/overview.md', 'en'), '# Overview');

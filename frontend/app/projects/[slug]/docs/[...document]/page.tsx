@@ -5,7 +5,7 @@ import { languageOf } from '@/lib/i18n';
 import { DocumentationReader } from '@/components/documentation-reader';
 
 export default async function DocumentPage({ params, searchParams }: {
-  params: Promise<{ slug: string; document: string[] }>; searchParams: Promise<{ lang?: string; q?: string }>;
+  params: Promise<{ slug: string; document: string[] }>; searchParams: Promise<{ edge?: string; lang?: string; q?: string }>;
 }) {
   const { slug, document } = await params;
   const query = await searchParams;
@@ -15,5 +15,5 @@ export default async function DocumentPage({ params, searchParams }: {
   if (source === null) notFound();
   const units = markdownUnits(source);
   const entries = await documentationEntries(slug, language);
-  return <DocumentationReader key={`${slug}/${id}`} project={slug} document={id} language={language} units={units} entries={entries} query={(query.q ?? '').slice(0, 100)}/>;
+  return <DocumentationReader initialEnd={query.edge === 'end'} key={`${slug}/${id}`} project={slug} document={id} language={language} units={units} entries={entries} query={(query.q ?? '').slice(0, 100)}/>;
 }

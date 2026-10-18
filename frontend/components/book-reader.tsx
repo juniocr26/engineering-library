@@ -1,15 +1,21 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 import { paginateMeasured, type BookUnit } from '../lib/book-pagination';
 import { contentPageId } from '../lib/manuscript';
 import { ManuscriptDecorations } from './manuscript-decorations';
 import { messages, type Language } from '../lib/i18n';
-type Turn<T> = { direction: 1 | -1; from: T[][]; target: number };
+type Turn<T> = { direction: 1 | -1; from: T[][]; target: number; href?: string };
 /** One lifecycle and navigation engine; only CSS geometry and visible leaf count differ. */
-export function BookReader<T extends BookUnit>({ units, renderUnit, project, language, title, header, location, locationRequest = 0, pageAction }: {
+export function BookReader<T extends BookUnit>({ units, renderUnit, project, language, title, header, location, locationRequest = 0, pageAction, previousChapter, nextChapter, previousIsContents, initialEnd = false }: {
+  previousChapter?: string; nextChapter?: string; previousIsContents?: boolean; initialEnd?: boolean;
   units: readonly T[]; renderUnit: (unit: T) => ReactNode; project: string; language: Language; title: string; header?: ReactNode;
   location?: string; locationRequest?: number; pageAction?: (page: T[], physicalPage: number) => ReactNode;
 }) {
+  const router = useRouter();
+  const routed = useRef(false);
+  const [departing, setDeparting] = useState(false);
+  const endPending = useRef(initialEnd);
   const [pages, setPages] = useState<T[][]>([[...units]]);
   const [mode, setMode] = useState<'spread' | 'single-page'>('single-page');
   const [position, setPosition] = useState(0);
@@ -25,17 +31,26 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   const locked = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touch = useRef<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    if (previousChapter) router.prefetch(previousChapter);
+    if (nextChapter) router.prefetch(nextChapter);
+  }, [router, previousChapter, nextChapter]);
   const count = mode === 'spread' ? 2 : 1;
   useEffect(() => {
     const node = measure.current;
     if (!node) return;
     let frame = 0; let disposed = false; let signature = '';
     measured.current = false;
+    const historyLocation = window.history.state?.bookLocation;
+    if (historyLocation?.url === window.location.href && units.some(unit => unit.id === historyLocation.anchor)) {
+      anchor.current = historyLocation.anchor;
+      endPending.current = false;
+    }
     const calculate = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        if (disposed) return;
-        // Keep the previous leaves while assets settle, but never publish their old total.
+        if (disposed || routed.current) return;
+        // Do not publish physical page totals until the destination assets settle.
         if (document.fonts.status === 'loading' || node.querySelector('[data-measure-pending="true"]') || Array.from(node.querySelectorAll('img')).some(image => !image.complete)) {
           measured.current = false; setMeasurement(null); return;
         }
@@ -50,7 +65,9 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
         if (signature === nextSignature && measured.current) return;
         signature = nextSignature;
         const next = paginateMeasured(units, heights, page => nextMode === 'single-page' || page % 2 === 0 ? node.clientHeight : rightCapacity);
-        const index = Math.max(0, next.findIndex(page => page.some(unit => unit.id === anchor.current)));
+        const index = endPending.current ? next.length - 1 : Math.max(0, next.findIndex(page => page.some(unit => unit.id === anchor.current)));
+        endPending.current = false;
+        anchor.current = next[index]?.[0]?.id;
         if (timer.current) clearTimeout(timer.current);
         locked.current = false; setTurn(null); setMode(nextMode); setPages(next);
         setPosition(nextMode === 'spread' ? index - index % 2 : index);
@@ -86,7 +103,17 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     });
     return () => { cancelAnimationFrame(frame); cancelAnimationFrame(scrollFrame); };
   }, [ready, location, locationRequest, units, pages, mode]);
-  function finish(target: number) {
+  function finish(target: number, href?: string) {
+    if (href) {
+      if (routed.current) return;
+      routed.current = true;
+      setDeparting(true);
+      locked.current = true;
+      if (timer.current) clearTimeout(timer.current);
+      router.push(href, { scroll: false });
+      return;
+    }
+    window.history.replaceState({ ...window.history.state, bookLocation: { url: window.location.href, anchor: pages[target]?.[0]?.id } }, '');
     setPosition(target); anchor.current = pages[target]?.[0]?.id; setTurn(null); locked.current = false;
     if (timer.current) clearTimeout(timer.current);
     requestAnimationFrame(() => {
@@ -96,17 +123,28 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   }
   function navigate(direction: 1 | -1) {
     if (locked.current || !ready || !measured.current) return;
-    const target = position + direction * count;
-    if (target < 0 || target >= pages.length) return;
+    const candidate = position + direction * count;
+    const boundary = candidate < 0 || candidate >= pages.length;
+    const href = boundary ? (direction === 1 ? nextChapter : previousChapter) : undefined;
+    if (boundary && !href) return;
+    const target = boundary ? position : candidate;
+    if (href) window.history.replaceState({ ...window.history.state, bookLocation: { url: window.location.href, anchor: pages[position]?.[0]?.id } }, '');
     focused.current = document.activeElement instanceof HTMLElement && stage.current?.contains(document.activeElement) ? document.activeElement : null;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(target); return; }
-    locked.current = true; setTurn({ direction, from: pages.slice(position, position + count), target });
-    timer.current = setTimeout(() => finish(target), 850);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(target, href); return; }
+    locked.current = true; setTurn({ direction, from: pages.slice(position, position + count), target, href });
+    timer.current = setTimeout(() => finish(target, href), 850);
+  }
+  const previousBoundary = position === 0 && !!previousChapter;
+  const nextBoundary = position + count >= pages.length && !!nextChapter;
+  const previousLabel = previousBoundary ? (previousIsContents ? (language === 'en' ? 'Back to Table of Contents' : 'Voltar ao sumário') : (language === 'en' ? 'Previous chapter' : 'Capítulo anterior')) : messages[language].previous;
+  const nextLabel = nextBoundary ? (language === 'en' ? 'Next chapter' : 'Próximo capítulo') : messages[language].next;
+  function boundaryIcon(direction: 1 | -1) {
+    return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d={direction === 1 ? 'M5 4v16M9 5l10 7-10 7Z' : 'M19 4v16M15 5 5 12l10 7Z'}/></svg>;
   }
   const controls = <nav className="reader-controls" aria-label={language === 'en' ? 'Book pages' : 'Páginas do livro'}>
-      <button aria-label={messages[language].previous} aria-disabled={!ready || !!turn || position === 0} onClick={() => navigate(-1)}>❮</button>
+      <button title={previousLabel} aria-label={previousLabel} aria-disabled={!ready || !!turn || departing || (position === 0 && !previousChapter)} onClick={() => navigate(-1)}>{previousBoundary ? boundaryIcon(-1) : '❮'}</button>
       <span aria-live="polite" aria-atomic="true">{ready ? `${messages[language].page} ${position + 1}${count === 2 && position + 1 < pages.length ? `–${position + 2}` : ''} ${messages[language].of} ${pages.length}` : language === 'en' ? 'Paginating…' : 'Paginando…'}</span>
-      <button aria-label={messages[language].next} aria-disabled={!ready || !!turn || position + count >= pages.length} onClick={() => navigate(1)}>❯</button>
+      <button title={nextLabel} aria-label={nextLabel} aria-disabled={!ready || !!turn || departing || (position + count >= pages.length && !nextChapter)} onClick={() => navigate(1)}>{nextBoundary ? boundaryIcon(1) : '❯'}</button>
     </nav>;
   function leaf(page: T[] | undefined, key: string, side: 'left' | 'right', physicalPage = 0) {
     const identity = contentPageId((page ?? []).map(unit => unit.id));
@@ -115,7 +153,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       {/* Give the externally owned header its own stable sibling boundary. */}
       {side === 'left' && <Fragment key="header">{header}</Fragment>}
       {page?.length && pageAction ? pageAction(page, physicalPage) : null}
-      <div className="reader-body">{page?.map(unit => <div className="book-unit" data-unit-id={unit.id} key={unit.id}>{renderUnit(unit)}</div>)}</div>
+      <div className="reader-body">{!ready && <p role="status">{language === 'en' ? 'Paginating…' : 'Paginando…'}</p>}{page?.map(unit => <div className="book-unit" data-unit-id={unit.id} key={unit.id}>{renderUnit(unit)}</div>)}</div>
       {(mode === 'single-page' || side === 'right') && controls}
     </div>;
   }
@@ -132,9 +170,9 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     const dx = event.changedTouches[0].clientX - start.x; const dy = event.changedTouches[0].clientY - start.y;
     if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1);
   }}>
-    <div className="reader-stage" ref={stage} tabIndex={-1} aria-busy={!ready || !!turn}>
-      <div className="reader-pages">{leaf(left, 'left', 'left', visible + 1)}{mode === 'spread' && leaf(right, 'right', 'right', visible + 2)}</div>
-      {turn && <div className={`turn-sheet turn-sheet--${turn.direction === 1 ? 'forward' : 'backward'}`} aria-hidden="true" inert onAnimationEnd={event => { if (event.target === event.currentTarget) finish(turn.target); }}>
+    <div className="reader-stage" ref={stage} tabIndex={-1} aria-busy={!ready || !!turn || departing}>
+      <div className="reader-pages">{leaf(ready ? left : undefined, 'left', 'left', visible + 1)}{mode === 'spread' && leaf(ready ? right : undefined, 'right', 'right', visible + 2)}</div>
+      {turn && <div className={`turn-sheet turn-sheet--${turn.direction === 1 ? 'forward' : 'backward'}`} aria-hidden="true" inert onAnimationEnd={event => { if (event.target === event.currentTarget) finish(turn.target, turn.href); }}>
         <div className="turn-face turn-front">{leaf(front, 'front', mode === 'spread' && turn.direction === 1 ? 'right' : 'left')}</div><div className="turn-face turn-back">{leaf(back, 'back', mode === 'spread' && turn.direction === -1 ? 'right' : 'left')}</div>
       </div>}
     </div>

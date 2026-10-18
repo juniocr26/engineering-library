@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
 import { BookReader } from './book-reader';
 import { DocumentLanguage } from './document-language';
 import { MarkdownUnit } from './markdown-unit';
@@ -42,8 +43,8 @@ function Search({ project, language, close }: { project: string; language: Langu
   </>;
 }
 
-export function DocumentationReader({ project, document: documentId, language, units, entries, query }: {
-  project: string; document: string; language: Language; units: Unit[]; entries: TocEntry[]; query: string;
+export function DocumentationReader({ project, document: documentId, language, units, entries, query, initialEnd = false }: {
+  project: string; document: string; language: Language; units: Unit[]; entries: TocEntry[]; query: string; initialEnd?: boolean;
 }) {
   const en = language === 'en';
   const [panel, setPanel] = useState<Panel | null>(null);
@@ -53,6 +54,7 @@ export function DocumentationReader({ project, document: documentId, language, u
   const [csrf, setCsrf] = useState('');
   const [bookmarkError, setBookmarkError] = useState(false);
   const [busy, setBusy] = useState(false);
+  const neighbors = readingNeighbors(getReadingSequence(project, language, entries), documentId);
   const title = entries.find(entry => entry.id === documentId)?.title ?? units.find(unit => unit.heading !== undefined)?.text ?? documentId;
   const labels = { search: en ? 'Search' : 'Pesquisar', chapters: en ? 'Chapter index' : 'Índice de capítulos', bookmarks: en ? 'My Bookmarks' : 'Minhas marcações' };
 
@@ -104,7 +106,7 @@ export function DocumentationReader({ project, document: documentId, language, u
       try { setLocation(decodeURIComponent(target.hash.slice(1))); setLocationRequest(previous => previous + 1); } catch { /* Invalid anchors keep their native link behavior. */ }
     }
   }}><DocumentLanguage language={language}/><div className="toc-shell documentation-shell">
-    <BookReader units={units} project={project} language={language} title={title} header={header} location={location} locationRequest={locationRequest}
+    <BookReader key={`${documentId}/${language}/${initialEnd}`} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={units} project={project} language={language} title={title} header={header} location={location} locationRequest={locationRequest}
       renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={unit.id === location ? query : ''}/>}
       pageAction={page => {
         const saved = bookmarks.find(bookmark => bookmark.project === project && bookmark.document === documentId && bookmark.language === language && page.some(unit => unit.id === bookmark.anchor));
