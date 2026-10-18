@@ -19,3 +19,10 @@ test('oversized units remain accessible, empty content and unavailable measureme
   assert.deepEqual(paginateMeasured([], [], 100), [[]]);
   assert.deepEqual(paginateMeasured(units, [], 0), [units]);
 });
+
+test('alternating capacities reserve the measured header and controls without losing entries', () => {
+  const units = Array.from({ length: 8 }, (_, i) => ({ id: String(i) }));
+  const pages = paginateMeasured(units, units.map(() => 30), page => page % 2 === 0 ? 60 : 90);
+  assert.deepEqual(pages.map(page => page.length), [2, 3, 2, 1]);
+  assert.deepEqual(pages.flat(), units);
+});

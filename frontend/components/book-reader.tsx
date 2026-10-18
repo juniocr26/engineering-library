@@ -6,14 +6,15 @@ import { ManuscriptDecorations } from './manuscript-decorations';
 import type { Language } from '../lib/i18n';
 type Turn<T> = { direction: 1 | -1; from: T[][]; target: number };
 /** One lifecycle and navigation engine; only CSS geometry and visible leaf count differ. */
-export function BookReader<T extends BookUnit>({ units, renderUnit, project, language, title }: {
-  units: readonly T[]; renderUnit: (unit: T) => ReactNode; project: string; language: Language; title: string;
+export function BookReader<T extends BookUnit>({ units, renderUnit, project, language, title, header }: {
+  units: readonly T[]; renderUnit: (unit: T) => ReactNode; project: string; language: Language; title: string; header?: ReactNode;
 }) {
   const [pages, setPages] = useState<T[][]>([[...units]]);
   const [mode, setMode] = useState<'spread' | 'single-page'>('single-page');
   const [position, setPosition] = useState(0);
   const [turn, setTurn] = useState<Turn<T> | null>(null);
   const measure = useRef<HTMLDivElement>(null);
+  const measureRight = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const focused = useRef<HTMLElement | null>(null);
   const anchor = useRef(units[0]?.id);
@@ -31,7 +32,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
         if (disposed) return;
         const nextMode = matchMedia('(min-width: 921px)').matches ? 'spread' : 'single-page';
         const heights = Array.from(node.children).map(child => child.getBoundingClientRect().height);
-        const next = paginateMeasured(units, heights, node.clientHeight);
+        const rightCapacity = measureRight.current?.clientHeight ?? node.clientHeight;
+        const next = paginateMeasured(units, heights, page => nextMode === 'single-page' || page % 2 === 0 ? node.clientHeight : rightCapacity);
         const index = Math.max(0, next.findIndex(page => page.some(unit => unit.id === anchor.current)));
         if (timer.current) clearTimeout(timer.current);
         locked.current = false; setTurn(null); setMode(nextMode); setPages(next);
@@ -39,7 +41,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       });
     };
     const observer = new ResizeObserver(calculate);
-    observer.observe(node); Array.from(node.children).forEach(child => observer.observe(child));
+    observer.observe(node); if (measureRight.current) observer.observe(measureRight.current); Array.from(node.children).forEach(child => observer.observe(child));
     window.addEventListener('resize', calculate);
     document.fonts.addEventListener('loadingdone', calculate);
     void document.fonts.ready.then(calculate); calculate();
@@ -62,11 +64,18 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     locked.current = true; setTurn({ direction, from: pages.slice(position, position + count), target });
     timer.current = setTimeout(() => finish(target), 850);
   }
-  function leaf(page: T[] | undefined, key: string) {
+  const controls = <nav className="reader-controls" aria-label={language === 'en' ? 'Book pages' : 'Páginas do livro'}>
+      <button aria-label={language === 'en' ? 'Previous page' : 'Página anterior'} aria-disabled={!!turn || position === 0} onClick={() => navigate(-1)}>❮</button>
+      <span aria-live="polite">{position + 1}{count === 2 && position + 1 < pages.length ? `–${position + 2}` : ''} / {pages.length}</span>
+      <button aria-label={language === 'en' ? 'Next page' : 'Próxima página'} aria-disabled={!!turn || position + count >= pages.length} onClick={() => navigate(1)}>❯</button>
+    </nav>;
+  function leaf(page: T[] | undefined, key: string, side: 'left' | 'right') {
     const identity = contentPageId((page ?? []).map(unit => unit.id));
     return <div className="reader-leaf paper manuscript-surface" key={key} data-page-id={identity}>
       <ManuscriptDecorations variant="reading" project={project} identity={identity}/>
+      {side === 'left' && header}
       <div className="reader-body">{page?.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div>
+      {(mode === 'single-page' || side === 'right') && controls}
     </div>;
   }
   const visible = turn ? turn.target : position;
@@ -83,16 +92,15 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1);
   }}>
     <div className="reader-stage" ref={stage} tabIndex={-1} aria-busy={!!turn}>
-      <div className="reader-pages">{leaf(left, 'left')}{mode === 'spread' && leaf(right, 'right')}</div>
+      <div className="reader-pages">{leaf(left, 'left', 'left')}{mode === 'spread' && leaf(right, 'right', 'right')}</div>
       {turn && <div className={`turn-sheet turn-sheet--${turn.direction === 1 ? 'forward' : 'backward'}`} aria-hidden="true" inert onAnimationEnd={event => { if (event.target === event.currentTarget) finish(turn.target); }}>
-        <div className="turn-face turn-front">{leaf(front, 'front')}</div><div className="turn-face turn-back">{leaf(back, 'back')}</div>
+        <div className="turn-face turn-front">{leaf(front, 'front', mode === 'spread' && turn.direction === 1 ? 'right' : 'left')}</div><div className="turn-face turn-back">{leaf(back, 'back', mode === 'spread' && turn.direction === -1 ? 'right' : 'left')}</div>
       </div>}
     </div>
-    <div className="reader-measure" aria-hidden="true" inert><div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div></div>
-    <nav className="reader-controls" aria-label={language === 'en' ? 'Book pages' : 'Páginas do livro'}>
-      <button aria-label={language === 'en' ? 'Previous page' : 'Página anterior'} aria-disabled={!!turn || position === 0} onClick={() => navigate(-1)}>❮</button>
-      <span aria-live="polite">{position + 1}{count === 2 && position + 1 < pages.length ? `–${position + 2}` : ''} / {pages.length}</span>
-      <button aria-label={language === 'en' ? 'Next page' : 'Próxima página'} aria-disabled={!!turn || position + count >= pages.length} onClick={() => navigate(1)}>❯</button>
-    </nav>
+    <div className="reader-measure" aria-hidden="true" inert>
+      <div className="reader-leaf paper reader-probe reader-probe--left">{header}<div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div><div className="reader-probe-controls">{controls}</div></div>
+      <div className="reader-leaf paper reader-probe reader-probe--right"><div className="reader-body" ref={measureRight}/>{controls}</div>
+    </div>
+
   </section>;
 }
