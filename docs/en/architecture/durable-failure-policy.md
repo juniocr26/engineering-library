@@ -1,3 +1,5 @@
+[Current final-scope implementation](rust-event-relay.md). The conceptual explanation remains applicable; dated milestone status and validation below are historical, including statements that scanner/replay/consumer/UI are future work.
+
 [Other language](../../pt-BR/architecture/durable-failure-policy.md)
 
 # Failure classification, durable retries and replay identity

@@ -45,3 +45,7 @@ Testes fake isolam codificação, alocação, ordem do serviço e mapeamento de 
 - [security/identity-and-transport](../../../../url-shortener/docs/pt-BR/security/identity-and-transport.md)
 - [operations/deployment-and-recovery](../../../../url-shortener/docs/pt-BR/operations/deployment-and-recovery.md)
 - [Interview / Entrevista](../interviews/url-shortener.md)
+
+## Conciliação com o código — 2026-10-18
+
+`40e4ea05d6e4d2d5ae81d2020ec6ea7936330d44`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../url-shortener/docs/pt-BR/guides/implementation-study.md).

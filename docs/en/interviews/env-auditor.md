@@ -175,3 +175,6 @@ Follow-up: What if backup succeeds and replacement fails? The original target re
 
 Follow-up: Is mocking `os.replace` enough to prove atomicity? No; it verifies call ordering/error handling. Real filesystem and crash experiments would test different guarantees and remain gaps. Follow-up: How would you inspect performance? First separate traversal, parsing and plan costs using synthetic trees under separate authorization. Large numbers of missing keys can expose list-membership costs; deeply nested trees can expose recursion limits. No benchmark ran here, and the application test suite was not rerun.
 
+## Source reconciliation — 2026-10-18
+
+`000949ff926fcc71428855193a2a029520f7e887`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../env-auditor/docs/en/guides/implementation-study.md).

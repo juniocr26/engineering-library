@@ -1851,3 +1851,6 @@ Aprofundamento: RF sozinho permite prometer resolução imediata após criar? N�
 
 Aprofundamento: Testes fake HTTP/serviço provam cluster real? Não; verificam validação, mapeamento e ordem sob resultados modelados. Defaults do driver, autenticação, escritas parciais e failover exigem infraestrutura isolada. Aprofundamento: O que observabilidade produtiva acrescentaria? Latência/categorias por operação, readiness das dependências e alarmes de recuperação do contador sem vazar credenciais/destinos. São hipotéticos. Reload, bind mounts e health locais não são estratégia de implantação produtiva; retenção, restauração consistente e rollback seguem lacunas dependentes de evidência.
 
+## Conciliação com o código — 2026-10-18
+
+`40e4ea05d6e4d2d5ae81d2020ec6ea7936330d44`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../url-shortener/docs/pt-BR/guides/implementation-study.md).

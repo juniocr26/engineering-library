@@ -1,3 +1,5 @@
+[Implementação atual do escopo final](rust-event-relay.md). Conceitos seguem aplicáveis; status/validações datados abaixo são históricos, inclusive scanner/replay/consumidor/UI apresentados como futuros.
+
 [Other language](../../en/architecture/durable-failure-policy.md)
 
 # Classificação de falhas, retries duráveis e identidade de replay

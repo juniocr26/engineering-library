@@ -169,6 +169,42 @@ class DocumentationValidatorTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertGreater(json.loads(result.stdout)['errors'], 0)
 
+    def test_external_links_are_counted_without_fetch_or_success_claim(self):
+        self.write('docs/en/guides/start.md', '# Start\n[Web](https://example.invalid/no-network)\n')
+        report = self.result()
+        self.assertEqual(report['external_links'], {'status': 'not checked', 'occurrences': 1})
+        self.assertEqual(report['summary']['errors'], 0)
+
+    def test_scope_exclusions_cannot_hide_unexpected_repository(self):
+        extra = self.root / 'extra'
+        (extra / '.git').mkdir(parents=True)
+        self.config['scope_exclusions'] = {'extra': 'Not a valid way to suppress a repository'}
+        self.assertIn('repository-unexpected', self.codes())
+        self.config['scope_exclusions'] = {'generated': ''}
+        self.assertIn('exclusion-unjustified', self.codes())
+
+    def test_private_backup_link_is_never_read(self):
+        secret = self.write('.local-backups/backup.md', 'MUST NOT READ')
+        self.write('docs/en/guides/start.md', '# Start\n[Backup](../../../.local-backups/backup.md)\n')
+        original = Path.read_text
+        def guarded(path, *args, **kwargs):
+            if path == secret:
+                raise AssertionError('Backup read')
+            return original(path, *args, **kwargs)
+        with patch.object(Path, 'read_text', guarded):
+            self.assertIn('link-blocked', self.codes())
+
+    def test_cli_rejects_nonregular_config_without_opening(self):
+        import os
+        folder = self.repo / 'tools'
+        folder.mkdir()
+        fifo = folder / 'pipe.json'
+        os.mkfifo(fifo)
+        command = [sys.executable, '-B', str(Path(checker.__file__)), '--workspace', str(self.root), '--config', str(fifo)]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=5)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(json.loads(result.stdout)['findings'][0]['code'], 'config-unsafe')
+
     def test_cli_rejects_unsafe_config_without_read(self):
         restricted = self.write('.env', 'secret')
         command = [sys.executable, '-B', str(Path(checker.__file__)), '--workspace', str(self.root), '--config', str(restricted)]

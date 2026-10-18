@@ -504,3 +504,6 @@ Aprofundamento: Toda interface prova Clean Architecture? Não. Verifique direç�
 
 Aprofundamento: Rollback exigiria restauração de banco? Não há banco de uploads, mas seriam necessários artefatos antigos e contratos de proxy compatíveis. Não há ensaio de rollback evidenciado. Aprofundamento: O que coletar no diagnóstico? Status em cada salto, logs sanitizados, formato/variante detectado, dimensões e reproducer mínimo não sensível. Evite conteúdo de usuário nos logs. Worker separado mudaria persistência/retry dos resultados; proponha apenas para requisitos demonstrados. Não houve gráfico de desempenho, carga, navegador ou implantação runtime nesta revisão.
 
+## Conciliação com o código — 2026-10-18
+
+`2c9a27f40a2a2c8bef5f86f187256870c1960630`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../go-image-optimizer/docs/pt-BR/guides/implementation-study.md).

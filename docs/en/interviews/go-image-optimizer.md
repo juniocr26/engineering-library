@@ -428,3 +428,6 @@ Follow-up: Is every interface proof of Clean Architecture? No. Check dependency 
 
 Follow-up: Would rollback need database restoration? There is no upload database here, but retained old build artifacts and compatible proxy contracts would still be needed. No rollback exercise is evidenced. Follow-up: What should diagnosis collect? Status at each hop, sanitized logs, actual detected format/variant, dimensions and a minimal non-sensitive reproducer. Avoid uploading user data into logs. A separate worker would change retry/result persistence semantics, so propose it only for demonstrated requirements. No performance chart, load test, browser validation or runtime deployment was performed during this review.
 
+## Source reconciliation — 2026-10-18
+
+`2c9a27f40a2a2c8bef5f86f187256870c1960630`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../go-image-optimizer/docs/en/guides/implementation-study.md).

@@ -1,3 +1,9 @@
+# Limite de leitura — atualização em 2026-10-18
+
+Use o [dossiê atual](../architecture/rust-event-relay.md) e as [questões do escopo final](#questões-do-escopo-local-final) para o comportamento presente. Questões abaixo preservam escopo dos marcos, inclusive produtor, consumidor e integração antes ausentes. Mecanismos seguem úteis; “futuro”, “não implementado” e “atual” pertencem às datas originais. Q001–Q007 preservadas.
+
+## Questões e respostas históricas
+
 # Rust Event Relay — Guia de Estudo para Entrevista Técnica
 
 ## Atualização de engenharia — Marco 2.5, 2026-10-12
@@ -203,3 +209,55 @@ Após relacionar código e experimentos a eventos duráveis válidos, recuperaç
 ## Integração durável — Marco 3.3
 
 [Decisões contextuais, jitter sem viés, pausas separadas, manutenção finita e cancelamento](../architecture/durable-failure-policy.md). Integração implementada e testada em infraestrutura isolada; rollout compartilhado permanece pendente. Descrições anteriores mantêm escopo histórico. Scanning geral fica em 3.4, replay em 3.5 e fechamento em 3.6.
+
+## Questões do escopo local final
+
+[Dossiê atual](../architecture/rust-event-relay.md)
+
+### Q008 — Introdutória: O que agora é real na UI?
+
+**Resposta:** Produtor, relay e consumidor executam trabalho local real. Uma execução cria fato/outbox atomicamente e normalmente muda estoque 10 para 15. Ações duplicadas e concorrentes republicam o envelope original, mantendo um efeito e estoque 15. Uma rejeição controlada antes do envio exercita retry persistido. Animações de crash/corrida/perda de confirmação ou ACK são educacionais, sem derrubar infraestrutura. Kill, reconexão e resultados ambíguos reais pertencem a testes isolados.
+
+Aprofundamento: Por que manter simulação? Expõe tempo/incerteza sem controles globais inseguros. Explique o valor educacional separando fatos persistidos de etapas ilustradas.
+
+### Q009 — Intermediária: Como idempotência do produtor difere de deduplicação do consumidor?
+
+**Resposta:** O produtor identifica intenção fixa por UUID: mesma intenção resolve execução existente, conteúdo alterado conflita. Uma transação registra recebimento, fixture inicial e outbox, evitando fato confirmado sem registro de encaminhamento. Consumidor usa recibo durável por nome/ID do evento e valida conteúdo imutável, confirmando recibo e estoque juntos. Cliente pode perder resposta após commit; inspecionar a mesma identidade é mais seguro que criar outra intenção. Nenhuma fronteira torna transporte exatamente uma vez.
+
+Aprofundamento: Email/pagamento externo entraria na transação? Não. Exige protocolo próprio de idempotência/encaminhamento durável; o projeto demonstra apenas mutação local de estoque.
+
+### Q010 — Desafiadora: Por que contar aquisições em vez de mensagens enviadas?
+
+**Resposta:** O fato durável é aquisição confirmada, inclusive crash antes de enviar; worker não conta com certeza todas as mensagens aceitas externamente sob perda de confirmação. attempt_count vitalício não é zerado. Baseline/máximo do ciclo definem saldo; revisão/token novo protegem transições. Lease expirado permite outra aquisição, mas não impede publicação antiga. Contador não é quantidade de mensagens no broker nem prova de exclusividade externa.
+
+Aprofundamento: Replay apaga esgotamento? Replay autorizado inicia ciclo com estado/revisão esperados e requisição auditada, preservando histórico e evento. Limites de armazenamento/histórico inválido permanecem; não é reparo irrestrito.
+
+### Q011 — Desafiadora: Como duplicatas concorrentes evitam dois incrementos?
+
+**Resposta:** Inserção única do recibo precede mutação em READ COMMITTED. Apenas vencedor aplica efeito e completa recibo. Outra inserção espera conflito; novo comando observa vencedor confirmado e compara conteúdo imutável restaurado. Conteúdo igual retorna Duplicate sem incrementar; diferente não é aceito como mesmo evento. Completude diferida impede commit parcial. Retenção da identidade integra correção, não é limpeza opcional.
+
+Aprofundamento: Por que BYTEA e não só hash? Representação versionada permite restauração/igualdade do modelo sem depender apenas de colisão de digest ou normalização JSONB. Custa armazenamento/validação. Alteração pelo proprietário do banco permanece fora das proteções.
+
+### Q012 — Desafiadora: O que confirms, processed, recibos e ACKs provam?
+
+**Resposta:** Confirm estabelece aceitação observada pelo publisher. processed_at registra transição protegida do relay. Recibo concluído estabelece efeito local. Depois consumidor tenta enviar ACK; sucesso não estabelece recebimento no broker. Fatos podem aparecer em ordens distintas. Crash após confirm antes de processed permite republicar; crash após commit antes da liquidação do ACK permite reentrega. ID estável/recibo retido impedem segundo efeito local suportado, não transporte duplicado.
+
+Aprofundamento: O que significa unknown? Falta de confirmação não prova commit ou rollback. Preserve identidade, inspecione e não compense/reenvie apenas por timeout. Snapshot sem recibo também não exclui commit posterior.
+
+### Q013 — Intermediária: Por que quarentena não é apenas NACK e descarte?
+
+**Resposta:** Aplicação preserva entrada rejeitada/não suportada/conflitante por publicação confirmada em quarentena antes de ACK na origem. Falha ou impossibilidade de preservação exata mantém origem pendente. Evidência primária é separada de falha secundária de preservação/ACK. dead_letter SQL é terminal do relay, não essa topologia. Política de dead-letter do broker seria outro protocolo com outras evidências/janelas.
+
+Aprofundamento: Quarentena pode duplicar? Sim: preservação confirmada e ACK desconhecido podem repetir na reentrega. Evita perda intencional; não torna duas operações AMQP atômicas.
+
+### Q014 — Intermediária: Como inspecionar histórico sem disparar trabalho?
+
+**Resposta:** GET de histórico/evidência e seleção de ação carregam snapshots com observed_at. Não submetem intenção nem repetem ação. Refresh falho mantém observação; após 15 segundos fica stale. Polling/timeout limitados e fechar modal controlam só observação. Correlação execução/ação/evento separa Duplicate de tráfego sem relação. Contagens limitadas são limites inferiores. Bearer/origem/header restringem HTTP local; session storage contém IDs, não token.
+
+Aprofundamento: Por que não reenviar unknown automaticamente? A ação anterior pode ter publicado/confirmado. Nova ação é trabalho novo explícito; GET não resolve toda incerteza distribuída nem deve fingir isso.
+
+### Q015 — Desafiadora: O que defender sobre testes, operação e capacidade?
+
+**Resposta:** Testes puros/fakes demonstram política/sequência; PostgreSQL/RabbitMQ/processos isolados cobrem falhas selecionadas; browser separa UI real/ilustrada. Manifesto de 2026-10-17 registra aceite em sua base, não revisão atual ou CI remoto. Launcher principal, artefatos runtime/test separados e controles nomeados Supervisor sustentam operação local. Limites de recursos/retenção rejeitam excesso sem apagar evidência. Não são capacidade produtiva medida, recuperação de desastre ou HA/TLS.
+
+Aprofundamento: O que justificaria produção? Segurança de transporte, menor privilégio, retenção/restauração de banco e broker, responsabilidade operacional e evidência por carga. São melhorias hipotéticas, não bloqueios adicionados retroativamente ao escopo local concluído.

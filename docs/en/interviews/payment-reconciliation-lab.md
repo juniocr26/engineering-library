@@ -109,3 +109,6 @@ Follow-up: Can we edit V1 to match the new product name? Applied migration check
 
 Follow-up: Could all fake tests pass while startup fails? Yes, for missing schema under disabled migrations, wrong credentials or enabled retired seed. Follow-up: What is the actual catalog scaling limit? The query returns all visible entities and DTOs without pagination/cache. Memory, sort work and response size can grow with catalog size; no measured threshold is available. Hypothetical pagination needs stable ordering/tie-breaking and UI contracts, while caching needs an invalidation/freshness policy. Health readiness checks database connectivity but neither these scaling limits nor payment functionality. Test new requirements at the boundary they rely on.
 
+## Source reconciliation — 2026-10-18
+
+`71b8b8f22d38f08e8ab40cb519f8b1a0985b74c6`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../payment-reconciliation-lab/docs/en/guides/implementation-study.md).

@@ -1,3 +1,9 @@
+# Reading boundary — updated 2026-10-18
+
+Use the [current dossier](../architecture/rust-event-relay.md) and [final-scope questions](#final-local-scope-questions) for present behavior. Earlier questions/answers below preserve their milestone scope, including formerly missing producer, consumer and UI integration. Their mechanisms remain useful, but “future”, “not implemented” and “current” must be read at their original dates. Stable Q001–Q007 are retained.
+
+## Historical questions and answers
+
 # Rust Event Relay technical interview study guide
 
 ## Current engineering update — Milestone 2.5, 2026-10-12
@@ -203,3 +209,55 @@ When implementation and experiments connect valid durable source events, recover
 ## Durable integration — Milestone 3.3
 
 [Contextual decisions, unbiased jitter, separate pacing, finite maintenance and cancellation](../architecture/durable-failure-policy.md). Application integration is implemented and tested on isolated infrastructure; shared rollout remains pending. Prior milestone descriptions are historical. General poison scanning remains 3.4, replay 3.5 and full closure 3.6.
+
+## Final local scope questions
+
+[Current implementation dossier](../architecture/rust-event-relay.md)
+
+### Q008 — Introductory: What is now real in the UI?
+
+**Answer:** The producer, relay and inventory consumer execute real local work. A new run creates producer fact/outbox atomically and normally changes stock 10 to 15. Duplicate and concurrent duplicate actions republish the original envelope, retaining one effect and stock 15. One controlled before-send rejection exercises persisted retry. Crash/race/lost-confirmation or ACK animations are educational playback; they do not shut down infrastructure. Actual kill, reconnect and ambiguous-outcome schedules belong to isolated integration tests.
+
+Follow-up: Why retain simulation? It exposes timing and uncertainty without unsafe global controls. Explain its educational value while explicitly distinguishing persisted facts from illustrated steps.
+
+### Q009 — Intermediate: How does producer idempotency differ from consumer deduplication?
+
+**Answer:** The producer keys fixed intent by request UUID: the same intent resolves to the existing run, while changed intent conflicts. Its one database transaction records goods receipt, initial stock fixture and outbox, preventing a committed fact without its handoff record. The consumer instead keys a durable receipt by consumer name/event ID and validates immutable content. It commits that receipt and stock effect together. A client can lose the producer response after commit; inspection with the same identity is safer than creating another intent. Neither boundary makes transport exactly once.
+
+Follow-up: Would an external email/payment effect share the consumer transaction? No. It needs a separately specified idempotency or durable handoff protocol; this project only demonstrates local stock mutation.
+
+### Q010 — Challenging: Why count acquisitions rather than messages sent?
+
+**Answer:** The durable fact is a committed acquisition, including a crash before send; a worker cannot reliably count all externally accepted messages across lost acknowledgements. Lifetime attempt_count never resets. Retry cycle baseline/maximum define the remaining allowance, while revision and fresh token protect current transitions. A lease that expires enables another acquisition but cannot stop the old process publishing. Thus the counter is neither a broker-message count nor proof of exclusive external activity.
+
+Follow-up: Can replay erase exhaustion? Authorized replay starts a new cycle with expected state/revision and an audit request, preserving lifetime history and original event identity. Storage limits and invalid history remain limits; it is not unrestricted repair.
+
+### Q011 — Challenging: How do concurrent duplicates avoid applying two increments?
+
+**Answer:** The unique receipt insertion precedes stock mutation in READ COMMITTED. Only the winning identity insertion applies the effect and completes the receipt. Another insertion waits on the conflict; a fresh statement then observes the committed winner and compares restored immutable event content. Equal content returns Duplicate without increment; different content is not accepted as the same event. Deferred completeness prevents a partial receipt commit. Retention of identity is part of correctness, not optional cleanup.
+
+Follow-up: Why store BYTEA instead of just a hash? Versioned representation supports restoration and checked model equality without relying only on digest collision assumptions or JSONB normalization. It costs storage and validation. Database-owner tampering remains outside these application safeguards.
+
+### Q012 — Challenging: What do confirms, processed state, receipts and ACKs prove?
+
+**Answer:** A confirm establishes publisher-observed broker acceptance. processed_at records an ownership-protected relay transition. A completed consumer receipt establishes the local stock effect. The consumer then attempts ACK send; success does not establish broker receipt of ACK. These facts can be observed in different orders. Crash after confirm before processed can republish; crash after consumer commit before broker settles ACK can redeliver. Stable event identity plus retained receipt prevents a second supported local effect, not duplicate transport.
+
+Follow-up: What does unknown mean? A missing acknowledgement proves neither commit nor rollback. Preserve identity, inspect independently and avoid compensation/resend based solely on timeout. A snapshot that lacks a receipt also cannot exclude a later commit.
+
+### Q013 — Intermediate: Why is quarantine not simply NACK-and-drop?
+
+**Answer:** The consumer application preserves rejected/unsupported/conflicting input through a confirmed quarantine publication before ACKing the source. Preservation failure or unsupported exact preservation leaves source unsettled for recovery. It separates primary processing evidence from secondary preservation/ACK failure. SQL dead_letter is a relay terminal record, not this RabbitMQ quarantine topology. A broker dead-letter policy would be a different protocol with different evidence and failure windows.
+
+Follow-up: Can quarantine itself duplicate? Yes: confirmed preservation followed by unknown source ACK may repeat on redelivery. Preservation avoids intentional loss; it does not make two AMQP operations atomic.
+
+### Q014 — Intermediate: How do you inspect history without triggering work?
+
+**Answer:** GET history/run evidence and action selection load statement snapshots with observed_at. They do not submit producer intent or repeat an action. Failed refresh retains earlier observations; after 15 seconds they are stale. Sequential bounded polling/timeout and closing the modal control observation only. Run/action/event correlations distinguish duplicate classification from unrelated queue traffic. Capped observation counts are lower bounds. Bearer/origin/client-header checks restrict a local HTTP interface; session storage contains IDs, not the token.
+
+Follow-up: Why not auto-resend unknown actions? The prior action may already have published or committed. A new action is explicit new work; GET inspection cannot resolve every distributed uncertainty and must not pretend it can.
+
+### Q015 — Challenging: What can you defend about tests, operation and capacity?
+
+**Answer:** Pure/fake tests establish policy and call sequencing; isolated PostgreSQL/RabbitMQ/process tests cover selected real failure schedules; browser tests cover real and illustrative UI separately. The final 2026-10-17 manifest records acceptance at its own base, not the current documentation revision or remote CI. The supported single main launcher, separate runtime/test artifacts and named Supervisor controls address local operation. Finite resource/retention bounds reject excess work instead of deleting evidence. They are not measured production capacity, disaster recovery or HA/TLS.
+
+Follow-up: What would justify a production claim? Explicit transport security, least-privilege deployment, retention/restore across database and broker, operational ownership and workload-specific evidence. These are hypothetical improvements, not acceptance blockers retroactively added to the completed local portfolio scope.

@@ -43,3 +43,7 @@ Preserve credenciais inicializadas e volume real durante a renomeação de infra
 - [security/read-api-boundaries](../../../../payment-reconciliation-lab/docs/pt-BR/security/read-api-boundaries.md)
 - [operations/deployment-and-evidence](../../../../payment-reconciliation-lab/docs/pt-BR/operations/deployment-and-evidence.md)
 - [Interview / Entrevista](../interviews/payment-reconciliation-lab.md)
+
+## Conciliação com o código — 2026-10-18
+
+`71b8b8f22d38f08e8ab40cb519f8b1a0985b74c6`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../payment-reconciliation-lab/docs/pt-BR/guides/implementation-study.md).

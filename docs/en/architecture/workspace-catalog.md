@@ -1,16 +1,18 @@
 # Workspace catalog and learning paths
 
-This parent workspace contains six independent Git repositories. Static code inspection on 2026-10-10 found no runtime integration from one portfolio application to another. Shared use of Docker, HTTP, Python or PostgreSQL is conceptual overlap, not an ecosystem call graph. ENV Auditor can scan sibling directories as filesystem inputs; that is not a network client of these applications. Engineering Library is a documentation/tooling collection, not an application dependency.
+2026-10-18. Six immediate Git repositories; all initially clean. No archived/reference repository was discovered at the parent level. Nested frontend/backend directories are components, not separate projects. Dependency caches, build outputs, test fixtures and audit evidence are not projects.
 
-| Repository | Current responsibility | Main representation / boundary | Start here |
+| Repository | Revision | Responsibility | Study |
 | --- | --- | --- | --- |
-| env-auditor | Literal environment-key synchronization | Ordered blocks, local files, per-file replacement | [Dossier](env-auditor.md), [interview](../interviews/env-auditor.md) |
-| go-image-optimizer | Synchronous compression/resize/conversion/preview | Multipart, pixels, native codecs, browser blobs | [Dossier](go-image-optimizer.md), [interview](../interviews/go-image-optimizer.md) |
-| url-shortener | Authenticated creation, public 301 resolution | Redis ID, affine Base62 code, Cassandra mapping | [Dossier](url-shortener.md), [interview](../interviews/url-shortener.md) |
-| payment-reconciliation-lab | Retained read-only catalog during domain transition | JPA entities, DTOs, constrained PostgreSQL schema | [Dossier](payment-reconciliation-lab.md), [interview](../interviews/payment-reconciliation-lab.md) |
-| rust-event-relay | HTTP liveness plus separately callable reader/publisher/ownership models | Envelope, snapshot, confirmed publish, future authority ports | [Dossier](rust-event-relay.md), [interview](../interviews/rust-event-relay.md) |
-| engineering-library | Self-contained explanations and interview preparation | Bilingual Markdown and read-only validator | [Collection interview](../interviews/engineering-library.md), [validator](../guides/documentation-validator.md) |
+| engineering-library | `0eb8085e4461` | Bilingual self-contained reference, interviews and read-only documentation validation. | [Collection interview](../interviews/engineering-library.md) |
+| env-auditor | `000949ff926f` | Literal local environment-key synchronization; ordered blocks, plans and per-file replacement. | [Dossier](env-auditor.md) / [Q&A](../interviews/env-auditor.md) |
+| go-image-optimizer | `2c9a27f40a2a` | Synchronous Go image processing with Next.js proxy and native codecs; no durable jobs. | [Dossier](go-image-optimizer.md) / [Q&A](../interviews/go-image-optimizer.md) |
+| payment-reconciliation-lab | `71b8b8f22d38` | Retained read-only catalog; Spring/JPA/Flyway and Angular. Reconciliation/Stripe remain planned. | [Dossier](payment-reconciliation-lab.md) / [Q&A](../interviews/payment-reconciliation-lab.md) |
+| rust-event-relay | `6e5e64fbffea` | Final accepted local producer/outbox/AMQP/consumer/UI scope, with bounded real scenarios and explicit simulations. | [Dossier](rust-event-relay.md) / [Q&A](../interviews/rust-event-relay.md) |
+| url-shortener | `40e4ea05d6e4` | FastAPI creation/301 resolution; Redis IDs and Cassandra mappings; no joint transaction. | [Dossier](url-shortener.md) / [Q&A](../interviews/url-shortener.md) |
 
-For a first pass, trace ENV Auditor's parse/plan/write boundary, then Go's HTTP/pixel boundary, URL Shortener's two-store failure boundary, Payment Lab's DTO/transaction boundary and Rust's snapshot/authority/broker boundary. For a deeper pass, rehearse an introductory explanation, defend the mechanism with source evidence, then answer a failure-window question and compare one alternative. The [cross-cutting interview](../interviews/foundations.md) supplies concepts; [verified flows](../integrations/verified-flows.md) explains actual paths end to end. Nothing here marks a learner as having completed study.
+## Reading paths
 
-Recorded runtime checks remain historical. This review ran only documentation validation and isolated validator tests. No applications, containers, migrations, benchmarks, network requests or deployment were executed. [Completion report](../operations/workspace-completion.md) records every repository and its remaining evidence gaps.
+Run a project: open its own README and setup; sibling repositories are optional references. Understand architecture: read the dossier, then trace the named records/calls. Test/troubleshoot: use that project’s strategy and operations, distinguishing historical execution from current instructions. Interview: rehearse purpose, mechanism, failure window, alternative and evidence limit.
+
+Recommended order: ENV Auditor (representation/filesystem), Go (HTTP/resources), URL Shortener (two-store failures), Payment Lab (DTO/SQL/domain transition), Rust (durable authority, uncertainty and effects), then [foundations](../interviews/foundations.md). [Verified relationships](../integrations/verified-flows.md) and [completion/evidence review](../operations/workspace-review-2026-10-18.md) explain the scope. No application depends on Engineering Library.

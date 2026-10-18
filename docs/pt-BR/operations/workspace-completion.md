@@ -1,3 +1,5 @@
+[Relatório histórico de 2026-10-10; revisão atual](workspace-review-2026-10-18.md). As afirmações abaixo descrevem a base original.
+
 # Relatório de conclusão documental do workspace
 
 Data da revisão: 2026-10-10 (America/Sao_Paulo). Os seis repositórios imediatos foram revisados; árvores estavam limpas antes deste trabalho documental. Manifest preserva inventário inicial. Nenhuma URL/repositório remoto, commit ou push foi alterado.

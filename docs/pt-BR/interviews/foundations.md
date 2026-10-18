@@ -1,3 +1,5 @@
+[Referência atual em 2026-10-18](../architecture/rust-event-relay.md). Atualizações datadas abaixo são históricas; retry durável, replay, consumidor e UI real estão implementados. Questões conceituais devem usar os limites do dossiê atual.
+
 # Entrevista de fundamentos transversais
 
 ## Atualização de engenharia — Marco 2.5, 2026-10-12

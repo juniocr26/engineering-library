@@ -717,3 +717,6 @@ Follow-up: Can we promise immediate successful resolution after creation solely 
 
 Follow-up: Do fake HTTP/service tests prove the real cluster works? No; they verify validation, mapping and call ordering under modeled outcomes. Driver defaults, authentication, actual partial writes and failover require isolated infrastructure tests. Follow-up: What would production observability add? Per-operation latency/error categories, dependency readiness and counter recovery alarms without leaking credentials/destinations. Those are hypothetical. Local reload, bind mounts and health probes do not constitute a production deployment strategy; retention, consistent restoration and rollback remain evidence-dependent gaps.
 
+## Source reconciliation — 2026-10-18
+
+`40e4ea05d6e4d2d5ae81d2020ec6ea7936330d44`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../url-shortener/docs/en/guides/implementation-study.md).

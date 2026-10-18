@@ -61,3 +61,9 @@ Category applicability and omissions are justified in the [completion checklist]
 ## Milestone 3.1 — selected policy
 
 [Classification, scheduling, budgets, uncertainty, poison isolation and replay identity](architecture/durable-failure-policy.md). General principles are separated from selected Rust defaults; only pure policy calculations exist today.
+
+## Current review and retained historical evidence
+
+- [2026-10-18](operations/workspace-review-2026-10-18.md)
+- [Rust: historical reviews](operations/rust-historical-reviews.md)
+- [Historical flow reviews](operations/historical-flow-reviews.md)

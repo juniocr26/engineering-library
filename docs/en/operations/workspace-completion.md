@@ -1,3 +1,5 @@
+[Historical 2026-10-10 report; current review](workspace-review-2026-10-18.md). Statements below describe the original baseline.
+
 # Workspace documentation completion report
 
 Review date: 2026-10-10 (America/Sao_Paulo). All six immediate repositories were reviewed; their working trees were clean before this documentation-only work. The initial manifest preserves document inventory. No remote URLs/repositories, commits or pushes were changed.

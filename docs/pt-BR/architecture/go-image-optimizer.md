@@ -36,3 +36,7 @@ Não há banco persistente de uploads para backup nem migrações. Atualizar o b
 - [security/resource-boundaries](../../../../go-image-optimizer/docs/pt-BR/security/resource-boundaries.md)
 - [operations/deployment-and-diagnosis](../../../../go-image-optimizer/docs/pt-BR/operations/deployment-and-diagnosis.md)
 - [Interview / Entrevista](../interviews/go-image-optimizer.md)
+
+## Conciliação com o código — 2026-10-18
+
+`2c9a27f40a2a2c8bef5f86f187256870c1960630`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../go-image-optimizer/docs/pt-BR/guides/implementation-study.md).

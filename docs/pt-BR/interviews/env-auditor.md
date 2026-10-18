@@ -175,3 +175,6 @@ Aprofundamento: E se backup funciona e substituição falha? O alvo original per
 
 Aprofundamento: Mock de `os.replace` prova atomicidade? Não; verifica ordem e tratamento de erro. Experimentos reais de filesystem/crash testariam garantias diferentes e permanecem lacunas. Aprofundamento: Como examinar desempenho? Separe custos de percurso, parser e plano em árvores sintéticas com autorização própria. Muitas chaves ausentes podem expor custo de busca em lista; árvores profundas podem expor recursão. Não houve benchmark aqui nem reexecução da suíte da aplicação.
 
+## Conciliação com o código — 2026-10-18
+
+`000949ff926fcc71428855193a2a029520f7e887`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../env-auditor/docs/pt-BR/guides/implementation-study.md).

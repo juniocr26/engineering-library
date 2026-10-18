@@ -109,3 +109,6 @@ Aprofundamento: Podemos editar V1 para o novo nome? Checksums/histórico aplicad
 
 Aprofundamento: Todos os fakes podem passar e startup falhar? Sim: schema ausente com migração desabilitada, credenciais erradas ou seed aposentado habilitado. Aprofundamento: Qual limite real de escala do catálogo? Consulta retorna todas as entidades visíveis e DTOs sem paginação/cache. Memória, ordenação e resposta crescem com dados; não há limiar medido. Paginação hipotética exige desempate estável e UI; cache exige invalidação/frescor. Readiness verifica conectividade do banco, não esses limites ou pagamentos. Teste requisitos na fronteira da qual dependem.
 
+## Conciliação com o código — 2026-10-18
+
+`71b8b8f22d38f08e8ab40cb519f8b1a0985b74c6`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../payment-reconciliation-lab/docs/pt-BR/guides/implementation-study.md).

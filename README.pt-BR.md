@@ -30,3 +30,14 @@ Comece pelo ENV Auditor para descoberta/parsing/falhas locais, depois Go Image O
 [Composição e lições operacionais do worker Rust](docs/pt-BR/architecture/rust-event-relay.md).
 
 [Recuperação Rust e limites de confiabilidade](docs/pt-BR/architecture/rust-event-relay.md).
+
+## Workspace atual e validação
+
+Comece pelo [catálogo](docs/pt-BR/architecture/workspace-catalog.md), siga um dossiê até as respostas de entrevista e compare fundamentos/fluxos verificados. Rust cobre escopo local final aceito com produtor/consumidor/UI; marcos anteriores são históricos. Execute no diretório pai:
+
+```sh
+python3 -B engineering-library/tools/check_docs.py --workspace .
+python3 -B -m unittest discover -s engineering-library/tools -p test_check_docs.py -v
+```
+
+Somente Python 3.10+ é necessário para validar documentação local; não é preciso instalar aplicações. [Revisão de 2026-10-18 e lacunas](docs/pt-BR/operations/workspace-review-2026-10-18.md).

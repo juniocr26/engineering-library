@@ -38,3 +38,7 @@ Remaining evidence gaps: crash/power-loss durability, concurrent writers and fil
 - [security/filesystem-boundaries](../../../../env-auditor/docs/en/security/filesystem-boundaries.md)
 - [operations/recovery-and-evidence](../../../../env-auditor/docs/en/operations/recovery-and-evidence.md)
 - [Interview / Entrevista](../interviews/env-auditor.md)
+
+## Source reconciliation — 2026-10-18
+
+`000949ff926fcc71428855193a2a029520f7e887`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../env-auditor/docs/en/guides/implementation-study.md).

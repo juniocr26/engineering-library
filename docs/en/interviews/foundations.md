@@ -1,3 +1,5 @@
+[2026-10-18 current implementation reference](../architecture/rust-event-relay.md). Dated milestone updates below are historical; durable retry, replay, consumer and real UI are now implemented. Foundation questions describe concepts and must be applied with the current dossier’s limits.
+
 # Cross-cutting foundations interview
 
 ## Current engineering update — Milestone 2.5, 2026-10-12

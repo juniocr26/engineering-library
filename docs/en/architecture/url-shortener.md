@@ -45,3 +45,7 @@ Fake tests isolate encoding, allocation, service ordering and HTTP error mapping
 - [security/identity-and-transport](../../../../url-shortener/docs/en/security/identity-and-transport.md)
 - [operations/deployment-and-recovery](../../../../url-shortener/docs/en/operations/deployment-and-recovery.md)
 - [Interview / Entrevista](../interviews/url-shortener.md)
+
+## Source reconciliation — 2026-10-18
+
+`40e4ea05d6e4d2d5ae81d2020ec6ea7936330d44`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../url-shortener/docs/en/guides/implementation-study.md).

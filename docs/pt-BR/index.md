@@ -61,3 +61,9 @@ Aplicabilidade e omissões estão justificadas no [checklist](operations/complet
 ## Marco 3.1 — política escolhida
 
 [Classification, scheduling, budgets, uncertainty, poison isolation and replay identity](architecture/durable-failure-policy.md). Princípios gerais separados das escolhas Rust; atualmente existem somente cálculos puros de política.
+
+## Revisão atual e evidência histórica preservada
+
+- [2026-10-18](operations/workspace-review-2026-10-18.md)
+- [Rust: historical reviews](operations/rust-historical-reviews.md)
+- [Historical flow reviews](operations/historical-flow-reviews.md)

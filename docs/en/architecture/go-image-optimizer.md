@@ -36,3 +36,7 @@ There is no persistent upload database to back up and no migration process. Upda
 - [security/resource-boundaries](../../../../go-image-optimizer/docs/en/security/resource-boundaries.md)
 - [operations/deployment-and-diagnosis](../../../../go-image-optimizer/docs/en/operations/deployment-and-diagnosis.md)
 - [Interview / Entrevista](../interviews/go-image-optimizer.md)
+
+## Source reconciliation — 2026-10-18
+
+`2c9a27f40a2a2c8bef5f86f187256870c1960630`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../go-image-optimizer/docs/en/guides/implementation-study.md).

@@ -18,7 +18,7 @@ CATEGORIES = {'architecture', 'adr', 'guides', 'testing', 'benchmarks', 'docker'
               'security', 'observability', 'payments', 'interviews'}
 DENIED = {'.git', '.hg', '.svn', '.aws', '.codex', '.agents', 'node_modules',
           'vendor', 'target', '.cargo-cache', 'storage', 'data', 'backups',
-          'backup', '.env-audit-backups', '.venv', 'venv', '__pycache__',
+          'backup', '.local-backups', '.env-audit-backups', '.venv', 'venv', '__pycache__',
           'dist', 'build', '.next', '.cache', 'coverage'}
 OBSOLETE = re.compile(r'(?<![\w-])(?:tecnical-interview|technical-interview)(?=/|\b)', re.I)
 PRIVATE_KEY = re.compile(r'-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----')
@@ -137,6 +137,7 @@ def validate(workspace: Path, config: dict) -> dict:
     docs: dict[Path, str] = {}
     graph: dict[Path, set[Path]] = {}
     inventories = {}
+    external_links = 0
 
     def finding(code, path, detail, severity='error'):
         try:
@@ -149,10 +150,18 @@ def validate(workspace: Path, config: dict) -> dict:
         return {'errors': 1, 'warnings': 0, 'findings': [{'severity': 'error', 'code': 'workspace-unsafe', 'detail': 'Workspace root is unreadable or symbolic'}]}
     try:
         actual = sorted(p.name for p in root.iterdir() if not p.is_symlink()
-                        and p.is_dir() and (p / '.git').exists())
+                        and p.is_dir() and not (p / '.git').is_symlink()
+                        and (p / '.git').exists())
     except OSError:
         finding('workspace-unreadable', root, 'Cannot enumerate workspace')
         actual = []
+    exclusions = config.get('scope_exclusions', {})
+    if not isinstance(exclusions, dict) or any(
+            not isinstance(k, str) or not isinstance(v, str) or not v.strip()
+            for k, v in exclusions.items()):
+        finding('exclusion-unjustified', root, 'Scope exclusions require nonempty textual reasons')
+        exclusions = {}
+    # Exclusions document non-project/generated scope; they never suppress discovered repos.
     expected = config.get('repositories', actual)
     if not isinstance(expected, list) or any(not isinstance(n, str) or '/' in n or n in {'.', '..'} or blocked_part(n) for n in expected):
         finding('invalid-config', root, 'Repository names must be safe immediate directory names')
@@ -255,6 +264,7 @@ def validate(workspace: Path, config: dict) -> dict:
                 finding('reference-missing', path, 'Undefined reference-style link')
                 continue
             if parts.scheme or parts.netloc:
+                external_links += 1
                 if parts.scheme.lower() == 'file':
                     finding('link-blocked', path, 'Machine-specific file URI not inspected', 'warning')
                 # No network access or external-link success claims.
@@ -328,6 +338,11 @@ def validate(workspace: Path, config: dict) -> dict:
     warnings = sum(f['severity'] == 'warning' for f in findings)
     return {'schema_version': 1, 'scope': 'read-only static documentation',
             'repositories': repos, 'documents': len(docs), 'inventory': inventories,
+            'scope_exclusions': exclusions,
+            'external_links': {'status': 'not checked', 'occurrences': external_links},
+            'summary': {'repositories': len(repos), 'documents': len(docs),
+                        'errors': errors, 'warnings': warnings,
+                        'finding_codes': dict(Counter(f['code'] for f in findings))},
             'errors': errors, 'warnings': warnings, 'findings': findings,
             'limits': ['No network or runtime checks', 'Markdown syntax subset',
                        'Bilingual semantic equivalence and answer accuracy require review',
@@ -343,7 +358,7 @@ def main(argv=None) -> int:
     config_path = args.config or Path(__file__).absolute().with_name('docs_manifest.json')
     config_path = Path(os.path.abspath(config_path))
     # Configurable metadata is deliberately narrower than arbitrary JSON/app data.
-    if classify(root, config_path) or config_path.parent.name != 'tools' or config_path.suffix != '.json':
+    if classify(root, config_path) or config_path.parent.name != 'tools' or config_path.suffix != '.json' or (config_path.exists() and not stat.S_ISREG(config_path.lstat().st_mode)):
         report = {'errors': 1, 'warnings': 0, 'findings': [{'severity': 'error', 'code': 'config-unsafe', 'detail': 'Only safe workspace tools/*.json metadata is permitted'}]}
     else:
         try:

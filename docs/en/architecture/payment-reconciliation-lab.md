@@ -43,3 +43,7 @@ Preserve initialized database credentials and the actual volume during the infra
 - [security/read-api-boundaries](../../../../payment-reconciliation-lab/docs/en/security/read-api-boundaries.md)
 - [operations/deployment-and-evidence](../../../../payment-reconciliation-lab/docs/en/operations/deployment-and-evidence.md)
 - [Interview / Entrevista](../interviews/payment-reconciliation-lab.md)
+
+## Source reconciliation — 2026-10-18
+
+`71b8b8f22d38f08e8ab40cb519f8b1a0985b74c6`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../../../../payment-reconciliation-lab/docs/en/guides/implementation-study.md).

@@ -30,3 +30,14 @@ Start with ENV Auditor for local discovery/parsing/failure boundaries, then Go I
 [Rust worker composition and operational lessons](docs/en/architecture/rust-event-relay.md).
 
 [Rust recovery and reliability limits](docs/en/architecture/rust-event-relay.md).
+
+## Current workspace and validation
+
+Start with the [workspace catalog](docs/en/architecture/workspace-catalog.md), follow a project dossier into its interview answers, then compare foundations and verified flows. The Rust dossier covers the accepted final local producer/consumer/UI scope; older milestone reviews are historical. Run from the parent workspace:
+
+```sh
+python3 -B engineering-library/tools/check_docs.py --workspace .
+python3 -B -m unittest discover -s engineering-library/tools -p test_check_docs.py -v
+```
+
+Only Python 3.10+ is required for local documentation validation; no application installation is required. [2026-10-18 review and remaining evidence gaps](docs/en/operations/workspace-review-2026-10-18.md).

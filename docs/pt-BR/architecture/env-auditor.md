@@ -38,3 +38,7 @@ Lacunas de evidência: durabilidade sob crash/queda de energia, escritores conco
 - [security/filesystem-boundaries](../../../../env-auditor/docs/pt-BR/security/filesystem-boundaries.md)
 - [operations/recovery-and-evidence](../../../../env-auditor/docs/pt-BR/operations/recovery-and-evidence.md)
 - [Interview / Entrevista](../interviews/env-auditor.md)
+
+## Conciliação com o código — 2026-10-18
+
+`000949ff926fcc71428855193a2a029520f7e887`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../../../../env-auditor/docs/pt-BR/guides/implementation-study.md).
