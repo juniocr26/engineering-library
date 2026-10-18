@@ -2,7 +2,7 @@
 
 ## Entrega e escopo
 
-Catálogo implementado com navegação **Biblioteca → Projeto → Idioma → Índice → Categoria → Documento**. Entrada principal: [index.md](index.md); entradas por idioma: [English](en/index.md) e [Português brasileiro](pt-BR/index.md). As seis coleções têm dois READMEs, índices bilíngues, capítulos indexados, proveniência e entrevistas. Não há catálogo separado por assunto nem catálogo recursivo dentro da entrada Engineering Library.
+Catálogo implementado com navegação **Biblioteca → Projeto → Idioma → Índice → Categoria → Documento**. Entrada principal: [index.md](index.md); entradas por idioma: [English](projects/engineering-library/docs/en/index.md) e [Português brasileiro](projects/engineering-library/docs/pt-BR/index.md). As seis coleções têm dois READMEs, índices bilíngues, capítulos indexados, proveniência e entrevistas. Não há catálogo separado por assunto nem catálogo recursivo dentro da entrada Engineering Library.
 
 Somente `engineering-library/docs/` foi alterado. Os cinco repositórios irmãos permaneceram limpos. Não houve stage, commit, push, rede, execução de aplicação, Docker, migração ou teste de integração de aplicação. Nenhuma funcionalidade de frontend, backend ou agente de IA foi implementada. O pequeno verificador em `docs/validation/` valida arquivos de documentação sem escrever ou executar aplicações; não é um agente nem framework de automação.
 
@@ -35,12 +35,12 @@ Cada projeto contém `README.md`, `README.pt-BR.md`, `docs/en/index.md` e `docs/
 
 | Projeto | Categorias nos dois idiomas | Markdown na coleção |
 | --- | --- | ---: |
-| engineering-library | architecture, guides, operations, technical-interview, testing | 28 |
-| env-auditor | architecture, guides, operations, security, technical-interview, testing | 40 |
-| go-image-optimizer | adr, api, architecture, docker, guides, operations, security, technical-interview, testing | 50 |
-| payment-reconciliation-lab | adr, api, architecture, database, docker, guides, operations, security, technical-interview, testing | 60 |
-| rust-event-relay | adr, architecture, database, docker, guides, integrations, operations, security, technical-interview, testing | 154 |
-| url-shortener | api, architecture, database, docker, guides, operations, security, technical-interview, testing | 52 |
+| engineering-library | architecture, guides, operations, faq, testing | 28 |
+| env-auditor | architecture, guides, operations, security, faq, testing | 40 |
+| go-image-optimizer | adr, api, architecture, docker, guides, operations, security, faq, testing | 50 |
+| payment-reconciliation-lab | adr, api, architecture, database, docker, guides, operations, security, faq, testing | 60 |
+| rust-event-relay | adr, architecture, database, docker, guides, integrations, operations, security, faq, testing | 154 |
+| url-shortener | api, architecture, database, docker, guides, operations, security, faq, testing | 52 |
 
 ## Contagens e preservação
 
@@ -55,7 +55,7 @@ Cada projeto contém `README.md`, `README.pt-BR.md`, `docs/en/index.md` e `docs/
 
 ## Entrevistas
 
-Todos os projetos possuem `technical-interview/index.md` e `study-guide.md` nos dois idiomas. O material existente cobre mecanismos, falhas, alternativas, limites e aprofundamentos. A Library ganhou também `application-and-catalog.md`, com Q101–Q106 alinhadas entre idiomas: Rails/Next.js, Compose/bind mounts, PostgreSQL/liveness, catálogo bilíngue, inferência local versus APIs e geração incremental baseada em evidências. Cada resposta distingue código inspecionado, arquitetura documentada e proposta. Não se atribuem motivações originais sem evidência.
+Todos os projetos possuem `faq/index.md` e `study-guide.md` nos dois idiomas. O material existente cobre mecanismos, falhas, alternativas, limites e aprofundamentos. A Library ganhou também `application-and-catalog.md`, com Q101–Q106 alinhadas entre idiomas: Rails/Next.js, Compose/bind mounts, PostgreSQL/liveness, catálogo bilíngue, inferência local versus APIs e geração incremental baseada em evidências. Cada resposta distingue código inspecionado, arquitetura documentada e proposta. Não se atribuem motivações originais sem evidência.
 
 ## Validação executada
 
@@ -71,7 +71,7 @@ git -C engineering-library status --short --untracked-files=all
 ```
 
 - **Verificador do catálogo:** seis projetos, 248 importações presentes; 436 Markdown; zero erros e zero avisos. Confere inventário, existência de links locais/âncoras, alcance desde entrada central e índices de cada projeto, caminhos bilíngues, IDs Q equivalentes, capítulos com conteúdo, títulos das entrevistas preservados, hashes das fontes importadas e duplicatas exatas. Nenhuma duplicata exata entre páginas de projeto ao final.
-- **Validador legado:** exit 1, **16 erros e 18 avisos**. Dois erros preexistentes são a categoria desconhecida/vazia `rust-event-relay/docs/pt-BR/manual`; 18 avisos são links restritos de fixtures do Go, sem leitura de seus destinos. Os outros 14 erros são falsos positivos `obsolete-library-name`: a regra legada rejeita o nome `technical-interview` obrigatório neste marco nos links dos dois índices e 12 atalhos. O scanner legado não percorre `docs/projects/`; por isso não substitui a verificação adicional. Sua implementação/configuração fora de `docs/` não foi alterada. Não se declara que esse comando passou.
+- **Validador legado:** exit 1, **16 erros e 18 avisos**. Dois erros preexistentes são a categoria desconhecida/vazia `rust-event-relay/docs/pt-BR/manual`; 18 avisos são links restritos de fixtures do Go, sem leitura de seus destinos. Os outros 14 erros são falsos positivos `obsolete-library-name`: a regra legada rejeita o nome `faq` obrigatório neste marco nos links dos dois índices e 12 atalhos. O scanner legado não percorre `docs/projects/`; por isso não substitui a verificação adicional. Sua implementação/configuração fora de `docs/` não foi alterada. Não se declara que esse comando passou.
 - **Testes do validador documental:** 22 testes passaram. São fixtures sintéticas temporárias de navegação/parser/segurança, não testes de aplicações ou infraestrutura.
 - **Git:** `diff --check` passou; diff e arquivos novos inspecionados. Conferência dos cinco irmãos: status vazio. Todos os caminhos modificados/novos da Library ficam em `docs/`. Nada foi adicionado ao stage.
 - **Preservação:** todos os títulos das 12 entrevistas coincidem com a revisão original; equivalência de IDs bilíngues passou. Links de código recebem checagem de existência, sem importar código para a biblioteca. Links restritos foram convertidos em texto nas cópias.

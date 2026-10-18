@@ -22,7 +22,7 @@ Clean Architecture é um princípio para fronteiras futuras: casos de uso devem 
 
 A navegação é Biblioteca → Projeto → Idioma → Índice → Categoria → Documento. `docs/projects/<repository>/` é uma coleção; seu identificador acompanha o diretório do workspace. Caminhos de idiomas e nomes de ADRs permanecem estáveis. Índices de categoria listam páginas como capítulos. Os índices inglês e português oferecem seleção de projetos. Assuntos aparecem nas descrições e capítulos, sem hierarquia separada por tema nem índice de busca.
 
-A entrada Engineering Library explica somente este projeto. Reutiliza os guias canônicos de ambiente e validação, sem conter outra cópia do catálogo do portfólio. Dossiês antigos do workspace e fundamentos entre projetos permanecem como referência preservada. Identidade do repositório, revisão, caminhos inspecionados e limites acompanham cada coleção. Cópias são snapshots e não adquirem validação de execução porque seus links passaram numa checagem.
+A entrada Engineering Library explica somente este projeto. Reutiliza os guias canônicos de ambiente e validação, sem conter outra cópia do catálogo do portfólio. As coleções preservam suas referências disponíveis; dossiês removidos dos diretórios de idioma da raiz não foram recriados. Identidade do repositório, revisão, caminhos inspecionados e limites acompanham cada coleção. Cópias são snapshots e não adquirem validação de execução porque seus links passaram numa checagem.
 
 ## Segurança e evidência pendente
 

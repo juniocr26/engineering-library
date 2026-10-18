@@ -87,6 +87,6 @@ A revisão estática detalhou limites de corridas no filesystem, durabilidade ap
 <!-- collection entry -->
 ## Coleção Engineering Library
 
-[Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/technical-interview/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
+[Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/faq/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
 
 CLI Python: sincronização literal de ambiente, prévias, backups e limites do sistema de arquivos.

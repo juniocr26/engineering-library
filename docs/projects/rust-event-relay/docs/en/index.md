@@ -109,5 +109,7 @@ Suggested order: README purpose → guides → architecture and ADRs → contrac
 - [integrations](integrations/index.md)
 - [operations](operations/index.md)
 - [security](security/index.md)
-- [technical-interview](technical-interview/index.md)
+- [faq](faq/index.md)
 - [testing](testing/index.md)
+
+- [env](env/index.md)

@@ -10,5 +10,7 @@ Ordem sugerida: propósito no README → guias → arquitetura e ADRs → contra
 - [architecture](architecture/index.md)
 - [guides](guides/index.md)
 - [operations](operations/index.md)
-- [technical-interview](technical-interview/index.md)
+- [faq](faq/index.md)
 - [testing](testing/index.md)
+
+- [env](env/index.md)

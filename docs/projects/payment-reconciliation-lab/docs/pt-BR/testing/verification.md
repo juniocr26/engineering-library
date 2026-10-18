@@ -60,4 +60,4 @@ Pendente: suíte Testcontainers não executada. Revisão automática rejeitou mo
 
 Arquitetura, decisões, roadmap e setup alinhados ao catálogo de leitura, remoção de pricing/vocabulário de identidade e rejeição da flag de seed. Inventário: 7 métodos unitários/API, 5 PostgreSQL opt-in e 4 Angular; não é novo resultado aprovado. Reconciliação/Stripe planejados, chave reservada sem binding/passagem Compose. Não foram executados Docker, builds, testes, inspeção de banco/volume, migração ou transição/backup. Estado de serviços anterior descreve aquela transição, não estado Docker atual.
 
-Checagens estáticas de links/âncoras, fences, pares de idioma e SHA-256 para alterações somente documentais estão na [revisão de entrevista](../../../../../pt-BR/testing/verification.md). Arquivos reais de ambiente e backups sensíveis não foram lidos/alterados.
+Checagens estáticas de links/âncoras, fences, pares de idioma e SHA-256 para alterações somente documentais estão na revisão de entrevista (relatório compartilhado anterior não incluído no catálogo atual). Arquivos reais de ambiente e backups sensíveis não foram lidos/alterados.

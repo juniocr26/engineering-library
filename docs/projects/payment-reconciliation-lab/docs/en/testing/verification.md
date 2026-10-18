@@ -63,4 +63,4 @@ Pending: Testcontainers integration suite was not executed. Automatic approval r
 
 Aligned current architecture, decisions, roadmap and setup with the retained read-only catalog, removed pricing/identity vocabulary and rejected seed flag. Source inventory is 7 unit/API methods, 5 opt-in PostgreSQL methods and 4 Angular cases; inventory is not a new passing result. Reconciliation/Stripe remain planned and the reserved key is not bound or injected by Compose. No Docker, builds, tests, database/volume inspection, migrations or transition/backup commands were executed. Earlier service-state statements describe the prior transition, not current Docker state.
 
-Static local-link/anchor, fence, language-pair and documentation-only SHA-256 checks are recorded in the shared [interview review](../../../../../en/testing/verification.md). Runtime environment files and secret-bearing backups were not read or modified.
+The earlier shared interview review is not included in the current catalog; its static link, language and SHA-256 checks remain historical reports, not reproduced evidence here. Runtime environment files and secret-bearing backups were not read or modified.

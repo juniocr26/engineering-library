@@ -89,6 +89,6 @@ Dentro do contêiner app: `python3 /app/scripts/demo-token.py rotate`.
 <!-- collection entry -->
 ## Coleção Engineering Library
 
-[Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/technical-interview/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
+[Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/faq/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
 
 Outbox transacional Rust/PostgreSQL, entrega RabbitMQ, retries, consumidor idempotente e demonstração local.

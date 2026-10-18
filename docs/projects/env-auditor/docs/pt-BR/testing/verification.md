@@ -18,7 +18,7 @@ Os hashes SHA-256, bits de permissão e timestamps de modificação dos arquivos
 
 ## Auditoria documental estática — 2026-10-09
 
-Script e 17 métodos de teste inspecionados sem importar ou executar. Arquitetura e material de entrevista alinhados à implementação baseada em exemplos autoritativos. Nenhum arquivo de ambiente ou backup foi lido/alterado; nenhuma prévia ou sincronização foi executada. Resultados anteriores continuam como evidência histórica. Checagens estáticas de links e alterações somente documentais estão na [revisão](../../../../../pt-BR/testing/verification.md).
+Script e 17 métodos de teste inspecionados sem importar ou executar. Arquitetura e material de entrevista alinhados à implementação baseada em exemplos autoritativos. Nenhum arquivo de ambiente ou backup foi lido/alterado; nenhuma prévia ou sincronização foi executada. Resultados anteriores continuam como evidência histórica. Checagens estáticas de links e alterações somente documentais estão na revisão (relatório compartilhado anterior não incluído no catálogo atual).
 
 ## Validação da apresentação — 2026-10-10
 

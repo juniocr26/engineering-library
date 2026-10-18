@@ -15,7 +15,7 @@ from urllib.parse import unquote, urlsplit
 LANGS = ('en', 'pt-BR')
 CATEGORIES = {'architecture', 'adr', 'guides', 'testing', 'benchmarks', 'docker',
               'database', 'api', 'integrations', 'deployment', 'operations',
-              'security', 'observability', 'payments', 'interviews'}
+              'security', 'observability', 'payments', 'interviews', 'faq', 'env'}
 DENIED = {'.git', '.hg', '.svn', '.aws', '.codex', '.agents', 'node_modules',
           'vendor', 'target', '.cargo-cache', 'storage', 'data', 'backups',
           'backup', '.local-backups', '.env-audit-backups', '.venv', 'venv', '__pycache__',
@@ -295,7 +295,7 @@ def validate(workspace: Path, config: dict) -> dict:
                 finding('anchor-unchecked', path, 'Anchor on a non-maintained document was not read', 'info')
             if not stat.S_ISREG(mode) and not stat.S_ISDIR(mode):
                 finding('link-nonregular', path, 'Target is not regular file/directory')
-        if 'interviews' in path.parts:
+        if 'interviews' in path.parts or 'faq' in path.parts:
             ids = question_ids(text)
             for level in ('##', '###'):
                 retained = re.findall(r'^' + level + r'\s+(\d+)\b', prose(text), re.M)

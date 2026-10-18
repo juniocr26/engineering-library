@@ -43,6 +43,6 @@ For existing checkouts, update configuration deliberately instead of overwriting
 <!-- collection entry -->
 ## Engineering Library collection
 
-[Library](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Interview](docs/en/technical-interview/index.md) | [Provenance](docs/en/operations/source-review.md)
+[Library](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Interview](docs/en/faq/index.md) | [Provenance](docs/en/operations/source-review.md)
 
 FastAPI URL creation and public redirects, Redis IDs, reversible Base62 and Cassandra persistence.

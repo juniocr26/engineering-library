@@ -22,7 +22,7 @@ Clean Architecture is a future boundary principle: use cases should express cata
 
 Navigation is Library → Project → Language → Index → Category → Document. `docs/projects/<repository>/` is a collection; its identifier matches the workspace directory. Language paths and ADR filenames remain stable. Category indexes list pages as chapters. English and Portuguese indexes provide project-selection entry points. Topics appear in descriptions and chapter names, with no separate subject hierarchy or search index.
 
-The Engineering Library project entry explains only this project. It references existing canonical environment and validation guides; it does not contain another copy of the portfolio catalog. Older workspace dossiers and cross-project foundations remain available as retained reference material. Source repository identity, revision, inspected paths and evidence limits accompany each collection. Copies are snapshots and do not inherit runtime verification from a successful link check.
+The Engineering Library project entry explains only this project. It references existing canonical environment and validation guides; it does not contain another copy of the portfolio catalog. Project collections retain their own available reference material; removed root-language dossiers are not recreated. Source repository identity, revision, inspected paths and evidence limits accompany each collection. Copies are snapshots and do not inherit runtime verification from a successful link check.
 
 ## Security and unresolved evidence
 

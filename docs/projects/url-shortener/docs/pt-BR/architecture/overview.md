@@ -224,7 +224,7 @@ O comportamento com Redis e Cassandra reais é validado por configuração Docke
 
 **Implementado:** criação/resolução síncronas, clientes reutilizáveis, contador Redis, mappings Cassandra por chave, obfuscação determinística, Basic Auth e testes com fakes. **Projetado / preparado arquiteturalmente:** instâncias podem compartilhar stores, mas não há deploy multi-instância ou failover. **Planejado / trabalho futuro:** testes reais de dependências/falhas, capacidade medida, recuperação/HA, controle de abuso e operação de produção. São candidatos a revisão, não funcionalidades entregues.
 
-O guia URL Shortener do Technical Interview sustenta a intenção de aprendizado (Python e persistência distribuída). Código prevalece. Alternativas são comparações de engenharia, não alegações de protótipos históricos.
+O guia URL Shortener do FAQ sustenta a intenção de aprendizado (Python e persistência distribuída). Código prevalece. Alternativas são comparações de engenharia, não alegações de protótipos históricos.
 
 ### Decisão: Python/FastAPI com chamadas síncronas
 

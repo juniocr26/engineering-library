@@ -38,6 +38,6 @@ UI: http://localhost:3000; API: http://localhost:8080. Dockerfiles constroem cod
 <!-- collection entry -->
 ## Coleção Engineering Library
 
-[Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/technical-interview/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
+[Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/faq/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
 
 Compressão, redimensionamento, conversão e prévia síncronos de imagens Go/Next.js com codecs nativos.

@@ -87,6 +87,6 @@ Static review clarified filesystem race, crash-durability and unexcluded hidden-
 <!-- collection entry -->
 ## Engineering Library collection
 
-[Library](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Interview](docs/en/technical-interview/index.md) | [Provenance](docs/en/operations/source-review.md)
+[Library](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Interview](docs/en/faq/index.md) | [Provenance](docs/en/operations/source-review.md)
 
 Python CLI: literal environment synchronization, preview, backups and filesystem boundaries.

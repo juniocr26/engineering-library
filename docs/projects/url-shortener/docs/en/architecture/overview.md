@@ -224,7 +224,7 @@ Live Redis/Cassandra behavior is validated through Docker Compose configuration 
 
 **Implemented:** synchronous URL creation/resolution, reusable clients, Redis counter, Cassandra primary-key mappings, deterministic obfuscation, Basic Auth and fake-based tests. **Designed / architecturally prepared:** application instances can share backing stores, but no multi-instance deployment or failover is implemented. **Planned / future work:** live dependency/failure tests, measured capacity, recovery/HA, abuse controls and production operations. These are review candidates, not delivered features.
 
-The Technical Interview URL Shortener guide supports the learning intent (Python and distributed persistence). Source remains authoritative. Alternatives below are engineering comparisons, not a claim that each was historically prototyped.
+The FAQ URL Shortener guide supports the learning intent (Python and distributed persistence). Source remains authoritative. Alternatives below are engineering comparisons, not a claim that each was historically prototyped.
 
 ### Decision: Python/FastAPI with synchronous dependency calls
 

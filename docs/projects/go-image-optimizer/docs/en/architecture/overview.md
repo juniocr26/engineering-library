@@ -328,7 +328,7 @@ The two application containers separate Node and Go/native runtime dependencies.
 
 **Implemented:** Compression, Resize, format conversion and preview fallback, with request-scoped results and backend/frontend automated tests. **Designed / architecturally prepared:** small processor/decoder interfaces permit alternative implementations; they are not delivered worker services. **Planned / future work:** no additional product features are currently planned. Reconsideration conditions below are conditional engineering reviews, not commitments to add infrastructure.
 
-The Technical Interview guide confirms Go as a deliberate learning project and the completed scope. The explanations below also use current source; alternatives describe reasonable options rather than undocumented historical deliberation. The preceding trade-off table remains the detailed behavior reference.
+The FAQ guide confirms Go as a deliberate learning project and the completed scope. The explanations below also use current source; alternatives describe reasonable options rather than undocumented historical deliberation. The preceding trade-off table remains the detailed behavior reference.
 
 ### Decision: Go packages and small interfaces for image processing
 

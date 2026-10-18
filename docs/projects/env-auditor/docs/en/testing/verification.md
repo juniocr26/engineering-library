@@ -18,7 +18,7 @@ SHA-256 digests, permission bits, and modification timestamps of discovered envi
 
 ## Static documentation audit — 2026-10-09
 
-Inspected the script and all 17 checked-in test methods without importing or executing them. Updated the architecture and interview material to the authoritative-example implementation. No environment files or backups were read or changed, and no preview or synchronization was executed. Previous runtime results above remain historical evidence. Static Markdown link and documentation-only change checks are recorded in the portfolio interview [review](../../../../../en/testing/verification.md).
+Inspected the script and all 17 checked-in test methods without importing or executing them. Updated the architecture and interview material to the authoritative-example implementation. No environment files or backups were read or changed, and no preview or synchronization was executed. Previous runtime results above remain historical evidence. The earlier shared portfolio review is not included in the current catalog; its reported checks remain historical evidence.
 
 ## Presentation validation — 2026-10-10
 

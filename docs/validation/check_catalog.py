@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
@@ -28,9 +29,16 @@ def main():
             path = Path(root) / name
             if path.suffix == ".md":
                 if validator.classify(workspace, path):
-                    errors.append(["unsafe-document", str(path.relative_to(docs_root))])
+                    errors.append(["unsafe-document", os.path.relpath(path, docs_root)])
                 else:
                     pages[path] = path.read_text(encoding="utf-8")
+    for relative in ('README.md', 'README.pt-BR.md', 'backend/README.md', 'frontend/README.md'):
+        path = docs_root.parent / relative
+        if not validator.classify(workspace, path) and path.is_file():
+            pages[path] = path.read_text(encoding='utf-8')
+    for language in ('en', 'pt-BR'):
+        if (docs_root / language).exists():
+            errors.append(['forbidden-root-language-directory', language])
     graph = {path: set() for path in pages}
     checked_links = 0
     for path, body in pages.items():
@@ -41,16 +49,16 @@ def main():
             raw = path.parent / unquote(url.path) if url.path else path
             reason = validator.classify(workspace, raw)
             if reason:
-                errors.append(["unsafe-link", str(path.relative_to(docs_root)), reason])
+                errors.append(["unsafe-link", os.path.relpath(path, docs_root), reason])
                 continue
             destination = Path(os.path.normpath(raw))
             checked_links += 1
             if not destination.exists():
-                errors.append(["missing-target", str(path.relative_to(docs_root)), target])
+                errors.append(["missing-target", os.path.relpath(path, docs_root), target])
             elif destination in pages:
                 graph[path].add(destination)
                 if url.fragment and unquote(url.fragment) not in validator.anchors(pages[destination]):
-                    errors.append(["missing-anchor", str(path.relative_to(docs_root)), target])
+                    errors.append(["missing-anchor", os.path.relpath(path, docs_root), target])
 
     def reachable(start):
         seen, pending = set(), [start]
@@ -63,7 +71,8 @@ def main():
 
     central = reachable(docs_root / "index.md")
     for path in pages.keys() - central:
-        errors.append(["unreachable-from-library", str(path.relative_to(docs_root))])
+        if path.is_relative_to(docs_root):
+            errors.append(["unreachable-from-library", os.path.relpath(path, docs_root)])
     manifest = json.loads((docs_root / "catalog-provenance.json").read_text())
     actual = {
         path.name for path in workspace.iterdir()
@@ -91,14 +100,19 @@ def main():
             paths.append({p.relative_to(language_root) for p in subset})
             seen = reachable(language_root / "index.md")
             for path in subset - seen:
-                errors.append(["unreachable-from-project", str(path.relative_to(docs_root))])
-            interview = language_root / "technical-interview/index.md"
+                errors.append(["unreachable-from-project", os.path.relpath(path, docs_root)])
+            interview = language_root / "faq/index.md"
             if interview not in pages:
-                errors.append(["missing-interview-index", name, language])
+                errors.append(["missing-faq-index", name, language])
+            if (language_root / 'technical-interview').exists():
+                errors.append(['obsolete-faq-category', name, language])
+            env = language_root / 'env/index.md'
+            if env not in pages or len(pages[env].splitlines()) < 5:
+                errors.append(['missing-env-reference', name, language])
             for category in language_root.iterdir():
                 if category.is_dir() and not category.is_symlink():
                     substantive = [p for p in subset if p.parent == category and p.name != "index.md"]
-                    if not substantive or category / "index.md" not in pages:
+                    if (not substantive and category.name != "env") or category / "index.md" not in pages:
                         errors.append(["empty-or-unindexed-category", name, language, category.name])
         if paths[0] != paths[1]:
             errors.append(["language-path-parity", name])
@@ -107,6 +121,10 @@ def main():
             pt = pages[base / "docs/pt-BR" / relative]
             if validator.question_ids(en) != validator.question_ids(pt):
                 errors.append(["question-id-parity", name, str(relative)])
+            if relative == Path('env/index.md'):
+                variables = lambda body: set(re.findall(r'\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b', body))
+                if variables(en) != variables(pt):
+                    errors.append(['env-variable-parity', name])
         for item in metadata["imports"]:
             imported += 1
             source = workspace / name / item["source"]
@@ -123,7 +141,7 @@ def main():
     hashes = collections.defaultdict(list)
     for path, body in pages.items():
         if path.is_relative_to(docs_root / "projects"):
-            hashes[hashlib.sha256(body.encode()).hexdigest()].append(str(path.relative_to(docs_root)))
+            hashes[hashlib.sha256(body.encode()).hexdigest()].append(os.path.relpath(path, docs_root))
     for group in hashes.values():
         if len(group) > 1:
             warnings.append(["identical-project-documents", group])

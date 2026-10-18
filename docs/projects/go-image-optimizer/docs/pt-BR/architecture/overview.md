@@ -328,7 +328,7 @@ Os dois containers de aplicação separam dependências Node e Go/nativas. Isso 
 
 **Implementado:** Compression, Resize, conversão e fallback de prévia, resultados por requisição e testes backend/frontend. **Projetado / preparado arquiteturalmente:** interfaces pequenas de processor/decoder permitem alternativas; não são serviços workers entregues. **Planejado / trabalho futuro:** nenhuma funcionalidade adicional planejada. Condições de revisão abaixo são hipóteses de engenharia, não compromissos de adicionar infraestrutura.
 
-O guia Technical Interview confirma aprendizado deliberado de Go e escopo concluído. Explicações usam também o código atual; alternativas são opções razoáveis, não deliberações históricas presumidas. A tabela anterior continua referência detalhada do comportamento.
+O guia FAQ confirma aprendizado deliberado de Go e escopo concluído. Explicações usam também o código atual; alternativas são opções razoáveis, não deliberações históricas presumidas. A tabela anterior continua referência detalhada do comportamento.
 
 ### Decisão: Pacotes Go e interfaces pequenas para processamento
 
