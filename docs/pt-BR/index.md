@@ -67,3 +67,5 @@ Aplicabilidade e omissões estão justificadas no [checklist](operations/complet
 - [2026-10-18](operations/workspace-review-2026-10-18.md)
 - [Rust: historical reviews](operations/rust-historical-reviews.md)
 - [Historical flow reviews](operations/historical-flow-reviews.md)
+
+- [Desenvolvimento da aplicação (Rails, Next.js, PostgreSQL)](guides/application-development.md)

@@ -67,3 +67,5 @@ Category applicability and omissions are justified in the [completion checklist]
 - [2026-10-18](operations/workspace-review-2026-10-18.md)
 - [Rust: historical reviews](operations/rust-historical-reviews.md)
 - [Historical flow reviews](operations/historical-flow-reviews.md)
+
+- [Application development (Rails, Next.js, PostgreSQL)](guides/application-development.md)

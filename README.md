@@ -1,5 +1,7 @@
 # Engineering Library
 
+A local-first engineering documentation platform, now with a Docker-based Rails API, Next.js frontend and PostgreSQL foundation. The existing bilingual reference collection remains available. [Application setup and architecture](docs/en/guides/application-development.md).
+
 [English](README.md) | [Português brasileiro](README.pt-BR.md)
 
 A self-contained bilingual technical reference and interview-preparation collection for ENV Auditor, Go Image Optimizer, URL Shortener, Rust Event Relay and Payment Reconciliation Lab. The guides explain implemented behavior, alternatives and limitations; suggested answers should be adapted to experience you can demonstrate.
@@ -41,3 +43,18 @@ python3 -B -m unittest discover -s engineering-library/tools -p test_check_docs.
 ```
 
 Only Python 3.10+ is required for local documentation validation; no application installation is required. [2026-10-18 review and remaining evidence gaps](docs/en/operations/workspace-review-2026-10-18.md).
+
+## Application scaffold
+
+Rails API + Next.js + PostgreSQL development foundation. Existing documentation is preserved below. AI features remain planned.
+
+[Docker, architecture, versions, DBeaver, dependency recovery and tests](docs/en/guides/application-development.md).
+
+```sh
+python3 tools/init_dev_env.py
+docker compose up --build
+# another terminal / outro terminal
+docker compose exec backend bin/rails db:prepare
+# shutdown / encerrar
+docker compose down
+```
