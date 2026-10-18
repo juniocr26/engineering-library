@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 import { paginateMeasured, type BookUnit } from '../lib/book-pagination';
 import { contentPageId } from '../lib/manuscript';
 import { ManuscriptDecorations } from './manuscript-decorations';
@@ -112,7 +112,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     const identity = contentPageId((page ?? []).map(unit => unit.id));
     return <div className="reader-leaf paper manuscript-surface" key={key} data-page-id={identity}>
       <ManuscriptDecorations variant="reading" project={project} identity={identity}/>
-      {side === 'left' && header}
+      {/* Give the externally owned header its own stable sibling boundary. */}
+      {side === 'left' && <Fragment key="header">{header}</Fragment>}
       {page?.length && pageAction ? pageAction(page, physicalPage) : null}
       <div className="reader-body">{page?.map(unit => <div className="book-unit" data-unit-id={unit.id} key={unit.id}>{renderUnit(unit)}</div>)}</div>
       {(mode === 'single-page' || side === 'right') && controls}
@@ -138,7 +139,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       </div>}
     </div>
     <div className="reader-measure" aria-hidden="true" inert>
-      <div className="reader-leaf paper reader-probe reader-probe--left">{header}<div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div><div className="reader-probe-controls">{controls}</div></div>
+      <div className="reader-leaf paper reader-probe reader-probe--left"><Fragment key="header">{header}</Fragment><div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div><div className="reader-probe-controls">{controls}</div></div>
       <div className="reader-leaf paper reader-probe reader-probe--right"><div className="reader-body" ref={measureRight}/>{controls}</div>
     </div>
 
