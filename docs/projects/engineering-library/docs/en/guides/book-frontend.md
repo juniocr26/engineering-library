@@ -6,7 +6,7 @@ The landing page implements the approved HTML book prototype: two pages on deskt
 
 ## Responsibilities
 
-- `app/page.tsx` requests the Rails catalog on the server. `app/projects/[slug]/page.tsx` discovers the bilingual Markdown collection through `lib/documentation.ts`; document links open public repository Markdown, pending a full document reader.
+- `app/page.tsx` requests the Rails catalog on the server. `app/projects/[slug]/page.tsx` discovers the bilingual Markdown collection through `lib/documentation.ts`; document links open the internal `/projects/[slug]/docs/[...document]` reader route.
 - `components/book-layout.tsx`, `project-list.tsx`, `pagination.tsx` and `catalog-state.tsx` own the book, cards, navigation and localized empty/error/loading states. `document-language.tsx` updates the document language after navigation; the initial shell defaults to Portuguese.
 - `lib/i18n.ts` defines the two languages and navigation URLs. `lib/pagination.ts` computes bounded page indicators independently of rendering. `lib/catalog.ts` contains typed server-only API access, using the existing `BACKEND_URL`.
 - Rails `Catalog::Files` reads only scoped catalog files. `Catalog::Sync` indexes identities. `Catalog::Page` performs PostgreSQL counting, sorting, offset and limit. `Catalog::Presenter` reads localized descriptions for the selected records. `Api::ProjectsController` handles HTTP responses.
@@ -56,7 +56,7 @@ git diff --check
 
 Compose adds only a read-only documentation mount at `/docs/projects`; existing database configuration and environment remain intact. Outside Docker, the catalog defaults to the repository `docs/projects` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; stop development or use a separate build output directory.
 
-Current limits: no full document reader, editing, bookmarks, authentication or search. API downtime produces a localized retry state. Future reader work must resolve document links safely, render Markdown accessibly and preserve project/language/category navigation.
+Current limits: no documentation editing, authentication or cross-device bookmark synchronization. API downtime produces a localized retry state. The document reader resolves repository Markdown with scoped filesystem reads and preserves project/language navigation.
 
 Browser smoke checks (install Playwright and Chromium in a temporary directory first):
 
@@ -69,7 +69,7 @@ docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_mo
 
 ## Reusable manuscript identity
 
-`ManuscriptDecorations` layers original local assets over `.manuscript-surface`, below `.content`. `BookLayout` applies it to the catalog and existing project indexes. Future readers, FAQ and documentation pages should reuse this surface and select the `reading` composition; those future screens are not implemented here. The `catalog`, `reading` and `illustration` variants use deterministic content-based layouts from `lib/manuscript.ts`, never `Math.random()`.
+`ManuscriptDecorations` layers original local assets over `.manuscript-surface`, below `.content`. `BookLayout` applies it to the catalog and existing project indexes. The documentation reader reuses this surface with the `reading` composition. The `catalog`, `reading` and `illustration` variants use deterministic content-based layouts from `lib/manuscript.ts`, never `Math.random()`.
 
 Assets live in `frontend/public/assets/manuscript/`: `parchment/` contains the delivered grain WebP and its editable SVG master; `burns/`, `ink/`, `wax/`, `erasures/` and `ornaments/` contain original SVG contours, absorbed ink, amber wax, nonlinguistic crossed pen strokes and the title quill. Reuse these files rather than copying textures. To regenerate the WebP, run Sharp against `aged-fibers-master.svg` with WebP quality 82 from the frontend environment.
 
@@ -85,4 +85,42 @@ A single locked transition lifecycle drives both spread (>920px) and single-page
 
 Decorative seeds combine project, ordered canonical content identities and a versioned variant; translated titles and physical page numbers are excluded. Marks stay stable when that content identity survives reflow. Changed groupings intentionally get a new composition. Burn frames, ink, wax, corrections, liquid rings and abrasions are absolute, pointer-transparent margin layers, independent of measurement. No graphics or animation dependency was added. The existing landing layout and controls remain unchanged; the inspected baseline had no mobile hamburger component, so the TOC supplies a minimal accessible hamburger menu linking back to the catalog.
 
-Limitations: document links still open GitHub, not an in-app Markdown reader. Oversized individual units scroll inside their page. Curvature is approximated with lightweight rigid-sheet perspective and shading. Browser visual checks and unit tests are complementary; none prove every document/font/zoom combination.
+Limitations: relative references to files outside the documentation collections are unavailable in the reader. Oversized individual units scroll inside their page. Curvature is approximated with lightweight rigid-sheet perspective and shading. Browser visual checks and unit tests are complementary; none prove every document/font/zoom combination.
+
+### Dynamic physical page count
+
+The shared engine displays `Page 1 of N` in single-page mode and `Page 1–2 of N` in spread mode (Portuguese: `Página 1 de N`). The final odd leaf counts once; an empty companion leaf is excluded. The total is the length of the browser-measured page array, never a character estimate or the catalog API total.
+
+Before measurements are available, and while fonts or content images are loading, the controls display `Paginating…` and prevent navigation. Previously rendered leaves stay in place. Image load/error, font completion, body/unit resizing, language and content updates trigger measurements. Identical geometry does not rebuild pagination or cancel a turn. The indicator stays on one line to avoid changing the measured page capacity as digits change.
+
+Repagination resolves the canonical reading anchor into the new page array, then aligns it to a spread where appropriate. Physical numbers and totals exist only in browser state; PostgreSQL persists only logical bookmark locations. Bookmarks store canonical content locations independently of these viewport-dependent numbers.
+
+`tests/book-browser.cjs` compares the published total with independently packed DOM measurements, traverses to the last spread, and checks responsive resizing, both languages and changed font metrics. It exercises the table of contents. `tests/document-reader-browser.cjs` exercises actual Markdown routing, chapter/search anchors, Mermaid, bookmark persistence and responsive page navigation.
+
+## Internal Markdown navigation and reader
+
+The previous `documentationEntries` builder hardcoded GitHub blob URLs. There was no document route, Markdown renderer, search or bookmark API to connect. Those were missing functionality, rather than a redirect regression. The builder and Rails category metadata now return internal routes. Catalog project pagination remains unchanged.
+
+`documentationSource` maps canonical IDs (`README` or a localized-relative `.md` path) onto the selected project/language. Each read validates segments and resolves real paths inside the project; invalid, absent or escaping paths produce a parchment-styled 404 without disclosing filesystem locations. Direct URLs, reload and browser history use the Next App Router. Navigation-only index pages remain loadable even when omitted from the TOC. Genuine external HTTP(S)/mail links retain their destinations; Markdown links within collections resolve relative to their actual source path, including language and cross-project links. Source-code references outside collections are shown without a destination rather than pointing at local files. Images use a scoped, extension-allowlisted asset endpoint with restrictive CSP and nosniff.
+
+`markdownUnits` parses a Markdown AST with remark/GFM. Top-level semantic units preserve headings, paragraphs, lists, code, tables and reference definitions. Heading anchors follow GitHub slug conventions; other blocks use a section/content hash, so inserting a different block does not shift their identity. `MarkdownUnit` uses react-markdown with raw HTML disabled. Mermaid is loaded lazily in strict mode, with accessible diagram source and a source-code fallback on failure. Pending diagram rendering participates in measurement readiness. Wide content can scroll locally; an oversized semantic unit remains on one physical page with internal scrolling. Physical page totals count the engine's leaves, not scroll subdivisions.
+
+`DocumentationReader` composes the existing `BookReader`, Markdown units and native-dialog parchment panels. Search, chapters and saved bookmarks have separate controls; each visible leaf has its own bookmark toggle and animated corner ribbon. Dialogs trap focus, restore it on closing and support Escape. Chapter, search and bookmark destinations share the reader route and content anchors. Anchor jumps select the containing measured page; ordinary previous/next turns retain the existing animation. Document-route changes load normally without forcing an animation over unloaded content. Missing/translated anchors display an explicit fallback notice. No page-number equivalence between languages is assumed.
+
+## Search and anonymous PostgreSQL bookmarks
+
+`GET /api/document-search/:project?q=...&lang=...` scans the selected collection's actual Markdown on demand, matches semantic block text and returns up to 80 contextual results with internal routes and anchors. The UI debounces input, cancels stale requests, and shows loading/empty/error states. There is no separate index to synchronize. The selected result block receives red text highlights. Search skips navigation-only indexes and ignores raw HTML/decorations.
+
+Rails exposes `GET/POST /api/bookmarks` and `DELETE /api/bookmarks/:id`, proxied through same-origin Next routes. GET establishes a cryptographically random 256-bit reader token in a signed, one-year HttpOnly, SameSite=Lax cookie (Secure in production); PostgreSQL stores only its SHA-256 digest. There are no user, login or session tables. GET also supplies an expiring signed CSRF token bound to that digest. Mutations require it; the proxy additionally verifies Origin. The backend ignores client-supplied reader IDs and scopes every list/delete to the cookie-derived digest. Responses are not cached.
+
+Migration `20261018010000_create_bookmarks` adds only `bookmarks`: digest, project, canonical document, language, logical anchor, bounded excerpt and timestamps. A unique index prevents duplicate logical locations; checks constrain language and digest. Referenced projects/documents are validated. The API bounds each browser collection to 200 entries, returns 422 for invalid locations, 403 for missing identity/CSRF, 404 for another browser's or absent bookmark, and 503 for database failures. No physical page number/count is stored. Cookies are forwarded server-side, with no privileged token in localStorage or URLs.
+
+Bookmarks belong to the browser identity, do not synchronize across devices, and become inaccessible if its cookie is cleared. Content changes can invalidate a block hash; the reader then shows an explicit document-start fallback. Deployment must expose the Next routes and use HTTPS in production. This is anonymous browser persistence, not authentication.
+
+Missing documents use Next `notFound()`: the error UI can arrive with HTTP 200 when the ancestor loading boundary has already started streaming; non-streamed responses use 404. Asset endpoints return 404 directly. Reference: [Next not-found](https://nextjs.org/docs/app/api-reference/file-conventions/not-found).
+
+Run the complete reader browser regression with an external Playwright installation:
+
+```sh
+docker compose exec -T frontend env PLAYWRIGHT_BROWSERS_PATH=/tmp/el-browsers PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/document-reader-browser.cjs
+```

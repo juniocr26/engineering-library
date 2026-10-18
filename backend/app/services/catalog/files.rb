@@ -26,7 +26,7 @@ module Catalog
       source.scan(/^[-*] \[([^\]]+)\]\(([a-zA-Z0-9_-]+)\/index\.md\)/).filter_map do |label, category|
         begin
           read(slug, "docs/#{language}/#{category}/index.md")
-          { name: label, url: "https://github.com/juniocr26/engineering-library/blob/main/docs/projects/#{slug}/docs/#{language}/#{category}/index.md" }
+          { name: label, url: "/projects/#{slug}/docs/#{category}/index.md?lang=#{language}" }
         rescue Errno::ENOENT, ArgumentError
           nil
         end

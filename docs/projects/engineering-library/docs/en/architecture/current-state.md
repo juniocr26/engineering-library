@@ -1,5 +1,7 @@
 # Engineering Library: current architecture
 
+> Historical scaffold inspection recorded on 2026-10-18. For the current catalog, internal Markdown reader, search and anonymous bookmarks, see [Book frontend and catalog](../guides/book-frontend.md).
+
 ## Purpose and evidence boundary
 
 The library preserves software engineering mechanisms, decisions, limits and interview reasoning in English and Brazilian Portuguese. Local Markdown is the current content source. Static inspection on 2026-10-18 examined routes, application classes, frontend page/status component, Compose, database configuration, dependency declarations, environment-template keys and test definitions. Existing execution reports remain dated evidence; no application was run for this catalog.

@@ -10,9 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "bookmarks", force: :cascade do |t|
+    t.string "reader_digest", limit: 64, null: false
+    t.string "project", limit: 100, null: false
+    t.string "document", limit: 240, null: false
+    t.string "language", limit: 5, null: false
+    t.string "anchor", limit: 200, null: false
+    t.string "excerpt", limit: 240, default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reader_digest", "project", "document", "language", "anchor"], name: "bookmarks_logical_location", unique: true
+    t.check_constraint "language::text = ANY (ARRAY['en'::character varying, 'pt-BR'::character varying]::text[])", name: "bookmarks_language"
+    t.check_constraint "reader_digest::text ~ '^[0-9a-f]{64}$'::text", name: "bookmarks_reader_digest"
+  end
 
   create_table "catalog_projects", force: :cascade do |t|
     t.string "stable_id", null: false

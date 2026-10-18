@@ -8,10 +8,34 @@ const assert = require('node:assert/strict');
   page.on('console', message => { if (message.type() === 'error' && /hydrat/i.test(message.text())) errors.push(message.text()); });
   const base = process.env.BROWSER_BASE_URL || 'http://localhost:3000';
   const ids = () => page.locator('.reader-pages .reader-leaf').evaluateAll(nodes => nodes.map(n => n.dataset.pageId));
+  // Independently pack browser geometry and compare it with the published total.
+  async function verifyTotal() {
+    await page.waitForFunction(() => document.querySelector('.reader[data-pagination="ready"]'));
+    const expected = await page.evaluate(() => {
+      const spread = document.querySelector('.reader').dataset.mode === 'spread';
+      const left = document.querySelector('.reader-probe--left .reader-body');
+      const right = document.querySelector('.reader-probe--right .reader-body');
+      const units = [...left.children];
+      let pages = 1, used = 0, entries = 0;
+      units.forEach((unit, index) => {
+        const height = unit.getBoundingClientRect().height;
+        const following = unit.querySelector('.toc-chapter > span') ? units[index + 1]?.getBoundingClientRect().height || 0 : 0;
+        const capacity = spread && pages % 2 === 0 ? right.clientHeight : left.clientHeight;
+        if (entries && used + height + following > capacity) { pages++; used = 0; entries = 0; }
+        used += height; entries++;
+      });
+      return pages;
+    });
+    const label = await page.locator('.reader-pages .reader-controls span').innerText();
+    assert.equal(Number(label.match(/(\d+)$/)[1]), expected, label);
+    return expected;
+  }
   for (const width of [1440, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(`${base}/projects/engineering-library?lang=en`, { waitUntil: 'networkidle' });
-    await page.waitForFunction(() => document.querySelector('.reader-controls span')?.textContent?.match(/\/ [2-9]/));
+    await page.waitForFunction(() => document.querySelector('.reader[data-pagination="ready"]'));
+    assert.match(await page.locator('.reader-pages .reader-controls span').innerText(), /^Page 1(?:–2)? of [1-9]\d*$/);
+    await verifyTotal();
     assert.equal(await page.locator('.reader').getAttribute('data-mode'), width > 920 ? 'spread' : 'single-page');
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     const original = await ids();
@@ -47,9 +71,9 @@ const assert = require('node:assert/strict');
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await previous.click();
       assert.deepEqual(await ids(), original);
-      await page.locator('.toc-mobile-menu summary').click();
-      assert.ok(await page.locator('.toc-mobile-menu a').isVisible());
-      await page.locator('.toc-mobile-menu summary').click();
+      await page.locator('.reader-pages .toc-mobile-menu summary').click();
+      assert.ok(await page.locator('.reader-pages .toc-mobile-menu a').isVisible());
+      await page.locator('.reader-pages .toc-mobile-menu summary').click();
     }
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await next.focus(); await page.keyboard.press('ArrowRight');
@@ -59,12 +83,35 @@ const assert = require('node:assert/strict');
     await page.setViewportSize({ width: width === 1440 ? 390 : 1440, height: 900 });
     await page.waitForTimeout(250);
     assert.ok((await ids()).some(id => JSON.parse(id).includes(anchor)));
+    await verifyTotal();
     const numbers = await page.locator('.reader-measure .chapter-number').allTextContents();
     await page.getByRole('link', { name: 'Português', exact: true }).click();
     await page.waitForURL(/lang=pt-BR/); await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => document.querySelector('.reader[data-pagination="ready"]'));
+    assert.match(await page.locator('.reader-pages .reader-controls span').innerText(), /^Página \d+(?:–\d+)? de [1-9]\d*$/);
+    await verifyTotal();
     assert.deepEqual(await page.locator('.reader-measure .chapter-number').allTextContents(), numbers);
     await page.emulateMedia({ reducedMotion: 'no-preference' });
   }
+  // Traverse every spread through the final odd/even leaf; no phantom blank page is counted.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${base}/projects/engineering-library?lang=en`, { waitUntil: 'networkidle' });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const total = await verifyTotal();
+  const next = page.getByRole('button', { name: 'Next page', exact: true });
+  let start = 1;
+  while (await next.getAttribute('aria-disabled') === 'false') {
+    await next.click(); start += 2;
+    assert.equal(await page.locator('.reader-pages .reader-controls span').innerText(), `Page ${start}${start < total ? `–${start + 1}` : ''} of ${total}`);
+  }
+  assert.equal(start + (start < total ? 1 : 0), total);
+  // Actual font metrics change without a viewport event.
+  const fontOverride = await page.addStyleTag({ content: '.reader .toc-document{font-size:28px!important;line-height:2!important}' });
+  await page.waitForTimeout(250);
+  assert.ok(await verifyTotal() > total);
+  await fontOverride.evaluate(node => node.remove());
+  await page.waitForTimeout(250);
+  assert.equal(await verifyTotal(), total);
   assert.deepEqual(errors, []);
   console.log('PASS: desktop/tablet/mobile, forward/backward geometry, rapid navigation lock, content continuity, stable reload textures, keyboard, touch swipes, mobile menu, bilingual numbering, reduced motion, resize anchor, no horizontal overflow/runtime errors');
   await browser.close();

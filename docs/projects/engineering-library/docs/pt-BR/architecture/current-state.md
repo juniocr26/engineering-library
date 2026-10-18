@@ -1,5 +1,7 @@
 # Engineering Library: arquitetura atual
 
+> Inspeção histórica do scaffold registrada em 18/10/2026. Para o catálogo atual, leitor Markdown interno, busca e marcações anônimas, consulte [Frontend em formato de livro e catálogo](../guides/book-frontend.md).
+
 ## Propósito e limites da evidência
 
 A biblioteca preserva mecanismos, decisões, limites e raciocínio de entrevistas de engenharia em inglês e português brasileiro. Markdown local é a fonte atual do conteúdo. A inspeção estática de 2026-10-18 examinou rotas, classes da aplicação, página e componente de status do frontend, Compose, configuração do banco, dependências, nomes de variáveis do template e definições de testes. Relatos de execução existentes continuam como evidência datada; nenhuma aplicação foi executada nesta catalogação.

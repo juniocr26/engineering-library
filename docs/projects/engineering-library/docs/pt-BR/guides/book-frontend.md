@@ -6,7 +6,7 @@ A página inicial implementa o protótipo HTML aprovado: duas páginas no deskto
 
 ## Responsabilidades
 
-- `app/page.tsx` consulta o catálogo Rails no servidor. `app/projects/[slug]/page.tsx` gera o sumário dos documentos reais com `lib/documentation.ts`; os links abrem Markdown no repositório público enquanto o leitor não existe.
+- `app/page.tsx` consulta o catálogo Rails no servidor. `app/projects/[slug]/page.tsx` gera o sumário dos documentos reais com `lib/documentation.ts`; os links abrem o leitor interno em `/projects/[slug]/docs/[...document]`.
 - `components/book-layout.tsx`, `project-list.tsx`, `pagination.tsx` e `catalog-state.tsx` implementam livro, cartões, navegação e estados localizados de vazio, erro e carregamento. `document-language.tsx` atualiza o idioma do documento após navegação; a estrutura inicial usa português.
 - `lib/i18n.ts` define os idiomas e URLs. `lib/pagination.ts` calcula os indicadores limitados, separado da apresentação. `lib/catalog.ts` contém contratos e acesso à API apenas no servidor, usando o `BACKEND_URL` existente.
 - No Rails, `Catalog::Files` lê arquivos restritos ao catálogo. `Catalog::Sync` indexa identidades. `Catalog::Page` conta, ordena e pagina no PostgreSQL. `Catalog::Presenter` lê as descrições localizadas dos registros selecionados. `Api::ProjectsController` responde HTTP.
@@ -56,7 +56,7 @@ git diff --check
 
 O Compose acrescenta somente montagem de documentação em leitura em `/docs/projects`; preserva configuração do banco e ambiente. Fora do Docker, o caminho padrão é `docs/projects`, irmão do Rails; `CATALOG_ROOT` permite substituição nos testes. Os testes usam o banco Rails de teste separado. Não execute build e servidor de desenvolvimento simultaneamente no mesmo `.next`; pare o desenvolvimento ou use outro diretório de build.
 
-Limites atuais: sem leitor completo, edição, favoritos, autenticação ou busca. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor futuro deverá resolver links com segurança, renderizar Markdown de forma acessível e preservar navegação por projeto, idioma e categoria.
+Limites atuais: sem edição de documentação, autenticação ou sincronização de marcações entre dispositivos. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor resolve arquivos Markdown com escopo validado e preserva navegação por projeto e idioma.
 
 Verificação no navegador (instale Playwright e Chromium antes em diretório temporário):
 
@@ -69,7 +69,7 @@ docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_mo
 
 ## Identidade reutilizável de manuscrito
 
-`ManuscriptDecorations` posiciona assets locais originais sobre `.manuscript-surface`, abaixo de `.content`. `BookLayout` aplica o sistema ao catálogo e aos índices existentes de projetos. Futuros leitores, FAQ e páginas de documentação devem reutilizar essa superfície com a composição `reading`; essas telas futuras não foram implementadas aqui. As variantes `catalog`, `reading` e `illustration` usam composições determinísticas baseadas no conteúdo em `lib/manuscript.ts`, sem `Math.random()`.
+`ManuscriptDecorations` posiciona assets locais originais sobre `.manuscript-surface`, abaixo de `.content`. `BookLayout` aplica o sistema ao catálogo e aos índices existentes de projetos. O leitor documental reutiliza essa superfície com a composição `reading`. As variantes `catalog`, `reading` e `illustration` usam composições determinísticas baseadas no conteúdo em `lib/manuscript.ts`, sem `Math.random()`.
 
 Os assets ficam em `frontend/public/assets/manuscript/`: `parchment/` contém o WebP de granulação e seu original SVG editável; `burns/`, `ink/`, `wax/`, `erasures/` e `ornaments/` contêm contornos queimados, tinta absorvida, cera âmbar, traços riscados sem conteúdo linguístico e a pena do título. Reutilize os arquivos em vez de duplicar texturas. Para regenerar o WebP, use Sharp sobre `aged-fibers-master.svg` com qualidade WebP 82 no ambiente do frontend.
 
@@ -85,4 +85,42 @@ O mesmo ciclo de transição atende `spread` acima de 920px e `single-page` nos 
 
 `lib/manuscript.ts` combina projeto, identidades canônicas ordenadas e variante versionada. Idioma e número físico não entram na semente. O mesmo conjunto de conteúdo mantém as marcas; agrupamentos diferentes recebem outra composição. Queimaduras, tinta, cera, rasuras, líquidos e abrasões são camadas absolutas nas margens, sem eventos de ponteiro nem impacto na medição. Nenhuma dependência gráfica foi adicionada. O catálogo inicial permanece preservado; a versão inspecionada não possuía hamburger mobile, então o sumário fornece um menu hamburger mínimo e acessível para voltar ao catálogo.
 
-Limites: documentos abrem no GitHub; o leitor Markdown completo não foi implementado. Unidades excepcionalmente altas usam rolagem interna. A curvatura é aproximada por perspectiva e iluminação de uma folha rígida. Testes automatizados não comprovam todos os documentos, fontes e níveis de zoom.
+Limites: referências a código fora das coleções documentais ficam sem destino no leitor. Unidades excepcionalmente altas usam rolagem interna. A curvatura é aproximada por perspectiva e iluminação de uma folha rígida. Testes automatizados não comprovam todos os documentos, fontes e níveis de zoom.
+
+### Contagem dinâmica de páginas físicas
+
+O motor compartilhado mostra `Página 1 de N` em página única e `Página 1–2 de N` em modo duplo (inglês: `Page 1 of N`). A última folha ímpar conta uma vez; a folha acompanhante vazia não entra no total. O total corresponde ao tamanho do resultado da paginação medida no navegador, nunca a uma estimativa por caracteres ou ao total do catálogo.
+
+Antes de obter medidas válidas, ou enquanto fontes e imagens do conteúdo carregam, os controles mostram `Paginando…` e impedem a navegação. As folhas anteriores permanecem visíveis. Carga/erro de imagens, conclusão de fontes, resize das unidades/áreas, idioma e conteúdo provocam nova medição. Geometria idêntica não reconstrói páginas nem cancela uma virada. O indicador fica em uma linha para não alterar a capacidade medida quando seus dígitos mudam.
+
+A repaginação localiza a âncora canônica de leitura no novo conjunto de páginas e alinha o resultado ao par quando necessário. Números físicos e totais ficam apenas no estado do navegador; PostgreSQL persiste apenas posições lógicas das marcações. Marcações guardam posições canônicas de conteúdo, independentemente desses números variáveis por viewport.
+
+`tests/book-browser.cjs` compara o total publicado com agrupamento independente das medidas DOM, percorre até o último par e verifica resize responsivo, os dois idiomas e mudanças de métricas de fonte. O teste usa o sumário. `tests/document-reader-browser.cjs` cobre Markdown real, capítulos, busca, Mermaid, persistência das marcações e navegação responsiva.
+
+## Navegação interna e leitor Markdown
+
+A investigação confirmou URLs GitHub fixas em `documentationEntries`. Não existiam rota de documento, renderizador Markdown, busca ou API de marcações. Eram funcionalidades ausentes. O gerador do sumário e os metadados de categorias Rails agora retornam rotas internas. A paginação do catálogo permanece independente.
+
+`/projects/[slug]/docs/[...document]` usa o App Router para acesso direto, refresh e histórico. `documentationSource` resolve IDs canônicos (`README` ou caminho relativo `.md`) no projeto e idioma selecionados. Valida segmentos, resolve caminhos reais e rejeita arquivos ausentes ou fora do projeto com 404 em pergaminho, sem expor caminhos locais. Índices apenas navegacionais continuam acessíveis por links relativos. Links HTTP(S)/mail externos mantêm seu destino; Markdown dentro das coleções resolve relativamente ao arquivo original, inclusive entre idiomas/projetos. Referências a código fora das coleções ficam sem destino. Imagens usam endpoint de arquivos com extensões permitidas, CSP restritiva e nosniff.
+
+`markdownUnits` usa AST remark/GFM para preservar cabeçalhos, parágrafos, listas, código, tabelas e referências. Cabeçalhos usam slugs GitHub; outros blocos usam hash da seção/conteúdo, sem depender da posição numérica. `MarkdownUnit` usa react-markdown sem HTML bruto. Mermaid carrega sob demanda em modo strict, com fonte acessível e fallback textual em caso de erro; sua renderização pendente impede a publicação prematura do total. Conteúdo largo usa rolagem local; uma unidade semântica maior que a folha permanece acessível por rolagem interna. O total conta as folhas físicas do motor, não subdivisões dessa rolagem.
+
+`DocumentationReader` integra `BookReader` e painéis de pergaminho com dialog nativo. Busca, capítulos e lista de marcações têm controles distintos. Cada folha visível possui marcação própria e fita animada no canto. Painéis contêm o foco, restauram-no ao fechar e aceitam Escape. Capítulos, resultados e marcações usam as mesmas rotas e âncoras; o motor encontra a página física correspondente. As setas mantêm a virada existente; mudanças de documento carregam normalmente, sem forçar animação sobre conteúdo ainda indisponível. Âncoras removidas ou sem correspondência no idioma exibem aviso explícito e fallback para o início. Não há equivalência presumida entre números físicos nos idiomas.
+
+## Busca e marcações anônimas no PostgreSQL
+
+`GET /api/document-search/:project?q=...&lang=...` pesquisa diretamente o texto dos blocos Markdown do projeto/idioma, com até 80 resultados, trechos e rotas internas com âncora. A interface aplica debounce, cancela requisições antigas e mostra carga, vazio e erro. Não existe índice separado para sincronizar. O bloco selecionado recebe destaque vermelho. Índices apenas navegacionais, HTML bruto e decoração não são pesquisados.
+
+Rails expõe `GET/POST /api/bookmarks` e `DELETE /api/bookmarks/:id`, via proxy Next de mesma origem. GET cria token aleatório criptográfico de 256 bits em cookie assinado HttpOnly, SameSite=Lax, com validade de um ano e Secure em produção. PostgreSQL guarda somente SHA-256. GET fornece também token CSRF assinado, com expiração e vínculo ao digest; mutações o exigem. O proxy verifica Origin. Identificadores de leitor enviados pelo cliente não definem o escopo: todas as consultas/exclusões usam o digest derivado do cookie. Respostas não são cacheadas. Não há usuários, login ou sessões.
+
+A migração `20261018010000_create_bookmarks` cria apenas `bookmarks`: digest, projeto, documento canônico, idioma, âncora lógica, trecho limitado e timestamps. Índice único impede duplicatas; constraints validam idioma/digest. A API valida projeto/documento e limita a coleção a 200 entradas. Retorna 422 para dados inválidos, 403 sem identidade/CSRF, 404 para marcação ausente ou de outro navegador e 503 em falha do banco. Números físicos/totais nunca são persistidos. Cookies são encaminhados no servidor, sem token privilegiado em localStorage ou URLs.
+
+As marcações pertencem à identidade do navegador. Não sincronizam entre dispositivos; limpar o cookie remove o acesso. Alterações no conteúdo podem invalidar o hash de um bloco; o leitor informa e mostra o início do documento. O deploy deve expor as rotas Next e usar HTTPS em produção. Essa persistência anônima não é autenticação.
+
+Documentos ausentes usam `notFound()` do Next: a tela de erro pode chegar com HTTP 200 quando o loading do ancestral já iniciou streaming; sem streaming, a resposta usa 404. Os endpoints de arquivos retornam 404 diretamente. Referência: [Next not-found](https://nextjs.org/docs/app/api-reference/file-conventions/not-found).
+
+Execute a regressão de navegador do leitor com Playwright instalado fora da árvore de dependências da aplicação:
+
+```sh
+docker compose exec -T frontend env PLAYWRIGHT_BROWSERS_PATH=/tmp/el-browsers PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/document-reader-browser.cjs
+```

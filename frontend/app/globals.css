@@ -358,6 +358,7 @@ inset:0}
 .reader-measure .reader-body{overflow:visible}
 .reader-probe-controls{display:none;flex-shrink:0}
 .reader-controls{position:relative;z-index:2;display:flex;justify-content:center;align-items:center;gap:24px;padding:20px 0 0;flex-shrink:0}
+.reader-controls span{white-space:nowrap;font-variant-numeric:tabular-nums}
 .reader-leaf>.reader-controls{align-self:flex-end}
 .reader[data-mode=single-page] .reader-leaf>.reader-controls{align-self:center}
 .toc-empty{position:relative;padding:40px;border:8px solid #392215;border-radius:18px}
@@ -377,6 +378,7 @@ inset:0}
 .reader[data-mode=single-page] .turn-sheet{width:100%}
 @media(max-width:920px){.toc-scene{padding:12px}.toc-header .langs{gap:0}.toc-header .lang{padding:6px;font-size:13px}.reader-measure{grid-template-columns:1fr}.reader-probe--right{display:none!important}.reader-probe-controls{display:block}.reader{--leaf-pad:28px;--leaf-height:clamp(700px,calc(100dvh - 48px),1200px)}.toc-document{font-size:15px;padding-left:8px}}
 @media(max-width:480px){.toc-scene{padding:0}.reader{border-width:4px;border-radius:0;--leaf-pad:24px;--leaf-height:max(740px,calc(100dvh - 8px))}.toc-header{gap:8px}.toc-header h1{margin:0 0 8px}.toc-document{font-size:14px}.toc-chapter{font-size:21px}}
+@media(max-width:480px){.reader-controls{gap:12px;font-size:14px}.reader-controls button{padding:8px 10px}}
 @media(prefers-reduced-motion:reduce){.turn-sheet,.turn-face:after{animation:none}}
 
 .toc-quill{display:inline-block;width:40px;height:65px;vertical-align:middle;background:url('/assets/manuscript/ornaments/writing-quill.svg') center/contain no-repeat}
@@ -389,3 +391,41 @@ inset:0}
 @media(max-width:920px){.toc-mobile-menu{display:block}.toc-header>.langs{width:100%;justify-content:center}}
 
 @media(max-width:920px){.reader .seeded-mark--ink{max-width:70px;max-height:70px}}
+
+/* Documentation uses the existing leaves, textures and measured body geometry. */
+.reader-document-header{position:relative;z-index:4;display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;flex-shrink:0;padding-right:32px;margin-bottom:16px;font-size:14px}
+.reader-document-header a{color:#173d5c}
+.reader-toolbar{display:flex;gap:6px;margin-left:auto}
+.reader-toolbar button,.reader-panel button,.reader-bookmark-toggle{color:#173d5c;background:#e8c48b;border:1px solid #966332;border-radius:5px;cursor:pointer;padding:5px 9px;font:inherit}
+.reader-toolbar button{font-size:23px;line-height:1;min-width:34px;min-height:34px}
+.reader-document-languages{display:flex;gap:16px;width:100%;flex-wrap:wrap}
+.reader-document-languages [aria-current=true]{font-weight:bold}
+.reader-markdown{font-size:16px;line-height:1.65;color:#173d5c}
+.reader-markdown h1,.reader-markdown h2,.reader-markdown h3{font-family:'Great Vibes','Apple Chancery',cursive;font-weight:400;line-height:1.2;margin:6px 0 10px}
+.reader-markdown h1{font-size:40px}.reader-markdown h2{font-size:32px}.reader-markdown h3{font-size:27px}
+.reader-markdown p,.reader-markdown ul,.reader-markdown ol,.reader-markdown blockquote{margin:4px 0 10px}
+.reader-markdown a{color:#173d5c;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.reader-markdown blockquote{border-left:3px solid #966332;padding-left:14px}
+.reader-markdown img{max-width:100%;height:auto}
+.reader-markdown code{font-size:.82em;white-space:pre-wrap;overflow-wrap:anywhere}
+.reader-code,.reader-table,.reader-diagram{max-width:100%;overflow:auto;scrollbar-width:thin}
+.reader-code>code{display:block;background:#76532a12;border:1px solid #96633266;padding:12px;white-space:pre;overflow-wrap:normal}
+.reader-table table{border-collapse:collapse;min-width:100%}.reader-table th,.reader-table td{border:1px solid #96633277;padding:5px 9px;text-align:left;min-width:100px}
+.reader-diagram svg{max-width:100%;height:auto;display:block}.reader-diagram pre{font-size:12px;white-space:pre}
+.reader-markdown mark{color:#3b1720;background:#bd443a55;box-shadow:0 1px 1px #9c332b55}
+.reader-panel{position:fixed;inset:20px 20px 20px auto;width:min(390px,calc(100vw - 32px));max-height:calc(100dvh - 40px);margin:0;padding:24px;border:6px solid #392215;border-radius:12px;color:#173d5c;box-shadow:0 12px 40px #0009}
+.reader-panel::backdrop{background:#21130655}
+.reader-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid #96633277;margin-bottom:18px}
+.reader-panel h2{font:400 34px/1.2 'Great Vibes',cursive;margin:0 0 10px}.reader-panel h3{font-size:17px}
+.reader-panel-heading button{font-size:26px;line-height:1;margin-bottom:10px}
+.reader-panel input{width:100%;margin-top:10px;background:#f3deb299;border:1px solid #966332;border-radius:5px;padding:10px;color:#173d5c;font:inherit}
+.reader-panel-list{list-style:none;padding:0;margin:0}.reader-panel-list li{border-bottom:1px solid #96633255;padding:12px 0;overflow-wrap:anywhere}
+.reader-panel-list a{display:block;color:#173d5c}.reader-panel-list a[aria-current=page]{background:#173d5c18}.reader-panel-list span{display:block;font-size:14px;margin-top:5px}
+.reader-saved-bookmark{display:flex;align-items:flex-start;gap:8px}.reader-saved-bookmark a{flex:1}
+.reader-page-bookmark{position:absolute;right:18px;top:0;z-index:5;height:100px;width:27px;pointer-events:none}
+.reader-bookmark-toggle{position:absolute;top:34px;right:0;pointer-events:auto;min-height:32px}
+.bookmark-ribbon{position:absolute;top:0;right:0;width:24px;height:75px;background:linear-gradient(90deg,#741e20,#b9443c 45%,#762020);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);transform:translateY(-105%);transition:transform .35s ease;box-shadow:0 2px 4px #30170b66}
+.bookmark-ribbon--saved{transform:translateY(0)}.bookmark-ribbon--saved+.reader-bookmark-toggle{top:80px}
+.reader-notice{background:#e8c48b;color:#173d5c;border:1px solid #966332;padding:12px;border-radius:5px}
+@media(max-width:480px){.reader-document-header{gap:8px;font-size:13px;padding-right:16px}.reader-toolbar{margin-left:0}.reader-markdown{font-size:15px}.reader-markdown h1{font-size:32px}.reader-markdown h2{font-size:28px}.reader-page-bookmark{right:6px;width:22px}.reader-bookmark-toggle{padding:3px 5px}.reader-panel{inset:8px;width:calc(100vw - 16px);max-height:calc(100dvh - 16px);padding:18px}}
+@media(prefers-reduced-motion:reduce){.bookmark-ribbon{transition:none}}
