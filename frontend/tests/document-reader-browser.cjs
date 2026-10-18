@@ -84,7 +84,7 @@ const assert = require('node:assert/strict');
   const savedURL = page.url();
 
   // Both visible leaves expose independent stable bookmarks; the cookie is HttpOnly.
-  const save = page.locator('.reader-pages').getByRole('button', { name: 'Bookmark this page', exact: true }).first();
+  const save = page.locator('.reader-pages').getByRole('button', { name: 'Bookmark page', exact: true }).first();
   await save.click();
   await page.locator('.reader-pages .bookmark-ribbon--saved').first().waitFor();
   assert.ok((await context.cookies()).some(cookie => cookie.name === 'engineering_reader' && cookie.httpOnly && cookie.sameSite === 'Lax'));

@@ -9,7 +9,7 @@ type Turn<T> = { direction: 1 | -1; from: T[][]; target: number; href?: string }
 /** One lifecycle and navigation engine; only CSS geometry and visible leaf count differ. */
 export function BookReader<T extends BookUnit>({ units, renderUnit, project, language, title, header, location, locationRequest = 0, pageAction, previousChapter, nextChapter, previousIsContents, initialEnd = false }: {
   previousChapter?: string; nextChapter?: string; previousIsContents?: boolean; initialEnd?: boolean;
-  units: readonly T[]; renderUnit: (unit: T) => ReactNode; project: string; language: Language; title: string; header?: ReactNode;
+  units: readonly T[]; renderUnit: (unit: T) => ReactNode; project: string; language: Language; title: string; header?: ReactNode | ((action: ReactNode) => ReactNode);
   location?: string; locationRequest?: number; pageAction?: (page: T[], physicalPage: number) => ReactNode;
 }) {
   const router = useRouter();
@@ -151,8 +151,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     return <div className="reader-leaf paper manuscript-surface" key={key} data-page-id={identity}>
       <ManuscriptDecorations variant="reading" project={project} identity={identity}/>
       {/* Give the externally owned header its own stable sibling boundary. */}
-      {side === 'left' && <Fragment key="header">{header}</Fragment>}
-      {page?.length && pageAction ? pageAction(page, physicalPage) : null}
+      {side === 'left' && <Fragment key="header">{typeof header === 'function' ? header(page?.length && pageAction ? pageAction(page, physicalPage) : null) : header}</Fragment>}
+      {(side !== 'left' || typeof header !== 'function') && page?.length && pageAction ? pageAction(page, physicalPage) : null}
       <div className="reader-body">{!ready && <p role="status">{language === 'en' ? 'Paginating…' : 'Paginando…'}</p>}{page?.map(unit => <div className="book-unit" data-unit-id={unit.id} key={unit.id}>{renderUnit(unit)}</div>)}</div>
       {(mode === 'single-page' || side === 'right') && controls}
     </div>;
@@ -177,7 +177,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       </div>}
     </div>
     <div className="reader-measure" aria-hidden="true" inert>
-      <div className="reader-leaf paper reader-probe reader-probe--left"><Fragment key="header">{header}</Fragment><div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div><div className="reader-probe-controls">{controls}</div></div>
+      <div className="reader-leaf paper reader-probe reader-probe--left"><Fragment key="header">{typeof header === 'function' ? header(null) : header}</Fragment><div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div><div className="reader-probe-controls">{controls}</div></div>
       <div className="reader-leaf paper reader-probe reader-probe--right"><div className="reader-body" ref={measureRight}/>{controls}</div>
     </div>
 
