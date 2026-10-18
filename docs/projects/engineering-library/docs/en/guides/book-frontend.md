@@ -66,3 +66,11 @@ docker compose exec -T frontend npm run start -- --port 3100
 # In another terminal, with the external Playwright module path:
 docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
 ```
+
+## Reusable manuscript identity
+
+`ManuscriptDecorations` layers original local assets over `.manuscript-surface`, below `.content`. `BookLayout` applies it to the catalog and existing project indexes. Future readers, FAQ and documentation pages should reuse this surface and select the `reading` composition; those future screens are not implemented here. The `catalog`, `reading` and `illustration` variants use fixed CSS placements, never runtime randomness.
+
+Assets live in `frontend/public/assets/manuscript/`: `parchment/` contains the delivered grain WebP and its editable SVG master; `burns/`, `ink/`, `wax/`, `erasures/` and `ornaments/` contain original SVG contours, absorbed ink, amber wax, nonlinguistic crossed pen strokes and the title quill. Reuse these files rather than copying textures. To regenerate the WebP, run Sharp against `aged-fibers-master.svg` with WebP quality 82 from the frontend environment.
+
+Keep strong marks at margins, corners and whitespace. The lighter paper supports text, code and tables; adjust decoration placement for long documents. All decoration is hidden from assistive technology and ignores pointer events; the title remains real text. Preserve focus outlines and contrast. Below 920px the illustration remains in the existing single-page flow; at 480px the feather and edge marks shrink without removing the aged identity. No animation, remote images or additional graphics dependency is required. Only the compact WebP is decoded for grain; SVG marks are shared cached assets. The master SVG is an editing source, not loaded by the interface.

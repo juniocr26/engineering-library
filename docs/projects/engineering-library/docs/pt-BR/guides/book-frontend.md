@@ -66,3 +66,11 @@ docker compose exec -T frontend npm run start -- --port 3100
 # In another terminal, with the external Playwright module path:
 docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
 ```
+
+## Identidade reutilizável de manuscrito
+
+`ManuscriptDecorations` posiciona assets locais originais sobre `.manuscript-surface`, abaixo de `.content`. `BookLayout` aplica o sistema ao catálogo e aos índices existentes de projetos. Futuros leitores, FAQ e páginas de documentação devem reutilizar essa superfície com a composição `reading`; essas telas futuras não foram implementadas aqui. As variantes `catalog`, `reading` e `illustration` usam posições fixas em CSS, sem aleatoriedade em execução.
+
+Os assets ficam em `frontend/public/assets/manuscript/`: `parchment/` contém o WebP de granulação e seu original SVG editável; `burns/`, `ink/`, `wax/`, `erasures/` e `ornaments/` contêm contornos queimados, tinta absorvida, cera âmbar, traços riscados sem conteúdo linguístico e a pena do título. Reutilize os arquivos em vez de duplicar texturas. Para regenerar o WebP, use Sharp sobre `aged-fibers-master.svg` com qualidade WebP 82 no ambiente do frontend.
+
+Concentre marcas fortes nas margens, cantos e espaços livres. O papel mais claro preserva textos, código e tabelas; ajuste as posições para documentos longos. A decoração fica oculta de tecnologias assistivas e ignora eventos de ponteiro; o título continua como texto real. Preserve foco e contraste. Abaixo de 920px a ilustração segue no fluxo existente de página única; em 480px a pena e as marcas diminuem sem eliminar a identidade envelhecida. Não há animação, imagens remotas ou dependência gráfica adicional. Somente o WebP compacto é decodificado para a granulação; os SVGs são compartilhados e armazenáveis em cache. O SVG original serve para edição e não é carregado pela interface.

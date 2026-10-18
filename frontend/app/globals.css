@@ -75,24 +75,6 @@ pointer-events:none;
 border:14px solid transparent;
 border-image:linear-gradient(130deg,#47210c66,#b8864344,#31170780,#bd804c42) 1;
 z-index:1}
-.inkmark{pointer-events:none;
-position:absolute;
-right:-18px;
-bottom:-14px;
-width:175px;
-height:175px;
-opacity:.27;
-background:radial-gradient(circle at 50% 50%,#381a0b 0 6%,transparent 7%),radial-gradient(circle at 30% 38%,#381a0b 0 2%,transparent 4%),radial-gradient(circle at 69% 34%,#381a0b 0 4%,transparent 5%);
-filter:blur(1px)}
-.scar{position:absolute;
-pointer-events:none;
-border:9px solid #86502a2a;
-border-radius:50%;
-width:155px;
-height:155px;
-right:-85px;
-top:270px;
-filter:blur(2px)}
 .content{position:relative;
 z-index:2;
 max-width:510px;
@@ -190,14 +172,6 @@ margin-top:4px}
 font-size:11px;
 text-align:center;
 color:#806346}
-.decor{position:absolute;
-pointer-events:none;
-left:17px;
-top:17px;
-width:105px;
-height:60px;
-opacity:.25;
-background:radial-gradient(ellipse at 20% 20%,#543020 5%,transparent 8%),radial-gradient(ellipse at 60% 70%,#543020 3%,transparent 5%)}
 @media(max-width:920px){.book{max-width:680px;
 display:block;
 min-height:0;
@@ -311,4 +285,51 @@ inset:0}
 }
 @media (max-width: 480px) {
   .brand { font-size: clamp(42px, 12vw, 57px); }
+}
+
+/* Shared manuscript surface: local textures, stronger marks confined to margins. */
+.manuscript-surface {
+  isolation: isolate;
+  background-image: url('/assets/manuscript/parchment/aged-fibers.webp');
+  background-size: 100% 100%;
+}
+.paper:before { display: none; }
+.manuscript-decorations { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; user-select: none; }
+.manuscript-decorations span { position: absolute; display: block; background-repeat: no-repeat; background-size: 100% 100%; }
+.manuscript-burns { inset: 0; background-image: url('/assets/manuscript/burns/scorched-frame.svg'); opacity: .85; }
+.manuscript-script { background-image: url('/assets/manuscript/erasures/faded-corrections.svg'); width: 73%; height: 115px; opacity: .5; }
+.manuscript-script--top { top: -20px; left: 7%; transform: rotate(-7deg); }
+.manuscript-script--side { bottom: 5%; right: -59%; transform: rotate(-12deg); opacity: .32; }
+.manuscript-ink { background-image: url('/assets/manuscript/ink/absorbed-splatter.svg'); }
+.manuscript-ink--large { width: 147px; height: 151px; right: -32px; bottom: -25px; transform: rotate(24deg); opacity: .8; }
+.manuscript-ink--small { width: 70px; height: 87px; left: -26px; top: 37%; transform: rotate(-31deg); opacity: .72; }
+.manuscript-wax { width: 148px; height: 155px; right: -77px; top: 38%; background-image: url('/assets/manuscript/wax/amber-candle-ring.svg'); transform: rotate(17deg); }
+.manuscript-decorations--reading .manuscript-script--side { bottom: 5%; right: -63%; }
+.manuscript-decorations--reading .manuscript-ink--large { width: 110px; height: 115px; opacity: .6; transform: rotate(92deg); }
+.manuscript-decorations--reading .manuscript-wax { top: 19%; transform: rotate(65deg); }
+.manuscript-decorations--illustration { z-index: 2; border: 7px solid #d2a46b; box-shadow: inset 0 0 3px 4px #412212; }
+.manuscript-decorations--illustration .manuscript-burns { opacity: 1; }
+.manuscript-decorations--illustration .manuscript-script,
+.manuscript-decorations--illustration .manuscript-wax,
+.manuscript-decorations--illustration .manuscript-ink--large { display: none; }
+.manuscript-decorations--illustration .manuscript-ink--small { top: -5px; left: -7px; }
+.brand-heading { position: relative; padding-right: 36px; }
+.brand-heading .brand { font-size: clamp(46px, 5vw, 78px); }
+.brand-quill { position: absolute; right: -12px; top: 8%; width: 48px; height: 115px; object-fit: contain; pointer-events: none; }
+@media (max-width: 920px) {
+  .brand-heading .brand { font-size: clamp(43px, 8vw, 70px); }
+  .brand-heading { padding-right: 29px; }
+  .brand-quill { right: -7px; width: 39px; height: 91px; }
+  .manuscript-script--top { height: 80px; opacity: .35; }
+  .manuscript-ink--large { width: 115px; height: 118px; right: -42px; }
+  .manuscript-ink--small { left: -37px; top: 32%; }
+  .manuscript-wax { right: -99px; top: 39%; }
+  .portrait-mobile { border-color: #8b592e; box-shadow: 0 0 0 2px #c39355, 0 5px 15px #29120644; }
+}
+@media (max-width: 480px) {
+  .brand-heading .brand { font-size: clamp(36px, 10.5vw, 49px); }
+  .brand-quill { width: 32px; height: 74px; top: -3px; right: -2px; }
+  .brand-heading { padding-right: 27px; }
+  .manuscript-script--side { right: -62%; opacity: .25; }
+  .manuscript-burns { opacity: .65; }
 }
