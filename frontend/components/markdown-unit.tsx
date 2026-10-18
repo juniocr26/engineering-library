@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 import { Fragment, memo, useEffect, useId, useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import { ExpandableMedia } from './expandable-media';
 import Markdown, { defaultUrlTransform } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { resolveDocumentLink } from '../lib/document-links';
@@ -27,7 +27,7 @@ function Diagram({ source, language, query }: { source: string; language: Langua
     return () => { live = false; };
   }, [source, id]);
   return <div className="reader-diagram" data-measure-pending={!result ? 'true' : 'false'}>
-    {result?.svg ? <div role="img" aria-label={language === 'en' ? 'Documentation diagram' : 'Diagrama da documentação'} dangerouslySetInnerHTML={{ __html: result.svg }}/> : !result ? <p>{language === 'en' ? 'Rendering diagram…' : 'Renderizando diagrama…'}</p> : null}
+    {result?.svg ? <ExpandableMedia svg={result.svg} language={language} alt={language === 'en' ? 'Documentation diagram' : 'Diagrama da documentação'}><div role="img" aria-label={language === 'en' ? 'Documentation diagram' : 'Diagrama da documentação'} dangerouslySetInnerHTML={{ __html: result.svg }}/></ExpandableMedia> : !result ? <p>{language === 'en' ? 'Rendering diagram…' : 'Renderizando diagrama…'}</p> : null}
     <details open={result?.failed || !!query}><summary>{language === 'en' ? 'Diagram source' : 'Código do diagrama'}</summary><pre><code>{highlighted(source, query)}</code></pre></details>
   </div>;
 }
@@ -44,7 +44,7 @@ function highlighted(children: ReactNode, query: string): ReactNode {
 export const MarkdownUnit = memo(function MarkdownUnit({ unit, project, document, language, query }: { unit: Unit; project: string; document: string; language: Language; query: string }) {
   return <div className="reader-markdown"><Markdown skipHtml remarkPlugins={[remarkGfm]} urlTransform={(url, key) => defaultUrlTransform(resolveDocumentLink(project, document, language, url, key === 'src') ?? '')} components={{
     a: ({ href, children }) => href?.startsWith('/projects/') ? <Link href={href}>{highlighted(children, query)}</Link> : <a href={href} rel={href?.startsWith('http') ? 'noreferrer' : undefined}>{highlighted(children, query)}</a>,
-    img: ({ src, alt }) => <img src={src || undefined} alt={alt ?? ''} loading="eager"/>,
+    img: ({ src, alt }) => <ExpandableMedia src={typeof src === 'string' ? src : undefined} alt={alt ?? ''} language={language}/>,
     pre: ({ children }) => <div className="reader-code">{children}</div>,
     code: ({ className, children }) => className === 'language-mermaid' ? <Diagram source={String(children).trim()} language={language} query={query}/> : <code className={className}>{highlighted(children, query)}</code>,
     table: ({ children }) => <div className="reader-table" tabIndex={0}><table>{children}</table></div>,
