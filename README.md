@@ -16,7 +16,7 @@ python3 tools/init_dev_env.py
 docker compose config --quiet
 docker compose up --build
 # First setup / primeira configuração
-docker compose exec backend bin/rails db:prepare
+docker compose exec backend bin/rails db:prepare catalog:sync
 # Preserve data / preservar dados
 docker compose down
 ```

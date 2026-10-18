@@ -41,3 +41,5 @@ UI: http://localhost:3000; API: http://localhost:8080. Native codecs are built b
 [Library](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Interview](docs/en/faq/index.md) | [Provenance](docs/en/operations/source-review.md)
 
 Go/Next.js synchronous image compression, resize, conversion and preview with native codecs.
+
+[Project bio](bio/en.md)

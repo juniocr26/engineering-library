@@ -92,3 +92,5 @@ Dentro do contêiner app: `python3 /app/scripts/demo-token.py rotate`.
 [Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/faq/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
 
 Outbox transacional Rust/PostgreSQL, entrega RabbitMQ, retries, consumidor idempotente e demonstração local.
+
+[Bio do projeto](bio/pt-BR.md)

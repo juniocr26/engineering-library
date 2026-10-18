@@ -7,3 +7,5 @@
 - [application-development](application-development.md)
 
 - [documentation-validator](documentation-validator.md)
+
+- [Book frontend and catalog](book-frontend.md)

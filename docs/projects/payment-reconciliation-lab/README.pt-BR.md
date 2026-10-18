@@ -48,3 +48,5 @@ Em checkout existente, atualize a configuração deliberadamente sem sobrescreve
 [Biblioteca](../../index.md) | [English](docs/en/index.md) | [Português brasileiro](docs/pt-BR/index.md) | [Entrevista](docs/pt-BR/faq/index.md) | [Proveniência](docs/pt-BR/operations/source-review.md)
 
 Base Spring Boot/Angular/PostgreSQL com catálogo legado somente leitura; conciliação e Stripe não estão implementados.
+
+[Bio do projeto](bio/pt-BR.md)

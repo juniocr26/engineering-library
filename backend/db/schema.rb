@@ -10,8 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 0) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "catalog_projects", force: :cascade do |t|
+    t.string "stable_id", null: false
+    t.string "slug", null: false
+    t.string "display_name", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "lower((display_name)::text) COLLATE \"C\", stable_id", name: "catalog_projects_order", where: "active"
+    t.index ["slug"], name: "index_catalog_projects_on_slug", unique: true
+    t.index ["stable_id"], name: "index_catalog_projects_on_stable_id", unique: true
+  end
 end

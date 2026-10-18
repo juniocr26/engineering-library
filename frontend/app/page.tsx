@@ -1,11 +1,16 @@
-import { BackendStatus } from '@/components/backend-status';
+import { BookLayout } from '@/components/book-layout';
+import { ProjectList } from '@/components/project-list';
+import { Pagination } from '@/components/pagination';
+import { CatalogState } from '@/components/catalog-state';
+import { catalogRequest, type CatalogPage } from '@/lib/catalog';
+import { languageOf, messages } from '@/lib/i18n';
 export const dynamic = 'force-dynamic';
-export default function Home() {
-  return <main id="main"><header><span className="monogram" aria-hidden="true">EL</span><span>Engineering Library</span><span className="edition">FOUNDATION · 01</span></header>
-    <article><p className="eyebrow">A FIELD GUIDE TO SOFTWARE ENGINEERING</p><h1>Good engineering.<br /><em>Worth keeping.</em></h1>
-      <p className="intro">A quiet home for technical documentation, architectural decisions, and the lessons behind the code.</p>
-      <hr /><section aria-labelledby="chapter"><p className="eyebrow">THE OPENING CHAPTER</p><h2 id="chapter">Building the foundation</h2>
-      <p>The documentation platform is under development. Our existing English and Brazilian Portuguese engineering guides remain available in the repository.</p>
-      <a href="https://github.com/juniocr26/engineering-library/tree/main/docs">Browse the documentation <span aria-hidden="true">↗</span></a></section>
-      <footer><BackendStatus /><span>ENGLISH & PORTUGUÊS BRASILEIRO</span></footer></article></main>;
+export default async function Home({ searchParams }: { searchParams: Promise<{ lang?: string; page?: string }> }) {
+  const params = await searchParams;
+  const language = languageOf(params.lang);
+  let data: CatalogPage;
+  try { data = await catalogRequest<CatalogPage>(`?page=${encodeURIComponent(params.page ?? '1')}`, language); }
+  catch { return <BookLayout language={language}><CatalogState kind="error" language={language}/></BookLayout>; }
+  const { page, total_pages } = data.pagination;
+  return <BookLayout language={language} page={page}><h2 className="section-title">{messages[language].projects}</h2>{data.projects.length ? <ProjectList projects={data.projects} language={language} page={page}/> : <CatalogState kind="empty" language={language}/>}<Pagination page={page} total={total_pages} language={language}/></BookLayout>;
 }
