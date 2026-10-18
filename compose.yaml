@@ -53,9 +53,11 @@ services:
       HOME: /tmp
       npm_config_cache: /tmp/npm-cache
       BACKEND_URL: http://backend:3000
+      DOCUMENTATION_ROOT: /docs/projects
       NEXT_TELEMETRY_DISABLED: "1"
     volumes:
       - ./frontend:/app
+      - ./docs/projects:/docs/projects:ro
     ports:
       - "127.0.0.1:${FRONTEND_PORT:-3099}:3000"
     depends_on:

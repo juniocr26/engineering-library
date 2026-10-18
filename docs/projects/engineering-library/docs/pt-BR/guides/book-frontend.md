@@ -6,7 +6,7 @@ A página inicial implementa o protótipo HTML aprovado: duas páginas no deskto
 
 ## Responsabilidades
 
-- `app/page.tsx` consulta o catálogo Rails no servidor. `app/projects/[slug]/page.tsx` mostra os índices reais das categorias; os links abrem Markdown no repositório público enquanto o leitor não existe.
+- `app/page.tsx` consulta o catálogo Rails no servidor. `app/projects/[slug]/page.tsx` gera o sumário dos documentos reais com `lib/documentation.ts`; os links abrem Markdown no repositório público enquanto o leitor não existe.
 - `components/book-layout.tsx`, `project-list.tsx`, `pagination.tsx` e `catalog-state.tsx` implementam livro, cartões, navegação e estados localizados de vazio, erro e carregamento. `document-language.tsx` atualiza o idioma do documento após navegação; a estrutura inicial usa português.
 - `lib/i18n.ts` define os idiomas e URLs. `lib/pagination.ts` calcula os indicadores limitados, separado da apresentação. `lib/catalog.ts` contém contratos e acesso à API apenas no servidor, usando o `BACKEND_URL` existente.
 - No Rails, `Catalog::Files` lê arquivos restritos ao catálogo. `Catalog::Sync` indexa identidades. `Catalog::Page` conta, ordena e pagina no PostgreSQL. `Catalog::Presenter` lê as descrições localizadas dos registros selecionados. `Api::ProjectsController` responde HTTP.
@@ -56,7 +56,7 @@ git diff --check
 
 O Compose acrescenta somente montagem de documentação em leitura em `/docs/projects`; preserva configuração do banco e ambiente. Fora do Docker, o caminho padrão é `docs/projects`, irmão do Rails; `CATALOG_ROOT` permite substituição nos testes. Os testes usam o banco Rails de teste separado. Não execute build e servidor de desenvolvimento simultaneamente no mesmo `.next`; pare o desenvolvimento ou use outro diretório de build.
 
-Limites atuais: sem leitor completo, edição, favoritos, animação de páginas, autenticação ou busca. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor futuro deverá resolver links com segurança, renderizar Markdown de forma acessível e preservar navegação por projeto, idioma e categoria.
+Limites atuais: sem leitor completo, edição, favoritos, autenticação ou busca. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor futuro deverá resolver links com segurança, renderizar Markdown de forma acessível e preservar navegação por projeto, idioma e categoria.
 
 Verificação no navegador (instale Playwright e Chromium antes em diretório temporário):
 
@@ -69,8 +69,20 @@ docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_mo
 
 ## Identidade reutilizável de manuscrito
 
-`ManuscriptDecorations` posiciona assets locais originais sobre `.manuscript-surface`, abaixo de `.content`. `BookLayout` aplica o sistema ao catálogo e aos índices existentes de projetos. Futuros leitores, FAQ e páginas de documentação devem reutilizar essa superfície com a composição `reading`; essas telas futuras não foram implementadas aqui. As variantes `catalog`, `reading` e `illustration` usam posições fixas em CSS, sem aleatoriedade em execução.
+`ManuscriptDecorations` posiciona assets locais originais sobre `.manuscript-surface`, abaixo de `.content`. `BookLayout` aplica o sistema ao catálogo e aos índices existentes de projetos. Futuros leitores, FAQ e páginas de documentação devem reutilizar essa superfície com a composição `reading`; essas telas futuras não foram implementadas aqui. As variantes `catalog`, `reading` e `illustration` usam composições determinísticas baseadas no conteúdo em `lib/manuscript.ts`, sem `Math.random()`.
 
 Os assets ficam em `frontend/public/assets/manuscript/`: `parchment/` contém o WebP de granulação e seu original SVG editável; `burns/`, `ink/`, `wax/`, `erasures/` e `ornaments/` contêm contornos queimados, tinta absorvida, cera âmbar, traços riscados sem conteúdo linguístico e a pena do título. Reutilize os arquivos em vez de duplicar texturas. Para regenerar o WebP, use Sharp sobre `aged-fibers-master.svg` com qualidade WebP 82 no ambiente do frontend.
 
-Concentre marcas fortes nas margens, cantos e espaços livres. O papel mais claro preserva textos, código e tabelas; ajuste as posições para documentos longos. A decoração fica oculta de tecnologias assistivas e ignora eventos de ponteiro; o título continua como texto real. Preserve foco e contraste. Abaixo de 920px a ilustração segue no fluxo existente de página única; em 480px a pena e as marcas diminuem sem eliminar a identidade envelhecida. Não há animação, imagens remotas ou dependência gráfica adicional. Somente o WebP compacto é decodificado para a granulação; os SVGs são compartilhados e armazenáveis em cache. O SVG original serve para edição e não é carregado pela interface.
+Concentre marcas fortes nas margens, cantos e espaços livres. O papel mais claro preserva textos, código e tabelas; ajuste as posições para documentos longos. A decoração fica oculta de tecnologias assistivas e ignora eventos de ponteiro; o título continua como texto real. Preserve foco e contraste. Abaixo de 920px a ilustração segue no fluxo existente de página única; em 480px a pena e as marcas diminuem sem eliminar a identidade envelhecida. As animações usam CSS; não há imagens remotas ou dependência gráfica adicional. Somente o WebP compacto é decodificado para a granulação; os SVGs são compartilhados e armazenáveis em cache. O SVG original serve para edição e não é carregado pela interface.
+
+## Sumário responsivo e motor compartilhado
+
+`lib/documentation.ts` une os caminhos canônicos dos dois idiomas, ordena categorias e arquivos, inclui README na ordenação normal e usa títulos H1 locais. Traduções ausentes ficam indisponíveis. Índices apenas navegacionais são omitidos; índices substantivos, como ENV, permanecem. O frontend lê `DOCUMENTATION_ROOT` (montagem somente leitura `/docs/projects` no Compose); fora do Docker, usa `../docs/projects`. PostgreSQL continua responsável apenas pelo catálogo de projetos.
+
+`BookReader` recebe unidades e função de renderização. Um contêiner invisível e inerte mede alturas reais, incluindo espaçamento. `ResizeObserver`, carregamento de fontes e mudanças de idioma/conteúdo recalculam limites. Cabeçalhos permanecem com o primeiro item quando possível. Unidades maiores que a área disponível possuem rolagem local acessível. Numeração de capítulos independe dos fólios. Resize tenta preservar a primeira unidade visível.
+
+O mesmo ciclo de transição atende `spread` acima de 920px e `single-page` nos demais tamanhos. Avançar gira a folha direita em -180 graus pela borda esquerda; voltar gira a folha esquerda em +180 graus pela borda direita. Faces, perspectiva e sombras compartilham as texturas. Botões, setas do teclado e gestos horizontais deliberados navegam; gestos verticais permanecem disponíveis. Movimento reduzido troca imediatamente. A trava evita transições sobrepostas; resize cancela a transição com segurança.
+
+`lib/manuscript.ts` combina projeto, identidades canônicas ordenadas e variante versionada. Idioma e número físico não entram na semente. O mesmo conjunto de conteúdo mantém as marcas; agrupamentos diferentes recebem outra composição. Queimaduras, tinta, cera, rasuras, líquidos e abrasões são camadas absolutas nas margens, sem eventos de ponteiro nem impacto na medição. Nenhuma dependência gráfica foi adicionada. O catálogo inicial permanece preservado; a versão inspecionada não possuía hamburger mobile, então o sumário fornece um menu hamburger mínimo e acessível para voltar ao catálogo.
+
+Limites: documentos abrem no GitHub; o leitor Markdown completo não foi implementado. Unidades excepcionalmente altas usam rolagem interna. A curvatura é aproximada por perspectiva e iluminação de uma folha rígida. Testes automatizados não comprovam todos os documentos, fontes e níveis de zoom.

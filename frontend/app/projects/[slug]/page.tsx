@@ -1,8 +1,11 @@
 import Link from 'next/link';
-import { BookLayout } from '@/components/book-layout';
+import { LanguageSelector } from '@/components/book-layout';
+import { DocumentLanguage } from '@/components/document-language';
+import { TableOfContents } from '@/components/table-of-contents';
+import { documentationEntries } from '@/lib/documentation';
 import { CatalogState } from '@/components/catalog-state';
 import { catalogRequest, type Project } from '@/lib/catalog';
-import { catalogHref, languageOf, messages, categoryLabels } from '@/lib/i18n';
+import { catalogHref, languageOf, messages } from '@/lib/i18n';
 export default async function ProjectPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ lang?: string; page?: string }> }) {
   const { slug } = await params;
   const query = await searchParams;
@@ -11,5 +14,9 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const t = messages[language];
   let project: Project | undefined;
   try { project = await catalogRequest<Project>(`/${encodeURIComponent(slug)}`, language); } catch { /* Localized recovery below. */ }
-  return <BookLayout language={language} page={page} slug={slug}><Link className="back" href={catalogHref(page, language)}>{t.back}</Link>{project ? <><h2 className="section-title">{project.name}</h2><p>{project.description}</p><h3>{t.index}</h3>{project.categories?.length ? <><p>{t.remote}</p>{project.categories.map(category => <a className="category" key={category.url} href={category.url}>{categoryLabels[language][category.name] ?? category.name} <span aria-hidden="true">↗</span></a>)}</> : <CatalogState kind="noDocs" language={language}/>}</> : <CatalogState kind="error" language={language} page={page}/>}</BookLayout>;
+  const entries = await documentationEntries(slug, language);
+  return <main className="scene toc-scene" lang={language}><DocumentLanguage language={language}/><div className="toc-shell">
+    <header className="toc-header"><Link className="back" href={catalogHref(page, language)}>{t.back}</Link><span>{project?.name ?? slug}</span><details className="toc-mobile-menu"><summary aria-label={language === 'en' ? 'Navigation menu' : 'Menu de navegação'}>☰</summary><Link href={catalogHref(page, language)}>{t.back}</Link></details><LanguageSelector language={language} page={page} slug={slug}/><h1>{language === 'en' ? 'Table of Contents' : 'Sumário'}<span className="toc-quill" aria-hidden="true"/></h1></header>
+    {entries.length ? <TableOfContents entries={entries} slug={slug} language={language}/> : <CatalogState kind={project ? 'noDocs' : 'error'} language={language} page={page}/>}
+  </div></main>;
 }

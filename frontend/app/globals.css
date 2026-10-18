@@ -333,3 +333,55 @@ inset:0}
   .manuscript-script--side { right: -62%; opacity: .25; }
   .manuscript-burns { opacity: .65; }
 }
+/* Seeded overlays never participate in layout or pagination measurements. */
+.seeded-mark--ink{background-image:url('/assets/manuscript/ink/absorbed-splatter.svg')}
+.seeded-mark--wax{background-image:url('/assets/manuscript/wax/amber-candle-ring.svg')}
+.seeded-mark--script{background-image:url('/assets/manuscript/erasures/faded-corrections.svg')}
+.seeded-mark--liquid{border:6px double #87471980;border-radius:43% 57% 61% 39%;box-shadow:0 0 12px #9c612c77,inset 0 0 15px #9c612c55}
+.seeded-mark--abrasion{background:repeating-linear-gradient(174deg,transparent 0 4px,#fff1c7aa 5px 6px);border-radius:50%;filter:blur(.7px)}
+.toc-shell{width:min(1320px,100%);color:#173d5c}
+.toc-header{background:#e9c995 url('/assets/manuscript/parchment/aged-fibers.webp') center/cover;padding:16px 30px 4px;border-radius:18px 18px 0 0;border:8px solid #392215;border-bottom:0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.toc-header .langs{margin:0 0 0 auto}.toc-header h1{width:100%;font:400 clamp(42px,5vw,76px)/1.1 'Great Vibes',cursive;text-align:center;margin:8px 0 14px;color:#173d5c}
+.toc-header h1 span{font-size:.5em}.toc-header .back{color:#173d5c;margin:0}
+.reader{position:relative;--leaf-height:clamp(260px,calc(100dvh - 290px),740px);--leaf-pad:clamp(28px,4vw,60px);border:8px solid #392215;border-top:0;border-radius:0 0 18px 18px;background:#e9c995;box-shadow:0 20px 45px #0008}
+.reader-stage{position:relative;perspective:2000px;isolation:isolate}
+.reader-pages{display:grid;grid-template-columns:1fr 1fr}
+.reader-leaf.paper{position:relative;padding:var(--leaf-pad);height:var(--leaf-height);min-height:0;overflow:hidden;color:#173d5c}
+.reader-body{height:100%;position:relative;z-index:2;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#936337 transparent;overflow-wrap:anywhere}
+.book-unit{display:flow-root;padding:7px 0}
+.toc-chapter{font-family:'Great Vibes','Apple Chancery',cursive;font-size:clamp(25px,2.5vw,34px);font-style:normal;font-weight:400;margin:10px 0 3px;border-bottom:1px solid #74533055;padding-bottom:7px}
+.toc-document{padding-left:16px;line-height:1.5;font-size:16px}
+.toc-document a,.toc-chapter a,.toc-chapter>span,.toc-document>span{display:flex;gap:10px;align-items:baseline;text-decoration:none}
+.toc-document a:hover{text-decoration:underline}.chapter-number{flex-shrink:0}.toc-leader{flex:1;min-width:10px;border-bottom:1px dotted #173d5c80}.toc-document [aria-disabled]{opacity:.7}
+.reader[data-mode=spread] .reader-stage:after{content:'';position:absolute;left:50%;top:0;bottom:0;width:18px;transform:translateX(-50%);background:linear-gradient(90deg,#361b1255,transparent,#361b1233);pointer-events:none;z-index:3}
+.reader-measure{position:absolute;top:0;left:0;width:50%;height:var(--leaf-height);padding:var(--leaf-pad);visibility:hidden;pointer-events:none;contain:layout style}
+.reader-measure .reader-body{overflow:visible}
+.reader-controls{display:flex;justify-content:center;align-items:center;gap:24px;padding:14px;background:url('/assets/manuscript/parchment/aged-fibers.webp') center/cover}
+.reader-controls button{background:#e8c48b;border:1px solid #966332;border-radius:6px;padding:8px 14px;color:#173d5c;box-shadow:inset 0 0 7px #9c642555}
+.reader-controls button[aria-disabled=true]{opacity:.4;cursor:default}
+.turn-sheet{position:absolute;top:0;width:50%;height:100%;z-index:6;transform-style:preserve-3d;pointer-events:none;animation-duration:720ms;animation-timing-function:cubic-bezier(.35,.12,.25,1);animation-fill-mode:both;will-change:transform}
+.turn-sheet--forward{right:0;transform-origin:left center;animation-name:book-forward}
+.turn-sheet--backward{left:0;transform-origin:right center;animation-name:book-backward}
+.turn-face{position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;box-shadow:0 8px 22px #28100566}
+.turn-face:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#28100555,transparent 25%,#fff1b71a 70%,#28100533);animation:paper-light 720ms ease-in-out both}
+.turn-back{transform:rotateY(180deg)}
+.turn-face .reader-leaf{height:100%}
+@keyframes book-forward{from{transform:rotateY(0deg)}50%{transform:rotateY(-90deg) rotateZ(-1deg)}to{transform:rotateY(-180deg)}}
+@keyframes book-backward{from{transform:rotateY(0deg)}50%{transform:rotateY(90deg) rotateZ(1deg)}to{transform:rotateY(180deg)}}
+@keyframes paper-light{0%,100%{opacity:.2}50%{opacity:1}}
+.reader[data-mode=single-page] .reader-pages{grid-template-columns:1fr}
+.reader[data-mode=single-page] .turn-sheet{width:100%}
+@media(max-width:920px){.toc-scene{padding:12px}.toc-header{padding:12px 18px 0}.toc-header .langs{gap:0}.toc-header .lang{padding:6px;font-size:13px}.reader-measure{width:100%}.reader{--leaf-pad:28px;--leaf-height:clamp(240px,calc(100dvh - 285px),850px)}.toc-document{font-size:15px;padding-left:8px}}
+@media(max-width:480px){.toc-scene{padding:0}.toc-header,.reader{border-width:4px;border-radius:0}.toc-header{gap:8px}.toc-header h1{margin:0 0 8px}.reader{--leaf-pad:24px;--leaf-height:clamp(220px,calc(100dvh - 265px),800px)}.toc-document{font-size:14px}.toc-chapter{font-size:21px}}
+@media(prefers-reduced-motion:reduce){.turn-sheet,.turn-face:after{animation:none}}
+
+.toc-quill{display:inline-block;width:40px;height:65px;vertical-align:middle;background:url('/assets/manuscript/ornaments/writing-quill.svg') center/contain no-repeat}
+
+.toc-mobile-menu{display:none;position:relative;margin-left:auto}
+.toc-mobile-menu summary{list-style:none;cursor:pointer;padding:7px 10px;border:1px solid #936337;border-radius:5px;background:#e8c48b}
+.toc-mobile-menu summary::-webkit-details-marker{display:none}
+.toc-mobile-menu summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.toc-mobile-menu a{position:absolute;right:0;top:100%;z-index:10;padding:14px;background:#f0d4a4;border:1px solid #936337;white-space:nowrap}
+@media(max-width:920px){.toc-mobile-menu{display:block}.toc-header>.langs{width:100%;justify-content:center}}
+
+@media(max-width:920px){.reader .seeded-mark--ink{max-width:70px;max-height:70px}}

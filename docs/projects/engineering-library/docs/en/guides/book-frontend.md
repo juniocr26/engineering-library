@@ -6,7 +6,7 @@ The landing page implements the approved HTML book prototype: two pages on deskt
 
 ## Responsibilities
 
-- `app/page.tsx` requests the Rails catalog on the server. `app/projects/[slug]/page.tsx` displays real category indexes; links open public repository Markdown, pending a future reader.
+- `app/page.tsx` requests the Rails catalog on the server. `app/projects/[slug]/page.tsx` discovers the bilingual Markdown collection through `lib/documentation.ts`; document links open public repository Markdown, pending a full document reader.
 - `components/book-layout.tsx`, `project-list.tsx`, `pagination.tsx` and `catalog-state.tsx` own the book, cards, navigation and localized empty/error/loading states. `document-language.tsx` updates the document language after navigation; the initial shell defaults to Portuguese.
 - `lib/i18n.ts` defines the two languages and navigation URLs. `lib/pagination.ts` computes bounded page indicators independently of rendering. `lib/catalog.ts` contains typed server-only API access, using the existing `BACKEND_URL`.
 - Rails `Catalog::Files` reads only scoped catalog files. `Catalog::Sync` indexes identities. `Catalog::Page` performs PostgreSQL counting, sorting, offset and limit. `Catalog::Presenter` reads localized descriptions for the selected records. `Api::ProjectsController` handles HTTP responses.
@@ -56,7 +56,7 @@ git diff --check
 
 Compose adds only a read-only documentation mount at `/docs/projects`; existing database configuration and environment remain intact. Outside Docker, the catalog defaults to the repository `docs/projects` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; stop development or use a separate build output directory.
 
-Current limits: no full document reader, editing, bookmarks, page-turning animation, authentication or search. API downtime produces a localized retry state. Future reader work must resolve document links safely, render Markdown accessibly and preserve project/language/category navigation.
+Current limits: no full document reader, editing, bookmarks, authentication or search. API downtime produces a localized retry state. Future reader work must resolve document links safely, render Markdown accessibly and preserve project/language/category navigation.
 
 Browser smoke checks (install Playwright and Chromium in a temporary directory first):
 
@@ -69,8 +69,20 @@ docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_mo
 
 ## Reusable manuscript identity
 
-`ManuscriptDecorations` layers original local assets over `.manuscript-surface`, below `.content`. `BookLayout` applies it to the catalog and existing project indexes. Future readers, FAQ and documentation pages should reuse this surface and select the `reading` composition; those future screens are not implemented here. The `catalog`, `reading` and `illustration` variants use fixed CSS placements, never runtime randomness.
+`ManuscriptDecorations` layers original local assets over `.manuscript-surface`, below `.content`. `BookLayout` applies it to the catalog and existing project indexes. Future readers, FAQ and documentation pages should reuse this surface and select the `reading` composition; those future screens are not implemented here. The `catalog`, `reading` and `illustration` variants use deterministic content-based layouts from `lib/manuscript.ts`, never `Math.random()`.
 
 Assets live in `frontend/public/assets/manuscript/`: `parchment/` contains the delivered grain WebP and its editable SVG master; `burns/`, `ink/`, `wax/`, `erasures/` and `ornaments/` contain original SVG contours, absorbed ink, amber wax, nonlinguistic crossed pen strokes and the title quill. Reuse these files rather than copying textures. To regenerate the WebP, run Sharp against `aged-fibers-master.svg` with WebP quality 82 from the frontend environment.
 
-Keep strong marks at margins, corners and whitespace. The lighter paper supports text, code and tables; adjust decoration placement for long documents. All decoration is hidden from assistive technology and ignores pointer events; the title remains real text. Preserve focus outlines and contrast. Below 920px the illustration remains in the existing single-page flow; at 480px the feather and edge marks shrink without removing the aged identity. No animation, remote images or additional graphics dependency is required. Only the compact WebP is decoded for grain; SVG marks are shared cached assets. The master SVG is an editing source, not loaded by the interface.
+Keep strong marks at margins, corners and whitespace. The lighter paper supports text, code and tables; adjust decoration placement for long documents. All decoration is hidden from assistive technology and ignores pointer events; the title remains real text. Preserve focus outlines and contrast. Below 920px the illustration remains in the existing single-page flow; at 480px the feather and edge marks shrink without removing the aged identity. Animations use CSS; no remote images or additional graphics dependency is required. Only the compact WebP is decoded for grain; SVG marks are shared cached assets. The master SVG is an editing source, not loaded by the interface.
+
+## Responsive Table of Contents reader
+
+`documentationEntries` unions canonical relative paths in both languages, sorts categories and filenames using stable case-insensitive canonical ordering, includes README normally and reads localized H1 titles. Missing counterparts are visibly unavailable. Navigation-only indexes are excluded; substantive indexes (including ENV references) remain entries. The frontend requires the read-only `/docs/projects` mount (`DOCUMENTATION_ROOT`), or defaults to `../docs/projects` outside Docker. PostgreSQL continues to paginate only the project catalog.
+
+`BookReader` consumes generic units and a render callback. A hidden, inert container measures actual unit heights and available body height; `ResizeObserver`, font completion and language/content changes trigger repagination. Headings stay with the first child when feasible. Oversized units have an accessible local scroll fallback. Chapter numbers remain independent of physical folios. Resizing anchors the first visible canonical unit where possible; a regrouped page gets a new combined content identity.
+
+A single locked transition lifecycle drives both spread (>920px) and single-page modes. Forward turns rotate the right sheet around its left edge by -180 degrees; backward turns rotate the left sheet around its right edge by +180 degrees. Front/back surfaces, perspective and animated shading share existing textures. Buttons, arrow keys and intentional horizontal swipes navigate. Vertical gestures remain available. Reduced motion changes pages immediately. A timeout recovers interrupted animations. Resize cancels active turns safely.
+
+Decorative seeds combine project, ordered canonical content identities and a versioned variant; translated titles and physical page numbers are excluded. Marks stay stable when that content identity survives reflow. Changed groupings intentionally get a new composition. Burn frames, ink, wax, corrections, liquid rings and abrasions are absolute, pointer-transparent margin layers, independent of measurement. No graphics or animation dependency was added. The existing landing layout and controls remain unchanged; the inspected baseline had no mobile hamburger component, so the TOC supplies a minimal accessible hamburger menu linking back to the catalog.
+
+Limitations: document links still open GitHub, not an in-app Markdown reader. Oversized individual units scroll inside their page. Curvature is approximated with lightweight rigid-sheet perspective and shading. Browser visual checks and unit tests are complementary; none prove every document/font/zoom combination.
