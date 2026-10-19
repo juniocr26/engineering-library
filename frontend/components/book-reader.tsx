@@ -1,4 +1,5 @@
 'use client';
+import { translatedLocation } from '../lib/reading-position';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 import { paginateMeasured, type BookUnit } from '../lib/book-pagination';
@@ -30,7 +31,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   const measureRight = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const focused = useRef<HTMLElement | null>(null);
-  const anchor = useRef(units[0]?.id);
+  const anchor = useRef<string | undefined>(units[0]?.id);
+  const previousContent = useRef({ units, language });
   const locked = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touch = useRef<{ x: number; y: number } | null>(null);
@@ -45,6 +47,10 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     let frame = 0; let disposed = false; let signature = '';
     let rowSignature = ''; let tableMeasurements = new Map<number, TableMeasurement>();
     measured.current = false;
+    if (previousContent.current.language !== language) {
+      anchor.current = translatedLocation(previousContent.current.units, units, anchor.current);
+    }
+    previousContent.current = { units, language };
     const historyLocation = window.history.state?.bookLocation;
     if (historyLocation?.url === window.location.href && units.some(unit => unit.id === historyLocation.anchor || historyLocation.anchor?.startsWith(`${unit.id}--row-`) || containsLocation(unit, historyLocation.anchor))) {
       anchor.current = historyLocation.anchor;
@@ -91,7 +97,13 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
           });
         }
         const next = paginateMeasured(units, heights, page => nextMode === 'single-page' || page % 2 === 0 ? node.clientHeight : rightCapacity, tableMeasurements);
-        const index = endPending.current ? next.length - 1 : Math.max(0, next.findIndex(page => page.some(unit => containsLocation(unit, anchor.current))));
+        let resolved = next.findIndex(page => page.some(unit => containsLocation(unit, anchor.current)));
+        if (resolved < 0 && anchor.current?.includes('--row-')) {
+          const origin = anchor.current.split('--row-')[0];
+          // A shorter translated table restores its last available row fragment.
+          next.forEach((page, index) => { if (page.some(unit => unit.id === origin || unit.tableOrigin === origin)) resolved = index; });
+        }
+        const index = endPending.current ? next.length - 1 : Math.max(0, resolved);
         endPending.current = false;
         anchor.current = next[index]?.some(unit => containsLocation(unit, anchor.current)) ? anchor.current : next[index]?.[0]?.id;
         if (timer.current) clearTimeout(timer.current);
@@ -113,7 +125,11 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     return () => { disposed = true; measured.current = false; cancelAnimationFrame(frame); observer.disconnect(); mutations.disconnect(); window.removeEventListener('resize', calculate); node.removeEventListener('load', invalidate, true); node.removeEventListener('error', invalidate, true); document.fonts.removeEventListener('loading', invalidate); document.fonts.removeEventListener('loadingdone', invalidate); if (timer.current) clearTimeout(timer.current); };
   }, [units, language]);
   useEffect(() => {
-    if (ready && pages[position]?.[0]) onLocationChange?.(anchor.current ?? pages[position][0].id);
+    if (ready && pages[position]?.[0]) {
+      const current = anchor.current ?? pages[position][0].id;
+      window.history.replaceState({ ...window.history.state, bookLocation: { url: window.location.href, anchor: current } }, '');
+      onLocationChange?.(current);
+    }
   }, [ready, pages, position, onLocationChange]);
   const requested = useRef<{ location?: string; units: readonly T[]; request: number } | null>(null);
   useEffect(() => {

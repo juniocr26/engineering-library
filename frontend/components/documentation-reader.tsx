@@ -72,7 +72,7 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
   const header = (toolbar: (action: ReactNode) => ReactNode, action: ReactNode) => <header className="reader-document-header">
     <Link href={`/projects/${encodeURIComponent(project)}?lang=${language}`}>← {en ? 'Contents' : 'Sumário'}</Link><span>{projectDisplayName(project, projectName)}</span>
     {toolbar(action)}
-    <nav className="reader-document-languages" aria-label={en ? 'Language' : 'Idioma'}>{(['pt-BR', 'en'] as const).map(lang => <Link key={lang} href={documentHref(project, documentId, lang, location)} aria-current={lang === language ? 'true' : undefined} hrefLang={lang}>{lang === 'en' ? '🇺🇸 English' : '🇧🇷 Português'}</Link>)}</nav>
+    <nav className="reader-document-languages" aria-label={en ? 'Language' : 'Idioma'}>{(['pt-BR', 'en'] as const).map(lang => <Link key={lang} href={documentHref(project, documentId, lang)} aria-current={lang === language ? 'true' : undefined} hrefLang={lang}>{lang === 'en' ? '🇺🇸 English' : '🇧🇷 Português'}</Link>)}</nav>
   </header>;
 
   return <main className="scene toc-scene" lang={language} onClick={event => {
@@ -83,7 +83,7 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
       try { setLocation(decodeURIComponent(target.hash.slice(1))); setLocationRequest(previous => previous + 1); } catch { /* Invalid anchors keep their native link behavior. */ }
     }
   }}><DocumentLanguage language={language}/><div className="toc-shell documentation-shell">
-    <ReaderTools project={project} projectName={projectName} document={documentId} language={language} entries={entries} title={title} headings={units.filter(unit => unit.heading !== undefined)}>{({ toolbar, pageAction }) => <BookReader key={`${documentId}/${language}/${initialEnd}`} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={flowUnits} project={project} language={language} title={title} header={action => header(toolbar, action)} location={location} locationRequest={locationRequest}
+    <ReaderTools project={project} projectName={projectName} document={documentId} language={language} entries={entries} title={title} headings={units.filter(unit => unit.heading !== undefined)}>{({ toolbar, pageAction }) => <BookReader key={documentId} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={flowUnits} project={project} language={language} title={title} header={action => header(toolbar, action)} location={location} locationRequest={locationRequest}
       renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={containsLocation(unit, location) ? query : ''} expanded={expanded} toggleSource={toggleSource} location={location}/>}
       pageAction={pageAction}/>}</ReaderTools>
     {location && !flowUnits.some(unit => containsLocation(unit, location) || location.startsWith(`${unit.id}--row-`)) && <p role="status" className="reader-notice">{en ? 'This saved location is unavailable: the source or translation may have changed. Showing the document start.' : 'Esta posição está indisponível: o código ou a tradução pode ter mudado. Exibindo o início do documento.'}</p>}
