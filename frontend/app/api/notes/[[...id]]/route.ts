@@ -15,7 +15,7 @@ async function proxy(request: Request, { params }: { params: Promise<{ id?: stri
   for (const name of ['cookie', 'x-reader-csrf']) { const value = request.headers.get(name); if (value) headers.set(name, value); }
   try {
     const body = ['POST', 'PATCH'].includes(request.method) ? await request.text() : undefined;
-    if (body && body.length > 600000) return new Response(null, { status: 413 });
+    if (body && new TextEncoder().encode(body).length > 32 * 1024 * 1024) return new Response(null, { status: 413 });
     const query = new URLSearchParams();
     const project = new URL(request.url).searchParams.get('project_slug');
     if (request.method === 'GET' && project !== null) query.set('project_slug', project);

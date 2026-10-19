@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,7 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_020000) do
     t.index ["reader_digest", "demo_key"], name: "index_notes_on_reader_digest_and_demo_key", unique: true, where: "(demo_key IS NOT NULL)"
     t.index ["reader_digest", "project", "document", "language", "anchor_digest"], name: "notes_logical_location", unique: true
     t.check_constraint "language::text = ANY (ARRAY['en'::character varying, 'pt-BR'::character varying]::text[])", name: "notes_language"
-    t.check_constraint "octet_length(body) <= 131072", name: "notes_body_size"
+    t.check_constraint "octet_length(body) <= 5242880", name: "notes_body_size"
     t.check_constraint "reader_digest::text ~ '^[0-9a-f]{64}$'::text", name: "notes_reader_digest"
   end
 

@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { Fragment, memo, useEffect, useId, useState, type ReactNode } from 'react';
+import { Fragment, memo, useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import { diagramAllowed } from '../lib/note-policy';
+import { renderIsolatedDiagram } from '../lib/isolated-diagram';
 import { SourceCode } from './source-code';
 import { ReaderTable, useTableScroll } from './reader-table';
 import { ExpandableMedia } from './expandable-media';
@@ -16,29 +16,25 @@ import type { Root, Element, RootContent } from 'hast';
 import type { SourceReference } from '../lib/source-links';
 import type { Language } from '../lib/i18n';
 
-let mermaidModule: Promise<typeof import('mermaid')> | undefined;
-const diagramCache = new Map<string, Promise<string>>();
-let diagramSerial = 0;
+const diagramCache = new Map<string, string>();
+
 export function Diagram({ source, language, query }: { source: string; language: Language; query: string }) {
-  const id = `diagram-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   const [result, setResult] = useState<{ svg?: string; failed?: boolean } | null>(null);
   useEffect(() => {
     let live = true;
-    if (diagramCache.size > 100) diagramCache.clear();
-    if (!diagramCache.has(source)) diagramCache.set(source, (async () => {
-      if (!diagramAllowed(source)) throw Error('Unsupported or unsafe diagram');
-      mermaidModule ??= import('mermaid').then(module => { module.default.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral', flowchart: { htmlLabels: false }, htmlLabels: false, maxTextSize: 12000, maxEdges: 200, secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'maxEdges', 'htmlLabels', 'flowchart', 'themeCSS'], suppressErrorRendering: true }); return module; });
-      const { default: mermaid } = await mermaidModule;
-      const key = `mermaid-${++diagramSerial}`;
-      await mermaid.parse(source);
-      const { svg } = await mermaid.render(key, source);
-      return svg.replaceAll(key, '__DIAGRAM_ID__');
-    })());
-    void diagramCache.get(source)!.then(svg => { if (live) setResult({ svg: svg.replaceAll('__DIAGRAM_ID__', id) }); }, () => { if (live) setResult({ failed: true }); });
-    return () => { live = false; };
-  }, [source, id]);
+    const controller = new AbortController();
+    const cached = diagramCache.get(source);
+    const render = cached ? Promise.resolve(cached) : renderIsolatedDiagram(source, controller.signal);
+    void render.then(svg => {
+      if (diagramCache.size >= 100) diagramCache.delete(diagramCache.keys().next().value!);
+      diagramCache.set(source, svg);
+      if (live) setResult({ svg });
+    }, () => { if (live) setResult({ failed: true }); });
+    return () => { live = false; controller.abort(); };
+  }, [source]);
   return <div className="reader-diagram" data-measure-pending={!result ? 'true' : 'false'}>
     {result?.svg ? <ExpandableMedia svg={result.svg} language={language} alt={language === 'en' ? 'Documentation diagram' : 'Diagrama da documentação'}><img alt={language === 'en' ? 'Documentation diagram' : 'Diagrama da documentação'} src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.svg)}`}/></ExpandableMedia> : !result ? <p>{language === 'en' ? 'Rendering diagram…' : 'Renderizando diagrama…'}</p> : null}
+    {result?.failed && <p role="alert">{language === 'en' ? 'Could not render this diagram. Its source is preserved below.' : 'Não foi possível renderizar o diagrama. O código está preservado abaixo.'}</p>}
     <details open={result?.failed || !!query}><summary>{language === 'en' ? 'Diagram source' : 'Código do diagrama'}</summary><pre><code>{highlighted(source, query)}</code></pre></details>
   </div>;
 }

@@ -16,10 +16,13 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       await page.goto(`${base}${path}?lang=en`); await ready(page);
       await page.evaluate(() => document.fonts.ready);
       await page.waitForTimeout(1500); await ready(page);
-      await page.locator('.reader-pages [data-highlight-block] p').first().evaluate(p => {
+      await page.waitForTimeout(1500);
+      await page.locator('.reader-pages [data-highlight-block]:not([data-highlight-unsupported]) p').first().evaluate(p => {
         const text = document.createTreeWalker(p, NodeFilter.SHOW_TEXT).nextNode();
         const range = document.createRange(); range.setStart(text, 0); range.setEnd(text, Math.min(20, text.length));
         getSelection().removeAllRanges(); getSelection().addRange(range);
+        document.dispatchEvent(new Event('selectionchange'));
+        p.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
         p.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
       });
       await page.getByRole('button', { name: 'Green', exact: true }).click().catch(async error => { console.log(await page.evaluate(() => ({ selection: getSelection().toString(), toolbar: document.querySelector('[role=toolbar]')?.outerHTML, notices: [...document.querySelectorAll('[role=status]')].map(n => n.textContent), block: document.querySelector('.reader-pages [data-highlight-block] p')?.outerHTML }))); throw error; });
@@ -49,7 +52,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       const draft = editor.locator('textarea'); await draft.fill(source);
       await editor.getByRole('button', { name: 'Preview', exact: true }).click();
       const preview = page.getByRole('dialog', { name: 'Note preview', exact: true });
-      await preview.locator('h1').waitFor(); await assertCentered(preview); assert.match(await preview.innerText(), /Revisão 📚/);
+      await preview.locator('h1').waitFor().catch(async error => { console.log(await preview.innerText(), errors); throw error; }); await assertCentered(preview); assert.match(await preview.innerText(), /Revisão 📚/);
       assert.equal(await preview.locator('table').count(), 1);
       assert.ok(await preview.locator('code .hljs-keyword').count() > 0);
       await preview.locator('.reader-diagram img').waitFor({ timeout: 20000 });
@@ -129,9 +132,13 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       const malicious = '# Security\n\n<script>window.pwned=1</script>\n<img src=x onerror="window.pwned=1">\n<svg onload="window.pwned=1"><script>alert(1)</script></svg>\n\n[click](javascript:alert%281%29) ![tracking](http://127.0.0.1:9/private) ![svg](data:image/svg+xml,test)\n\n```mermaid\n%%{init: {"securityLevel":"loose"}}%%\nflowchart LR\n A --> B\n```\n\n```mermaid\ninvalid diagram blah\n```';
       await draft.fill(malicious); await editor.getByRole('button', { name: 'Preview', exact: true }).click();
       await preview.waitFor(); await page.waitForTimeout(700);
-      assert.equal(await preview.locator('script,iframe,object,embed,svg,[onerror],[onload],a[href^="javascript"],img').count(), 0);
+      await preview.locator('.note-html-frame').first().waitFor();
+      assert.equal(await preview.locator('script,object,embed,[onerror],[onload],a[href^="javascript"]').count(), 0);
+      for (const frame of await preview.locator('iframe').all()) assert.equal(await frame.getAttribute('sandbox'), 'allow-scripts');
       assert.equal(await page.evaluate(() => window.pwned), undefined);
-      assert.equal(await preview.locator('details[open]').count(), 2);
+      await preview.locator('.reader-diagram [role=alert]').waitFor();
+      assert.equal(await preview.locator('.reader-diagram img').count(), 1);
+      assert.equal(await preview.locator('details[open]').count(), 1);
       await page.keyboard.press('Escape');
       await draft.fill(source + '\nUnsaved draft');
       const deletion = page.getByRole('dialog', { name: 'Delete note?', exact: true });

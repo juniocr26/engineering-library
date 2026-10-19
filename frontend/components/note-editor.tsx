@@ -33,7 +33,7 @@ export function NoteEditor({ note, highlightId, hasHighlight, query, csrf, langu
       else { const value = await response.json(); setCurrent(value); setDraft(value.body); saved(value); setMessage(current ? (en ? 'Note updated successfully.' : 'Nota atualizada com sucesso.') : (en ? 'Note saved successfully.' : 'Nota salva com sucesso.')); }
     } catch {
       if (remove) setDeleteError(en ? 'Could not delete the note. Try again.' : 'Não foi possível excluir a nota. Tente novamente.');
-      else setMessage(en ? 'Could not save. Your draft is preserved. Maximum: 128 KiB.' : 'Não foi possível salvar. Seu rascunho foi preservado. Máximo: 128 KiB.');
+      else setMessage(en ? 'Could not save. Your draft is preserved. Maximum: 5 MiB.' : 'Não foi possível salvar. Seu rascunho foi preservado. Máximo: 5 MiB.');
     }
     finally { pending.current = false; setBusy(false); }
   }
@@ -47,7 +47,7 @@ export function NoteEditor({ note, highlightId, hasHighlight, query, csrf, langu
     <header><h2>{en ? 'Passage note' : 'Nota do trecho'}</h2><button disabled={busy} onClick={finish} aria-label={en ? 'Close note' : 'Fechar nota'}>×</button></header>
     <label htmlFor="note-draft">{en ? 'Markdown or plain text' : 'Markdown ou texto simples'}</label>
     <textarea id="note-draft" ref={editor} autoFocus readOnly={busy} value={draft} onChange={event => setDraft(event.target.value)} spellCheck/>
-    <p role="status">{message || `${bytes.toLocaleString()} / 131.072 bytes`}</p>
+    <p role="status">{message || `${bytes.toLocaleString()} / 5.242.880 bytes`}</p>
     <footer><button ref={deleteButton} disabled={busy || !current} onClick={() => { setDeleteError(''); setConfirmDelete(true); }}>{en ? 'Delete note' : 'Excluir nota'}</button><button disabled={busy} onClick={() => setPreview(true)}>{en ? 'Preview' : 'Pré-visualizar'}</button><button disabled={busy || bytes > NOTE_MAX_BYTES} onClick={() => void mutate()}>{en ? 'Save' : 'Salvar'}</button></footer>
     {confirmDelete && <ViewerDialog label={en ? 'Delete note?' : 'Excluir nota?'} close={cancelDelete} className="note-delete-confirmation">
       <h2>{en ? 'Delete note?' : 'Excluir nota?'}</h2>

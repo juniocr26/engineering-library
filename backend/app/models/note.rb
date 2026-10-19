@@ -1,7 +1,7 @@
 require "digest"
 
 class Note < ApplicationRecord
-  MAX_BYTES = 131_072
+  MAX_BYTES = 5 * 1024 * 1024
   belongs_to :highlight, optional: true
   validates :reader_digest, :project, :document, :language, :anchor_digest, presence: true
   validates :language, inclusion: { in: %w[en pt-BR] }
@@ -17,7 +17,7 @@ class Note < ApplicationRecord
   private
 
   def safe_content
-    errors.add(:body, "must be UTF-8 text of at most 128 KiB") unless body.is_a?(String) && body.valid_encoding? && body.bytesize <= MAX_BYTES
+    errors.add(:body, "must be UTF-8 text of at most 5 MiB") unless body.is_a?(String) && body.valid_encoding? && body.bytesize <= MAX_BYTES
     probe = Highlight.new(reader_digest: reader_digest, project: project, document: document, language: language, color: "yellow", segments: segments)
     errors.add(:segments, "invalid text anchor") unless probe.valid?
     if highlight && highlight.attributes.slice("reader_digest", "project", "document", "language", "segments") != attributes.slice("reader_digest", "project", "document", "language", "segments")

@@ -47,6 +47,14 @@ class NotesApiTest < ActionDispatch::IntegrationTest
     assert Highlight.exists?(replacement)
   end
 
+  test 'rich source larger than the previous limit roundtrips without rewriting' do
+    @body = "<div style=\"color:navy\"><svg><text>ação 📚</text></svg></div>\n" + ("Mixed **Markdown** and HTML\n" * 6000)
+    id = create_note
+    assert_equal @body, Note.find(id).body
+    get '/api/notes', params: @scope
+    assert_equal @body, response.parsed_body['notes'].find { |note| note['id'] == id }['body']
+  end
+
   test 'ownership scope CSRF language document and invalid payloads' do
     id = create_note
     stranger = open_session
@@ -67,7 +75,7 @@ class NotesApiTest < ActionDispatch::IntegrationTest
     end
     patch "/api/notes/#{id}", params: @scope.merge(body: 'no csrf'), as: :json
     assert_response :forbidden
-    [nil, {}, 'a' * (Note::MAX_BYTES + 1), '📚' * 40000].each do |body|
+    [nil, {}, 'a' * (Note::MAX_BYTES + 1), '📚' * (Note::MAX_BYTES / 4 + 1)].each do |body|
       patch "/api/notes/#{id}", params: @scope.merge(body: body), headers: @headers, as: :json
       assert_response :unprocessable_entity
       assert_equal @body, Note.find(id).body

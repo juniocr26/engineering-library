@@ -10,6 +10,11 @@ const labels = {
   'pt-BR': { image: 'Ampliar imagem', diagram: 'Ampliar diagrama', close: 'Fechar', in: 'Ampliar', out: 'Reduzir', reset: 'Restaurar zoom', failed: 'Não foi possível carregar a imagem.', help: 'Arraste para mover. Use os botões de zoom, a roda do mouse ou o gesto de pinça. Pressione Escape para fechar.' },
 };
 
+export const MISSING_IMAGE = '/assets/image-missing.svg';
+export function MissingImage({ alt, message }: { alt: string; message: string }) {
+  return <img className="missing-image" src={MISSING_IMAGE} width={48} height={36} alt={`${message}${alt ? ` ${alt}` : ''}`} title={alt || message}/>;
+}
+
 export function ExpandIcon() {
   return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 3H3v5m0-5 7 7M16 3h5v5m0-5-7 7M3 16v5h5m-5 0 7-7m11 2v5h-5m5 0-7-7"/></svg>;
 }
@@ -66,13 +71,14 @@ function diagramUrl(svg: string) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(root))}`;
 }
 
-export function ExpandableMedia({ src, alt, svg, language, children }: { src?: string; alt: string; svg?: string; language: Language; children?: ReactNode }) {
+export function ExpandableMedia({ src, alt, svg, language, children, width, height, title }: { width?: number | string; height?: number | string; title?: string; src?: string; alt: string; svg?: string; language: Language; children?: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [failedSource, setFailedSource] = useState<string>();
+  const failed = !!src && failedSource === src;
   const button = useRef<HTMLButtonElement>(null);
   const text = labels[language];
   return <span className="expandable-media">
-    {children ?? (failed || !src ? <span role="status">{text.failed} {alt}</span> : <img src={src} alt={alt} loading="eager" onError={() => setFailed(true)}/>)}
+    {children ?? (failed || !src ? <MissingImage alt={alt} message={text.failed}/> : <img src={src} alt={alt} width={width} height={height} title={title} loading="eager" onError={() => setFailedSource(src)}/>)}
     {(svg || (src && !failed)) && <span className="media-controls"><button ref={button} type="button" className="media-expand" aria-label={svg ? text.diagram : text.image} onClick={event => { event.preventDefault(); event.stopPropagation(); setOpen(true); }}><ExpandIcon/></button></span>}
     {open && createPortal(<FullscreenMediaViewer src={svg ? diagramUrl(svg) : src!} alt={alt} language={language} close={() => { setOpen(false); requestAnimationFrame(() => button.current?.focus({ preventScroll: true })); }}/>, document.body)}
   </span>;
@@ -126,7 +132,7 @@ function FullscreenMediaViewer({ src, alt, language, close }: { src: string; alt
         if (delta.factor !== 1) zoom(delta.factor);
         else setView(current => constrain(current.scale, current.x + delta.x, current.y + delta.y));
       }} onPointerUp={event => pointers.current.delete(event.pointerId)} onPointerCancel={event => pointers.current.delete(event.pointerId)} onLostPointerCapture={event => pointers.current.delete(event.pointerId)}>
-      {failed ? <p role="status">{text.failed}</p> : <img ref={media} src={src} alt={alt} draggable={false} onError={() => setFailed(true)} style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})` }}/>}
+      {failed ? <MissingImage alt={alt} message={text.failed}/> : <img ref={media} src={src} alt={alt} draggable={false} onError={() => setFailed(true)} style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})` }}/>}
     </div>
   </ViewerDialog>;
 }

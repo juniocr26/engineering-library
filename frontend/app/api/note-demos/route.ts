@@ -4,7 +4,7 @@ async function proxy(request: Request) {
   const origin = request.headers.get('origin');
   if (!origin || new URL(origin).host !== request.headers.get('host') || request.headers.get('sec-fetch-site') === 'cross-site') return new Response(null, { status: 403 });
   const body = request.method === 'POST' ? await request.text() : undefined;
-  if (body && body.length > 600000) return new Response(null, { status: 413 });
+  if (body && new TextEncoder().encode(body).length > 32 * 1024 * 1024) return new Response(null, { status: 413 });
   const headers = new Headers({ 'Content-Type': 'application/json' });
   for (const name of ['cookie', 'x-reader-csrf']) { const value = request.headers.get(name); if (value) headers.set(name, value); }
   const response = await fetch(`${backend}/api/note_demos${new URL(request.url).search}`, { method: request.method, headers, body, cache: 'no-store' });

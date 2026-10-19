@@ -18,7 +18,7 @@ module Api
         if item.save
           render json: present(item), status: :created
         else
-          render json: { error: "Invalid note. Maximum size is 128 KiB of UTF-8 text." }, status: :unprocessable_entity
+          render json: { error: "Invalid note. Maximum size is 5 MiB of UTF-8 text." }, status: :unprocessable_entity
         end
       end
     end
@@ -30,7 +30,7 @@ module Api
       if item.update(body: params[:body])
         render json: present(item)
       else
-        render json: { error: "Invalid note. Maximum size is 128 KiB of UTF-8 text." }, status: :unprocessable_entity
+        render json: { error: "Invalid note. Maximum size is 5 MiB of UTF-8 text." }, status: :unprocessable_entity
       end
     end
 
