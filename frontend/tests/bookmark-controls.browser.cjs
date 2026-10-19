@@ -29,6 +29,26 @@ const assert = require('node:assert/strict');
       await ready();
       const leaves = page.locator('.reader-pages .reader-leaf');
       const left = leaves.first();
+      const assertContentClearance = async () => {
+        await leaves.locator('.bookmark-ribbon--saved').evaluateAll(nodes => nodes.forEach(node => node.getAnimations().forEach(animation => animation.finish())));
+        const geometry = await leaves.evaluateAll(nodes => nodes.map((leaf, index) => {
+          const body = leaf.querySelector('.reader-body');
+          const control = leaf.querySelector('.reader-page-bookmark');
+          const ribbon = control?.querySelector('.bookmark-ribbon--saved');
+          const occupied = ribbon || control;
+          const probe = document.querySelector(index === 0 ? '.reader-probe--left .reader-body' : '.reader-probe--right .reader-body');
+          return {
+            clear: !occupied || body.getBoundingClientRect().top >= occupied.getBoundingClientRect().bottom + 12 - 1,
+            capacity: body.clientHeight,
+            measured: probe.clientHeight,
+          };
+        }));
+        for (const leaf of geometry) {
+          assert.ok(leaf.clear, 'content starts below the bookmark control or active ribbon');
+          assert.equal(leaf.capacity, leaf.measured, 'pagination measures the visible content capacity');
+        }
+      };
+      await assertContentClearance();
       const save = left.getByRole('button', { name: 'Bookmark page', exact: true });
       await save.waitFor();
       const boxes = await left.locator('.reader-toolbar button:not(.bookmark-ribbon)').evaluateAll(nodes => nodes.map(node => { const r = node.getBoundingClientRect(); return [r.y, r.width, r.height]; }));
@@ -48,6 +68,7 @@ const assert = require('node:assert/strict');
         await leaves.nth(1).locator('.bookmark-ribbon--saved').waitFor();
         assert.equal(bookmarks.length, 2);
       }
+      await assertContentClearance();
       await page.reload(); await ready(); await left.locator('.bookmark-ribbon--saved').waitFor();
       fail = true; await ribbon.click(); await page.locator('.reader-notice[role=alert]').waitFor();
       await page.waitForFunction(() => !document.querySelector('.reader-pages .bookmark-ribbon--saved')?.disabled);

@@ -169,7 +169,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     </nav>;
   function leaf(page: T[] | undefined, key: string, side: 'left' | 'right', physicalPage = 0, concealed = false) {
     const identity = contentPageId((page ?? []).map(unit => unit.id));
-    return <div className="reader-leaf paper manuscript-surface" key={key} data-page-id={identity} data-content-concealed={concealed || undefined} aria-hidden={concealed || undefined} inert={concealed || undefined}>
+    return <div className="reader-leaf paper manuscript-surface" key={key} data-page-controls={pageAction && (side !== 'left' || typeof header !== 'function') ? 'standalone' : undefined} data-page-id={identity} data-content-concealed={concealed || undefined} aria-hidden={concealed || undefined} inert={concealed || undefined}>
       <ManuscriptDecorations variant="reading" project={project} identity={identity}/>
       {/* Give the externally owned header its own stable sibling boundary. */}
       {side === 'left' && <Fragment key="header">{typeof header === 'function' ? header(page?.length && pageAction ? pageAction(page, physicalPage) : null) : header}</Fragment>}
@@ -198,8 +198,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       </div>}
     </div>
     <div className="reader-measure" aria-hidden="true" inert>
-      <div className="reader-leaf paper reader-probe reader-probe--left"><Fragment key="header">{typeof header === 'function' ? header(null) : header}</Fragment><div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div><div className="reader-probe-controls">{controls}</div></div>
-      <div className="reader-leaf paper reader-probe reader-probe--right"><div className="reader-body" ref={measureRight}/>{controls}</div>
+      <div className="reader-leaf paper reader-probe reader-probe--left" data-page-controls={pageAction && typeof header !== 'function' ? 'standalone' : undefined}><Fragment key="header">{typeof header === 'function' ? header(null) : header}</Fragment><div className="reader-body" ref={measure}>{units.map(unit => <div className="book-unit" key={unit.id}>{renderUnit(unit)}</div>)}</div><div className="reader-probe-controls">{controls}</div></div>
+      <div className="reader-leaf paper reader-probe reader-probe--right" data-page-controls={pageAction ? 'standalone' : undefined}><div className="reader-body" ref={measureRight}/>{controls}</div>
     </div>
 
   </section></TableScrollProvider>;

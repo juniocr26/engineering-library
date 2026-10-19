@@ -343,10 +343,12 @@ inset:0}
 .toc-header{position:relative;z-index:2;display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex-shrink:0;margin-bottom:16px;overflow-wrap:anywhere}
 .toc-header .langs{width:100%;justify-content:center;margin:0}.toc-header h1{width:100%;font:400 clamp(42px,5vw,76px)/1.1 'Great Vibes',cursive;text-align:center;margin:8px 0 14px;color:#173d5c}
 .toc-header h1 span{font-size:.5em}.toc-header .back{color:#173d5c;margin:0}
-.reader{position:relative;--leaf-height:clamp(620px,calc(100dvh - 100px),1040px);--leaf-pad:clamp(28px,4vw,60px);border:8px solid #392215;border-radius:18px;background:#392215;box-shadow:0 20px 45px #0008;overflow:hidden}
+.reader{position:relative;--leaf-height:clamp(620px,calc(100dvh - 100px),1040px);--leaf-pad:clamp(28px,4vw,60px);--page-control-size:40px;--page-ribbon-height:75px;--page-control-gap:12px;border:8px solid #392215;border-radius:18px;background:#392215;box-shadow:0 20px 45px #0008;overflow:hidden}
 .reader-stage{position:relative;perspective:2000px;isolation:isolate}
 .reader-pages{display:grid;grid-template-columns:1fr 1fr}
 .reader-leaf.paper{position:relative;padding:var(--leaf-pad);height:var(--leaf-height);min-height:0;overflow:hidden;color:#173d5c;display:flex;flex-direction:column;gap:0}
+/* Keep the visible leaves and pagination probes on the same control-safe geometry. */
+.reader-leaf[data-page-controls=standalone]>.reader-body{margin-top:calc(max(var(--page-control-size),var(--page-ribbon-height) - var(--leaf-pad)) + var(--page-control-gap))}
 .reader-body{flex:1;min-height:0;position:relative;z-index:2;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#936337 transparent;overflow-wrap:anywhere}
 /* Preserve leaf geometry and parchment while the existing turn lifecycle owns visibility.
    Include descendants so nested visibility rules cannot expose document content. */
@@ -401,8 +403,8 @@ inset:0}
 .reader-document-header a{color:#173d5c}
 .reader-toolbar{display:flex;align-items:center;flex-wrap:nowrap;gap:6px;margin-left:auto;flex-shrink:0}
 .reader-toolbar button,.reader-panel button,.reader-bookmark-toggle{color:#173d5c;background:#e8c48b;border:1px solid #966332;border-radius:5px;cursor:pointer;padding:5px 9px;font:inherit}
-.reader-toolbar button:not(.bookmark-ribbon),.reader-bookmark-toggle{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;flex-shrink:0;line-height:1}
-.reader-bookmark-slot{width:40px;height:40px;flex-shrink:0}
+.reader-toolbar button:not(.bookmark-ribbon),.reader-bookmark-toggle{display:inline-flex;align-items:center;justify-content:center;width:var(--page-control-size);height:var(--page-control-size);padding:0;flex-shrink:0;line-height:1}
+.reader-bookmark-slot{width:var(--page-control-size);height:var(--page-control-size);flex-shrink:0}
 .reader-toolbar button:focus-visible,.reader-page-bookmark button:focus-visible{outline:3px solid #173d5c;outline-offset:3px}
 .reader-toolbar button:disabled,.reader-page-bookmark button:disabled{cursor:wait}
 .reader-document-languages{display:flex;gap:16px;width:100%;flex-wrap:wrap}
@@ -429,10 +431,10 @@ inset:0}
 .reader-panel-list{list-style:none;padding:0;margin:0}.reader-panel-list li{border-bottom:1px solid #96633255;padding:12px 0;overflow-wrap:anywhere}
 .reader-panel-list a{display:block;color:#173d5c}.reader-panel-list a[aria-current=page]{background:#173d5c18}.reader-panel-list span{display:block;font-size:14px;margin-top:5px}
 .reader-saved-bookmark{display:flex;align-items:flex-start;gap:8px}.reader-saved-bookmark a{flex:1}
-.reader-page-bookmark{position:absolute;right:var(--leaf-pad);top:var(--leaf-pad);z-index:5;width:40px;height:40px;pointer-events:none}
+.reader-page-bookmark{position:absolute;right:var(--leaf-pad);top:var(--leaf-pad);z-index:5;width:var(--page-control-size);height:var(--page-control-size);pointer-events:none}
 .reader-bookmark-slot .reader-page-bookmark{position:static}
 .reader-bookmark-toggle{pointer-events:auto}
-.reader-page-bookmark .bookmark-ribbon{position:absolute;top:calc(-1 * var(--leaf-pad));right:0;width:24px;height:75px;padding:0;border:0;border-radius:0;background:linear-gradient(90deg,#741e20,#b9443c 45%,#762020);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);transform:translateY(-105%);transition:transform .35s ease;box-shadow:0 2px 4px #30170b66;pointer-events:none;visibility:hidden}
+.reader-page-bookmark .bookmark-ribbon{position:absolute;top:calc(-1 * var(--leaf-pad));right:0;width:24px;height:var(--page-ribbon-height);padding:0;border:0;border-radius:0;background:linear-gradient(90deg,#741e20,#b9443c 45%,#762020);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);transform:translateY(-105%);transition:transform .35s ease;box-shadow:0 2px 4px #30170b66;pointer-events:none;visibility:hidden}
 .reader-page-bookmark .bookmark-ribbon--saved{transform:translateY(0);pointer-events:auto;visibility:visible;cursor:pointer}
 .reader-page-bookmark .bookmark-ribbon[aria-hidden=false]{visibility:visible}
 .reader-page-bookmark .bookmark-ribbon:focus-visible{outline-offset:-4px;outline-color:#f9e4bb}
