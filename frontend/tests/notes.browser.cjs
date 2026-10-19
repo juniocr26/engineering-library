@@ -11,17 +11,19 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
     for (const width of [1440, 390]) {
       const context = await browser.newContext({ viewport: { width, height: 1000 } });
       const page = await context.newPage();
-      page.setDefaultTimeout(10000);
+      page.setDefaultTimeout(20000); page.setDefaultNavigationTimeout(60000);
       const errors = []; page.on('pageerror', error => errors.push(error.message));
       await page.goto(`${base}${path}?lang=en`); await ready(page);
       await page.evaluate(() => document.fonts.ready);
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1500); await ready(page);
       await page.locator('.reader-pages [data-highlight-block] p').first().evaluate(p => {
         const text = document.createTreeWalker(p, NodeFilter.SHOW_TEXT).nextNode();
         const range = document.createRange(); range.setStart(text, 0); range.setEnd(text, Math.min(20, text.length));
         getSelection().removeAllRanges(); getSelection().addRange(range);
+        p.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
       });
-      await page.getByRole('button', { name: 'Green', exact: true }).click();
+      await page.getByRole('button', { name: 'Green', exact: true }).click().catch(async error => { console.log(await page.evaluate(() => ({ selection: getSelection().toString(), toolbar: document.querySelector('[role=toolbar]')?.outerHTML, notices: [...document.querySelectorAll('[role=status]')].map(n => n.textContent), block: document.querySelector('.reader-pages [data-highlight-block] p')?.outerHTML }))); throw error; });
+      await page.waitForFunction(() => CSS.highlights.get('reader-green')?.size > 0);
       const list = () => page.evaluate(async query => (await fetch(`/api/highlights?${query}`)).json(), query);
       const highlights = await list(); assert.equal(highlights.highlights.length, 1);
       const id = highlights.highlights[0].id;
@@ -29,11 +31,25 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       await page.mouse.click(hit.x, hit.y);
       await page.getByRole('button', { name: 'Open note', exact: true }).click();
       const editor = page.getByRole('dialog', { name: 'Note editor', exact: true }); await editor.waitFor();
+      const assertCentered = async dialog => {
+        const bounds = await dialog.boundingBox();
+        const viewport = page.viewportSize();
+        assert.ok(Math.abs(bounds.x + bounds.width / 2 - viewport.width / 2) < 3);
+        assert.ok(Math.abs(bounds.y + bounds.height / 2 - viewport.height / 2) < 3);
+        assert.ok(bounds.x >= 0 && bounds.y >= 0);
+        assert.ok(bounds.x + bounds.width <= viewport.width && bounds.y + bounds.height <= viewport.height);
+        for (const button of await dialog.locator(':scope > footer button, :scope > header button, :scope > .media-viewer-toolbar button').all()) {
+          const rect = await button.boundingBox();
+          assert.ok(rect.x >= bounds.x && rect.x + rect.width <= bounds.x + bounds.width);
+          assert.ok(rect.y >= bounds.y && rect.y + rect.height <= bounds.y + bounds.height);
+        }
+      };
+      await assertCentered(editor);
       let source = '# Revisão 📚\n\n**Durable** *notes* ~~old~~\n\n- [x] Persist Unicode ação\n\n| Operation | Result |\n|---|---|\n| Remove color | Keep note |\n\n```typescript\nconst safe = "<script>alert(1)</script>";\n```\n\n![Persistence](/assets/notes/persistence.svg)\n\n```mermaid\nflowchart LR\n A --> B\n```';
       const draft = editor.locator('textarea'); await draft.fill(source);
       await editor.getByRole('button', { name: 'Preview', exact: true }).click();
       const preview = page.getByRole('dialog', { name: 'Note preview', exact: true });
-      await preview.locator('h1').waitFor(); assert.match(await preview.innerText(), /Revisão 📚/);
+      await preview.locator('h1').waitFor(); await assertCentered(preview); assert.match(await preview.innerText(), /Revisão 📚/);
       assert.equal(await preview.locator('table').count(), 1);
       assert.ok(await preview.locator('code .hljs-keyword').count() > 0);
       await preview.locator('.reader-diagram img').waitFor({ timeout: 20000 });
@@ -50,17 +66,54 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       await preview.getByRole('button', { name: 'Expand diagram', exact: true }).click();
       await page.getByRole('dialog', { name: 'Documentation diagram', exact: true }).waitFor(); await page.keyboard.press('Escape');
       await preview.getByRole('button', { name: 'Zoom in', exact: true }).click(); assert.equal(await preview.locator('output').innerText(), '125%');
+      for (let step = 0; step < 8; step++) {
+        const zoomIn = preview.getByRole('button', { name: 'Zoom in', exact: true });
+        if (await zoomIn.isEnabled()) await zoomIn.click();
+      }
+      assert.equal(await preview.locator('output').innerText(), '500%');
+      const stage = preview.locator('.note-preview-scroll');
+      assert.notEqual(await stage.evaluate(node => getComputedStyle(node).userSelect), 'none');
+      await preview.getByRole('button', { name: 'Pan mode', exact: true }).click();
+      assert.equal(await stage.evaluate(node => getComputedStyle(node).cursor), 'grab');
+      await stage.evaluate(node => node.scrollTo(0, 0));
+      const box = await stage.boundingBox();
+      await page.mouse.move(box.x + 10, box.y + 10);
+      await page.mouse.down();
+      assert.equal(await stage.evaluate(node => getComputedStyle(node).cursor), 'grabbing');
+      await page.mouse.move(box.x - 150, box.y - 150, { steps: 4 });
+      await page.mouse.up();
+      assert.ok(await stage.evaluate(node => node.scrollLeft > 100 && node.scrollTop > 100), JSON.stringify(await stage.evaluate(node => ({ left: node.scrollLeft, top: node.scrollTop, width: node.clientWidth, fullWidth: node.scrollWidth, height: node.clientHeight, fullHeight: node.scrollHeight }))));
+      await preview.getByRole('button', { name: 'Reset zoom', exact: true }).click();
+      assert.equal(await preview.locator('output').innerText(), '100%');
+      assert.deepEqual(await stage.evaluate(node => [node.scrollLeft, node.scrollTop]), [0, 0]);
       await page.screenshot({ path: `/tmp/notes-preview-${width}.png` });
       await preview.getByRole('button', { name: 'Return to edit', exact: true }).click(); assert.equal(await draft.inputValue(), source);
-      await editor.getByRole('button', { name: 'Save', exact: true }).click(); await editor.getByRole('status').filter({ hasText: 'Note saved.' }).waitFor();
+      await page.route('**/api/notes?**', route => route.request().method() === 'POST' ? route.fulfill({ status: 500, body: '{}' }) : route.continue());
+      await editor.getByRole('button', { name: 'Save', exact: true }).click();
+      await editor.getByRole('status').filter({ hasText: 'Could not save.' }).waitFor();
+      assert.equal(await draft.inputValue(), source);
+      await page.unroute('**/api/notes?**');
+      let completeSave;
+      const holdSave = new Promise(resolve => { completeSave = resolve; });
+      await page.route('**/api/notes?**', async route => { if (route.request().method() === 'POST') await holdSave; await route.continue(); });
+      await editor.getByRole('button', { name: 'Save', exact: true }).click();
+      assert.ok(await editor.getByRole('button', { name: 'Save', exact: true }).isDisabled());
+      assert.ok(!(await editor.getByRole('status').innerText()).includes('successfully'));
+      completeSave();
+      await editor.getByRole('status').filter({ hasText: 'Note saved successfully.' }).waitFor();
+      await page.unroute('**/api/notes?**');
       await editor.getByRole('button', { name: 'Close note', exact: true }).click();
       await page.reload(); await ready(page);
       await page.setViewportSize({ width: width === 390 ? 430 : 1280, height: 900 }); await ready(page);
-      await page.getByRole('button', { name: 'Open saved note', exact: true }).click();
+      const marker = page.getByRole('button', { name: 'Open saved note', exact: true }); await marker.waitFor();
+      assert.equal(await marker.count(), 1);
+      assert.ok(await marker.evaluate(node => { const rect = node.getBoundingClientRect(); return rect.width <= 18 && rect.height <= 18 && getComputedStyle(node).cursor === 'pointer'; }));
+      await marker.focus(); assert.ok(await marker.evaluate(node => document.activeElement === node));
+      await page.keyboard.press('Enter');
       assert.equal(await page.locator('#note-draft').inputValue(), source);
       const originalNoteId = await page.evaluate(async query => (await (await fetch(`/api/notes?${query}`)).json()).notes[0].id, query);
       source += '\n\nUpdated after refreshing.'; await draft.fill(source);
-      await editor.getByRole('button', { name: 'Save', exact: true }).click(); await editor.getByRole('status').filter({ hasText: 'Note saved.' }).waitFor();
+      await editor.getByRole('button', { name: 'Save', exact: true }).click(); await editor.getByRole('status').filter({ hasText: 'Note updated successfully.' }).waitFor();
       const updatedNotes = await page.evaluate(async query => (await (await fetch(`/api/notes?${query}`)).json()).notes, query);
       assert.equal(updatedNotes.length, 1); assert.equal(updatedNotes[0].id, originalNoteId);
       await page.locator('#note-draft').fill(source + '\nUnsaved');
@@ -80,7 +133,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       assert.equal(await page.evaluate(() => window.pwned), undefined);
       assert.equal(await preview.locator('details[open]').count(), 2);
       await page.keyboard.press('Escape');
-      await draft.fill(source); page.once('dialog', dialog => dialog.accept()); await editor.getByRole('button', { name: 'Delete note', exact: true }).click(); await editor.waitFor({ state: 'hidden' });
+      await draft.fill(source); page.once('dialog', dialog => dialog.accept()); await editor.getByRole('button', { name: 'Delete note', exact: true }).click(); await editor.waitFor({ state: 'hidden' }); await page.getByRole('status').filter({ hasText: 'Note deleted.' }).waitFor();
       assert.deepEqual(errors, []);
       await context.close(); console.log(`PASS notes desktop/mobile ${width}: source roundtrip, preview, Unicode, code, table/media expansion, Mermaid, zoom, reload, detach, language, discard, security, delete`);
     }

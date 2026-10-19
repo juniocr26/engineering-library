@@ -17,11 +17,41 @@ export function ExpandIcon() {
 /** Shared native dialog lifecycle, focus containment and Escape behavior for all viewers. */
 export function ViewerDialog({ label, close, children, className = '' }: { label: string; close: () => void; children: ReactNode; className?: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => { const node = dialog.current!; node.showModal(); return () => node.close(); }, []);
+  useEffect(() => {
+    const node = dialog.current!;
+    node.showModal();
+    const viewport = window.visualViewport;
+    const resize = () => {
+      node.style.setProperty('--viewer-visible-height', `${viewport?.height ?? innerHeight}px`);
+      node.style.setProperty('--viewer-visible-top', `${viewport?.offsetTop ?? 0}px`);
+    };
+    resize();
+    viewport?.addEventListener('resize', resize);
+    viewport?.addEventListener('scroll', resize);
+    return () => { viewport?.removeEventListener('resize', resize); viewport?.removeEventListener('scroll', resize); node.close(); };
+  }, []);
   return <dialog ref={dialog} className={`media-viewer ${className}`} aria-label={label} aria-modal="true" onCancel={event => { event.preventDefault(); event.stopPropagation(); close(); }} onKeyDown={event => {
     if (event.target === event.currentTarget && ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) event.preventDefault();
     event.stopPropagation();
   }}>{children}</dialog>;
+}
+
+/** Shared multiplicative zoom limits for image and text viewers. */
+export function viewerZoom(scale: number, factor: number, minimum = 1, maximum = 8) {
+  return Math.max(minimum, Math.min(maximum, scale * factor));
+}
+
+/** Shared pointer delta/pinch math; each viewer keeps its own selection policy. */
+export function viewerPointerMove(pointers: Map<number, { x: number; y: number }>, id: number, next: { x: number; y: number }) {
+  const previous = pointers.get(id);
+  if (!previous) return;
+  const other = [...pointers.entries()].find(([key]) => key !== id)?.[1];
+  pointers.set(id, next);
+  if (other) {
+    const before = Math.hypot(previous.x - other.x, previous.y - other.y);
+    return { factor: before ? Math.hypot(next.x - other.x, next.y - other.y) / before : 1, x: 0, y: 0 };
+  }
+  return { factor: 1, x: next.x - previous.x, y: next.y - previous.y };
 }
 
 function diagramUrl(svg: string) {
@@ -63,7 +93,7 @@ function FullscreenMediaViewer({ src, alt, language, close }: { src: string; alt
     return { scale, x: Math.max(-limitX, Math.min(limitX, x)), y: Math.max(-limitY, Math.min(limitY, y)) };
   }
   function zoom(factor: number) {
-    setView(current => constrain(Math.max(1, Math.min(8, current.scale * factor)), current.x, current.y));
+    setView(current => constrain(viewerZoom(current.scale, factor), current.x, current.y));
   }
   useEffect(() => {
     const node = stage.current!.closest('dialog')!;
@@ -91,16 +121,10 @@ function FullscreenMediaViewer({ src, alt, language, close }: { src: string; alt
     <div ref={stage} className="media-viewer-stage" data-zoom={view.scale} onWheel={event => zoom(Math.exp(-event.deltaY * .002))}
       onPointerDown={event => { if (event.pointerType === 'mouse' && event.button !== 0) return; event.currentTarget.setPointerCapture(event.pointerId); pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY }); }}
       onPointerMove={event => {
-        const previous = pointers.current.get(event.pointerId);
-        if (!previous) return;
-        const next = { x: event.clientX, y: event.clientY };
-        const other = [...pointers.current.entries()].find(([id]) => id !== event.pointerId)?.[1];
-        if (other) {
-          const before = Math.hypot(previous.x - other.x, previous.y - other.y);
-          const after = Math.hypot(next.x - other.x, next.y - other.y);
-          if (before > 0) zoom(after / before);
-        } else setView(current => constrain(current.scale, current.x + next.x - previous.x, current.y + next.y - previous.y));
-        pointers.current.set(event.pointerId, next);
+        const delta = viewerPointerMove(pointers.current, event.pointerId, { x: event.clientX, y: event.clientY });
+        if (!delta) return;
+        if (delta.factor !== 1) zoom(delta.factor);
+        else setView(current => constrain(current.scale, current.x + delta.x, current.y + delta.y));
       }} onPointerUp={event => pointers.current.delete(event.pointerId)} onPointerCancel={event => pointers.current.delete(event.pointerId)} onLostPointerCapture={event => pointers.current.delete(event.pointerId)}>
       {failed ? <p role="status">{text.failed}</p> : <img ref={media} src={src} alt={alt} draggable={false} onError={() => setFailed(true)} style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})` }}/>}
     </div>

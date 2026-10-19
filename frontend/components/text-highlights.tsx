@@ -124,14 +124,15 @@ function HighlightSession({ project, documentId, language, root }: { project: st
       for (const note of notes) {
         for (const block of surface.querySelectorAll<HTMLElement>('.reader-pages [data-highlight-block]')) {
           if (block.closest('[inert]')) continue;
-          const anchor = note.segments.find(part => part.block === block.dataset.highlightBlock);
+          const anchor = note.segments.at(-1);
+          if (anchor?.block !== block.dataset.highlightBlock) continue;
           const resolved = anchor && resolveTextAnchor(anchor, block.textContent ?? '');
           if (!resolved) continue;
-          const rect = eligibleRanges(block, ...resolved).at(-1)?.getBoundingClientRect();
+          const rect = Array.from(eligibleRanges(block, ...resolved).at(-1)?.getClientRects() ?? []).at(-1);
           if (rect && rect.height && rect.top >= 0 && rect.top < innerHeight) {
-            const left = Math.min(innerWidth - 30, block.getBoundingClientRect().right + 3);
-            let top = rect.top;
-            while (result.some(item => Math.abs(item.left - left) < 25 && Math.abs(item.top - top) < 26)) top += 27;
+            const left = Math.min(innerWidth - 30, rect.right + 2);
+            let top = Math.max(0, rect.top - 7);
+            while (result.some(item => Math.abs(item.left - left) < 16 && Math.abs(item.top - top) < 16)) top += 16;
             result.push({ id: note.id, left, top }); break;
           }
         }
@@ -143,8 +144,9 @@ function HighlightSession({ project, documentId, language, root }: { project: st
     const observer = new MutationObserver(schedule);
     observer.observe(surface, { subtree: true, childList: true, attributes: true, attributeFilter: ['inert', 'data-pagination', 'aria-busy'] });
     const resize = new ResizeObserver(schedule); resize.observe(surface);
+    document.fonts.addEventListener('loadingdone', schedule);
     window.addEventListener('resize', schedule); window.addEventListener('scroll', schedule, true); schedule();
-    return () => { observer.disconnect(); resize.disconnect(); cancelAnimationFrame(frame); window.removeEventListener('resize', schedule); window.removeEventListener('scroll', schedule, true); };
+    return () => { observer.disconnect(); resize.disconnect(); document.fonts.removeEventListener('loadingdone', schedule); cancelAnimationFrame(frame); window.removeEventListener('resize', schedule); window.removeEventListener('scroll', schedule, true); };
   }, [notes, root, en]);
   function openNote() {
     if (!tool) return;
@@ -192,11 +194,11 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   }, [saved, root]);
   return <>
     {process.env.NODE_ENV === 'development' && <NoteDemos project={project} documentId={documentId} language={language} csrf={csrf} changed={() => { void Promise.all([fetch(`/api/highlights?${query}`, { cache: 'no-store' }), fetch(`/api/notes?${query}`, { cache: 'no-store' })]).then(async ([highlights, notes]) => { if (!highlights.ok || !notes.ok) throw Error(); setSaved((await highlights.json()).highlights); setNotes((await notes.json()).notes); }).catch(() => setMessage(en ? 'Reload to refresh annotations.' : 'Recarregue para atualizar as anotações.')); }}/>}
-    {indicators.map(item => createPortal(<button key={item.id} className="reader-note-indicator" data-note-id={item.id} style={{ left: item.left, top: item.top }} aria-label={en ? 'Open saved note' : 'Abrir nota salva'} onClick={() => setEditing({ note: notes.find(note => note.id === item.id) })}>✎</button>, document.body))}
-    {editing && createPortal(<NoteEditor note={editing.note} highlightId={editing.highlightId} query={query} csrf={csrf} language={language} saved={note => setNotes(previous => [...previous.filter(item => item.id !== note.id), note])} removed={id => setNotes(previous => previous.filter(item => item.id !== id))} close={() => setEditing(null)}/>, document.body)}
+    {indicators.map(item => createPortal(<button key={item.id} className="reader-note-indicator" data-note-id={item.id} style={{ left: item.left, top: item.top }} aria-label={en ? 'Open saved note' : 'Abrir nota salva'} onClick={() => setEditing({ note: notes.find(note => note.id === item.id) })}><svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 2h8v12H4zM6 5h4M6 8h4M6 11h3"/></svg></button>, document.body))}
+    {editing && createPortal(<NoteEditor note={editing.note} highlightId={editing.highlightId} query={query} csrf={csrf} language={language} saved={note => setNotes(previous => [...previous.filter(item => item.id !== note.id), note])} removed={id => { setNotes(previous => previous.filter(item => item.id !== id)); setMessage(en ? 'Note deleted.' : 'Nota excluída.'); }} close={() => setEditing(null)}/>, document.body)}
     {message && <p className="reader-notice" role="status">{message}</p>}
     {tool && createPortal(<div role="toolbar" aria-label={en ? 'Text highlights' : 'Destaques de texto'} className="reader-selection-toolbar" style={{ left: tool.left, top: tool.top }} onPointerDown={event => event.preventDefault()}>
-      {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: `var(--highlight-${color})` }} disabled={busy || !csrf} onClick={() => void mutate(color, tool.id !== undefined && tool.color === color)}/>)}
+      {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(tool.color === color ? (en ? 'Remove highlight: ' : 'Remover destaque: ') : '') + (en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: `var(--highlight-${color})` }} disabled={busy || !csrf} onClick={() => void mutate(color, tool.id !== undefined && tool.color === color)}>{tool.color === color && <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="m4 4 8 8m0-8-8 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>}</button>)}
       <button type="button" aria-label={en ? 'Copy' : 'Copiar'} onClick={() => void copy()}>⧉</button>
       <button type="button" disabled={busy || !csrf} onClick={openNote} aria-label={en ? 'Open note' : 'Abrir nota'}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M13 5H5v15h14v-8M11 13l1-4 7-7 3 3-7 7-4 1Z"/></svg></button>
     </div>, document.body)}

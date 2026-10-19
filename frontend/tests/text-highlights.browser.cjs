@@ -38,7 +38,7 @@ const assert = require('node:assert/strict');
         });
         await page.getByRole('toolbar', { name: 'Text highlights' }).waitFor({ timeout: 5000 }).catch(async error => { console.log(await page.evaluate(() => ({ selection: getSelection().toString(), notices: [...document.querySelectorAll('[role=status]')].map(n => n.textContent), html: document.querySelector('.reader-pages [data-highlight-block] p')?.outerHTML, mode: document.querySelector('.reader')?.dataset.mode, inert: document.querySelector('.reader-pages [data-highlight-block] p')?.closest('[inert]')?.outerHTML.slice(0,200), css: getComputedStyle(document.querySelector('.reader-pages [data-highlight-block] p')).userSelect }))); throw error; });
       };
-      await page.goto(`${base}${path}?lang=en`); await ready();
+      await page.goto(`${base}${path}?lang=en`); await page.evaluate(() => document.fonts.ready); await page.waitForTimeout(500); await ready();
       // Synthetic DOM fixture in the real reader: inline formatting, controls,
       // collapsed disclosure, code and media boundaries share one saved record.
       await page.locator('.reader-pages [data-highlight-block]').first().evaluate(block => {
@@ -119,7 +119,11 @@ const assert = require('node:assert/strict');
         const rect = [...CSS.highlights.get('reader-blue')][0].getClientRects()[0]; return { x: rect.x + 2, y: rect.y + rect.height / 2 };
       });
       await page.mouse.click(removePoint.x, removePoint.y);
-      await page.getByRole('button', { name: 'Blue', exact: true }).click();
+      const toolbar = page.getByRole('toolbar', { name: 'Text highlights' });
+      assert.equal(await toolbar.locator('button[aria-pressed=true] svg').count(), 1);
+      assert.equal(await toolbar.locator('button[aria-pressed=false] svg').count(), 0);
+      assert.equal(await toolbar.locator('button').count(), 9);
+      await page.getByRole('button', { name: 'Remove highlight: Blue', exact: true }).click();
       await page.waitForFunction(() => CSS.highlights.get('reader-blue')?.size === 0);
       assert.equal((await list()).highlights.length, 0);
       assert.deepEqual(errors, []);
