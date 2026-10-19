@@ -18,7 +18,7 @@ export function ExpandIcon() {
 export function ViewerDialog({ label, close, children, className = '' }: { label: string; close: () => void; children: ReactNode; className?: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => { const node = dialog.current!; node.showModal(); return () => node.close(); }, []);
-  return <dialog ref={dialog} className={`media-viewer ${className}`} aria-label={label} aria-modal="true" onCancel={event => { event.preventDefault(); close(); }} onKeyDown={event => {
+  return <dialog ref={dialog} className={`media-viewer ${className}`} aria-label={label} aria-modal="true" onCancel={event => { event.preventDefault(); event.stopPropagation(); close(); }} onKeyDown={event => {
     if (event.target === event.currentTarget && ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) event.preventDefault();
     event.stopPropagation();
   }}>{children}</dialog>;

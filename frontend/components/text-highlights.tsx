@@ -1,4 +1,6 @@
 'use client';
+import { NoteDemos } from './note-demos';
+import { NoteEditor, type SavedNote } from './note-editor';
 import { createPortal } from 'react-dom';
 import { readerIdentity } from '../lib/reader-identity';
 import { useEffect, useRef, useState, type RefObject, type ReactNode } from 'react';
@@ -15,6 +17,9 @@ export function TextHighlights({ project, document: documentId, language, childr
 }
 function HighlightSession({ project, documentId, language, root }: { project: string; documentId: string; language: Language; root: RefObject<HTMLDivElement | null> }) {
   const [saved, setSaved] = useState<SavedHighlight[]>([]);
+  const [notes, setNotes] = useState<SavedNote[]>([]);
+  const [editing, setEditing] = useState<{ note?: SavedNote; highlightId?: number } | null>(null);
+  const [indicators, setIndicators] = useState<{ id: number; left: number; top: number }[]>([]);
   const [csrf, setCsrf] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -24,7 +29,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   const query = new URLSearchParams({ project, document: documentId, language }).toString();
   useEffect(() => {
     const controller = new AbortController();
-    void readerIdentity(project, language).then(() => fetch(`/api/highlights?${query}`, { signal: controller.signal, cache: 'no-store' })).then(async response => { if (!response.ok) throw Error(); return response.json(); }).then(data => { if (!controller.signal.aborted) { setSaved(data.highlights); setCsrf(data.csrf_token); } }, () => { if (!controller.signal.aborted) setMessage(en ? 'Highlights unavailable. Reload to retry.' : 'Destaques indisponíveis. Recarregue para tentar novamente.'); });
+    void readerIdentity(project, language).then(() => fetch(`/api/highlights?${query}`, { signal: controller.signal, cache: 'no-store' })).then(async response => { if (!response.ok) throw Error(); return response.json(); }).then(data => { if (!controller.signal.aborted) { setSaved(data.highlights); setCsrf(data.csrf_token); void fetch(`/api/notes?${query}`, { signal: controller.signal, cache: 'no-store' }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(value => setNotes(value.notes)).catch(() => { if (!controller.signal.aborted) setMessage(en ? 'Notes unavailable. Reload to retry.' : 'Notas indisponíveis. Recarregue para tentar novamente.'); }); } }, () => { if (!controller.signal.aborted) setMessage(en ? 'Highlights unavailable. Reload to retry.' : 'Destaques indisponíveis. Recarregue para tentar novamente.'); });
     return () => controller.abort();
   }, [query, en, project, language]);
   useEffect(() => {
@@ -63,6 +68,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
     if (!surface) return;
     let timer: ReturnType<typeof setTimeout>;
     const capture = () => {
+      if (document.querySelector('.note-editor')) return;
       const selection = window.getSelection();
       if (!selection || selection.isCollapsed || !selection.rangeCount) { setTool(null); return; }
       const range = selection.getRangeAt(0);
@@ -91,7 +97,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
       clearTimeout(timer); if (!window.getSelection()?.isCollapsed) timer = setTimeout(capture, 0);
     };
     const outside = (event: PointerEvent) => { if (!(event.target as Element).closest?.('[role="toolbar"]')) { clearTimeout(timer); setTool(null); } };
-    const key = (event: KeyboardEvent) => { if (event.key === 'Escape') { clearTimeout(timer); setTool(null); window.getSelection()?.removeAllRanges(); } };
+    const key = (event: KeyboardEvent) => { if (event.key === 'Escape' && !document.querySelector('.note-editor')) { clearTimeout(timer); setTool(null); window.getSelection()?.removeAllRanges(); } };
     const dismiss = () => setTool(null);
     const copySelection = (event: ClipboardEvent) => {
       const selection = window.getSelection();
@@ -109,6 +115,44 @@ function HighlightSession({ project, documentId, language, root }: { project: st
     window.addEventListener('resize', dismiss); window.addEventListener('scroll', dismiss, true);
     return () => { clearTimeout(timer); surface.removeEventListener('copy', copySelection); document.removeEventListener('pointerdown', outside); document.removeEventListener('pointerup', completed); document.removeEventListener('selectionchange', changed); document.removeEventListener('keydown', key); window.removeEventListener('resize', dismiss); window.removeEventListener('scroll', dismiss, true); };
   }, [en, root, saved]);
+  useEffect(() => {
+    const surface = root.current;
+    if (!surface) return;
+    let frame = 0;
+    const update = () => {
+      const result: { id: number; left: number; top: number }[] = [];
+      for (const note of notes) {
+        for (const block of surface.querySelectorAll<HTMLElement>('.reader-pages [data-highlight-block]')) {
+          if (block.closest('[inert]')) continue;
+          const anchor = note.segments.find(part => part.block === block.dataset.highlightBlock);
+          const resolved = anchor && resolveTextAnchor(anchor, block.textContent ?? '');
+          if (!resolved) continue;
+          const rect = eligibleRanges(block, ...resolved).at(-1)?.getBoundingClientRect();
+          if (rect && rect.height && rect.top >= 0 && rect.top < innerHeight) {
+            const left = Math.min(innerWidth - 30, block.getBoundingClientRect().right + 3);
+            let top = rect.top;
+            while (result.some(item => Math.abs(item.left - left) < 25 && Math.abs(item.top - top) < 26)) top += 27;
+            result.push({ id: note.id, left, top }); break;
+          }
+        }
+      }
+      setIndicators(result);
+      if (notes.some(note => !note.segments.some(anchor => Array.from(surface.querySelectorAll<HTMLElement>('[data-highlight-block]')).some(block => block.dataset.highlightBlock === anchor.block && resolveTextAnchor(anchor, block.textContent ?? ''))))) setMessage(en ? 'Some note locations changed and could not be restored safely.' : 'A localização de algumas notas mudou e não pôde ser restaurada com segurança.');
+    };
+    const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
+    const observer = new MutationObserver(schedule);
+    observer.observe(surface, { subtree: true, childList: true, attributes: true, attributeFilter: ['inert', 'data-pagination', 'aria-busy'] });
+    const resize = new ResizeObserver(schedule); resize.observe(surface);
+    window.addEventListener('resize', schedule); window.addEventListener('scroll', schedule, true); schedule();
+    return () => { observer.disconnect(); resize.disconnect(); cancelAnimationFrame(frame); window.removeEventListener('resize', schedule); window.removeEventListener('scroll', schedule, true); };
+  }, [notes, root, en]);
+  function openNote() {
+    if (!tool) return;
+    const same = (segments: TextAnchor[]) => segments.length === tool.segments.length && segments.every((part, index) => part.block === tool.segments[index].block && part.start === tool.segments[index].start && part.end === tool.segments[index].end && part.exact === tool.segments[index].exact);
+    const note = notes.find(item => item.highlight_id === tool.id && tool.id !== undefined || same(item.segments));
+    if (!note && !tool.id) { setMessage(en ? 'Choose a highlight color before adding a note.' : 'Escolha uma cor de destaque antes de adicionar uma nota.'); return; }
+    setEditing({ note, highlightId: tool.id }); setTool(null); window.getSelection()?.removeAllRanges();
+  }
   async function mutate(color?: HighlightColor, remove = false) {
     if (!tool || pending.current || !csrf) return;
     pending.current = true; setBusy(true);
@@ -147,11 +191,14 @@ function HighlightSession({ project, documentId, language, root }: { project: st
     return () => surface?.removeEventListener('click', click);
   }, [saved, root]);
   return <>
+    {process.env.NODE_ENV === 'development' && <NoteDemos project={project} documentId={documentId} language={language} csrf={csrf} changed={() => { void Promise.all([fetch(`/api/highlights?${query}`, { cache: 'no-store' }), fetch(`/api/notes?${query}`, { cache: 'no-store' })]).then(async ([highlights, notes]) => { if (!highlights.ok || !notes.ok) throw Error(); setSaved((await highlights.json()).highlights); setNotes((await notes.json()).notes); }).catch(() => setMessage(en ? 'Reload to refresh annotations.' : 'Recarregue para atualizar as anotações.')); }}/>}
+    {indicators.map(item => createPortal(<button key={item.id} className="reader-note-indicator" data-note-id={item.id} style={{ left: item.left, top: item.top }} aria-label={en ? 'Open saved note' : 'Abrir nota salva'} onClick={() => setEditing({ note: notes.find(note => note.id === item.id) })}>✎</button>, document.body))}
+    {editing && createPortal(<NoteEditor note={editing.note} highlightId={editing.highlightId} query={query} csrf={csrf} language={language} saved={note => setNotes(previous => [...previous.filter(item => item.id !== note.id), note])} removed={id => setNotes(previous => previous.filter(item => item.id !== id))} close={() => setEditing(null)}/>, document.body)}
     {message && <p className="reader-notice" role="status">{message}</p>}
     {tool && createPortal(<div role="toolbar" aria-label={en ? 'Text highlights' : 'Destaques de texto'} className="reader-selection-toolbar" style={{ left: tool.left, top: tool.top }} onPointerDown={event => event.preventDefault()}>
       {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: `var(--highlight-${color})` }} disabled={busy || !csrf} onClick={() => void mutate(color, tool.id !== undefined && tool.color === color)}/>)}
       <button type="button" aria-label={en ? 'Copy' : 'Copiar'} onClick={() => void copy()}>⧉</button>
-      <button type="button" disabled aria-label={en ? 'Add note (available in Phase 2)' : 'Adicionar nota (disponível na fase 2)'} title={en ? 'Notes will be available in Phase 2' : 'Notas estarão disponíveis na fase 2'}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M13 5H5v15h14v-8M11 13l1-4 7-7 3 3-7 7-4 1Z"/></svg></button>
+      <button type="button" disabled={busy || !csrf} onClick={openNote} aria-label={en ? 'Open note' : 'Abrir nota'}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M13 5H5v15h14v-8M11 13l1-4 7-7 3 3-7 7-4 1Z"/></svg></button>
     </div>, document.body)}
   </>;
 }

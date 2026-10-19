@@ -60,7 +60,7 @@ export function SourceCode({ unit, language, query, location, collapse }: { coll
   </div>;
 }
 
-function CodeViewer({ children, en, path, close }: { children: ReactNode; en: boolean; path: string; close: () => void }) {
+export function CodeViewer({ children, en, path, close }: { children: ReactNode; en: boolean; path: string; close: () => void }) {
   const [zoom, setZoom] = useState(1);
   return <ViewerDialog label={path} close={close} className="code-viewer">
     <div className="media-viewer-toolbar">

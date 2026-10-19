@@ -1,0 +1,88 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/tmp/numbering-browser/node_modules/playwright');
+const assert = require('node:assert/strict');
+const base = process.env.BROWSER_BASE_URL || 'http://localhost:3000';
+const path = '/projects/engineering-library/docs/architecture/current-state.md';
+const query = 'project=engineering-library&document=architecture%2Fcurrent-state.md&language=en';
+const ready = async page => { await page.locator('.reader[data-pagination="ready"]').waitFor(); await page.waitForFunction(() => document.querySelector('.reader-stage')?.getAttribute('aria-busy') === 'false'); };
+(async () => {
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+  try {
+    for (const width of [1440, 390]) {
+      const context = await browser.newContext({ viewport: { width, height: 1000 } });
+      const page = await context.newPage();
+      page.setDefaultTimeout(10000);
+      const errors = []; page.on('pageerror', error => errors.push(error.message));
+      await page.goto(`${base}${path}?lang=en`); await ready(page);
+      await page.evaluate(() => document.fonts.ready);
+      await page.waitForTimeout(500);
+      await page.locator('.reader-pages [data-highlight-block] p').first().evaluate(p => {
+        const text = document.createTreeWalker(p, NodeFilter.SHOW_TEXT).nextNode();
+        const range = document.createRange(); range.setStart(text, 0); range.setEnd(text, Math.min(20, text.length));
+        getSelection().removeAllRanges(); getSelection().addRange(range);
+      });
+      await page.getByRole('button', { name: 'Green', exact: true }).click();
+      const list = () => page.evaluate(async query => (await fetch(`/api/highlights?${query}`)).json(), query);
+      const highlights = await list(); assert.equal(highlights.highlights.length, 1);
+      const id = highlights.highlights[0].id;
+      const hit = await page.evaluate(() => { const rect = [...CSS.highlights.get('reader-green')][0].getClientRects()[0]; return { x: rect.x + 2, y: rect.y + rect.height / 2 }; });
+      await page.mouse.click(hit.x, hit.y);
+      await page.getByRole('button', { name: 'Open note', exact: true }).click();
+      const editor = page.getByRole('dialog', { name: 'Note editor', exact: true }); await editor.waitFor();
+      let source = '# Revisão 📚\n\n**Durable** *notes* ~~old~~\n\n- [x] Persist Unicode ação\n\n| Operation | Result |\n|---|---|\n| Remove color | Keep note |\n\n```typescript\nconst safe = "<script>alert(1)</script>";\n```\n\n![Persistence](/assets/notes/persistence.svg)\n\n```mermaid\nflowchart LR\n A --> B\n```';
+      const draft = editor.locator('textarea'); await draft.fill(source);
+      await editor.getByRole('button', { name: 'Preview', exact: true }).click();
+      const preview = page.getByRole('dialog', { name: 'Note preview', exact: true });
+      await preview.locator('h1').waitFor(); assert.match(await preview.innerText(), /Revisão 📚/);
+      assert.equal(await preview.locator('table').count(), 1);
+      assert.ok(await preview.locator('code .hljs-keyword').count() > 0);
+      await preview.locator('.reader-diagram img').waitFor({ timeout: 20000 });
+      assert.equal(await preview.locator('img').count(), 2);
+      await preview.getByRole('button', { name: 'Expand code', exact: true }).click();
+      await page.getByRole('dialog', { name: 'typescript', exact: true }).waitFor(); await page.keyboard.press('Escape');
+      await preview.getByRole('button', { name: 'Expand table', exact: true }).click();
+      await page.getByRole('dialog', { name: 'Complete table', exact: true }).waitFor();
+      await page.keyboard.press('Escape'); await preview.waitFor();
+      await preview.getByRole('button', { name: 'Expand image', exact: true }).click();
+      const media = page.getByRole('dialog', { name: 'Persistence', exact: true }); await media.waitFor({ timeout: 5000 }).catch(async error => { console.log(await page.locator('dialog').evaluateAll(items => items.map(n => ({ label: n.getAttribute('aria-label'), open: n.open, rect: n.getBoundingClientRect().toJSON(), html: n.outerHTML.slice(0,500) })))); await page.screenshot({ path: '/tmp/notes-failure.png' }); throw error; });
+       await media.getByRole('button', { name: 'Zoom in', exact: true }).click(); assert.equal(await media.locator('output').innerText(), '125%');
+      await page.keyboard.press('Escape');
+      await preview.getByRole('button', { name: 'Expand diagram', exact: true }).click();
+      await page.getByRole('dialog', { name: 'Documentation diagram', exact: true }).waitFor(); await page.keyboard.press('Escape');
+      await preview.getByRole('button', { name: 'Zoom in', exact: true }).click(); assert.equal(await preview.locator('output').innerText(), '125%');
+      await page.screenshot({ path: `/tmp/notes-preview-${width}.png` });
+      await preview.getByRole('button', { name: 'Return to edit', exact: true }).click(); assert.equal(await draft.inputValue(), source);
+      await editor.getByRole('button', { name: 'Save', exact: true }).click(); await editor.getByRole('status').filter({ hasText: 'Note saved.' }).waitFor();
+      await editor.getByRole('button', { name: 'Close note', exact: true }).click();
+      await page.reload(); await ready(page);
+      await page.setViewportSize({ width: width === 390 ? 430 : 1280, height: 900 }); await ready(page);
+      await page.getByRole('button', { name: 'Open saved note', exact: true }).click();
+      assert.equal(await page.locator('#note-draft').inputValue(), source);
+      const originalNoteId = await page.evaluate(async query => (await (await fetch(`/api/notes?${query}`)).json()).notes[0].id, query);
+      source += '\n\nUpdated after refreshing.'; await draft.fill(source);
+      await editor.getByRole('button', { name: 'Save', exact: true }).click(); await editor.getByRole('status').filter({ hasText: 'Note saved.' }).waitFor();
+      const updatedNotes = await page.evaluate(async query => (await (await fetch(`/api/notes?${query}`)).json()).notes, query);
+      assert.equal(updatedNotes.length, 1); assert.equal(updatedNotes[0].id, originalNoteId);
+      await page.locator('#note-draft').fill(source + '\nUnsaved');
+      page.once('dialog', dialog => dialog.dismiss()); await page.getByRole('button', { name: 'Close note', exact: true }).click(); assert.ok(await editor.isVisible());
+      await page.locator('#note-draft').fill(source);
+      await page.getByRole('button', { name: 'Close note', exact: true }).click();
+      await page.evaluate(async ({ id, query, token }) => fetch(`/api/highlights/${id}?${query}`, { method: 'DELETE', headers: { 'X-Reader-CSRF': token } }), { id, query, token: highlights.csrf_token });
+      await page.reload(); await ready(page); await page.getByRole('button', { name: 'Open saved note', exact: true }).click(); assert.equal(await draft.inputValue(), source);
+      await editor.getByRole('button', { name: 'Close note', exact: true }).click();
+      await page.goto(`${base}${path}?lang=pt-BR`); await ready(page); assert.equal(await page.getByRole('button', { name: 'Abrir nota salva', exact: true }).count(), 0);
+      await page.goto(`${base}${path}?lang=en`); await ready(page);
+      await page.getByRole('button', { name: 'Open saved note', exact: true }).click();
+      const malicious = '# Security\n\n<script>window.pwned=1</script>\n<img src=x onerror="window.pwned=1">\n<svg onload="window.pwned=1"><script>alert(1)</script></svg>\n\n[click](javascript:alert%281%29) ![tracking](http://127.0.0.1:9/private) ![svg](data:image/svg+xml,test)\n\n```mermaid\n%%{init: {"securityLevel":"loose"}}%%\nflowchart LR\n A --> B\n```\n\n```mermaid\ninvalid diagram blah\n```';
+      await draft.fill(malicious); await editor.getByRole('button', { name: 'Preview', exact: true }).click();
+      await preview.waitFor(); await page.waitForTimeout(700);
+      assert.equal(await preview.locator('script,iframe,object,embed,svg,[onerror],[onload],a[href^="javascript"],img').count(), 0);
+      assert.equal(await page.evaluate(() => window.pwned), undefined);
+      assert.equal(await preview.locator('details[open]').count(), 2);
+      await page.keyboard.press('Escape');
+      await draft.fill(source); page.once('dialog', dialog => dialog.accept()); await editor.getByRole('button', { name: 'Delete note', exact: true }).click(); await editor.waitFor({ state: 'hidden' });
+      assert.deepEqual(errors, []);
+      await context.close(); console.log(`PASS notes desktop/mobile ${width}: source roundtrip, preview, Unicode, code, table/media expansion, Mermaid, zoom, reload, detach, language, discard, security, delete`);
+    }
+  } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exit(1); });
