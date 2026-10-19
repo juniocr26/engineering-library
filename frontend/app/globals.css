@@ -525,14 +525,24 @@ inset:0}
 .toc-toggle:focus-visible{outline:2px solid #173d5c;outline-offset:2px}
 
 /* Text ranges paint without inserting DOM nodes or changing book measurements. */
-::highlight(reader-yellow) { background: #f9e35780; color: #182d48; }
-::highlight(reader-blue) { background: #9dc1ff80; color: #182d48; }
-::highlight(reader-pink) { background: #f5a2b080; color: #182d48; }
-::highlight(reader-orange) { background: #ffbe7280; color: #182d48; }
-::highlight(reader-purple) { background: #c4a1ed80; color: #182d48; }
-::highlight(reader-red) { background: #ee8c8580; color: #182d48; }
-::highlight(reader-green) { background: #a6d49480; color: #182d48; }
+::highlight(reader-yellow) { background: color-mix(in srgb, var(--highlight-yellow) 65%, transparent); color: #182d48; }
+::highlight(reader-blue) { background: color-mix(in srgb, var(--highlight-blue) 65%, transparent); color: #182d48; }
+::highlight(reader-pink) { background: color-mix(in srgb, var(--highlight-pink) 65%, transparent); color: #182d48; }
+::highlight(reader-orange) { background: color-mix(in srgb, var(--highlight-orange) 65%, transparent); color: #182d48; }
+::highlight(reader-purple) { background: color-mix(in srgb, var(--highlight-purple) 65%, transparent); color: #182d48; }
+::highlight(reader-red) { background: color-mix(in srgb, var(--highlight-red) 65%, transparent); color: #182d48; }
+::highlight(reader-green) { background: color-mix(in srgb, var(--highlight-green) 65%, transparent); color: #182d48; }
 .reader-selection-toolbar { position: fixed; z-index: 100; display: flex; align-items: center; gap: 3px; padding: 7px; background: #f0dfb8; border: 1px solid #87683d; border-radius: 8px; box-shadow: 0 3px 12px #33221140; max-width: calc(100vw - 16px); }
 .reader-selection-toolbar button { flex: 0 0 26px; width: 26px; height: 26px; padding: 0; border: 1px solid #705b4680; border-radius: 50%; color: #182d48; cursor: pointer; }
 .reader-selection-toolbar button[aria-pressed=true], .reader-selection-toolbar button:focus-visible { outline: 2px solid #182d48; outline-offset: 2px; }
 .reader-selection-toolbar button:disabled { opacity: .5; cursor: not-allowed; }
+
+:root {
+  --highlight-yellow: #e8cc3f;
+  --highlight-blue: #76a4ed;
+  --highlight-pink: #e783a0;
+  --highlight-orange: #f0a34a;
+  --highlight-purple: #ab80d1;
+  --highlight-red: #d77970;
+  --highlight-green: #83ba80;
+}

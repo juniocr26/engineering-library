@@ -2,32 +2,12 @@
 import { createPortal } from 'react-dom';
 import { readerIdentity } from '../lib/reader-identity';
 import { useEffect, useRef, useState, type RefObject, type ReactNode } from 'react';
-import { highlightColors, resolveTextAnchor, textAnchor, toolbarPosition, type HighlightColor, type SavedHighlight, type TextAnchor } from '../lib/text-anchors';
+import { highlightColors, resolveTextAnchor, toolbarPosition, type HighlightColor, type SavedHighlight, type TextAnchor } from '../lib/text-anchors';
+import { eligibleRanges, selectedAnchors } from '../lib/highlight-dom';
 import type { Language } from '../lib/i18n';
 
 type Registry = { set: (name: string, value: unknown) => void; delete: (name: string) => void };
 type HighlightWindow = Window & { Highlight?: new (...ranges: Range[]) => unknown };
-const colors = ['#f9e357', '#9dc1ff', '#f5a2b0', '#ffbe72', '#c4a1ed', '#ee8c85', '#a6d494'];
-const blocked = 'button,pre,code,table,svg,img,.reader-diagram,.source-code,.reader-code,.source-reference';
-function nodes(element: HTMLElement) {
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
-  const result: Text[] = [];
-  while (walker.nextNode()) result.push(walker.currentNode as Text);
-  return result;
-}
-function domRange(element: HTMLElement, start: number, end: number) {
-  const range = document.createRange(); let offset = 0; let begun = false;
-  for (const node of nodes(element)) {
-    const next = offset + node.length;
-    if (!begun && start <= next) { range.setStart(node, start - offset); begun = true; }
-    if (begun && end <= next) { range.setEnd(node, end - offset); return range; }
-    offset = next;
-  }
-  return null;
-}
-function offset(element: HTMLElement, node: Node, position: number) {
-  const range = document.createRange(); range.selectNodeContents(element); range.setEnd(node, position); return range.toString().length;
-}
 
 export function TextHighlights({ project, document: documentId, language, children }: { project: string; document: string; language: Language; children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
@@ -62,8 +42,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
           if (segment.block !== block.dataset.highlightBlock) continue;
           const resolved = resolveTextAnchor(segment, block.textContent ?? '');
           if (!resolved) { unresolved = true; continue; }
-          const range = domRange(block, ...resolved);
-          if (range) { ranges.get(item.color)?.push(range); }
+          ranges.get(item.color)?.push(...eligibleRanges(block, ...resolved));
         }
       });
       for (const [color, values] of ranges) registry.set(`reader-${color}`, Object.assign(new Constructor(...values) as object, { priority: highlightColors.indexOf(color) }));
@@ -75,7 +54,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
       if (unresolved) setMessage(en ? 'Some saved passages changed and could not be restored safely.' : 'Alguns trechos salvos mudaram e não puderam ser restaurados com segurança.');
     };
     const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(paint); };
-    const observer = new MutationObserver(schedule); observer.observe(surface, { subtree: true, childList: true, attributes: true, attributeFilter: ['inert', 'data-pagination'] });
+    const observer = new MutationObserver(schedule); observer.observe(surface, { subtree: true, childList: true, attributes: true, attributeFilter: ['inert', 'data-pagination', 'open', 'hidden', 'aria-hidden'] });
     schedule();
     return () => { observer.disconnect(); cancelAnimationFrame(frame); for (const color of highlightColors) registry.delete(`reader-${color}`); };
   }, [saved, en, root]);
@@ -95,14 +74,14 @@ function HighlightSession({ project, documentId, language, root }: { project: st
         if (element(range.startContainer)?.closest('.reader-pages .reader-body') && element(range.endContainer)?.closest('.reader-pages .reader-body')) setMessage(en ? 'Select prose, headings or lists without code or media.' : 'Selecione texto, títulos ou listas sem código ou mídia.');
         return;
       }
-      const blocks = Array.from(surface.querySelectorAll<HTMLElement>('.reader-pages [data-highlight-block]')).filter(block => range.intersectsNode(block));
-      if (!blocks.length || blocks.length > 32 || blocks.some(block => block.matches('[data-highlight-unsupported]')) || Array.from(surface.querySelectorAll(blocked)).some(node => node.closest('.reader-pages') && range.intersectsNode(node))) {
-        setTool(null); setMessage(en ? 'Select prose, headings or lists without code or media.' : 'Selecione texto, títulos ou listas sem código ou mídia.'); return;
+      const blocks = Array.from(surface.querySelectorAll<HTMLElement>('.reader-pages [data-highlight-block]')).filter(block => !block.closest('[inert]') && range.intersectsNode(block));
+      const segments = blocks.flatMap(block => selectedAnchors(block, range));
+      if (segments.length > 32 || segments.some(part => part.exact.length > 8000)) {
+        setTool(null); setMessage(en ? 'Selection is too large. Select a shorter passage.' : 'Seleção muito extensa. Selecione um trecho menor.'); return;
       }
-      const segments = blocks.map(block => textAnchor(block.dataset.highlightBlock!, block.textContent ?? '', block === first ? offset(block, range.startContainer, range.startOffset) : 0, block === last ? offset(block, range.endContainer, range.endOffset) : (block.textContent ?? '').length)).filter(part => part.exact.length);
-      if (!segments.length || !selection.toString().trim()) { setTool(null); return; }
+      if (!segments.length || !segments.some(part => part.exact.trim())) { setTool(null); return; }
       if (!(CSS as unknown as { highlights?: Registry }).highlights) { setMessage(en ? 'This browser does not support text highlights.' : 'Este navegador não suporta destaques de texto.'); return; }
-      setTool({ segments, text: selection.toString(), ...toolbarPosition(range.getBoundingClientRect(), innerWidth, innerHeight) });
+      setTool({ segments, text: segments.map(part => part.exact).join('\n'), ...toolbarPosition(range.getBoundingClientRect(), innerWidth, innerHeight) });
     };
     const changed = () => { clearTimeout(timer); if (!window.getSelection()?.isCollapsed) setTool(null); timer = setTimeout(capture, 180); };
     const completed = (event: PointerEvent) => {
@@ -143,8 +122,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
       if (!block || block.closest('[inert]')) { setTool(null); return; }
       const candidates = saved.flatMap(item => item.segments.filter(segment => segment.block === block.dataset.highlightBlock).flatMap(segment => {
         const resolved = resolveTextAnchor(segment, block.textContent ?? '');
-        const range = resolved && domRange(block, ...resolved);
-        return range ? [{ id: item.id, color: item.color, range }] : [];
+        return resolved ? eligibleRanges(block, ...resolved).map(range => ({ id: item.id, color: item.color, range })) : [];
       })).sort((a, b) => highlightColors.indexOf(b.color) - highlightColors.indexOf(a.color) || b.id - a.id);
       const hit = candidates.find(({ range }) => Array.from(range.getClientRects()).some(rect => event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom));
       const item = saved.find(item => item.id === hit?.id);
@@ -156,7 +134,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   return <>
     {message && <p className="reader-notice" role="status">{message}</p>}
     {tool && createPortal(<div role="toolbar" aria-label={en ? 'Text highlights' : 'Destaques de texto'} className="reader-selection-toolbar" style={{ left: tool.left, top: tool.top }} onPointerDown={event => event.preventDefault()}>
-      {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: colors[index] }} disabled={busy || !csrf} onClick={() => void mutate(color)}/>)}
+      {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: `var(--highlight-${color})` }} disabled={busy || !csrf} onClick={() => void mutate(color)}/>)}
       <button type="button" aria-label={en ? 'Copy' : 'Copiar'} onClick={() => void copy()}>⧉</button>
       <button type="button" disabled aria-label={en ? 'Add note (available in Phase 2)' : 'Adicionar nota (disponível na fase 2)'} title={en ? 'Notes will be available in Phase 2' : 'Notas estarão disponíveis na fase 2'}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M13 5H5v15h14v-8M11 13l1-4 7-7 3 3-7 7-4 1Z"/></svg></button>
       {tool.id && <button type="button" aria-label={en ? 'Remove highlight' : 'Remover destaque'} disabled={busy} onClick={() => void mutate(undefined, true)}>×</button>}

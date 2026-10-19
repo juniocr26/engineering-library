@@ -39,6 +39,25 @@ const assert = require('node:assert/strict');
         await page.getByRole('toolbar', { name: 'Text highlights' }).waitFor({ timeout: 5000 }).catch(async error => { console.log(await page.evaluate(() => ({ selection: getSelection().toString(), notices: [...document.querySelectorAll('[role=status]')].map(n => n.textContent), html: document.querySelector('.reader-pages [data-highlight-block] p')?.outerHTML, mode: document.querySelector('.reader')?.dataset.mode, inert: document.querySelector('.reader-pages [data-highlight-block] p')?.closest('[inert]')?.outerHTML.slice(0,200), css: getComputedStyle(document.querySelector('.reader-pages [data-highlight-block] p')).userSelect }))); throw error; });
       };
       await page.goto(`${base}${path}?lang=en`); await ready();
+      // Synthetic DOM fixture in the real reader: inline formatting, controls,
+      // collapsed disclosure, code and media boundaries share one saved record.
+      await page.locator('.reader-pages [data-highlight-block]').first().evaluate(block => {
+        block.innerHTML = '<p>Before <a href="#fixture">link</a> <strong>bold</strong> <em>italic</em> <code>inline</code><button class="source-reference">CONTROL</button> after</p><pre>EXCLUDED CODE</pre><p>across code</p><details><summary>Disclosure</summary><p>COLLAPSED</p></details><table><tbody><tr><td>EXCLUDED TABLE</td></tr></tbody></table><p>end</p>';
+        const range = document.createRange(); range.selectNodeContents(block);
+        getSelection().removeAllRanges(); getSelection().addRange(range);
+      });
+      await page.getByRole('button', { name: 'Purple', exact: true }).click();
+      await page.waitForFunction(() => CSS.highlights.get('reader-purple')?.size > 0);
+      const fixture = await page.evaluate(async () => (await fetch('/api/highlights?project=engineering-library&document=architecture%2Fcurrent-state.md&language=en')).json());
+      assert.equal(fixture.highlights.length, 1);
+      const captured = fixture.highlights[0].segments.map(part => part.exact).join(' ');
+      for (const text of ['Before', 'link', 'bold', 'italic', 'inline', 'after', 'across code', 'end']) assert.ok(captured.includes(text), captured);
+      for (const text of ['CONTROL', 'EXCLUDED', 'COLLAPSED', 'Disclosure']) assert.ok(!captured.includes(text), captured);
+      assert.equal(await page.locator('.reader-pages details[open]').count(), 0);
+      const painted = await page.evaluate(() => [...CSS.highlights.get('reader-purple')].map(range => range.toString()).join(' '));
+      for (const text of ['CONTROL', 'EXCLUDED', 'COLLAPSED', 'Disclosure']) assert.ok(!painted.includes(text), painted);
+      await page.request.delete(`${base}/api/highlights/${fixture.highlights[0].id}?project=engineering-library&document=architecture%2Fcurrent-state.md&language=en`, { headers: { Origin: base, 'X-Reader-CSRF': fixture.csrf_token } });
+      await page.reload(); await ready();
       await select();
       assert.equal(await page.locator('.reader-selection-toolbar button[aria-pressed]').count(), 7);
       await page.keyboard.press('Escape');
