@@ -9,7 +9,16 @@ module Api
     rescue_from ActiveRecord::ActiveRecordError, with: :database_unavailable
 
     def index
-      render json: { bookmarks: scope.order(created_at: :desc).limit(200).map { |bookmark| present(bookmark) }, csrf_token: verifier.generate(@reader_digest, expires_in: 1.day, purpose: "bookmark-mutation") }
+      bookmarks = scope
+      if params.key?(:project_slug)
+        slug = params[:project_slug]
+        unless slug.is_a?(String) && CatalogProject.exists?(slug: slug, active: true)
+          render json: { error: "Invalid project" }, status: :unprocessable_entity
+          return
+        end
+        bookmarks = bookmarks.where(project: slug)
+      end
+      render json: { bookmarks: bookmarks.order(created_at: :desc).limit(200).map { |bookmark| present(bookmark) }, csrf_token: verifier.generate(@reader_digest, expires_in: 1.day, purpose: "bookmark-mutation") }
     end
 
     def create

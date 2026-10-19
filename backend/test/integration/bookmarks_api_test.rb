@@ -45,6 +45,48 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "project lists preserve reader isolation and other projects across reload and deletion" do
+    reader = open_session
+    reader.get "/api/bookmarks"
+    csrf = reader.response.parsed_body.fetch("csrf_token")
+    saved = %w[engineering-library env-auditor go-image-optimizer].map do |project|
+      reader.post "/api/bookmarks", params: location.merge(project: project, document: "README"), headers: { "X-Reader-CSRF" => csrf }, as: :json
+      assert_equal 201, reader.response.status
+      reader.response.parsed_body
+    end
+    saved.each do |bookmark|
+      2.times do
+        reader.get "/api/bookmarks", params: { project_slug: bookmark.fetch("project") }
+        assert_equal 200, reader.response.status
+        assert_equal [bookmark.fetch("id")], reader.response.parsed_body.fetch("bookmarks").map { |item| item.fetch("id") }
+        assert_equal "no-store", reader.response.headers["Cache-Control"]
+      end
+    end
+    stranger = open_session
+    stranger.get "/api/bookmarks", params: { project_slug: "engineering-library" }
+    assert_empty stranger.response.parsed_body.fetch("bookmarks")
+    stranger.delete "/api/bookmarks/#{saved.first.fetch('id')}", headers: { "X-Reader-CSRF" => stranger.response.parsed_body.fetch("csrf_token") }
+    assert_equal 404, stranger.response.status
+    assert_difference "Bookmark.count", -1 do
+      reader.delete "/api/bookmarks/#{saved.first.fetch('id')}", headers: { "X-Reader-CSRF" => csrf }
+      assert_equal 204, reader.response.status
+    end
+    reader.get "/api/bookmarks", params: { project_slug: "engineering-library" }
+    assert_empty reader.response.parsed_body.fetch("bookmarks")
+    reader.get "/api/bookmarks"
+    assert_equal saved.drop(1).map { |item| item.fetch("id") }.sort, reader.response.parsed_body.fetch("bookmarks").map { |item| item.fetch("id") }.sort
+  end
+
+  test "project filter rejects unknown inactive and malformed identifiers" do
+    ["missing", "", "../env-auditor", ["env-auditor"]].each do |slug|
+      get "/api/bookmarks", params: { project_slug: slug }
+      assert_response :unprocessable_entity
+    end
+    CatalogProject.find_by!(slug: "env-auditor").update!(active: false)
+    get "/api/bookmarks", params: { project_slug: "env-auditor" }
+    assert_response :unprocessable_entity
+  end
+
   test "invalid documents and traversal cannot be bookmarked" do
     get "/api/bookmarks"
     csrf = response.parsed_body["csrf_token"]

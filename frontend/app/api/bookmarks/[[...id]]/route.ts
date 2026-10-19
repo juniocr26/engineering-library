@@ -16,7 +16,11 @@ async function proxy(request: Request, { params }: { params: Promise<{ id?: stri
   try {
     const body = request.method === 'POST' ? await request.text() : undefined;
     if (body && body.length > 4096) return new Response(null, { status: 413 });
-    const response = await fetch(`${backend}/api/bookmarks${id.length ? `/${id[0]}` : ''}`, { method: request.method, headers, body, cache: 'no-store', signal: AbortSignal.timeout(5000) });
+    const query = new URLSearchParams();
+    const project = new URL(request.url).searchParams.get('project_slug');
+    if (request.method === 'GET' && project !== null) query.set('project_slug', project);
+    const suffix = query.size ? `?${query}` : '';
+    const response = await fetch(`${backend}/api/bookmarks${id.length ? `/${id[0]}` : ''}${suffix}`, { method: request.method, headers, body, cache: 'no-store', signal: AbortSignal.timeout(5000) });
     const outgoing = new Headers({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
     for (const cookie of response.headers.getSetCookie()) outgoing.append('Set-Cookie', cookie);
     return new Response(response.status === 204 ? null : await response.text(), { status: response.status, headers: outgoing });

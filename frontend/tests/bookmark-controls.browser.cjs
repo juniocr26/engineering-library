@@ -8,9 +8,12 @@ const assert = require('node:assert/strict');
       const context = await browser.newContext({ viewport: { width, height: 900 } });
       const page = await context.newPage();
       let bookmarks = [], nextId = 1, fail = false, requests = 0;
-      await page.route('**/api/bookmarks{,/**}', async route => {
+      await page.route('**/api/bookmarks{,?*,/**}', async route => {
         const request = route.request();
-        if (request.method() === 'GET') return route.fulfill({ json: { bookmarks, csrf_token: 'fixture' } });
+        if (request.method() === 'GET') {
+          assert.equal(new URL(request.url()).searchParams.get('project_slug'), 'engineering-library');
+          return route.fulfill({ json: { bookmarks, csrf_token: 'fixture' } });
+        }
         requests++;
         await new Promise(resolve => setTimeout(resolve, 120));
         if (fail) return route.fulfill({ status: 503, json: { error: 'unavailable' } });
