@@ -1,5 +1,7 @@
+import { sourceSearchResults } from '@/lib/source-search';
 import { documentationEntries, documentationSource } from '@/lib/documentation';
 import { documentHref } from '@/lib/document-links';
+import { integrateSources } from '@/lib/source-references';
 import { markdownUnits } from '@/lib/markdown';
 import { languageOf } from '@/lib/i18n';
 export async function GET(request: Request, { params }: { params: Promise<{ project: string }> }) {
@@ -14,7 +16,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ proj
   for (const entry of entries.filter(entry => entry.href)) {
     const source = await documentationSource(project, entry.id, language);
     if (source === null) continue;
-    for (const unit of markdownUnits(source)) {
+    for (const unit of await integrateSources(project, entry.id, language, markdownUnits(source))) {
+      for (const ref of unit.references ?? []) for (const result of sourceSearchResults(project, entry.id, language, entry.title, ref, query)) {
+        results.push(result);
+        if (results.length === 80) return Response.json({ results, truncated: true });
+      }
       const offset = unit.text.toLowerCase().indexOf(query.toLowerCase());
       if (offset < 0) continue;
       const row = unit.table?.rows.findIndex(row => row.toLowerCase().includes(query.toLowerCase())) ?? -1;

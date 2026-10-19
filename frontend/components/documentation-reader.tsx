@@ -1,4 +1,6 @@
 'use client';
+import { referenceContainsLocation, sourceUnits } from '../lib/source-links';
+import { useMemo } from 'react';
 import { projectDisplayName } from '../lib/project-name';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
@@ -98,8 +100,21 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
   project: string; projectName?: string; document: string; language: Language; units: Unit[]; entries: TocEntry[]; query: string; initialEnd?: boolean;
 }) {
   const en = language === 'en';
-  const [panel, setPanel] = useState<Panel | null>(null);
   const [location, setLocation] = useState('');
+  const [expandedByDocument, setExpandedByDocument] = useState<Record<string, string[]>>({});
+  const documentKey = documentId;
+  const expansionStorageKey = `reader-sources/${project}/${documentKey}`;
+  const expanded = useMemo(() => new Set([...(expandedByDocument[documentKey] ?? []), ...units.flatMap(unit => (unit.references ?? []).filter(ref => referenceContainsLocation(ref, location)).map(ref => ref.id))]), [expandedByDocument, documentKey, units, location]);
+  const flowUnits: Unit[] = useMemo(() => sourceUnits(units, expanded), [units, expanded]);
+  function toggleSource(id: string) {
+    const next = new Set(expanded);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setExpandedByDocument(previous => ({ ...previous, [documentKey]: [...next] }));
+    try { sessionStorage.setItem(expansionStorageKey, JSON.stringify([...next])); } catch { /* Storage is optional. */ }
+    const owner = units.find(unit => unit.references?.some(ref => ref.id === id));
+    if (owner) { setLocation(owner.id); setLocationRequest(previous => previous + 1); window.history.replaceState({ ...window.history.state, bookLocation: null }, '', `#${encodeURIComponent(owner.id)}`); }
+  }
+  const [panel, setPanel] = useState<Panel | null>(null);
   const [locationRequest, setLocationRequest] = useState(0);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [csrf, setCsrf] = useState('');
@@ -117,6 +132,26 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
     update(); window.addEventListener('hashchange', update);
     return () => window.removeEventListener('hashchange', update);
   }, [documentId, language, units]);
+
+  useEffect(() => {
+    try {
+      const stored: unknown = JSON.parse(sessionStorage.getItem(expansionStorageKey) ?? '[]');
+      if (!Array.isArray(stored)) return;
+      const valid = new Set(units.flatMap(unit => (unit.references ?? []).map(ref => ref.id)));
+      const restored = stored.filter((id): id is string => typeof id === 'string' && valid.has(id));
+      if (restored.length) setExpandedByDocument(previous => ({ ...previous, [documentKey]: [...new Set([...(previous[documentKey] ?? []), ...restored])] }));
+    } catch { /* Reading works when session storage is disabled. */ }
+  }, [expansionStorageKey, documentKey, units]);
+
+  useEffect(() => {
+    const ids = units.flatMap(unit => (unit.references ?? []).filter(ref => referenceContainsLocation(ref, location)).map(ref => ref.id));
+    if (ids.length) setExpandedByDocument(previous => {
+      const current = previous[documentKey] ?? [];
+      const next = [...new Set([...current, ...ids])];
+      try { sessionStorage.setItem(expansionStorageKey, JSON.stringify(next)); } catch { /* Storage is optional. */ }
+      return ids.every(id => current.includes(id)) ? previous : { ...previous, [documentKey]: next };
+    });
+  }, [location, units, documentKey, expansionStorageKey]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -160,13 +195,13 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
       try { setLocation(decodeURIComponent(target.hash.slice(1))); setLocationRequest(previous => previous + 1); } catch { /* Invalid anchors keep their native link behavior. */ }
     }
   }}><DocumentLanguage language={language}/><div className="toc-shell documentation-shell">
-    <BookReader key={`${documentId}/${language}/${initialEnd}`} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={units} project={project} language={language} title={title} header={header} location={location} locationRequest={locationRequest}
-      renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={containsLocation(unit, location) ? query : ''}/>}
+    <BookReader key={`${documentId}/${language}/${initialEnd}`} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={flowUnits} project={project} language={language} title={title} header={header} location={location} locationRequest={locationRequest}
+      renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={containsLocation(unit, location) ? query : ''} expanded={expanded} toggleSource={toggleSource} location={location}/>}
       pageAction={page => {
         const saved = bookmarks.find(bookmark => bookmark.project === project && bookmark.document === documentId && bookmark.language === language && page.some(unit => containsLocation(unit, bookmark.anchor)));
         return <PageBookmark key={`${project}/${documentId}/${language}/${page.map(unit => unit.id).join('/')}`} saved={!!saved} disabled={busy || !csrf} en={en} toggle={() => void mutate(saved, page[0])}/>;
       }}/>
-    {location && !units.some(unit => unit.id === location || location.startsWith(`${unit.id}--row-`)) && <p role="status" className="reader-notice">{en ? 'This saved location is no longer available in this language. Showing the document start.' : 'Esta posição não está mais disponível neste idioma. Exibindo o início do documento.'}</p>}
+    {location && !flowUnits.some(unit => containsLocation(unit, location) || location.startsWith(`${unit.id}--row-`)) && <p role="status" className="reader-notice">{en ? 'This saved location is unavailable: the source or translation may have changed. Showing the document start.' : 'Esta posição está indisponível: o código ou a tradução pode ter mudado. Exibindo o início do documento.'}</p>}
     {bookmarkError && <p role="alert" className="reader-notice">{en ? 'Bookmarks unavailable. Reload to try again.' : 'Marcações indisponíveis. Recarregue para tentar novamente.'}</p>}
     {panel && <ReaderPanel title={labels[panel]} close={() => setPanel(null)} closeLabel={en ? 'Close panel' : 'Fechar painel'}>
       {panel === 'search' && <Search project={project} language={language} close={() => setPanel(null)}/>}

@@ -45,7 +45,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     let rowSignature = ''; let tableMeasurements = new Map<number, TableMeasurement>();
     measured.current = false;
     const historyLocation = window.history.state?.bookLocation;
-    if (historyLocation?.url === window.location.href && units.some(unit => unit.id === historyLocation.anchor || historyLocation.anchor?.startsWith(`${unit.id}--row-`))) {
+    if (historyLocation?.url === window.location.href && units.some(unit => unit.id === historyLocation.anchor || historyLocation.anchor?.startsWith(`${unit.id}--row-`) || containsLocation(unit, historyLocation.anchor))) {
       anchor.current = historyLocation.anchor;
       endPending.current = false;
     }
@@ -72,6 +72,13 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
           tableMeasurements = new Map<number, TableMeasurement>();
           rowSignature = nextRowSignature;
           Array.from(node.children).forEach((child, index) => {
+            const code = child.querySelector('[data-source-code]');
+            if (code) {
+              const rows = Array.from(code.querySelectorAll('[data-source-line]')).map(row => row.getBoundingClientRect().height);
+              const header = code.querySelector('[data-source-header]')?.getBoundingClientRect().height ?? 0;
+              tableMeasurements.set(index, { kind: 'code', rows, header, overhead: Math.max(0, heights[index] - header - rows.reduce((a, b) => a + b, 0)) + 2, widths: [], safe: true });
+              return;
+            }
             const table = child.querySelector('table');
             if (!table) return;
             const rows = Array.from(table.tBodies).flatMap(body => Array.from(body.rows));
@@ -85,7 +92,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
         const next = paginateMeasured(units, heights, page => nextMode === 'single-page' || page % 2 === 0 ? node.clientHeight : rightCapacity, tableMeasurements);
         const index = endPending.current ? next.length - 1 : Math.max(0, next.findIndex(page => page.some(unit => containsLocation(unit, anchor.current))));
         endPending.current = false;
-        anchor.current = next[index]?.[0]?.id;
+        anchor.current = next[index]?.some(unit => containsLocation(unit, anchor.current)) ? anchor.current : next[index]?.[0]?.id;
         if (timer.current) clearTimeout(timer.current);
         locked.current = false; setTurn(null); setMode(nextMode); setPages(next);
         setPosition(nextMode === 'spread' ? index - index % 2 : index);
@@ -116,7 +123,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       locked.current = false; setTurn(null); anchor.current = location;
       setPosition(mode === 'spread' ? index - index % 2 : index);
       scrollFrame = requestAnimationFrame(() => {
-        const block = Array.from(stage.current?.querySelectorAll<HTMLElement>('[data-unit-id]') ?? []).find(node => node.dataset.unitId === location);
+        const block = Array.from(stage.current?.querySelectorAll<HTMLElement>('[data-source-location], [data-unit-id]') ?? []).find(node => node.dataset.sourceLocation === location || node.dataset.unitId === location);
         if (block?.parentElement) block.parentElement.scrollTop = block.offsetTop;
       });
     });
@@ -184,9 +191,9 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   const left = turn && count === 2 && turn.direction === 1 ? turn.from[0] : pages[visible];
   const right = turn && count === 2 && turn.direction === -1 ? turn.from[1] : pages[visible + 1];
   return <TableScrollProvider><section className="reader" data-mode={mode} data-pagination={ready ? 'ready' : 'measuring'} aria-label={title} onKeyDown={event => {
-    if (event.altKey || event.ctrlKey || event.metaKey || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable],.reader-table,dialog')) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable],.reader-table,.source-code,dialog')) return;
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); navigate(event.key === 'ArrowRight' ? 1 : -1); }
-  }} onTouchStart={event => { if (event.touches.length === 1 && !(event.target as HTMLElement).closest('a,button,.reader-table,dialog')) touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }} onTouchEnd={event => {
+  }} onTouchStart={event => { if (event.touches.length === 1 && !(event.target as HTMLElement).closest('a,button,.reader-table,.source-code,dialog')) touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }} onTouchEnd={event => {
     const start = touch.current; touch.current = null; if (!start || !event.changedTouches[0]) return;
     const dx = event.changedTouches[0].clientX - start.x; const dy = event.changedTouches[0].clientY - start.y;
     if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1);

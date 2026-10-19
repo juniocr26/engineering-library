@@ -11,16 +11,21 @@ export function sourcePath(document: string, language: Language) {
 /** Resolve only collection Markdown/assets. Other HTTP(S)/mail links retain their meaning. */
 export function resolveDocumentLink(project: string, document: string, language: Language, href: string, image = false): string | undefined {
   if (href.startsWith('#')) return href;
-  if (/^(?:https?:|mailto:)/i.test(href) && !href.startsWith('https://github.com/juniocr26/engineering-library/blob/main/docs/projects/')) return href;
-  if (/^[a-z][a-z\d+.-]*:|^\/\//i.test(href)) return undefined;
+  const repository = 'https://github.com/juniocr26/engineering-library/blob/main/docs/projects/';
+  const github = href.match(/^https:\/\/github\.com\/juniocr26\/([a-z0-9-]+)\/blob\/(?:main|master)\/(.+\.md(?:#.*)?)$/);
+  if (/^(?:https?:|mailto:)/i.test(href) && !href.startsWith(repository) && !github) return href;
+  if (/^[a-z][a-z\d+.-]*:|^\/\//i.test(href) && !/^https?:/i.test(href)) return undefined;
   try {
-    const repository = 'https://github.com/juniocr26/engineering-library/blob/main/docs/projects/';
-    const target = href.startsWith(repository) ? new URL(`https://reader.invalid/collection/${href.slice(repository.length)}`) : new URL(href, `https://reader.invalid/collection/${project}/${sourcePath(document, language)}`);
+    const target = href.startsWith(repository)
+      ? new URL(`https://reader.invalid/workspace/engineering-library/docs/projects/${href.slice(repository.length)}`)
+      : github ? new URL(`https://reader.invalid/workspace/${github[1]}/${github[2]}`)
+      : new URL(href, `https://reader.invalid/workspace/engineering-library/docs/projects/${project}/${sourcePath(document, language)}`);
     const pathname = decodeURIComponent(target.pathname);
-    if (!pathname.startsWith('/collection/') || /[\\\0]/.test(pathname)) return undefined;
-    const parts = pathname.slice('/collection/'.length).split('/');
+    if (/[\\\0]/.test(pathname)) return undefined;
+    const prefix = '/workspace/engineering-library/docs/projects/';
+    const parts = pathname.startsWith(prefix) ? pathname.slice(prefix.length).split('/') : pathname.startsWith('/workspace/') ? pathname.slice('/workspace/'.length).split('/') : [];
     const slug = parts.shift()!;
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return undefined;
+    if (!slug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return undefined;
     const relative = parts.join('/');
     if (image) return /\.(png|jpe?g|gif|webp|svg)$/i.test(relative) ? `/api/document-assets/${[slug, ...parts].map(encodeURIComponent).join('/')}` : undefined;
     let id: string; let lang = language;
