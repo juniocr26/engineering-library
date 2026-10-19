@@ -40,9 +40,13 @@ try {
       const values = await leaves.evaluateAll(nodes => nodes.map(node => {
         const table = node.querySelector('table');
         const shell = node.closest('.book-unit');
-        return { headers: table.tHead.rows.length, cols: table.tHead.rows[0].cells.length, rows: [...table.tBodies[0].rows].map(row => row.cells[0].textContent), fits: shell.getBoundingClientRect().bottom <= shell.parentElement.getBoundingClientRect().bottom + 2, overflow: node.scrollWidth > node.clientWidth, bounded: node.getBoundingClientRect().right <= shell.parentElement.getBoundingClientRect().right + 1 };
+        const toolbar = node.parentElement.querySelector('.media-controls');
+        const button = toolbar.querySelector('button');
+        const rect = button.getBoundingClientRect();
+
+        return { controlsBelow: toolbar.getBoundingClientRect().top >= node.getBoundingClientRect().bottom, touchTarget: rect.width >= 44 && rect.height >= 44, controlsBounded: toolbar.getBoundingClientRect().right <= node.getBoundingClientRect().right + 1, headers: table.tHead.rows.length, cols: table.tHead.rows[0].cells.length, rows: [...table.tBodies[0].rows].map(row => row.cells[0].textContent), fits: shell.getBoundingClientRect().bottom <= shell.parentElement.getBoundingClientRect().bottom + 2, overflow: node.scrollWidth > node.clientWidth, bounded: node.getBoundingClientRect().right <= shell.parentElement.getBoundingClientRect().right + 1 };
       }));
-      for (const value of values) { assert.equal(value.headers, 1); assert.equal(value.cols, rows === 200 ? 12 : 10); assert.ok(value.fits, 'segment fits leaf'); assert.ok(value.bounded); assert.ok(value.overflow); found.push(...value.rows); }
+      for (const value of values) { assert.ok(value.controlsBelow); assert.ok(value.touchTarget); assert.ok(value.controlsBounded); assert.equal(value.headers, 1); assert.equal(value.cols, rows === 200 ? 12 : 10); assert.ok(value.fits, 'segment fits leaf'); assert.ok(value.bounded); assert.ok(value.overflow); found.push(...value.rows); }
       if (!turns) {
         const table = leaves.first();
         await table.focus(); await page.keyboard.press('ArrowRight');
@@ -100,7 +104,7 @@ try {
   for (const edge of ['one-row', 'insufficient-space', 'oversized-header']) {
     await page.goto(`${base}/table-stress-test?rows=5${edge === 'insufficient-space' ? '&before=1' : ''}`);
     await page.locator('.reader[data-pagination=ready]').waitFor();
-    const height = await page.locator('.reader-probe--left table').evaluate(table => table.tHead.getBoundingClientRect().height + table.tBodies[0].rows[0].getBoundingClientRect().height + 17);
+    const height = await page.locator('.reader-probe--left table').evaluate(table => table.closest('.book-unit').getBoundingClientRect().height - table.getBoundingClientRect().height + table.tHead.getBoundingClientRect().height + table.tBodies[0].rows[0].getBoundingClientRect().height + 3);
     await page.addStyleTag({ content: `.reader-body{flex:0 0 ${height}px!important;height:${height}px!important}` + (edge === 'insufficient-space' ? `.book-unit:has(> .reader-markdown > p){height:${height - 10}px;box-sizing:border-box}` : '') + (edge === 'oversized-header' ? '.reader-table th{height:900px}' : '') });
     await page.waitForTimeout(400);
     await page.locator('.reader[data-pagination=ready]').waitFor();

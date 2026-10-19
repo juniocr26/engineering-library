@@ -34,8 +34,8 @@ export function ReaderTable({ children, fullTable, part, language, scroll, canSp
     const observer = new ResizeObserver(update); observer.observe(node); observer.observe(node.querySelector('table')!); update();
     return () => observer.disconnect();
   }, [scroll]);
-  return <div className="reader-table-shell" style={part?.maxHeight ? { height: part.maxHeight } : undefined}>
-    <button ref={button} className="media-expand" type="button" aria-label={en ? 'Expand table' : 'Ampliar tabela'} onClick={event => { event.stopPropagation(); setOpen(true); }}><ExpandIcon/></button>
+  return <div className="reader-table-shell">
+
     <div ref={viewport} className="reader-table" role="region" aria-describedby={helpId} aria-label={en ? 'Documentation table' : 'Tabela da documentação'} tabIndex={0} data-overflow={overflow} data-dragging={dragging}
       style={part?.maxHeight ? { maxHeight: part.maxHeight } : undefined}
       onScroll={event => { scroll.set(event.currentTarget.scrollLeft); }}
@@ -47,7 +47,10 @@ export function ReaderTable({ children, fullTable, part, language, scroll, canSp
         {part?.widths.length ? <colgroup>{part.widths.map((width, index) => <col key={index} style={{ width }}/>)}</colgroup> : null}{children}
       </table>
     </div>
-    {overflow && <span className="reader-table-hint" aria-hidden="true">↔</span>}
+    <div className="media-controls">
+      {overflow && <span className="reader-table-hint" aria-hidden="true">↔</span>}
+      <button ref={button} className="media-expand" type="button" aria-label={en ? 'Expand table' : 'Ampliar tabela'} onClick={event => { event.stopPropagation(); setOpen(true); }}><ExpandIcon/></button>
+    </div>
     <span id={helpId} className="sr-only">{overflow ? help : ''}{part?.maxHeight ? (en ? ' Scroll vertically to read the complete row or expand the table.' : ' Role verticalmente para ler a linha completa ou amplie a tabela.') : ''}</span>
     {open && createPortal(<TableViewer language={language} close={() => { setOpen(false); requestAnimationFrame(() => button.current?.focus({ preventScroll: true })); }}>{fullTable()}</TableViewer>, document.body)}
   </div>;

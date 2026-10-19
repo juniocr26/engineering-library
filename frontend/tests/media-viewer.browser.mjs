@@ -18,6 +18,12 @@ try {
       await next.click();
       await page.locator('.reader-stage[aria-busy="false"]').waitFor();
     }
+    assert.ok(await expand.evaluate(button => {
+      const wrapper = button.closest('.expandable-media');
+      const media = wrapper.querySelector('img, [role="img"]');
+      const rect = button.getBoundingClientRect();
+      return media && rect.top >= media.getBoundingClientRect().bottom && rect.width >= 44 && rect.height >= 44 && rect.right <= wrapper.getBoundingClientRect().right + 1;
+    }), 'expand control must be below media with a bounded accessible target');
     const url = page.url();
     const pages = await page.locator('.reader-pages').innerText();
     await expand.focus();

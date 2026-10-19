@@ -43,7 +43,7 @@ export function ExpandableMedia({ src, alt, svg, language, children }: { src?: s
   const text = labels[language];
   return <span className="expandable-media">
     {children ?? (failed || !src ? <span role="status">{text.failed} {alt}</span> : <img src={src} alt={alt} loading="eager" onError={() => setFailed(true)}/>)}
-    {(svg || (src && !failed)) && <button ref={button} type="button" className="media-expand" aria-label={svg ? text.diagram : text.image} onClick={event => { event.preventDefault(); event.stopPropagation(); setOpen(true); }}><ExpandIcon/></button>}
+    {(svg || (src && !failed)) && <span className="media-controls"><button ref={button} type="button" className="media-expand" aria-label={svg ? text.diagram : text.image} onClick={event => { event.preventDefault(); event.stopPropagation(); setOpen(true); }}><ExpandIcon/></button></span>}
     {open && createPortal(<FullscreenMediaViewer src={svg ? diagramUrl(svg) : src!} alt={alt} language={language} close={() => { setOpen(false); requestAnimationFrame(() => button.current?.focus({ preventScroll: true })); }}/>, document.body)}
   </span>;
 }
