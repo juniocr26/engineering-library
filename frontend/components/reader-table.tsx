@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { ExpandIcon, ViewerDialog } from './expandable-media';
+import { useHorizontalDrag } from './use-horizontal-drag';
 import type { Language } from '../lib/i18n';
 import type { TablePart } from '../lib/table-pagination';
 
@@ -22,9 +23,8 @@ export function ReaderTable({ children, fullTable, part, language, scroll, canSp
   const helpId = useId();
   const viewport = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
-  const drag = useRef<{ x: number; left: number; active: boolean } | null>(null);
   const [overflow, setOverflow] = useState(false);
-  const [dragging, setDragging] = useState(false);
+  const { dragging, handlers } = useHorizontalDrag(overflow);
   const [open, setOpen] = useState(false);
   const en = language === 'en';
   const help = en ? 'Scroll for more columns. Drag horizontally or use arrow keys.' : 'Role para ver mais colunas. Arraste horizontalmente ou use as setas.';
@@ -39,10 +39,7 @@ export function ReaderTable({ children, fullTable, part, language, scroll, canSp
     <div ref={viewport} className="reader-table" role="region" aria-describedby={helpId} aria-label={en ? 'Documentation table' : 'Tabela da documentação'} tabIndex={0} data-overflow={overflow} data-dragging={dragging}
       style={part?.maxHeight ? { maxHeight: part.maxHeight } : undefined}
       onScroll={event => { scroll.set(event.currentTarget.scrollLeft); }}
-      onPointerDown={event => { if (overflow && event.pointerType === 'mouse' && event.button === 0 && !(event.target as HTMLElement).closest('a,button,input')) drag.current = { x: event.clientX, left: event.currentTarget.scrollLeft, active: false }; }}
-      onPointerMove={event => { const current = drag.current; if (!current) return; if (!current.active && Math.abs(event.clientX - current.x) > 6) { current.active = true; setDragging(true); event.currentTarget.setPointerCapture(event.pointerId); } if (current.active) { event.preventDefault(); event.currentTarget.scrollLeft = current.left + current.x - event.clientX; } }}
-      onPointerLeave={() => { if (!drag.current?.active) drag.current = null; }}
-      onPointerUp={() => { drag.current = null; setDragging(false); }} onPointerCancel={() => { drag.current = null; setDragging(false); }} onLostPointerCapture={() => { drag.current = null; setDragging(false); }} onKeyDown={event => event.stopPropagation()}>
+      {...handlers} onKeyDown={event => event.stopPropagation()}>
       <table data-row-pagination={canSplit} style={part?.widths.length ? { width: part.widths.reduce((a, b) => a + b, 0), tableLayout: 'fixed' } : undefined}>
         {part?.widths.length ? <colgroup>{part.widths.map((width, index) => <col key={index} style={{ width }}/>)}</colgroup> : null}{children}
       </table>

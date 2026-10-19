@@ -95,3 +95,11 @@ test('ordinary list units and legacy source-list bookmark identities are preserv
   assert.equal(markdownUnits(sources).length, 2);
   assert.equal(markdownUnits(sources)[0].id, `start--${createHash('sha256').update(sources).digest('hex').slice(0, 16)}`);
 });
+
+test('code segment fallback reserves repeated header and below-code controls', () => {
+  const reference = { id: 'controls', path: 'sample.rs', href: './sample.rs', language: 'rust', status: 'available' as const, lines: ['long line'] };
+  const units: BookUnit[] = [{ id: reference.id, code: reference }];
+  const pages = paginateMeasured(units, [180], 120, new Map([[0, { kind: 'code' as const, rows: [80], header: 44, overhead: 50, widths: [], safe: true }]]));
+  assert.equal(pages[0][0].codePart?.maxHeight, 26);
+  assert.equal(pages[0][0].codePart?.end, 1);
+});

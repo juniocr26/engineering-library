@@ -18,7 +18,7 @@ try {
   browser = await chromium.launch({ headless: true });
   const ready = async page => { await page.locator('.reader[data-pagination="ready"]').waitFor(); await page.locator('.reader-stage[aria-busy="false"]').waitFor(); };
   for (const width of [390, 768, 1440]) {
-    const page = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: 'reduce' });
+    const page = await browser.newPage({ viewport: { width, height: 1000 }, hasTouch: width < 921, reducedMotion: 'reduce' });
     const errors = []; page.on('pageerror', error => errors.push(error.message));
     let savedBookmark;
     await page.route('**/api/bookmarks**', async route => {
@@ -31,6 +31,77 @@ try {
     await page.locator('.reader-pages .source-reference').first().click(); await ready(page);
     assert.equal(await page.locator('.reader-pages .source-reference').nth(1).getAttribute('aria-expanded'), 'false');
     const after = await controls.locator('[aria-live]').innerText(); assert.notEqual(after, before);
+    for (const line of [1, 100, 200]) {
+      await page.evaluate(line => { window.location.hash = `source-stress--line-${line}`; }, line);
+      await ready(page);
+      const segment = page.locator('.reader-pages .source-code-shell').filter({ has: page.locator(`[data-source-line="${line}"]`) });
+      await segment.getByRole('button', { name: 'Expand code', exact: true }).click();
+      const viewer = page.getByRole('dialog');
+      await viewer.waitFor();
+      assert.equal(await viewer.locator('[data-source-line]').count(), 200);
+      assert.ok(await viewer.locator('.hljs-keyword').count());
+      await viewer.getByRole('button', { name: 'Zoom in', exact: true }).click();
+      assert.equal(await viewer.locator('output').innerText(), '125%');
+      await viewer.getByRole('button', { name: 'Zoom out', exact: true }).click();
+      assert.equal(await viewer.locator('output').innerText(), '100%');
+      await viewer.getByRole('button', { name: 'Zoom in', exact: true }).click();
+      await viewer.getByRole('button', { name: 'Reset zoom', exact: true }).click();
+      assert.equal(await viewer.locator('output').innerText(), '100%');
+      if (line === 100) await viewer.getByRole('button', { name: 'Close viewer' }).click();
+      else await page.keyboard.press('Escape');
+      assert.equal(await page.getByRole('dialog').count(), 0);
+      await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Expand code');
+      assert.equal(await segment.getByRole('button', { name: 'Expand code', exact: true }).evaluate(n => n === document.activeElement), true);
+      await segment.getByRole('button', { name: 'Collapse code' }).click(); await ready(page);
+      assert.equal(await page.locator('.reader-measure [data-source-code="source-stress"]').count(), 0);
+      const disclosure = page.locator('.reader-pages .source-reference').first();
+      await disclosure.waitFor(); assert.equal(await disclosure.getAttribute('aria-expanded'), 'false');
+      assert.equal(await controls.locator('[aria-live]').innerText(), before);
+      await disclosure.click(); await ready(page);
+    }
+    await page.evaluate(() => { window.location.hash = 'intro'; }); await ready(page);
+    await page.locator('.reader-pages .source-reference').nth(1).click(); await ready(page);
+    await page.evaluate(() => { window.location.hash = 'source-stress--line-100'; }); await ready(page);
+    await page.locator('.reader-pages .source-code-shell').filter({ has: page.locator('[data-source-location="source-stress--line-100"]') }).getByRole('button', { name: 'Collapse code' }).click(); await ready(page);
+    assert.equal(await page.locator('.reader-measure [data-source-code="source-stress"]').count(), 0);
+    assert.equal(await page.locator('.reader-measure [data-source-code="source-stress-repeat"]').count(), 1);
+    await page.locator('.reader-pages .source-reference').nth(1).click(); await ready(page);
+    await page.locator('.reader-pages .source-reference').first().click(); await ready(page);
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await controls.locator('button').last().click();
+    await page.locator('.turn-sheet').waitFor(); await ready(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.evaluate(() => { window.location.hash = 'source-stress--line-21'; }); await ready(page);
+    const viewport = page.locator('.reader-pages .source-code-scroll').filter({ has: page.locator('[data-source-line="21"]') });
+    await page.waitForFunction(() => document.querySelector('.reader-pages [data-overflow="true"]'));
+    assert.equal(await viewport.evaluate(n => getComputedStyle(n).cursor), 'grab');
+    await page.screenshot({ path: `/tmp/source-controls-${width}.png` });
+    const box = await viewport.boundingBox();
+    await page.mouse.move(box.x + 30, box.y + 10); await page.mouse.down();
+    await page.mouse.move(box.x + 5, box.y + 10, { steps: 5 });
+    assert.equal(await viewport.evaluate(n => getComputedStyle(n).cursor), 'grabbing');
+    await page.mouse.up();
+    assert.ok(await viewport.evaluate(n => n.scrollLeft > 0));
+    assert.equal(await viewport.evaluate(n => getComputedStyle(n).cursor), 'grab');
+    await viewport.evaluate(n => { n.scrollLeft = 120; n.dispatchEvent(new Event('scroll')); });
+    assert.equal(await viewport.evaluate(n => n.scrollLeft), 120);
+    // Direct text dragging keeps ordinary browser selection available.
+    const text = viewport.locator('[data-code-text]').first(); const textBox = await text.boundingBox();
+    await page.mouse.move(Math.max(box.x + 90, textBox.x + 5), textBox.y + 10); await page.mouse.down();
+    await page.mouse.move(box.x + 190, textBox.y + 10, { steps: 5 }); await page.mouse.up();
+    assert.equal(await viewport.getAttribute('data-dragging'), 'false');
+    assert.ok(await page.evaluate(() => (window.getSelection()?.toString().length ?? 0) > 0), 'code text remains selectable');
+    if (width < 921) {
+      const session = await page.context().newCDPSession(page);
+      const x = box.x + box.width * .8, y = box.y + 100;
+      const left = await viewport.evaluate(n => n.scrollLeft);
+      await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+      for (let step = 1; step <= 8; step++) await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x - step * 12, y }] });
+      await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await page.waitForFunction(left => document.querySelector('.reader-pages .source-code-scroll')?.scrollLeft > left, left);
+      await session.detach();
+    }
+    await page.evaluate(() => { window.getSelection()?.removeAllRanges(); window.location.hash = 'intro'; }); await ready(page);
     const seen = []; let scrolled = false;
     while (true) {
       if (await page.locator('.reader-pages [data-source-line="21"]').count()) {
@@ -62,15 +133,15 @@ try {
     assert.equal(await page.locator('.reader-measure [data-source-line]').count(), 0);
     assert.equal(await page.locator('.reader-pages .source-reference').first().getAttribute('aria-expanded'), 'false');
     assert.deepEqual(errors, []);
-    console.log(`PASS synthetic 200 lines: ${width}px, exact continuity, page bounds, line navigation, resize, persistent expansion, independent repeated disclosure, horizontal scrolling, bookmark restoration, collapse`);
+    console.log(`PASS synthetic 200 lines: ${width}px, exact continuity, page bounds, line navigation, resize, persistent expansion, independent repeated disclosure, horizontal scrolling, bookmark restoration, collapse from first/middle/final segments, shared occurrence state, drag cursors, fullscreen zoom/focus/Escape, animated turns`);
     await page.close();
   }
-  for (const project of ['engineering-library', 'env-auditor', 'go-image-optimizer', 'payment-reconciliation-lab', 'rust-event-relay', 'url-shortener']) {
+  for (const project of (process.env.SOURCE_FIXTURE_ONLY ? [] : ['engineering-library', 'env-auditor', 'go-image-optimizer', 'payment-reconciliation-lab', 'rust-event-relay', 'url-shortener'])) {
     const response = await fetch(`http://localhost:3000/api/document-search/${project}?lang=en&q=return`);
     assert.equal(response.ok, true);
     const result = (await response.json()).results.find(r => r.anchor.includes('--line-'));
     assert.ok(result, `${project}: search indexes approved collapsed source`);
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, hasTouch: width < 921, reducedMotion: 'reduce' });
     await page.goto(`http://localhost:3000${result.href}`); await ready(page);
     await page.locator(`.reader-pages [data-source-location="${result.anchor}"] mark`).first().waitFor();
     await page.locator('.reader-pages .source-code').first().waitFor();

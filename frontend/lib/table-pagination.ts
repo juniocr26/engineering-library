@@ -43,7 +43,7 @@ export function paginateTables<T extends TableBookUnit>(units: readonly T[], hei
       if (table.safe) while (end < table.rows.length && height + table.rows[end] <= room) height += table.rows[end++];
       const fallback = !table.safe || end === start;
       if (fallback) { end = table.safe ? start + 1 : table.rows.length; height = room; }
-      if (table.kind === 'code') page.push({ ...unit, id: unit.code ? sourceLocation(unit.code, start + (unit.code.start ?? 1)) : unit.id, codeOrigin: unit.id, codePart: { start, end, ...(fallback ? { maxHeight: room - table.overhead } : {}) } });
+      if (table.kind === 'code') page.push({ ...unit, id: unit.code ? sourceLocation(unit.code, start + (unit.code.start ?? 1)) : unit.id, codeOrigin: unit.id, codePart: { start, end, ...(fallback ? { maxHeight: Math.max(1, room - fixed) } : {}) } });
       else page.push({ ...unit, id: start ? `${unit.id}--row-${start}` : unit.id, tableOrigin: unit.id, tablePart: { start, end, widths: table.widths, ...(fallback ? { maxHeight: Math.max(1, room - table.overhead) } : {}) } });
       used += height; start = end;
       if (start < table.rows.length) flush();
