@@ -40,7 +40,7 @@ test('ordinary navigation and reference-style links retain their semantics', () 
 test('every catalog project, both languages: approved references resolve and documents without code remain unchanged', async () => {
   for (const project of ['engineering-library', 'env-auditor', 'go-image-optimizer', 'payment-reconciliation-lab', 'rust-event-relay', 'url-shortener']) for (const language of ['en', 'pt-BR'] as const) {
     let approved = 0; let plain = 0;
-    for (const entry of (await documentationEntries(project, language)).filter(e => e.href)) {
+    for (const entry of (await documentationEntries(project, language)).filter(e => e.href && !e.documentId)) {
       const source = await documentationSource(project, entry.id, language);
       assert.notEqual(source, null);
       const units = markdownUnits(source!);

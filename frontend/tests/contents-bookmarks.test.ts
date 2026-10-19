@@ -12,5 +12,5 @@ test('canonical contents anchors survive localization', async () => {
   const en = await documentationEntries('engineering-library', 'en');
   const pt = await documentationEntries('engineering-library', 'pt-BR');
   assert.ok(en.length > 0);
-  assert.deepEqual(en.map(entry => entry.id), pt.map(entry => entry.id));
+  assert.deepEqual(en.filter(entry => !entry.documentId).map(entry => entry.id), pt.filter(entry => !entry.documentId).map(entry => entry.id));
 });

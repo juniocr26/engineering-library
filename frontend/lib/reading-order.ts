@@ -7,7 +7,7 @@ export type ReadingEntry = { id: string | null; href: string };
 export function getReadingSequence(project: string, language: Language, entries: readonly TocEntry[]): ReadingEntry[] {
   return [
     { id: null, href: `/projects/${encodeURIComponent(project)}?lang=${language}` },
-    ...entries.filter((entry): entry is TocEntry & { href: string } => !!entry.href).map(({ id, href }) => ({ id, href })),
+    ...entries.filter((entry): entry is TocEntry & { href: string } => !!entry.href && !entry.documentId).map(({ id, href }) => ({ id, href })),
   ];
 }
 

@@ -13,7 +13,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ proj
   if (!entries.length) return Response.json({ error: 'Project not found' }, { status: 404 });
   const results: { title: string; excerpt: string; href: string; anchor: string }[] = [];
   // The repository collection is small; scan authoritative Markdown, without another index.
-  for (const entry of entries.filter(entry => entry.href)) {
+  for (const entry of entries.filter(entry => entry.href && !entry.documentId)) {
     const source = await documentationSource(project, entry.id, language);
     if (source === null) continue;
     for (const unit of await integrateSources(project, entry.id, language, markdownUnits(source))) {

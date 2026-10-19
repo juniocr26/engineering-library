@@ -30,18 +30,18 @@ test('canonical bilingual discovery, README, substantive indexes and missing tra
     const { documentationEntries, documentationSource } = await import('../lib/documentation.ts');
     const en = await documentationEntries('sample', 'en');
     const pt = await documentationEntries('sample', 'pt-BR');
-    assert.deepEqual(en.map(e => [e.id, e.number]), pt.map(e => [e.id, e.number]));
+    assert.deepEqual(en.filter(e => !e.documentId).map(e => [e.id, e.number]), pt.filter(e => !e.documentId).map(e => [e.id, e.number]));
     assert.equal(en.filter(e => e.id === 'README').length, 1);
     assert.ok(en.findIndex(e => e.id === 'category:architecture') < en.findIndex(e => e.id === 'README'));
     assert.equal(en.at(-1)?.id, 'README');
     assert.ok(!en.some(e => e.id === 'architecture/index.md'));
     assert.ok(en.some(e => e.id === 'env/index.md'));
     assert.ok(!en.some(e => e.id === 'index.md'));
-    assert.deepEqual(en.filter(e => e.id.includes('faq')), [{
+    assert.deepEqual(en.filter(e => e.id === 'faq/index.md'), [{
       id: 'faq/index.md', number: '3', heading: true, title: 'FAQ',
-      href: '/projects/sample/docs/faq/index.md?lang=en',
+      href: '/projects/sample/docs/faq/index.md?lang=en', depth: 0,
     }]);
-    assert.deepEqual(en.map(e => e.number), ['1', '1.1', '1.2', '2', '2.1', '3', '4']);
+    assert.deepEqual(en.filter(e => !e.documentId).map(e => e.number), ['1', '1.1', '1.2', '2', '2.1', '3', '4']);
     assert.ok(await documentationSource('sample', 'faq/study-guide.md', 'en'));
     assert.equal(pt.find(e => e.id === 'architecture/alpha.md')?.href, undefined);
     const englishSequence = getReadingSequence('sample', 'en', en);

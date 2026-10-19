@@ -7,7 +7,7 @@ import GithubSlugger from 'github-slugger';
 import type { SourceReference, SourcePart } from './source-links';
 import type { TablePart } from './table-pagination';
 
-export type MarkdownUnit = { readingParents?: string[]; readingSection?: string; readingAmbiguous?: boolean; readingAnchor?: string; links?: string[]; references?: SourceReference[]; code?: SourceReference; codePart?: SourcePart; codeOrigin?: string; id: string; source: string; text: string; heading?: string; keepWithNext?: boolean; tableOrigin?: string; tablePart?: TablePart; table?: { header: string; rows: string[]; definitions: string } };
+export type MarkdownUnit = { readingParents?: string[]; readingSection?: string; readingAmbiguous?: boolean; readingAnchor?: string; links?: string[]; references?: SourceReference[]; code?: SourceReference; codePart?: SourcePart; codeOrigin?: string; id: string; source: string; text: string; heading?: string; headingDepth?: number; navigationKey?: string; keepWithNext?: boolean; tableOrigin?: string; tablePart?: TablePart; table?: { header: string; rows: string[]; definitions: string } };
 type TextNode = { value?: string; alt?: string; children?: TextNode[] };
 const links = (node: TextNode & { type?: string; url?: string; identifier?: string }, definitions: Map<string, string>): string[] => [...(node.type === 'link' && node.url ? [node.url] : node.type === 'linkReference' && node.identifier && definitions.has(node.identifier) ? [definitions.get(node.identifier)!] : []), ...(node.children ?? []).flatMap(child => links(child, definitions))];
 const plain = (node: TextNode): string => node.value ?? node.alt ?? node.children?.map(plain).join('') ?? '';
@@ -80,6 +80,6 @@ export function markdownUnits(source: string): MarkdownUnit[] {
       rows: node.children.slice(1).map(row => source.slice(row.position!.start.offset, row.position!.end.offset)), definitions,
     } : undefined;
     const fingerprint = createHash('sha256').update(raw).digest('hex').slice(0, 16);
-    return { readingParents, readingSection, readingAmbiguous, readingAnchor: `${readingSection}/content:${fingerprint}`, links: links(node as TextNode, linkDefinitions), table, id: ordinal ? `${base}-${ordinal}` : base, source: `${raw}\n\n${definitions}`, text, heading, keepWithNext: node.type === 'heading' };
+    return { readingParents, readingSection, readingAmbiguous, readingAnchor: `${readingSection}/content:${fingerprint}`, links: links(node as TextNode, linkDefinitions), table, id: ordinal ? `${base}-${ordinal}` : base, source: `${raw}\n\n${definitions}`, text, heading, navigationKey: node.type === 'heading' ? questionId(text) ? `question:${questionId(text)}` : canonicalSections.has(node) ? `section:${canonicalSections.get(node)}` : undefined : undefined, headingDepth: node.type === 'heading' ? node.depth : undefined, keepWithNext: node.type === 'heading' };
   });
 }

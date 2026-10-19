@@ -1,8 +1,9 @@
 import { readdir, readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { categoryLabels, type Language } from './i18n.ts';
+import { markdownUnits } from './markdown.ts';
 import { documentHref, sourcePath } from './document-links.ts';
-export type TocEntry = { id: string; number: string; title: string; href?: string; heading?: boolean; keepWithNext?: boolean };
+export type TocEntry = { id: string; number: string; title: string; href?: string; heading?: boolean; keepWithNext?: boolean; parentId?: string; documentId?: string; anchor?: string; depth?: number };
 const root = process.env.DOCUMENTATION_ROOT ?? path.resolve(process.cwd(), '../docs/projects');
 const titleOf = (source: string, fallback: string) => source.match(/^#\s+(.+)$/m)?.[1]?.replace(/\s+—.*$/, '') ?? fallback;
 export async function documentationEntries(slug: string, language: Language): Promise<TocEntry[]> {
@@ -34,24 +35,70 @@ export async function documentationEntries(slug: string, language: Language): Pr
   const selected = localized[language === 'en' ? 0 : 1];
   const alphabetical = (a: string, b: string) => a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : a < b ? -1 : a > b ? 1 : 0;
   const ids = [...new Set(localized.flatMap(map => [...map.keys()]))]
-    .filter(id => id !== 'index.md' && (!id.startsWith('faq/') || id === 'faq/index.md'))
+    .filter(id => id !== 'index.md' && id !== 'faq/study-guide.md')
     .sort(alphabetical);
   const groups = [...new Set(ids.map(id => id.split('/')[0]))].sort(alphabetical);
   const result: TocEntry[] = [];
-  const entry = (id: string, number: string, heading = false): TocEntry => {
+  const entry = (id: string, heading = false): TocEntry => {
     const doc = selected.get(id);
-    return { id, number, heading, title: doc ? titleOf(doc.source, id) : `${id} (${language === 'en' ? 'unavailable' : 'indisponível'})`, href: doc ? documentHref(slug, id, language) : undefined };
+    return { id, number: '', heading, title: doc ? titleOf(doc.source, id) : `${id} (${language === 'en' ? 'unavailable' : 'indisponível'})`, href: doc ? documentHref(slug, id, language) : undefined };
   };
-  groups.forEach((group, index) => {
+  groups.forEach(group => {
     const children = ids.filter(id => id.startsWith(`${group}/`));
-    if (group === 'faq') result.push({ ...entry('faq/index.md', `${index + 1}`, true), title: 'FAQ' });
-    else if (!children.length) result.push(entry(group, `${index + 1}`, true));
+    if (group === 'faq') {
+      result.push({ ...entry('faq/index.md', true), title: 'FAQ' });
+      children.filter(id => id !== 'faq/index.md').forEach(id => result.push({ ...entry(id), parentId: 'faq/index.md', depth: 1 }));
+    }
+    else if (!children.length) result.push(entry(group, true));
     else {
-      result.push({ id: `category:${group}`, number: `${index + 1}`, title: categoryLabels[language][group] ?? group, heading: true, keepWithNext: true });
-      children.forEach((id, child) => result.push(entry(id, `${index + 1}.${child + 1}`)));
+      result.push({ id: `category:${group}`, number: '', title: categoryLabels[language][group] ?? group, heading: true, keepWithNext: true });
+      children.forEach(id => result.push({ ...entry(id), parentId: `category:${group}`, depth: 1 }));
     }
   });
-  return result;
+  // The same flat, ordered tree serves pagination, quick navigation and chapter order.
+  // Only actual AST headings enter the tree; the document title is already represented.
+  const tree = result.flatMap(document => {
+    const source = selected.get(document.id)?.source;
+    if (!source) return [document];
+    const headings = markdownUnits(source).filter(unit => unit.heading !== undefined);
+    const stack: { level: number; entry: TocEntry }[] = [
+      { level: 0, entry: document },
+    ];
+    const children: TocEntry[] = [];
+    headings.forEach((unit, index) => {
+      if (index === 0 && unit.headingDepth === 1) return;
+      const level = unit.headingDepth!;
+      while (stack.length > 1 && stack.at(-1)!.level >= level) stack.pop();
+      const parent = stack.at(-1)!;
+      // Verified section and question identities are shared across languages.
+      // Other headings keep their actual slug; never infer translation from position.
+      const key = !unit.readingAmbiguous && unit.navigationKey
+        ? unit.navigationKey : `heading:${unit.id}`;
+      const child: TocEntry = {
+        id: `${document.id}#${key}`, documentId: document.id, anchor: unit.id,
+        parentId: parent.entry.id, depth: (parent.entry.depth ?? (document.heading ? 0 : 1)) + 1,
+        number: '', title: unit.text,
+        href: documentHref(slug, document.id, language, unit.id),
+      };
+      // Repeated subheadings within canonical questions retain distinct targets.
+      if (children.some(entry => entry.id === child.id)) child.id += `:${unit.id}`;
+      children.push(child);
+      stack.push({ level, entry: child });
+    });
+    return [document, ...children];
+  });
+  const counters = new Map<string, number>();
+  const byId = new Map<string, TocEntry>();
+  for (const node of tree) {
+    const parent = node.parentId ? byId.get(node.parentId) : undefined;
+    const key = node.parentId ?? '@root';
+    const ordinal = (counters.get(key) ?? 0) + 1;
+    counters.set(key, ordinal);
+    node.number = parent ? `${parent.number}.${ordinal}` : `${ordinal}`;
+    node.depth = parent ? (parent.depth ?? 0) + 1 : 0;
+    byId.set(node.id, node);
+  }
+  return tree;
 }
 
 /** Every read resolves real paths; symlinks may not escape the selected project. */
