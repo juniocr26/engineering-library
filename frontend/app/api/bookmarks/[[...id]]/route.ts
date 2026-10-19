@@ -19,6 +19,8 @@ async function proxy(request: Request, { params }: { params: Promise<{ id?: stri
     const query = new URLSearchParams();
     const project = new URL(request.url).searchParams.get('project_slug');
     if (request.method === 'GET' && project !== null) query.set('project_slug', project);
+    const language = new URL(request.url).searchParams.get('language');
+    if (language !== null) query.set('language', language);
     const suffix = query.size ? `?${query}` : '';
     const response = await fetch(`${backend}/api/bookmarks${id.length ? `/${id[0]}` : ''}${suffix}`, { method: request.method, headers, body, cache: 'no-store', signal: AbortSignal.timeout(5000) });
     const outgoing = new Headers({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -38,5 +38,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_010000) do
     t.index "lower((display_name)::text) COLLATE \"C\", stable_id", name: "catalog_projects_order", where: "active"
     t.index ["slug"], name: "index_catalog_projects_on_slug", unique: true
     t.index ["stable_id"], name: "index_catalog_projects_on_stable_id", unique: true
+  end
+
+  create_table "highlights", force: :cascade do |t|
+    t.string "reader_digest", limit: 64, null: false
+    t.string "project", limit: 100, null: false
+    t.string "document", limit: 240, null: false
+    t.string "language", limit: 5, null: false
+    t.string "color", null: false
+    t.jsonb "segments", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reader_digest", "project", "document", "language"], name: "highlights_document_scope"
+    t.check_constraint "color::text = ANY (ARRAY['yellow'::character varying, 'blue'::character varying, 'pink'::character varying, 'orange'::character varying, 'purple'::character varying, 'red'::character varying, 'green'::character varying]::text[])", name: "highlights_color"
+    t.check_constraint "jsonb_typeof(segments) = 'array'::text AND jsonb_array_length(segments) >= 1 AND jsonb_array_length(segments) <= 32", name: "highlights_segments"
+    t.check_constraint "language::text = ANY (ARRAY['en'::character varying, 'pt-BR'::character varying]::text[])", name: "highlights_language"
+    t.check_constraint "reader_digest::text ~ '^[0-9a-f]{64}$'::text", name: "highlights_reader_digest"
   end
 end

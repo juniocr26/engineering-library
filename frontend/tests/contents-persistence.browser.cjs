@@ -14,7 +14,7 @@ const assert = require('node:assert/strict');
    await leaf.getByRole('button', { name: 'Bookmark page', exact: true }).click();
    await leaf.locator('.bookmark-ribbon--saved').waitFor();
   }
-  const response = await page.request.get('/api/bookmarks?project_slug=engineering-library');
+  const response = await page.request.get('/api/bookmarks?project_slug=engineering-library&language=en');
   const { bookmarks } = await response.json();
   assert.equal(bookmarks.length, 2);
   assert.ok(bookmarks.every(b => b.document === '@contents'));
@@ -25,14 +25,14 @@ const assert = require('node:assert/strict');
    await leaf.locator('.bookmark-ribbon--saved').click();
    await leaf.getByRole('button', { name: 'Bookmark page', exact: true }).waitFor();
   }
-  assert.equal((await (await page.request.get('/api/bookmarks?project_slug=engineering-library')).json()).bookmarks.length, 0);
+  assert.equal((await (await page.request.get('/api/bookmarks?project_slug=engineering-library&language=en')).json()).bookmarks.length, 0);
   console.log('PASS: real anonymous Rails/PostgreSQL create, independent leaves, refresh and ribbon deletion');
  } finally {
   // Only this isolated browser identity is affected; clean up after failed assertions too.
-  const response = await page.request.get('/api/bookmarks?project_slug=engineering-library');
+  const response = await page.request.get('/api/bookmarks?project_slug=engineering-library&language=en');
   if (response.ok()) {
    const data = await response.json();
-   for (const bookmark of data.bookmarks) await page.request.delete(`/api/bookmarks/${bookmark.id}`, { headers: { 'X-Reader-CSRF': data.csrf_token } });
+   for (const bookmark of data.bookmarks) await page.request.delete(`/api/bookmarks/${bookmark.id}?language=en`, { headers: { 'X-Reader-CSRF': data.csrf_token } });
   }
   await browser.close();
  }

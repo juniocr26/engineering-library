@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   namespace :api do
+    resources :highlights, only: [:index, :create, :update, :destroy]
     resources :bookmarks, only: [:index, :create, :destroy]
     resources :projects, only: [:index, :show] do
       get :icon, on: :member

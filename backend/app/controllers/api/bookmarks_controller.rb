@@ -4,6 +4,7 @@ require "securerandom"
 module Api
   class BookmarksController < ApplicationController
     include ActionController::Cookies
+    before_action :validate_language
     before_action :identify_reader
     before_action :verify_reader_csrf, except: :index
     rescue_from ActiveRecord::ActiveRecordError, with: :database_unavailable
@@ -51,8 +52,14 @@ module Api
 
     private
 
+    def validate_language
+      if !%w[en pt-BR].include?(params[:language])
+        render json: { error: "Invalid language" }, status: :unprocessable_entity
+      end
+    end
+
     def verifier = Rails.application.message_verifier("anonymous-bookmarks")
-    def scope = Bookmark.where(reader_digest: @reader_digest)
+    def scope = Bookmark.where(reader_digest: @reader_digest, language: params[:language])
     def present(bookmark) = bookmark.as_json(only: %i[id project document language anchor excerpt created_at])
 
     def identify_reader

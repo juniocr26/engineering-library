@@ -7,6 +7,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
 import { containsLocation } from '../lib/table-pagination';
+import { TextHighlights } from './text-highlights';
 import { BookReader } from './book-reader';
 import { DocumentLanguage } from './document-language';
 import { MarkdownUnit } from './markdown-unit';
@@ -84,9 +85,9 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
       try { setLocation(decodeURIComponent(target.hash.slice(1))); setLocationRequest(previous => previous + 1); } catch { /* Invalid anchors keep their native link behavior. */ }
     }
   }}><DocumentLanguage language={language}/><div className="toc-shell documentation-shell">
-    <ReaderTools project={project} projectName={projectName} document={documentId} language={language} entries={entries} title={title} headings={flowUnits.filter(unit => unit.heading !== undefined)}>{({ toolbar, pageAction }) => <BookReader key={documentId} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={flowUnits} project={project} language={language} title={title} header={action => header(toolbar, action)} location={location} locationRequest={locationRequest}
+    <TextHighlights project={project} document={documentId} language={language}><ReaderTools project={project} projectName={projectName} document={documentId} language={language} entries={entries} title={title} headings={flowUnits.filter(unit => unit.heading !== undefined)}>{({ toolbar, pageAction }) => <BookReader key={documentId} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={flowUnits} project={project} language={language} title={title} header={action => header(toolbar, action)} location={location} locationRequest={locationRequest}
       renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={containsLocation(unit, location) ? query : ''} expanded={expanded} toggleSource={toggleSource} location={location}/>}
-      pageAction={pageAction}/>}</ReaderTools>
+      pageAction={pageAction}/>}</ReaderTools></TextHighlights>
     {location && !flowUnits.some(unit => containsLocation(unit, location) || location.startsWith(`${unit.id}--row-`)) && <p role="status" className="reader-notice">{en ? 'This saved location is unavailable: the source or translation may have changed. Showing the document start.' : 'Esta posição está indisponível: o código ou a tradução pode ter mudado. Exibindo o início do documento.'}</p>}
   </div></main>;
 }

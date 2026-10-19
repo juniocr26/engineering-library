@@ -139,7 +139,7 @@ const assert = require('node:assert/strict');
   assert.match(image.headers()['content-type'], /image\/svg\+xml/);
   assert.match(image.headers()['content-security-policy'], /sandbox/);
   const outsider = await browser.newContext();
-  const response = await outsider.request.get(`${base}/api/bookmarks`);
+  const response = await outsider.request.get(`${base}/api/bookmarks?language=en`);
   assert.deepEqual((await response.json()).bookmarks, []);
   assert.deepEqual(errors, []);
   await browser.close();

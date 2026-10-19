@@ -217,10 +217,10 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   const left = turn && count === 2 && turn.direction === 1 ? turn.from[0] : pages[visible];
   const right = turn && count === 2 && turn.direction === -1 ? turn.from[1] : pages[visible + 1];
   return <TableScrollProvider><section className="reader" data-mode={mode} data-pagination={ready ? 'ready' : 'measuring'} aria-label={title} onKeyDown={event => {
-    if (event.altKey || event.ctrlKey || event.metaKey || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable],.reader-table,.source-code,dialog')) return;
+    if (event.shiftKey || !window.getSelection()?.isCollapsed || event.altKey || event.ctrlKey || event.metaKey || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable],.reader-table,.source-code,dialog')) return;
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); navigate(event.key === 'ArrowRight' ? 1 : -1); }
   }} onTouchStart={event => { if (event.touches.length === 1 && !(event.target as HTMLElement).closest('a,button,.reader-table,.source-code,dialog')) touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }} onTouchEnd={event => {
-    const start = touch.current; touch.current = null; if (!start || !event.changedTouches[0]) return;
+    const start = touch.current; touch.current = null; if (!window.getSelection()?.isCollapsed || !start || !event.changedTouches[0]) return;
     const dx = event.changedTouches[0].clientX - start.x; const dy = event.changedTouches[0].clientY - start.y;
     if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1);
   }}>

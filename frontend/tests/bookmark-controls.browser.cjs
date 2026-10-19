@@ -21,7 +21,7 @@ const assert = require('node:assert/strict');
           const saved = { ...request.postDataJSON(), id: nextId++ }; bookmarks.push(saved);
           return route.fulfill({ status: 201, json: saved });
         }
-        bookmarks = bookmarks.filter(item => item.id !== Number(request.url().split('/').pop()));
+        bookmarks = bookmarks.filter(item => item.id !== Number(new URL(request.url()).pathname.split('/').pop()));
         return route.fulfill({ status: 204 });
       });
       await page.goto(`${process.env.BROWSER_BASE_URL || 'http://localhost:3000'}/projects/engineering-library/docs/architecture/current-state.md?lang=en`);

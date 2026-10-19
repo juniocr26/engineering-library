@@ -1,4 +1,5 @@
 'use client';
+import { readerIdentity } from '../lib/reader-identity';
 import { headingTitle } from '../lib/heading-numbering';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
@@ -101,19 +102,19 @@ export function ReaderTools({ project, projectName, document: documentId, langua
 
   useEffect(() => {
     const controller = new AbortController();
-    void fetch(`/api/bookmarks?project_slug=${encodeURIComponent(project)}`, { cache: 'no-store', signal: controller.signal }).then(async response => {
+    void readerIdentity(project, language).then(() => fetch(`/api/bookmarks?project_slug=${encodeURIComponent(project)}&language=${language}`, { cache: 'no-store', signal: controller.signal })).then(async response => {
       if (!response.ok) throw new Error('Bookmarks unavailable');
       return response.json();
-    }).then(data => { if (controller.signal.aborted) return; setBookmarks(data.bookmarks.filter((item: Bookmark) => item.project === project)); setCsrf(data.csrf_token); setBookmarkError(false); }, () => { if (!controller.signal.aborted) setBookmarkError(true); });
+    }).then(data => { if (controller.signal.aborted) return; setBookmarks(data.bookmarks.filter((item: Bookmark) => item.project === project && item.language === language)); setCsrf(data.csrf_token); setBookmarkError(false); }, () => { if (!controller.signal.aborted) setBookmarkError(true); });
     return () => controller.abort();
-  }, [project]);
+  }, [project, language]);
 
   async function mutate(bookmark?: Bookmark, unit?: { id: string; text: string }) {
     if (mutationPending.current || !csrf) return;
     mutationPending.current = true;
     setBusy(true); setBookmarkError(false);
     try {
-      const response = await fetch(bookmark ? `/api/bookmarks/${bookmark.id}` : '/api/bookmarks', {
+      const response = await fetch(bookmark ? `/api/bookmarks/${bookmark.id}?language=${language}` : '/api/bookmarks', {
         method: bookmark ? 'DELETE' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf },
         body: bookmark ? undefined : JSON.stringify({ project, document: documentId, language, anchor: unit!.id, excerpt: unit!.text.slice(0, 240) }),
       });
@@ -145,8 +146,8 @@ export function ReaderTools({ project, projectName, document: documentId, langua
       </>}
       {panel === 'bookmarks' && <>
         <p>{en ? 'Saved in this browser. Clearing its identity removes access; bookmarks do not sync across devices.' : 'Salvas neste navegador. Limpar sua identidade remove o acesso; marcações não sincronizam entre dispositivos.'}</p>
-        {!bookmarks.length && <p>{en ? 'No bookmarks saved for this project.' : 'Nenhuma marcação salva neste projeto.'}</p>}
-        <ul className="reader-panel-list">{bookmarks.map(bookmark => <li key={bookmark.id} className="reader-saved-bookmark"><Link href={bookmarkHref(bookmark.project, bookmark.document, bookmark.language, bookmark.anchor)} onClick={() => setPanel(null)}><strong>{projectDisplayName(bookmark.project, bookmark.project === project ? projectName : undefined)} · {bookmark.document === CONTENTS_DOCUMENT ? (bookmark.language === 'en' ? 'Table of Contents' : 'Sumário') : bookmark.document}</strong><span>{bookmark.excerpt}</span></Link><button type="button" aria-label={en ? 'Remove bookmark' : 'Remover marcação'} disabled={busy} onClick={() => void mutate(bookmark)}>×</button></li>)}</ul>
+        {!bookmarks.filter(item => item.language === language).length && <p>{en ? 'No bookmarks saved for this project.' : 'Nenhuma marcação salva neste projeto.'}</p>}
+        <ul className="reader-panel-list">{bookmarks.filter(item => item.language === language).map(bookmark => <li key={bookmark.id} className="reader-saved-bookmark"><Link href={bookmarkHref(bookmark.project, bookmark.document, bookmark.language, bookmark.anchor)} onClick={() => setPanel(null)}><strong>{projectDisplayName(bookmark.project, bookmark.project === project ? projectName : undefined)} · {bookmark.document === CONTENTS_DOCUMENT ? (bookmark.language === 'en' ? 'Table of Contents' : 'Sumário') : bookmark.document}</strong><span>{bookmark.excerpt}</span></Link><button type="button" aria-label={en ? 'Remove bookmark' : 'Remover marcação'} disabled={busy} onClick={() => void mutate(bookmark)}>×</button></li>)}</ul>
       </>}
     </ReaderPanel>}
   </>;
