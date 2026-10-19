@@ -9,5 +9,3 @@
 - [documentation-validator](documentation-validator.md)
 
 - [Frontend do livro e catálogo](book-frontend.md)
-
-- [Questões de engenharia entre projetos](cross-project-boundaries.md)

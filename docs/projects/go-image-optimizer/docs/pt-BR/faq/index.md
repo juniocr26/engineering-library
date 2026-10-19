@@ -1,7 +1,12 @@
-# FAQ
+# go-image-optimizer — FAQ técnica
 
 [Índice do projeto](../index.md) · [English](../../en/faq/index.md)
 
+Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente nesta página. Afirmações históricas conservam suas datas; as correções atuais abaixo prevalecem. Exemplos em primeira pessoa descrevem artefatos do portfólio, sem atribuir experiência profissional. O [roteiro de estudo](study-guide.md) preserva URLs e âncoras existentes por compatibilidade.
+
+## Revisão do código atual — 2026-10-19
+
+As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
 ### Q006 — Todos os endpoints de imagem aceitam os mesmos campos multipart e padrões?
 
@@ -522,7 +527,3 @@ Aprofundamento: Rollback exigiria restauração de banco? Não há banco de uplo
 ## Conciliação com o código — 2026-10-18
 
 `2c9a27f40a2a2c8bef5f86f187256870c1960630`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../guides/implementation-study.md).
-
-## Revisão do código atual — 2026-10-19
-
-As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).

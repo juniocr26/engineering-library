@@ -1,7 +1,12 @@
-# FAQ
+# url-shortener — FAQ técnica
 
 [Índice do projeto](../index.md) · [English](../../en/faq/index.md)
 
+Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente nesta página. Afirmações históricas conservam suas datas; as correções atuais abaixo prevalecem. Exemplos em primeira pessoa descrevem artefatos do portfólio, sem atribuir experiência profissional. O [roteiro de estudo](study-guide.md) preserva URLs e âncoras existentes por compatibilidade.
+
+## Revisão do código atual — 2026-10-19
+
+As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
 ### Q006 — O que acontece se o contador Redis desaparecer após a inicialização do processo?
 
@@ -1869,7 +1874,3 @@ Aprofundamento: Testes fake HTTP/serviço provam cluster real? Não; verificam v
 ## Conciliação com o código — 2026-10-18
 
 `40e4ea05d6e4d2d5ae81d2020ec6ea7936330d44`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../guides/implementation-study.md).
-
-## Revisão do código atual — 2026-10-19
-
-As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).

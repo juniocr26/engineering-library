@@ -1,7 +1,12 @@
-# FAQ
+# rust-event-relay — Technical FAQ
 
 [Project index](../index.md) · [Português brasileiro](../../pt-BR/faq/index.md)
 
+Technical questions, detailed answers and follow-ups are available directly on this page. Historical milestone statements retain their dates; current corrections below take precedence. First-person examples describe portfolio artifacts, not employment experience. The [study guide](study-guide.md) retains its existing URLs and anchors for compatibility.
+
+## Current source review — 2026-10-19
+
+The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
 ### Q016 — Can one completed run accept multiple duplicate-publication actions?
 
@@ -276,7 +281,3 @@ Follow-up: Why not auto-resend unknown actions? The prior action may already hav
 **Answer:** Pure/fake tests establish policy and call sequencing; isolated PostgreSQL/RabbitMQ/process tests cover selected real failure schedules; browser tests cover real and illustrative UI separately. The final 2026-10-17 manifest records acceptance at its own base, not the current documentation revision or remote CI. The supported single main launcher, separate runtime/test artifacts and named Supervisor controls address local operation. Finite resource/retention bounds reject excess work instead of deleting evidence. They are not measured production capacity, disaster recovery or HA/TLS.
 
 Follow-up: What would justify a production claim? Explicit transport security, least-privilege deployment, retention/restore across database and broker, operational ownership and workload-specific evidence. These are hypothetical improvements, not acceptance blockers retroactively added to the completed local portfolio scope.
-
-## Current source review — 2026-10-19
-
-The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).

@@ -1,7 +1,12 @@
-# FAQ
+# url-shortener — Technical FAQ
 
 [Project index](../index.md) · [Português brasileiro](../../pt-BR/faq/index.md)
 
+Technical questions, detailed answers and follow-ups are available directly on this page. Historical milestone statements retain their dates; current corrections below take precedence. First-person examples describe portfolio artifacts, not employment experience. The [study guide](study-guide.md) retains its existing URLs and anchors for compatibility.
+
+## Current source review — 2026-10-19
+
+The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
 ### Q006 — What happens if the Redis counter disappears after a process initialized it?
 
@@ -735,7 +740,3 @@ Follow-up: Do fake HTTP/service tests prove the real cluster works? No; they ver
 ## Source reconciliation — 2026-10-18
 
 `40e4ea05d6e4d2d5ae81d2020ec6ea7936330d44`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../guides/implementation-study.md).
-
-## Current source review — 2026-10-19
-
-The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).

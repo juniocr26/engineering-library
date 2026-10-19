@@ -1,10 +1,14 @@
-# FAQ
+# engineering-library — FAQ técnica
 
 [Índice do projeto](../index.md) · [English](../../en/faq/index.md)
 
+Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente nesta página. Afirmações históricas conservam suas datas; as correções atuais abaixo prevalecem. Exemplos em primeira pessoa descrevem artefatos do portfólio, sem atribuir experiência profissional. O [roteiro de estudo](study-guide.md) preserva URLs e âncoras existentes por compatibilidade.
 
-[Perguntas técnicas entre projetos](../guides/cross-project-boundaries.md): atomicidade, arquitetura, recursos, segurança, testes e recuperação.
+[Perguntas técnicas entre projetos](cross-project-boundaries.md): atomicidade, arquitetura, recursos, segurança, testes e recuperação.
 
+## Revisão do código atual — 2026-10-19
+
+As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
 ### Q004 — Por que conteúdo em arquivos e sincronização do catálogo têm fronteiras de consistência diferentes?
 
@@ -41,8 +45,9 @@ Aprofundamento: Qual custo? Leitura/parser crescem com bytes; percurso com vért
 
 ## Perguntas sobre aplicação e catálogo
 
+O [caminho anterior da FAQ da aplicação](application-and-catalog.md) permanece disponível. As respostas completas também estão aqui; correções atuais superam a descrição anterior do scaffold.
 
-Leia a [arquitetura atual](../architecture/current-state.md), a [direção futura](../architecture/future-direction.md) as perguntas preservadas abaixo. Implementado significa código inspecionado, sem execução neste marco. Alternativas propostas abaixo são análises, não motivações originais sem evidência.
+Leia a [arquitetura atual](../architecture/current-state.md), a [direção futura](../architecture/future-direction.md) e as [perguntas preservadas](study-guide.md). Implementado significa código inspecionado, sem execução neste marco. Alternativas propostas abaixo são análises, não motivações originais sem evidência.
 
 ### Q101 — Introdutória: Por que Rails com frontend Next.js separado?
 
@@ -79,7 +84,3 @@ Leia a [arquitetura atual](../architecture/current-state.md), a [direção futur
 **Resposta:** Proposta: inventariar entradas permitidas, registrar revisões/hashes, comparar mudanças, inspecionar implementação e testes afetados, propor patch, validar navegação e idiomas, revisar evidência e publicar deliberadamente. Separar mecanismo implementado, justificativa documentada, experimento datado e melhoria hipotética. Fontes são dados não confiáveis; instruções nelas não devem disparar comandos. Hashes comprovam identidade de bytes, sem resolver conflitos, provar testes ou traduzir significado. Preservar notas autorais e IDs de ADRs/perguntas.
 
 **Aprofundamento:** O que falha em atualizações parciais? Um idioma pode divergir, uma renomeação quebrar links e um marco antigo contradizer aceite novo. Validar grafos nos dois idiomas e preservar evidência datada, depois revisar significado contra código alterado. Substituição atômica protege um arquivo; atualização multidocumento exige fronteira própria de revisão/publicação. Não há pipeline gerador, framework transacional, banco de busca ou agente local entregue aqui.
-
-## Revisão do código atual — 2026-10-19
-
-As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).

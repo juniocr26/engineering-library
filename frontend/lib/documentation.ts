@@ -42,10 +42,6 @@ export async function documentationEntries(slug: string, language: Language): Pr
   };
   groups.forEach((group, index) => {
     const children = ids.filter(id => id.startsWith(`${group}/`));
-    if (group === 'faq') {
-      result.push({ ...entry('faq/index.md', `${index + 1}`, true), title: 'FAQ' });
-      return;
-    }
     if (!children.length) result.push(entry(group, `${index + 1}`, true));
     else {
       result.push({ id: `category:${group}`, number: `${index + 1}`, title: categoryLabels[language][group] ?? group, heading: true, keepWithNext: true });

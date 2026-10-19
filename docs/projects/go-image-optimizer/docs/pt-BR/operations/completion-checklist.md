@@ -40,7 +40,7 @@ Revisão estática em 2026-10-10; sem execução runtime. Itens marcados indicam
 
 Compressão/resize/conversão/preview; interfaces/CGO; multipart/API/proxy; pixels, formatos, alpha/orientação/animação; cleanup/cancelamento; testes, recursos e limites de rollout.
 
-[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/index.md)
+[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/study-guide.md)
 
 ## Aplicabilidade das categorias
 

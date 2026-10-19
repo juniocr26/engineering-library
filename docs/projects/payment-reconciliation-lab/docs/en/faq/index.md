@@ -1,7 +1,12 @@
-# FAQ
+# payment-reconciliation-lab — Technical FAQ
 
 [Project index](../index.md) · [Português brasileiro](../../pt-BR/faq/index.md)
 
+Technical questions, detailed answers and follow-ups are available directly on this page. Historical milestone statements retain their dates; current corrections below take precedence. First-person examples describe portfolio artifacts, not employment experience. The [study guide](study-guide.md) retains its existing URLs and anchors for compatibility.
+
+## Current source review — 2026-10-19
+
+The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
 ### Q007 — Does readOnly=true or purchasable=true implement payment authorization?
 
@@ -127,7 +132,3 @@ Follow-up: Could all fake tests pass while startup fails? Yes, for missing schem
 ## Source reconciliation — 2026-10-18
 
 `71b8b8f22d38f08e8ab40cb519f8b1a0985b74c6`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../guides/implementation-study.md).
-
-## Current source review — 2026-10-19
-
-The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).

@@ -1,6 +1,6 @@
 # Perguntas de engenharia entre projetos
 
-[FAQ técnica](../faq/index.md) · [English](../../en/guides/cross-project-boundaries.md)
+[FAQ técnica](index.md) · [English](../../en/faq/cross-project-boundaries.md)
 
 Reavaliação em 2026-10-19 de `foundations.md` histórico em `5052a8515b30278abea5fb81b37647482c10ba18` e fontes atuais selecionadas. Os seis IDs estáveis pertencem a este documento. Comparam projetos independentes do portfólio, sem integração runtime ou atribuição de experiência profissional. Afirmações históricas de worker ausente foram superadas; nenhum teste de aplicação foi executado nesta revisão.
 

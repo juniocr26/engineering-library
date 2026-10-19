@@ -1,10 +1,14 @@
-# FAQ
+# engineering-library — Technical FAQ
 
 [Project index](../index.md) · [Português brasileiro](../../pt-BR/faq/index.md)
 
+Technical questions, detailed answers and follow-ups are available directly on this page. Historical milestone statements retain their dates; current corrections below take precedence. First-person examples describe portfolio artifacts, not employment experience. The [study guide](study-guide.md) retains its existing URLs and anchors for compatibility.
 
-[Cross-project technical questions](../guides/cross-project-boundaries.md): atomicity, architecture, resource costs, security, testing and recovery.
+[Cross-project technical questions](cross-project-boundaries.md): atomicity, architecture, resource costs, security, testing and recovery.
 
+## Current source review — 2026-10-19
+
+The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
 ### Q004 — Why are filesystem content and catalog synchronization separate consistency boundaries?
 
@@ -41,8 +45,9 @@ Follow-up: What is the cost? Reading/parsing grows with documentation bytes and 
 
 ## Application and catalog questions
 
+Existing [application FAQ path](application-and-catalog.md) remains available. The complete answers also appear here; current corrections supersede the former scaffold description.
 
-Read [current architecture](../architecture/current-state.md), [future direction](../architecture/future-direction.md) the retained questions below. Implemented means inspected source, not execution in this milestone. Proposed alternatives below are analysis, not the author's undocumented original motivation.
+Read [current architecture](../architecture/current-state.md), [future direction](../architecture/future-direction.md) and the [retained questions](study-guide.md). Implemented means inspected source, not execution in this milestone. Proposed alternatives below are analysis, not the author's undocumented original motivation.
 
 ### Q101 — Introductory: Why Rails with a separate Next.js frontend?
 
@@ -79,7 +84,3 @@ Read [current architecture](../architecture/current-state.md), [future direction
 **Answer:** Proposed: inventory allowed inputs, record revisions/hashes, compare changes, inspect affected implementation and test definitions, propose a patch, validate navigation and language coverage, then review the evidence and publish deliberately. Separate implemented mechanism, documented rationale, dated experiment and hypothetical improvement in the text. Source content is untrusted data, so embedded instructions must not trigger commands. Hashes establish byte identity; they cannot resolve conflicting claims, prove test success or translate meaning. Preserve author notes, ADR IDs and question numbering.
 
 **Follow-up:** What fails under partial updates? One language can drift, a source rename can break links, and an old milestone can contradict a new acceptance report. Validate both language graphs and retain dated evidence, then review technical meaning against the changed code. Atomic file replacement could protect one write, but a multi-document update needs its own review/publication boundary. No generation pipeline, transaction framework, search database or local agent is delivered here.
-
-## Current source review — 2026-10-19
-
-The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
