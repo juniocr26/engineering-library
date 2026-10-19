@@ -55,10 +55,10 @@ export function NoteEditor({ note, highlightId, hasHighlight, query, csrf, langu
       {deleteError && <p role="alert">{deleteError}</p>}
       <footer><button autoFocus disabled={busy} onClick={cancelDelete}>{en ? 'Cancel' : 'Cancelar'}</button><button disabled={busy} onClick={() => void mutate(true)}>{busy ? (en ? 'Deleting…' : 'Excluindo…') : (en ? 'Delete note' : 'Excluir nota')}</button></footer>
     </ViewerDialog>}
-    {preview && <NotePreview source={draft} language={language} close={() => { setPreview(false); requestAnimationFrame(() => editor.current?.focus({ preventScroll: true })); }}/>}
+    {preview && <NotePreview source={draft} language={language} context="editor" close={() => { setPreview(false); requestAnimationFrame(() => editor.current?.focus({ preventScroll: true })); }}/>}
   </ViewerDialog>;
 }
-function NotePreview({ source, language, close }: { source: string; language: Language; close: () => void }) {
+export function NotePreview({ source, language, close, context = 'editor' }: { source: string; language: Language; close: () => void; context?: 'editor' | 'annotations' }) {
   const [zoom, setZoom] = useState(1);
   const [pageWidth, setPageWidth] = useState<number>();
   const [panMode, setPanMode] = useState(false);
@@ -84,7 +84,7 @@ function NotePreview({ source, language, close }: { source: string; language: La
   }, [panMode]);
   const release = (id: number) => { pointers.current.delete(id); setDragging(false); };
   return <ViewerDialog label={en ? 'Note preview' : 'Prévia da nota'} close={close} className="note-preview">
-    <div className="media-viewer-toolbar"><button aria-label={en ? 'Zoom out' : 'Reduzir'} disabled={zoom === .75} onClick={() => changeZoom(1 / 1.25)}>−</button><output aria-live="polite">{Math.round(zoom * 100)}%</output><button aria-label={en ? 'Zoom in' : 'Ampliar'} disabled={zoom === 5} onClick={() => changeZoom(1.25)}>+</button><button onClick={() => { setZoom(1); scroll.current?.scrollTo(0, 0); }}>{en ? 'Reset zoom' : 'Restaurar zoom'}</button><button aria-pressed={panMode} onClick={() => setPanMode(value => !value)}>{en ? 'Pan mode' : 'Modo arrastar'}</button><button autoFocus onClick={close}>{en ? 'Return to edit' : 'Voltar à edição'}</button></div>
+    <div className="media-viewer-toolbar"><button aria-label={en ? 'Zoom out' : 'Reduzir'} disabled={zoom === .75} onClick={() => changeZoom(1 / 1.25)}>−</button><output aria-live="polite">{Math.round(zoom * 100)}%</output><button aria-label={en ? 'Zoom in' : 'Ampliar'} disabled={zoom === 5} onClick={() => changeZoom(1.25)}>+</button><button onClick={() => { setZoom(1); scroll.current?.scrollTo(0, 0); }}>{en ? 'Reset zoom' : 'Restaurar zoom'}</button><button aria-pressed={panMode} onClick={() => setPanMode(value => !value)}>{en ? 'Pan mode' : 'Modo arrastar'}</button><button autoFocus onClick={close}>{context === 'annotations' ? (en ? 'Close' : 'Fechar') : (en ? 'Return to edit' : 'Voltar à edição')}</button></div>
     <p className="note-preview-help">{en ? 'Select text to copy. Enable pan mode to drag or pinch; Ctrl + wheel also zooms.' : 'Selecione texto para copiar. Ative o modo arrastar para mover ou usar pinça; Ctrl + roda também amplia.'}</p>
     <div ref={scroll} className="note-preview-scroll" tabIndex={0} data-pan={panMode} data-dragging={dragging} data-zoom={zoom} aria-label={en ? 'Scrollable note preview' : 'Prévia rolável da nota'} onPointerDown={event => {
       if (!panMode || event.button !== 0 || (event.target as Element).closest('a,button,table,pre')) return;

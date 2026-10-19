@@ -44,6 +44,16 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
   const neighbors = readingNeighbors(getReadingSequence(project, language, entries), documentId);
   const title = entries.find(entry => entry.id === documentId)?.title ?? units.find(unit => unit.heading !== undefined)?.text ?? documentId;
   useEffect(() => {
+    const navigateAnnotation = (event: Event) => {
+      const target = (event as CustomEvent<{ project: string; document: string; language: string; anchor: string }>).detail;
+      if (target.project !== project || target.document !== documentId || target.language !== language) return;
+      setLocation(target.anchor); setLocationRequest(previous => previous + 1);
+    };
+    window.addEventListener('reader-annotation-location', navigateAnnotation);
+    return () => window.removeEventListener('reader-annotation-location', navigateAnnotation);
+  }, [project, documentId, language]);
+
+  useEffect(() => {
     const update = () => {
       try { setLocation(decodeURIComponent(window.location.hash.slice(1))); setLocationRequest(previous => previous + 1); } catch { setLocation(''); }
     };

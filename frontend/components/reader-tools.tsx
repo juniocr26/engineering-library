@@ -3,6 +3,7 @@ import { readerIdentity } from '../lib/reader-identity';
 import { headingTitle } from '../lib/heading-numbering';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import { AnnotationsPanel } from './annotations-panel';
 import { ReaderPanel } from './reader-panel';
 import { bookmarkHref, CONTENTS_DOCUMENT } from '../lib/document-links';
 import { projectDisplayName } from '../lib/project-name';
@@ -12,10 +13,10 @@ import type { TocEntry } from '../lib/documentation';
 import type { Language } from '../lib/i18n';
 type Bookmark = { id: number; project: string; document: string; language: Language; anchor: string; excerpt: string };
 type SearchResult = { title: string; excerpt: string; href: string; anchor: string };
-type Panel = 'search' | 'chapters' | 'bookmarks';
+type Panel = 'search' | 'chapters' | 'bookmarks' | 'annotations';
 function ReaderIcon({ name }: { name: Panel | 'page' }) {
   return <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {name === 'search' ? <><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></> : name === 'chapters' ? <><path d="M4 3h13a2 2 0 0 1 2 2v16H6a3 3 0 0 1-3-3V4a1 1 0 0 1 1-1Z"/><path d="M6 3v14M4 17h15M10 7h5M10 10h5"/></> : name === 'bookmarks' ? <><path d="M5 3h9v16l-4.5-4L5 19ZM18 5h3v16l-3-3"/></> : <path d="M6 3h12v18l-6-5-6 5Z"/>}
+    {name === 'annotations' ? <><path d="M5 3h14v18H5zM3 6h4M3 11h4M3 16h4M10 7h5M10 11h5M10 15h3"/></> : name === 'search' ? <><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></> : name === 'chapters' ? <><path d="M4 3h13a2 2 0 0 1 2 2v16H6a3 3 0 0 1-3-3V4a1 1 0 0 1 1-1Z"/><path d="M6 3v14M4 17h15M10 7h5M10 10h5"/></> : name === 'bookmarks' ? <><path d="M5 3h9v16l-4.5-4L5 19ZM18 5h3v16l-3-3"/></> : <path d="M6 3h12v18l-6-5-6 5Z"/>}
   </svg>;
 }
 
@@ -98,7 +99,7 @@ export function ReaderTools({ project, projectName, document: documentId, langua
   const [bookmarkError, setBookmarkError] = useState(false);
   const [busy, setBusy] = useState(false);
   const mutationPending = useRef(false);
-  const labels = { search: en ? 'Search' : 'Pesquisar', chapters: en ? 'Chapter index' : 'Índice de capítulos', bookmarks: en ? 'My Bookmarks' : 'Minhas marcações' };
+  const labels = { annotations: en ? 'Highlights and Notes' : 'Destaques e notas', search: en ? 'Search' : 'Pesquisar', chapters: en ? 'Chapter index' : 'Índice de capítulos', bookmarks: en ? 'My Bookmarks' : 'Minhas marcações' };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -127,7 +128,7 @@ export function ReaderTools({ project, projectName, document: documentId, langua
 
   const toolbar = (action: ReactNode) => <>
     <nav className="reader-toolbar" aria-label={en ? 'Reader tools' : 'Ferramentas de leitura'}>
-      {(['search', 'chapters', 'bookmarks'] as const).map(name => <button key={name} type="button" title={labels[name]} aria-label={labels[name]} onClick={() => setPanel(name)}><ReaderIcon name={name}/></button>)}
+      {(['search', 'chapters', 'bookmarks', 'annotations'] as const).map(name => <button key={name} type="button" title={labels[name]} aria-label={labels[name]} onClick={() => setPanel(name)}><ReaderIcon name={name}/></button>)}
       <div className="reader-bookmark-slot">{action}</div>
     </nav>
   </>;
@@ -139,6 +140,7 @@ export function ReaderTools({ project, projectName, document: documentId, langua
   return <>{children({ toolbar, pageAction })}
     {bookmarkError && <p role="alert" className="reader-notice">{en ? 'Bookmarks unavailable. Reload to try again.' : 'Marcações indisponíveis. Recarregue para tentar novamente.'}</p>}
     {panel && <ReaderPanel title={labels[panel]} close={() => setPanel(null)} closeLabel={en ? 'Close panel' : 'Fechar painel'}>
+      {panel === 'annotations' && <AnnotationsPanel key={`${project}/${language}`} project={project} language={language} entries={entries} documentId={documentId} headings={headings} close={() => setPanel(null)}/>}
       {panel === 'search' && <Search project={project} language={language} close={() => setPanel(null)}/>}
       {panel === 'chapters' && <>
         {headings.length > 0 && <h3>{title}</h3>}<ul className="reader-panel-list">{headings.map(unit => <li key={unit.id}><a href={`#${encodeURIComponent(unit.id)}`} onClick={() => setPanel(null)}>{unit.navigationNumber ? `${unit.navigationNumber} ${headingTitle(unit.text, unit.navigationNumber)}` : unit.text}</a></li>)}</ul>

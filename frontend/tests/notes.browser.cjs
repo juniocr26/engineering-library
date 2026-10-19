@@ -62,11 +62,11 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       await preview.getByRole('button', { name: 'Expand table', exact: true }).click();
       await page.getByRole('dialog', { name: 'Complete table', exact: true }).waitFor();
       await page.keyboard.press('Escape'); await preview.waitFor();
-      await preview.getByRole('button', { name: 'Expand image', exact: true }).click();
+      await preview.getByRole('button', { name: 'Expand image: Persistence', exact: true }).click();
       const media = page.getByRole('dialog', { name: 'Persistence', exact: true }); await media.waitFor({ timeout: 5000 }).catch(async error => { console.log(await page.locator('dialog').evaluateAll(items => items.map(n => ({ label: n.getAttribute('aria-label'), open: n.open, rect: n.getBoundingClientRect().toJSON(), html: n.outerHTML.slice(0,500) })))); await page.screenshot({ path: '/tmp/notes-failure.png' }); throw error; });
        await media.getByRole('button', { name: 'Zoom in', exact: true }).click(); assert.equal(await media.locator('output').innerText(), '125%');
       await page.keyboard.press('Escape');
-      await preview.getByRole('button', { name: 'Expand diagram', exact: true }).click();
+      await preview.getByRole('button', { name: 'Expand diagram: Documentation diagram', exact: true }).click();
       await page.getByRole('dialog', { name: 'Documentation diagram', exact: true }).waitFor(); await page.keyboard.press('Escape');
       await preview.getByRole('button', { name: 'Zoom in', exact: true }).click(); assert.equal(await preview.locator('output').innerText(), '125%');
       for (let step = 0; step < 8; step++) {

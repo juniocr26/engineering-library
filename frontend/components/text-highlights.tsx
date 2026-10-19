@@ -1,4 +1,5 @@
 'use client';
+import { useSearchParams } from 'next/navigation';
 import { NoteDemos } from './note-demos';
 import { NoteEditor, type SavedNote } from './note-editor';
 import { createPortal } from 'react-dom';
@@ -16,6 +17,10 @@ export function TextHighlights({ project, document: documentId, language, childr
   return <div ref={root} className="reader-highlights">{children}<HighlightSession key={`${project}/${documentId}/${language}`} root={root} project={project} documentId={documentId} language={language}/></div>;
 }
 function HighlightSession({ project, documentId, language, root }: { project: string; documentId: string; language: Language; root: RefObject<HTMLDivElement | null> }) {
+  const searchParams = useSearchParams();
+  const annotationRequest = searchParams.get('annotation');
+  const handledAnnotation = useRef<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState<SavedHighlight[]>([]);
   const [notes, setNotes] = useState<SavedNote[]>([]);
   const [editing, setEditing] = useState<{ note?: SavedNote; highlightId?: number } | null>(null);
@@ -29,9 +34,60 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   const query = new URLSearchParams({ project, document: documentId, language }).toString();
   useEffect(() => {
     const controller = new AbortController();
-    void readerIdentity(project, language).then(() => fetch(`/api/highlights?${query}`, { signal: controller.signal, cache: 'no-store' })).then(async response => { if (!response.ok) throw Error(); return response.json(); }).then(data => { if (!controller.signal.aborted) { setSaved(data.highlights); setCsrf(data.csrf_token); void fetch(`/api/notes?${query}`, { signal: controller.signal, cache: 'no-store' }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(value => setNotes(value.notes)).catch(() => { if (!controller.signal.aborted) setMessage(en ? 'Notes unavailable. Reload to retry.' : 'Notas indisponíveis. Recarregue para tentar novamente.'); }); } }, () => { if (!controller.signal.aborted) setMessage(en ? 'Highlights unavailable. Reload to retry.' : 'Destaques indisponíveis. Recarregue para tentar novamente.'); });
+    void readerIdentity(project, language).then(() => fetch(`/api/highlights?${query}`, { signal: controller.signal, cache: 'no-store' })).then(async response => { if (!response.ok) throw Error(); return response.json(); }).then(data => { if (!controller.signal.aborted) { setSaved(data.highlights); setCsrf(data.csrf_token); void fetch(`/api/notes?${query}`, { signal: controller.signal, cache: 'no-store' }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(value => { if (!controller.signal.aborted) { setNotes(value.notes); setLoaded(true); } }).catch(() => { if (!controller.signal.aborted) setMessage(en ? 'Notes unavailable. Reload to retry.' : 'Notas indisponíveis. Recarregue para tentar novamente.'); }); } }, () => { if (!controller.signal.aborted) setMessage(en ? 'Highlights unavailable. Reload to retry.' : 'Destaques indisponíveis. Recarregue para tentar novamente.'); });
     return () => controller.abort();
   }, [query, en, project, language]);
+  useEffect(() => {
+    if (!loaded) return;
+    const surface = root.current;
+    if (!surface) return;
+    let frame = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let targetId = handledAnnotation.current === annotationRequest ? null : annotationRequest;
+    let navigationFrames = 0;
+    let resolvedRequest = '';
+    const clearTarget = () => surface.querySelectorAll('[data-annotation-target]').forEach(node => node.removeAttribute('data-annotation-target'));
+    const attempt = () => {
+      if (!targetId) return;
+      const item = targetId.startsWith('note-') ? notes.find(note => `note-${note.id}` === targetId) : saved.find(highlight => `highlight-${highlight.id}` === targetId);
+      const reader = surface.querySelector<HTMLElement>('.reader');
+      if (!reader || reader.dataset.pagination !== 'ready') return;
+      const valid = item && item.segments.every(segment => Array.from(surface.querySelectorAll<HTMLElement>('.reader-measure [data-highlight-block]')).some(block => block.dataset.highlightBlock === segment.block && resolveTextAnchor(segment, block.textContent ?? '')));
+      if (!valid) {
+        setMessage(en ? 'This annotation location could not be verified. The annotation is preserved.' : 'Não foi possível verificar a localização desta anotação. A anotação foi preservada.');
+        handledAnnotation.current = targetId; targetId = null; return;
+      }
+      if (resolvedRequest !== targetId) {
+        resolvedRequest = targetId; handledAnnotation.current = targetId;
+        window.dispatchEvent(new CustomEvent('reader-annotation-location', { detail: { project, document: documentId, language, anchor: item.segments[0].block } }));
+        frame = requestAnimationFrame(attempt);
+        return;
+      }
+      const blocks = Array.from(surface.querySelectorAll<HTMLElement>('.reader-pages [data-highlight-block]')).filter(block => !block.closest('[inert]') && item.segments.some(segment => segment.block === block.dataset.highlightBlock));
+      if (!blocks.length) {
+        if (++navigationFrames < 180) frame = requestAnimationFrame(attempt);
+        else { setMessage(en ? 'Could not open the annotation location. Please try again.' : 'Não foi possível abrir o trecho da anotação. Tente novamente.'); targetId = null; }
+        return;
+      }
+      clearTarget();
+      blocks.forEach(block => block.dataset.annotationTarget = 'true');
+      blocks[0].scrollIntoView({ block: 'nearest', behavior: 'instant' });
+      const segment = item.segments.find(part => part.block === blocks[0].dataset.highlightBlock);
+      const range = segment && resolveTextAnchor(segment, blocks[0].textContent ?? '');
+      const rect = range && eligibleRanges(blocks[0], ...range)[0]?.getBoundingClientRect();
+      const body = blocks[0].closest<HTMLElement>('.reader-body');
+      if (rect && body) body.scrollTop += rect.top - body.getBoundingClientRect().top - 20;
+      blocks[0].tabIndex = -1; blocks[0].focus({ preventScroll: true });
+      targetId = null;
+      timer = setTimeout(clearTarget, 5000);
+    };
+    const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(attempt); };
+    const request = (event: Event) => { targetId = (event as CustomEvent<string>).detail; resolvedRequest = ''; navigationFrames = 0; schedule(); };
+    const observer = new MutationObserver(schedule);
+    observer.observe(surface, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-pagination', 'aria-busy'] });
+    window.addEventListener('reader-annotation-request', request); schedule();
+    return () => { observer.disconnect(); window.removeEventListener('reader-annotation-request', request); cancelAnimationFrame(frame); clearTimeout(timer); clearTarget(); };
+  }, [annotationRequest, loaded, saved, notes, en, project, documentId, language, root]);
   useEffect(() => {
     const surface = root.current;
     const registry = (CSS as unknown as { highlights?: Registry }).highlights;
