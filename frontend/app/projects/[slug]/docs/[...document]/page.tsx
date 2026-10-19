@@ -1,3 +1,5 @@
+import { catalogRequest, type Project } from '@/lib/catalog';
+import { projectDisplayName } from '@/lib/project-name';
 import { notFound } from 'next/navigation';
 import { documentationEntries, documentationSource } from '@/lib/documentation';
 import { markdownUnits } from '@/lib/markdown';
@@ -13,7 +15,9 @@ export default async function DocumentPage({ params, searchParams }: {
   const id = document.join('/');
   const source = await documentationSource(slug, id, language);
   if (source === null) notFound();
+  let name: string | undefined;
+  try { name = (await catalogRequest<Project>(`/${encodeURIComponent(slug)}`, language)).name; } catch { /* Keep local documentation available with a readable fallback. */ }
   const units = markdownUnits(source);
   const entries = await documentationEntries(slug, language);
-  return <DocumentationReader initialEnd={query.edge === 'end'} key={`${slug}/${id}`} project={slug} document={id} language={language} units={units} entries={entries} query={(query.q ?? '').slice(0, 100)}/>;
+  return <DocumentationReader initialEnd={query.edge === 'end'} key={`${slug}/${id}`} project={slug} projectName={projectDisplayName(slug, name)} document={id} language={language} units={units} entries={entries} query={(query.q ?? '').slice(0, 100)}/>;
 }

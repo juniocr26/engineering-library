@@ -35,6 +35,23 @@ class CatalogTest < ActiveSupport::TestCase
       assert_equal 1, CatalogProject.count
     end
   end
+  test "display name updates preserve database identity and explicit names win" do
+    with_catalog do |root|
+      bio(root, "url-shortener", "identity", "")
+      Catalog::Sync.call
+      original = CatalogProject.first
+      assert_equal "URL Shortener", original.display_name
+      bio(root, "url-shortener", "identity", "Official URL Name")
+      2.times { Catalog::Sync.call }
+      assert_equal 1, CatalogProject.count
+      assert_equal original.id, CatalogProject.first.id
+      assert_equal "url-shortener", original.reload.slug
+      assert_equal "Official URL Name", original.display_name
+      %w[en pt-BR].each do |language|
+        assert_equal "Official URL Name", Catalog::Presenter.call(original, language)[:name]
+      end
+    end
+  end
   test "missing invalid and duplicate bios abort without partial writes" do
     with_catalog do |root|
       bio(root, "one", "identity", "One")

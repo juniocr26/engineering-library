@@ -26,6 +26,9 @@ Concise localized description of the verified project purpose.
 
 Keep `id` immutable when renaming a directory. Both files must agree on `id` and canonical `name`. The remaining body is a plain-text compact description, not rendered Markdown. Invalid or missing bios abort synchronization before any database write and report the project slug. Preserve identifiers to avoid creating a replacement identity. Conflicting renames fail transactionally rather than overwriting another record. Missing projects are marked inactive, never deleted. Restoring their stable identifier reactivates them. Do not run synchronization while editing catalog files; the database write transaction is serialized, but filesystem discovery is not a filesystem snapshot.
 
+
+Use the directory basename as the technical slug and set an explicit official human-readable `name` when creating each biography (for example `Env Auditor`, `Go Image Optimizer`, `URL Shortener`). Preserve acronyms and proper names; do not translate the official name between languages. Provide both localized descriptions and `icon.svg`. There is no separate metadata generator. Legacy bios with an absent or blank name use a readable slug fallback with common acronyms preserved; missing bios, invalid IDs and non-string names still fail validation. This fallback does not replace an explicit name. Cards, contents headers, reader headers and bookmark labels use the catalog name; URLs and bookmark associations retain the slug. Run `catalog:sync` after metadata edits to update the existing PostgreSQL row by stable ID, without a schema migration.
+
 Icons are original local SVGs with a 24×24 viewBox, consistent ink strokes and no scripts, external resources or active content. Rails serves them through a scoped endpoint; Next proxies these requests. An unavailable icon uses the local book fallback. The EL seal remains the principal app identity.
 
 ## API and pagination

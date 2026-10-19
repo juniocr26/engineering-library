@@ -1,6 +1,18 @@
 require "test_helper"
 class CatalogApiTest < ActionDispatch::IntegrationTest
   setup { Catalog::Sync.call }
+  test "official names and localized descriptions retain original slugs" do
+    names = { "engineering-library" => "Engineering Library", "env-auditor" => "Env Auditor", "go-image-optimizer" => "Go Image Optimizer", "payment-reconciliation-lab" => "Payment Reconciliation Lab", "rust-event-relay" => "Reliable Event Relay", "url-shortener" => "URL Shortener" }
+    names.each do |slug, name|
+      %w[en pt-BR].each do |language|
+        get "/api/projects/#{slug}", params: { lang: language }
+        assert_response :success
+        assert_equal slug, response.parsed_body["slug"]
+        assert_equal name, response.parsed_body["name"]
+        assert_equal Catalog::Files.bio(slug, language)[:description], response.parsed_body["description"]
+      end
+    end
+  end
   test "fixed page size, language and real categories" do
     get "/api/projects", params: { page: 1, per_page: 500, lang: "en" }
     assert_response :success

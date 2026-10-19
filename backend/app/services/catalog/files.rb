@@ -18,8 +18,13 @@ module Catalog
       match = source.match(/\A---\r?\n(.*?)\r?\n---\r?\n(.+)\z/m)
       raise ArgumentError, "Invalid bio" unless match
       data = YAML.safe_load(match[1], permitted_classes: [], aliases: false)
-      raise ArgumentError, "Invalid metadata" unless data.is_a?(Hash) && SLUG.match?(data["id"].to_s) && data["name"].is_a?(String) && !data["name"].strip.empty? && !match[2].strip.empty?
-      { id: data["id"], name: data["name"].strip, description: match[2].strip }
+      raise ArgumentError, "Invalid metadata" unless data.is_a?(Hash) && SLUG.match?(data["id"].to_s) && (data["name"].nil? || data["name"].is_a?(String)) && !match[2].strip.empty?
+      { id: data["id"], name: data["name"].to_s.strip.presence || display_name(slug), description: match[2].strip }
+    end
+    # Compatibility for older bios; explicit names always take precedence.
+    def self.display_name(slug)
+      acronyms = %w[api cli css html http https id json sql ui url ux]
+      slug.split("-").map { |word| acronyms.include?(word) ? word.upcase : word.capitalize }.join(" ")
     end
     def self.categories(slug, language)
       source = read(slug, "docs/#{language}/index.md")

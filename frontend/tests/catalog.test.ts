@@ -24,3 +24,11 @@ test('language and catalog page persist in navigation', () => {
   assert.equal(catalogHref(2, 'pt-BR', 'env-auditor'), '/projects/env-auditor?lang=pt-BR&page=2');
   assert.deepEqual(Object.keys(messages.en), Object.keys(messages['pt-BR']));
 });
+
+test('project display names preserve official spelling and readable fallback acronyms', async () => {
+  const { projectDisplayName } = await import('../lib/project-name.ts');
+  assert.equal(projectDisplayName('rust-event-relay', 'Reliable Event Relay'), 'Reliable Event Relay');
+  assert.equal(projectDisplayName('url-shortener'), 'URL Shortener');
+  assert.equal(projectDisplayName('go-image-optimizer', ' '), 'Go Image Optimizer');
+  assert.equal(projectDisplayName('env-auditor', 'ENV Auditor'), 'ENV Auditor');
+});

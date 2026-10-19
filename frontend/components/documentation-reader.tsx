@@ -1,4 +1,5 @@
 'use client';
+import { projectDisplayName } from '../lib/project-name';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
@@ -93,8 +94,8 @@ export function DocumentationReader(props: Parameters<typeof ProjectDocumentatio
   return <ProjectDocumentationReader key={props.project} {...props}/>;
 }
 
-function ProjectDocumentationReader({ project, document: documentId, language, units, entries, query, initialEnd = false }: {
-  project: string; document: string; language: Language; units: Unit[]; entries: TocEntry[]; query: string; initialEnd?: boolean;
+function ProjectDocumentationReader({ project, projectName, document: documentId, language, units, entries, query, initialEnd = false }: {
+  project: string; projectName?: string; document: string; language: Language; units: Unit[]; entries: TocEntry[]; query: string; initialEnd?: boolean;
 }) {
   const en = language === 'en';
   const [panel, setPanel] = useState<Panel | null>(null);
@@ -143,7 +144,7 @@ function ProjectDocumentationReader({ project, document: documentId, language, u
   }
 
   const header = (action: ReactNode) => <header className="reader-document-header">
-    <Link href={`/projects/${encodeURIComponent(project)}?lang=${language}`}>← {en ? 'Contents' : 'Sumário'}</Link><span>{project}</span>
+    <Link href={`/projects/${encodeURIComponent(project)}?lang=${language}`}>← {en ? 'Contents' : 'Sumário'}</Link><span>{projectDisplayName(project, projectName)}</span>
     <nav className="reader-toolbar" aria-label={en ? 'Reader tools' : 'Ferramentas de leitura'}>
       {(['search', 'chapters', 'bookmarks'] as const).map(name => <button key={name} type="button" title={labels[name]} aria-label={labels[name]} onClick={() => setPanel(name)}><ReaderIcon name={name}/></button>)}
       <div className="reader-bookmark-slot">{action}</div>
@@ -176,7 +177,7 @@ function ProjectDocumentationReader({ project, document: documentId, language, u
       {panel === 'bookmarks' && <>
         <p>{en ? 'Saved in this browser. Clearing its identity removes access; bookmarks do not sync across devices.' : 'Salvas neste navegador. Limpar sua identidade remove o acesso; marcações não sincronizam entre dispositivos.'}</p>
         {!bookmarks.length && <p>{en ? 'No bookmarks saved for this project.' : 'Nenhuma marcação salva neste projeto.'}</p>}
-        <ul className="reader-panel-list">{bookmarks.map(bookmark => <li key={bookmark.id} className="reader-saved-bookmark"><Link href={documentHref(bookmark.project, bookmark.document, bookmark.language, bookmark.anchor)} onClick={() => setPanel(null)}><strong>{bookmark.project} · {bookmark.document}</strong><span>{bookmark.excerpt}</span></Link><button type="button" aria-label={en ? 'Remove bookmark' : 'Remover marcação'} disabled={busy} onClick={() => void mutate(bookmark)}>×</button></li>)}</ul>
+        <ul className="reader-panel-list">{bookmarks.map(bookmark => <li key={bookmark.id} className="reader-saved-bookmark"><Link href={documentHref(bookmark.project, bookmark.document, bookmark.language, bookmark.anchor)} onClick={() => setPanel(null)}><strong>{projectDisplayName(bookmark.project, bookmark.project === project ? projectName : undefined)} · {bookmark.document}</strong><span>{bookmark.excerpt}</span></Link><button type="button" aria-label={en ? 'Remove bookmark' : 'Remover marcação'} disabled={busy} onClick={() => void mutate(bookmark)}>×</button></li>)}</ul>
       </>}
     </ReaderPanel>}
   </div></main>;
