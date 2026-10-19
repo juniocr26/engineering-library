@@ -25,8 +25,7 @@ class CatalogTests(unittest.TestCase):
         for lang in ('en', 'pt-BR'):
             prefix = f'docs/projects/library/docs/{lang}'
             self.write(f'{prefix}/index.md', '[FAQ](faq/index.md) [ENV](env/index.md)')
-            self.write(f'{prefix}/faq/index.md', '[Study](study.md)')
-            self.write(f'{prefix}/faq/study.md', '# Questions\n\n### Q001 — Example\n\n**Answer:** Detailed answer.\n\n**Follow-up:** Detail.')
+            self.write(f'{prefix}/faq/index.md', '# FAQ\n\n### Q001 — Example\n\n**Answer:** Detailed answer.\n\n**Follow-up:** Detail.')
             self.write(f'{prefix}/env/index.md', '# ENV\n\n`EXAMPLE_PORT`\n\nOptional\n\nEmpty falls back.')
             filename = 'README.md' if lang == 'en' else 'README.pt-BR.md'
             self.write(f'docs/projects/library/{filename}', f'[Index](docs/{lang}/index.md)')
@@ -54,6 +53,13 @@ class CatalogTests(unittest.TestCase):
     def test_missing_env_is_rejected(self):
         (self.library / 'docs/projects/library/docs/en/env/index.md').unlink()
         self.assertIn('missing-env-reference', self.run_catalog()[1])
+
+    def test_intermediate_faq_is_rejected(self):
+        self.write('docs/projects/library/docs/en/faq/index.md', '[Study](study.md)')
+        self.write('docs/projects/library/docs/en/faq/study.md', '# Questions\n\n**Answer:** Detail.')
+        errors = self.run_catalog()[1]
+        self.assertIn('faq-without-answers', errors)
+        self.assertIn('duplicate-or-nested-faq', errors)
 
     def test_root_language_directory_is_rejected(self):
         (self.library / 'docs/en').mkdir()

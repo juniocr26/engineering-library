@@ -1,12 +1,7 @@
-# rust-event-relay — FAQ técnica
+# FAQ
 
 [Índice do projeto](../index.md) · [English](../../en/faq/index.md)
 
-Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente nesta página. Afirmações históricas conservam suas datas; as correções atuais abaixo prevalecem. Exemplos em primeira pessoa descrevem artefatos do portfólio, sem atribuir experiência profissional. O [roteiro de estudo](study-guide.md) preserva URLs e âncoras existentes por compatibilidade.
-
-## Revisão do código atual — 2026-10-19
-
-As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
 ### Q016 — Uma execução concluída pode aceitar várias ações de publicação duplicada?
 
@@ -281,3 +276,7 @@ Aprofundamento: Por que não reenviar unknown automaticamente? A ação anterior
 **Resposta:** Testes puros/fakes demonstram política/sequência; PostgreSQL/RabbitMQ/processos isolados cobrem falhas selecionadas; browser separa UI real/ilustrada. Manifesto de 2026-10-17 registra aceite em sua base, não revisão atual ou CI remoto. Launcher principal, artefatos runtime/test separados e controles nomeados Supervisor sustentam operação local. Limites de recursos/retenção rejeitam excesso sem apagar evidência. Não são capacidade produtiva medida, recuperação de desastre ou HA/TLS.
 
 Aprofundamento: O que justificaria produção? Segurança de transporte, menor privilégio, retenção/restauração de banco e broker, responsabilidade operacional e evidência por carga. São melhorias hipotéticas, não bloqueios adicionados retroativamente ao escopo local concluído.
+
+## Revisão do código atual — 2026-10-19
+
+As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).

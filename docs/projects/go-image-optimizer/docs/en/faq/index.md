@@ -1,12 +1,7 @@
-# go-image-optimizer — Technical FAQ
+# FAQ
 
 [Project index](../index.md) · [Português brasileiro](../../pt-BR/faq/index.md)
 
-Technical questions, detailed answers and follow-ups are available directly on this page. Historical milestone statements retain their dates; current corrections below take precedence. First-person examples describe portfolio artifacts, not employment experience. The [study guide](study-guide.md) retains its existing URLs and anchors for compatibility.
-
-## Current source review — 2026-10-19
-
-The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
 ### Q006 — Does every image endpoint accept the same multipart fields and defaults?
 
@@ -451,3 +446,7 @@ Follow-up: Would rollback need database restoration? There is no upload database
 ## Source reconciliation — 2026-10-18
 
 `2c9a27f40a2a2c8bef5f86f187256870c1960630`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../guides/implementation-study.md).
+
+## Current source review — 2026-10-19
+
+The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).

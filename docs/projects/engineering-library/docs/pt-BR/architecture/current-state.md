@@ -35,3 +35,7 @@ O catálogo contém portfólio público. Não implementa autenticação de conta
 O validador atual verifica links locais, âncoras, idiomas, IDs Q, títulos preservados e alcance. Não comprova tradução, paginação runtime, URLs externas ou prontidão de implantação. Definições de testes cobrem sincronização, paginação, travessia de caminhos, isolamento anônimo e CSRF; ler esses testes não significa executá-los.
 
 Evidências: `backend/app/services/catalog/{files,sync,page,presenter}.rb`, `backend/app/controllers/api/{projects,bookmarks}_controller.rb`, `backend/db/schema.rb`, `backend/test/models/catalog_test.rb`, `backend/test/integration/{catalog_api,bookmarks_api}_test.rb`, `frontend/lib/{catalog,documentation,document-links}.ts` e `compose.yaml`. Veja [escopo da auditoria e pendências](../operations/documentation-audit-2026-10-19.md).
+
+## Navegação direta da FAQ
+
+Cada projeto possui um documento FAQ canônico bilíngue em `docs/<language>/faq/index.md`. `documentationEntries` o apresenta como link `FAQ` no primeiro nível, em vez de categoria seguida de documentos filhos. A sequência de leitura, o painel de capítulos e a busca usam as mesmas entradas canônicas. A paginação física continua no `BookReader`; marcações mantêm o ID documental `faq/index.md` e uma âncora lógica de conteúdo. A consolidação remove documentos de estudo duplicados, preservando respostas corrigidas junto às perguntas históricas. A árvore FAQ temporária na raiz é entrada de migração, nunca fonte de dados em runtime.

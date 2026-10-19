@@ -35,3 +35,7 @@ The catalog is public portfolio content. It has no user-account authentication o
 The current catalog validator checks local links, anchors, language paths, question IDs, retained headings and reachability. It cannot establish translation accuracy, runtime pagination, external URL reachability or deployment readiness. Application test definitions cover catalog synchronization, pagination, path traversal, anonymous isolation and CSRF; reading those tests is not executing them.
 
 Evidence: `backend/app/services/catalog/{files,sync,page,presenter}.rb`, `backend/app/controllers/api/{projects,bookmarks}_controller.rb`, `backend/db/schema.rb`, `backend/test/models/catalog_test.rb`, `backend/test/integration/{catalog_api,bookmarks_api}_test.rb`, `frontend/lib/{catalog,documentation,document-links}.ts` and `compose.yaml`. See [audit scope and remaining work](../operations/documentation-audit-2026-10-19.md).
+
+## Direct FAQ navigation
+
+Each project has one bilingual canonical FAQ document at `docs/<language>/faq/index.md`. `documentationEntries` emits this as a top-level `FAQ` link, rather than a category followed by child documents. The reading sequence, chapter panel and search consume the same canonical entries. Physical pagination still belongs to `BookReader`; bookmarks retain the document ID `faq/index.md` and a logical content anchor. Consolidation removes duplicate study documents, while corrected answers remain alongside retained historical questions. The temporary root FAQ tree is a migration input, never a runtime data source.

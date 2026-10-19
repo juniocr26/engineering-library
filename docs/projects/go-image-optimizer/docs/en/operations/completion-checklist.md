@@ -40,7 +40,7 @@ Static review on 2026-10-10; no runtime execution. Checked items describe comple
 
 Compression/resize/conversion/preview; interfaces and CGO; multipart/API/proxy; pixels, formats, alpha/orientation/animation; cleanup/cancellation; testing, resource safety and rollout limits.
 
-[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/study-guide.md)
+[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/index.md)
 
 ## Category applicability
 

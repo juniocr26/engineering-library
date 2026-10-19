@@ -1,20 +1,8 @@
-# env-auditor — FAQ técnica
+# FAQ
 
 [Índice do projeto](../index.md) · [English](../../en/faq/index.md)
 
-Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente nesta página. Afirmações históricas conservam suas datas; as correções atuais abaixo prevalecem. Exemplos em primeira pessoa descrevem artefatos do portfólio, sem atribuir experiência profissional. O [roteiro de estudo](study-guide.md) preserva URLs e âncoras existentes por compatibilidade.
-
-## Revisão do código atual — 2026-10-19
-
-As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
-
-### Q006 — Uma prévia sem mudanças garante que a execução normal posterior não fará nada?
-
-**Resposta:** Não. Prévia e escrita compartilham `plan`, de modo que entradas inalteradas geram a mesma transformação. Porém são varreduras e leituras separadas, sem lock, snapshot ou revalidação que vincule a escrita posterior à prévia anterior. Um exemplo alterado muda o contrato de chaves; outro escritor pode editar o alvo entre leitura e replace. Revise novamente escopo e referências antes de aplicar e compare originais dos backups antes de recuperar manualmente. Exit zero na prévia significa ausência de erros tratados de descoberta/par; não significa ausência de diferenças propostas nem valores válidos em runtime. Os testes isolados comparam bytes e entradas dos diretórios antes/depois dos dois aliases; essas asserções valem para a invocação, não para execuções futuras.
-
-
 ## ENV Auditor — Guia de Estudo para Entrevista Técnica
-
 
 [English](../../en/faq/index.md) | [Português brasileiro](index.md)
 
@@ -115,15 +103,15 @@ O stream temporário recebe flush, chmod e fsync antes de `os.replace`. Atomicid
 
 ## 8. FALHAS E EVIDÊNCIAS
 
-| Cenário | Resposta implementada / limite |
-| --- | --- |
-| Exemplo ou alvo inválido | Erro tratado, alvo intacto, continua, saída final 1 |
-| Exemplo ausente | Ignora intacto, sem erro |
-| Falha de backup | Sem substituir alvo; cópias parciais podem ficar |
-| Falha de replace | Original permanece; limpeza tentada; backups podem ficar |
-| Permissão na descoberta | Registra erro, processa pares descobertos, saída 1 |
-| Escritor altera alvo durante processamento | Sem coordenação; pode sobrescrever |
-| Exemplo omite chave usada externamente | Remove; uso no código/runtime não é consultado |
+| Cenário                                    | Resposta implementada / limite                           |
+| ------------------------------------------ | -------------------------------------------------------- |
+| Exemplo ou alvo inválido                   | Erro tratado, alvo intacto, continua, saída final 1      |
+| Exemplo ausente                            | Ignora intacto, sem erro                                 |
+| Falha de backup                            | Sem substituir alvo; cópias parciais podem ficar         |
+| Falha de replace                           | Original permanece; limpeza tentada; backups podem ficar |
+| Permissão na descoberta                    | Registra erro, processa pares descobertos, saída 1       |
+| Escritor altera alvo durante processamento | Sem coordenação; pode sobrescrever                       |
+| Exemplo omite chave usada externamente     | Remove; uso no código/runtime não é consultado           |
 
 A maioria dos OSErrors de descoberta/processamento é tratada. Nem toda exceção é capturada por `run`: recursão excessiva ou falhas de saída podem escapar. Não prometa 0/1/2 para qualquer falha ambiental. Falha de limpeza pode deixar temporário; nomes/caminhos não são uma fronteira completa de sigilo.
 
@@ -131,14 +119,14 @@ Há 22 casos `unittest`: raiz real/diretórios do chamador, overrides, recursão
 
 ## 9. DECISÕES E ALTERNATIVAS
 
-| Escolha implementada | Benefício | Custo | Alternativa de estudo / gatilho |
-| --- | --- | --- | --- |
-| Recursão no filesystem | Encontra entradas ignoradas | Storage não excluído; recursão profunda | Raízes explícitas em workspaces grandes |
-| Raiz pelo script | Escopo estável entre diretórios | Acoplamento ao layout | Argumento obrigatório para CLI instalada separadamente |
-| Exemplos autoritativos | Contrato estrutural determinístico | Remove chave necessária omitida | Schema tipado para validar valores |
-| Blocos literais ordenados | Preserva valores/formatação | Gramática limitada; duplicatas mantidas | Parser de sintaxe concreta para ampliar suporte |
-| Plano compartilhado | Mesma transformação em prévia/escrita | Prévia não prova escrita | Preflight adicional conforme requisitos |
-| Backup e replace | Recuperação/visibilidade por arquivo | Cópias sensíveis; sem rollback global/lock | Lock ou transação coordenada |
+| Escolha implementada      | Benefício                             | Custo                                      | Alternativa de estudo / gatilho                        |
+| ------------------------- | ------------------------------------- | ------------------------------------------ | ------------------------------------------------------ |
+| Recursão no filesystem    | Encontra entradas ignoradas           | Storage não excluído; recursão profunda    | Raízes explícitas em workspaces grandes                |
+| Raiz pelo script          | Escopo estável entre diretórios       | Acoplamento ao layout                      | Argumento obrigatório para CLI instalada separadamente |
+| Exemplos autoritativos    | Contrato estrutural determinístico    | Remove chave necessária omitida            | Schema tipado para validar valores                     |
+| Blocos literais ordenados | Preserva valores/formatação           | Gramática limitada; duplicatas mantidas    | Parser de sintaxe concreta para ampliar suporte        |
+| Plano compartilhado       | Mesma transformação em prévia/escrita | Prévia não prova escrita                   | Preflight adicional conforme requisitos                |
+| Backup e replace          | Recuperação/visibilidade por arquivo  | Cópias sensíveis; sem rollback global/lock | Lock ou transação coordenada                           |
 
 ## 10. ROTEIRO ORDENADO DE ESTUDO
 
@@ -191,6 +179,14 @@ Aprofundamento: E se backup funciona e substituição falha? O alvo original per
 
 Aprofundamento: Mock de `os.replace` prova atomicidade? Não; verifica ordem e tratamento de erro. Experimentos reais de filesystem/crash testariam garantias diferentes e permanecem lacunas. Aprofundamento: Como examinar desempenho? Separe custos de percurso, parser e plano em árvores sintéticas com autorização própria. Muitas chaves ausentes podem expor custo de busca em lista; árvores profundas podem expor recursão. Não houve benchmark aqui nem reexecução da suíte da aplicação.
 
+### Q006 — Uma prévia sem mudanças garante que a execução normal posterior não fará nada?
+
+**Resposta:** Não. Prévia e escrita compartilham `plan`, de modo que entradas inalteradas geram a mesma transformação. Porém são varreduras e leituras separadas, sem lock, snapshot ou revalidação que vincule a escrita posterior à prévia anterior. Um exemplo alterado muda o contrato de chaves; outro escritor pode editar o alvo entre leitura e replace. Revise novamente escopo e referências antes de aplicar e compare originais dos backups antes de recuperar manualmente. Exit zero na prévia significa ausência de erros tratados de descoberta/par; não significa ausência de diferenças propostas nem valores válidos em runtime. Os testes isolados comparam bytes e entradas dos diretórios antes/depois dos dois aliases; essas asserções valem para a invocação, não para execuções futuras.
+
 ## Conciliação com o código — 2026-10-18
 
 `000949ff926fcc71428855193a2a029520f7e887`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../guides/implementation-study.md).
+
+## Revisão do código atual — 2026-10-19
+
+As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).

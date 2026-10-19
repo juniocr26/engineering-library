@@ -43,7 +43,7 @@ Revisão estática em 2026-10-10; sem execução runtime. Itens marcados indicam
 
 Contratos POST/301; Basic versus TLS; matemática Base62/afim; falhas entre bancos; inicialização/perda Redis; modelo Cassandra/RF/consistência; lifecycle, testes e recuperação.
 
-[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/study-guide.md)
+[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/index.md)
 
 ## Aplicabilidade das categorias
 

@@ -1,6 +1,6 @@
 # Cross-project engineering questions
 
-[Technical FAQ](index.md) · [Português brasileiro](../../pt-BR/faq/cross-project-boundaries.md)
+[Technical FAQ](../faq/index.md) · [Português brasileiro](../../pt-BR/guides/cross-project-boundaries.md)
 
 Re-evaluated on 2026-10-19 from the historical `foundations.md` at `5052a8515b30278abea5fb81b37647482c10ba18` and selected current source. The six stable IDs below belong to this document. These are comparisons of independent portfolio projects, not an integrated platform or personal employment claims. Historical worker-absence statements are superseded; no application tests were executed here.
 

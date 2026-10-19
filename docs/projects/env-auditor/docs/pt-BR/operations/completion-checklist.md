@@ -36,7 +36,7 @@ Revisão estática em 2026-10-10; sem execução runtime. Itens marcados indicam
 
 Parser literal; variantes/referências; blocos ordenados/conjuntos; prévia/exit codes; backups/substituição atômica; permissões, corridas, recuperação e complexidade estática.
 
-[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/study-guide.md)
+[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/index.md)
 
 ## Aplicabilidade das categorias
 

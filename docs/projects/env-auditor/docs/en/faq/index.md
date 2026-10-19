@@ -1,20 +1,8 @@
-# env-auditor — Technical FAQ
+# FAQ
 
 [Project index](../index.md) · [Português brasileiro](../../pt-BR/faq/index.md)
 
-Technical questions, detailed answers and follow-ups are available directly on this page. Historical milestone statements retain their dates; current corrections below take precedence. First-person examples describe portfolio artifacts, not employment experience. The [study guide](study-guide.md) retains its existing URLs and anchors for compatibility.
-
-## Current source review — 2026-10-19
-
-The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
-
-### Q006 — Can a zero-change preview guarantee a no-op when the normal command runs later?
-
-**Answer:** No. Preview and mutation share `plan`, so unchanged inputs produce the same transformation. They are separate scans and reads, with no lock, snapshot or content recheck binding the later write to the earlier preview. A changed example can change the key contract; another writer can alter a target between read and replace. Review scope and reference files again before applying, and compare exact backup originals before manual recovery. A zero exit code in preview means no handled discovery/pair error; it does not mean no proposed differences or valid runtime values. The existing isolated tests compare fixture bytes and directory entries before/after both preview aliases; those assertions concern that invocation, not future executions.
-
-
 ## ENV Auditor technical interview study guide
-
 
 [English](index.md) | [Português brasileiro](../../pt-BR/faq/index.md)
 
@@ -115,15 +103,15 @@ The temporary stream is flushed, chmodded and fsynced before `os.replace`. This 
 
 ## 8 Failure scenarios and available evidence
 
-| Scenario | Implemented response / boundary |
-| --- | --- |
-| Invalid example or target | Handled pair error; unchanged target; continue; final 1 |
-| No matching example | Skip unchanged; not an error |
-| Backup failure | No target replacement; partial backups can remain |
-| Replace failure | Original target remains; cleanup attempted; backups may remain |
-| Discovery permission error | Record error, process discovered pairs, final 1 |
-| Writer changes target during processing | No coordination; overwrite is possible |
-| Example omits externally consumed key | Remove it; source/runtime usage is not consulted |
+| Scenario                                | Implemented response / boundary                                |
+| --------------------------------------- | -------------------------------------------------------------- |
+| Invalid example or target               | Handled pair error; unchanged target; continue; final 1        |
+| No matching example                     | Skip unchanged; not an error                                   |
+| Backup failure                          | No target replacement; partial backups can remain              |
+| Replace failure                         | Original target remains; cleanup attempted; backups may remain |
+| Discovery permission error              | Record error, process discovered pairs, final 1                |
+| Writer changes target during processing | No coordination; overwrite is possible                         |
+| Example omits externally consumed key   | Remove it; source/runtime usage is not consulted               |
 
 Most discovery/processing OSErrors are handled. `run` does not wrap every possible exception: recursion exhaustion in very deep trees or output failures can escape; do not promise an exit 0/1/2 mapping for every environmental failure. A cleanup failure can leave a temporary file. Filename/key metadata is not a complete secrecy boundary.
 
@@ -131,14 +119,14 @@ The checked-in suite has 22 `unittest` cases covering caller directories/default
 
 ## 9 Decisions, alternatives and limits
 
-| Implemented choice | Benefit | Cost | Learning alternative / trigger |
-| --- | --- | --- | --- |
-| Filesystem recursion | Finds ignored runtime inputs | Traverses unexcluded storage; deep recursion | Explicit include roots for large workspaces |
-| Script-derived root | Stable scope across caller directories | Installation-layout coupling | Required root for independently installed CLI |
-| Authoritative per-target examples | Deterministic structural contract | Omitted required keys are removed | Typed schema when value validation is needed |
-| Ordered literal blocks | Preserves values/formatting | Limited grammar and retained duplicates | Concrete-syntax parser for broader syntax |
-| Plan shared by previews/writes | Same transformation logic | Preview cannot prove write success | Additional preflight with explicit requirements |
-| Backup then atomic replace | Recovery and individual-file visibility | Sensitive copies; no global rollback/lock | Locking or staged transaction for coordinated writers |
+| Implemented choice                | Benefit                                 | Cost                                         | Learning alternative / trigger                        |
+| --------------------------------- | --------------------------------------- | -------------------------------------------- | ----------------------------------------------------- |
+| Filesystem recursion              | Finds ignored runtime inputs            | Traverses unexcluded storage; deep recursion | Explicit include roots for large workspaces           |
+| Script-derived root               | Stable scope across caller directories  | Installation-layout coupling                 | Required root for independently installed CLI         |
+| Authoritative per-target examples | Deterministic structural contract       | Omitted required keys are removed            | Typed schema when value validation is needed          |
+| Ordered literal blocks            | Preserves values/formatting             | Limited grammar and retained duplicates      | Concrete-syntax parser for broader syntax             |
+| Plan shared by previews/writes    | Same transformation logic               | Preview cannot prove write success           | Additional preflight with explicit requirements       |
+| Backup then atomic replace        | Recovery and individual-file visibility | Sensitive copies; no global rollback/lock    | Locking or staged transaction for coordinated writers |
 
 ## 10 Ordered study roadmap
 
@@ -191,6 +179,14 @@ Follow-up: What if backup succeeds and replacement fails? The original target re
 
 Follow-up: Is mocking `os.replace` enough to prove atomicity? No; it verifies call ordering/error handling. Real filesystem and crash experiments would test different guarantees and remain gaps. Follow-up: How would you inspect performance? First separate traversal, parsing and plan costs using synthetic trees under separate authorization. Large numbers of missing keys can expose list-membership costs; deeply nested trees can expose recursion limits. No benchmark ran here, and the application test suite was not rerun.
 
+### Q006 — Can a zero-change preview guarantee a no-op when the normal command runs later?
+
+**Answer:** No. Preview and mutation share `plan`, so unchanged inputs produce the same transformation. They are separate scans and reads, with no lock, snapshot or content recheck binding the later write to the earlier preview. A changed example can change the key contract; another writer can alter a target between read and replace. Review scope and reference files again before applying, and compare exact backup originals before manual recovery. A zero exit code in preview means no handled discovery/pair error; it does not mean no proposed differences or valid runtime values. The existing isolated tests compare fixture bytes and directory entries before/after both preview aliases; those assertions concern that invocation, not future executions.
+
 ## Source reconciliation — 2026-10-18
 
 `000949ff926fcc71428855193a2a029520f7e887`. The source, API/CLI entry points, persistence/resource boundaries and test definitions were reviewed statically. The existing explanations and interview answers remain applicable within their recorded limits. No runtime test results were produced. See the project’s standalone [implementation and interview path](../guides/implementation-study.md).
+
+## Current source review — 2026-10-19
+
+The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).

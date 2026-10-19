@@ -36,7 +36,7 @@ Static review on 2026-10-10; no runtime execution. Checked items describe comple
 
 Literal parsing; variant/reference selection; ordered blocks and sets; preview/exit contracts; backups and atomic replacement; permissions, races, recovery and static complexity.
 
-[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/study-guide.md)
+[Self-contained dossier / Dossiê](../architecture/overview.md) | [Interview / Entrevista](../faq/index.md)
 
 ## Category applicability
 

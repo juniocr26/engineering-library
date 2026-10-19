@@ -1,12 +1,7 @@
-# payment-reconciliation-lab — FAQ técnica
+# FAQ
 
 [Índice do projeto](../index.md) · [English](../../en/faq/index.md)
 
-Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente nesta página. Afirmações históricas conservam suas datas; as correções atuais abaixo prevalecem. Exemplos em primeira pessoa descrevem artefatos do portfólio, sem atribuir experiência profissional. O [roteiro de estudo](study-guide.md) preserva URLs e âncoras existentes por compatibilidade.
-
-## Revisão do código atual — 2026-10-19
-
-As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
 ### Q007 — readOnly=true ou purchasable=true implementam autorização de pagamento?
 
@@ -132,3 +127,7 @@ Aprofundamento: Todos os fakes podem passar e startup falhar? Sim: schema ausent
 ## Conciliação com o código — 2026-10-18
 
 `71b8b8f22d38f08e8ab40cb519f8b1a0985b74c6`. Código, entradas API/CLI, limites de persistência/recursos e definições de testes foram revisados estaticamente. Explicações e respostas existentes continuam aplicáveis nos limites registrados. Não foram produzidos resultados de runtime. Consulte o [roteiro autossuficiente de implementação e entrevista](../guides/implementation-study.md).
+
+## Revisão do código atual — 2026-10-19
+
+As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).

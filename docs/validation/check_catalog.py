@@ -104,6 +104,10 @@ def main():
             interview = language_root / "faq/index.md"
             if interview not in pages:
                 errors.append(["missing-faq-index", name, language])
+            elif not re.search(r'\*\*(?:Answer|Resposta|Model answer|Resposta modelo):\*\*', pages[interview]):
+                errors.append(["faq-without-answers", name, language])
+            if {p for p in subset if p.is_relative_to(language_root / 'faq')} != {interview}:
+                errors.append(["duplicate-or-nested-faq", name, language])
             if (language_root / 'technical-interview').exists():
                 errors.append(['obsolete-faq-category', name, language])
             env = language_root / 'env/index.md'
@@ -112,7 +116,7 @@ def main():
             for category in language_root.iterdir():
                 if category.is_dir() and not category.is_symlink():
                     substantive = [p for p in subset if p.parent == category and p.name != "index.md"]
-                    if (not substantive and category.name != "env") or category / "index.md" not in pages:
+                    if (not substantive and category.name not in {"env", "faq"}) or category / "index.md" not in pages:
                         errors.append(["empty-or-unindexed-category", name, language, category.name])
         if paths[0] != paths[1]:
             errors.append(["language-path-parity", name])
@@ -136,7 +140,9 @@ def main():
                 errors.append(["missing-import", name, item["destination"]])
         for item in metadata["relocated_interviews"]:
             body = pages.get(docs_root / item["destination"], "")
-            if [line for line in body.splitlines() if line.startswith("#")] != item["preserved_headings"]:
+            # Consolidation changes heading depth, while retaining the original questions.
+            headings = {line.lstrip('#').strip() for line in body.splitlines() if line.startswith('#')}
+            if not all(heading.lstrip('#').strip() in headings for heading in item["preserved_headings"]):
                 errors.append(["retained-interview-headings", name, item["destination"]])
     hashes = collections.defaultdict(list)
     for path, body in pages.items():
