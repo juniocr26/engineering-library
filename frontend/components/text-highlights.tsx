@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { readerIdentity } from '../lib/reader-identity';
 import { useEffect, useRef, useState, type RefObject, type ReactNode } from 'react';
 import { highlightColors, resolveTextAnchor, toolbarPosition, type HighlightColor, type SavedHighlight, type TextAnchor } from '../lib/text-anchors';
-import { eligibleRanges, selectedAnchors } from '../lib/highlight-dom';
+import { eligibleRanges, selectedAnchors, passageText } from '../lib/highlight-dom';
 import type { Language } from '../lib/i18n';
 
 type Registry = { set: (name: string, value: unknown) => void; delete: (name: string) => void };
@@ -64,7 +64,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
     let timer: ReturnType<typeof setTimeout>;
     const capture = () => {
       const selection = window.getSelection();
-      if (!selection || selection.isCollapsed || !selection.rangeCount) { setTool(previous => previous?.id ? previous : null); return; }
+      if (!selection || selection.isCollapsed || !selection.rangeCount) { setTool(null); return; }
       const range = selection.getRangeAt(0);
       const element = (node: Node) => node instanceof Element ? node : node.parentElement;
       const first = element(range.startContainer)?.closest<HTMLElement>('[data-highlight-block]');
@@ -81,19 +81,34 @@ function HighlightSession({ project, documentId, language, root }: { project: st
       }
       if (!segments.length || !segments.some(part => part.exact.trim())) { setTool(null); return; }
       if (!(CSS as unknown as { highlights?: Registry }).highlights) { setMessage(en ? 'This browser does not support text highlights.' : 'Este navegador não suporta destaques de texto.'); return; }
-      setTool({ segments, text: segments.map(part => part.exact).join('\n'), ...toolbarPosition(range.getBoundingClientRect(), innerWidth, innerHeight) });
+      const existing = saved.find(item => item.segments.length === segments.length && item.segments.every((part, index) => part.block === segments[index].block && part.start === segments[index].start && part.end === segments[index].end && part.exact === segments[index].exact));
+      setTool({ segments, text: passageText(segments), id: existing?.id, color: existing?.color, ...toolbarPosition(range.getBoundingClientRect(), innerWidth, innerHeight) });
     };
-    const changed = () => { clearTimeout(timer); if (!window.getSelection()?.isCollapsed) setTool(null); timer = setTimeout(capture, 180); };
+    const changed = () => { clearTimeout(timer); const selection = window.getSelection(); setTool(previous => selection?.type === 'Caret' && previous?.id ? previous : null); if (selection && !selection.isCollapsed) timer = setTimeout(capture, 180); };
     const completed = (event: PointerEvent) => {
       if ((event.target as Element).closest?.('[role="toolbar"]')) return;
-      clearTimeout(timer); timer = setTimeout(capture, 0);
+      if (!surface.contains(event.target as Node)) { clearTimeout(timer); setTool(null); return; }
+      clearTimeout(timer); if (!window.getSelection()?.isCollapsed) timer = setTimeout(capture, 0);
     };
+    const outside = (event: PointerEvent) => { if (!(event.target as Element).closest?.('[role="toolbar"]')) { clearTimeout(timer); setTool(null); } };
     const key = (event: KeyboardEvent) => { if (event.key === 'Escape') { clearTimeout(timer); setTool(null); window.getSelection()?.removeAllRanges(); } };
     const dismiss = () => setTool(null);
-    document.addEventListener('pointerup', completed); document.addEventListener('selectionchange', changed); document.addEventListener('keydown', key);
+    const copySelection = (event: ClipboardEvent) => {
+      const selection = window.getSelection();
+      if (!event.clipboardData || !selection?.rangeCount || selection.isCollapsed) return;
+      const range = selection.getRangeAt(0);
+      if (!surface.contains(range.startContainer) || !surface.contains(range.endContainer)) return;
+      const blocks = Array.from(surface.querySelectorAll<HTMLElement>('.reader-pages [data-highlight-block]')).filter(block => !block.closest('[inert]') && range.intersectsNode(block));
+      const segments = blocks.flatMap(block => selectedAnchors(block, range));
+      if (!segments.length) return;
+      event.clipboardData.setData('text/plain', passageText(segments));
+      event.preventDefault();
+    };
+    surface.addEventListener('copy', copySelection);
+    document.addEventListener('pointerdown', outside); document.addEventListener('pointerup', completed); document.addEventListener('selectionchange', changed); document.addEventListener('keydown', key);
     window.addEventListener('resize', dismiss); window.addEventListener('scroll', dismiss, true);
-    return () => { clearTimeout(timer); document.removeEventListener('pointerup', completed); document.removeEventListener('selectionchange', changed); document.removeEventListener('keydown', key); window.removeEventListener('resize', dismiss); window.removeEventListener('scroll', dismiss, true); };
-  }, [en, root]);
+    return () => { clearTimeout(timer); surface.removeEventListener('copy', copySelection); document.removeEventListener('pointerdown', outside); document.removeEventListener('pointerup', completed); document.removeEventListener('selectionchange', changed); document.removeEventListener('keydown', key); window.removeEventListener('resize', dismiss); window.removeEventListener('scroll', dismiss, true); };
+  }, [en, root, saved]);
   async function mutate(color?: HighlightColor, remove = false) {
     if (!tool || pending.current || !csrf) return;
     pending.current = true; setBusy(true);
@@ -126,7 +141,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
       })).sort((a, b) => highlightColors.indexOf(b.color) - highlightColors.indexOf(a.color) || b.id - a.id);
       const hit = candidates.find(({ range }) => Array.from(range.getClientRects()).some(rect => event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom));
       const item = saved.find(item => item.id === hit?.id);
-      if (item && hit) setTool({ ...item, text: item.segments.map(part => part.exact).join('\n'), ...toolbarPosition(hit.range.getBoundingClientRect(), innerWidth, innerHeight) }); else setTool(null);
+      if (item && hit) setTool({ ...item, text: passageText(item.segments), ...toolbarPosition(hit.range.getBoundingClientRect(), innerWidth, innerHeight) }); else setTool(null);
     };
     surface?.addEventListener('click', click);
     return () => surface?.removeEventListener('click', click);
@@ -134,10 +149,9 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   return <>
     {message && <p className="reader-notice" role="status">{message}</p>}
     {tool && createPortal(<div role="toolbar" aria-label={en ? 'Text highlights' : 'Destaques de texto'} className="reader-selection-toolbar" style={{ left: tool.left, top: tool.top }} onPointerDown={event => event.preventDefault()}>
-      {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: `var(--highlight-${color})` }} disabled={busy || !csrf} onClick={() => void mutate(color)}/>)}
+      {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: `var(--highlight-${color})` }} disabled={busy || !csrf} onClick={() => void mutate(color, tool.id !== undefined && tool.color === color)}/>)}
       <button type="button" aria-label={en ? 'Copy' : 'Copiar'} onClick={() => void copy()}>⧉</button>
       <button type="button" disabled aria-label={en ? 'Add note (available in Phase 2)' : 'Adicionar nota (disponível na fase 2)'} title={en ? 'Notes will be available in Phase 2' : 'Notas estarão disponíveis na fase 2'}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M13 5H5v15h14v-8M11 13l1-4 7-7 3 3-7 7-4 1Z"/></svg></button>
-      {tool.id && <button type="button" aria-label={en ? 'Remove highlight' : 'Remover destaque'} disabled={busy} onClick={() => void mutate(undefined, true)}>×</button>}
     </div>, document.body)}
   </>;
 }

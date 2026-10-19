@@ -1,6 +1,6 @@
 import { textAnchor, type TextAnchor } from './text-anchors';
 
-const excluded = 'button,summary,input,select,textarea,[role="button"],pre,table,svg,img,figure,video,audio,canvas,[hidden],[aria-hidden="true"],[inert],[role="toolbar"],nav,.reader-diagram,.source-code,.reader-code,.source-reference,[data-highlight-unsupported]';
+const excluded = 'button:not(.source-reference),summary,input,select,textarea,[role="button"]:not(.source-reference),pre,table,svg,img,figure,video,audio,canvas,[hidden],[aria-hidden="true"],[inert],[role="toolbar"],nav,.reader-diagram,.source-code,.reader-code,[data-highlight-unsupported]';
 
 function eligible(node: Text, block: HTMLElement) {
   const parent = node.parentElement;
@@ -50,4 +50,9 @@ export function selectedAnchors(block: HTMLElement, selection: Range): TextAncho
     else result.push(textAnchor(block.dataset.highlightBlock!, text, start, end));
   }
   return result;
+}
+
+/** Inline gaps can contain UI text; only logical block boundaries add a newline. */
+export function passageText(segments: TextAnchor[]): string {
+  return segments.map((part, index) => `${index && segments[index - 1].block !== part.block ? '\n' : ''}${part.exact}`).join('');
 }

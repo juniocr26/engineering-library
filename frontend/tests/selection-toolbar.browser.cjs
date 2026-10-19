@@ -64,17 +64,42 @@ const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=
       await page.goto(`${base}${path}?lang=pt-BR`); await ready();
       const intro = page.locator('.reader-pages p').filter({ hasText: 'O README mantém' }).first();
       assert.equal(await intro.locator('.source-reference').count(), 1);
+      // Real sentence crossing the interactive label, including its hidden arrow gap.
+      const sentence = 'O README mantém o contrato da CLI e todas as exclusões. A implementação é um script da biblioteca padrão, organizado em descoberta, parsing literal, planejamento e persistência por alvo.';
+      await intro.evaluate(node => {
+        const range = document.createRange(); range.selectNodeContents(node);
+        getSelection().removeAllRanges(); getSelection().addRange(range);
+      });
+      await checkToolbar();
+      assert.equal(await toolbar.locator('button').count(), 9);
+      for (const name of ['Copiar', 'Adicionar nota (disponível na fase 2)']) {
+        assert.equal(await toolbar.getByRole('button', { name, exact: true }).evaluate(node => getComputedStyle(node).backgroundColor), 'rgba(0, 0, 0, 0)');
+      }
+      await page.keyboard.press('Control+c');
+      assert.equal(await page.evaluate(() => navigator.clipboard.readText()), sentence);
+      await toolbar.getByRole('button', { name: 'Copiar', exact: true }).click();
+      assert.equal(await page.evaluate(() => navigator.clipboard.readText()), sentence);
       await drag(intro, 0, 62); await checkToolbar();
       const selected = await page.evaluate(() => getSelection().toString());
       await toolbar.getByRole('button', { name: 'Copiar', exact: true }).click();
       assert.equal(await page.evaluate(() => navigator.clipboard.readText()), selected);
       await toolbar.waitFor({ state: 'hidden' });
-      await drag(intro, 0, 62); await checkToolbar();
+      await intro.evaluate(node => { const range = document.createRange(); range.selectNodeContents(node); getSelection().removeAllRanges(); getSelection().addRange(range); }); await checkToolbar();
       await page.screenshot({ path: `/tmp/selection-toolbar-${width}.png` });
       await toolbar.getByRole('button', { name: 'Amarelo', exact: true }).click();
       await page.waitForFunction(() => CSS.highlights.get('reader-yellow')?.size > 0);
       const list = async () => (await page.request.get(`${base}/api/highlights?${scope}`)).json();
       assert.equal((await list()).highlights.length, 1);
+      const originalId = (await list()).highlights[0].id;
+      await intro.evaluate(node => { const range = document.createRange(); range.selectNodeContents(node); getSelection().removeAllRanges(); getSelection().addRange(range); }); await checkToolbar();
+      await toolbar.getByRole('button', { name: 'Azul', exact: true }).click();
+      await page.waitForFunction(() => CSS.highlights.get('reader-blue')?.size > 0);
+      assert.equal((await list()).highlights.length, 1);
+      assert.equal((await list()).highlights[0].id, originalId);
+      await intro.evaluate(node => { const range = document.createRange(); range.selectNodeContents(node); getSelection().removeAllRanges(); getSelection().addRange(range); }); await checkToolbar();
+      await toolbar.getByRole('button', { name: 'Amarelo', exact: true }).click();
+      await page.waitForFunction(() => CSS.highlights.get('reader-yellow')?.size > 0);
+
       await page.reload(); await ready();
       await page.waitForFunction(() => CSS.highlights.get('reader-yellow')?.size > 0);
       const savedPoint = async color => page.evaluate(color => { const rect = [...CSS.highlights.get(`reader-${color}`)][0].getClientRects()[0]; return { x: rect.x + 4, y: rect.y + rect.height / 2 }; }, color);
@@ -86,9 +111,21 @@ const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=
       await page.locator('.reader-pages .reader-document-languages a[hreflang="pt-BR"]').click(); await page.waitForURL(/lang=pt-BR/); await ready();
       await page.waitForFunction(() => CSS.highlights.get('reader-blue')?.size > 0);
       const blue = await savedPoint('blue'); await page.mouse.click(blue.x, blue.y); await checkToolbar();
-      await toolbar.getByRole('button', { name: 'Remover destaque', exact: true }).click();
+      await page.keyboard.press('Escape'); await toolbar.waitFor({ state: 'hidden' });
+      assert.equal((await list()).highlights.length, 1);
+      await page.mouse.click(blue.x, blue.y); await checkToolbar();
+      await page.mouse.click(2, 2); await toolbar.waitFor({ state: 'hidden' });
+      assert.equal((await list()).highlights.length, 1);
+      await page.mouse.click(blue.x, blue.y); await checkToolbar();
+      await toolbar.getByRole('button', { name: 'Azul', exact: true }).click();
       await page.waitForFunction(() => CSS.highlights.get('reader-blue')?.size === 0);
       assert.equal((await list()).highlights.length, 0);
+      await page.reload(); await ready();
+      assert.equal((await list()).highlights.length, 0);
+      await intro.locator('.source-reference').click(); await ready();
+      assert.equal(await intro.locator('.source-reference').getAttribute('aria-expanded'), 'true');
+      await intro.locator('.source-reference').click(); await ready();
+      assert.equal(await intro.locator('.source-reference').getAttribute('aria-expanded'), 'false');
       // A heading near the top remains selectable; the entire heading is not a forbidden surface.
       await drag(page.locator('.reader-pages h1').first(), 2, 10); await checkToolbar(); await page.keyboard.press('Escape');
       // Prose AFTER inline code in the same paragraph is eligible.
@@ -96,10 +133,9 @@ const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=
       const prose = page.locator('.reader-pages p').filter({ hasText: 'interpreta flags' }).first();
       const start = await prose.evaluate(node => node.textContent.indexOf('interpreta'));
       await drag(prose, start, start + 35); await checkToolbar(); await page.keyboard.press('Escape');
-      // Selecting inline code itself remains explicitly unsupported.
+      // Inline code is selectable prose; block code remains excluded.
       await drag(prose.locator('code').first(), 0, 3);
-      await page.getByRole('status').filter({ hasText: 'Selecione texto' }).waitFor();
-      assert.equal(await toolbar.count(), 0); await page.keyboard.press('Escape');
+      await checkToolbar(); await page.keyboard.press('Escape');
       if (width === 1728) {
         // Resolve the logical paragraph onto its physical page, then choose the right leaf.
         const target = await page.evaluate(() => [...document.querySelectorAll('.reader-measure [data-highlight-block]')].find(node => node.textContent.includes('verifica arquivo regular')).dataset.highlightBlock);
@@ -120,7 +156,7 @@ const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=
       assert.ok(eligible >= 0, 'next page has eligible prose');
       await drag(next, eligible, eligible + 8); await checkToolbar(); await page.keyboard.press('Escape');
       assert.deepEqual(errors, []);
-      console.log(`PASS ${width}px: real mouse drag in mixed Markdown, seven colors, note disabled, visible portal, copy, PostgreSQL CRUD/reload, language isolation, headings, inline-code exclusion, page navigation`);
+      console.log(`PASS ${width}px: real mouse drag in mixed Markdown, seven colors, note disabled, visible portal, copy, PostgreSQL CRUD/reload, language isolation, headings, inline code, page navigation`);
     }
   } finally {
     for (const context of contexts) {

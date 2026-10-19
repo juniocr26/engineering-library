@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
   const contexts = [];
   try {
     for (const width of [1440, 390]) {
-      const context = await browser.newContext({ viewport: { width, height: 1000 } });
+      const context = await browser.newContext({ viewport: { width, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'] });
       contexts.push(context);
       const page = await context.newPage();
       const errors = [];
@@ -42,7 +42,13 @@ const assert = require('node:assert/strict');
       // Synthetic DOM fixture in the real reader: inline formatting, controls,
       // collapsed disclosure, code and media boundaries share one saved record.
       await page.locator('.reader-pages [data-highlight-block]').first().evaluate(block => {
-        block.innerHTML = '<p>Before <a href="#fixture">link</a> <strong>bold</strong> <em>italic</em> <code>inline</code><button class="source-reference">CONTROL</button> after</p><pre>EXCLUDED CODE</pre><p>across code</p><details><summary>Disclosure</summary><p>COLLAPSED</p></details><table><tbody><tr><td>EXCLUDED TABLE</td></tr></tbody></table><p>end</p>';
+        block.innerHTML = '<p>Before <a href="#fixture">link</a> <strong>bold</strong> <em>italic</em> <code>inline</code><button>CONTROL</button><button class="source-reference"><span aria-hidden="true">▸ </span>standard <strong>library</strong></button> <button class="source-reference"><span aria-hidden="true">▸ </span>ação padrão</button> after</p><pre>EXCLUDED CODE</pre><p>across code</p><details><summary>Disclosure</summary><p>COLLAPSED</p></details><table><tbody><tr><td>EXCLUDED TABLE</td></tr></tbody></table><p>end</p>';
+        const range = document.createRange(); range.selectNodeContents(block);
+        getSelection().removeAllRanges(); getSelection().addRange(range);
+      });
+      await page.getByRole('button', { name: 'Copy', exact: true }).click();
+      assert.equal(await page.evaluate(() => navigator.clipboard.readText()), 'Before link bold italic inline' + 'standard library ação padrão afteracross codeend');
+      await page.locator('.reader-pages [data-highlight-block]').first().evaluate(block => {
         const range = document.createRange(); range.selectNodeContents(block);
         getSelection().removeAllRanges(); getSelection().addRange(range);
       });
@@ -51,7 +57,7 @@ const assert = require('node:assert/strict');
       const fixture = await page.evaluate(async () => (await fetch('/api/highlights?project=engineering-library&document=architecture%2Fcurrent-state.md&language=en')).json());
       assert.equal(fixture.highlights.length, 1);
       const captured = fixture.highlights[0].segments.map(part => part.exact).join(' ');
-      for (const text of ['Before', 'link', 'bold', 'italic', 'inline', 'after', 'across code', 'end']) assert.ok(captured.includes(text), captured);
+      for (const text of ['Before', 'link', 'bold', 'italic', 'inline', 'after', 'across code', 'end', 'standard library', 'ação padrão']) assert.ok(captured.includes(text), captured);
       for (const text of ['CONTROL', 'EXCLUDED', 'COLLAPSED', 'Disclosure']) assert.ok(!captured.includes(text), captured);
       assert.equal(await page.locator('.reader-pages details[open]').count(), 0);
       const painted = await page.evaluate(() => [...CSS.highlights.get('reader-purple')].map(range => range.toString()).join(' '));
@@ -113,7 +119,7 @@ const assert = require('node:assert/strict');
         const rect = [...CSS.highlights.get('reader-blue')][0].getClientRects()[0]; return { x: rect.x + 2, y: rect.y + rect.height / 2 };
       });
       await page.mouse.click(removePoint.x, removePoint.y);
-      await page.getByRole('button', { name: 'Remove highlight', exact: true }).click();
+      await page.getByRole('button', { name: 'Blue', exact: true }).click();
       await page.waitForFunction(() => CSS.highlights.get('reader-blue')?.size === 0);
       assert.equal((await list()).highlights.length, 0);
       assert.deepEqual(errors, []);
