@@ -4,4 +4,5 @@ ENV BUNDLE_PATH=/app/vendor/bundle BUNDLE_APP_CONFIG=/tmp/bundle-config
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 COPY . .
-CMD ["sh", "-c", "set -e; bundle check || bundle install; exec bundle exec rails server -b 0.0.0.0 -p 3000"]
+# The development bind mount can retain a PID from a previous container.
+CMD ["sh", "-c", "set -e; bundle check || bundle install; rm -f tmp/pids/server.pid; exec bundle exec rails server -b 0.0.0.0 -p 3000"]
