@@ -14,5 +14,5 @@ export function resolveTextAnchor(anchor: TextAnchor, text: string): [number, nu
   return candidates.length === 1 ? [candidates[0], candidates[0] + anchor.exact.length] : null;
 }
 export function toolbarPosition(rect: { left: number; top: number; bottom: number }, width: number, height: number) {
-  return { left: Math.max(8, Math.min(rect.left, width - 320)), top: Math.max(8, Math.min(rect.top >= 60 ? rect.top - 54 : rect.bottom + 8, height - 60)) };
+  return { left: Math.max(8, Math.min(rect.left, width - 330)), top: Math.max(8, Math.min(rect.top >= 60 ? rect.top - 54 : rect.bottom + 8, height - 60)) };
 }

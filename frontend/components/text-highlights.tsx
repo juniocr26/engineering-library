@@ -1,4 +1,5 @@
 'use client';
+import { createPortal } from 'react-dom';
 import { readerIdentity } from '../lib/reader-identity';
 import { useEffect, useRef, useState, type RefObject, type ReactNode } from 'react';
 import { highlightColors, resolveTextAnchor, textAnchor, toolbarPosition, type HighlightColor, type SavedHighlight, type TextAnchor } from '../lib/text-anchors';
@@ -95,7 +96,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
         return;
       }
       const blocks = Array.from(surface.querySelectorAll<HTMLElement>('.reader-pages [data-highlight-block]')).filter(block => range.intersectsNode(block));
-      if (!blocks.length || blocks.length > 32 || blocks.some(block => block.matches('[data-highlight-unsupported]') || !!block.querySelector(blocked)) || Array.from(surface.querySelectorAll('.reader-pages button,.reader-pages pre,.reader-pages table,.reader-pages svg,.reader-pages img')).some(node => range.intersectsNode(node))) {
+      if (!blocks.length || blocks.length > 32 || blocks.some(block => block.matches('[data-highlight-unsupported]')) || Array.from(surface.querySelectorAll(blocked)).some(node => node.closest('.reader-pages') && range.intersectsNode(node))) {
         setTool(null); setMessage(en ? 'Select prose, headings or lists without code or media.' : 'Selecione texto, títulos ou listas sem código ou mídia.'); return;
       }
       const segments = blocks.map(block => textAnchor(block.dataset.highlightBlock!, block.textContent ?? '', block === first ? offset(block, range.startContainer, range.startOffset) : 0, block === last ? offset(block, range.endContainer, range.endOffset) : (block.textContent ?? '').length)).filter(part => part.exact.length);
@@ -104,11 +105,15 @@ function HighlightSession({ project, documentId, language, root }: { project: st
       setTool({ segments, text: selection.toString(), ...toolbarPosition(range.getBoundingClientRect(), innerWidth, innerHeight) });
     };
     const changed = () => { clearTimeout(timer); if (!window.getSelection()?.isCollapsed) setTool(null); timer = setTimeout(capture, 180); };
+    const completed = (event: PointerEvent) => {
+      if ((event.target as Element).closest?.('[role="toolbar"]')) return;
+      clearTimeout(timer); timer = setTimeout(capture, 0);
+    };
     const key = (event: KeyboardEvent) => { if (event.key === 'Escape') { clearTimeout(timer); setTool(null); window.getSelection()?.removeAllRanges(); } };
     const dismiss = () => setTool(null);
-    document.addEventListener('selectionchange', changed); document.addEventListener('keydown', key);
+    document.addEventListener('pointerup', completed); document.addEventListener('selectionchange', changed); document.addEventListener('keydown', key);
     window.addEventListener('resize', dismiss); window.addEventListener('scroll', dismiss, true);
-    return () => { clearTimeout(timer); document.removeEventListener('selectionchange', changed); document.removeEventListener('keydown', key); window.removeEventListener('resize', dismiss); window.removeEventListener('scroll', dismiss, true); };
+    return () => { clearTimeout(timer); document.removeEventListener('pointerup', completed); document.removeEventListener('selectionchange', changed); document.removeEventListener('keydown', key); window.removeEventListener('resize', dismiss); window.removeEventListener('scroll', dismiss, true); };
   }, [en, root]);
   async function mutate(color?: HighlightColor, remove = false) {
     if (!tool || pending.current || !csrf) return;
@@ -150,10 +155,11 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   }, [saved, root]);
   return <>
     {message && <p className="reader-notice" role="status">{message}</p>}
-    {tool && <div role="toolbar" aria-label={en ? 'Text highlights' : 'Destaques de texto'} className="reader-selection-toolbar" style={{ left: tool.left, top: tool.top }} onPointerDown={event => event.preventDefault()}>
+    {tool && createPortal(<div role="toolbar" aria-label={en ? 'Text highlights' : 'Destaques de texto'} className="reader-selection-toolbar" style={{ left: tool.left, top: tool.top }} onPointerDown={event => event.preventDefault()}>
       {highlightColors.map((color, index) => <button type="button" key={color} aria-label={(en ? ['Yellow', 'Blue', 'Pink', 'Orange', 'Purple', 'Red', 'Green'] : ['Amarelo', 'Azul', 'Rosa', 'Laranja', 'Roxo', 'Vermelho', 'Verde'])[index]} aria-pressed={tool.color === color} style={{ backgroundColor: colors[index] }} disabled={busy || !csrf} onClick={() => void mutate(color)}/>)}
       <button type="button" aria-label={en ? 'Copy' : 'Copiar'} onClick={() => void copy()}>⧉</button>
+      <button type="button" disabled aria-label={en ? 'Add note (available in Phase 2)' : 'Adicionar nota (disponível na fase 2)'} title={en ? 'Notes will be available in Phase 2' : 'Notas estarão disponíveis na fase 2'}><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M13 5H5v15h14v-8M11 13l1-4 7-7 3 3-7 7-4 1Z"/></svg></button>
       {tool.id && <button type="button" aria-label={en ? 'Remove highlight' : 'Remover destaque'} disabled={busy} onClick={() => void mutate(undefined, true)}>×</button>}
-    </div>}
+    </div>, document.body)}
   </>;
 }
