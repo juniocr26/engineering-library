@@ -7,21 +7,36 @@ function textNodes(node: Element): Text[] {
     : child.type === 'element' && child.tagName !== 'code' ? textNodes(child) : []);
 }
 
-/** Display-only sentence casing for the h1–h3 styled in manuscript cursive.
- * Preserve the first letter's case, lowercase the rest, and leave monospace
- * inline code, source text, search indexes and canonical unit IDs untouched.
+/** A stateful formatter keeps sentence context across inline emphasis and links.
+ * Only uppercase prose words change; mixed case and technical literals survive.
  */
+export function createCursiveNormalizer() {
+  let firstWord = true;
+  return (text: string): string => text.replace(/\S+/gu, token => {
+    // Commands, paths, identifiers and calls are technical literals, even when
+    // authors did not wrap them in inline code.
+    if (/[/\\_`=]|^--|\w\.\w|\w\(/u.test(token)) return token;
+    return token.replace(/\p{L}[\p{L}\p{M}]*/gu, word => {
+      const initial = firstWord;
+      firstWord = false;
+      if (word !== word.toUpperCase()) return word;
+      const lower = word.toLowerCase();
+      return initial ? lower.charAt(0).toUpperCase() + lower.slice(1) : lower;
+    });
+  });
+}
+
+/** Presentation only: never use this value for IDs, URLs, search or metadata. */
+export function normalizeCursiveLabel(text: string): string {
+  return createCursiveNormalizer()(text);
+}
+
 export function cursiveHeadings() {
   return (tree: Root) => {
     const visit = (node: Root | Element) => {
       if (node.type === 'element' && /^h[123]$/u.test(node.tagName)) {
-        let firstLetter = true;
-        for (const text of textNodes(node)) {
-          text.value = text.value.replace(/\p{L}/gu, letter => {
-            if (firstLetter) { firstLetter = false; return letter; }
-            return letter.toLowerCase();
-          });
-        }
+        const normalize = createCursiveNormalizer();
+        for (const text of textNodes(node)) text.value = normalize(text.value);
         return;
       }
       for (const child of node.children) if (child.type === 'element') visit(child);

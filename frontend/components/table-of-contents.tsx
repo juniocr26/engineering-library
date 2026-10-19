@@ -1,4 +1,5 @@
 'use client';
+import { normalizeCursiveLabel } from '../lib/cursive-headings';
 import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
 import { useEffect, useState, type ReactNode } from 'react';
 import { BookReader } from './book-reader';
@@ -33,10 +34,10 @@ export function TableOfContents({ entries, slug, language, projectName, catalogP
       <details className="toc-mobile-menu"><summary aria-label={language === 'en' ? 'Navigation menu' : 'Menu de navegação'}>☰</summary><Link href={catalogHref(catalogPage, language)}>{messages[language].back}</Link></details>
       {toolbar(action)}
       <nav className="langs" aria-label={messages[language].language}>{(['pt-BR', 'en'] as const).map(lang => <Link key={lang} className="lang" href={bookmarkHref(slug, CONTENTS_DOCUMENT, lang, visibleAnchor).replace('?', `?page=${catalogPage}&`)} hrefLang={lang} aria-current={lang === language ? 'true' : undefined}><span className="flag" aria-hidden="true">{lang === 'en' ? '🇺🇸' : '🇧🇷'}</span>{lang === 'en' ? 'English' : 'Português'}</Link>)}</nav>
-      <h1>{title}<span className="toc-quill" aria-hidden="true"/></h1>
+      <h1>{normalizeCursiveLabel(title)}<span className="toc-quill" aria-hidden="true"/></h1>
     </header>;
     return <BookReader key={`${slug}/${language}/${initialEnd}`} initialEnd={initialEnd} location={location} locationRequest={locationRequest} onLocationChange={setVisibleAnchor} pageAction={pageAction} nextChapter={readingNeighbors(getReadingSequence(slug, language, entries), null).next} units={entries} header={header} project={slug} language={language} title={title} renderUnit={entry => {
-      const text = <><span className="chapter-number">{entry.number}</span><span>{entry.title}</span></>;
+      const text = <><span className="chapter-number">{entry.number}</span><span>{entry.heading ? normalizeCursiveLabel(entry.title) : entry.title}</span></>;
       const content = entry.href ? <Link href={entry.href}>{text}<span className="toc-leader" aria-hidden="true"/>↗</Link> : <span aria-disabled={!entry.heading || undefined}>{text}</span>;
       return entry.heading ? <h2 className="toc-chapter">{content}</h2> : <div className="toc-document">{content}</div>;
     }}/>;

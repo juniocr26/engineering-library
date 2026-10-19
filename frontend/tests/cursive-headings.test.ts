@@ -4,7 +4,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { cursiveHeadings } from '../lib/cursive-headings.ts';
+import { cursiveHeadings, normalizeCursiveLabel } from '../lib/cursive-headings.ts';
 import { markdownUnits } from '../lib/markdown.ts';
 
 function render(source: string) {
@@ -14,6 +14,13 @@ function render(source: string) {
 }
 
 for (const [source, expected] of [
+  ['Docker', 'Docker'],
+  ['Go Image Optimizer', 'Go Image Optimizer'],
+  ['API', 'Api'],
+  ['(API): FAQ, ADR 001!', '(Api): faq, adr 001!'],
+  ['FAQ', 'Faq'],
+  ['ADR 001', 'Adr 001'],
+  ['VARIÁVEIS DE AMBIENTE', 'Variáveis de ambiente'],
   ['ARQUITETURA E FLUXO', 'Arquitetura e fluxo'],
   ['RULES DE SOBRESCRITA DO FILESYSTEM', 'Rules de sobrescrita do filesystem'],
   ['DESENVOLVIMENTO DO PROJETO', 'Desenvolvimento do projeto'],
@@ -21,21 +28,23 @@ for (const [source, expected] of [
   ['3. RULES DE SOBRESCRITA no filesystem', '3. Rules de sobrescrita no filesystem'],
   ['3. rules DE SOBRESCRITA no filesystem', '3. rules de sobrescrita no filesystem'],
   ['2. Arquitetura E FLUXO', '2. Arquitetura e fluxo'],
-  ['Arquitetura e PostgreSQL', 'Arquitetura e postgresql'],
+  ['Arquitetura e PostgreSQL', 'Arquitetura e PostgreSQL'],
   ['API CLI HTTP FAQ ADR', 'Api cli http faq adr'],
   ['API E CLI PARA O PROJETO', 'Api e cli para o projeto'],
   ['ADR 001 — USAR RUST PARA O RELAY', 'Adr 001 — usar rust para o relay'],
-  ['USAR POSTGRESQL COM NEXT.JS E DOCKER', 'Usar postgresql com next.js e docker'],
+  ['USAR POSTGRESQL COM NEXT.JS E DOCKER', 'Usar postgresql com NEXT.JS e docker'],
   ['USAR --dry-run PARA O PROJETO', 'Usar --dry-run para o projeto'],
-  ['USAR ./src/API.ts E /etc/config COM NODE_ENV E getHTTPClient()', 'Usar ./src/api.ts e /etc/config com node_env e gethttpclient()'],
+  ['USAR ./src/API.ts E /etc/config COM NODE_ENV E getHTTPClient()', 'Usar ./src/API.ts e /etc/config com NODE_ENV e getHTTPClient()'],
   ['CONFIGURAÇÃO E EXECUÇÃO — VISÃO GERAL', 'Configuração e execução — visão geral'],
   ['PROJECT DEVELOPMENT AND ARCHITECTURE', 'Project development and architecture'],
-  ['USAR ACME XYZ Foobar', 'Usar acme xyz foobar'],
+  ['USAR ACME XYZ Foobar', 'Usar acme xyz Foobar'],
   ['USAR ACME XYZ', 'Usar acme xyz'],
   ['DESENVOLVIMENTO DO PROJETO COM API E CLI PARA CONFIGURAÇÃO E EXECUÇÃO EM PRODUÇÃO',
     'Desenvolvimento do projeto com api e cli para configuração e execução em produção'],
 ]) {
   test(`cursive heading: ${source}`, () => {
+    assert.equal(normalizeCursiveLabel(source), expected);
+    assert.equal(normalizeCursiveLabel(expected), expected);
     for (const level of [1, 2, 3]) assert.equal(render(`${'#'.repeat(level)} ${source}`), `<h${level}>${expected}</h${level}>`);
   });
 }
