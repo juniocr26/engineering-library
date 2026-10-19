@@ -42,7 +42,7 @@ Each row describes behavior **at Compose interpolation**, before the application
 
 Variables without a required marker are optional. Empty host/user/database values have no Ruby fallback and may cause connection failure. Empty numeric settings are not supported. Production adapter URL resolution requires separate validation.
 
-`POSTGRES_PORT=5499` is host-only; Rails uses `postgres:5432`. Compose fixes `BACKEND_URL=http://backend:3000`, `RAILS_ENV=development`, `PGDATA=/var/lib/postgresql/18/docker`, `HOME=/tmp`, `BUNDLE_PATH=/app/vendor/bundle`, `BUNDLE_APP_CONFIG=/tmp/bundle-config`, `npm_config_cache=/tmp/npm-cache` and `NEXT_TELEMETRY_DISABLED=1`; these are not new `.env` inputs. Dependency/cache directories must be writable. Next fetches server-side, so CORS needs no change. `POSTGRES_DB` only initializes databases in fresh clusters. See [migration](../operations/database-migration.md).
+`POSTGRES_PORT=5499` is host-only; Rails uses `postgres:5432`. Compose fixes `BACKEND_URL=http://backend:3000`, `RAILS_ENV=development`, `CATALOG_ROOT=/docs/projects` (Rails), `DOCUMENTATION_ROOT=/docs/projects` (Next.js), `PGDATA=/var/lib/postgresql/18/docker`, `HOME=/tmp`, `BUNDLE_PATH=/usr/local/bundle`, `BUNDLE_APP_CONFIG=/tmp/bundle-config`, `npm_config_cache=/tmp/npm-cache` and `NEXT_TELEMETRY_DISABLED=1`; these are not new `.env` inputs. Dependency/cache directories must be writable. Next fetches server-side, so CORS needs no change. `POSTGRES_DB` only initializes databases in fresh clusters. See [migration](../operations/database-migration.md).
 
 ## Catalog filesystem roots — 2026-10-19
 

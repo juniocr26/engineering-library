@@ -12,19 +12,21 @@ services:
     volumes:
       - ./.dockerized-postgres:/var/lib/postgresql
     healthcheck:
-      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
       interval: 5s
       timeout: 3s
       retries: 20
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: backend-development
     user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     init: true
     environment:
       HOME: /tmp
-      BUNDLE_PATH: /app/vendor/bundle
-      BUNDLE_APP_CONFIG: /tmp/bundle-config
       RAILS_ENV: development
+      CATALOG_ROOT: /docs/projects
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Set SECRET_KEY_BASE}
       POSTGRES_HOST: postgres
       POSTGRES_USER: ${POSTGRES_USER}
@@ -32,8 +34,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./docs/projects:/docs/projects:ro
-      - ./backend:/app
-      - ./backend/vendor/bundle:/app/vendor/bundle
+      - ./backend:/app/backend
+    tmpfs:
+      - /app/backend/tmp:mode=1777
+      - /app/backend/log:mode=1777
     ports:
       - "127.0.0.1:${BACKEND_PORT:-3098}:3000"
     depends_on:
@@ -46,7 +50,10 @@ services:
       start_period: 120s
       retries: 30
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: frontend-development
     user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     init: true
     environment:
@@ -56,8 +63,12 @@ services:
       DOCUMENTATION_ROOT: /docs/projects
       NEXT_TELEMETRY_DISABLED: "1"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app/frontend
       - ./docs/projects:/docs/projects:ro
+    # Mask host packages/cache; Linux dependencies resolve from /app/node_modules.
+    tmpfs:
+      - /app/frontend/node_modules:mode=0555
+      - /app/frontend/.next:mode=1777
     ports:
       - "127.0.0.1:${FRONTEND_PORT:-3099}:3000"
     depends_on:

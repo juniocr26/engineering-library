@@ -9,17 +9,17 @@ Ruby 3.4.11, Rails 8.1.4, PostgreSQL 18 (`18-bookworm`, com versão principal fi
 Navegador :3099 → Next.js :3000 → Rails :3000 no Compose → PostgreSQL :5432. Rails também é exposto em loopback :3098. Consultas Next ao catálogo usam `BACKEND_URL` no servidor, `cache: no-store` e timeout de cinco segundos. `/up` Rails continua como liveness de boot, sem consultar catálogo/banco. Serviços/models atuais implementam sync, paginação e favoritos anônimos; o leitor implementa transições de páginas. Não há autenticação de contas, inferência IA ou geração automática de documentação. Acesso do navegador à API usa rotas Next de mesma origem; o initializer CORS Rails revisado está inativo.
 
 ```text
-backend/                  API Rails, config, db, test, Dockerfile, Gemfile.lock
-  vendor/bundle/          gems Linux no host, ignoradas pelo Git
-frontend/                 App Router, components, public, Dockerfile, package-lock.json
-  node_modules/           pacotes Linux no host, ignorados pelo Git
-docs/projects/engineering-library/docs/en/guides/      documentação da aplicação em inglês
-docs/projects/engineering-library/docs/pt-BR/guides/   documentação da aplicação em português
-tools/                    validadores existentes
-.dockerized-postgres/     dados ignorados pelo Git, cluster em 18/docker
-.env                      credenciais locais, ignoradas pelo Git
-.env.example              modelo de configuração
-compose.yaml              três serviços, sem volumes nomeados para dados/dependências
+docker/
+  Dockerfile              backend-dependencies, backend-development,
+                          frontend-dependencies, frontend-development
+  backend-entrypoint.sh   db:prepare catalog:sync; exec Rails
+  frontend-entrypoint.sh  lockfile consistency; exec Next.js
+backend/                  Rails, Gemfile.lock
+frontend/                 Next.js, package-lock.json
+docs/                     Markdown
+.dockerized-postgres/     PostgreSQL 18: 18/docker
+.env                      local credentials (ignored)
+compose.yaml              PostgreSQL + independent Rails and Next.js services
 ```
 
 ## Preparação e execução
@@ -32,32 +32,31 @@ A implementação gerou `.env` local com senha PostgreSQL aleatória de 12 carac
 python3 tools/init_dev_env.py
 docker compose config --quiet
 docker compose up --build
-# Em outro terminal, na preparação inicial e após criar migrações:
-docker compose exec backend bin/rails db:prepare catalog:sync
 # Acesse http://localhost:3099 e http://localhost:3098/up
 # Encerre preservando os dados:
 docker compose down
 ```
 
-O PostgreSQL cria o banco de desenvolvimento ao inicializar um cluster novo. `db:prepare` prepara explicitamente o esquema e migrações; a inicialização dos contêineres não executa migrações. Rails aguarda o PostgreSQL saudável; Next aguarda Rails saudável. O código usa bind mounts e recarga de desenvolvimento. Next usa webpack para observação previsível de arquivos no Docker. Ao iniciar, o frontend executa `npm ci`; o backend confere as gems e instala as ausentes. As dependências das imagens validam o build, mas são ocultadas pelos bind mounts em execução; a inicialização as restaura fisicamente no host.
+O PostgreSQL cria o banco ao inicializar um cluster novo. Rails aguarda PostgreSQL saudável, executa `db:prepare catalog:sync` e inicia o servidor; falhas interrompem o processo. Next aguarda Rails saudável. As migrações futuras devem ser revisadas antes da inicialização. O sync atual atualiza metadados sem excluir registros.
+
+O único Dockerfile usa o contexto raiz e quatro targets: `backend-dependencies`, `backend-development`, `frontend-dependencies` e `frontend-development`. Gems ficam em `/usr/local/bundle`; pacotes Node em `/app/node_modules`, acima do código montado em `/app/frontend`. O mount vazio de `node_modules` mascara pacotes do host. `.next`, logs e temporários Rails usam tmpfs e são descartados ao parar. Dependências são instaladas a partir dos lockfiles durante o build, sem instalação nem acesso ao registry no startup. Os serviços rodam com LOCAL_UID/LOCAL_GID, padrão 1000:1000. São imagens de desenvolvimento.
 
 ## Dependências e comandos
 
 ```sh
-docker compose exec backend bundle install
-docker compose exec frontend npm ci
-# Recuperação quando o serviço não inicia:
-docker compose run --rm --no-deps backend bundle install
-docker compose run --rm --no-deps frontend npm ci
-# Após alterar package.json, atualize o lockfile e reinicie:
-docker compose exec frontend npm install
-docker compose restart frontend
-docker compose exec backend bin/rails db:migrate
+docker compose build backend
+docker compose build frontend
+# Após atualizar os manifests e lockfiles:
+docker compose up -d --build
+# Build Next isolado do cache do servidor em desenvolvimento:
+docker compose run --rm --no-deps frontend npm run build
 docker compose exec backend bin/rails console
 docker compose logs -f backend frontend postgres
+# Cinco ciclos controlados; preserva dados e deixa o último ciclo ativo:
+python3 tools/check_docker_startup.py --cycles 5
 ```
 
-Gems e pacotes nativos são compilados para Linux e a arquitetura do contêiner; não podem ser reutilizados diretamente pelo macOS ou por outra arquitetura. Execute os comandos dentro dos contêineres e reinstale ao mudar a plataforma. `npm ci` reconstrói node_modules; pare o frontend antes de recuperar dependências em uso. Não execute instalações concorrentes na mesma pasta. Versione os lockfiles, nunca as dependências.
+Atualize os lockfiles com Ruby/Node compatíveis ou um contêiner descartável com diretório gravável; reconstrua a imagem correspondente. Não instale dependências no contêiner ativo. Pacotes e gems antigos no host permanecem intactos, mas não são usados. O cache Next em tmpfs acelera o uso durante cada execução, custa memória e recompila após parar o contêiner. Não execute `npm run build` no servidor de desenvolvimento ativo: use o comando isolado acima.
 
 ## DBeaver e persistência
 
@@ -89,7 +88,7 @@ docker compose exec -e RAILS_ENV=test backend bin/rails test
 docker compose exec backend bin/rails zeitwerk:check
 docker compose exec frontend npm run lint
 docker compose exec frontend npm run typecheck
-docker compose exec frontend npm run build
+docker compose run --rm --no-deps frontend npm run build
 curl --fail http://localhost:3098/up
 curl --fail http://localhost:3099
 python3 -B -m unittest discover -s tools -p test_check_docs.py -v

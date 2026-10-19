@@ -52,22 +52,22 @@ docker compose exec -T backend sh -c 'RAILS_ENV=test bundle exec rails db:prepar
 docker compose exec -T frontend npm test
 docker compose exec -T frontend npm run typecheck
 docker compose exec -T frontend npm run lint
-docker compose exec -T frontend npm run build
+docker compose run --rm --no-deps frontend npm run build
 python3 -B docs/validation/check_catalog.py
 git diff --check
 ```
 
-Compose adds only a read-only documentation mount at `/docs/projects`; existing database configuration and environment remain intact. Outside Docker, the catalog defaults to the repository `docs/projects` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; stop development or use a separate build output directory.
+Compose mounts documentation read-only at `/docs/projects`; Rails uses `CATALOG_ROOT=/docs/projects`. Dependencies stay in images and each frontend container gets its own `.next` tmpfs. Outside Docker, the catalog defaults to the repository `docs/projects` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; stop development or use a separate build output directory.
 
 Current limits: no documentation editing, authentication or cross-device bookmark synchronization. API downtime produces a localized retry state. The document reader resolves repository Markdown with scoped filesystem reads and preserves project/language navigation.
 
 Browser smoke checks (install Playwright and Chromium in a temporary directory first):
 
 ```sh
-# Run a production server on port 3100 after building.
-docker compose exec -T frontend npm run start -- --port 3100
+# Build and serve in one isolated container, using its own temporary cache.
+docker compose run --rm --no-deps --name engineering-library-preview frontend sh -c 'npm run build && exec npm run start -- --hostname 0.0.0.0 --port 3100'
 # In another terminal, with the external Playwright module path:
-docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
+docker compose exec -T frontend sh -c 'BROWSER_BASE_URL=http://engineering-library-preview:3100 PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
 ```
 
 ## Reusable manuscript identity

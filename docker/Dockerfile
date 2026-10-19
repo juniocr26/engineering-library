@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+
+FROM ruby:3.4.11-bookworm AS backend-dependencies
+WORKDIR /app/backend
+ENV BUNDLE_PATH=/usr/local/bundle \
+    BUNDLE_APP_CONFIG=/tmp/bundle-config \
+    BUNDLE_FROZEN=true
+COPY backend/Gemfile backend/Gemfile.lock ./
+RUN bundle install && bundle clean --force
+
+FROM backend-dependencies AS backend-development
+ENV RAILS_ENV=development HOME=/tmp
+COPY --chown=1000:1000 backend/ ./
+RUN mkdir -p tmp/pids log && chown -R 1000:1000 /app/backend
+COPY --chmod=755 docker/backend-entrypoint.sh /usr/local/bin/backend-entrypoint
+USER 1000:1000
+EXPOSE 3000
+ENTRYPOINT ["backend-entrypoint"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+
+FROM node:24.22.0-bookworm-slim AS frontend-dependencies
+# Dependencies live above the source mount and remain available to Node/npm.
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci && npm cache clean --force
+
+FROM frontend-dependencies AS frontend-development
+ENV HOME=/tmp npm_config_cache=/tmp/npm-cache
+WORKDIR /app/frontend
+COPY --chown=1000:1000 frontend/ ./
+RUN chown 1000:1000 /app/frontend
+COPY --chmod=755 docker/frontend-entrypoint.sh /usr/local/bin/frontend-entrypoint
+USER 1000:1000
+EXPOSE 3000
+ENTRYPOINT ["frontend-entrypoint"]
+CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]

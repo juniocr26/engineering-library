@@ -49,22 +49,22 @@ docker compose exec -T backend sh -c 'RAILS_ENV=test bundle exec rails db:prepar
 docker compose exec -T frontend npm test
 docker compose exec -T frontend npm run typecheck
 docker compose exec -T frontend npm run lint
-docker compose exec -T frontend npm run build
+docker compose run --rm --no-deps frontend npm run build
 python3 -B docs/validation/check_catalog.py
 git diff --check
 ```
 
-O Compose acrescenta somente montagem de documentação em leitura em `/docs/projects`; preserva configuração do banco e ambiente. Fora do Docker, o caminho padrão é `docs/projects`, irmão do Rails; `CATALOG_ROOT` permite substituição nos testes. Os testes usam o banco Rails de teste separado. Não execute build e servidor de desenvolvimento simultaneamente no mesmo `.next`; pare o desenvolvimento ou use outro diretório de build.
+O Compose monta documentação em leitura em `/docs/projects`; Rails usa `CATALOG_ROOT=/docs/projects`. Dependências ficam nas imagens e cada contêiner frontend tem seu próprio tmpfs `.next`. Fora do Docker, o caminho padrão é `docs/projects`, irmão do Rails; `CATALOG_ROOT` permite substituição nos testes. Os testes usam o banco Rails de teste separado. Não execute build e servidor de desenvolvimento simultaneamente no mesmo `.next`; pare o desenvolvimento ou use outro diretório de build.
 
 Limites atuais: sem edição de documentação, autenticação ou sincronização de marcações entre dispositivos. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor resolve arquivos Markdown com escopo validado e preserva navegação por projeto e idioma.
 
 Verificação no navegador (instale Playwright e Chromium antes em diretório temporário):
 
 ```sh
-# Run a production server on port 3100 after building.
-docker compose exec -T frontend npm run start -- --port 3100
+# Build and serve in one isolated container, using its own temporary cache.
+docker compose run --rm --no-deps --name engineering-library-preview frontend sh -c 'npm run build && exec npm run start -- --hostname 0.0.0.0 --port 3100'
 # In another terminal, with the external Playwright module path:
-docker compose exec -T frontend sh -c 'PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
+docker compose exec -T frontend sh -c 'BROWSER_BASE_URL=http://engineering-library-preview:3100 PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
 ```
 
 ## Identidade reutilizável de manuscrito

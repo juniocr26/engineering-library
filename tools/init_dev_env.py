@@ -28,7 +28,7 @@ def main():
         with os.fdopen(fd, 'w') as target:
             target.write(content)
         print('Created local .env; credentials were not printed.')
-    for folder in ('backend/vendor/bundle', 'frontend/node_modules', '.dockerized-postgres'):
+    for folder in ('.dockerized-postgres',):
         (root / folder).mkdir(parents=True, exist_ok=True)
 
 

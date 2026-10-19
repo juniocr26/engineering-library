@@ -15,11 +15,11 @@ Plataforma local de documentação de engenharia, com Rails, Next.js e PostgreSQ
 python3 tools/init_dev_env.py
 docker compose config --quiet
 docker compose up --build
-# First setup / primeira configuração
-docker compose exec backend bin/rails db:prepare catalog:sync
 # Preserve data / preservar dados
 docker compose down
 ```
+
+Docker usa somente `docker/Dockerfile`, com os targets `backend-dependencies`, `backend-development`, `frontend-dependencies` e `frontend-development`. O Compose constrói os runtimes independentemente; dependências ficam nas imagens e caches de desenvolvimento em tmpfs. Rails executa `db:prepare catalog:sync` antes do servidor. Após alterar dependências e seus lockfiles, execute `docker compose up -d --build`. Não é necessário reiniciar manualmente o frontend.
 
 Frontend: http://localhost:3099 · Rails: http://localhost:3098/up · PostgreSQL/DBeaver: `localhost:5499`, database `engineering_library`. Rails → `postgres:5432`.
 
