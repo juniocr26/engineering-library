@@ -8,15 +8,6 @@ Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente n
 
 As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
-### Q006 — O que acontece se o contador Redis desaparecer após a inicialização do processo?
-
-**Resposta:** `RedisIdGenerator` memoriza `_initialized` localmente. Seu lock protege SET NX inicial daquela instância, sem garantir durabilidade do contador. Se a chave desaparecer depois, INCR pode recriá-la a partir de zero e a instância não restaura `URL_ID_START`. IDs reutilizados podem atingir chaves existentes no Cassandra: o adaptador usa INSERT/upsert comum, sem transação condicional de unicidade. A atomicidade de INCR não prova unicidade global permanente após perda de dados. Timeout Cassandra também pode ocultar mapeamento já escrito; repetir POST normalmente aloca outro ID. Recuperar contador, reconciliar stores e definir idempotência durável de criação são trabalhos de projeto separados, sem garantia fornecida pelo lock inicial.
-
-### Q007 — Alterar apenas settings injetados no serviço permite trocar o mapeamento público com segurança?
-
-**Resposta:** Não. O serviço recebe Settings para montar a URL pública, mas helpers Base62/ofuscação chamam `get_settings()` global com cache. Trocar uma instância injetada não necessariamente altera esses helpers. Códigos usam permutação afim reversível módulo `62**7`, parâmetros derivados por SHA-256 e padding literal `0`; este pressupõe alfabeto iniciado por zero para round trips corretos. Mudar chave/alfabeto altera a decodificação de links anteriores, sem versão ou registro de migração. Isso é ofuscação, sem criptografia ou autorização. Rotação real exige requisitos de compatibilidade/versionamento e recuperação; nenhuma rotação ou recuperação dos stores foi executada. Testes com fakes demonstram chamadas/erros selecionados, sem compatibilidade histórica entre todas as configurações.
-
-
 ## URL Shortener — Guia de Estudo para Entrevista Técnica
 
 
@@ -1870,6 +1861,15 @@ Aprofundamento: RF sozinho permite prometer resolução imediata após criar? N�
 **Resposta:** Implementado: POST válido autenticado retorna 201; GET público retorna 301, código inválido/ausente 404, falha de configuração 500 e de adapter 503. Redirect permanente pode ser cacheado, então logs não medem todas as visitas posteriores. Probe Compose busca OpenAPI após startup; startup inicializa Cassandra e alocação Redis é lazy. Logo health verde não prova novo incremento Redis ou consulta de mapeamento. GET não usa Redis, mas reinício da app ainda depende de inicialização Cassandra.
 
 Aprofundamento: Testes fake HTTP/serviço provam cluster real? Não; verificam validação, mapeamento e ordem sob resultados modelados. Defaults do driver, autenticação, escritas parciais e failover exigem infraestrutura isolada. Aprofundamento: O que observabilidade produtiva acrescentaria? Latência/categorias por operação, readiness das dependências e alarmes de recuperação do contador sem vazar credenciais/destinos. São hipotéticos. Reload, bind mounts e health locais não são estratégia de implantação produtiva; retenção, restauração consistente e rollback seguem lacunas dependentes de evidência.
+
+### Q006 — O que acontece se o contador Redis desaparecer após a inicialização do processo?
+
+**Resposta:** `RedisIdGenerator` memoriza `_initialized` localmente. Seu lock protege SET NX inicial daquela instância, sem garantir durabilidade do contador. Se a chave desaparecer depois, INCR pode recriá-la a partir de zero e a instância não restaura `URL_ID_START`. IDs reutilizados podem atingir chaves existentes no Cassandra: o adaptador usa INSERT/upsert comum, sem transação condicional de unicidade. A atomicidade de INCR não prova unicidade global permanente após perda de dados. Timeout Cassandra também pode ocultar mapeamento já escrito; repetir POST normalmente aloca outro ID. Recuperar contador, reconciliar stores e definir idempotência durável de criação são trabalhos de projeto separados, sem garantia fornecida pelo lock inicial.
+
+### Q007 — Alterar apenas settings injetados no serviço permite trocar o mapeamento público com segurança?
+
+**Resposta:** Não. O serviço recebe Settings para montar a URL pública, mas helpers Base62/ofuscação chamam `get_settings()` global com cache. Trocar uma instância injetada não necessariamente altera esses helpers. Códigos usam permutação afim reversível módulo `62**7`, parâmetros derivados por SHA-256 e padding literal `0`; este pressupõe alfabeto iniciado por zero para round trips corretos. Mudar chave/alfabeto altera a decodificação de links anteriores, sem versão ou registro de migração. Isso é ofuscação, sem criptografia ou autorização. Rotação real exige requisitos de compatibilidade/versionamento e recuperação; nenhuma rotação ou recuperação dos stores foi executada. Testes com fakes demonstram chamadas/erros selecionados, sem compatibilidade histórica entre todas as configurações.
+
 
 ## Conciliação com o código — 2026-10-18
 

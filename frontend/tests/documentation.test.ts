@@ -17,6 +17,13 @@ test('canonical bilingual discovery, README, substantive indexes and missing tra
     }
     await writeFile(path.join(root, 'sample', 'README.md'), '# README');
     await writeFile(path.join(root, 'sample', 'README.pt-BR.md'), '# LEIA-ME');
+    for (const lang of ['en', 'pt-BR']) {
+      const dir = path.join(root, 'sample', 'docs', lang);
+      await writeFile(path.join(dir, 'index.md'), '# Legacy contents\n\nCatalog introduction.');
+      await mkdir(path.join(dir, 'faq'));
+      await writeFile(path.join(dir, 'faq/index.md'), '# Technical FAQ\n\n### Q001 — Question\n\nAnswer.');
+      await writeFile(path.join(dir, 'faq/study-guide.md'), '# Retained study guide\n\nAnswer.');
+    }
     await writeFile(path.join(root, 'sample', 'docs/en/architecture/alpha.md'), '# Only English');
     await mkdir(path.join(root, 'sample', 'docs/en/env'));
     await writeFile(path.join(root, 'sample', 'docs/en/env/index.md'), '# ENV\n\n## Runtime\nRequired configuration.');
@@ -29,6 +36,13 @@ test('canonical bilingual discovery, README, substantive indexes and missing tra
     assert.equal(en.at(-1)?.id, 'README');
     assert.ok(!en.some(e => e.id === 'architecture/index.md'));
     assert.ok(en.some(e => e.id === 'env/index.md'));
+    assert.ok(!en.some(e => e.id === 'index.md'));
+    assert.deepEqual(en.filter(e => e.id.includes('faq')), [{
+      id: 'faq/index.md', number: '3', heading: true, title: 'FAQ',
+      href: '/projects/sample/docs/faq/index.md?lang=en',
+    }]);
+    assert.deepEqual(en.map(e => e.number), ['1', '1.1', '1.2', '2', '2.1', '3', '4']);
+    assert.ok(await documentationSource('sample', 'faq/study-guide.md', 'en'));
     assert.equal(pt.find(e => e.id === 'architecture/alpha.md')?.href, undefined);
     const englishSequence = getReadingSequence('sample', 'en', en);
     const portugueseSequence = getReadingSequence('sample', 'pt-BR', pt);

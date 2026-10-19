@@ -8,11 +8,6 @@ Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente n
 
 As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
-### Q006 — Uma prévia sem mudanças garante que a execução normal posterior não fará nada?
-
-**Resposta:** Não. Prévia e escrita compartilham `plan`, de modo que entradas inalteradas geram a mesma transformação. Porém são varreduras e leituras separadas, sem lock, snapshot ou revalidação que vincule a escrita posterior à prévia anterior. Um exemplo alterado muda o contrato de chaves; outro escritor pode editar o alvo entre leitura e replace. Revise novamente escopo e referências antes de aplicar e compare originais dos backups antes de recuperar manualmente. Exit zero na prévia significa ausência de erros tratados de descoberta/par; não significa ausência de diferenças propostas nem valores válidos em runtime. Os testes isolados comparam bytes e entradas dos diretórios antes/depois dos dois aliases; essas asserções valem para a invocação, não para execuções futuras.
-
-
 ## ENV Auditor — Guia de Estudo para Entrevista Técnica
 
 
@@ -190,6 +185,11 @@ Aprofundamento: E se backup funciona e substituição falha? O alvo original per
 **Resposta:** Evidência implementada: a suíte usa árvores temporárias e falhas injetadas para parser, prévias, precedência de variantes, backup, substituição, permissões e continuação. Teste relevante de prévia fotografa toda a árvore antes/depois e verifica ausência de alvos/backups novos; também verifica mudanças calculadas, senão não fazer nada passaria. Para gravação, compare bytes multilinha preservados e originais recuperáveis. Injete falha de backup antes da substituição e falha de replace depois do backup; verifique estado do alvo e continuação separadamente. Isso prova comportamento limitado nas fixtures, não queda de energia ou todos os filesystems.
 
 Aprofundamento: Mock de `os.replace` prova atomicidade? Não; verifica ordem e tratamento de erro. Experimentos reais de filesystem/crash testariam garantias diferentes e permanecem lacunas. Aprofundamento: Como examinar desempenho? Separe custos de percurso, parser e plano em árvores sintéticas com autorização própria. Muitas chaves ausentes podem expor custo de busca em lista; árvores profundas podem expor recursão. Não houve benchmark aqui nem reexecução da suíte da aplicação.
+
+### Q006 — Uma prévia sem mudanças garante que a execução normal posterior não fará nada?
+
+**Resposta:** Não. Prévia e escrita compartilham `plan`, de modo que entradas inalteradas geram a mesma transformação. Porém são varreduras e leituras separadas, sem lock, snapshot ou revalidação que vincule a escrita posterior à prévia anterior. Um exemplo alterado muda o contrato de chaves; outro escritor pode editar o alvo entre leitura e replace. Revise novamente escopo e referências antes de aplicar e compare originais dos backups antes de recuperar manualmente. Exit zero na prévia significa ausência de erros tratados de descoberta/par; não significa ausência de diferenças propostas nem valores válidos em runtime. Os testes isolados comparam bytes e entradas dos diretórios antes/depois dos dois aliases; essas asserções valem para a invocação, não para execuções futuras.
+
 
 ## Conciliação com o código — 2026-10-18
 

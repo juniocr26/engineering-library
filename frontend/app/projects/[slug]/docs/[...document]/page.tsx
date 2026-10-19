@@ -6,6 +6,7 @@ import { integrateSources } from '@/lib/source-references';
 import { markdownUnits } from '@/lib/markdown';
 import { languageOf } from '@/lib/i18n';
 import { DocumentationReader } from '@/components/documentation-reader';
+import ProjectPage from '../../page';
 
 export default async function DocumentPage({ params, searchParams }: {
   params: Promise<{ slug: string; document: string[] }>; searchParams: Promise<{ edge?: string; lang?: string; q?: string }>;
@@ -14,6 +15,8 @@ export default async function DocumentPage({ params, searchParams }: {
   const query = await searchParams;
   const language = languageOf(query.lang);
   const id = document.join('/');
+  // The retained Markdown index URL uses the same canonical, numbered contents.
+  if (id === 'index.md') return ProjectPage({ params: Promise.resolve({ slug }), searchParams: Promise.resolve(query) });
   const source = await documentationSource(slug, id, language);
   if (source === null) notFound();
   let name: string | undefined;

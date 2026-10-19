@@ -10,15 +10,6 @@ Technical questions, detailed answers and follow-ups are available directly on t
 
 The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
-### Q004 — Why are filesystem content and catalog synchronization separate consistency boundaries?
-
-**Answer:** `Catalog::Sync` validates both bio files and duplicate stable identifiers before entering a PostgreSQL transaction. Its advisory lock serializes cooperating database sync transactions, not filesystem editors. A file may change after validation; subsequent presenters also read bios from disk. Keep metadata stable during sync, and synchronize explicit bio/name/slug changes. Editing a chapter body needs no database ingest. Missing projects become inactive rather than deleted; stable identifiers preserve catalog identity across supported slug renames. This does not migrate bookmarks, whose project association is a slug string. A successful sync therefore establishes the indexed metadata update under those inputs, not an atomic snapshot of every chapter or automatic repair of old bookmark URLs.
-
-### Q005 — What protects anonymous bookmarks, and what does it not guarantee?
-
-**Answer:** A first GET establishes a signed browser cookie; the server hashes its random token to scope PostgreSQL rows. Mutations require `X-Reader-CSRF` carrying a purpose-bound verifier token for that digest. The unique index includes reader, project, document, language and anchor, preventing a repeated logical location from creating another row. Cross-reader deletion returns not found. There is no account login, cross-device synchronization or recovery identity if the cookie is lost. The 200-entry count-before-insert check is an admission policy, not an exact concurrent quota. Document existence is checked for ordinary Markdown, but arbitrary anchor existence is not; `@contents` is a reserved virtual document. Thus syntax-valid bookmarks can become unavailable after document or source-snapshot changes.
-
-
 ## Engineering Library interview
 
 > Source review — 2026-10-19: the current tree implements a Rails catalog API, PostgreSQL catalog records and anonymous bookmarks, plus an internal Next.js Markdown reader. The former documentation-only/scaffold description is superseded. No AI agent is implemented. See [current architecture](../architecture/current-state.md).
@@ -42,6 +33,15 @@ Follow-up: Is it a race-free sandbox? No. lstat followed by read has a TOCTOU wi
 **Answer:** Implemented: stable Markdown paths are the navigation contract. The current catalog validator loads allowed Markdown, extracts anchors/link targets and walks the link graph from the Library and each project-language index. These Python checks run without Rails, PostgreSQL or Next. The running reader has separate behavior: `documentationEntries` unifies relative document IDs across languages, skips navigation-only indexes and retains substantive indexes, then constructs category/document entries. Thus FAQ indexes containing answers become readable chapters automatically. A passing structural check does not demonstrate browser pagination or runtime API availability.
 
 Follow-up: What is the cost? Reading/parsing grows with documentation bytes and graph traversal with vertices/edges, plus filesystem metadata checks; no performance measurements are available. Follow-up: Can structural validation detect conflicting facts or poor translations? No. It can detect IDs/counterparts and missing answers, but source-grounded content review must judge meaning. Isolated tests prove selected safety/parser/failure contracts, not race-free operation under hostile filesystem mutation or external URL reachability.
+
+### Q004 — Why are filesystem content and catalog synchronization separate consistency boundaries?
+
+**Answer:** `Catalog::Sync` validates both bio files and duplicate stable identifiers before entering a PostgreSQL transaction. Its advisory lock serializes cooperating database sync transactions, not filesystem editors. A file may change after validation; subsequent presenters also read bios from disk. Keep metadata stable during sync, and synchronize explicit bio/name/slug changes. Editing a chapter body needs no database ingest. Missing projects become inactive rather than deleted; stable identifiers preserve catalog identity across supported slug renames. This does not migrate bookmarks, whose project association is a slug string. A successful sync therefore establishes the indexed metadata update under those inputs, not an atomic snapshot of every chapter or automatic repair of old bookmark URLs.
+
+### Q005 — What protects anonymous bookmarks, and what does it not guarantee?
+
+**Answer:** A first GET establishes a signed browser cookie; the server hashes its random token to scope PostgreSQL rows. Mutations require `X-Reader-CSRF` carrying a purpose-bound verifier token for that digest. The unique index includes reader, project, document, language and anchor, preventing a repeated logical location from creating another row. Cross-reader deletion returns not found. There is no account login, cross-device synchronization or recovery identity if the cookie is lost. The 200-entry count-before-insert check is an admission policy, not an exact concurrent quota. Document existence is checked for ordinary Markdown, but arbitrary anchor existence is not; `@contents` is a reserved virtual document. Thus syntax-valid bookmarks can become unavailable after document or source-snapshot changes.
+
 
 ## Application and catalog questions
 

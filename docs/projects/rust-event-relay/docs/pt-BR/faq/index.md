@@ -8,15 +8,6 @@ Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente n
 
 As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
-### Q016 — Uma execução concluída pode aceitar várias ações de publicação duplicada?
-
-**Resposta:** Sim na árvore atual. A migration `20261019000000_multiple_duplicate_actions.up.sql` remove a unicidade por execução e acrescenta índice de histórico. O repositório ainda reconcilia `request_id` da ação antes de admitir: repetir a mesma identidade retorna a ação anterior; mudar execução/cópias conflita. Novas identidades admitem até três ações retidas por execução, sujeitas a quatro queued/executing e 100 ações retidas globalmente. Cópias devem ser 1 ou 3; três exigem cenário concurrent. Elegibilidade exige outbox processed, recibo concluído e estoque 15. É demonstração local limitada, sem replay arbitrário ou administração do broker. Ações preservam o envelope original; deduplicação do consumidor, não admissão da ação, impede outro incremento.
-
-### Q017 — Timeout HTTP comprova rollback do produtor ou da ação?
-
-**Resposta:** Não. O middleware dedicado retorna 503 sanitizado após oito segundos, mas uma transação pode já ter commitado. Reutilize a mesma identidade e consulte/reconcilie evidências, em vez de criar outra identidade de comando. A API verifica separadamente bearer de 64 caracteres, Origin localhost/loopback correspondente quando presente e `x-demo-client: demo61`; semáforo de duas permissões e dez requisições por segundo limitam admissão local, sem rate limit distribuído. A composição valida o fingerprint do banco demo, usa duas conexões e timeouts SQL/lock/aquisição distintos. Definições de testes incluem confirmação de commit perdida, cancelamento após commit, conflitos de identidade e histórico somente leitura. Não estabelecem nova execução, segurança global contra crashes ou rollout em produção.
-
-
 ## Limite de leitura — atualização em 2026-10-18
 
 
@@ -281,3 +272,10 @@ Aprofundamento: Por que não reenviar unknown automaticamente? A ação anterior
 **Resposta:** Testes puros/fakes demonstram política/sequência; PostgreSQL/RabbitMQ/processos isolados cobrem falhas selecionadas; browser separa UI real/ilustrada. Manifesto de 2026-10-17 registra aceite em sua base, não revisão atual ou CI remoto. Launcher principal, artefatos runtime/test separados e controles nomeados Supervisor sustentam operação local. Limites de recursos/retenção rejeitam excesso sem apagar evidência. Não são capacidade produtiva medida, recuperação de desastre ou HA/TLS.
 
 Aprofundamento: O que justificaria produção? Segurança de transporte, menor privilégio, retenção/restauração de banco e broker, responsabilidade operacional e evidência por carga. São melhorias hipotéticas, não bloqueios adicionados retroativamente ao escopo local concluído.
+### Q016 — Uma execução concluída pode aceitar várias ações de publicação duplicada?
+
+**Resposta:** Sim na árvore atual. A migration `20261019000000_multiple_duplicate_actions.up.sql` remove a unicidade por execução e acrescenta índice de histórico. O repositório ainda reconcilia `request_id` da ação antes de admitir: repetir a mesma identidade retorna a ação anterior; mudar execução/cópias conflita. Novas identidades admitem até três ações retidas por execução, sujeitas a quatro queued/executing e 100 ações retidas globalmente. Cópias devem ser 1 ou 3; três exigem cenário concurrent. Elegibilidade exige outbox processed, recibo concluído e estoque 15. É demonstração local limitada, sem replay arbitrário ou administração do broker. Ações preservam o envelope original; deduplicação do consumidor, não admissão da ação, impede outro incremento.
+
+### Q017 — Timeout HTTP comprova rollback do produtor ou da ação?
+
+**Resposta:** Não. O middleware dedicado retorna 503 sanitizado após oito segundos, mas uma transação pode já ter commitado. Reutilize a mesma identidade e consulte/reconcilie evidências, em vez de criar outra identidade de comando. A API verifica separadamente bearer de 64 caracteres, Origin localhost/loopback correspondente quando presente e `x-demo-client: demo61`; semáforo de duas permissões e dez requisições por segundo limitam admissão local, sem rate limit distribuído. A composição valida o fingerprint do banco demo, usa duas conexões e timeouts SQL/lock/aquisição distintos. Definições de testes incluem confirmação de commit perdida, cancelamento após commit, conflitos de identidade e histórico somente leitura. Não estabelecem nova execução, segurança global contra crashes ou rollout em produção.

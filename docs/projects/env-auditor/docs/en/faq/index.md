@@ -8,11 +8,6 @@ Technical questions, detailed answers and follow-ups are available directly on t
 
 The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
-### Q006 — Can a zero-change preview guarantee a no-op when the normal command runs later?
-
-**Answer:** No. Preview and mutation share `plan`, so unchanged inputs produce the same transformation. They are separate scans and reads, with no lock, snapshot or content recheck binding the later write to the earlier preview. A changed example can change the key contract; another writer can alter a target between read and replace. Review scope and reference files again before applying, and compare exact backup originals before manual recovery. A zero exit code in preview means no handled discovery/pair error; it does not mean no proposed differences or valid runtime values. The existing isolated tests compare fixture bytes and directory entries before/after both preview aliases; those assertions concern that invocation, not future executions.
-
-
 ## ENV Auditor technical interview study guide
 
 
@@ -190,6 +185,11 @@ Follow-up: What if backup succeeds and replacement fails? The original target re
 **Answer:** Implemented evidence: the existing suite uses temporary fixture trees and injected failures to exercise parsing, previews, variant precedence, backups, replacement, permissions and continuation. A meaningful preview test snapshots the entire fixture tree before and after and asserts no target or backup appeared; it must also verify the calculated changes, otherwise doing nothing would pass. For writes, compare exact retained multiline bytes and recoverable originals. Inject backup failure before replacement and replace failure after backup, then assert target state and continued processing independently. These prove bounded fixture behavior, not power-loss durability or every filesystem.
 
 Follow-up: Is mocking `os.replace` enough to prove atomicity? No; it verifies call ordering/error handling. Real filesystem and crash experiments would test different guarantees and remain gaps. Follow-up: How would you inspect performance? First separate traversal, parsing and plan costs using synthetic trees under separate authorization. Large numbers of missing keys can expose list-membership costs; deeply nested trees can expose recursion limits. No benchmark ran here, and the application test suite was not rerun.
+
+### Q006 — Can a zero-change preview guarantee a no-op when the normal command runs later?
+
+**Answer:** No. Preview and mutation share `plan`, so unchanged inputs produce the same transformation. They are separate scans and reads, with no lock, snapshot or content recheck binding the later write to the earlier preview. A changed example can change the key contract; another writer can alter a target between read and replace. Review scope and reference files again before applying, and compare exact backup originals before manual recovery. A zero exit code in preview means no handled discovery/pair error; it does not mean no proposed differences or valid runtime values. The existing isolated tests compare fixture bytes and directory entries before/after both preview aliases; those assertions concern that invocation, not future executions.
+
 
 ## Source reconciliation — 2026-10-18
 

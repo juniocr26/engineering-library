@@ -8,15 +8,6 @@ Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente n
 
 As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
-### Q007 — readOnly=true ou purchasable=true implementam autorização de pagamento?
-
-**Resposta:** Não. `CatalogService.list` usa transação somente leitura para consultar AVAILABLE e TEMPORARILY_UNAVAILABLE e mapear DTOs explícitos antes do retorno. `purchasable` deriva de AVAILABLE: é política de apresentação, sem reserva de estoque, aceite de pedido ou permissão de cobrança. Security permite explicitamente GET do catálogo e health, OpenAPI apenas em desenvolvimento e nega o restante. CORS permite origens configuradas/GET sem credenciais, uma política do navegador, sem autorização financeira. Checkout, conciliação, webhooks Stripe, assinaturas do provedor e idempotência durável de pagamentos não estão implementados. Uma mutação futura precisa definir transação, identidade e retries próprios, sem confiar em uma flag da leitura.
-
-### Q008 — O que sobrevive à transição do schema legado e o que os testes cobrem?
-
-**Resposta:** Flyway mantém V1; V2 renomeia stores para `legacy_stores` antes de criar products. Isso preserva linhas históricas sem expor vínculo de loja no DTO. SQL impõe preço positivo, restrições de slug/nome/categoria e valores de disponibilidade; filtragem da resposta pertence à consulta do serviço/repositório. `ProductApiTest` simula o serviço para verificar DTO, segurança e erros HTTP. `ProductPostgresIT` usa Testcontainers para migrações, restrições SQL, visibilidade, ordenação e health em PostgreSQL isolado. Ler os testes não gera nova execução aprovada; um banco Testcontainers novo não demonstra restauração ou migração do volume local existente. Ativar `DEV_SEED_ENABLED` interrompe a partida porque fixtures de conciliação estão ausentes.
-
-
 ## Payment Reconciliation Lab — Guia de Estudo para Entrevista Técnica
 
 
@@ -128,6 +119,15 @@ Aprofundamento: Podemos editar V1 para o novo nome? Checksums/histórico aplicad
 **Resposta:** Evidência implementada: 5 métodos ProductApiTest substituem CatalogService; 2 cobrem rejeição/default de seed; 5 PostgreSQL opt-in usam Testcontainers isolados; 4 Angular substituem HTTP. Camadas provam coisas diferentes: fakes API cobrem resposta/segurança/erro; PostgreSQL real exercita migrações/constraints/visibilidade; Angular exercita estados UI. Contagens são inventário, não aprovação atual ou percentual. Nenhum teste de aplicação foi executado aqui e não existem testes de conciliação/provedor.
 
 Aprofundamento: Todos os fakes podem passar e startup falhar? Sim: schema ausente com migração desabilitada, credenciais erradas ou seed aposentado habilitado. Aprofundamento: Qual limite real de escala do catálogo? Consulta retorna todas as entidades visíveis e DTOs sem paginação/cache. Memória, ordenação e resposta crescem com dados; não há limiar medido. Paginação hipotética exige desempate estável e UI; cache exige invalidação/frescor. Readiness verifica conectividade do banco, não esses limites ou pagamentos. Teste requisitos na fronteira da qual dependem.
+
+### Q007 — readOnly=true ou purchasable=true implementam autorização de pagamento?
+
+**Resposta:** Não. `CatalogService.list` usa transação somente leitura para consultar AVAILABLE e TEMPORARILY_UNAVAILABLE e mapear DTOs explícitos antes do retorno. `purchasable` deriva de AVAILABLE: é política de apresentação, sem reserva de estoque, aceite de pedido ou permissão de cobrança. Security permite explicitamente GET do catálogo e health, OpenAPI apenas em desenvolvimento e nega o restante. CORS permite origens configuradas/GET sem credenciais, uma política do navegador, sem autorização financeira. Checkout, conciliação, webhooks Stripe, assinaturas do provedor e idempotência durável de pagamentos não estão implementados. Uma mutação futura precisa definir transação, identidade e retries próprios, sem confiar em uma flag da leitura.
+
+### Q008 — O que sobrevive à transição do schema legado e o que os testes cobrem?
+
+**Resposta:** Flyway mantém V1; V2 renomeia stores para `legacy_stores` antes de criar products. Isso preserva linhas históricas sem expor vínculo de loja no DTO. SQL impõe preço positivo, restrições de slug/nome/categoria e valores de disponibilidade; filtragem da resposta pertence à consulta do serviço/repositório. `ProductApiTest` simula o serviço para verificar DTO, segurança e erros HTTP. `ProductPostgresIT` usa Testcontainers para migrações, restrições SQL, visibilidade, ordenação e health em PostgreSQL isolado. Ler os testes não gera nova execução aprovada; um banco Testcontainers novo não demonstra restauração ou migração do volume local existente. Ativar `DEV_SEED_ENABLED` interrompe a partida porque fixtures de conciliação estão ausentes.
+
 
 ## Conciliação com o código — 2026-10-18
 

@@ -8,15 +8,6 @@ Technical questions, detailed answers and follow-ups are available directly on t
 
 The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
-### Q006 — Does every image endpoint accept the same multipart fields and defaults?
-
-**Answer:** No. The compression handler obtains `FormFile("image")` but does not enforce the exactly-one-file contract used by resize and conversion. Conversion inspection and preview reject extra text fields; conversion processing requires exactly one `targetFormat`. Resize processing rejects repeated text values, defaults missing/empty `axis` to `width`, and defaults absent `keepAspectRatio` to true while rejecting its explicit empty value. Numeric required fields reject empty input. These are endpoint-specific contracts, not a universal policy inferred from the shared proxy. The proxy forwards reconstructed FormData and the backend status; it does not normalize all these differences. Client validation should agree with the selected operation instead of assuming another handler has identical rules.
-
-### Q007 — Why can an accepted upload still exceed memory or continue after cancellation?
-
-**Answer:** The Go 50 MiB bound covers the complete encoded multipart body; Next checks the selected file only after `request.formData()` has parsed it and later buffers the response with `arrayBuffer()`. Neither is a streaming global admission budget. Pixel checks bound dimensions/work, while simultaneous source, output, frames and native allocations add memory. Read/write deadlines bound transport, and propagating a request signal does not establish that an in-progress synchronous native codec stops. There is no global semaphore or worker-process isolation in the reviewed handlers. Tests of a fake use case establish HTTP mapping, while codec fixtures and real HTTP tests cover different boundaries; no peak-memory or cancellation measurement was executed in this audit.
-
-
 ## Go Image Optimizer technical interview study guide
 
 
@@ -447,6 +438,15 @@ Follow-up: Is every interface proof of Clean Architecture? No. Check dependency 
 **Answer:** Implemented: results are request-scoped and there is no database, durable job or server history. A proxy failure is 502; supported processing failures have explicit statuses, while codec/unexpected failures become 500. A retry reruns work and can increase load even if input is unchanged. There is no delivery guarantee for a download interrupted after processing. Local Compose and Dockerfiles document runtime dependencies, not a measured production SLO or rollout pipeline. Updating the backend must keep native codec libraries compatible; updating the frontend must preserve metadata/error expectations.
 
 Follow-up: Would rollback need database restoration? There is no upload database here, but retained old build artifacts and compatible proxy contracts would still be needed. No rollback exercise is evidenced. Follow-up: What should diagnosis collect? Status at each hop, sanitized logs, actual detected format/variant, dimensions and a minimal non-sensitive reproducer. Avoid uploading user data into logs. A separate worker would change retry/result persistence semantics, so propose it only for demonstrated requirements. No performance chart, load test, browser validation or runtime deployment was performed during this review.
+
+### Q006 — Does every image endpoint accept the same multipart fields and defaults?
+
+**Answer:** No. The compression handler obtains `FormFile("image")` but does not enforce the exactly-one-file contract used by resize and conversion. Conversion inspection and preview reject extra text fields; conversion processing requires exactly one `targetFormat`. Resize processing rejects repeated text values, defaults missing/empty `axis` to `width`, and defaults absent `keepAspectRatio` to true while rejecting its explicit empty value. Numeric required fields reject empty input. These are endpoint-specific contracts, not a universal policy inferred from the shared proxy. The proxy forwards reconstructed FormData and the backend status; it does not normalize all these differences. Client validation should agree with the selected operation instead of assuming another handler has identical rules.
+
+### Q007 — Why can an accepted upload still exceed memory or continue after cancellation?
+
+**Answer:** The Go 50 MiB bound covers the complete encoded multipart body; Next checks the selected file only after `request.formData()` has parsed it and later buffers the response with `arrayBuffer()`. Neither is a streaming global admission budget. Pixel checks bound dimensions/work, while simultaneous source, output, frames and native allocations add memory. Read/write deadlines bound transport, and propagating a request signal does not establish that an in-progress synchronous native codec stops. There is no global semaphore or worker-process isolation in the reviewed handlers. Tests of a fake use case establish HTTP mapping, while codec fixtures and real HTTP tests cover different boundaries; no peak-memory or cancellation measurement was executed in this audit.
+
 
 ## Source reconciliation — 2026-10-18
 

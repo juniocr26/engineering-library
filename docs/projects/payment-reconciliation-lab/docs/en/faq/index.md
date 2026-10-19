@@ -8,15 +8,6 @@ Technical questions, detailed answers and follow-ups are available directly on t
 
 The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
-### Q007 — Does readOnly=true or purchasable=true implement payment authorization?
-
-**Answer:** No. `CatalogService.list` uses a read-only transaction to query AVAILABLE and TEMPORARILY_UNAVAILABLE rows and map explicit DTOs before returning. `purchasable` is derived from AVAILABLE; it is display policy, not stock reservation, order acceptance or permission to charge. Security explicitly allows catalog GET and health, with development-only OpenAPI routes and deny-all fallback. CORS allows configured origins/GET without credentials, which is a browser policy rather than payment authorization. Checkout, reconciliation, Stripe webhooks, provider signatures and durable payment idempotency are not implemented. A future mutation contract must establish its own transaction, identity and retry semantics rather than relying on a read response flag.
-
-### Q008 — What survives the legacy-schema transition, and what do the tests actually cover?
-
-**Answer:** Flyway V1 is retained and V2 renames stores to `legacy_stores` before creating products. That preserves historical rows without exposing a store relationship in the catalog DTO. SQL enforces positive price, slug/name/category constraints and the allowed availability set; response filtering belongs to the service/repository query. `ProductApiTest` mocks the service and verifies HTTP DTO/security/error policy. `ProductPostgresIT` uses Testcontainers to exercise migrations, SQL constraints, visibility, sorting and health against isolated PostgreSQL. Neither test source is a new passing run, and a new Testcontainers database does not demonstrate restore or migration of the existing local volume. Enabling `DEV_SEED_ENABLED` intentionally aborts startup because reconciliation fixtures are absent.
-
-
 ## Payment Reconciliation Lab technical interview study guide
 
 
@@ -128,6 +119,15 @@ Follow-up: Can we edit V1 to match the new product name? Applied migration check
 **Answer:** Implemented evidence: 5 ProductApiTest methods replace CatalogService, 2 tests cover seed rejection/default behavior, 5 opt-in PostgreSQL methods use isolated Testcontainers and 4 Angular cases replace HTTP. The layers prove different things: API fakes cover response/security/error contracts; real PostgreSQL cases exercise migrations/constraints/query visibility; Angular cases exercise UI states. Counts are an inventory, not current passing status or coverage percentage. No application tests ran in this review, and there are no reconciliation/provider tests.
 
 Follow-up: Could all fake tests pass while startup fails? Yes, for missing schema under disabled migrations, wrong credentials or enabled retired seed. Follow-up: What is the actual catalog scaling limit? The query returns all visible entities and DTOs without pagination/cache. Memory, sort work and response size can grow with catalog size; no measured threshold is available. Hypothetical pagination needs stable ordering/tie-breaking and UI contracts, while caching needs an invalidation/freshness policy. Health readiness checks database connectivity but neither these scaling limits nor payment functionality. Test new requirements at the boundary they rely on.
+
+### Q007 — Does readOnly=true or purchasable=true implement payment authorization?
+
+**Answer:** No. `CatalogService.list` uses a read-only transaction to query AVAILABLE and TEMPORARILY_UNAVAILABLE rows and map explicit DTOs before returning. `purchasable` is derived from AVAILABLE; it is display policy, not stock reservation, order acceptance or permission to charge. Security explicitly allows catalog GET and health, with development-only OpenAPI routes and deny-all fallback. CORS allows configured origins/GET without credentials, which is a browser policy rather than payment authorization. Checkout, reconciliation, Stripe webhooks, provider signatures and durable payment idempotency are not implemented. A future mutation contract must establish its own transaction, identity and retry semantics rather than relying on a read response flag.
+
+### Q008 — What survives the legacy-schema transition, and what do the tests actually cover?
+
+**Answer:** Flyway V1 is retained and V2 renames stores to `legacy_stores` before creating products. That preserves historical rows without exposing a store relationship in the catalog DTO. SQL enforces positive price, slug/name/category constraints and the allowed availability set; response filtering belongs to the service/repository query. `ProductApiTest` mocks the service and verifies HTTP DTO/security/error policy. `ProductPostgresIT` uses Testcontainers to exercise migrations, SQL constraints, visibility, sorting and health against isolated PostgreSQL. Neither test source is a new passing run, and a new Testcontainers database does not demonstrate restore or migration of the existing local volume. Enabling `DEV_SEED_ENABLED` intentionally aborts startup because reconciliation fixtures are absent.
+
 
 ## Source reconciliation — 2026-10-18
 

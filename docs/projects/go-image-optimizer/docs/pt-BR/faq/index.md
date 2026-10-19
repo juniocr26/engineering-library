@@ -8,15 +8,6 @@ Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente n
 
 As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
-### Q006 — Todos os endpoints de imagem aceitam os mesmos campos multipart e padrões?
-
-**Resposta:** Não. O handler de compressão obtém `FormFile("image")`, mas não impõe o contrato de exatamente um arquivo usado em resize e conversão. Inspeção de conversão e preview rejeitam campos textuais extras; processamento de conversão exige exatamente um `targetFormat`. Resize rejeita valores textuais repetidos, usa `width` para `axis` ausente/vazio e assume true quando `keepAspectRatio` está ausente, rejeitando seu vazio explícito. Campos numéricos obrigatórios rejeitam vazio. São contratos por endpoint, sem política universal inferida do proxy. O proxy encaminha FormData reconstruído e status do backend, sem normalizar essas diferenças. A validação cliente deve acompanhar a operação selecionada.
-
-### Q007 — Por que um upload aceito ainda pode exceder memória ou continuar após cancelamento?
-
-**Resposta:** O limite Go de 50 MiB cobre todo o corpo multipart codificado; Next verifica o arquivo selecionado somente após `request.formData()` e depois mantém a resposta em `arrayBuffer()`. Nenhum deles constitui admissão global em streaming. Limites de pixels delimitam dimensões/trabalho; origem, saída, frames e alocações nativas simultâneas somam memória. Deadlines de leitura/escrita limitam transporte; propagar o sinal não estabelece interrupção de codec nativo síncrono em andamento. Não há semáforo global nem isolamento por processo nos handlers revisados. Fakes comprovam mapeamento HTTP; fixtures de codecs e testes HTTP reais têm outras fronteiras. Esta auditoria não mediu pico de memória ou cancelamento.
-
-
 ## Go Image Optimizer Guia de Estudo para Entrevista Técnica
 
 
@@ -523,6 +514,15 @@ Aprofundamento: Toda interface prova Clean Architecture? Não. Verifique direç�
 **Resposta:** Implementado: resultados são por requisição, sem banco, job durável ou histórico servidor. Falha do proxy vira 502; falhas de processamento têm status explícitos; codec/inesperadas viram 500. Retry repete trabalho e pode aumentar carga mesmo com entrada igual. Não há garantia de entrega de download interrompido após processamento. Compose/Dockerfiles locais documentam dependências, não SLO medido ou pipeline de rollout. Atualizar backend exige bibliotecas nativas compatíveis; frontend precisa preservar expectativas de metadados/erros.
 
 Aprofundamento: Rollback exigiria restauração de banco? Não há banco de uploads, mas seriam necessários artefatos antigos e contratos de proxy compatíveis. Não há ensaio de rollback evidenciado. Aprofundamento: O que coletar no diagnóstico? Status em cada salto, logs sanitizados, formato/variante detectado, dimensões e reproducer mínimo não sensível. Evite conteúdo de usuário nos logs. Worker separado mudaria persistência/retry dos resultados; proponha apenas para requisitos demonstrados. Não houve gráfico de desempenho, carga, navegador ou implantação runtime nesta revisão.
+
+### Q006 — Todos os endpoints de imagem aceitam os mesmos campos multipart e padrões?
+
+**Resposta:** Não. O handler de compressão obtém `FormFile("image")`, mas não impõe o contrato de exatamente um arquivo usado em resize e conversão. Inspeção de conversão e preview rejeitam campos textuais extras; processamento de conversão exige exatamente um `targetFormat`. Resize rejeita valores textuais repetidos, usa `width` para `axis` ausente/vazio e assume true quando `keepAspectRatio` está ausente, rejeitando seu vazio explícito. Campos numéricos obrigatórios rejeitam vazio. São contratos por endpoint, sem política universal inferida do proxy. O proxy encaminha FormData reconstruído e status do backend, sem normalizar essas diferenças. A validação cliente deve acompanhar a operação selecionada.
+
+### Q007 — Por que um upload aceito ainda pode exceder memória ou continuar após cancelamento?
+
+**Resposta:** O limite Go de 50 MiB cobre todo o corpo multipart codificado; Next verifica o arquivo selecionado somente após `request.formData()` e depois mantém a resposta em `arrayBuffer()`. Nenhum deles constitui admissão global em streaming. Limites de pixels delimitam dimensões/trabalho; origem, saída, frames e alocações nativas simultâneas somam memória. Deadlines de leitura/escrita limitam transporte; propagar o sinal não estabelece interrupção de codec nativo síncrono em andamento. Não há semáforo global nem isolamento por processo nos handlers revisados. Fakes comprovam mapeamento HTTP; fixtures de codecs e testes HTTP reais têm outras fronteiras. Esta auditoria não mediu pico de memória ou cancelamento.
+
 
 ## Conciliação com o código — 2026-10-18
 

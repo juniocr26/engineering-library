@@ -8,15 +8,6 @@ Technical questions, detailed answers and follow-ups are available directly on t
 
 The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
-### Q006 — What happens if the Redis counter disappears after a process initialized it?
-
-**Answer:** `RedisIdGenerator` remembers `_initialized` locally. Its lock protects the initial SET NX in that instance, not counter durability. If the key disappears afterward, the next INCR can recreate it from zero, and the instance does not restore `URL_ID_START`. Reused IDs can target existing Cassandra primary keys; the adapter uses ordinary INSERT/upsert rather than a conditional uniqueness transaction. Redis INCR atomicity therefore does not prove permanent global uniqueness after data loss. A Cassandra timeout can also leave an already written mapping whose acknowledgement was lost; retrying POST normally allocates another ID. Counter recovery, cross-store reconciliation and a durable creation-idempotency contract remain separate design work, not capabilities delivered by the initialization lock.
-
-### Q007 — Can changing only injected service settings safely rotate the public-code mapping?
-
-**Answer:** No. The service receives Settings for constructing the public URL, but Base62 and obfuscation helpers independently call cached global `get_settings()`. Changing an injected instance does not necessarily change those helpers. Public codes use a reversible affine permutation modulo `62**7`, with SHA-256-derived parameters and literal `0` left-padding; the latter assumes a zero-first alphabet for correct round trips. Changing key/alphabet changes decoding of existing links, with no version marker or migration registry. This is obfuscation, not encryption or authorization. An actual rotation would need explicit compatibility/versioning and recovery requirements; no rotation or real-store recovery was executed. Fake-backed tests demonstrate selected call/error contracts, not historical-code compatibility across every configuration.
-
-
 ## URL Shortener technical interview study guide
 
 
@@ -736,6 +727,15 @@ Follow-up: Can we promise immediate successful resolution after creation solely 
 **Answer:** Implemented: authenticated valid POST succeeds with 201; public GET returns 301, invalid/missing codes 404, configuration failures 500 and adapter failures 503. A permanent redirect can be cached, so application logs do not measure every later visit. The Compose app probe requests OpenAPI after startup; startup initializes Cassandra, while Redis allocation is lazy. Thus a green probe does not prove a fresh Redis increment or mapping lookup. GET's dependency path excludes Redis, but app restart still depends on Cassandra initialization.
 
 Follow-up: Do fake HTTP/service tests prove the real cluster works? No; they verify validation, mapping and call ordering under modeled outcomes. Driver defaults, authentication, actual partial writes and failover require isolated infrastructure tests. Follow-up: What would production observability add? Per-operation latency/error categories, dependency readiness and counter recovery alarms without leaking credentials/destinations. Those are hypothetical. Local reload, bind mounts and health probes do not constitute a production deployment strategy; retention, consistent restoration and rollback remain evidence-dependent gaps.
+
+### Q006 — What happens if the Redis counter disappears after a process initialized it?
+
+**Answer:** `RedisIdGenerator` remembers `_initialized` locally. Its lock protects the initial SET NX in that instance, not counter durability. If the key disappears afterward, the next INCR can recreate it from zero, and the instance does not restore `URL_ID_START`. Reused IDs can target existing Cassandra primary keys; the adapter uses ordinary INSERT/upsert rather than a conditional uniqueness transaction. Redis INCR atomicity therefore does not prove permanent global uniqueness after data loss. A Cassandra timeout can also leave an already written mapping whose acknowledgement was lost; retrying POST normally allocates another ID. Counter recovery, cross-store reconciliation and a durable creation-idempotency contract remain separate design work, not capabilities delivered by the initialization lock.
+
+### Q007 — Can changing only injected service settings safely rotate the public-code mapping?
+
+**Answer:** No. The service receives Settings for constructing the public URL, but Base62 and obfuscation helpers independently call cached global `get_settings()`. Changing an injected instance does not necessarily change those helpers. Public codes use a reversible affine permutation modulo `62**7`, with SHA-256-derived parameters and literal `0` left-padding; the latter assumes a zero-first alphabet for correct round trips. Changing key/alphabet changes decoding of existing links, with no version marker or migration registry. This is obfuscation, not encryption or authorization. An actual rotation would need explicit compatibility/versioning and recovery requirements; no rotation or real-store recovery was executed. Fake-backed tests demonstrate selected call/error contracts, not historical-code compatibility across every configuration.
+
 
 ## Source reconciliation — 2026-10-18
 

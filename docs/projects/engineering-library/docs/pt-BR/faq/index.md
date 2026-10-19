@@ -10,15 +10,6 @@ Perguntas técnicas, respostas detalhadas e aprofundamentos estão diretamente n
 
 As respostas abaixo foram verificadas em código atual e definições de testes selecionados. Nenhum teste de aplicação ou serviço dos repositórios irmãos foi executado. Veja o [registro de escopo e evidências](../operations/documentation-audit-2026-10-19.md).
 
-### Q004 — Por que conteúdo em arquivos e sincronização do catálogo têm fronteiras de consistência diferentes?
-
-**Resposta:** `Catalog::Sync` valida as duas bios e IDs estáveis duplicados antes da transação PostgreSQL. Seu advisory lock serializa sincronizações cooperantes no banco, sem bloquear editores de arquivos. Arquivos podem mudar após a validação; presenters também leem bios do disco depois. Mantenha metadados estáveis durante sync e sincronize explicitamente alterações de bio/nome/slug. Editar o corpo de um capítulo dispensa ingestão no banco. Projetos ausentes ficam inativos; IDs estáveis preservam a identidade do catálogo em renomeações suportadas. Isso não migra favoritos, cuja associação usa o slug textual. Sync bem-sucedido estabelece a atualização indexada sob aquelas entradas, sem snapshot atômico de todos os capítulos ou reparação automática de URLs antigas de favoritos.
-
-### Q005 — O que protege favoritos anônimos e quais garantias permanecem ausentes?
-
-**Resposta:** Um GET inicial cria cookie assinado; o servidor aplica hash ao token aleatório para delimitar linhas PostgreSQL. Mutações exigem `X-Reader-CSRF` com token do verifier vinculado ao digest e à finalidade. O índice único inclui leitor, projeto, documento, idioma e âncora, impedindo outra linha para a mesma localização lógica. Exclusão por outro leitor retorna não encontrado. Não há login, sincronização entre dispositivos ou identidade de recuperação quando o cookie se perde. A contagem antes do insert para 200 entradas é política de admissão, sem quota exata sob concorrência. Markdown comum tem existência verificada, mas não toda âncora; `@contents` é documento virtual reservado. Assim, favoritos de sintaxe válida podem ficar indisponíveis após alterações de documentos ou snapshots.
-
-
 ## Entrevista da Engineering Library
 
 > Revisão do código — 2026-10-19: a árvore atual implementa API de catálogo Rails, registros de catálogo e favoritos anônimos no PostgreSQL, além do leitor Markdown interno em Next.js. A descrição anterior de coleção sem aplicação/scaffold foi superada. Não há agente de IA implementado. Consulte a [arquitetura atual](../architecture/current-state.md).
@@ -42,6 +33,15 @@ Aprofundamento: É sandbox livre de corrida? Não. lstat seguido de leitura tem 
 **Resposta:** Implementado: caminhos Markdown estáveis formam o contrato de navegação. O validador atual carrega Markdown permitido, extrai âncoras/destinos e percorre o grafo desde a biblioteca e cada índice de projeto/idioma. Essas verificações Python dispensam Rails, PostgreSQL e Next. O leitor em execução tem comportamento separado: `documentationEntries` unifica IDs relativos entre idiomas, omite índices apenas navegacionais, mantém índices substanciais e constrói entradas por categoria/documento. Assim, índices FAQ com respostas tornam-se capítulos automaticamente. Validação estrutural não demonstra paginação no navegador nem disponibilidade da API.
 
 Aprofundamento: Qual custo? Leitura/parser crescem com bytes; percurso com vértices/arestas, mais metadados filesystem; sem medições. Aprofundamento: Estrutura detecta fatos conflitantes/traduções ruins? Não. Detecta IDs/contrapartes/respostas ausentes, mas revisão do código julga significado. Testes isolados comprovam contratos selecionados, não operação livre de corrida sob mutação hostil ou alcance externo.
+
+### Q004 — Por que conteúdo em arquivos e sincronização do catálogo têm fronteiras de consistência diferentes?
+
+**Resposta:** `Catalog::Sync` valida as duas bios e IDs estáveis duplicados antes da transação PostgreSQL. Seu advisory lock serializa sincronizações cooperantes no banco, sem bloquear editores de arquivos. Arquivos podem mudar após a validação; presenters também leem bios do disco depois. Mantenha metadados estáveis durante sync e sincronize explicitamente alterações de bio/nome/slug. Editar o corpo de um capítulo dispensa ingestão no banco. Projetos ausentes ficam inativos; IDs estáveis preservam a identidade do catálogo em renomeações suportadas. Isso não migra favoritos, cuja associação usa o slug textual. Sync bem-sucedido estabelece a atualização indexada sob aquelas entradas, sem snapshot atômico de todos os capítulos ou reparação automática de URLs antigas de favoritos.
+
+### Q005 — O que protege favoritos anônimos e quais garantias permanecem ausentes?
+
+**Resposta:** Um GET inicial cria cookie assinado; o servidor aplica hash ao token aleatório para delimitar linhas PostgreSQL. Mutações exigem `X-Reader-CSRF` com token do verifier vinculado ao digest e à finalidade. O índice único inclui leitor, projeto, documento, idioma e âncora, impedindo outra linha para a mesma localização lógica. Exclusão por outro leitor retorna não encontrado. Não há login, sincronização entre dispositivos ou identidade de recuperação quando o cookie se perde. A contagem antes do insert para 200 entradas é política de admissão, sem quota exata sob concorrência. Markdown comum tem existência verificada, mas não toda âncora; `@contents` é documento virtual reservado. Assim, favoritos de sintaxe válida podem ficar indisponíveis após alterações de documentos ou snapshots.
+
 
 ## Perguntas sobre aplicação e catálogo
 

@@ -8,15 +8,6 @@ Technical questions, detailed answers and follow-ups are available directly on t
 
 The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
-### Q016 — Can one completed run accept multiple duplicate-publication actions?
-
-**Answer:** Yes in the current tree. Migration `20261019000000_multiple_duplicate_actions.up.sql` removes the unique run constraint and adds a run/history index. The repository still reconciles action `request_id` before new admission: retrying the same identity returns its prior action, while changed run/copy intent conflicts. New identities can admit up to three retained actions for a run, subject to four queued/executing and 100 retained actions globally. Copies must be 1 or 3; three copies require the concurrent scenario. Eligibility also requires processed outbox and completed inventory receipt with stock 15. This is bounded local demonstration behavior, not arbitrary replay or broker administration. Multiple actions preserve the original event envelope; consumer deduplication, not action admission, prevents another stock increment.
-
-### Q017 — Does an HTTP timeout prove the producer or action was rolled back?
-
-**Answer:** No. The dedicated demo middleware returns a sanitized 503 after its eight-second timeout, but a transaction may already have committed. Reuse the same request identity and inspect/reconcile evidence rather than generating another command identity. The demo API separately checks a 64-character bearer token, optional matching localhost/loopback Origin and `x-demo-client: demo61`; its two-permit semaphore and ten requests per second are local admission bounds, not a distributed rate-limit guarantee. Dedicated composition validates the demo database fingerprint, uses two pool connections and separate SQL/lock/acquisition timeouts. Static test definitions include lost commit acknowledgement, cancellation after server commit, identity conflicts and history reads. They do not establish new execution, global crash safety or production rollout.
-
-
 ## Reading boundary — updated 2026-10-18
 
 
@@ -281,3 +272,10 @@ Follow-up: Why not auto-resend unknown actions? The prior action may already hav
 **Answer:** Pure/fake tests establish policy and call sequencing; isolated PostgreSQL/RabbitMQ/process tests cover selected real failure schedules; browser tests cover real and illustrative UI separately. The final 2026-10-17 manifest records acceptance at its own base, not the current documentation revision or remote CI. The supported single main launcher, separate runtime/test artifacts and named Supervisor controls address local operation. Finite resource/retention bounds reject excess work instead of deleting evidence. They are not measured production capacity, disaster recovery or HA/TLS.
 
 Follow-up: What would justify a production claim? Explicit transport security, least-privilege deployment, retention/restore across database and broker, operational ownership and workload-specific evidence. These are hypothetical improvements, not acceptance blockers retroactively added to the completed local portfolio scope.
+### Q016 — Can one completed run accept multiple duplicate-publication actions?
+
+**Answer:** Yes in the current tree. Migration `20261019000000_multiple_duplicate_actions.up.sql` removes the unique run constraint and adds a run/history index. The repository still reconciles action `request_id` before new admission: retrying the same identity returns its prior action, while changed run/copy intent conflicts. New identities can admit up to three retained actions for a run, subject to four queued/executing and 100 retained actions globally. Copies must be 1 or 3; three copies require the concurrent scenario. Eligibility also requires processed outbox and completed inventory receipt with stock 15. This is bounded local demonstration behavior, not arbitrary replay or broker administration. Multiple actions preserve the original event envelope; consumer deduplication, not action admission, prevents another stock increment.
+
+### Q017 — Does an HTTP timeout prove the producer or action was rolled back?
+
+**Answer:** No. The dedicated demo middleware returns a sanitized 503 after its eight-second timeout, but a transaction may already have committed. Reuse the same request identity and inspect/reconcile evidence rather than generating another command identity. The demo API separately checks a 64-character bearer token, optional matching localhost/loopback Origin and `x-demo-client: demo61`; its two-permit semaphore and ten requests per second are local admission bounds, not a distributed rate-limit guarantee. Dedicated composition validates the demo database fingerprint, uses two pool connections and separate SQL/lock/acquisition timeouts. Static test definitions include lost commit acknowledgement, cancellation after server commit, identity conflicts and history reads. They do not establish new execution, global crash safety or production rollout.

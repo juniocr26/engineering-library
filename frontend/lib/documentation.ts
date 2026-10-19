@@ -33,7 +33,9 @@ export async function documentationEntries(slug: string, language: Language): Pr
   }));
   const selected = localized[language === 'en' ? 0 : 1];
   const alphabetical = (a: string, b: string) => a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : a < b ? -1 : a > b ? 1 : 0;
-  const ids = [...new Set(localized.flatMap(map => [...map.keys()]))].sort(alphabetical);
+  const ids = [...new Set(localized.flatMap(map => [...map.keys()]))]
+    .filter(id => id !== 'index.md' && (!id.startsWith('faq/') || id === 'faq/index.md'))
+    .sort(alphabetical);
   const groups = [...new Set(ids.map(id => id.split('/')[0]))].sort(alphabetical);
   const result: TocEntry[] = [];
   const entry = (id: string, number: string, heading = false): TocEntry => {
@@ -42,7 +44,8 @@ export async function documentationEntries(slug: string, language: Language): Pr
   };
   groups.forEach((group, index) => {
     const children = ids.filter(id => id.startsWith(`${group}/`));
-    if (!children.length) result.push(entry(group, `${index + 1}`, true));
+    if (group === 'faq') result.push({ ...entry('faq/index.md', `${index + 1}`, true), title: 'FAQ' });
+    else if (!children.length) result.push(entry(group, `${index + 1}`, true));
     else {
       result.push({ id: `category:${group}`, number: `${index + 1}`, title: categoryLabels[language][group] ?? group, heading: true, keepWithNext: true });
       children.forEach((id, child) => result.push(entry(id, `${index + 1}.${child + 1}`)));
