@@ -151,6 +151,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     focused.current = document.activeElement instanceof HTMLElement && stage.current?.contains(document.activeElement) ? document.activeElement : null;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(target, href); return; }
     locked.current = true; setTurn({ direction, from: pages.slice(position, position + count), target, href });
+    // Move focus out before its page becomes inert and hidden from assistive technology.
+    if (focused.current) stage.current?.focus({ preventScroll: true });
     timer.current = setTimeout(() => finish(target, href), 850);
   }
   const previousBoundary = position === 0 && !!previousChapter;
@@ -165,9 +167,9 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       <span aria-live="polite" aria-atomic="true">{ready ? `${messages[language].page} ${position + 1}${count === 2 && position + 1 < pages.length ? `–${position + 2}` : ''} ${messages[language].of} ${pages.length}` : language === 'en' ? 'Paginating…' : 'Paginando…'}</span>
       <button title={nextLabel} aria-label={nextLabel} aria-disabled={!ready || !!turn || departing || (position + count >= pages.length && !nextChapter)} onClick={() => navigate(1)}>{nextBoundary ? boundaryIcon(1) : '❯'}</button>
     </nav>;
-  function leaf(page: T[] | undefined, key: string, side: 'left' | 'right', physicalPage = 0) {
+  function leaf(page: T[] | undefined, key: string, side: 'left' | 'right', physicalPage = 0, concealed = false) {
     const identity = contentPageId((page ?? []).map(unit => unit.id));
-    return <div className="reader-leaf paper manuscript-surface" key={key} data-page-id={identity}>
+    return <div className="reader-leaf paper manuscript-surface" key={key} data-page-id={identity} data-content-concealed={concealed || undefined} aria-hidden={concealed || undefined} inert={concealed || undefined}>
       <ManuscriptDecorations variant="reading" project={project} identity={identity}/>
       {/* Give the externally owned header its own stable sibling boundary. */}
       {side === 'left' && <Fragment key="header">{typeof header === 'function' ? header(page?.length && pageAction ? pageAction(page, physicalPage) : null) : header}</Fragment>}
@@ -190,9 +192,9 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1);
   }}>
     <div className="reader-stage" ref={stage} tabIndex={-1} aria-busy={!ready || !!turn || departing}>
-      <div className="reader-pages">{leaf(ready ? left : undefined, 'left', 'left', visible + 1)}{mode === 'spread' && leaf(ready ? right : undefined, 'right', 'right', visible + 2)}</div>
+      <div className="reader-pages">{leaf(ready ? left : undefined, 'left', 'left', visible + 1, !!turn && (count === 1 || turn.direction === -1))}{mode === 'spread' && leaf(ready ? right : undefined, 'right', 'right', visible + 2, !!turn && turn.direction === 1)}</div>
       {turn && <div className={`turn-sheet turn-sheet--${turn.direction === 1 ? 'forward' : 'backward'}`} aria-hidden="true" inert onAnimationEnd={event => { if (event.target === event.currentTarget) finish(turn.target, turn.href); }}>
-        <div className="turn-face turn-front">{leaf(front, 'front', mode === 'spread' && turn.direction === 1 ? 'right' : 'left')}</div><div className="turn-face turn-back">{leaf(back, 'back', mode === 'spread' && turn.direction === -1 ? 'right' : 'left')}</div>
+        <div className="turn-face turn-front">{leaf(front, 'front', mode === 'spread' && turn.direction === 1 ? 'right' : 'left', 0, true)}</div><div className="turn-face turn-back">{leaf(back, 'back', mode === 'spread' && turn.direction === -1 ? 'right' : 'left', 0, true)}</div>
       </div>}
     </div>
     <div className="reader-measure" aria-hidden="true" inert>

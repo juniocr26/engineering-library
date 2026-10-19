@@ -348,6 +348,10 @@ inset:0}
 .reader-pages{display:grid;grid-template-columns:1fr 1fr}
 .reader-leaf.paper{position:relative;padding:var(--leaf-pad);height:var(--leaf-height);min-height:0;overflow:hidden;color:#173d5c;display:flex;flex-direction:column;gap:0}
 .reader-body{flex:1;min-height:0;position:relative;z-index:2;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#936337 transparent;overflow-wrap:anywhere}
+/* Preserve leaf geometry and parchment while the existing turn lifecycle owns visibility.
+   Include descendants so nested visibility rules cannot expose document content. */
+.reader-leaf[data-content-concealed=true]>:not(.manuscript-decorations),
+.reader-leaf[data-content-concealed=true]>:not(.manuscript-decorations) *{visibility:hidden!important;pointer-events:none!important}
 .book-unit{display:flow-root;padding:7px 0}
 .toc-chapter{font-family:'Great Vibes','Apple Chancery',cursive;font-size:clamp(25px,2.5vw,34px);font-style:normal;font-weight:400;margin:10px 0 3px;border-bottom:1px solid #74533055;padding-bottom:7px}
 .toc-document{padding-left:16px;line-height:1.5;font-size:16px}

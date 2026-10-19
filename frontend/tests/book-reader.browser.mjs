@@ -12,6 +12,29 @@ async function ready(page) {
   await page.locator('.reader-stage[aria-busy="false"]').waitFor();
 }
 
+async function inspectTurn(page, direction) {
+  const sheet = page.locator('.turn-sheet');
+  await sheet.waitFor({ state: 'attached' });
+  const state = await page.evaluate(() => {
+    const leaves = [...document.querySelectorAll('.reader-pages > .reader-leaf')];
+    const faces = [...document.querySelectorAll('.turn-face > .reader-leaf')];
+    const concealed = [...leaves, ...faces].filter(leaf => leaf.dataset.contentConcealed === 'true');
+    return {
+      leaves: leaves.map(leaf => leaf.dataset.contentConcealed === 'true'),
+      faces: faces.length,
+      hidden: concealed.every(leaf => leaf.inert && leaf.getAttribute('aria-hidden') === 'true' &&
+        [...leaf.querySelectorAll('.reader-body, .book-unit, a, button')].every(node => getComputedStyle(node).visibility === 'hidden')),
+      parchment: concealed.every(leaf => getComputedStyle(leaf.querySelector('.manuscript-decorations')).visibility === 'visible'),
+      geometry: concealed.every(leaf => leaf.getBoundingClientRect().height > 0 && leaf.querySelector('.reader-body').clientHeight > 0),
+    };
+  });
+  assert.equal(state.faces, 2);
+  assert.equal(state.hidden, true, 'turning and destination content must be hidden and inert');
+  assert.equal(state.parchment, true, 'manuscript decorations must remain visible');
+  assert.equal(state.geometry, true, 'concealing content must preserve layout');
+  assert.deepEqual(state.leaves, state.leaves.length === 1 ? [true] : direction === 1 ? [false, true] : [true, false]);
+}
+
 async function turnAndReturn(page) {
   const leaves = page.locator('.reader-pages');
   const controls = leaves.locator('.reader-controls');
@@ -20,13 +43,16 @@ async function turnAndReturn(page) {
   const next = controls.locator('button').last();
   assert.equal(await next.getAttribute('aria-disabled'), 'false', 'fixture must have multiple physical pages');
   await next.click();
+  await inspectTurn(page, 1);
   await page.waitForFunction(text => document.querySelector('.reader-pages [aria-live]')?.textContent !== text, before);
   await ready(page);
   assert.notEqual(await leaves.locator('.reader-leaf').first().getAttribute('data-page-id'), identity);
   await controls.locator('button').first().click();
+  await inspectTurn(page, -1);
   await page.waitForFunction(text => document.querySelector('.reader-pages [aria-live]')?.textContent === text, before);
   await ready(page);
   assert.equal(await leaves.locator('.reader-leaf').first().getAttribute('data-page-id'), identity);
+  assert.equal(await leaves.locator('[data-content-concealed="true"]').count(), 0);
 }
 
 async function openDocument(page) {
@@ -46,7 +72,7 @@ async function openDocument(page) {
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    for (const width of [390, 1440]) {
+    for (const width of [390, 768, 1440]) {
       const context = await browser.newContext({ viewport: { width, height: 900 } });
       const page = await context.newPage();
       page.setDefaultTimeout(30_000);
@@ -68,6 +94,17 @@ async function openDocument(page) {
         assert.equal(await page.locator('.reader-pages .toc-header h1').innerText(), 'Sumário');
         assert.equal(await page.locator('.reader-probe--left .toc-header').count(), 1);
         await turnAndReturn(page);
+
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        const originalPage = await page.locator('.reader-pages [aria-live]').innerText();
+        await page.locator('.reader-pages .reader-controls button').last().click();
+        await ready(page);
+        assert.notEqual(await page.locator('.reader-pages [aria-live]').innerText(), originalPage);
+        assert.equal(await page.locator('.turn-sheet, .reader-pages [data-content-concealed="true"]').count(), 0);
+        await page.locator('.reader-pages .reader-controls button').first().click();
+        await ready(page);
+        assert.equal(await page.locator('.reader-pages [aria-live]').innerText(), originalPage);
+        await page.emulateMedia({ reducedMotion: 'no-preference' });
 
         await page.locator('.reader-pages .toc-header a[hreflang="en"]').click();
         await page.waitForFunction(() => document.querySelector('main')?.lang === 'en');
