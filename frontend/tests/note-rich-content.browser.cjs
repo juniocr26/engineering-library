@@ -31,7 +31,7 @@ const source = '# Rich content 📚 ação\n\n**Markdown** <em>mixed HTML</em>\n
       await page.route('https://absent.test/**', route => route.abort('namenotresolved'));
       await page.goto(`${base}${path}?lang=en`);
       await page.locator('.reader[data-pagination="ready"]').waitFor();
-      await page.waitForTimeout(1000);
+      await page.locator('.reader-pages [data-highlight-block]:not([data-highlight-unsupported]) p').first().waitFor();
       const ids = await page.evaluate(async ({ query, source }) => {
         const { csrf_token } = await (await fetch(`/api/highlights?${query}`)).json();
         const p = document.querySelector('.reader-pages [data-highlight-block]:not([data-highlight-unsupported]) p');
@@ -76,9 +76,29 @@ const source = '# Rich content 📚 ação\n\n**Markdown** <em>mixed HTML</em>\n
         assert.equal(await isolatedFrame.evaluate(async url => { try { await fetch(url); return 'unexpected access'; } catch { return 'blocked'; } }, `${base}/api/notes?${query}`), 'blocked');
         await preview.locator('.reader-diagram img').waitFor();
         await preview.locator('.reader-diagram [role=alert]').waitFor();
-        await preview.getByRole('button', { name: 'Expand image', exact: true }).first().click();
+        assert.equal(await preview.locator('.expandable-media > .media-controls').count(), 0);
+        const image = preview.getByRole('button', { name: 'Expand image: Remote SVG', exact: true });
+        assert.equal(await image.evaluate(node => getComputedStyle(node).cursor), 'pointer');
+        await image.click();
         await page.getByRole('dialog', { name: 'Remote SVG', exact: true }).waitFor();
+        const viewer = page.getByRole('dialog', { name: 'Remote SVG', exact: true });
+        await viewer.getByRole('button', { name: 'Zoom in', exact: true }).click();
+        assert.equal(await viewer.locator('output').innerText(), '125%');
+        await viewer.getByRole('button', { name: 'Reset zoom', exact: true }).click();
+        assert.equal(await viewer.locator('output').innerText(), '100%');
         await page.keyboard.press('Escape');
+        await image.focus();
+        await page.keyboard.press('Enter');
+        await viewer.waitFor();
+        await page.keyboard.press('Escape');
+        await image.focus();
+        await page.keyboard.press('Space');
+        await viewer.waitFor();
+        await page.keyboard.press('Escape');
+        await preview.getByRole('button', { name: 'Expand diagram: Documentation diagram', exact: true }).click();
+        await page.getByRole('dialog', { name: 'Documentation diagram', exact: true }).waitFor();
+        await page.keyboard.press('Escape');
+        assert.ok(await preview.getByRole('button', { name: 'Expand table', exact: true }).count());
         for (let i = 0; i < 8; i++) { const button = preview.getByRole('button', { name: 'Zoom in', exact: true }); if (await button.isEnabled()) await button.click(); }
         assert.equal(await preview.locator('output').innerText(), '500%');
         await preview.getByRole('button', { name: 'Pan mode', exact: true }).click();

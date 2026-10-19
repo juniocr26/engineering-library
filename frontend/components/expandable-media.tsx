@@ -71,16 +71,26 @@ function diagramUrl(svg: string) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(root))}`;
 }
 
-export function ExpandableMedia({ src, alt, svg, language, children, width, height, title }: { width?: number | string; height?: number | string; title?: string; src?: string; alt: string; svg?: string; language: Language; children?: ReactNode }) {
+export function ExpandableMedia({ src, alt, svg, language, children, width, height, title, expandOnClick = false }: { expandOnClick?: boolean; width?: number | string; height?: number | string; title?: string; src?: string; alt: string; svg?: string; language: Language; children?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [failedSource, setFailedSource] = useState<string>();
   const failed = !!src && failedSource === src;
   const button = useRef<HTMLButtonElement>(null);
   const text = labels[language];
+  const graphic = useRef<HTMLImageElement | null>(null);
+  const content = children ?? (failed || !src ? <MissingImage alt={alt} message={text.failed}/> : <img src={src} alt={alt} width={width} height={height} title={title} loading="eager" onError={() => setFailedSource(src)}/>);
   return <span className="expandable-media">
-    {children ?? (failed || !src ? <MissingImage alt={alt} message={text.failed}/> : <img src={src} alt={alt} width={width} height={height} title={title} loading="eager" onError={() => setFailedSource(src)}/>)}
-    {(svg || (src && !failed)) && <span className="media-controls"><button ref={button} type="button" className="media-expand" aria-label={svg ? text.diagram : text.image} onClick={event => { event.preventDefault(); event.stopPropagation(); setOpen(true); }}><ExpandIcon/></button></span>}
-    {open && createPortal(<FullscreenMediaViewer src={svg ? diagramUrl(svg) : src!} alt={alt} language={language} close={() => { setOpen(false); requestAnimationFrame(() => button.current?.focus({ preventScroll: true })); }}/>, document.body)}
+    {expandOnClick && (svg || (src && !failed)) ? <img src={svg ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}` : src} alt={alt} width={width} height={height} title={title} loading="eager" onError={() => setFailedSource(src)} ref={graphic}
+      className="note-graphic-trigger" role="button" tabIndex={alt ? 0 : -1}
+      aria-label={`${svg ? text.diagram : text.image}${alt ? `: ${alt}` : ''}`}
+      onClick={event => { event.preventDefault(); event.stopPropagation(); setOpen(true); }}
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault(); event.stopPropagation(); setOpen(true);
+        }
+      }}/> : content}
+    {!expandOnClick && (svg || (src && !failed)) && <span className="media-controls"><button ref={button} type="button" className="media-expand" aria-label={svg ? text.diagram : text.image} onClick={event => { event.preventDefault(); event.stopPropagation(); setOpen(true); }}><ExpandIcon/></button></span>}
+    {open && createPortal(<FullscreenMediaViewer src={svg ? diagramUrl(svg) : src!} alt={alt} language={language} close={() => { setOpen(false); requestAnimationFrame(() => (expandOnClick ? graphic.current : button.current)?.focus({ preventScroll: true })); }}/>, document.body)}
   </span>;
 }
 
