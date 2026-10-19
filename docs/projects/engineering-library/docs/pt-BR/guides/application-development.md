@@ -1,12 +1,12 @@
 # Desenvolvimento da aplicação
 
-Este marco acrescenta uma API Rails, uma página Next.js inspirada na leitura de um livro e PostgreSQL. Os guias de engenharia e validadores Python existentes foram mantidos nos locais originais. Os dossiês anteriores retratam o escopo histórico das inspeções; este documento descreve a nova aplicação.
+Revisão atual: 2026-10-19. Rails serve catálogo PostgreSQL e favoritos anônimos; Next renderiza o livro bilíngue interno. O setup abaixo mantém escopo de desenvolvimento; consulte [arquitetura atual](../architecture/current-state.md) e [guia do leitor](book-frontend.md) para responsabilidades presentes.
 
 ## Versões e arquitetura
 
 Ruby 3.4.11, Rails 8.1.4, PostgreSQL 18 (`18-bookworm`, com versão principal fixada), Node 24.22.0, Next.js 16.4.2, React 19.3.1, TypeScript 5.9.3 e ESLint 9.39.5. Gemfile.lock e package-lock.json fixam as dependências. Atualizações menores da imagem PostgreSQL são intencionais. As imagens são voltadas ao desenvolvimento.
 
-Navegador :3099 → Next.js :3000 → Rails :3000 na rede Compose → postgres :5432. Rails também fica disponível na porta 3098 do computador. O servidor Next consulta `/up`, com limite de três segundos e indicação de indisponibilidade em caso de falha. Esse endpoint verifica a inicialização do Rails; a conexão SQL é testada separadamente. Como o navegador não consulta outra origem, não é necessário middleware CORS. Mantemos as convenções Rails e adicionaremos serviços e domínio quando houver casos de uso reais. Autenticação, IA, análise de repositórios, geração de documentos e animações ainda não existem.
+Navegador :3099 → Next.js :3000 → Rails :3000 no Compose → PostgreSQL :5432. Rails também é exposto em loopback :3098. Consultas Next ao catálogo usam `BACKEND_URL` no servidor, `cache: no-store` e timeout de cinco segundos. `/up` Rails continua como liveness de boot, sem consultar catálogo/banco. Serviços/models atuais implementam sync, paginação e favoritos anônimos; o leitor implementa transições de páginas. Não há autenticação de contas, inferência IA ou geração automática de documentação. Acesso do navegador à API usa rotas Next de mesma origem; o initializer CORS Rails revisado está inativo.
 
 ```text
 backend/                  API Rails, config, db, test, Dockerfile, Gemfile.lock
@@ -33,7 +33,7 @@ python3 tools/init_dev_env.py
 docker compose config --quiet
 docker compose up --build
 # Em outro terminal, na preparação inicial e após criar migrações:
-docker compose exec backend bin/rails db:prepare
+docker compose exec backend bin/rails db:prepare catalog:sync
 # Acesse http://localhost:3099 e http://localhost:3098/up
 # Encerre preservando os dados:
 docker compose down
@@ -83,7 +83,7 @@ Guarde backups fora da pasta de dados e do repositório, proteja o acesso e test
 docker compose config --quiet
 docker compose build
 docker compose up -d --wait --wait-timeout 300
-docker compose exec backend bin/rails db:prepare
+docker compose exec backend bin/rails db:prepare catalog:sync
 docker compose exec -e RAILS_ENV=test backend bin/rails db:prepare
 docker compose exec -e RAILS_ENV=test backend bin/rails test
 docker compose exec backend bin/rails zeitwerk:check

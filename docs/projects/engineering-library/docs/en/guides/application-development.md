@@ -1,12 +1,12 @@
 # Application development
 
-This milestone adds a Rails API, a Next.js reading-inspired landing page and PostgreSQL. Existing engineering guides and Python tooling remain in their original locations. Existing project dossiers describe their historical inspection scope; the application scaffold is described here.
+Current review: 2026-10-19. Rails serves the PostgreSQL-backed catalog and anonymous bookmarks; Next renders the bilingual internal book. The setup below retains its development scope; see [current architecture](../architecture/current-state.md) and [reader guide](book-frontend.md) for present responsibilities.
 
 ## Versions and architecture
 
 Ruby 3.4.11, Rails 8.1.4, PostgreSQL 18 (official `18-bookworm` major-pinned image), Node 24.22.0, Next.js 16.4.2, React 19.3.1, TypeScript 5.9.3, ESLint 9.39.5. Gemfile.lock and package-lock.json pin dependencies. PostgreSQL minor image updates are intentional; this development environment is not a production deployment.
 
-Browser :3099 → Next.js :3000 → Rails :3000 on the Compose network → postgres :5432. Rails is also available on host :3098. The Next.js server fetches `/up` with a three-second timeout and reports an unavailable state on failure. `/up` checks Rails boot, not database readiness; the integration suite separately checks a SQL query. No browser cross-origin API call is made, so no CORS middleware is needed. Rails conventions provide reloading, errors and application organization; domain/service classes will be added only when actual use cases exist. No authentication, AI, scanning, document generation or page animations exist.
+Browser :3099 → Next.js :3000 → Rails :3000 on Compose → PostgreSQL :5432. Rails is also exposed on loopback :3098. Next catalog requests use server-side `BACKEND_URL`, `cache: no-store` and a five-second timeout. Rails `/up` remains boot liveness, not a catalog/database query. Current services/models implement catalog sync, pagination and anonymous bookmarks; the reader also implements page-turn transitions. There is no account authentication, AI inference or automatic documentation-generation pipeline. Browser API access uses same-origin Next routes; the reviewed Rails CORS initializer is inactive.
 
 ```text
 backend/                  Rails API, config, db, test, Dockerfile, Gemfile.lock
@@ -33,7 +33,7 @@ python3 tools/init_dev_env.py
 docker compose config --quiet
 docker compose up --build
 # In a second terminal, first setup only (and after adding migrations):
-docker compose exec backend bin/rails db:prepare
+docker compose exec backend bin/rails db:prepare catalog:sync
 # Open http://localhost:3099 and http://localhost:3098/up
 # Stop, preserving all bind-mounted data:
 docker compose down
@@ -84,7 +84,7 @@ Keep backups outside the data directory and repository, protect access and verif
 docker compose config --quiet
 docker compose build
 docker compose up -d --wait --wait-timeout 300
-docker compose exec backend bin/rails db:prepare
+docker compose exec backend bin/rails db:prepare catalog:sync
 docker compose exec -e RAILS_ENV=test backend bin/rails db:prepare
 docker compose exec -e RAILS_ENV=test backend bin/rails test
 docker compose exec backend bin/rails zeitwerk:check

@@ -34,7 +34,7 @@ Each row describes behavior **at Compose interpolation**, before the application
 | `PORT` | Puma | 3000 | empty string retained; CLI -p 3000 overrides in Docker | [puma.rb](../../../../../../backend/config/puma.rb) |
 | `PIDFILE` | Puma | not set | Ruby treats empty string as truthy; empty path passed | [puma.rb](../../../../../../backend/config/puma.rb) |
 | `DATABASE_URL` | Rails production | nil; shared config remains | empty URL retained in ERB; adapter resolution not verified | [database.yml](../../../../../../backend/config/database.yml) |
-| `BACKEND_URL` | Next server health | http://backend:3000 | nullish coalescing retains empty; fetch fails, page shows unavailable | [frontend/components/backend-status.tsx](../../../../../../frontend/components/backend-status.tsx) |
+| `BACKEND_URL` | Next server catalog API | http://backend:3000 | empty is retained; fetch fails and catalog shows unavailable | [frontend/lib/catalog.ts](../../../../../../frontend/lib/catalog.ts) |
 | `SECRET_KEY_BASE` | Rails / Compose | Compose error | Compose error; use generated secret, never publish | [compose.yaml](../../../../../../compose.yaml) |
 | `CI` | Rails tests | eager_load false | present? false; nonblank enables eager loading | [environments/test.rb](../../../../../../backend/config/environments/test.rb) |
 | `RAILS_ENV` | Rails runtime | Compose sets development | direct execution outside Compose: framework behavior not verified | [compose.yaml](../../../../../../compose.yaml) |
@@ -43,3 +43,7 @@ Each row describes behavior **at Compose interpolation**, before the application
 Variables without a required marker are optional. Empty host/user/database values have no Ruby fallback and may cause connection failure. Empty numeric settings are not supported. Production adapter URL resolution requires separate validation.
 
 `POSTGRES_PORT=5499` is host-only; Rails uses `postgres:5432`. Compose fixes `BACKEND_URL=http://backend:3000`, `RAILS_ENV=development`, `PGDATA=/var/lib/postgresql/18/docker`, `HOME=/tmp`, `BUNDLE_PATH=/app/vendor/bundle`, `BUNDLE_APP_CONFIG=/tmp/bundle-config`, `npm_config_cache=/tmp/npm-cache` and `NEXT_TELEMETRY_DISABLED=1`; these are not new `.env` inputs. Dependency/cache directories must be writable. Next fetches server-side, so CORS needs no change. `POSTGRES_DB` only initializes databases in fresh clusters. See [migration](../operations/database-migration.md).
+
+## Catalog filesystem roots — 2026-10-19
+
+`CATALOG_ROOT` optionally selects the Rails catalog directory; default is `../docs/projects` relative to Rails root. `DOCUMENTATION_ROOT` selects the Next collection; default is the same sibling path relative to its working directory. Compose fixes the latter to `/docs/projects` and mounts that collection read-only for both services. An empty override is retained rather than replaced by the default; use a valid explicit directory or leave it absent. These paths must refer to the same intended public collection. They do not authorize runtime reads of sibling source repositories. `BACKEND_URL` is server-side catalog access with a five-second timeout; `/up` liveness has a separate contract.

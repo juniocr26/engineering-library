@@ -1,5 +1,7 @@
 # Current architecture — final local portfolio scope
 
+> Source reconciliation — 2026-10-19: `backend/src/bin/demo.rs` is the dedicated local producer/evidence composition, distinct from the shared HTTP binary. Its middleware bounds requests and sanitizes timeout responses; a timeout can conceal a committed producer/action. The current action schema supports multiple actions for one completed run. See [direct current answers](../faq/index.md) and [migration inventory](../database/migrations.md). This statement is static source evidence, not a live rollout check.
+
 The HTTP binary composes the bounded producer/evidence API; the relay binary acquires and publishes outbox events; the consumer binary commits local inventory effects. Supervisor manages their separate lifecycles. Vue calls HTTP through its proxy for real scenarios and GET-only inspection. PostgreSQL owns producer, relay and consumer state in separate schemas; RabbitMQ owns durable transport. No sibling project is a runtime dependency.
 
 The producer commits the goods-receipt fact and canonical outbox atomically. Publication uses database leases/revisions, confirms, durable retry and authorized replay. The consumer commits receipt and stock atomically, then attempts ACK. These are independent boundaries: a consumer can commit before relay completion is observed, and successful ACK send does not prove broker receipt. Stable identity and retained receipts prevent a second supported local effect, not duplicate transport.

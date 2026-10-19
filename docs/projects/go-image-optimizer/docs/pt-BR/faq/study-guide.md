@@ -1,5 +1,6 @@
 # Go Image Optimizer Guia de Estudo para Entrevista Técnica
 
+> A [FAQ técnica completa](index.md) é a entrada principal para perguntas e respostas. Este roteiro mantém títulos e links históricos por compatibilidade.
 
 [English](../../en/faq/study-guide.md) | [Português brasileiro](study-guide.md)
 

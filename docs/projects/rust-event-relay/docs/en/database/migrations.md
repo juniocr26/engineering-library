@@ -1,3 +1,9 @@
+## Current source inventory — 2026-10-19
+
+The working tree contains nine paired migrations, including demo runs, demo actions and `20261019000000_multiple_duplicate_actions`. This is source inventory, not a query of installed migration state. Earlier six-migration/shared-rollout statements below belong to their dates.
+
+The latest up removes `demo.actions` uniqueness by run and adds an ordered run/history index. Admission in the current repository allows up to three retained actions per run, while request identity still reconciles retries. The down tries to restore unique run ownership before dropping that index; multiple retained actions make it fail instead of deleting history. Preserve that evidence; a source review does not authorize rollback or data cleanup. [Current FAQ](../faq/index.md) and [scope record](../operations/documentation-audit-2026-10-19.md) explain the selected demo inspection. No migration command or database query was executed here.
+
 **Current local state — Milestone 4.5 (2026-10-16):** [Verified rollout and recovery](../operations/milestone-4-5-rollout.md). Six migrations applied; current HTTP/relay/consumer artifacts installed and running; consumer autostart=true. Protected backup/isolated restore and real 10 → 15 → 15 demonstration verified. Replay API remains disabled; frontend remains simulation. Earlier observations below retain their dates.
 
 Current 4.2: six additive versions are tracked. Migration 20261014000000 creates consumer-owned stock/receipts; its down migration loses all stock and deduplication history. Validate only in exact isolated databases. Shared development still has four installed versions; replay 20261013000000 and consumer 20261014000000 are pending, without rollout authorization. [Protocol and constraints](../architecture/milestone-4-2.md).

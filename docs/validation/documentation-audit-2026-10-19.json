@@ -1,0 +1,710 @@
+{
+  "date": "2026-10-19",
+  "historical_commit": "5052a8515b30278abea5fb81b37647482c10ba18",
+  "historical_repository": "engineering-library",
+  "projects": {
+    "engineering-library": {
+      "head": "7b96b3545d5f257611257d23846606cbdefc0442",
+      "historical": {
+        "en": {
+          "lines": 21,
+          "sha256": "a32aaea34f770e1aacc3fba9f710b062dabb68ba980d4dd4271ba1b115ef6725",
+          "current_guide_sha256_before": "3d2dfc340dc3251dcaaa7238485b582395d91dbf5b03e93b1aa431d22a2308ac"
+        },
+        "pt-BR": {
+          "lines": 21,
+          "sha256": "fe68fadd5ed9fe2020330c469b6b8b4c5ffd69dff1e83b5b22cce212443d7e2e",
+          "current_guide_sha256_before": "b1d18d4b954a9b8ece991e71a1f4a31538c54b04243b2f16ada3965cf9b6ac66"
+        }
+      },
+      "status": "partial: FAQ answers made directly available; selected current answers/category corrections reviewed; complete audit remains open",
+      "focus": "Current catalog API, metadata synchronization, PostgreSQL schema, anonymous bookmark isolation, filesystem readers and current-vs-future architecture.",
+      "remaining_work": "Review the complete reader components, pagination/media/Mermaid rendering, source-catalog generator/runtime loader, remaining setup/operations guides and migrations/tasks. Reconcile old verification narratives against their dates; execute browser checks only in a suitable existing runtime.",
+      "source_inspection": "Selective static inspection; some large files inspected by excerpts. Hashes identify whole files, not full-line review coverage. No sibling code executed.",
+      "source_files": [
+        {
+          "path": "compose.yaml",
+          "sha256": "6449ff38ec35f792faf769913110a91e02c9066e9acf9b02c51b816b2369b39a"
+        },
+        {
+          "path": "backend/config/routes.rb",
+          "sha256": "d780ba04a8bea1e89335f4e93e422241adcb7b25615ea2ed9eff72f8623157f5"
+        },
+        {
+          "path": "backend/config/database.yml",
+          "sha256": "88bf7f0eda059817e315ba1e388e54360a9a87b9905094d6c8516e1de6044c55"
+        },
+        {
+          "path": "backend/config/initializers/cors.rb",
+          "sha256": "3d2204f77bb83b40940ae789f0201a66d0f40a55a9144d51f28c433d8eb0d1bd"
+        },
+        {
+          "path": "backend/db/schema.rb",
+          "sha256": "e15d24d1da1a692f8761d9a5b4fff1f4ba138a711cabb9e83085674459d9b8ef"
+        },
+        {
+          "path": "backend/app/services/catalog/files.rb",
+          "sha256": "f39be2b30663d70379585bbf7c32feb012ffd83aebb3907af7d815f426984e36"
+        },
+        {
+          "path": "backend/app/services/catalog/sync.rb",
+          "sha256": "72b009ff50aaa90872a3a8feba99c9f5225bfbbbb0ed98e886ef9b1db01f5cfa"
+        },
+        {
+          "path": "backend/app/services/catalog/page.rb",
+          "sha256": "e5482420448a3a16ebfbd048513fc84f5450361d4da2af67316e5b164cf96259"
+        },
+        {
+          "path": "backend/app/services/catalog/presenter.rb",
+          "sha256": "e9462b8ca7032890c10933e987c14e903c973980f872533fe7b2933da8cb96d3"
+        },
+        {
+          "path": "backend/app/controllers/api/projects_controller.rb",
+          "sha256": "19fc53ac22d4f124e76067419a23cc9c703f6a5f3b816ae92091bad0709ba164"
+        },
+        {
+          "path": "backend/app/controllers/api/bookmarks_controller.rb",
+          "sha256": "821c71fcb689bd3028d3ce1d8aa461468d631ee038d0a006540cfaf0b77ebe93"
+        },
+        {
+          "path": "backend/app/models/catalog_project.rb",
+          "sha256": "1b48a7adde3ed2e3e0a32a11d5b65db23bb84bc7cbb62ba044199a6ff623a388"
+        },
+        {
+          "path": "backend/app/models/bookmark.rb",
+          "sha256": "c8cc12cb9c0cf02cdab2bd90c9ac8f1014a82d0a56f6309493b162bef8d3ddff"
+        },
+        {
+          "path": "backend/test/models/catalog_test.rb",
+          "sha256": "0a864783d97bca5662dc5d135dbcbcbc522accf5b28495bce7365be2c9a27570"
+        },
+        {
+          "path": "backend/test/integration/catalog_api_test.rb",
+          "sha256": "713168d8139010145d3307799f79be2df4279ef3627fda7887e40ccc7525d05a"
+        },
+        {
+          "path": "backend/test/integration/bookmarks_api_test.rb",
+          "sha256": "ce229e1cfe7f9ed5902a6c050aa776d9334711994b79ffaaa03f542535d30607"
+        },
+        {
+          "path": "frontend/lib/catalog.ts",
+          "sha256": "f030bfb30816e87e310df5a7d5425613876c67aa28eaaa377f63a39fed3c0b31"
+        },
+        {
+          "path": "frontend/lib/documentation.ts",
+          "sha256": "20dd784a97e123302ff1aa4c67662feb3efcf7c6b92a2d5f3aacad3e51bada3c"
+        },
+        {
+          "path": "frontend/lib/document-links.ts",
+          "sha256": "151dd62152f08102e42aff39fc5b3a1fad93a7e2bcab411e4b63a5255e4f1bff"
+        },
+        {
+          "path": "frontend/lib/reading-order.ts",
+          "sha256": "b410a371450185998edb23733c5323212ed212b871e2778ca9fa4ef95ecd84bc"
+        },
+        {
+          "path": "frontend/lib/source-links.ts",
+          "sha256": "5a46c24728fcb8117031d15002f2ec95fcbd90ad58eb7fac0c7f3dfd57f5c91d"
+        },
+        {
+          "path": "frontend/lib/source-snapshot.ts",
+          "sha256": "089603ffff0d1365d87e130b64a4bc8e5ff6fbbf4f4989db0dc009f3fc446371"
+        },
+        {
+          "path": "frontend/lib/source-search.ts",
+          "sha256": "dd67edcf0503fbeb76e5a1d881b0439a12dab44ee7bb6981850fc6c0cc644b86"
+        },
+        {
+          "path": "frontend/tests/reading-order.test.ts",
+          "sha256": "c021d9f816b037bf25802c7aa759ea97c2fd7e0b4f71a856249fc20255e0ce4c"
+        },
+        {
+          "path": "frontend/package.json",
+          "sha256": "122eae7d968b6d0dc6ec805ad2e57ff48ec101d4d80dd68dc91f4afb79f4cba3"
+        },
+        {
+          "path": "docs/validation/check_catalog.py",
+          "sha256": "9acbc3c41b7b4d13150ee60abf803da850db1f4bc09b6aa3abb97dd32a085fb5"
+        },
+        {
+          "path": "tools/check_docs.py",
+          "sha256": "efceee516f784c3553aeb0b46cd35fc08a5368130025a431eeacd14fc280f053"
+        },
+        {
+          "path": "tools/test_catalog.py",
+          "sha256": "aa86cc3b0f8474559a3d39238f7b60b29c21fdab7f0044aee86fa20fbe719e45"
+        }
+      ],
+      "working_tree_status_entries": 48,
+      "category_documents_reviewed_selectively": [
+        "architecture/current-state.md",
+        "architecture/future-direction.md",
+        "architecture/source-references.md",
+        "guides/book-frontend.md",
+        "guides/documentation-validator.md",
+        "guides/application-development.md",
+        "env/index.md",
+        "testing/documentation.md",
+        "operations/source-review.md",
+        "faq/application-and-catalog.md"
+      ],
+      "legacy_faq_status": "Compared historical/current migration and preserved all legacy material; complete semantic revalidation of every legacy answer remains pending.",
+      "remaining_document_paths_en": [
+        "architecture/index.md",
+        "faq/cross-project-boundaries.md",
+        "faq/study-guide.md",
+        "guides/development.md",
+        "guides/index.md",
+        "index.md",
+        "operations/database-migration.md",
+        "operations/index.md",
+        "operations/taxonomy-environment-review.md",
+        "testing/index.md"
+      ]
+    },
+    "env-auditor": {
+      "head": "3bfe68e30a4169219f69b65ccc6188d5c5f5263f",
+      "historical": {
+        "en": {
+          "lines": 180,
+          "sha256": "f2d3295bafc9b970e0f8607da46ed41faf5f9c731589416cc306c55055a37f9e",
+          "current_guide_sha256_before": "1eddce1990f0bf740bca8d25b787f3c4c9c4775341cf84c22c78f769ee592b4b"
+        },
+        "pt-BR": {
+          "lines": 180,
+          "sha256": "ae41d1a405a438851a99dc50b7eb77c7fd4cd19145cd00a6d00d0ebeed2e2d2a",
+          "current_guide_sha256_before": "e5cfd313fc2428b007d99ada7334ee2f85c93d7f17f2fa21b763588c6e35d2ef"
+        }
+      },
+      "status": "partial: FAQ answers made directly available; selected current answers/category corrections reviewed; complete audit remains open",
+      "focus": "Literal parse/plan/write flow, preview-to-write race, per-file recovery, plaintext backup boundaries and absence of application ENV configuration.",
+      "remaining_work": "Complete line-by-line review of every retained legacy answer, both READMEs, remaining terminal/guide pages and all test bodies; reconcile historical test counts without turning them into current runs.",
+      "source_inspection": "Selective static inspection; some large files inspected by excerpts. Hashes identify whole files, not full-line review coverage. No sibling code executed.",
+      "source_files": [
+        {
+          "path": "scripts/audit-envs.py",
+          "sha256": "47b006280a881dcea68878830c3b19bcbdfc3f6c1f87a6eaa41afdc68b828581"
+        },
+        {
+          "path": "tests/test_audit_envs.py",
+          "sha256": "890ab6c5fc5a48008e14482c7764697d0465afaa68741cf14e6e512edaf73d7d"
+        }
+      ],
+      "working_tree_status_entries": 0,
+      "category_documents_reviewed_selectively": [
+        "architecture/overview.md",
+        "architecture/implementation-review.md",
+        "guides/implementation-study.md",
+        "security/filesystem-boundaries.md",
+        "operations/recovery-and-evidence.md",
+        "operations/source-review.md",
+        "testing/verification.md",
+        "env/index.md"
+      ],
+      "legacy_faq_status": "Compared historical/current migration and preserved all legacy material; complete semantic revalidation of every legacy answer remains pending.",
+      "remaining_document_paths_en": [
+        "architecture/index.md",
+        "faq/study-guide.md",
+        "guides/index.md",
+        "guides/project-guide.md",
+        "guides/setup.md",
+        "index.md",
+        "operations/completion-checklist.md",
+        "operations/index.md",
+        "operations/terminal-report.md",
+        "security/index.md",
+        "testing/index.md"
+      ]
+    },
+    "go-image-optimizer": {
+      "head": "cdb188c6a08f08482060a43d3d505fd494a1189e",
+      "historical": {
+        "en": {
+          "lines": 433,
+          "sha256": "7bffefbf53e7683c4c723d47a630a3021be19bc5032b9674d9e91ce35059d06c",
+          "current_guide_sha256_before": "1aba5a1f38d5d0c717a8e727fc96f7061ed27201badfb7343066262371d6b663"
+        },
+        "pt-BR": {
+          "lines": 509,
+          "sha256": "7cbed5704857821ce567e90e71bb4a742538986befc608a4ceefa61fd45cf0ea",
+          "current_guide_sha256_before": "9ae730314173606c4d4df39c47b2e0c785ac504fa0bed7352e3f839a93eccf0b"
+        }
+      },
+      "status": "partial: FAQ answers made directly available; selected current answers/category corrections reviewed; complete audit remains open",
+      "focus": "Multipart contracts, defaults, proxy buffering, encoded/pixel resource boundaries and selected HTTP test definitions.",
+      "remaining_work": "Inspect all use cases and codec implementations/fixtures, frontend controls/download lifecycle, Docker/CGO configuration, ENV consumers, ADR and remaining tests; revalidate every retained legacy answer.",
+      "source_inspection": "Selective static inspection; some large files inspected by excerpts. Hashes identify whole files, not full-line review coverage. No sibling code executed.",
+      "source_files": [
+        {
+          "path": "backend/internal/infrastructure/http/handler/compress_image/handler.go",
+          "sha256": "0068467083cd8150bde7e0c10aa1a88bd184f78e2cc79ee16f548acf518d1fb0"
+        },
+        {
+          "path": "backend/internal/infrastructure/http/handler/resize_image/handler.go",
+          "sha256": "75323c1c25b928663843d096c0d38c2b4ecb6c92017ebc14257c2c325bec8fab"
+        },
+        {
+          "path": "backend/internal/infrastructure/http/handler/convert_image/handler.go",
+          "sha256": "9cbbf139688dc7c399eae4c097035ae86addcf269afbdd8e0ca09d419ca4e34d"
+        },
+        {
+          "path": "backend/internal/infrastructure/http/router.go",
+          "sha256": "c5beb8243c91065f6c7ca36aeb41fb48160aa4d0aaccd6ae4101b7e1368d0121"
+        },
+        {
+          "path": "backend/internal/infrastructure/http/server.go",
+          "sha256": "9c0188db5b0093209a240ad03704932c810c109cf5e67358774e14e4541c2c22"
+        },
+        {
+          "path": "backend/internal/infrastructure/imaging/limits.go",
+          "sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8"
+        },
+        {
+          "path": "backend/internal/infrastructure/http/resize_test.go",
+          "sha256": "983227a4b1ec0d666afe683784478fbacc18c919c2a6567b9fb6dbcd8f67554d"
+        },
+        {
+          "path": "frontend/app/api/images/forward-image-request.ts",
+          "sha256": "207072efd1c856841b835d6c280e8531530040e243e53394f477e9d417893067"
+        },
+        {
+          "path": "frontend/app/api/images/compress/route.ts",
+          "sha256": "ed85b9a6cb9dfc3eeff2519aba419cf879a56732b880351805b2dc00e3d39269"
+        }
+      ],
+      "working_tree_status_entries": 0,
+      "category_documents_reviewed_selectively": [
+        "api/contracts.md",
+        "security/resource-boundaries.md"
+      ],
+      "legacy_faq_status": "Compared historical/current migration and preserved all legacy material; complete semantic revalidation of every legacy answer remains pending.",
+      "remaining_document_paths_en": [
+        "adr/001-native-image-codecs.md",
+        "adr/index.md",
+        "api/index.md",
+        "architecture/index.md",
+        "architecture/overview.md",
+        "docker/development.md",
+        "docker/index.md",
+        "docker/runtime.md",
+        "env/index.md",
+        "faq/study-guide.md",
+        "guides/implementation-study.md",
+        "guides/index.md",
+        "guides/project-guide.md",
+        "index.md",
+        "operations/completion-checklist.md",
+        "operations/deployment-and-diagnosis.md",
+        "operations/index.md",
+        "operations/source-review.md",
+        "security/index.md",
+        "testing/index.md",
+        "testing/strategy.md",
+        "testing/verification.md"
+      ]
+    },
+    "payment-reconciliation-lab": {
+      "head": "c27a55959101e6c29d0fb201c6d6b0d322fd40d1",
+      "historical": {
+        "en": {
+          "lines": 114,
+          "sha256": "99c9d6160c377aa14104ff53498e9b433bec2eb1d23446d47af7fa33c105257d",
+          "current_guide_sha256_before": "29e7eb3a533583a89141928d9ff3e9219462805c76e86b116c025ccc38c3af9a"
+        },
+        "pt-BR": {
+          "lines": 114,
+          "sha256": "07ad94edec339a0a05f05aca78a39536149fe46ee4369b78c76399e64ce54b1f",
+          "current_guide_sha256_before": "393b4b8fe6b7f1cf7172076573d57f9dab9cdc63858d1756388880f1e6d252a9"
+        }
+      },
+      "status": "partial: FAQ answers made directly available; selected current answers/category corrections reviewed; complete audit remains open",
+      "focus": "Read-only catalog DTOs, query visibility, legacy schema preservation, SQL constraints, security allowlist, seed failure and test boundaries.",
+      "remaining_work": "Inspect Angular flows, build/Compose/existing-volume configuration, remaining DTO/seed test bodies, ENV and ADR/operations guides; revalidate every retained legacy answer.",
+      "source_inspection": "Selective static inspection; some large files inspected by excerpts. Hashes identify whole files, not full-line review coverage. No sibling code executed.",
+      "source_files": [
+        {
+          "path": "backend/src/main/java/com/aurorabakery/catalog/application/CatalogService.java",
+          "sha256": "794f44166ec495154931c5ed2446f9d5cea9bf11846a9a96e2ceda597935d402"
+        },
+        {
+          "path": "backend/src/main/java/com/aurorabakery/catalog/api/ProductController.java",
+          "sha256": "792d785dc7ebf74ca0ab9b59491a57d68e29dfd299b4fac813dcd6363ab4a93d"
+        },
+        {
+          "path": "backend/src/main/java/com/aurorabakery/catalog/infrastructure/ProductRepository.java",
+          "sha256": "b9fb26def57030e5ae22cc45c114f02ed294c41baebbf8c6cc9c10f753c06e99"
+        },
+        {
+          "path": "backend/src/main/java/com/aurorabakery/catalog/domain/Product.java",
+          "sha256": "11b9bf6e29d9d5b7e9cacbb722a06ce62341bbb5b0ccb48b71641d0d685d6675"
+        },
+        {
+          "path": "backend/src/main/java/com/aurorabakery/configuration/SecurityConfiguration.java",
+          "sha256": "09a22a8549dcf4643061a22522987b3b0b290eb476f97dd68e6137a45e5d5074"
+        },
+        {
+          "path": "backend/src/main/java/com/aurorabakery/configuration/ApiExceptionHandler.java",
+          "sha256": "2d2d4517c10ff610081969af4cf29388659474dc038f9904e891c4de7290f04a"
+        },
+        {
+          "path": "backend/src/main/java/com/aurorabakery/configuration/DevelopmentSeedConfiguration.java",
+          "sha256": "718f86854b7e1c45afecb73192dbdbcb52e30f57fd3b1ad9847a8557992fca8c"
+        },
+        {
+          "path": "backend/src/main/resources/application.yml",
+          "sha256": "ded437f2f898ec39cee5346ae614b7477584f016c589184a8ee616b51cf00111"
+        },
+        {
+          "path": "backend/src/main/resources/application-dev.yml",
+          "sha256": "f8f8e5b7bbe5b966cb42a671376a0bd262dbaa5063dec0029562fb793c15125a"
+        },
+        {
+          "path": "backend/src/main/resources/db/migration/V1__create_stores.sql",
+          "sha256": "71230944bf253a46509c57560718002ff0a01d22b9e1632d95b6f5df44f02319"
+        },
+        {
+          "path": "backend/src/main/resources/db/migration/V2__single_bakery_catalog.sql",
+          "sha256": "94e44c585b49c6ad7306e912adfae9b1bba6d915d7104cda9543aefdc813c7d9"
+        },
+        {
+          "path": "backend/src/test/java/com/aurorabakery/catalog/ProductApiTest.java",
+          "sha256": "5014aebcd5fc0fa58a08606bc02ba2989a91ea31e9a4a2877f19cf2a92adbc66"
+        },
+        {
+          "path": "backend/src/test/java/com/aurorabakery/catalog/ProductPostgresIT.java",
+          "sha256": "b85bf85e123683504701d34c7d494684a9779082c6e1932ce5eaafd5974f82bd"
+        }
+      ],
+      "working_tree_status_entries": 0,
+      "category_documents_reviewed_selectively": [
+        "database/catalog-and-transition.md",
+        "security/read-api-boundaries.md"
+      ],
+      "legacy_faq_status": "Compared historical/current migration and preserved all legacy material; complete semantic revalidation of every legacy answer remains pending.",
+      "remaining_document_paths_en": [
+        "adr/architecture-decisions.md",
+        "adr/index.md",
+        "api/catalog-contract.md",
+        "api/index.md",
+        "architecture/index.md",
+        "architecture/overview.md",
+        "architecture/roadmap.md",
+        "database/index.md",
+        "docker/development.md",
+        "docker/index.md",
+        "docker/runtime.md",
+        "env/index.md",
+        "faq/study-guide.md",
+        "guides/implementation-study.md",
+        "guides/index.md",
+        "guides/setup.md",
+        "guides/toolchain.md",
+        "index.md",
+        "operations/completion-checklist.md",
+        "operations/deployment-and-evidence.md",
+        "operations/historical-refactor-report.md",
+        "operations/index.md",
+        "operations/source-review.md",
+        "security/index.md",
+        "testing/index.md",
+        "testing/strategy.md",
+        "testing/verification.md"
+      ]
+    },
+    "rust-event-relay": {
+      "head": "a1e0fa1513a8cbdf362f06f5cf1bdd906eb2430c",
+      "historical": {
+        "en": {
+          "lines": 263,
+          "sha256": "a3ef45911c5d7617f3a126ec323bc7efd1d783beab71328e492aac11b86597ff",
+          "current_guide_sha256_before": "5dd8a46f452c8acc7188049941e99e3c38ee3fd8e1c628168c625d2f777f026f"
+        },
+        "pt-BR": {
+          "lines": 263,
+          "sha256": "a46e1c8a0259423c90a6d7ad657cde2c4f225030496754a8d855e92e3e1d1bb8",
+          "current_guide_sha256_before": "a9a0b98cffbe1f27009cf71ef43d206e42294d3e714fd5121a9a7edd442a1bc8"
+        }
+      },
+      "status": "partial: FAQ answers made directly available; selected current answers/category corrections reviewed; complete audit remains open",
+      "focus": "Dedicated demo intent/actions, identity reconciliation, HTTP admission/timeout, new multiple-action migration and selected test definitions.",
+      "remaining_work": "Audit the full producer/relay/consumer/replay/retry/ownership paths, broker and SQL adapters, frontend/proxy, supervisor/start scripts, topology/ENV, all ADRs/migrations and remaining milestone evidence. Current demo inspection is not a full delivery-guarantee audit.",
+      "source_inspection": "Selective static inspection; some large files inspected by excerpts. Hashes identify whole files, not full-line review coverage. No sibling code executed.",
+      "source_files": [
+        {
+          "path": "backend/src/application/demo.rs",
+          "sha256": "72e055bda3ba4dbdc6f8250871f9bfbe3fd2a07df0763d6038d5ac5d79ccc58f"
+        },
+        {
+          "path": "backend/src/infrastructure/demo_http.rs",
+          "sha256": "9afc674aab1646b4b60b240e30e673add3a8c2a83d6baba658920bf20fb8f07c"
+        },
+        {
+          "path": "backend/src/bin/demo.rs",
+          "sha256": "2090376207bb1fd5d0a3b84fc0676e49d8a4d28fdd300e22e2cd579925e3efc4"
+        },
+        {
+          "path": "backend/src/infrastructure/postgres/demo.rs",
+          "sha256": "85123c03e793d0e0ed49ded9b5362acbe9eb49d54ed9665c463e7aba4dd7fdf6"
+        },
+        {
+          "path": "backend/migrations/20261019000000_multiple_duplicate_actions.up.sql",
+          "sha256": "cfc0c453b48c067ef90466056e0b1b62fb80dc691e189999d3c96b5fe5e965c1"
+        },
+        {
+          "path": "backend/migrations/20261019000000_multiple_duplicate_actions.down.sql",
+          "sha256": "5792b5dccd31ad61419946d861226eec7465dbde7f6afe4b4c2807ecc71aabf5"
+        },
+        {
+          "path": "backend/tests/demo_runs.rs",
+          "sha256": "ed04186e942ce867c13f75a6dcffa0a63c7ce273f9ab0b91612bc51e82cd9d93"
+        }
+      ],
+      "working_tree_status_entries": 0,
+      "category_documents_reviewed_selectively": [
+        "architecture/overview.md",
+        "database/migrations.md"
+      ],
+      "legacy_faq_status": "Compared historical/current migration and preserved all legacy material; complete semantic revalidation of every legacy answer remains pending.",
+      "remaining_document_paths_en": [
+        "adr/001-use-rust-for-the-relay.md",
+        "adr/002-use-postgresql-for-durable-event-storage.md",
+        "adr/003-use-versioned-sql-migrations.md",
+        "adr/004-use-postgresql-transactional-outbox-schema.md",
+        "adr/005-separate-persistence-contracts-from-postgresql.md",
+        "adr/006-rabbitmq-publisher-and-supervisor.md",
+        "adr/007-durable-delivery-ownership.md",
+        "adr/008-durable-failure-policy.md",
+        "adr/009-authorized-idempotent-replay.md",
+        "adr/010-atomic-consumer-and-quarantine.md",
+        "adr/011-persistent-demo-runs.md",
+        "adr/012-one-application-real-scenarios.md",
+        "adr/index.md",
+        "architecture/failure-and-transactions.md",
+        "architecture/index.md",
+        "architecture/milestone-2-1.md",
+        "architecture/milestone-2-2.md",
+        "architecture/milestone-2-3.md",
+        "architecture/milestone-2-4.md",
+        "architecture/milestone-2-5.md",
+        "architecture/milestone-2-6.md",
+        "architecture/milestone-3-1.md",
+        "architecture/milestone-3-2.md",
+        "architecture/milestone-3-3.md",
+        "architecture/milestone-3-4.md",
+        "architecture/milestone-3-5.md",
+        "architecture/milestone-4-1.md",
+        "architecture/milestone-4-2.md",
+        "architecture/milestone-4-3.md",
+        "architecture/persistence-contracts.md",
+        "database/index.md",
+        "database/outbox-schema.md",
+        "database/postgres-repository.md",
+        "database/postgresql.md",
+        "docker/configuration.md",
+        "docker/environment-inventory.md",
+        "docker/index.md",
+        "env/index.md",
+        "faq/study-guide.md",
+        "guides/dependencies.md",
+        "guides/frontend-backend.md",
+        "guides/implementation-study.md",
+        "guides/index.md",
+        "guides/project-guide.md",
+        "index.md",
+        "integrations/index.md",
+        "integrations/rabbitmq-contract.md",
+        "operations/application-scenarios.md",
+        "operations/completion-checklist.md",
+        "operations/demo-token-connectivity.md",
+        "operations/deployment-and-evidence.md",
+        "operations/final-audit.md",
+        "operations/handoff-marco-1.md",
+        "operations/index.md",
+        "operations/local-relay-rollout.md",
+        "operations/milestone-1-review.md",
+        "operations/milestone-2-review.md",
+        "operations/milestone-3-review.md",
+        "operations/milestone-4-4-review.md",
+        "operations/milestone-4-5-rollout.md",
+        "operations/milestone-5-1.md",
+        "operations/milestone-5-2.md",
+        "operations/milestone-5-3.md",
+        "operations/milestone-6-1.md",
+        "operations/milestone-6-2.md",
+        "operations/milestone-6-3.md",
+        "operations/milestone-6-preparation.md",
+        "operations/replay.md",
+        "operations/source-review.md",
+        "security/diagnostic-and-authority-boundaries.md",
+        "security/index.md",
+        "testing/index.md",
+        "testing/strategy.md",
+        "testing/validation-results.md"
+      ]
+    },
+    "url-shortener": {
+      "head": "ed43c65c2893172f94c231ee608ecf2753b8f92f",
+      "historical": {
+        "en": {
+          "lines": 722,
+          "sha256": "3b9ba1482c39607d35353a0a45950684fcb4f043abe779425d8ca682c4619ed8",
+          "current_guide_sha256_before": "391fcc2e4e8f18b18c07813face1f4279cfd1eda5c4f03cb0d5eb8d6fcda48ff"
+        },
+        "pt-BR": {
+          "lines": 1856,
+          "sha256": "9a949159a871d6bc88d18d3ebe2ae4d81c008fe3aad00ab12a75ecfb086815f0",
+          "current_guide_sha256_before": "e85ecec4246515c3fe27d5cdf6f27200efce90243e28e796d008be9f6fa91edf"
+        }
+      },
+      "status": "partial: FAQ answers made directly available; selected current answers/category corrections reviewed; complete audit remains open",
+      "focus": "Creation/resolution path, Redis initialization, Cassandra upsert, cross-store uncertainty, global encoding settings and selected fake-backed tests.",
+      "remaining_work": "Inspect controllers/dependency injection, all test bodies, Cassandra bootstrap/consistency and Compose/AOF configuration, ENV, security/operations guides; revalidate every retained legacy answer.",
+      "source_inspection": "Selective static inspection; some large files inspected by excerpts. Hashes identify whole files, not full-line review coverage. No sibling code executed.",
+      "source_files": [
+        {
+          "path": "app/main.py",
+          "sha256": "0c941454e637c58766a4e2df0e5e0a1b8203f2c5810c0f84eb77f5a256fb2102"
+        },
+        {
+          "path": "app/schemas.py",
+          "sha256": "865b5e24f500ee1b50328b00bea09367487d370ffe0384cd37e47cf3c953da3a"
+        },
+        {
+          "path": "app/api/routes.py",
+          "sha256": "0ea895b77327c71755e5a3c3188939a96ca4c49e46a7de4a597b17f1d13e6423"
+        },
+        {
+          "path": "app/core/config.py",
+          "sha256": "5cc4aaf59a8697e19ae047e66421e2c213fce5fbf05beb4428cf12833a24034c"
+        },
+        {
+          "path": "app/core/security.py",
+          "sha256": "4b1539db7f36ff497777d50e7fc656d2fcd7cf07948344727ecffa115a091fdf"
+        },
+        {
+          "path": "app/services/url_service.py",
+          "sha256": "7889962abb7500d2ac5251ddc3bbeefb64ef9e83044c8275e735ae3f79d55ede"
+        },
+        {
+          "path": "app/infrastructure/redis_id_generator.py",
+          "sha256": "092c095edc8cbb4ab75d8965d788af7b2cf2c3f5fc53b7fc3cc3e3c38d975405"
+        },
+        {
+          "path": "app/infrastructure/cassandra_url_store.py",
+          "sha256": "440b616de3389277db0711140728fa7a4a629159b54bb344a5359dd3390954c9"
+        },
+        {
+          "path": "app/helpers/base62.py",
+          "sha256": "91fddbf8a54980850191217cc62a12eb22293b6968835a4a221f641a9addcf6f"
+        },
+        {
+          "path": "app/helpers/obfuscation.py",
+          "sha256": "4f30c2febe7fb4c155b64c533640635d18bc278c89b2bf5539429750ee0bfea0"
+        },
+        {
+          "path": "tests/test_redis_id_generator.py",
+          "sha256": "5f03609c37edd9f5844655f79fbd6c71a5df6c79781b4d5fc635516c485c68fc"
+        },
+        {
+          "path": "tests/test_url_service.py",
+          "sha256": "7fbe6a20d8009ee4e310c3838fccbd0fbdd61272ee58ec4c1a007a3cdb961a56"
+        }
+      ],
+      "working_tree_status_entries": 0,
+      "category_documents_reviewed_selectively": [
+        "architecture/overview.md",
+        "database/identity-and-consistency.md"
+      ],
+      "legacy_faq_status": "Compared historical/current migration and preserved all legacy material; complete semantic revalidation of every legacy answer remains pending.",
+      "remaining_document_paths_en": [
+        "api/contracts.md",
+        "api/index.md",
+        "api/postman.md",
+        "architecture/index.md",
+        "database/index.md",
+        "docker/development.md",
+        "docker/index.md",
+        "docker/runtime.md",
+        "env/index.md",
+        "faq/study-guide.md",
+        "guides/implementation-study.md",
+        "guides/index.md",
+        "guides/project-guide.md",
+        "index.md",
+        "operations/completion-checklist.md",
+        "operations/deployment-and-recovery.md",
+        "operations/index.md",
+        "operations/source-review.md",
+        "security/identity-and-transport.md",
+        "security/index.md",
+        "testing/index.md",
+        "testing/strategy.md",
+        "testing/verification.md"
+      ]
+    }
+  },
+  "scope": "Only engineering-library modified; sibling repositories are read-only evidence. No staging, commits or pushes.",
+  "status": "partial: bounded FAQ migration and selected source/category corrections completed; comprehensive portfolio audit remains open",
+  "validation": {
+    "baseline_catalog": {
+      "errors": 6,
+      "warnings": 0
+    },
+    "unit_tests": {
+      "command": "python3 -B -m unittest discover -s tools -p 'test_*.py' -v",
+      "passed": 27
+    },
+    "frontend_runtime": {
+      "status": "not run",
+      "reason": "Host node and npm commands unavailable; no dependencies installed or services started."
+    },
+    "final_catalog": {
+      "command": "python3 -B docs/validation/check_catalog.py",
+      "projects": 6,
+      "markdown_files": 442,
+      "local_links_checked": 3540,
+      "errors": 0,
+      "warnings": 0
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    "additional_checks": [
+      "All new Markdown/JSON files checked for trailing whitespace.",
+      "Only docs/ paths changed; no application code changed.",
+      "Current catalog validates bilingual document paths and Q-ID parity, retained study-guide headings, local links/anchors and index reachability."
+    ],
+    "inspected_source_hashes_unchanged_at_finish": true
+  },
+  "resume_order": [
+    "Finish per-answer semantic checks in existing bilingual FAQs using source hashes/current tree, rather than recreating interviews.",
+    "Review remaining implementation paths and categories recorded for each project.",
+    "Update both languages, preserve logical paths/Q IDs, rerun catalog validator and existing tool tests.",
+    "Validate actual reader layout when an appropriate runtime is available; do not equate Markdown checks with browser verification."
+  ],
+  "faq_changes": {
+    "engineering-library": "Q001–Q003 corrected; Q004–Q005 added; Q101/Q103 corrected and Q101–Q106 included directly; six cross-project foundational questions recovered in a bilingual companion FAQ.",
+    "env-auditor": "Existing complete answers exposed in index; Q006 added on preview/write race and evidence.",
+    "go-image-optimizer": "Existing complete answers exposed in index; Q006–Q007 added on endpoint-specific multipart and resource/cancellation boundaries.",
+    "payment-reconciliation-lab": "Existing complete answers exposed in index; Q007–Q008 added on read/payment boundaries and schema/test evidence.",
+    "rust-event-relay": "Existing complete answers exposed in index; Q016–Q017 added on multiple actions, uncertainty and dedicated demo composition.",
+    "url-shortener": "Existing complete answers exposed in index; Q006–Q007 added on counter loss, upserts and configuration continuity."
+  },
+  "changed_categories": [
+    "faq",
+    "architecture",
+    "api",
+    "database",
+    "env",
+    "guides",
+    "operations",
+    "security",
+    "testing"
+  ],
+  "not_completed": [
+    "Full per-answer semantic revalidation of all legacy FAQs in both languages.",
+    "Full source/category audit for every documented project, particularly ADR, Docker, integrations, complete ENV consumers and historical test/rollout narratives.",
+    "Actual frontend/browser layout verification and application/database suites; only documentation-tool tests executed."
+  ]
+}

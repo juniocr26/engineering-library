@@ -1,5 +1,6 @@
 # Payment Reconciliation Lab technical interview study guide
 
+> The complete [technical FAQ](index.md) is the primary entry point for questions and answers. This study document retains historical headings and links for compatibility.
 
 [English](study-guide.md) | [Português brasileiro](../../pt-BR/faq/study-guide.md)
 

@@ -23,3 +23,5 @@
 - [Milestone 6 preparation — reference comparison and live interface scope](milestone-6-preparation.md)
 - [Operator replay procedure](replay.md)
 - [Provenance and limits](source-review.md)
+
+- [Documentation audit — 2026-10-19](documentation-audit-2026-10-19.md)

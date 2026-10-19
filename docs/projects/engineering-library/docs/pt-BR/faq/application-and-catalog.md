@@ -4,9 +4,9 @@ Leia a [arquitetura atual](../architecture/current-state.md), a [direção futur
 
 ### Q101 — Introdutória: Por que Rails com frontend Next.js separado?
 
-**Resposta:** Implementado: Rails expõe `/up`, configura PostgreSQL e fornece classes-base de API; Next.js renderiza uma página inicial e consulta saúde no servidor. A arquitetura documentada separa apresentação no navegador de HTTP/persistência no backend. Convenções Rails facilitam iniciar a API; Next.js fornece renderização React e roteamento. Não há evidência de benchmarks entre frameworks. Duas aplicações exigem dependências, builds, rede e diagnóstico separados. Um site renderizado por Rails simplificaria implantação; é alternativa hipotética, não decisão histórica avaliada.
+**Resposta:** Implementado: Rails serve metadados paginados do catálogo e favoritos anônimos apoiados pelo PostgreSQL; Next.js renderiza o leitor Markdown interno e busca JSON no servidor. Arquivos continuam como fonte de documentos e bios. Convenções Rails fornecem HTTP/persistência; Next fornece rotas React e layout no navegador, com builds, dependências e diagnóstico separados. Não há evidência de benchmark de frameworks. Renderização Rails poderia simplificar implantação, mas é comparação conceitual, sem avaliação histórica documentada.
 
-**Aprofundamento:** A separação comprova Clean Architecture? Não. Convenções Rails e processos separados não estabelecem inversão de dependência nem casos de uso de domínio. Introduzir uma fronteira de caso de uso quando existir contrato real de leitura documental; adaptadores podem cuidar de arquivos e HTTP sem acoplar o núcleo ao framework. Hoje não existe serviço de catálogo implementado a descrever.
+**Aprofundamento:** A separação comprova Clean Architecture? Não. `Catalog::Sync`, `Catalog::Page`, `Catalog::Files` e controllers expressam responsabilidades concretas, mas ActiveRecord, Rails e filesystem permanecem visíveis. Avalie direção de dependência e comportamento testável, sem inferir camadas de domínio pelo número de processos.
 
 ### Q102 — Intermediária: O que Compose reproduz e por que bind mounts?
 
@@ -16,13 +16,13 @@ Leia a [arquitetura atual](../architecture/current-state.md), a [direção futur
 
 ### Q103 — Intermediária: O que o status verde da API comprova?
 
-**Resposta:** Implementado: o componente de servidor Next.js consulta `/up` com timeout de três segundos e apresenta conectividade. O health Rails verifica boot/liveness, sem executar teste SQL de prontidão. O teste de integração inspecionado executa separadamente `SELECT 1`, verifica saúde e não divulgação da senha. Definições comprovam asserções previstas, não execução nesta tarefa. Dados persistem em bind mount do host; saúde HTTP não comprova backup nem recuperação.
+**Resposta:** Implementado: `/up` estabelece boot/liveness Rails, sem consultar linhas do catálogo. Resposta do catálogo também exercita metadados PostgreSQL e bios localizadas daquela requisição, sem provar todos os documentos ou favoritos. Acesso Next ao catálogo tem timeout de cinco segundos; os três segundos do componente antigo do scaffold não definem o cliente atual. Health aprovado não estabelece integridade de backup, recuperação ou renderização no navegador. Nenhum teste runtime de saúde ou banco foi executado nesta auditoria.
 
 **Aprofundamento:** Como fortalecer prontidão? Uma consulta limitada ao banco e semântica explícita de dependências distinguiriam indisponibilidade de um processo HTTP vivo, ao custo de carga e acoplamento de falhas adicionais. É proposta. Uma restauração precisa de destino isolado e verificações de integridade; arquivos persistentes não a comprovam.
 
 ### Q104 — Intermediária: Por que catálogo por projeto e bilíngue?
 
-**Resposta:** Implementado na documentação: cada repositório tem identidade estável, dois READMEs, índices por idioma, capítulos de categoria, limites de evidência e entrevistas. Nomes de ADRs e numeração sobrevivem à importação. O leitor escolhe contexto antes dos mecanismos; títulos e caminhos permitem busca futura sem coleções duplicadas por assunto. Caminhos equivalentes permitem validar estrutura, sem comprovar equivalência semântica. Índices apontam explicações sem repeti-las. Guias canônicos de ambiente da Library são reutilizados, sem catálogo recursivo.
+**Resposta:** Implementado na documentação: cada repositório tem identidade estável, dois READMEs, índices por idioma, capítulos de categoria, limites de evidência e entrevistas. Nomes de ADRs e numeração sobrevivem à importação. O leitor escolhe contexto antes dos mecanismos; o leitor atual usa identidades documentais e busca no projeto sem coleções duplicadas por assunto. Caminhos equivalentes permitem validar estrutura, sem comprovar equivalência semântica. Índices FAQ agora contêm respostas substanciais; caminhos dos roteiros preservam âncoras por compatibilidade. Guias canônicos de ambiente da Library são reutilizados, sem catálogo recursivo.
 
 **Aprofundamento:** Como evitar cópias desatualizadas? Registrar caminho, revisão e escopo da inspeção, comparar entradas alteradas e conferir links no novo local. Preservar história como história. Uma revisão diferente sinaliza necessidade de revisão, sem autorizar regenerar tudo nem provar precisão da documentação inalterada. Automação incremental é futura; o catálogo é um snapshot revisto manualmente.
 

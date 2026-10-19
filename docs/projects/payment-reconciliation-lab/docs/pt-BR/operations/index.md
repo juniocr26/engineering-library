@@ -6,3 +6,5 @@
 - [Startup, implantação e fronteiras dos testes](deployment-and-evidence.md)
 - [Relatório da reestruturação Aurora Bakery](historical-refactor-report.md)
 - [Proveniência e limites](source-review.md)
+
+- [Auditoria documental — 2026-10-19](documentation-audit-2026-10-19.md)

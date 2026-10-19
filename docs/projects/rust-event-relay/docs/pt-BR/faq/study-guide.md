@@ -1,5 +1,6 @@
 # Limite de leitura — atualização em 2026-10-18
 
+> A [FAQ técnica completa](index.md) é a entrada principal para perguntas e respostas. Este roteiro mantém títulos e links históricos por compatibilidade.
 
 Use o [dossiê atual](../architecture/overview.md) e as [questões do escopo final](#questões-do-escopo-local-final) para o comportamento presente. Questões abaixo preservam escopo dos marcos, inclusive produtor, consumidor e integração antes ausentes. Mecanismos seguem úteis; “futuro”, “não implementado” e “atual” pertencem às datas originais. Q001–Q007 preservadas.
 

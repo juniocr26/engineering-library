@@ -1,5 +1,6 @@
 # Reading boundary — updated 2026-10-18
 
+> The complete [technical FAQ](index.md) is the primary entry point for questions and answers. This study document retains historical headings and links for compatibility.
 
 Use the [current dossier](../architecture/overview.md) and [final-scope questions](#final-local-scope-questions) for present behavior. Earlier questions/answers below preserve their milestone scope, including formerly missing producer, consumer and UI integration. Their mechanisms remain useful, but “future”, “not implemented” and “current” must be read at their original dates. Stable Q001–Q007 are retained.
 

@@ -4,3 +4,5 @@
 
 - [Engineering Library: current architecture](current-state.md)
 - [Future direction and open design questions](future-direction.md)
+
+- [Embedded source references](source-references.md)

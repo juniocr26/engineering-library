@@ -9,3 +9,9 @@ Flyway V1 cria stores. V2 renomeia para `legacy_stores`, preservando linhas, e c
 JPA usa BigDecimal para preço e Hibernate valida schema em vez de gerá-lo. `open-in-view=false` exige concluir o mapeamento dentro da transação do serviço, sem depender de persistência durante serialização. `readOnly=true` expressa intenção/hint transacional; não substitui privilégios do banco ou autorização. O serviço importa o repositório JPA concreto, portanto há camadas úteis, mas não inversão estrita de dependências.
 
 Índices de slug único e chave primária atendem identidade; migrações não declaram índice específico de filtro/ordenação do catálogo. Não alegue plano otimizado sem EXPLAIN e dados representativos. Escala monetária evita arredondamento binário no catálogo persistido, mas conciliação real também exigiria moeda explícita, regras de arredondamento, fontes financeiras imutáveis, ajustes e identidades de matching. São requisitos futuros não selecionados. Preserve histórico/checksums de migração; renomear serviços Compose ou volume não transforma identidade inicializada de usuário/banco nem dados do domínio.
+
+## Visibilidade não é invariante de pagamento — 2026-10-19
+
+A consulta inclui AVAILABLE e TEMPORARILY_UNAVAILABLE, ordena featured primeiro e depois nome e materializa todo o resultado sem paginação. DTOs são mapeados dentro da transação read-only; `purchasable` deriva apenas de AVAILABLE. Nem a flag nem `readOnly=true` reservam estoque ou autorizam cobrança. Restrições SQL protegem representação; filtragem de status controla a resposta. V2 preserva `legacy_stores`, sem converter linhas em transações financeiras.
+
+`ProductPostgresIT` define asserções isoladas de migrations/restrições/visibilidade. `ProductApiTest` simula o serviço para transporte e segurança. Foram lidos, sem execução. Um banco isolado novo não prova recuperação de volume inicializado. [Respostas técnicas atuais](../faq/index.md).

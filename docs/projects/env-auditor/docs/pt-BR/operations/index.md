@@ -6,3 +6,5 @@
 - [Operação, falhas e limites de evidência](recovery-and-evidence.md)
 - [Proveniência e limites](source-review.md)
 - [Relatório do terminal](terminal-report.md)
+
+- [Auditoria documental — 2026-10-19](documentation-audit-2026-10-19.md)

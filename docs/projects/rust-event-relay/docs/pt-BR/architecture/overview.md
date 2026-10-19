@@ -1,5 +1,7 @@
 # Arquitetura atual — escopo local final
 
+> Conciliação do código — 2026-10-19: `backend/src/bin/demo.rs` compõe produtor/evidência local dedicado, separado do HTTP compartilhado. Middleware limita requisições e sanitiza timeout; timeout pode ocultar commit do produtor/ação. Schema atual admite várias ações para execução concluída. Veja [respostas atuais](../faq/index.md) e [inventário de migrations](../database/migrations.md). É evidência estática, sem verificação de rollout em execução.
+
 HTTP compõe API limitada de produtor/evidência; relay adquire/publica outbox; consumidor confirma efeito local de estoque. Supervisor gerencia ciclos separados. Vue chama HTTP pelo proxy para cenários reais e inspeção GET. PostgreSQL controla produtor, relay e consumidor em schemas separados; RabbitMQ controla transporte durável. Nenhum projeto irmão é dependência de runtime.
 
 Produtor confirma fato de recebimento e outbox atomicamente. Publicação usa leases/revisões, confirms, retry durável e replay autorizado. Consumidor confirma recibo/estoque atomicamente e tenta ACK. São fronteiras independentes: consumidor pode confirmar antes da conclusão observada do relay; enviar ACK com sucesso não prova recebimento. Identidade estável/recibos retidos impedem segundo efeito local suportado, não transporte duplicado.

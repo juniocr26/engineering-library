@@ -6,3 +6,5 @@
 - [Startup, deployment and test boundaries](deployment-and-evidence.md)
 - [Aurora Bakery restructuring report](historical-refactor-report.md)
 - [Provenance and limits](source-review.md)
+
+- [Documentation audit — 2026-10-19](documentation-audit-2026-10-19.md)

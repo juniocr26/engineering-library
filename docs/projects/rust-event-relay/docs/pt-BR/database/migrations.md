@@ -1,3 +1,9 @@
+## Inventário atual do código — 2026-10-19
+
+A árvore contém nove pares de migrations, incluindo execuções demo, ações demo e `20261019000000_multiple_duplicate_actions`. É inventário de fontes, sem consulta de versões instaladas. Afirmações anteriores de seis migrations/rollout pertencem às respectivas datas.
+
+O up mais recente remove unicidade por execução em `demo.actions` e cria índice ordenado de histórico. A admissão atual permite até três ações retidas por execução, mantendo reconciliação de retries por identidade. O down tenta restaurar unicidade antes de remover o índice; várias ações retidas causam falha, sem apagar histórico. Preserve as evidências: revisão de código não autoriza rollback ou limpeza de dados. [FAQ atual](../faq/index.md) e [registro do escopo](../operations/documentation-audit-2026-10-19.md) explicam a inspeção selecionada. Nenhuma migration ou consulta ao banco foi executada aqui.
+
 **Estado local atual — Marco 4.5 (2026-10-16):** [Rollout verificado e recuperação](../operations/milestone-4-5-rollout.md). Seis migrations aplicadas; artefatos atuais HTTP/relay/consumer instalados e ativos; consumer autostart=true. Backup protegido/restore isolado e demonstração real 10 → 15 → 15 verificados. API replay desabilitada; frontend continua simulação. Observações anteriores abaixo preservam suas datas.
 
 Estado 4.2: seis versões aditivas no código. Migração 20261014000000 cria estoque/recibos do consumidor; down perde estoque e histórico de deduplicação. Validar somente em banco exato isolado. Desenvolvimento compartilhado conserva quatro versões instaladas; replay 20261013000000 e consumidor 20261014000000 pendentes, sem autorização de rollout. [Protocolo e constraints](../architecture/milestone-4-2.md).

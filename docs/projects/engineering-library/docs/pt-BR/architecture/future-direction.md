@@ -2,11 +2,11 @@
 
 ## Status
 
-São requisitos e propostas exploratórias para próximos marcos, sem implementação ou comprovação de uma arquitetura detalhada aprovada. O scaffold e o catálogo Markdown atuais estão no [estado atual](current-state.md). O guia de desenvolvimento existente apresenta uma primeira API de coleção/capítulo somente leitura como trabalho futuro.
+API de catálogo somente leitura, livro Markdown interno, busca no projeto e favoritos anônimos estão implementados. O [estado atual](current-state.md) descreve suas fronteiras. Propostas remanescentes tratam de geração documental automatizada, inferência e política de acesso público/privado; o roadmap antigo do scaffold é histórico.
 
 ## Interface de leitura
 
-A experiência pretendida de livro técnico começa pela seleção de projeto, seguida de idioma, índice de capítulos e documento. Uma futura API precisa definir identificadores estáveis, resolução segura de caminhos, renderização Markdown, navegação e contratos de erro antes do consumo pelo Next.js. Títulos e caminhos existentes podem fornecer navegação; nenhuma busca, estrutura de banco ou funcionalidade de frontend foi adicionada aqui. Acessibilidade, renderização de código/diagramas e tratamento de links quebrados precisam de critérios de aceite explícitos.
+Seleção de projeto, capítulos bilíngues, páginas medidas, expansões de código e favoritos lógicos já existem. Próximos passos devem partir de comportamento concreto e evidências, sem propor reconstruir todo o leitor como funcionalidade ausente. A arquitetura atual dispensa API Rails separada de Markdown bruto: Next lê a coleção local delimitada. A implementação não comprova implantação em produção nem certificação completa de acessibilidade.
 
 ## IA local e geração incremental
 
@@ -18,4 +18,4 @@ Inferência local oferece proximidade dos dados e operação offline, mas consom
 
 Um adaptador de ingestão deve impor raízes permitidas sem atravessar symlinks externos, excluir credenciais/dados/backups e distinguir código implementado, evidência datada, justificativa documentada e melhoria proposta. São proteções propostas, não uma fronteira de segurança implantada. Separar entradas, saídas e política de acesso privadas do catálogo público; não presumir que um modelo consegue remover segredos de forma confiável. Uma citação permite rastrear, mas não estabelece veracidade por si só.
 
-Desafios abertos: divergência entre código e documentação; marcos históricos conflitantes; significado da tradução além da equivalência de caminhos; links/âncoras Markdown robustos; revisão de alucinações; preservação de material autoral; recursos limitados de inferência; publicação segura. Ordem sugerida: manutenção do catálogo → contrato documental somente leitura → interface de livro → experimentos de ingestão/inferência com escopo separado. São pré-requisitos, não marcos concluídos nem compromissos de lançamento.
+Desafios abertos: divergência entre código e documentação; marcos históricos conflitantes; significado da tradução além da equivalência de caminhos; links/âncoras Markdown robustos; revisão de alucinações; preservação de material autoral; recursos limitados de inferência; publicação segura. Próxima ordem sugerida: manter catálogo/leitor existentes → resolver lacunas observadas de uso/evidência → delimitar experimentos de ingestão/inferência. É planejamento, sem compromisso de lançamento.

@@ -23,3 +23,5 @@
 - [Preparação do Marco 6 — comparação e escopo da interface real](milestone-6-preparation.md)
 - [Procedimento de replay do operador](replay.md)
 - [Proveniência e limites](source-review.md)
+
+- [Auditoria documental — 2026-10-19](documentation-audit-2026-10-19.md)
