@@ -1,4 +1,5 @@
 'use client';
+import { headingTitle } from '../lib/heading-numbering';
 import { normalizeCursiveLabel } from '../lib/cursive-headings';
 import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
@@ -57,7 +58,7 @@ export function TableOfContents({ entries, slug, language, projectName, catalogP
       <h1>{normalizeCursiveLabel(title)}<span className="toc-quill" aria-hidden="true"/></h1>
     </header>;
     return <BookReader key={slug} initialEnd={initialEnd} location={location} locationRequest={locationRequest} onLocationChange={setVisibleAnchor} pageAction={pageAction} nextChapter={readingNeighbors(getReadingSequence(slug, language, entries), null).next} units={visibleEntries} header={header} project={slug} language={language} title={title} renderUnit={entry => {
-      const text = <><span className="chapter-number">{entry.number}</span><span>{entry.heading ? normalizeCursiveLabel(entry.title) : entry.title}</span></>;
+      const text = <><span className="chapter-number">{entry.number}</span><span>{entry.heading ? normalizeCursiveLabel(headingTitle(entry.title, entry.number)) : headingTitle(entry.title, entry.number)}</span></>;
       const content = entry.href ? <Link href={entry.href}>{text}<span className="toc-leader" aria-hidden="true"/>↗</Link> : <span aria-disabled={!entry.heading || undefined}>{text}</span>;
       const toggle = parents.has(entry.id) ? <button type="button" className="toc-toggle" aria-expanded={expandedIds.has(entry.id)} aria-label={`${expandedIds.has(entry.id) ? (language === 'en' ? 'Collapse' : 'Recolher') : (language === 'en' ? 'Expand' : 'Expandir')}: ${entry.title}`} onClick={() => {
         const next = new Set(expandedIds);

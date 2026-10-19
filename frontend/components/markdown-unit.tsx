@@ -6,6 +6,7 @@ import { ReaderTable, useTableScroll } from './reader-table';
 import { ExpandableMedia } from './expandable-media';
 import Markdown, { defaultUrlTransform } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { numberedHeading } from '../lib/heading-numbering';
 import { cursiveHeadings } from '../lib/cursive-headings';
 import { resolveDocumentLink } from '../lib/document-links';
 import type { MarkdownUnit as Unit } from '../lib/markdown';
@@ -66,7 +67,7 @@ export const MarkdownUnit = memo(function MarkdownUnit({ unit, project, document
   const scroll = useTableScroll(`${project}/${document}/${language}/${unit.tableOrigin ?? unit.id}`);
   if (unit.code) return <SourceCode collapse={toggleSource ? () => toggleSource(unit.code!.id) : undefined} unit={unit} language={language} query={query} location={location}/>;
   const source = unit.table && unit.tablePart ? `${unit.table.header}${unit.table.rows.slice(unit.tablePart.start, unit.tablePart.end).join('\n')}\n\n${unit.table.definitions}` : unit.source;
-  return <div className="reader-markdown"><Markdown skipHtml remarkPlugins={[remarkGfm]} rehypePlugins={[disclosurePlugin(unit.references ?? []), cursiveHeadings]} urlTransform={(url, key) => defaultUrlTransform(key === 'href' && unit.references?.some(ref => ref.href === url) ? url : resolveDocumentLink(project, document, language, url, key === 'src') ?? '')} components={{
+  return <div className="reader-markdown"><Markdown skipHtml remarkPlugins={[remarkGfm]} rehypePlugins={[disclosurePlugin(unit.references ?? []), cursiveHeadings, numberedHeading(unit.navigationNumber)]} urlTransform={(url, key) => defaultUrlTransform(key === 'href' && unit.references?.some(ref => ref.href === url) ? url : resolveDocumentLink(project, document, language, url, key === 'src') ?? '')} components={{
     a: ({ href, children, node }) => { const ref = unit.references?.find(ref => ref.id === node?.properties['data-source-id']); if (ref) return <button type="button" className="source-reference" aria-expanded={expanded?.has(ref.id) ?? false} onClick={() => toggleSource?.(ref.id)}><span aria-hidden="true">{expanded?.has(ref.id) ? '▾ ' : '▸ '}</span>{children}</button>; return href?.startsWith('/projects/') ? <Link href={href}>{highlighted(children, query)}</Link> : <a href={href} rel={href?.startsWith('http') ? 'noreferrer' : undefined}>{highlighted(children, query)}</a>; },
     img: ({ src, alt }) => <ExpandableMedia src={typeof src === 'string' ? src : undefined} alt={alt ?? ''} language={language}/>,
     pre: ({ children }) => <div className="reader-code">{children}</div>,

@@ -37,6 +37,7 @@ console.log(`Complete inventory: ${output}`);
 
 if (process.argv.includes('--validate')) {
   const { documentationEntries } = await import('../lib/documentation.ts');
+  const { numberHeadingUnits, numberedHeading, headingTitle } = await import('../lib/heading-numbering.ts');
   const { markdownUnits } = await import('../lib/markdown.ts');
   const { getReadingSequence } = await import('../lib/reading-order.ts');
   if (process.env.BACKEND_URL) {
@@ -95,6 +96,16 @@ if (process.argv.includes('--validate')) {
           continue;
         }
         const units = markdownUnits(await readFile(path.join(root, project.project, doc.relative), 'utf8'));
+        const numbered = numberHeadingUnits(units, entries, id);
+        for (const unit of numbered.filter(u => u.heading !== undefined)) {
+          const canonical = entries.find(e => e.id === unit.navigationId);
+          if (!canonical || canonical.number !== unit.navigationNumber) errors.push(`${language}: reader numbering ${id}#${unit.id}`);
+          const tree: import('hast').Root = { type: 'root', children: [{ type: 'element', tagName: `h${unit.headingDepth}`, properties: {}, children: [{ type: 'text', value: unit.text }] }] };
+          numberedHeading(unit.navigationNumber)()(tree);
+          const heading = tree.children[0];
+          const rendered = heading.type === 'element' ? heading.children.map(n => n.type === 'text' ? n.value : '').join('') : '';
+          if (canonical && rendered !== `${canonical.number} ${headingTitle(unit.text, canonical.number)}`) errors.push(`${language}: rendered number ${id}#${unit.id}`);
+        }
         const expected = doc.headings.filter((h,index) => !(index === 0 && h.depth === 1));
         headingsExpected += expected.length;
         const stack: { depth: number; id: string }[] = [];
@@ -116,15 +127,15 @@ if (process.argv.includes('--validate')) {
       languages.push({ language, entries: entries.length, headingsExpected, headingsFound, excluded, tree: entries });
     }
     failures += errors.length;
-    const baselineMissingHeadings = languages.map(l => ({ language: l.language, missing: l.headingsExpected }));
-    reports.push({ project: project.project, baselineMissingHeadings, errors, ambiguities, languages });
+    const baselineUnnumberedHeadings = languages.map(l => ({ language: l.language, missing: l.headingsExpected }));
+    reports.push({ project: project.project, baselineUnnumberedHeadings, errors, ambiguities, languages });
     console.log(`${project.project}: ${languages.map(l => `${l.language}=${l.entries} entries, ${l.headingsFound}/${l.headingsExpected} headings`).join('; ')}; ${errors.length} errors; ${ambiguities.length} unverified bilingual targets`);
   }
   await writeFile('/tmp/navigation-audit.json', JSON.stringify(reports, null, 2));
   const summary = ['# Full-library navigation audit', '', 'Generated from every collection and every Markdown AST. Counts below cover navigable trees; the inventory also includes excluded legacy documents and metadata. Translation ambiguities are not verified equivalents. No technical Markdown was rewritten.', '', '| Project | EN entries | PT-BR entries | Heading coverage EN/PT | Structural errors | Bilingual findings (unverified targets / structure) |', '| --- | ---: | ---: | --- | ---: | ---: |'];
   for (const r of reports) summary.push(`| ${r.project} | ${r.languages[0].entries} | ${r.languages[1].entries} | ${r.languages.map(l => `${l.headingsFound}/${l.headingsExpected}`).join(' / ')} | ${r.errors.length} | ${r.ambiguities.length} |`);
   for (const r of reports) {
-    summary.push('', `## ${r.project}`, '', `Before correction: ${r.baselineMissingHeadings.map(l => `${l.language}: ${l.missing} internal headings absent from the TOC`).join('; ')}. Existing document/category numbering did not require a reset fix.`, '', 'Corrections: shared AST heading discovery, parent-based sequential numbering, direct heading targets, progressive disclosure; chapter reading order excludes section links.', '', 'Excluded files (explicit compatibility/navigation policy):', ...r.languages.flatMap(l => l.excluded.map(d => `- ${l.language} ${d.id}: ${d.reason}; ${d.headings} headings inventoried.`)), '', `Unresolved bilingual findings: ${r.ambiguities.length} (unverified targets and structural differences). Details and complete trees are in navigation-audit.json. Missing canonical section metadata is reported rather than inferred from translated ordinal positions.`, ...r.errors);
+    summary.push('', `## ${r.project}`, '', `Before correction: ${r.baselineUnnumberedHeadings.map(l => `${l.language}: ${l.missing} internal reader headings lacked structural numbers`).join('; ')}. Existing document/category numbering did not require a reset fix.`, '', 'Correction: reader heading units resolve the existing canonical entry by document ID and AST anchor; the Markdown renderer and local chapter links consume its resolved number. TOC and project chapter links retain the same tree. Audit checks heading metadata and the shared HAST numbering transform; it does not certify browser layout.', '', 'Excluded files (explicit compatibility/navigation policy):', ...r.languages.flatMap(l => l.excluded.map(d => `- ${l.language} ${d.id}: ${d.reason}; ${d.headings} headings inventoried.`)), '', `Unresolved bilingual findings: ${r.ambiguities.length} (unverified targets and structural differences). Details and complete trees are in navigation-audit.json. Missing canonical section metadata is reported rather than inferred from translated ordinal positions.`, ...r.errors);
   }
   await writeFile('/tmp/navigation-audit.md', summary.join('\n') + '\n');
   if (failures) process.exitCode = 1;

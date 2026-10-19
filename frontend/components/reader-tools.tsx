@@ -1,4 +1,5 @@
 'use client';
+import { headingTitle } from '../lib/heading-numbering';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { ReaderPanel } from './reader-panel';
@@ -86,7 +87,7 @@ function Search({ project, language, close }: { project: string; language: Langu
 
 export function ReaderTools({ project, projectName, document: documentId, language, entries, title, headings = [], children }: {
   project: string; projectName?: string; document: string; language: Language; entries: TocEntry[]; title: string;
-  headings?: { id: string; text: string }[];
+  headings?: { id: string; text: string; navigationNumber?: string }[];
   children: (tools: { toolbar: (action: ReactNode) => ReactNode; pageAction: (page: BookUnit[]) => ReactNode }) => ReactNode;
 }) {
   const en = language === 'en';
@@ -139,8 +140,8 @@ export function ReaderTools({ project, projectName, document: documentId, langua
     {panel && <ReaderPanel title={labels[panel]} close={() => setPanel(null)} closeLabel={en ? 'Close panel' : 'Fechar painel'}>
       {panel === 'search' && <Search project={project} language={language} close={() => setPanel(null)}/>}
       {panel === 'chapters' && <>
-        {headings.length > 0 && <h3>{title}</h3>}<ul className="reader-panel-list">{headings.map(unit => <li key={unit.id}><a href={`#${encodeURIComponent(unit.id)}`} onClick={() => setPanel(null)}>{unit.text}</a></li>)}</ul>
-        <h3>{en ? 'Project documents' : 'Documentos do projeto'}</h3><ul className="reader-panel-list">{entries.map(entry => <li key={entry.id}>{entry.href ? <Link href={entry.href} aria-current={entry.id === documentId ? 'page' : undefined} onClick={() => setPanel(null)}>{entry.number} {entry.title}</Link> : <strong>{entry.number} {entry.title}</strong>}</li>)}</ul>
+        {headings.length > 0 && <h3>{title}</h3>}<ul className="reader-panel-list">{headings.map(unit => <li key={unit.id}><a href={`#${encodeURIComponent(unit.id)}`} onClick={() => setPanel(null)}>{unit.navigationNumber ? `${unit.navigationNumber} ${headingTitle(unit.text, unit.navigationNumber)}` : unit.text}</a></li>)}</ul>
+        <h3>{en ? 'Project documents' : 'Documentos do projeto'}</h3><ul className="reader-panel-list">{entries.map(entry => <li key={entry.id}>{entry.href ? <Link href={entry.href} aria-current={entry.id === documentId ? 'page' : undefined} onClick={() => setPanel(null)}>{entry.number} {headingTitle(entry.title, entry.number)}</Link> : <strong>{entry.number} {headingTitle(entry.title, entry.number)}</strong>}</li>)}</ul>
       </>}
       {panel === 'bookmarks' && <>
         <p>{en ? 'Saved in this browser. Clearing its identity removes access; bookmarks do not sync across devices.' : 'Salvas neste navegador. Limpar sua identidade remove o acesso; marcações não sincronizam entre dispositivos.'}</p>

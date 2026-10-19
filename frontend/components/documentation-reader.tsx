@@ -1,4 +1,5 @@
 'use client';
+import { numberHeadingUnits } from '../lib/heading-numbering';
 import { referenceContainsLocation, sourceUnits } from '../lib/source-links';
 import { useMemo } from 'react';
 import { projectDisplayName } from '../lib/project-name';
@@ -29,7 +30,7 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
   const documentKey = documentId;
   const expansionStorageKey = `reader-sources/${project}/${documentKey}`;
   const expanded = useMemo(() => new Set([...(expandedByDocument[documentKey] ?? []), ...units.flatMap(unit => (unit.references ?? []).filter(ref => referenceContainsLocation(ref, location)).map(ref => ref.id))]), [expandedByDocument, documentKey, units, location]);
-  const flowUnits: Unit[] = useMemo(() => sourceUnits(units, expanded), [units, expanded]);
+  const flowUnits: Unit[] = useMemo(() => sourceUnits(numberHeadingUnits(units, entries, documentId), expanded), [units, entries, documentId, expanded]);
   function toggleSource(id: string) {
     const next = new Set(expanded);
     if (next.has(id)) next.delete(id); else next.add(id);
@@ -83,7 +84,7 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
       try { setLocation(decodeURIComponent(target.hash.slice(1))); setLocationRequest(previous => previous + 1); } catch { /* Invalid anchors keep their native link behavior. */ }
     }
   }}><DocumentLanguage language={language}/><div className="toc-shell documentation-shell">
-    <ReaderTools project={project} projectName={projectName} document={documentId} language={language} entries={entries} title={title} headings={units.filter(unit => unit.heading !== undefined)}>{({ toolbar, pageAction }) => <BookReader key={documentId} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={flowUnits} project={project} language={language} title={title} header={action => header(toolbar, action)} location={location} locationRequest={locationRequest}
+    <ReaderTools project={project} projectName={projectName} document={documentId} language={language} entries={entries} title={title} headings={flowUnits.filter(unit => unit.heading !== undefined)}>{({ toolbar, pageAction }) => <BookReader key={documentId} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={flowUnits} project={project} language={language} title={title} header={action => header(toolbar, action)} location={location} locationRequest={locationRequest}
       renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={containsLocation(unit, location) ? query : ''} expanded={expanded} toggleSource={toggleSource} location={location}/>}
       pageAction={pageAction}/>}</ReaderTools>
     {location && !flowUnits.some(unit => containsLocation(unit, location) || location.startsWith(`${unit.id}--row-`)) && <p role="status" className="reader-notice">{en ? 'This saved location is unavailable: the source or translation may have changed. Showing the document start.' : 'Esta posição está indisponível: o código ou a tradução pode ter mudado. Exibindo o início do documento.'}</p>}
