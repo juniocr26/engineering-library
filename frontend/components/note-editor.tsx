@@ -6,10 +6,13 @@ import { NOTE_MAX_BYTES } from '../lib/note-policy';
 import type { TextAnchor } from '../lib/text-anchors';
 import type { Language } from '../lib/i18n';
 export type SavedNote = { id: number; highlight_id: number | null; segments: TextAnchor[]; body: string };
-export function NoteEditor({ note, highlightId, query, csrf, language, saved, removed, close }: { note?: SavedNote; highlightId?: number; query: string; csrf: string; language: Language; saved: (note: SavedNote) => void; removed: (id: number) => void; close: () => void }) {
+export function NoteEditor({ note, highlightId, hasHighlight, query, csrf, language, saved, removed, close }: { note?: SavedNote; highlightId?: number; hasHighlight: boolean; query: string; csrf: string; language: Language; saved: (note: SavedNote) => void; removed: (id: number) => void; close: () => void }) {
   const [current, setCurrent] = useState(note);
   const [draft, setDraft] = useState(note?.body ?? '');
   const [preview, setPreview] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const deleteButton = useRef<HTMLButtonElement>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const pending = useRef(false);
@@ -20,23 +23,38 @@ export function NoteEditor({ note, highlightId, query, csrf, language, saved, re
   useEffect(() => { const prevent = (event: BeforeUnloadEvent) => { if (dirty) event.preventDefault(); }; window.addEventListener('beforeunload', prevent); return () => window.removeEventListener('beforeunload', prevent); }, [dirty]);
   async function mutate(remove = false) {
     if (pending.current) return;
-    if (remove && (draft.trim() || current?.body.trim()) && !confirm(en ? 'Delete this note? The highlight will remain.' : 'Excluir esta nota? O destaque será preservado.')) return;
+    if (remove && !current) return;
+    if (remove) setDeleteError('');
     pending.current = true; setBusy(true); setMessage('');
     try {
       const response = await fetch(`/api/notes${current ? `/${current.id}` : ''}?${query}`, { method: remove ? 'DELETE' : current ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf }, body: remove ? undefined : JSON.stringify({ highlight_id: highlightId, body: draft }) });
       if (!response.ok) throw Error();
       if (remove) { removed(current!.id); close(); }
       else { const value = await response.json(); setCurrent(value); setDraft(value.body); saved(value); setMessage(current ? (en ? 'Note updated successfully.' : 'Nota atualizada com sucesso.') : (en ? 'Note saved successfully.' : 'Nota salva com sucesso.')); }
-    } catch { setMessage(remove ? (en ? 'Could not delete the note. Try again.' : 'Não foi possível excluir a nota. Tente novamente.') : en ? 'Could not save. Your draft is preserved. Maximum: 128 KiB.' : 'Não foi possível salvar. Seu rascunho foi preservado. Máximo: 128 KiB.'); }
+    } catch {
+      if (remove) setDeleteError(en ? 'Could not delete the note. Try again.' : 'Não foi possível excluir a nota. Tente novamente.');
+      else setMessage(en ? 'Could not save. Your draft is preserved. Maximum: 128 KiB.' : 'Não foi possível salvar. Seu rascunho foi preservado. Máximo: 128 KiB.');
+    }
     finally { pending.current = false; setBusy(false); }
   }
+  const cancelDelete = () => {
+    if (pending.current) return;
+    setConfirmDelete(false);
+    requestAnimationFrame(() => deleteButton.current?.focus({ preventScroll: true }));
+  };
   const bytes = new TextEncoder().encode(draft).length;
-  return <ViewerDialog label={en ? 'Note editor' : 'Editor de nota'} close={() => { if (!busy) finish(); }} className="note-editor">
+  return <ViewerDialog label={en ? 'Note editor' : 'Editor de nota'} close={() => { if (!busy && !confirmDelete) finish(); }} className="note-editor">
     <header><h2>{en ? 'Passage note' : 'Nota do trecho'}</h2><button disabled={busy} onClick={finish} aria-label={en ? 'Close note' : 'Fechar nota'}>×</button></header>
     <label htmlFor="note-draft">{en ? 'Markdown or plain text' : 'Markdown ou texto simples'}</label>
     <textarea id="note-draft" ref={editor} autoFocus readOnly={busy} value={draft} onChange={event => setDraft(event.target.value)} spellCheck/>
     <p role="status">{message || `${bytes.toLocaleString()} / 131.072 bytes`}</p>
-    <footer><button disabled={busy || !current} onClick={() => void mutate(true)}>{en ? 'Delete note' : 'Excluir nota'}</button><button disabled={busy} onClick={() => setPreview(true)}>{en ? 'Preview' : 'Pré-visualizar'}</button><button disabled={busy || bytes > NOTE_MAX_BYTES} onClick={() => void mutate()}>{en ? 'Save' : 'Salvar'}</button></footer>
+    <footer><button ref={deleteButton} disabled={busy || !current} onClick={() => { setDeleteError(''); setConfirmDelete(true); }}>{en ? 'Delete note' : 'Excluir nota'}</button><button disabled={busy} onClick={() => setPreview(true)}>{en ? 'Preview' : 'Pré-visualizar'}</button><button disabled={busy || bytes > NOTE_MAX_BYTES} onClick={() => void mutate()}>{en ? 'Save' : 'Salvar'}</button></footer>
+    {confirmDelete && <ViewerDialog label={en ? 'Delete note?' : 'Excluir nota?'} close={cancelDelete} className="note-delete-confirmation">
+      <h2>{en ? 'Delete note?' : 'Excluir nota?'}</h2>
+      <p>{en ? 'This note will be permanently deleted.' : 'Esta nota será excluída permanentemente.'}{hasHighlight && (en ? ' The text highlight will be preserved.' : ' O destaque do texto será preservado.')}</p>
+      {deleteError && <p role="alert">{deleteError}</p>}
+      <footer><button autoFocus disabled={busy} onClick={cancelDelete}>{en ? 'Cancel' : 'Cancelar'}</button><button disabled={busy} onClick={() => void mutate(true)}>{busy ? (en ? 'Deleting…' : 'Excluindo…') : (en ? 'Delete note' : 'Excluir nota')}</button></footer>
+    </ViewerDialog>}
     {preview && <NotePreview source={draft} language={language} close={() => { setPreview(false); requestAnimationFrame(() => editor.current?.focus({ preventScroll: true })); }}/>}
   </ViewerDialog>;
 }

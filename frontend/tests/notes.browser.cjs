@@ -133,7 +133,42 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       assert.equal(await page.evaluate(() => window.pwned), undefined);
       assert.equal(await preview.locator('details[open]').count(), 2);
       await page.keyboard.press('Escape');
-      await draft.fill(source); page.once('dialog', dialog => dialog.accept()); await editor.getByRole('button', { name: 'Delete note', exact: true }).click(); await editor.waitFor({ state: 'hidden' }); await page.getByRole('status').filter({ hasText: 'Note deleted.' }).waitFor();
+      await draft.fill(source + '\nUnsaved draft');
+      const deletion = page.getByRole('dialog', { name: 'Delete note?', exact: true });
+      let nativeDialogs = 0;
+      page.on('dialog', dialog => { nativeDialogs++; void dialog.dismiss(); });
+      await editor.getByRole('button', { name: 'Delete note', exact: true }).click();
+      await deletion.waitFor(); await assertCentered(deletion);
+      assert.ok(!(await deletion.innerText()).includes('highlight will be preserved'));
+      await deletion.getByRole('button', { name: 'Cancel', exact: true }).click();
+      assert.equal(await draft.inputValue(), source + '\nUnsaved draft');
+      await page.waitForFunction(() => document.activeElement?.closest('.note-editor') && document.activeElement?.textContent === 'Delete note');
+      await editor.getByRole('button', { name: 'Delete note', exact: true }).click();
+      await page.keyboard.press('Escape'); await deletion.waitFor({ state: 'hidden' });
+      assert.ok(await editor.isVisible());
+      let deletes = 0;
+      await page.route('**/api/notes/*?**', async route => {
+        if (route.request().method() !== 'DELETE') return route.continue();
+        deletes++; await route.fulfill({ status: 500, body: '{}' });
+      });
+      await editor.getByRole('button', { name: 'Delete note', exact: true }).click();
+      await deletion.getByRole('button', { name: 'Delete note', exact: true }).click();
+      await deletion.getByRole('alert').waitFor();
+      assert.equal(await draft.inputValue(), source + '\nUnsaved draft'); assert.equal(deletes, 1);
+      await page.unroute('**/api/notes/*?**');
+      let completeDelete;
+      const holdDelete = new Promise(resolve => { completeDelete = resolve; });
+      await page.route('**/api/notes/*?**', async route => {
+        if (route.request().method() !== 'DELETE') return route.continue();
+        deletes++; await holdDelete; await route.continue();
+      });
+      await deletion.getByRole('button', { name: 'Delete note', exact: true }).click();
+      assert.ok(await deletion.getByRole('button', { name: 'Deleting…', exact: true }).isDisabled());
+      await page.keyboard.press('Escape'); assert.ok(await deletion.isVisible());
+      completeDelete(); await editor.waitFor({ state: 'hidden' });
+      assert.equal(deletes, 2); assert.equal(nativeDialogs, 0);
+      assert.equal(await marker.count(), 0);
+      assert.equal(await page.getByRole('status').filter({ hasText: 'Note deleted.' }).count(), 0);
       assert.deepEqual(errors, []);
       await context.close(); console.log(`PASS notes desktop/mobile ${width}: source roundtrip, preview, Unicode, code, table/media expansion, Mermaid, zoom, reload, detach, language, discard, security, delete`);
     }
