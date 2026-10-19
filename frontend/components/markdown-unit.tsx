@@ -1,6 +1,7 @@
 'use client';
 import { Fragment, memo, useEffect, useId, useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import { ReaderTable, useTableScroll } from './reader-table';
 import { ExpandableMedia } from './expandable-media';
 import Markdown, { defaultUrlTransform } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -41,13 +42,15 @@ function highlighted(children: ReactNode, query: string): ReactNode {
   return children;
 }
 
-export const MarkdownUnit = memo(function MarkdownUnit({ unit, project, document, language, query }: { unit: Unit; project: string; document: string; language: Language; query: string }) {
+export const MarkdownUnit = memo(function MarkdownUnit({ unit, project, document, language, query, plainTable = false }: { plainTable?: boolean; unit: Unit; project: string; document: string; language: Language; query: string }) {
+  const scroll = useTableScroll(`${project}/${document}/${language}/${unit.tableOrigin ?? unit.id}`);
+  const source = unit.table && unit.tablePart ? `${unit.table.header}${unit.table.rows.slice(unit.tablePart.start, unit.tablePart.end).join('\n')}\n\n${unit.table.definitions}` : unit.source;
   return <div className="reader-markdown"><Markdown skipHtml remarkPlugins={[remarkGfm]} urlTransform={(url, key) => defaultUrlTransform(resolveDocumentLink(project, document, language, url, key === 'src') ?? '')} components={{
     a: ({ href, children }) => href?.startsWith('/projects/') ? <Link href={href}>{highlighted(children, query)}</Link> : <a href={href} rel={href?.startsWith('http') ? 'noreferrer' : undefined}>{highlighted(children, query)}</a>,
     img: ({ src, alt }) => <ExpandableMedia src={typeof src === 'string' ? src : undefined} alt={alt ?? ''} language={language}/>,
     pre: ({ children }) => <div className="reader-code">{children}</div>,
     code: ({ className, children }) => className === 'language-mermaid' ? <Diagram source={String(children).trim()} language={language} query={query}/> : <code className={className}>{highlighted(children, query)}</code>,
-    table: ({ children }) => <div className="reader-table" tabIndex={0}><table>{children}</table></div>,
+    table: ({ children }) => plainTable ? <table>{children}</table> : <ReaderTable canSplit={!!unit.table} part={unit.tablePart} language={language} scroll={scroll} fullTable={() => <MarkdownUnit unit={{ ...unit, tablePart: undefined }} project={project} document={document} language={language} query={query} plainTable/>}>{children}</ReaderTable>,
     p: ({ children }) => <p>{highlighted(children, query)}</p>,
     li: ({ children }) => <li>{highlighted(children, query)}</li>,
     h1: ({ children }) => <h1>{highlighted(children, query)}</h1>,
@@ -56,9 +59,9 @@ export const MarkdownUnit = memo(function MarkdownUnit({ unit, project, document
     h4: ({ children }) => <h4>{highlighted(children, query)}</h4>,
     h5: ({ children }) => <h5>{highlighted(children, query)}</h5>,
     h6: ({ children }) => <h6>{highlighted(children, query)}</h6>,
-    td: ({ children }) => <td>{highlighted(children, query)}</td>,
-    th: ({ children }) => <th>{highlighted(children, query)}</th>,
+    td: ({ children, style }) => <td style={style}>{highlighted(children, query)}</td>,
+    th: ({ children, style }) => <th scope="col" style={style}>{highlighted(children, query)}</th>,
     strong: ({ children }) => <strong>{highlighted(children, query)}</strong>,
     em: ({ children }) => <em>{highlighted(children, query)}</em>,
-  }}>{unit.source}</Markdown></div>;
+  }}>{source}</Markdown></div>;
 });

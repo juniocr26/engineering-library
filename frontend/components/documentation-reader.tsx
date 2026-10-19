@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
+import { containsLocation } from '../lib/table-pagination';
 import { BookReader } from './book-reader';
 import { DocumentLanguage } from './document-language';
 import { MarkdownUnit } from './markdown-unit';
@@ -159,12 +160,12 @@ function ProjectDocumentationReader({ project, document: documentId, language, u
     }
   }}><DocumentLanguage language={language}/><div className="toc-shell documentation-shell">
     <BookReader key={`${documentId}/${language}/${initialEnd}`} initialEnd={initialEnd} previousChapter={neighbors.previous} nextChapter={neighbors.next} previousIsContents={neighbors.previousIsContents} units={units} project={project} language={language} title={title} header={header} location={location} locationRequest={locationRequest}
-      renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={unit.id === location ? query : ''}/>}
+      renderUnit={unit => <MarkdownUnit unit={unit} project={project} document={documentId} language={language} query={containsLocation(unit, location) ? query : ''}/>}
       pageAction={page => {
-        const saved = bookmarks.find(bookmark => bookmark.project === project && bookmark.document === documentId && bookmark.language === language && page.some(unit => unit.id === bookmark.anchor));
+        const saved = bookmarks.find(bookmark => bookmark.project === project && bookmark.document === documentId && bookmark.language === language && page.some(unit => containsLocation(unit, bookmark.anchor)));
         return <PageBookmark key={`${project}/${documentId}/${language}/${page.map(unit => unit.id).join('/')}`} saved={!!saved} disabled={busy || !csrf} en={en} toggle={() => void mutate(saved, page[0])}/>;
       }}/>
-    {location && !units.some(unit => unit.id === location) && <p role="status" className="reader-notice">{en ? 'This saved location is no longer available in this language. Showing the document start.' : 'Esta posição não está mais disponível neste idioma. Exibindo o início do documento.'}</p>}
+    {location && !units.some(unit => unit.id === location || location.startsWith(`${unit.id}--row-`)) && <p role="status" className="reader-notice">{en ? 'This saved location is no longer available in this language. Showing the document start.' : 'Esta posição não está mais disponível neste idioma. Exibindo o início do documento.'}</p>}
     {bookmarkError && <p role="alert" className="reader-notice">{en ? 'Bookmarks unavailable. Reload to try again.' : 'Marcações indisponíveis. Recarregue para tentar novamente.'}</p>}
     {panel && <ReaderPanel title={labels[panel]} close={() => setPanel(null)} closeLabel={en ? 'Close panel' : 'Fechar painel'}>
       {panel === 'search' && <Search project={project} language={language} close={() => setPanel(null)}/>}

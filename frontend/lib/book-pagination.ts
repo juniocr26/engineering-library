@@ -1,16 +1,11 @@
-export type BookUnit = { id: string; keepWithNext?: boolean };
-/** All sizes come from browser measurements, including margins in the measured wrapper. */
-export function paginateMeasured<T extends BookUnit>(units: readonly T[], heights: readonly number[], capacity: number | ((page: number) => number)): T[][] {
+import { paginateTables, type TableBookUnit, type TableMeasurement } from './table-pagination.ts';
+export type BookUnit = TableBookUnit;
+/** All sizes come from browser measurements, including margins in the measured wrapper.
+ * Table measurements extend the same flow with safe row boundaries and repeated headers.
+ */
+export function paginateMeasured<T extends BookUnit>(units: readonly T[], heights: readonly number[], capacity: number | ((page: number) => number), tables: ReadonlyMap<number, TableMeasurement> = new Map()): T[][] {
   if (!units.length) return [[]];
   const available = (page: number) => typeof capacity === 'function' ? capacity(page) : capacity;
   if (available(0) <= 0 || heights.length !== units.length) return [[...units]];
-  const pages: T[][] = []; let page: T[] = []; let used = 0;
-  units.forEach((unit, index) => {
-    const height = heights[index];
-    const required = height + (unit.keepWithNext ? (heights[index + 1] ?? 0) : 0);
-    if (page.length && used + required > available(pages.length)) { pages.push(page); page = []; used = 0; }
-    page.push(unit); used += height;
-  });
-  if (page.length) pages.push(page);
-  return pages;
+  return paginateTables(units, heights, tables, available);
 }

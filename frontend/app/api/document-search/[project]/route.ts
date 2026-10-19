@@ -17,8 +17,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ proj
     for (const unit of markdownUnits(source)) {
       const offset = unit.text.toLowerCase().indexOf(query.toLowerCase());
       if (offset < 0) continue;
-      const href = documentHref(project, entry.id, language, unit.id).replace('?lang=', `?q=${encodeURIComponent(query)}&lang=`);
-      results.push({ title: entry.title, excerpt: unit.text.slice(Math.max(0, offset - 65), offset + query.length + 110), href, anchor: unit.id });
+      const row = unit.table?.rows.findIndex(row => row.toLowerCase().includes(query.toLowerCase())) ?? -1;
+      const anchor = row > 0 ? `${unit.id}--row-${row}` : unit.id;
+      const href = documentHref(project, entry.id, language, anchor).replace('?lang=', `?q=${encodeURIComponent(query)}&lang=`);
+      results.push({ title: entry.title, excerpt: unit.text.slice(Math.max(0, offset - 65), offset + query.length + 110), href, anchor });
       if (results.length === 80) return Response.json({ results, truncated: true });
     }
   }

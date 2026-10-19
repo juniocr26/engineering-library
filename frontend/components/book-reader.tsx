@@ -2,7 +2,9 @@
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 import { paginateMeasured, type BookUnit } from '../lib/book-pagination';
+import { containsLocation, type TableMeasurement } from '../lib/table-pagination';
 import { contentPageId } from '../lib/manuscript';
+import { TableScrollProvider } from './reader-table';
 import { ManuscriptDecorations } from './manuscript-decorations';
 import { messages, type Language } from '../lib/i18n';
 type Turn<T> = { direction: 1 | -1; from: T[][]; target: number; href?: string };
@@ -40,9 +42,10 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     const node = measure.current;
     if (!node) return;
     let frame = 0; let disposed = false; let signature = '';
+    let rowSignature = ''; let tableMeasurements = new Map<number, TableMeasurement>();
     measured.current = false;
     const historyLocation = window.history.state?.bookLocation;
-    if (historyLocation?.url === window.location.href && units.some(unit => unit.id === historyLocation.anchor)) {
+    if (historyLocation?.url === window.location.href && units.some(unit => unit.id === historyLocation.anchor || historyLocation.anchor?.startsWith(`${unit.id}--row-`))) {
       anchor.current = historyLocation.anchor;
       endPending.current = false;
     }
@@ -64,8 +67,23 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
         // Control updates and identical observer notifications must not restart a turn.
         if (signature === nextSignature && measured.current) return;
         signature = nextSignature;
-        const next = paginateMeasured(units, heights, page => nextMode === 'single-page' || page % 2 === 0 ? node.clientHeight : rightCapacity);
-        const index = endPending.current ? next.length - 1 : Math.max(0, next.findIndex(page => page.some(unit => unit.id === anchor.current)));
+        const nextRowSignature = JSON.stringify([node.clientWidth, heights]);
+        if (rowSignature !== nextRowSignature) {
+          tableMeasurements = new Map<number, TableMeasurement>();
+          rowSignature = nextRowSignature;
+          Array.from(node.children).forEach((child, index) => {
+            const table = child.querySelector('table');
+            if (!table) return;
+            const rows = Array.from(table.tBodies).flatMap(body => Array.from(body.rows));
+            const header = table.tHead?.getBoundingClientRect().height ?? 0;
+            const rowHeights = rows.map(row => row.getBoundingClientRect().height);
+            tableMeasurements.set(index, { rows: rowHeights, header, overhead: Math.max(0, heights[index] - header - rowHeights.reduce((a, b) => a + b, 0)) + 2,
+              widths: Array.from(table.rows[0]?.cells ?? []).map(cell => cell.getBoundingClientRect().width),
+              safe: table.dataset.rowPagination === 'true' && !!table.tHead && !table.querySelector('[rowspan], [colspan]') });
+          });
+        }
+        const next = paginateMeasured(units, heights, page => nextMode === 'single-page' || page % 2 === 0 ? node.clientHeight : rightCapacity, tableMeasurements);
+        const index = endPending.current ? next.length - 1 : Math.max(0, next.findIndex(page => page.some(unit => containsLocation(unit, anchor.current))));
         endPending.current = false;
         anchor.current = next[index]?.[0]?.id;
         if (timer.current) clearTimeout(timer.current);
@@ -74,21 +92,22 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
         measured.current = true; setMeasurement({ units, language });
       });
     };
+    const invalidate = () => { signature = ''; rowSignature = ''; calculate(); };
     const observer = new ResizeObserver(calculate);
     const mutations = new MutationObserver(calculate);
     mutations.observe(node, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-measure-pending', 'src'] });
     observer.observe(node); if (measureRight.current) observer.observe(measureRight.current); Array.from(node.children).forEach(child => observer.observe(child));
     window.addEventListener('resize', calculate);
-    node.addEventListener('load', calculate, true); node.addEventListener('error', calculate, true);
-    document.fonts.addEventListener('loading', calculate);
-    document.fonts.addEventListener('loadingdone', calculate);
+    node.addEventListener('load', invalidate, true); node.addEventListener('error', invalidate, true);
+    document.fonts.addEventListener('loading', invalidate);
+    document.fonts.addEventListener('loadingdone', invalidate);
     void document.fonts.ready.then(calculate); calculate();
-    return () => { disposed = true; measured.current = false; cancelAnimationFrame(frame); observer.disconnect(); mutations.disconnect(); window.removeEventListener('resize', calculate); node.removeEventListener('load', calculate, true); node.removeEventListener('error', calculate, true); document.fonts.removeEventListener('loading', calculate); document.fonts.removeEventListener('loadingdone', calculate); if (timer.current) clearTimeout(timer.current); };
+    return () => { disposed = true; measured.current = false; cancelAnimationFrame(frame); observer.disconnect(); mutations.disconnect(); window.removeEventListener('resize', calculate); node.removeEventListener('load', invalidate, true); node.removeEventListener('error', invalidate, true); document.fonts.removeEventListener('loading', invalidate); document.fonts.removeEventListener('loadingdone', invalidate); if (timer.current) clearTimeout(timer.current); };
   }, [units, language]);
   const requested = useRef<{ location?: string; units: readonly T[]; request: number } | null>(null);
   useEffect(() => {
     if (!ready || !location || (requested.current?.location === location && requested.current.units === units && requested.current.request === locationRequest)) return;
-    const index = pages.findIndex(page => page.some(unit => unit.id === location));
+    const index = pages.findIndex(page => page.some(unit => containsLocation(unit, location)));
     if (index < 0) return;
     let scrollFrame = 0;
     const frame = requestAnimationFrame(() => {
@@ -162,10 +181,10 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   const back = turn ? pages[turn.target + (turn.direction === -1 && count === 2 ? 1 : 0)] : undefined;
   const left = turn && count === 2 && turn.direction === 1 ? turn.from[0] : pages[visible];
   const right = turn && count === 2 && turn.direction === -1 ? turn.from[1] : pages[visible + 1];
-  return <section className="reader" data-mode={mode} data-pagination={ready ? 'ready' : 'measuring'} aria-label={title} onKeyDown={event => {
-    if (event.altKey || event.ctrlKey || event.metaKey || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable]')) return;
+  return <TableScrollProvider><section className="reader" data-mode={mode} data-pagination={ready ? 'ready' : 'measuring'} aria-label={title} onKeyDown={event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable],.reader-table,dialog')) return;
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); navigate(event.key === 'ArrowRight' ? 1 : -1); }
-  }} onTouchStart={event => { if (event.touches.length === 1 && !(event.target as HTMLElement).closest('a,button')) touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }} onTouchEnd={event => {
+  }} onTouchStart={event => { if (event.touches.length === 1 && !(event.target as HTMLElement).closest('a,button,.reader-table,dialog')) touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }} onTouchEnd={event => {
     const start = touch.current; touch.current = null; if (!start || !event.changedTouches[0]) return;
     const dx = event.changedTouches[0].clientX - start.x; const dy = event.changedTouches[0].clientY - start.y;
     if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1);
@@ -181,5 +200,5 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       <div className="reader-leaf paper reader-probe reader-probe--right"><div className="reader-body" ref={measureRight}/>{controls}</div>
     </div>
 
-  </section>;
+  </section></TableScrollProvider>;
 }

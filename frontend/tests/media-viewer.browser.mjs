@@ -16,7 +16,7 @@ try {
       const next = page.locator('.reader-pages .reader-controls button').last();
       assert.equal(await next.getAttribute('aria-disabled'), 'false', 'document must contain media');
       await next.click();
-      await page.waitForTimeout(700);
+      await page.locator('.reader-stage[aria-busy="false"]').waitFor();
     }
     const url = page.url();
     const pages = await page.locator('.reader-pages').innerText();
