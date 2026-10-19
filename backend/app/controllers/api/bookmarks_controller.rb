@@ -78,6 +78,8 @@ module Api
       slug, document, language = attributes.values_at("project", "document", "language")
       return false unless slug.is_a?(String) && CatalogProject.exists?(slug: slug, active: true) && %w[en pt-BR].include?(language)
       return false unless document.is_a?(String) && document.length <= 240 && !document.include?("\\") && !document.include?("\0")
+      # Virtual table of contents shares the anonymous bookmark schema.
+      return true if document == "@contents"
       relative = if document == "README"
         language == "en" ? "README.md" : "README.pt-BR.md"
       else

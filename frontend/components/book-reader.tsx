@@ -9,7 +9,8 @@ import { ManuscriptDecorations } from './manuscript-decorations';
 import { messages, type Language } from '../lib/i18n';
 type Turn<T> = { direction: 1 | -1; from: T[][]; target: number; href?: string };
 /** One lifecycle and navigation engine; only CSS geometry and visible leaf count differ. */
-export function BookReader<T extends BookUnit>({ units, renderUnit, project, language, title, header, location, locationRequest = 0, pageAction, previousChapter, nextChapter, previousIsContents, initialEnd = false }: {
+export function BookReader<T extends BookUnit>({ units, renderUnit, project, language, title, header, location, locationRequest = 0, pageAction, onLocationChange, previousChapter, nextChapter, previousIsContents, initialEnd = false }: {
+  onLocationChange?: (anchor: string) => void;
   previousChapter?: string; nextChapter?: string; previousIsContents?: boolean; initialEnd?: boolean;
   units: readonly T[]; renderUnit: (unit: T) => ReactNode; project: string; language: Language; title: string; header?: ReactNode | ((action: ReactNode) => ReactNode);
   location?: string; locationRequest?: number; pageAction?: (page: T[], physicalPage: number) => ReactNode;
@@ -111,6 +112,9 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     void document.fonts.ready.then(calculate); calculate();
     return () => { disposed = true; measured.current = false; cancelAnimationFrame(frame); observer.disconnect(); mutations.disconnect(); window.removeEventListener('resize', calculate); node.removeEventListener('load', invalidate, true); node.removeEventListener('error', invalidate, true); document.fonts.removeEventListener('loading', invalidate); document.fonts.removeEventListener('loadingdone', invalidate); if (timer.current) clearTimeout(timer.current); };
   }, [units, language]);
+  useEffect(() => {
+    if (ready && pages[position]?.[0]) onLocationChange?.(anchor.current ?? pages[position][0].id);
+  }, [ready, pages, position, onLocationChange]);
   const requested = useRef<{ location?: string; units: readonly T[]; request: number } | null>(null);
   useEffect(() => {
     if (!ready || !location || (requested.current?.location === location && requested.current.units === units && requested.current.request === locationRequest)) return;
@@ -121,6 +125,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       requested.current = { location, units, request: locationRequest };
       if (timer.current) clearTimeout(timer.current);
       locked.current = false; setTurn(null); anchor.current = location;
+      onLocationChange?.(location);
       setPosition(mode === 'spread' ? index - index % 2 : index);
       scrollFrame = requestAnimationFrame(() => {
         const block = Array.from(stage.current?.querySelectorAll<HTMLElement>('[data-source-location], [data-unit-id]') ?? []).find(node => node.dataset.sourceLocation === location || node.dataset.unitId === location);
@@ -128,7 +133,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       });
     });
     return () => { cancelAnimationFrame(frame); cancelAnimationFrame(scrollFrame); };
-  }, [ready, location, locationRequest, units, pages, mode]);
+  }, [ready, location, locationRequest, units, pages, mode, onLocationChange]);
   function finish(target: number, href?: string) {
     if (href) {
       if (routed.current) return;

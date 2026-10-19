@@ -7,6 +7,27 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
     { project: "engineering-library", document: "architecture/current-state.md", language: "en", anchor: "purpose-and-evidence-boundary", excerpt: "Purpose" }
   end
 
+  test "contents bookmarks use logical anchors and preserve document bookmarks" do
+    get "/api/bookmarks", params: { project_slug: "engineering-library" }
+    csrf = response.parsed_body.fetch("csrf_token")
+    headers = { "X-Reader-CSRF" => csrf }
+    assert_difference "Bookmark.count", 2 do
+      post "/api/bookmarks", params: location, headers: headers, as: :json
+      assert_response :created
+      post "/api/bookmarks", params: location.merge(document: "@contents", anchor: "category:architecture"), headers: headers, as: :json
+      assert_response :created
+    end
+    saved = response.parsed_body
+    post "/api/bookmarks", params: location.merge(document: "@contents", anchor: "category:architecture"), headers: headers, as: :json
+    assert_equal saved.fetch("id"), response.parsed_body.fetch("id")
+    get "/api/bookmarks", params: { project_slug: "engineering-library" }
+    assert_equal ["@contents", location[:document]].sort, response.parsed_body.fetch("bookmarks").map { |item| item.fetch("document") }.sort
+    delete "/api/bookmarks/#{saved.fetch('id')}", headers: headers
+    assert_response :no_content
+    get "/api/bookmarks", params: { project_slug: "engineering-library" }
+    assert_equal [location[:document]], response.parsed_body.fetch("bookmarks").map { |item| item.fetch("document") }
+  end
+
   test "anonymous cookie, stable location, duplicate prevention and isolation" do
     first = open_session
     second = open_session

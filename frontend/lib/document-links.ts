@@ -4,6 +4,14 @@ export function documentHref(project: string, document: string, language: Langua
   return `/projects/${encodeURIComponent(project)}/docs/${document.split('/').map(encodeURIComponent).join('/')}?lang=${language}${anchor ? `#${encodeURIComponent(anchor)}` : ''}`;
 }
 
+/** Reserved virtual document; anchors are canonical TocEntry IDs, never page numbers. */
+export const CONTENTS_DOCUMENT = '@contents';
+export function bookmarkHref(project: string, document: string, language: Language, anchor?: string) {
+  return document === CONTENTS_DOCUMENT
+    ? `/projects/${encodeURIComponent(project)}?lang=${language}${anchor ? `#${encodeURIComponent(anchor)}` : ''}`
+    : documentHref(project, document, language, anchor);
+}
+
 export function sourcePath(document: string, language: Language) {
   return document === 'README' ? (language === 'en' ? 'README.md' : 'README.pt-BR.md') : `docs/${language}/${document}`;
 }
