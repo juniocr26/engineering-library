@@ -32,7 +32,6 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   const stage = useRef<HTMLDivElement>(null);
   const focused = useRef<HTMLElement | null>(null);
   const anchor = useRef<string | undefined>(units[0]?.id);
-  const [translationLimitation, setTranslationLimitation] = useState(false);
   const previousContent = useRef({ units, language });
   const locked = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -51,7 +50,6 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     if (previousContent.current.language !== language) {
       const translated = resolveTranslatedLocation(previousContent.current.units, units, anchor.current);
       anchor.current = translated.anchor;
-      setTranslationLimitation(!!translated.limitation);
     }
     previousContent.current = { units, language };
     const historyLocation = window.history.state?.bookLocation;
@@ -168,7 +166,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
       return;
     }
     window.history.replaceState({ ...window.history.state, bookLocation: { url: window.location.href, anchor: pages[target]?.[0]?.id } }, '');
-    setPosition(target); anchor.current = pages[target]?.[0]?.id; setTranslationLimitation(false); setTurn(null); locked.current = false;
+    setPosition(target); anchor.current = pages[target]?.[0]?.id; setTurn(null); locked.current = false;
     if (timer.current) clearTimeout(timer.current);
     requestAnimationFrame(() => {
       if (focused.current && !focused.current.isConnected && document.activeElement === document.body) stage.current?.focus({ preventScroll: true });
@@ -226,7 +224,6 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     const dx = event.changedTouches[0].clientX - start.x; const dy = event.changedTouches[0].clientY - start.y;
     if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 2) navigate(dx < 0 ? 1 : -1);
   }}>
-    {translationLimitation && ready && <p role="status" className="reader-notice">{language === 'en' ? 'An equivalent reading location could not be verified in this translation.' : 'Não foi possível verificar uma posição de leitura equivalente nesta tradução.'}</p>}
     <div className="reader-stage" ref={stage} tabIndex={-1} aria-busy={!ready || !!turn || departing}>
       <div className="reader-pages">{leaf(ready ? left : undefined, 'left', 'left', visible + 1, !!turn && (count === 1 || turn.direction === -1))}{mode === 'spread' && leaf(ready ? right : undefined, 'right', 'right', visible + 2, !!turn && turn.direction === 1)}</div>
       {turn && <div className={`turn-sheet turn-sheet--${turn.direction === 1 ? 'forward' : 'backward'}`} aria-hidden="true" inert onAnimationEnd={event => { if (event.target === event.currentTarget) finish(turn.target, turn.href); }}>
