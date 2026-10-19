@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { NotePreview } from './note-editor';
 import { noteExcerpt } from '../lib/annotation-excerpt';
@@ -41,6 +41,7 @@ export function AnnotationsPanel({ project, language, entries, close, documentId
   const [popover, setPopover] = useState(false);
   const filters = useRef<HTMLDivElement>(null);
   const filterButton = useRef<HTMLButtonElement>(null);
+  const filterMenu = useRef<HTMLDivElement>(null);
   const previewFocus = useRef<HTMLElement | null>(null);
   const options: Filter[] = ['all', ...highlightColors, 'notes'];
   const names: Record<Filter, string> = { all: en ? 'All annotations' : 'Todas as anotações', notes: en ? 'Notes' : 'Notas', yellow: en ? 'Yellow' : 'Amarelo', blue: en ? 'Blue' : 'Azul', pink: en ? 'Pink' : 'Rosa', orange: en ? 'Orange' : 'Laranja', purple: en ? 'Purple' : 'Roxo', red: en ? 'Red' : 'Vermelho', green: en ? 'Green' : 'Verde' };
@@ -56,17 +57,49 @@ export function AnnotationsPanel({ project, language, entries, close, documentId
     }, () => { if (!controller.signal.aborted) { setLoading(false); setError(true); } });
     return () => controller.abort();
   }, [project, language, filter, page, retry]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!popover) return;
+    const menu = filterMenu.current!;
+    const button = filterButton.current!;
+    // A body portal would be inert behind the modal dialog. Native popovers
+    // enter the top layer while retaining the dialog's DOM/focus ownership.
+    menu.showPopover();
+    const fit = () => {
+      const viewport = window.visualViewport;
+      const left = (viewport?.offsetLeft ?? 0) + 8;
+      const top = (viewport?.offsetTop ?? 0) + 8;
+      const right = left + (viewport?.width ?? innerWidth) - 16;
+      const bottom = top + (viewport?.height ?? innerHeight) - 16;
+      const anchor = button.getBoundingClientRect();
+      menu.style.width = `${Math.min(290, right - left)}px`;
+      const naturalHeight = menu.scrollHeight + menu.offsetHeight - menu.clientHeight;
+      const below = Math.max(0, bottom - anchor.bottom - 6);
+      const above = Math.max(0, anchor.top - 6 - top);
+      const flip = naturalHeight > below && above > below;
+      // If neither side fits, shift within the viewport before adding scrolling.
+      const available = bottom - top;
+      const height = Math.min(naturalHeight, available);
+      menu.style.maxHeight = naturalHeight > available ? `${available}px` : 'none';
+      menu.style.left = `${Math.max(left, Math.min(anchor.left, right - menu.offsetWidth))}px`;
+      menu.style.top = `${Math.max(top, Math.min(flip ? anchor.top - 6 - height : anchor.bottom + 6, bottom - height))}px`;
+    };
+    fit();
     const outside = (event: PointerEvent) => { if (!filters.current?.contains(event.target as Node)) setPopover(false); };
     document.addEventListener('pointerdown', outside);
-    const fit = () => {
-      const menu = filters.current?.querySelector<HTMLElement>('[role="menu"]');
-      if (menu) menu.style.maxHeight = `${Math.max(20, Math.min(480, innerHeight - menu.getBoundingClientRect().top - 16))}px`;
+    window.addEventListener('resize', fit);
+    window.addEventListener('scroll', fit, true);
+    const viewport = window.visualViewport;
+    viewport?.addEventListener('resize', fit);
+    viewport?.addEventListener('scroll', fit);
+    const resize = new ResizeObserver(fit);
+    resize.observe(button); resize.observe(menu);
+    menu.querySelector<HTMLElement>('[aria-checked="true"]')?.focus({ preventScroll: true });
+    return () => {
+      resize.disconnect(); document.removeEventListener('pointerdown', outside);
+      window.removeEventListener('resize', fit); window.removeEventListener('scroll', fit, true);
+      viewport?.removeEventListener('resize', fit); viewport?.removeEventListener('scroll', fit);
+      if (menu.isConnected && menu.matches(':popover-open')) menu.hidePopover();
     };
-    fit(); window.addEventListener('resize', fit);
-    const frame = requestAnimationFrame(() => filters.current?.querySelector<HTMLElement>('[aria-checked="true"]')?.focus());
-    return () => { cancelAnimationFrame(frame); window.removeEventListener('resize', fit); document.removeEventListener('pointerdown', outside); };
   }, [popover]);
   const choose = (value: Filter) => { setPopover(false); filterButton.current?.focus(); if (value !== filter) { setData(null); setLoading(true); setError(false); setPage(1); setFilter(value); } };
   function navigate(item: Annotation) {
@@ -88,7 +121,7 @@ export function AnnotationsPanel({ project, language, entries, close, documentId
     }}>
       <button ref={filterButton} aria-label={en ? 'Filter annotations' : 'Filtrar anotações'} aria-expanded={popover} aria-haspopup="menu" onClick={() => setPopover(value => !value)}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M3 7h18M3 17h18"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg></button>
       <span>{names[filter]}</span>
-      {popover && <div className="annotation-filter-menu" role="menu" aria-label={en ? 'Annotation filters' : 'Filtros de anotações'}>{options.map(option => <button key={option} role="menuitemradio" aria-checked={filter === option} onClick={() => choose(option)}>{highlightColors.includes(option as HighlightColor) && <i className="annotation-color" style={{ background: `var(--highlight-${option})` }} aria-hidden="true"/>}{names[option]} <span>({data?.counts[option] ?? '…'})</span></button>)}</div>}
+      {popover && <div ref={filterMenu} popover="manual" className="annotation-filter-menu" role="menu" aria-label={en ? 'Annotation filters' : 'Filtros de anotações'}>{options.map(option => <button key={option} role="menuitemradio" aria-checked={filter === option} onClick={() => choose(option)}>{highlightColors.includes(option as HighlightColor) && <i className="annotation-color" style={{ background: `var(--highlight-${option})` }} aria-hidden="true"/>}{names[option]} <span>({data?.counts[option] ?? '…'})</span></button>)}</div>}
     </div>
     <p role="status">{loading ? (en ? 'Loading annotations…' : 'Carregando anotações…') : error ? (en ? 'Annotations unavailable.' : 'Anotações indisponíveis.') : !data?.annotations.length ? (filter === 'all' ? (en ? 'No highlights or notes in this project.' : 'Nenhum destaque ou nota neste projeto.') : filter === 'notes' ? (en ? 'No notes found.' : 'Nenhuma nota encontrada.') : (en ? 'No highlights in this color.' : 'Nenhum destaque nesta cor.')) : `${data.annotations.length} / ${data.counts[filter]}`}</p>
     {unresolved && <p role="alert">{en ? 'The source document is unavailable. The annotation is preserved.' : 'O documento de origem está indisponível. A anotação foi preservada.'}</p>}
