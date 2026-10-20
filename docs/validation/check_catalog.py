@@ -46,7 +46,13 @@ def main():
             url = urlsplit(target)
             if url.scheme or url.netloc:
                 continue
-            raw = path.parent / unquote(url.path) if url.path else path
+            public = unquote(url.path)
+            if public.startswith('/img/'):
+                raw = docs_root / 'img' / public.removeprefix('/img/')
+            elif public.startswith('/assets/'):
+                raw = docs_root.parent / 'frontend/public/assets' / public.removeprefix('/assets/')
+            else:
+                raw = path.parent / public if public else path
             reason = validator.classify(workspace, raw)
             if reason:
                 errors.append(["unsafe-link", os.path.relpath(path, docs_root), reason])

@@ -9,6 +9,6 @@ export function catalogHref(page: number, language: Language, slug?: string) {
 }
 
 export const categoryLabels: Record<Language, Record<string, string>> = {
-  'pt-BR': { architecture: 'Arquitetura', adr: 'Decisões arquiteturais', guides: 'Guias', operations: 'Operações', faq: 'Perguntas e entrevistas técnicas', testing: 'Testes', env: 'Variáveis de ambiente', docker: 'Docker', api: 'API', security: 'Segurança', database: 'Banco de dados', integrations: 'Integrações' },
-  en: { architecture: 'Architecture', adr: 'Architecture decisions', guides: 'Guides', operations: 'Operations', faq: 'Questions and technical interviews', testing: 'Testing', env: 'Environment variables', docker: 'Docker', api: 'API', security: 'Security', database: 'Database', integrations: 'Integrations' }
+  'pt-BR': { img: 'IMG', architecture: 'Arquitetura', adr: 'Decisões arquiteturais', guides: 'Guias', operations: 'Operações', faq: 'Perguntas e entrevistas técnicas', testing: 'Testes', env: 'Variáveis de ambiente', docker: 'Docker', api: 'API', security: 'Segurança', database: 'Banco de dados', integrations: 'Integrações' },
+  en: { img: 'IMG', architecture: 'Architecture', adr: 'Architecture decisions', guides: 'Guides', operations: 'Operations', faq: 'Questions and technical interviews', testing: 'Testing', env: 'Environment variables', docker: 'Docker', api: 'API', security: 'Security', database: 'Database', integrations: 'Integrations' }
 };

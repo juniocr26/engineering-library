@@ -12,3 +12,7 @@ test('rich notes no longer have small structural limits', () => {
   assert.ok(noteRenderError('x'.repeat(NOTE_MAX_BYTES + 1)));
   assert.ok(noteRenderError('📚'.repeat(NOTE_MAX_BYTES / 4 + 1)));
 });
+
+test('notes use the same global IMG URL as project documentation', () => {
+  assert.equal(noteUrl('/img/diagrams/reader-storage.svg', 'src'), '/api/shared-assets/diagrams/reader-storage.svg');
+});

@@ -24,3 +24,5 @@ O leitor oferece busca no projeto, incluindo snapshots de código aprovados. Nã
 [Engineering Library — English introduction](projects/engineering-library/README.md).
 
 [Auditoria documental de 2026-10-19](projects/engineering-library/docs/pt-BR/operations/documentation-audit-2026-10-19.md) · [Source reference verification](source-reference-verification.md) · [Contents toolbar validation](validation/contents-toolbar.md).
+
+[Shared IMG assets / Recursos compartilhados](img/README.md)

@@ -1,13 +1,14 @@
 'use client';
-import { useState } from 'react';
-import { noteDemos } from '../lib/note-demos';
+import { useState, useSyncExternalStore } from 'react';
+import { noteDemos, localizedDemoBody } from '../lib/note-demos';
 import { textAnchor } from '../lib/text-anchors';
 import type { Language } from '../lib/i18n';
 export function NoteDemos({ project, documentId, language, csrf, changed }: { changed: () => void; project: string; documentId: string; language: Language; csrf: string }) {
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [manifest, setManifest] = useState<{ case: string; title: string; anchor: string; href: string }[]>([]);
-  if (process.env.NODE_ENV !== 'development' || typeof window === 'undefined' || !new URLSearchParams(window.location.search).has('noteDemos')) return null;
+  if (!mounted || project !== 'engineering-library' || process.env.NODE_ENV !== 'development' || typeof window === 'undefined' || !new URLSearchParams(window.location.search).has('noteDemos')) return null;
   const query = new URLSearchParams({ project, document: documentId, language });
   async function run(cleanup = false) {
     setBusy(true);
@@ -21,16 +22,24 @@ export function NoteDemos({ project, documentId, language, csrf, changed }: { ch
       const blocks = Array.from(document.querySelectorAll<HTMLElement>('.reader-measure [data-highlight-block], .reader-measurement [data-highlight-block], [data-measurement] [data-highlight-block]'));
       const candidates = blocks.length ? blocks : Array.from(document.querySelectorAll<HTMLElement>('[data-highlight-block]'));
       const unique = [...new Map(candidates.filter(block => !block.dataset.highlightUnsupported && (block.textContent ?? '').length > 8).map(block => [block.dataset.highlightBlock!, block])).values()];
-      const entries = language === 'en' ? noteDemos.slice(0, 15) : noteDemos.slice(15);
+      const entries = noteDemos;
       if (unique.length < entries.length) throw Error('This document needs more prose blocks. Use architecture/current-state.md.');
       const result = [];
       for (let i = 0; i < entries.length; i++) {
         const block = unique[i]; const text = block.textContent ?? '';
         const segment = textAnchor(block.dataset.highlightBlock!, text, 0, Math.min(text.length, 40));
-        const id = String(language === 'en' ? i + 1 : 16).padStart(2, '0');
-        const response = await fetch(`/api/note-demos?${query}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf }, body: JSON.stringify({ demo_key: `phase2-${id}`, segments: [segment], body: entries[i][1] }) });
+        const id = String(i + 1).padStart(2, '0');
+        const response = await fetch(`/api/note-demos?${query}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf }, body: JSON.stringify({ demo_key: `visual-${language}-${documentId.replace(/[^a-z0-9]/g, '-')}-${id}`, segments: [segment], body: localizedDemoBody(entries[i][1], language), color: ['yellow', 'blue', 'pink', 'orange', 'purple', 'red', 'green'][i % 7], remove_color: i === 14 }) });
         if (!response.ok) throw Error(`Case ${id}: ${response.status}`);
         result.push({ case: id, title: entries[i][0], anchor: segment.block, href: `${location.pathname}?lang=${language}&noteDemos=1#${encodeURIComponent(segment.block)}` });
+      }
+      for (const [index, kind] of ['bookmark', 'bookmark', 'bookmark', 'highlight'].entries()) {
+        const block = unique[[0, Math.floor(unique.length / 2), unique.length - 1, Math.min(16, unique.length - 1)][index]];
+        const text = block.textContent ?? '';
+        const segment = textAnchor(block.dataset.highlightBlock!, text, 0, Math.min(text.length, 40));
+        const response = await fetch(`/api/note-demos?${query}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf }, body: JSON.stringify({ demo_key: `visual-${language}-${documentId.replace(/[^a-z0-9]/g, '-')}-${kind}-${index}`, kind, color: 'yellow', segments: [segment], body: '' }) });
+        if (!response.ok) throw Error(`${kind}: ${response.status}`);
+        result.push({ case: `${kind}-${index}`, title: kind, anchor: segment.block, href: `${location.pathname}?lang=${language}&noteDemos=1#${encodeURIComponent(segment.block)}` });
       }
       changed(); setManifest(result); setMessage(`${result.length} cases saved. Open a passage below; click its ✎ indicator.`);
     } catch (error) { setMessage(String(error)); }

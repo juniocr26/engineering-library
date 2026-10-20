@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_030000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_20_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_030000) do
     t.string "excerpt", limit: 240, default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "demo_key"
+    t.index ["reader_digest", "demo_key"], name: "index_bookmarks_on_reader_digest_and_demo_key", unique: true, where: "(demo_key IS NOT NULL)"
     t.index ["reader_digest", "project", "document", "language", "anchor"], name: "bookmarks_logical_location", unique: true
     t.check_constraint "language::text = ANY (ARRAY['en'::character varying, 'pt-BR'::character varying]::text[])", name: "bookmarks_language"
     t.check_constraint "reader_digest::text ~ '^[0-9a-f]{64}$'::text", name: "bookmarks_reader_digest"
@@ -49,6 +51,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_030000) do
     t.jsonb "segments", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "demo_key"
+    t.index ["reader_digest", "demo_key"], name: "index_highlights_on_reader_digest_and_demo_key", unique: true, where: "(demo_key IS NOT NULL)"
     t.index ["reader_digest", "project", "document", "language"], name: "highlights_document_scope"
     t.check_constraint "color::text = ANY (ARRAY['yellow'::character varying, 'blue'::character varying, 'pink'::character varying, 'orange'::character varying, 'purple'::character varying, 'red'::character varying, 'green'::character varying]::text[])", name: "highlights_color"
     t.check_constraint "jsonb_typeof(segments) = 'array'::text AND jsonb_array_length(segments) >= 1 AND jsonb_array_length(segments) <= 32", name: "highlights_segments"

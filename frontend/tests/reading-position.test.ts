@@ -30,8 +30,8 @@ test('canonical Q005 survives extra translated headings, long answers and unequa
   const { markdownUnits } = await import('../lib/markdown.ts');
   const { readFileSync } = await import('node:fs');
   const { paginateMeasured } = await import('../lib/book-pagination.ts');
-  const pt = markdownUnits(readFileSync(new URL('../../docs/projects/go-image-optimizer/docs/pt-BR/faq/index.md', import.meta.url), 'utf8'));
-  const en = markdownUnits(readFileSync(new URL('../../docs/projects/go-image-optimizer/docs/en/faq/index.md', import.meta.url), 'utf8'));
+  const pt = markdownUnits(readFileSync(process.env.DOCUMENTATION_ROOT ? `${process.env.DOCUMENTATION_ROOT}/go-image-optimizer/docs/pt-BR/faq/index.md` : new URL('../../docs/projects/go-image-optimizer/docs/pt-BR/faq/index.md', import.meta.url), 'utf8'));
+  const en = markdownUnits(readFileSync(process.env.DOCUMENTATION_ROOT ? `${process.env.DOCUMENTATION_ROOT}/go-image-optimizer/docs/en/faq/index.md` : new URL('../../docs/projects/go-image-optimizer/docs/en/faq/index.md', import.meta.url), 'utf8'));
   for (const [from, to] of [[pt, en], [en, pt]]) {
     const heading = to.find(unit => unit.readingSection === 'question:Q005')!;
     assert.ok(heading.text.startsWith('Q005'));

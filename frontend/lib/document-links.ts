@@ -18,6 +18,7 @@ export function sourcePath(document: string, language: Language) {
 
 /** Resolve only collection Markdown/assets. Other HTTP(S)/mail links retain their meaning. */
 export function resolveDocumentLink(project: string, document: string, language: Language, href: string, image = false): string | undefined {
+  if (image && /^\/(?:img\/|assets\/|api\/shared-assets\/)/.test(href)) return href.startsWith('/img/') ? href.replace('/img/', '/api/shared-assets/') : href;
   if (href.startsWith('#')) return href;
   const repository = 'https://github.com/juniocr26/engineering-library/blob/main/docs/projects/';
   const github = href.match(/^https:\/\/github\.com\/juniocr26\/([a-z0-9-]+)\/blob\/(?:main|master)\/(.+\.md(?:#.*)?)$/);

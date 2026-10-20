@@ -14,3 +14,5 @@ Ordem sugerida: propósito no README → guias → arquitetura e ADRs → contra
 - [testing](testing/index.md)
 
 - [env](env/index.md)
+
+- [IMG](img/index.md)

@@ -5,6 +5,7 @@ export function noteUrl(url: string, key: string): string {
   if (/[\u0000-\u001f\u007f]/.test(value)) return '';
   if (/^(?:https?:|mailto:|tel:)/i.test(value)) return key === 'src' && !/^https?:/i.test(value) ? '' : value;
   if (key === 'src' && /^data:image\//i.test(value)) return value;
+  if (key === 'src' && value.startsWith('/img/')) return value.replace('/img/', '/api/shared-assets/');
   if (/^[a-z][a-z\d+.-]*:/i.test(value)) return '';
   return value;
 }
