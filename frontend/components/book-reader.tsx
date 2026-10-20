@@ -2,7 +2,7 @@
 import { resolveTranslatedLocation } from '../lib/reading-position';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
-import { paginateMeasured, type BookUnit } from '../lib/book-pagination';
+import { paginateMeasured, samePagination, type BookUnit } from '../lib/book-pagination';
 import { containsLocation, type TableMeasurement } from '../lib/table-pagination';
 import { contentPageId } from '../lib/manuscript';
 import { TableScrollProvider } from './reader-table';
@@ -27,6 +27,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
   const [measurement, setMeasurement] = useState<{ units: readonly T[]; language: Language } | null>(null);
   const ready = measurement?.units === units && measurement.language === language;
   const measured = useRef(false);
+  const committedLayout = useRef<{ pages: T[][]; mode: 'spread' | 'single-page' } | null>(null);
+  const navigationGeneration = useRef(0);
   const measure = useRef<HTMLDivElement>(null);
   const measureRight = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -63,13 +65,13 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
         if (disposed || routed.current) return;
         // Do not publish physical page totals until the destination assets settle.
         if (document.fonts.status === 'loading' || node.querySelector('[data-measure-pending="true"]') || Array.from(node.querySelectorAll('img')).some(image => !image.complete)) {
-          measured.current = false; setMeasurement(null); return;
+          return;
         }
         const nextMode = matchMedia('(min-width: 921px)').matches ? 'spread' : 'single-page';
         const heights = Array.from(node.children).map(child => child.getBoundingClientRect().height);
         const rightCapacity = measureRight.current?.clientHeight ?? node.clientHeight;
         if (node.clientHeight <= 0 || (nextMode === 'spread' && rightCapacity <= 0)) {
-          measured.current = false; setMeasurement(null); return;
+          return;
         }
         const nextSignature = JSON.stringify([nextMode, node.clientWidth, node.clientHeight, rightCapacity, heights]);
         // Require consecutive animation frames with identical geometry, rather
@@ -101,6 +103,8 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
           });
         }
         const next = paginateMeasured(units, heights, page => nextMode === 'single-page' || page % 2 === 0 ? node.clientHeight : rightCapacity, tableMeasurements);
+        if (measured.current && committedLayout.current?.mode === nextMode && samePagination(committedLayout.current.pages, next)) return;
+        committedLayout.current = { pages: next, mode: nextMode };
         let resolved = next.findIndex(page => page.some(unit => containsLocation(unit, anchor.current)));
         if (resolved < 0 && anchor.current?.includes('--row-')) {
           const origin = anchor.current.split('--row-')[0];
@@ -114,7 +118,7 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
         locked.current = false; setTurn(null); setMode(nextMode); setPages(next);
         const visibleIndex = nextMode === 'spread' ? index - index % 2 : index;
         setPosition(visibleIndex);
-        measured.current = true; setMeasurement({ units, language });
+        measured.current = true; setMeasurement(previous => previous?.units === units && previous.language === language ? previous : { units, language });
       });
     };
     const invalidate = () => { signature = ''; rowSignature = ''; calculate(); };
@@ -142,10 +146,15 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     const index = pages.findIndex(page => page.some(unit => containsLocation(unit, location)));
     if (index < 0) return;
     let scrollFrame = 0;
+    const generation = navigationGeneration.current;
     const frame = requestAnimationFrame(() => {
+      if (generation !== navigationGeneration.current) return;
       requested.current = { location, units, request: locationRequest };
       if (timer.current) clearTimeout(timer.current);
       locked.current = false; setTurn(null); anchor.current = location;
+      // A new logical target may share the current spread, so position state can
+      // stay equal. Persist it here rather than waiting for a position effect.
+      window.history.replaceState({ ...window.history.state, bookLocation: { url: window.location.href, anchor: location } }, '');
       onLocationChange?.(location);
       setPosition(mode === 'spread' ? index - index % 2 : index);
       scrollFrame = requestAnimationFrame(() => {
@@ -180,6 +189,11 @@ export function BookReader<T extends BookUnit>({ units, renderUnit, project, lan
     const href = boundary ? (direction === 1 ? nextChapter : previousChapter) : undefined;
     if (boundary && !href) return;
     const target = boundary ? position : candidate;
+    // A scheduled restoration may not supersede a newer explicit page turn.
+    navigationGeneration.current++;
+    requested.current = { location, units, request: locationRequest };
+    // If layout changes during the animation, resolve the intended destination.
+    if (!href) anchor.current = pages[target]?.[0]?.id;
     if (href) window.history.replaceState({ ...window.history.state, bookLocation: { url: window.location.href, anchor: pages[position]?.[0]?.id } }, '');
     focused.current = document.activeElement instanceof HTMLElement && stage.current?.contains(document.activeElement) ? document.activeElement : null;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(target, href); return; }

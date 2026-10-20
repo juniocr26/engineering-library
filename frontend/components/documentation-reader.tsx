@@ -30,7 +30,11 @@ function ProjectDocumentationReader({ project, projectName, document: documentId
   const [expandedByDocument, setExpandedByDocument] = useState<Record<string, string[]>>({});
   const documentKey = documentId;
   const expansionStorageKey = `reader-sources/${project}/${documentKey}`;
-  const expanded = useMemo(() => new Set([...(expandedByDocument[documentKey] ?? []), ...units.flatMap(unit => (unit.references ?? []).filter(ref => referenceContainsLocation(ref, location)).map(ref => ref.id))]), [expandedByDocument, documentKey, units, location]);
+  // Moving between prose anchors does not change the source expansion set.
+  // Depend on the referenced source identity, not every location string, so the
+  // measured units remain stable for ordinary search/bookmark navigation.
+  const locationSource = units.flatMap(unit => unit.references ?? []).find(ref => referenceContainsLocation(ref, location))?.id;
+  const expanded = useMemo(() => new Set([...(expandedByDocument[documentKey] ?? []), ...(locationSource ? [locationSource] : [])]), [expandedByDocument, documentKey, locationSource]);
   const flowUnits: Unit[] = useMemo(() => sourceUnits(numberHeadingUnits(units, entries, documentId), expanded), [units, entries, documentId, expanded]);
   function toggleSource(id: string) {
     const next = new Set(expanded);
