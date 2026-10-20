@@ -37,6 +37,11 @@ export function AnnotationsPanel({ project, language, entries, close, documentId
   const [error, setError] = useState(false);
   const [unresolved, setUnresolved] = useState(false);
   const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    const refresh = () => { setPage(1); setRetry(value => value + 1); };
+    window.addEventListener('reader-demonstrations-changed', refresh);
+    return () => window.removeEventListener('reader-demonstrations-changed', refresh);
+  }, []);
   const [preview, setPreview] = useState<Annotation | null>(null);
   const [popover, setPopover] = useState(false);
   const filters = useRef<HTMLDivElement>(null);

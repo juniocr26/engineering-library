@@ -23,6 +23,12 @@ class NoteDemosApiTest < ActionDispatch::IntegrationTest
       end
       assert_equal 1, Note.where(demo_key: 'visual-en-note').count
       assert_equal 1, Highlight.where(demo_key: 'visual-en-note').count
+      moved = segment.merge(block: 'moved-fixture-block')
+      post '/api/note_demos', params: payload.merge(segments: [moved], color: 'red'), headers: headers, as: :json
+      assert_response :created
+      assert_equal 'moved-fixture-block', Note.find_by!(demo_key: 'visual-en-note').segments.first['block']
+      assert_equal 'moved-fixture-block', Highlight.find_by!(demo_key: 'visual-en-note').segments.first['block']
+      assert_equal 'red', Highlight.find_by!(demo_key: 'visual-en-note').color
       post '/api/note_demos', params: payload.merge(remove_color: true), headers: headers, as: :json
       assert_response :created
       assert_nil Note.find_by!(demo_key: 'visual-en-note').highlight_id

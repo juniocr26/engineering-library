@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const inspectAnchors = require('./demo-anchors.cjs');
 const assert = require('node:assert/strict');
 (async () => {
   const base = process.env.BROWSER_BASE_URL || 'http://localhost:3099';
@@ -13,6 +14,9 @@ const assert = require('node:assert/strict');
       const path = `${base}/projects/engineering-library/docs/${document}?lang=${language}`;
       await page.goto(path); await page.locator('.reader[data-pagination="ready"]').waitFor();
       const notes = await page.evaluate(async ({ language, document }) => (await (await fetch(`/api/notes?project=engineering-library&document=${encodeURIComponent(document)}&language=${language}`)).json()).notes, { language, document });
+      const anchors = await inspectAnchors(page, document, language);
+      assert.equal(anchors.filter(item => !item.valid).length, 0, JSON.stringify(anchors.filter(item => !item.valid)));
+      assert.equal(anchors.length, 33);
       assert.equal(notes.length, 15);
       const data = await page.evaluate(async ({language, document}) => {
         const query = new URLSearchParams({project: 'engineering-library', document, language});

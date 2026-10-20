@@ -97,6 +97,12 @@ export function ReaderTools({ project, projectName, document: documentId, langua
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [csrf, setCsrf] = useState('');
   const [bookmarkError, setBookmarkError] = useState(false);
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    const refresh = () => setRevision(value => value + 1);
+    window.addEventListener('reader-demonstrations-changed', refresh);
+    return () => window.removeEventListener('reader-demonstrations-changed', refresh);
+  }, []);
   const [busy, setBusy] = useState(false);
   const mutationPending = useRef(false);
   const labels = { annotations: en ? 'Highlights and Notes' : 'Destaques e notas', search: en ? 'Search' : 'Pesquisar', chapters: en ? 'Chapter index' : 'Índice de capítulos', bookmarks: en ? 'My Bookmarks' : 'Minhas marcações' };
@@ -108,7 +114,7 @@ export function ReaderTools({ project, projectName, document: documentId, langua
       return response.json();
     }).then(data => { if (controller.signal.aborted) return; setBookmarks(data.bookmarks.filter((item: Bookmark) => item.project === project && item.language === language)); setCsrf(data.csrf_token); setBookmarkError(false); }, () => { if (!controller.signal.aborted) setBookmarkError(true); });
     return () => controller.abort();
-  }, [project, language]);
+  }, [project, language, revision]);
 
   async function mutate(bookmark?: Bookmark, unit?: { id: string; text: string }) {
     if (mutationPending.current || !csrf) return;

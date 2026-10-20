@@ -33,11 +33,16 @@ module Api
       return render json: { error: 'Passage already has a personal note' }, status: :conflict if collision
       Note.transaction do
         item.assign_attributes(attributes.merge(anchor_digest: Note.anchor_key(segments), body: params[:body]))
-        if item.new_record?
-          item.highlight = Highlight.create!(attributes.merge(reader_digest: @reader_digest, color: params[:color] || 'green', demo_key: key))
+        if item.highlight || !(key == 'phase2-15' || params[:remove_color] == true)
+          highlight = item.highlight || Highlight.find_or_initialize_by(reader_digest: @reader_digest, demo_key: key)
+          # Reconcile deterministic anchors after document edits, only for demo-owned colors.
+          if highlight.demo_key == key
+            highlight.update!(attributes.merge(color: params[:color] || 'green'))
+            item.highlight = highlight
+          end
         end
         item.save!
-        item.highlight&.destroy! if key == 'phase2-15' || params[:remove_color] == true
+        item.highlight&.destroy! if item.highlight&.demo_key == key && (key == 'phase2-15' || params[:remove_color] == true)
       end
       render json: present(item.reload), status: :created
     rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique

@@ -3,12 +3,14 @@ import { useState, useSyncExternalStore } from 'react';
 import { noteDemos, localizedDemoBody } from '../lib/note-demos';
 import { textAnchor } from '../lib/text-anchors';
 import type { Language } from '../lib/i18n';
-export function NoteDemos({ project, documentId, language, csrf, changed }: { changed: () => void; project: string; documentId: string; language: Language; csrf: string }) {
+export function NoteDemos({ project, documentId, language, csrf, changed }: { changed: () => Promise<void>; project: string; documentId: string; language: Language; csrf: string }) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [manifest, setManifest] = useState<{ case: string; title: string; anchor: string; href: string }[]>([]);
   if (!mounted || project !== 'engineering-library' || process.env.NODE_ENV !== 'development' || typeof window === 'undefined' || !new URLSearchParams(window.location.search).has('noteDemos')) return null;
+  const en = language === 'en';
+  const supported = ['architecture/current-state.md', 'img/visual-components.md'].includes(documentId);
   const query = new URLSearchParams({ project, document: documentId, language });
   async function run(cleanup = false) {
     setBusy(true);
@@ -16,7 +18,7 @@ export function NoteDemos({ project, documentId, language, csrf, changed }: { ch
       if (cleanup) {
         const response = await fetch(`/api/note-demos?${query}`, { method: 'DELETE', headers: { 'X-Reader-CSRF': csrf } });
         if (!response.ok) throw Error('Cleanup failed');
-        changed(); setMessage('Demonstrations removed.'); return;
+        await changed(); window.dispatchEvent(new Event('reader-demonstrations-changed')); setManifest([]); setMessage(en ? 'Demonstrations removed for this reader throughout this project, in both languages.' : 'Demonstrações removidas deste leitor em todo o projeto, nos dois idiomas.'); return;
       }
       // The measurement surface includes every real logical unit, even off-page.
       const blocks = Array.from(document.querySelectorAll<HTMLElement>('.reader-measure [data-highlight-block], .reader-measurement [data-highlight-block], [data-measurement] [data-highlight-block]'));
@@ -41,9 +43,9 @@ export function NoteDemos({ project, documentId, language, csrf, changed }: { ch
         if (!response.ok) throw Error(`${kind}: ${response.status}`);
         result.push({ case: `${kind}-${index}`, title: kind, anchor: segment.block, href: `${location.pathname}?lang=${language}&noteDemos=1#${encodeURIComponent(segment.block)}` });
       }
-      changed(); setManifest(result); setMessage(`${result.length} cases saved. Open a passage below; click its ✎ indicator.`);
-    } catch (error) { setMessage(String(error)); }
+      await changed(); window.dispatchEvent(new Event('reader-demonstrations-changed')); setManifest(result); setMessage(en ? `${result.length} cases saved: 15 notes, 15 highlights, 3 bookmarks in this document and language. Open the annotation panels or a passage below.` : `${result.length} casos salvos: 15 notas, 15 destaques, 3 marcações neste documento e idioma. Abra os painéis de anotações ou um trecho abaixo.`);
+    } catch (error) { await changed().catch(() => {}); window.dispatchEvent(new Event('reader-demonstrations-changed')); setMessage(String(error)); }
     finally { setBusy(false); }
   }
-  return <details className="note-demo-tools"><summary>Development note demonstrations</summary><button disabled={busy || !csrf} onClick={() => void run()}>Seed current reader</button><button disabled={busy || !csrf} onClick={() => void run(true)}>Remove demonstration records</button><p role="status">{message}</p><ol>{manifest.map(item => <li key={item.case}><a href={item.href}>{item.case} — {item.title}</a> · {item.anchor}</li>)}</ol><button disabled={!manifest.length} onClick={() => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ project, document: documentId, language, cases: manifest }, null, 2)], { type: 'application/json' })); a.download = 'note-demonstrations.json'; a.click(); URL.revokeObjectURL(a.href); }}>Download manifest</button></details>;
+  return <details className="note-demo-tools"><summary>Development note demonstrations</summary><p>{en ? 'Seed current reader creates examples for this browser only, in the document and language shown. CLI demonstrations belong to a separate browser and do not populate this reader. Nothing is seeded automatically.' : 'Seed current reader cria exemplos somente para este navegador, no documento e idioma abertos. As demonstrações do CLI pertencem a outro navegador e não preenchem este leitor. Nada é criado automaticamente.'}</p><p>{en ? 'Open each document in both languages and seed it:' : 'Abra cada documento nos dois idiomas e execute o seed:'}</p><ul>{['en', 'pt-BR'].flatMap(lang => ['architecture/current-state.md', 'img/visual-components.md'].map(doc => <li key={`${lang}/${doc}`}><a href={`/projects/${project}/docs/${doc}?lang=${lang}&noteDemos=1`}>{lang} · {doc}</a></li>))}</ul><button disabled={busy || !csrf || !supported} onClick={() => void run()}>Seed current reader</button><button disabled={busy || !csrf} onClick={() => void run(true)}>Remove demonstration records</button><p role="status">{message}</p><ol>{manifest.map(item => <li key={item.case}><a href={item.href}>{item.case} — {item.title}</a> · {item.anchor}</li>)}</ol><button disabled={!manifest.length} onClick={() => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ project, document: documentId, language, cases: manifest }, null, 2)], { type: 'application/json' })); a.download = 'note-demonstrations.json'; a.click(); URL.revokeObjectURL(a.href); }}>Download manifest</button></details>;
 }
