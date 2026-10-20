@@ -1,10 +1,10 @@
 # Metadata is fetched in two scoped queries; only the current page loads note bodies.
-# Existing scope indexes have reader_digest/project as their leftmost prefix.
+# Shared scope indexes start with project/language.
 class AnnotationLibrary
   PAGE_SIZE = 20
 
-  def initialize(reader:, project:, language:)
-    @scope = { reader_digest: reader, project: project, language: language }
+  def initialize(project:, language:)
+    @scope = { project: project, language: language }
   end
 
   def list(filter:, page:)
@@ -14,7 +14,7 @@ class AnnotationLibrary
     paired = {}
     entries = notes.map do |note|
       matches = by_anchor[[note.document, Note.anchor_key(note.segments)]] || []
-      highlight = matches.find { |h| h.id == note.highlight_id } || matches.max_by(&:id)
+      highlight = matches.find { |h| h.id == note.highlight_id }
       paired[highlight.id] = true if highlight
       entry(note, highlight, note)
     end

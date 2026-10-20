@@ -1,14 +1,16 @@
 # Demonstrações de desenvolvimento
 
-O startup Docker (`docker compose up -d --build`) inicializa metadados do catálogo, sem criar demonstrações de anotações. Um leitor anônimo novo tem coleções vazias. Os seeds são opcionais, manuais e exclusivos de desenvolvimento; a limpeza nunca é automática. Não reinicialize o PostgreSQL nem remova seu volume.
+Engineering Library usa um conjunto local compartilhado de anotações PostgreSQL, organizado por projeto, documento e idioma, sem contas, sessões ou perfis de leitor. Execute o seed uma vez e abra ou atualize qualquer navegador que acesse a mesma instalação. Não há cadastro de navegador, cookie especial ou ação adicional na interface. Um banco sem anotações mostra coleções vazias.
 
-## Fluxo A — leitor de demonstração do CLI
+O startup Docker inicializa apenas metadados do catálogo. Seed e limpeza são comandos opcionais e explícitos de desenvolvimento; nunca são executados no boot ou em produção. Não reinicialize o PostgreSQL nem remova seu volume.
 
-O CLI usa um perfil persistente separado, por padrão `/tmp/engineering-note-demo-browser` (configurável com `DEMO_BROWSER_PROFILE`). O Rails cria seu cookie aleatório assinado HttpOnly `engineering_reader` pela API normal de marcações. O PostgreSQL guarda somente seu SHA-256. Os registros pertencem a esse perfil: executar a verificação ou abrir links do manifesto em outro navegador não transfere a propriedade. `demo_key` identifica demonstrações para limpeza, não concede visibilidade pública. Nunca copie cookies nem publique digests.
+## Comandos
 
-Com Node.js e Playwright instalados no host:
+Na raiz do repositório, aplique as migrações e instale Playwright no host, se necessário:
 
 ```sh
+docker compose up -d --build
+docker compose exec backend bin/rails db:migrate
 cd frontend
 npm install --prefix /tmp/engineering-library-browser playwright
 export PLAYWRIGHT_MODULE=/tmp/engineering-library-browser/node_modules/playwright
@@ -19,34 +21,28 @@ npm run notes:demos:verify
 npm run notes:demos:manifest
 ```
 
-Use `PLAYWRIGHT_EXECUTABLE_PATH` para um navegador instalado. Não execute comandos simultâneos no mesmo perfil. `notes:demos` cria ou reconcilia somente as demonstrações desse perfil. `notes:demos:verify` lê os registros persistidos e abre indicadores e prévias reais. `notes:demos:manifest` faz diagnóstico atualizado de âncoras somente leitura, sem criar ou excluir registros. Ele grava `/tmp/engineering-note-demo-manifest.json` com IDs, documento/idioma, âncoras lógicas, indicadores `valid` e totais válidos/inválidos, sem cookies ou digests. Após editar documentos, confira âncoras inválidas e execute explicitamente o seed para reconciliar demonstrações. Os registros pessoais são preservados.
+`PLAYWRIGHT_EXECUTABLE_PATH` permite selecionar um navegador instalado. O CLI abre um navegador descartável apenas para medir âncoras reais; não mantém perfil persistente e grava pelas APIs compartilhadas. `notes:demos` reconcilia registros identificados por `demo_key`, sem duplicatas. Não adota nem sobrescreve notas/marcações manuais em trechos ocupados; o conflito é informado e uma execução interrompida pode deixar seed parcial. Resolva o conflito e execute novamente de forma explícita.
 
-## Fluxo B — demonstrações no navegador atual
+`notes:demos:verify` lê o conjunto compartilhado em um navegador novo e abre indicadores/prévias reais. `notes:demos:manifest` é somente leitura e grava `/tmp/engineering-note-demo-manifest.json` com URLs navegáveis e indicadores de âncoras válidas/inválidas. Não cria nem exclui dados. Reconcilie as demonstrações explicitamente após editar os documentos; anotações inválidas nunca são mostradas sobre textos sem relação.
 
-Use o navegador onde deseja ver as anotações, sempre em `localhost:3099`. Outro navegador, janela privada, perfil ou hostname `127.0.0.1` pode ter identidade diferente.
+## Abra o leitor normal
 
-1. Abra cada um dos quatro endereços:
-   - [Arquitetura, inglês](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=en&noteDemos=1)
-   - [Componentes visuais, inglês](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=en&noteDemos=1)
-   - [Arquitetura, português](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=pt-BR&noteDemos=1)
-   - [Componentes visuais, português](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=pt-BR&noteDemos=1)
-2. Expanda **Development note demonstrations** abaixo do livro, rolando a página se necessário. Clique em **Seed current reader** em cada endereço. A ação preenche somente o documento e idioma abertos, usando seu cookie protegido existente. Não adota a identidade do CLI. Outros documentos mostram links de orientação e o botão de seed fica desabilitado.
-3. Aguarde a mensagem de contagem salva. Notas, destaques, painéis de marcações e fitas se atualizam imediatamente. Abra **Destaques e notas** e **Minhas marcações** na barra normal. Use filtros ou links dos trechos gerados e clique no indicador sobrescrito da nota. **Download manifest** exporta os trechos criados neste documento; o manifesto somente leitura do CLI valida o perfil separado dele.
-4. Remova `noteDemos=1` ou recarregue normalmente. O mesmo navegador mantém os dados. Troque o idioma para ver sua coleção independente. Não é necessário reiniciar o Docker.
+- [architecture/current-state.md · en](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=en)
+- [architecture/current-state.md · pt-BR](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=pt-BR)
+- [img/visual-components.md · en](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=en)
+- [img/visual-components.md · pt-BR](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=pt-BR)
 
-Repetir a ação reconcilia demonstrações sem duplicatas. Uma nota ou marcação pessoal no trecho provoca conflito, sem sobrescrita. Uma execução interrompida pode deixar demonstrações parciais; o erro é exibido e o estado salvo é atualizado. Resolva o conflito ou use um perfil de desenvolvimento vazio antes de tentar novamente. Dados pessoais nunca são removidos para liberar espaço.
+Abra **Destaques e notas** e **Minhas marcações**, navegue até um trecho salvo e clique no indicador sobrescrito da nota. Fitas e cores usam os mesmos dados persistidos. Outro navegador independente ou um reload restaura a mesma coleção. Alterações aparecem no outro navegador após atualizar; não há sincronização por push. Inglês e português permanecem estritamente independentes, sem transferência de anotações entre idiomas.
 
-## Contagens e inspeção do banco
+## Contagens esperadas
 
-Por documento e idioma: 15 notas, 15 destaques ativos (14 com notas e um independente), 3 marcações. Dois documentos e dois idiomas totalizam **60 notas, 60 destaques e 12 marcações por leitor populado**. Quatro notas não têm cor. Por idioma, o painel do projeto tem 32 anotações, incluindo 30 notas: amarelo 6; azul, rosa, laranja, roxo, vermelho e verde 4 cada. O painel carrega inicialmente 20 entradas; use o controle de carregar mais para as restantes. O manifesto de seed tem 76 cenários de criação; a validação atual confere 132 âncoras persistidas.
+Cada documento/idioma tem 15 notas, 15 destaques ativos (14 com notas e um independente) e 3 marcações. Nos dois documentos e idiomas: **60 notas, 60 destaques e 12 marcações**. Quatro notas não têm cor. Por idioma, o painel tem 32 anotações combinadas, incluindo 30 notas: amarelo 6, cada uma das outras seis cores 4. A paginação inicial carrega 20 entradas. O seed cria 76 cenários e o manifesto básico valida 132 âncoras. Anotações manuais e duplicatas legadas preservadas podem aumentar os totais; não são removidas para forçar contagens.
 
-As identidades canônicas são `architecture/current-state.md` e `img/visual-components.md`, independentes do idioma. As âncoras derivam do DOM medido do leitor. A API normal de notas/destaques consulta o documento; `/api/annotations?project=engineering-library&language=pt-BR` e `/api/bookmarks?project_slug=engineering-library&language=pt-BR` consultam todo o projeto. Toda leitura continua limitada ao proprietário do cookie e ao idioma, com cache `no-store`.
-
-O DBeaver acessa `localhost:5499`, banco `engineering_library`, com suas credenciais locais existentes. As consultas somente leitura abaixo agregam **todos** os leitores de demonstração. Duas identidades totalmente populadas dobram os totais. Contagens no banco não comprovam visibilidade no navegador aberto.
+No DBeaver, use a conexão existente em `localhost:5499`, credenciais locais e banco `engineering_library`. Diagnóstico somente leitura:
 
 ```sql
-SELECT language, document, count(*), count(DISTINCT reader_digest) AS owners
-FROM notes WHERE demo_key IS NOT NULL GROUP BY language, document;
+SELECT language, document, count(*) FROM notes
+WHERE demo_key IS NOT NULL GROUP BY language, document;
 SELECT language, color, count(*) FROM highlights
 WHERE demo_key IS NOT NULL GROUP BY language, color;
 SELECT language, document, count(*) FROM bookmarks
@@ -55,16 +51,16 @@ WHERE demo_key IS NOT NULL GROUP BY language, document;
 
 ## Limpeza explícita
 
-Na interface de desenvolvimento, **Remove demonstration records** remove somente as demonstrações identificadas do navegador atual em todo o projeto, nos dois documentos e idiomas, e atualiza a interface. Preserva registros pessoais e outros leitores. A limpeza não se limita ao documento aberto.
-
-Para remover somente as demonstrações do perfil CLI, execute separadamente quando desejar:
+Execute separadamente somente quando desejar remover as demonstrações compartilhadas:
 
 ```sh
 BROWSER_BASE_URL=http://localhost:3099 npm run notes:demos:cleanup
 ```
 
-Use o mesmo `DEMO_BROWSER_PROFILE` do seed. Isso não limpa seu navegador habitual. Cores legadas sem identificação explícita de demonstração podem permanecer para evitar excluir destaques pessoais.
+A limpeza remove somente registros identificados como demonstração em todo o projeto Engineering Library, nos dois documentos e idiomas. Notas, destaques e marcações manuais permanecem. Se uma nota manual referencia um destaque de demonstração, a exclusão do destaque anula o vínculo e preserva o Markdown com sua âncora independente. Todos os navegadores refletem a limpeza após atualizar. Não há identidade de navegador envolvida. Não execute seed e limpeza simultaneamente.
 
-## Validação em 20/10/2026 — correção de visibilidade
+## Migração e testes de regressão
 
-O leitor temporário novo no Edge começou vazio mesmo com os registros do perfil CLI presentes. A ação explícita passou nos dois documentos e idiomas: indicadores, fitas e listas de marcações imediatos, seed repetido, contagens dos sete filtros, filtro de notas, reload, isolamento de outro leitor novo e limpeza explícita do proprietário temporário. Execute `npm run test:demos:browser` com o ambiente Playwright acima. A regressão Rails verifica reconciliação de âncoras movidas, idempotência, isolamento e preservação na limpeza. Consulte o relatório da tarefa para os resultados efetivamente executados das suítes e das prévias; este guia não infere a identidade do navegador já aberto do usuário. Firefox e Safari exigem validação separada; mídia externa depende do provedor.
+Consulte a [migração compartilhada](../architecture/current-state.md#migração-de-anotações-compartilhadas) para a preservação de duplicatas legadas. A transição adiciona índices compartilhados antes de remover propriedade obsoleta; mantém IDs, corpos distintos e relacionamentos. Reverter exige backup revisado, pois a propriedade removida não pode ser reconstruída.
+
+`npm run test:demos:browser` exige instalação QA explicitamente isolada (`SHARED_ANNOTATIONS_TEST=1` e `BROWSER_BASE_URL`), recusa coleções não vazias antes das verificações de fixtures e valida CRUD compartilhado, dois contextos independentes, filtros de idioma, idempotência e limpeza exclusiva de demonstrações. Testes Rails também exercitam registros legados conflitantes em schema PostgreSQL temporário. O startup normal nunca executa esses testes.

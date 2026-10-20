@@ -36,7 +36,7 @@ Highlight.js supplies read-only language grammars for Rust, Go, Python, Ruby, Ja
 
 The existing project search scans approved source snapshots even when disclosures are collapsed. Source results retain project, full path, document, occurrence, revision/fingerprint, original line and excerpt. Selecting a result expands the exact occurrence, repaginates, turns to its line and applies the red highlight. Unapproved content is excluded from search. Search retains its existing 80-result cap; there is no new database or external search service.
 
-Anonymous PostgreSQL bookmarks retain the existing architecture. Bookmarking a continuation stores its first logical line anchor. Restoring that anchor expands the correct occurrence after reflow. Missing or changed source locations show a fallback notice. Expansion survives page turning, resizing and font remeasurement. Session storage retains independent occurrences across document navigation, language changes and reloads in the same browser tab when storage is available. Collapse explicitly removes that occurrence from the saved expansion state.
+Shared PostgreSQL bookmarks retain the existing architecture. Bookmarking a continuation stores its first logical line anchor. Restoring that anchor expands the correct occurrence after reflow. Missing or changed source locations show a fallback notice. Expansion survives page turning, resizing and font remeasurement. Session storage retains independent occurrences across document navigation, language changes and reloads in the same browser tab when storage is available. Collapse explicitly removes that occurrence from the saved expansion state.
 
 ## Verification
 

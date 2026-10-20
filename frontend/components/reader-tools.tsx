@@ -1,5 +1,4 @@
 'use client';
-import { readerIdentity } from '../lib/reader-identity';
 import { headingTitle } from '../lib/heading-numbering';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
@@ -97,24 +96,18 @@ export function ReaderTools({ project, projectName, document: documentId, langua
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [csrf, setCsrf] = useState('');
   const [bookmarkError, setBookmarkError] = useState(false);
-  const [revision, setRevision] = useState(0);
-  useEffect(() => {
-    const refresh = () => setRevision(value => value + 1);
-    window.addEventListener('reader-demonstrations-changed', refresh);
-    return () => window.removeEventListener('reader-demonstrations-changed', refresh);
-  }, []);
   const [busy, setBusy] = useState(false);
   const mutationPending = useRef(false);
   const labels = { annotations: en ? 'Highlights and Notes' : 'Destaques e notas', search: en ? 'Search' : 'Pesquisar', chapters: en ? 'Chapter index' : 'Índice de capítulos', bookmarks: en ? 'My Bookmarks' : 'Minhas marcações' };
 
   useEffect(() => {
     const controller = new AbortController();
-    void readerIdentity(project, language).then(() => fetch(`/api/bookmarks?project_slug=${encodeURIComponent(project)}&language=${language}`, { cache: 'no-store', signal: controller.signal })).then(async response => {
+    void fetch(`/api/bookmarks?project_slug=${encodeURIComponent(project)}&language=${language}`, { cache: 'no-store', signal: controller.signal }).then(async response => {
       if (!response.ok) throw new Error('Bookmarks unavailable');
       return response.json();
     }).then(data => { if (controller.signal.aborted) return; setBookmarks(data.bookmarks.filter((item: Bookmark) => item.project === project && item.language === language)); setCsrf(data.csrf_token); setBookmarkError(false); }, () => { if (!controller.signal.aborted) setBookmarkError(true); });
     return () => controller.abort();
-  }, [project, language, revision]);
+  }, [project, language]);
 
   async function mutate(bookmark?: Bookmark, unit?: { id: string; text: string }) {
     if (mutationPending.current || !csrf) return;
@@ -122,7 +115,7 @@ export function ReaderTools({ project, projectName, document: documentId, langua
     setBusy(true); setBookmarkError(false);
     try {
       const response = await fetch(bookmark ? `/api/bookmarks/${bookmark.id}?language=${language}` : '/api/bookmarks', {
-        method: bookmark ? 'DELETE' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf },
+        method: bookmark ? 'DELETE' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Annotation-CSRF': csrf },
         body: bookmark ? undefined : JSON.stringify({ project, document: documentId, language, anchor: unit!.id, excerpt: unit!.text.slice(0, 240) }),
       });
       if (!response.ok) throw new Error('Bookmark mutation failed');
@@ -153,7 +146,7 @@ export function ReaderTools({ project, projectName, document: documentId, langua
         <h3>{en ? 'Project documents' : 'Documentos do projeto'}</h3><ul className="reader-panel-list">{entries.map(entry => <li key={entry.id}>{entry.href ? <Link href={entry.href} aria-current={entry.id === documentId ? 'page' : undefined} onClick={() => setPanel(null)}>{entry.number} {headingTitle(entry.title, entry.number)}</Link> : <strong>{entry.number} {headingTitle(entry.title, entry.number)}</strong>}</li>)}</ul>
       </>}
       {panel === 'bookmarks' && <>
-        <p>{en ? 'Saved in this browser. Clearing its identity removes access; bookmarks do not sync across devices.' : 'Salvas neste navegador. Limpar sua identidade remove o acesso; marcações não sincronizam entre dispositivos.'}</p>
+        <p>{en ? 'Shared in this local installation, organized by project and language.' : 'Compartilhadas nesta instalação local, organizadas por projeto e idioma.'}</p>
         {!bookmarks.filter(item => item.language === language).length && <p>{en ? 'No bookmarks saved for this project.' : 'Nenhuma marcação salva neste projeto.'}</p>}
         <ul className="reader-panel-list">{bookmarks.filter(item => item.language === language).map(bookmark => <li key={bookmark.id} className="reader-saved-bookmark"><Link href={bookmarkHref(bookmark.project, bookmark.document, bookmark.language, bookmark.anchor)} onClick={() => setPanel(null)}><strong>{projectDisplayName(bookmark.project, bookmark.project === project ? projectName : undefined)} · {bookmark.document === CONTENTS_DOCUMENT ? (bookmark.language === 'en' ? 'Table of Contents' : 'Sumário') : bookmark.document}</strong><span>{bookmark.excerpt}</span></Link><button type="button" aria-label={en ? 'Remove bookmark' : 'Remover marcação'} disabled={busy} onClick={() => void mutate(bookmark)}>×</button></li>)}</ul>
       </>}

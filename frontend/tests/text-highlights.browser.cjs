@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/tmp/numbering-browser/node_modules/playwright');
 const assert = require('node:assert/strict');
+const trackRecords = require('./annotation-test-records.cjs');
 (async () => {
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
-  const contexts = [];
+  const cleanups = [];
   try {
     for (const width of [1440, 390]) {
       const context = await browser.newContext({ viewport: { width, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'] });
-      contexts.push(context);
+      cleanups.push(trackRecords(context, process.env.BROWSER_BASE_URL || 'http://localhost:3000'));
       const page = await context.newPage();
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
@@ -62,7 +63,7 @@ const assert = require('node:assert/strict');
       assert.equal(await page.locator('.reader-pages details[open]').count(), 0);
       const painted = await page.evaluate(() => [...CSS.highlights.get('reader-purple')].map(range => range.toString()).join(' '));
       for (const text of ['CONTROL', 'EXCLUDED', 'COLLAPSED', 'Disclosure']) assert.ok(!painted.includes(text), painted);
-      await page.request.delete(`${base}/api/highlights/${fixture.highlights[0].id}?project=engineering-library&document=architecture%2Fcurrent-state.md&language=en`, { headers: { Origin: base, 'X-Reader-CSRF': fixture.csrf_token } });
+      await page.request.delete(`${base}/api/highlights/${fixture.highlights[0].id}?project=engineering-library&document=architecture%2Fcurrent-state.md&language=en`, { headers: { Origin: base, 'X-Annotation-CSRF': fixture.csrf_token } });
       await page.reload(); await ready();
       await select();
       assert.equal(await page.locator('.reader-selection-toolbar button[aria-pressed]').count(), 7);
@@ -89,7 +90,7 @@ const assert = require('node:assert/strict');
       const overlapping = await list();
       assert.equal(overlapping.highlights.length, 2);
       const green = overlapping.highlights.find(item => item.color === 'green');
-      const deleted = await page.request.delete(`${base}/api/highlights/${green.id}?project=engineering-library&document=architecture%2Fcurrent-state.md&language=en`, { headers: { Origin: base, 'X-Reader-CSRF': overlapping.csrf_token } });
+      const deleted = await page.request.delete(`${base}/api/highlights/${green.id}?project=engineering-library&document=architecture%2Fcurrent-state.md&language=en`, { headers: { Origin: base, 'X-Annotation-CSRF': overlapping.csrf_token } });
       assert.equal(deleted.status(), 204);
       await page.reload(); await ready();
       await page.waitForFunction(() => CSS.highlights.get('reader-yellow')?.size > 0);
@@ -132,17 +133,7 @@ const assert = require('node:assert/strict');
     }
     console.log('PASS: desktop/mobile selection, seven colors, Escape, keyboard selection, search compatibility, overlaps, PostgreSQL persistence, reload, resize, language scope, recolor and delete');
   } finally {
-    for (const context of contexts) {
-      try {
-        const base = process.env.BROWSER_BASE_URL || 'http://localhost:3000';
-        const scope = 'project=engineering-library&document=architecture%2Fcurrent-state.md&language=en';
-        const response = await context.request.get(`${base}/api/highlights?${scope}`);
-        if (response.ok()) {
-          const data = await response.json();
-          for (const item of data.highlights) await context.request.delete(`${base}/api/highlights/${item.id}?${scope}`, { headers: { Origin: base, 'X-Reader-CSRF': data.csrf_token } });
-        }
-      } catch { /* Completed contexts are already closed and cleaned. */ }
-    }
+    for (const cleanup of cleanups) await cleanup();
     await browser.close();
   }
 })().catch(error => { console.error(error); process.exit(1); });

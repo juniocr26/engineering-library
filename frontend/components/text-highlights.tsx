@@ -1,9 +1,8 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { NoteDemos } from './note-demos';
+import { noteAtSelection } from '../lib/note-location';
 import { NoteEditor, type SavedNote } from './note-editor';
 import { createPortal } from 'react-dom';
-import { readerIdentity } from '../lib/reader-identity';
 import { useEffect, useRef, useState, type RefObject, type ReactNode } from 'react';
 import { highlightColors, resolveTextAnchor, toolbarPosition, type HighlightColor, type SavedHighlight, type TextAnchor } from '../lib/text-anchors';
 import { eligibleRanges, selectedAnchors, passageText } from '../lib/highlight-dom';
@@ -34,7 +33,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   const query = new URLSearchParams({ project, document: documentId, language }).toString();
   useEffect(() => {
     const controller = new AbortController();
-    void readerIdentity(project, language).then(() => fetch(`/api/highlights?${query}`, { signal: controller.signal, cache: 'no-store' })).then(async response => { if (!response.ok) throw Error(); return response.json(); }).then(data => { if (!controller.signal.aborted) { setSaved(data.highlights); setCsrf(data.csrf_token); void fetch(`/api/notes?${query}`, { signal: controller.signal, cache: 'no-store' }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(value => { if (!controller.signal.aborted) { setNotes(value.notes); setLoaded(true); } }).catch(() => { if (!controller.signal.aborted) setMessage(en ? 'Notes unavailable. Reload to retry.' : 'Notas indisponíveis. Recarregue para tentar novamente.'); }); } }, () => { if (!controller.signal.aborted) setMessage(en ? 'Highlights unavailable. Reload to retry.' : 'Destaques indisponíveis. Recarregue para tentar novamente.'); });
+    void fetch(`/api/highlights?${query}`, { signal: controller.signal, cache: 'no-store' }).then(async response => { if (!response.ok) throw Error(); return response.json(); }).then(data => { if (!controller.signal.aborted) { setSaved(data.highlights); setCsrf(data.csrf_token); void fetch(`/api/notes?${query}`, { signal: controller.signal, cache: 'no-store' }).then(r => { if (!r.ok) throw Error(); return r.json(); }).then(value => { if (!controller.signal.aborted) { setNotes(value.notes); setLoaded(true); } }).catch(() => { if (!controller.signal.aborted) setMessage(en ? 'Notes unavailable. Reload to retry.' : 'Notas indisponíveis. Recarregue para tentar novamente.'); }); } }, () => { if (!controller.signal.aborted) setMessage(en ? 'Highlights unavailable. Reload to retry.' : 'Destaques indisponíveis. Recarregue para tentar novamente.'); });
     return () => controller.abort();
   }, [query, en, project, language]);
   useEffect(() => {
@@ -206,8 +205,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
   }, [notes, root, en]);
   function openNote() {
     if (!tool) return;
-    const same = (segments: TextAnchor[]) => segments.length === tool.segments.length && segments.every((part, index) => part.block === tool.segments[index].block && part.start === tool.segments[index].start && part.end === tool.segments[index].end && part.exact === tool.segments[index].exact);
-    const note = notes.find(item => item.highlight_id === tool.id && tool.id !== undefined || same(item.segments));
+    const note = noteAtSelection(notes, tool.segments, tool.id);
     if (!note && !tool.id) { setMessage(en ? 'Choose a highlight color before adding a note.' : 'Escolha uma cor de destaque antes de adicionar uma nota.'); return; }
     setEditing({ note, highlightId: tool.id }); setTool(null); window.getSelection()?.removeAllRanges();
   }
@@ -215,7 +213,7 @@ function HighlightSession({ project, documentId, language, root }: { project: st
     if (!tool || pending.current || !csrf) return;
     pending.current = true; setBusy(true);
     try {
-      const response = await fetch(`/api/highlights${tool.id ? `/${tool.id}` : ''}?${query}`, { method: remove ? 'DELETE' : tool.id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf }, body: remove ? undefined : JSON.stringify({ color, segments: tool.segments }) });
+      const response = await fetch(`/api/highlights${tool.id ? `/${tool.id}` : ''}?${query}`, { method: remove ? 'DELETE' : tool.id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Annotation-CSRF': csrf }, body: remove ? undefined : JSON.stringify({ color, segments: tool.segments }) });
       if (!response.ok) throw Error();
       if (remove) setSaved(previous => previous.filter(item => item.id !== tool.id));
       else { const item = await response.json(); setSaved(previous => [...previous.filter(old => old.id !== item.id), item]); }
@@ -249,7 +247,6 @@ function HighlightSession({ project, documentId, language, root }: { project: st
     return () => surface?.removeEventListener('click', click);
   }, [saved, root]);
   return <>
-    {process.env.NODE_ENV === 'development' && <NoteDemos project={project} documentId={documentId} language={language} csrf={csrf} changed={async () => { await Promise.all([fetch(`/api/highlights?${query}`, { cache: 'no-store' }), fetch(`/api/notes?${query}`, { cache: 'no-store' })]).then(async ([highlights, notes]) => { if (!highlights.ok || !notes.ok) throw Error(); setSaved((await highlights.json()).highlights); setNotes((await notes.json()).notes); }); }}/>}
     {indicators.map(item => createPortal(<button key={item.id} className="reader-note-indicator" data-note-id={item.id} style={{ left: item.left, top: item.top }} aria-label={en ? 'Open saved note' : 'Abrir nota salva'} onClick={() => setEditing({ note: notes.find(note => note.id === item.id) })}><svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 2h8v12H4zM6 5h4M6 8h4M6 11h3"/></svg></button>, document.body))}
     {editing && createPortal(<NoteEditor note={editing.note} highlightId={editing.highlightId} hasHighlight={saved.some(item => item.id === (editing.note?.highlight_id ?? editing.highlightId))} query={query} csrf={csrf} language={language} saved={note => setNotes(previous => [...previous.filter(item => item.id !== note.id), note])} removed={id => { setNotes(previous => previous.filter(item => item.id !== id)); }} close={() => setEditing(null)}/>, document.body)}
     {message && <p className="reader-notice" role="status">{message}</p>}

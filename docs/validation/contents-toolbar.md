@@ -1,7 +1,7 @@
 # Table of contents reader tools
 
 The table of contents and documentation now share `ReaderTools`: the original
-icons, search, chapter list, anonymous bookmark requests, panel and ribbon lifecycle
+icons, search, chapter list, shared bookmark requests, panel and ribbon lifecycle
 were extracted from `DocumentationReader`. `BookReader` remains the only pagination
 and page-turning engine.
 
@@ -12,7 +12,7 @@ the first canonical `TocEntry.id` on the selected physical leaf, including categ
 IDs such as `category:architecture`. Language remains part of bookmark identity.
 No database migration, account or second bookmark store is needed. Rails accepts
 this reserved document only after validating the active project and language;
-existing anonymous identity, CSRF, uniqueness, limits and project filtering apply.
+application CSRF, shared location uniqueness, limits and project/language filtering apply.
 
 Bookmark links route to `/projects/:slug?lang=:language#encoded-entry-id` rather
 than `/docs/`. The shared reader resolves the anchor against newly measured pages.
@@ -46,9 +46,9 @@ running frontend, then run:
 - `node tests/contents-toolbar.browser.cjs`: four viewport widths, real search and
   internal result navigation, chapter panel, mocked bookmark API, logical anchor
   restoration, language switching, overflow and measured control clearance.
-- `node tests/contents-persistence.browser.cjs`: real anonymous Rails/PostgreSQL
+- `node tests/contents-persistence.browser.cjs`: shared Rails/PostgreSQL
   create, independent desktop leaves, reload and ribbon deletion, using an isolated
-  browser context and cleaning that context's bookmarks afterward.
+  QA installation and cleaning only the exact fixture IDs afterward.
 - `node tests/bookmark-controls.browser.cjs`: existing document control regression.
 
 ## Validation executed (2026-10-19)

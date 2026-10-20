@@ -36,7 +36,7 @@ const source = '# Rich content 📚 ação\n\n**Markdown** <em>mixed HTML</em>\n
         const { csrf_token } = await (await fetch(`/api/highlights?${query}`)).json();
         const p = document.querySelector('.reader-pages [data-highlight-block]:not([data-highlight-unsupported]) p');
         const block = p.closest('[data-highlight-block]'); const text = block.textContent;
-        const headers = { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf_token };
+        const headers = { 'Content-Type': 'application/json', 'X-Annotation-CSRF': csrf_token };
         const highlightResponse = await fetch(`/api/highlights?${query}`, { method: 'POST', headers, body: JSON.stringify({ color: 'green', segments: [{ block: block.dataset.highlightBlock, start: 0, end: 20, exact: text.slice(0, 20), prefix: '', suffix: text.slice(20, 68) }] }) });
         if (!highlightResponse.ok) throw Error(`highlight ${highlightResponse.status}`);
         const highlight = await highlightResponse.json();
@@ -121,7 +121,7 @@ const source = '# Rich content 📚 ação\n\n**Markdown** <em>mixed HTML</em>\n
         console.log(`PASS rich note ${width}: mixed HTML, isolated SVG/scripts, arbitrary image hosts, GIF, 1100 rows, Mermaid success/failure, local fallback, expansion, zoom, save/reload, language isolation`);
       } finally {
         await page.evaluate(async ({ ids, query }) => {
-          const headers = { 'X-Reader-CSRF': ids.token };
+          const headers = { 'X-Annotation-CSRF': ids.token };
           await fetch(`/api/notes/${ids.note}?${query}`, { method: 'DELETE', headers });
           await fetch(`/api/highlights/${ids.highlight}?${query}`, { method: 'DELETE', headers });
         }, { ids, query });

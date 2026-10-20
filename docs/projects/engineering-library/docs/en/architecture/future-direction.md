@@ -2,7 +2,7 @@
 
 ## Status
 
-The read-only catalog API, internal Markdown book reader, project search and anonymous bookmarks are implemented. The [current state](current-state.md) describes their boundaries. Remaining proposals concern automated documentation generation, inference and private/public access policy; the older scaffold roadmap is historical.
+The read-only catalog API, internal Markdown book reader, project search and shared annotations are implemented. The [current state](current-state.md) describes their boundaries. Remaining proposals concern automated documentation generation, inference and private/public access policy; the older scaffold roadmap is historical.
 
 ## Reading interface
 

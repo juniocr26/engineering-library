@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { NotePreview } from './note-editor';
 import { noteExcerpt } from '../lib/annotation-excerpt';
 import { documentHref } from '../lib/document-links';
-import { readerIdentity } from '../lib/reader-identity';
 import { highlightColors, type HighlightColor, type TextAnchor } from '../lib/text-anchors';
 import type { TocEntry } from '../lib/documentation';
 import type { Language } from '../lib/i18n';
@@ -37,11 +36,6 @@ export function AnnotationsPanel({ project, language, entries, close, documentId
   const [error, setError] = useState(false);
   const [unresolved, setUnresolved] = useState(false);
   const [retry, setRetry] = useState(0);
-  useEffect(() => {
-    const refresh = () => { setPage(1); setRetry(value => value + 1); };
-    window.addEventListener('reader-demonstrations-changed', refresh);
-    return () => window.removeEventListener('reader-demonstrations-changed', refresh);
-  }, []);
   const [preview, setPreview] = useState<Annotation | null>(null);
   const [popover, setPopover] = useState(false);
   const filters = useRef<HTMLDivElement>(null);
@@ -52,7 +46,7 @@ export function AnnotationsPanel({ project, language, entries, close, documentId
   const names: Record<Filter, string> = { all: en ? 'All annotations' : 'Todas as anotações', notes: en ? 'Notes' : 'Notas', yellow: en ? 'Yellow' : 'Amarelo', blue: en ? 'Blue' : 'Azul', pink: en ? 'Pink' : 'Rosa', orange: en ? 'Orange' : 'Laranja', purple: en ? 'Purple' : 'Roxo', red: en ? 'Red' : 'Vermelho', green: en ? 'Green' : 'Verde' };
   useEffect(() => {
     const controller = new AbortController();
-    void readerIdentity(project, language).then(() => fetch(`/api/annotations?${new URLSearchParams({ project, language, filter, page: String(page) })}`, { cache: 'no-store', signal: controller.signal })).then(async response => {
+    void fetch(`/api/annotations?${new URLSearchParams({ project, language, filter, page: String(page) })}`, { cache: 'no-store', signal: controller.signal }).then(async response => {
       if (!response.ok) throw Error();
       return response.json() as Promise<Collection>;
     }).then(value => {

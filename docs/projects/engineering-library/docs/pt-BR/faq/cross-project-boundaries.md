@@ -24,7 +24,7 @@ Aprofundamento: O que registrar na medição? Tamanhos/distribuições de entrad
 
 ### Q004 — Quais mecanismos de segurança resolvem problemas diferentes?
 
-**Resposta:** Validação verifica representação/invariantes; autenticação identifica; autorização permite ações; criptografia protege confidencialidade. Sintaxe de URL não impede destinos abusivos; Basic exige transporte protegido; ofuscação afim reversível não é criptografia. CORS do Payment Lab controla o navegador, enquanto regras explícitas negam rotas indisponíveis. Cookie assinado e token CSRF por leitor da Engineering Library isolam mutações de favoritos, sem controlar acesso a documentos privados. Permissões dos backups ENV Auditor reduzem acesso ordinário mantendo texto puro. Limites de pixels Go reduzem riscos específicos sem isolar código nativo.
+**Resposta:** Validação verifica representação/invariantes; autenticação identifica; autorização permite ações; criptografia protege confidencialidade. Sintaxe de URL não impede destinos abusivos; Basic exige transporte protegido; ofuscação afim reversível não é criptografia. CORS do Payment Lab controla o navegador, enquanto regras explícitas negam rotas indisponíveis. A Engineering Library usa anotações compartilhadas com CSRF da aplicação e verificação de origem, sem controlar acesso a documentos privados. Permissões dos backups ENV Auditor reduzem acesso ordinário mantendo texto puro. Limites de pixels Go reduzem riscos específicos sem isolar código nativo.
 
 Aprofundamento: Erro genérico ao cliente prova logs seguros? Não. O handler financeiro registra a exceção original. Examine cada fronteira de saída/armazenamento; valores secretos não foram inspecionados ou publicados aqui.
 

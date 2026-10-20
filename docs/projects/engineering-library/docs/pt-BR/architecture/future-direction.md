@@ -2,7 +2,7 @@
 
 ## Status
 
-API de catálogo somente leitura, livro Markdown interno, busca no projeto e favoritos anônimos estão implementados. O [estado atual](current-state.md) descreve suas fronteiras. Propostas remanescentes tratam de geração documental automatizada, inferência e política de acesso público/privado; o roadmap antigo do scaffold é histórico.
+API de catálogo somente leitura, livro Markdown interno, busca no projeto e anotações compartilhadas estão implementados. O [estado atual](current-state.md) descreve suas fronteiras. Propostas remanescentes tratam de geração documental automatizada, inferência e política de acesso público/privado; o roadmap antigo do scaffold é histórico.
 
 ## Interface de leitura
 

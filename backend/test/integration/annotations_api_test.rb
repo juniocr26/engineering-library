@@ -5,11 +5,10 @@ class AnnotationsApiTest < ActionDispatch::IntegrationTest
     Catalog::Sync.call
     @scope = { project: 'engineering-library', document: 'README', language: 'en' }
     get '/api/highlights', params: @scope
-    @headers = { 'X-Reader-CSRF' => response.parsed_body.fetch('csrf_token') }
+    @headers = { 'X-Annotation-CSRF' => response.parsed_body.fetch('csrf_token') }
     @segments = [{ block: 'stable-test-block', start: 0, end: 5, exact: 'Hello', prefix: '', suffix: ' world' }]
     post '/api/highlights', params: @scope.merge(color: 'blue', segments: @segments), headers: @headers, as: :json
     @highlight = response.parsed_body.fetch('id')
-    @reader = Highlight.find(@highlight).reader_digest
     post '/api/notes', params: @scope.merge(highlight_id: @highlight, body: '**A saved note**'), headers: @headers, as: :json
     @note = response.parsed_body.fetch('id')
     @query = @scope.except(:document)
@@ -24,7 +23,6 @@ class AnnotationsApiTest < ActionDispatch::IntegrationTest
     assert_equal 'blue', data['annotations'][0]['color']
     assert_equal 1, data['counts']['blue']
     assert_equal 1, data['counts']['notes']
-    assert_nil data['annotations'][0]['reader_digest']
     original = data['annotations'][0]['created_at']
     patch "/api/notes/#{@note}", params: @scope.merge(body: 'Edited'), headers: @headers, as: :json
     get '/api/annotations', params: @query
@@ -39,13 +37,15 @@ class AnnotationsApiTest < ActionDispatch::IntegrationTest
     post '/api/highlights', params: @scope.merge(color: 'pink', segments: @segments), headers: @headers, as: :json
     get '/api/annotations', params: @query.merge(filter: 'pink')
     assert_equal 1, response.parsed_body['annotations'].size
-    assert_equal @note, response.parsed_body['annotations'][0]['note_id']
+    assert_nil response.parsed_body['annotations'][0]['note_id']
+    get '/api/annotations', params: @query.merge(filter: 'notes')
+    assert_nil response.parsed_body['annotations'][0]['color']
   end
 
   test 'all documents newest first deterministic ties and pagination' do
     timestamp = Time.current
     25.times do |index|
-      Highlight.create!(reader_digest: @reader, project: @scope[:project], document: 'architecture/current-state.md', language: 'en', color: Highlight::COLORS[index % 7], segments: @segments.map { |s| s.merge(block: "block-#{index}") }, created_at: timestamp)
+      Highlight.create!(project: @scope[:project], document: 'architecture/current-state.md', language: 'en', color: Highlight::COLORS[index % 7], segments: @segments.map { |s| s.merge(block: "block-#{index}") }, created_at: timestamp)
     end
     get '/api/annotations', params: @query
     first = response.parsed_body
@@ -66,10 +66,10 @@ class AnnotationsApiTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'ownership project language invalid queries and bounded query count' do
+  test 'shared project language invalid queries and bounded query count' do
     stranger = open_session
     stranger.get '/api/annotations', params: @query
-    assert_empty stranger.response.parsed_body['annotations']
+    assert_equal [@note], stranger.response.parsed_body['annotations'].map { |n| n['note_id'] }
     get '/api/annotations', params: @query.merge(language: 'pt-BR')
     assert_empty response.parsed_body['annotations']
     other = CatalogProject.where(active: true).where.not(slug: @scope[:project]).first!
@@ -82,7 +82,7 @@ class AnnotationsApiTest < ActionDispatch::IntegrationTest
     queries = []
     callback = ->(_name, _start, _finish, _id, payload) { queries << payload[:sql] unless payload[:name] == 'SCHEMA' }
     ActiveSupport::Notifications.subscribed(callback, 'sql.active_record') do
-      AnnotationLibrary.new(reader: @reader, project: @scope[:project], language: 'en').list(filter: 'all', page: 1)
+      AnnotationLibrary.new(project: @scope[:project], language: 'en').list(filter: 'all', page: 1)
     end
     assert_equal 3, queries.count { |sql| sql.match?(/\ASELECT/) }
   end

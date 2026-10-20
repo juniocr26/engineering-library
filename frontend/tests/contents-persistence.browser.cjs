@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
+const trackRecords = require('./annotation-test-records.cjs');
 (async () => {
  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
  const context = await browser.newContext({ baseURL: process.env.BROWSER_BASE_URL || 'http://localhost:3000', viewport: { width: 1440, height: 900 } });
  const page = await context.newPage();
+ const cleanup = trackRecords(context, process.env.BROWSER_BASE_URL || 'http://localhost:3000');
  try {
   await page.goto(`${process.env.BROWSER_BASE_URL || 'http://localhost:3000'}/projects/engineering-library?lang=en`);
   await page.locator('.reader[data-pagination="ready"]').waitFor();
@@ -26,14 +28,9 @@ const assert = require('node:assert/strict');
    await leaf.getByRole('button', { name: 'Bookmark page', exact: true }).waitFor();
   }
   assert.equal((await (await page.request.get('/api/bookmarks?project_slug=engineering-library&language=en')).json()).bookmarks.length, 0);
-  console.log('PASS: real anonymous Rails/PostgreSQL create, independent leaves, refresh and ribbon deletion');
+  console.log('PASS: shared Rails/PostgreSQL create, independent leaves, refresh and ribbon deletion');
  } finally {
-  // Only this isolated browser identity is affected; clean up after failed assertions too.
-  const response = await page.request.get('/api/bookmarks?project_slug=engineering-library&language=en');
-  if (response.ok()) {
-   const data = await response.json();
-   for (const bookmark of data.bookmarks) await page.request.delete(`/api/bookmarks/${bookmark.id}?language=en`, { headers: { 'X-Reader-CSRF': data.csrf_token } });
-  }
+  await cleanup();
   await browser.close();
  }
 })().catch(error => { console.error(error); process.exit(1); });

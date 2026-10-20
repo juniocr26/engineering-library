@@ -12,13 +12,13 @@ The answers below were checked against selected current source and test definiti
 
 ## Engineering Library interview
 
-> Source review — 2026-10-19: the current tree implements a Rails catalog API, PostgreSQL catalog records and anonymous bookmarks, plus an internal Next.js Markdown reader. The former documentation-only/scaffold description is superseded. No AI agent is implemented. See [current architecture](../architecture/current-state.md).
+> Source review — 2026-10-19: the current tree implements a Rails catalog API, PostgreSQL catalog records and shared annotations, plus an internal Next.js Markdown reader. The former documentation-only/scaffold description is superseded. No AI agent is implemented. See [current architecture](../architecture/current-state.md).
 
 These conceptual comparisons do not imply runtime integration. Implemented facts, general theory and hypothetical alternatives are explicitly separated.
 
 ### Q001 — Introductory: What is Engineering Library responsible for?
 
-**Answer:** Implemented: this repository maintains bilingual project documentation and serves it through a Next.js book reader backed by a Rails catalog API. PostgreSQL persists indexed project identity/visibility and anonymous bookmark locations; Markdown remains the source for document bodies and localized bios. `Catalog::Sync` validates both bios before serializing database writes inside a transaction with a PostgreSQL advisory lock. The catalog endpoint pages active projects, while Next reads scoped collection Markdown on the server. This is an implemented local application, with no claim of production deployment, payment flow or AI ingestion.
+**Answer:** Implemented: this repository maintains bilingual project documentation and serves it through a Next.js book reader backed by a Rails catalog API. PostgreSQL persists indexed project identity/visibility and shared annotation locations; Markdown remains the source for document bodies and localized bios. `Catalog::Sync` validates both bios before serializing database writes inside a transaction with a PostgreSQL advisory lock. The catalog endpoint pages active projects, while Next reads scoped collection Markdown on the server. This is an implemented local application, with no claim of production deployment, payment flow or AI ingestion.
 
 Follow-up: Why retain old interview answers instead of replacing them with dossiers? Answers teach reasoning and failure analysis, while dossiers explain mechanisms; both are required. Stable additional Q IDs preserve old numbering and bilingual alignment. Follow-up: What is the cost of self-contained explanations? Shared facts are repeated between project docs and library, so source review and explicit gaps must maintain consistency. Links alone would reduce duplication but fail the interview requirement. Semantic accuracy remains manual review; a successful link check cannot prove an answer is true.
 
@@ -38,9 +38,9 @@ Follow-up: What is the cost? Reading/parsing grows with documentation bytes and 
 
 **Answer:** `Catalog::Sync` validates both bio files and duplicate stable identifiers before entering a PostgreSQL transaction. Its advisory lock serializes cooperating database sync transactions, not filesystem editors. A file may change after validation; subsequent presenters also read bios from disk. Keep metadata stable during sync, and synchronize explicit bio/name/slug changes. Editing a chapter body needs no database ingest. Missing projects become inactive rather than deleted; stable identifiers preserve catalog identity across supported slug renames. This does not migrate bookmarks, whose project association is a slug string. A successful sync therefore establishes the indexed metadata update under those inputs, not an atomic snapshot of every chapter or automatic repair of old bookmark URLs.
 
-### Q005 — What protects anonymous bookmarks, and what does it not guarantee?
+### Q005 — What protects shared annotations, and what does it not guarantee?
 
-**Answer:** A first GET establishes a signed browser cookie; the server hashes its random token to scope PostgreSQL rows. Mutations require `X-Reader-CSRF` carrying a purpose-bound verifier token for that digest. The unique index includes reader, project, document, language and anchor, preventing a repeated logical location from creating another row. Cross-reader deletion returns not found. There is no account login, cross-device synchronization or recovery identity if the cookie is lost. The 200-entry count-before-insert check is an admission policy, not an exact concurrent quota. Document existence is checked for ordinary Markdown, but arbitrary anchor existence is not; `@contents` is a reserved virtual document. Thus syntax-valid bookmarks can become unavailable after document or source-snapshot changes.
+**Answer:** All browsers use one local PostgreSQL dataset scoped by canonical project, document and mandatory language. Signed, expiring application CSRF tokens and same-origin proxy checks protect mutations without cookies or profiles. IDs identify distinct annotations; preserved legacy bookmarks use a deterministic location variant. The 200-bookmark admission check is not an exact concurrent quota. Document existence is validated, but arbitrary anchor existence is checked when navigating; changed content may make a location unavailable. See [current architecture](../architecture/current-state.md).
 
 
 ## Application and catalog questions
@@ -51,7 +51,7 @@ Read [current architecture](../architecture/current-state.md), [future direction
 
 ### Q101 — Introductory: Why Rails with a separate Next.js frontend?
 
-**Answer:** Implemented: Rails serves paginated catalog metadata and anonymous bookmarks backed by PostgreSQL; Next.js renders the internal Markdown reader and obtains catalog JSON on the server. Files remain the source for document bodies and bios. Rails conventions supply HTTP/persistence structure while Next provides React routing and browser layout, at the cost of separate builds, dependencies and failure diagnosis. There is no evidence of framework benchmarking. A Rails-rendered alternative could simplify deployment, but remains a conceptual comparison rather than a documented historical evaluation.
+**Answer:** Implemented: Rails serves paginated catalog metadata and shared annotations backed by PostgreSQL; Next.js renders the internal Markdown reader and obtains catalog JSON on the server. Files remain the source for document bodies and bios. Rails conventions supply HTTP/persistence structure while Next provides React routing and browser layout, at the cost of separate builds, dependencies and failure diagnosis. There is no evidence of framework benchmarking. A Rails-rendered alternative could simplify deployment, but remains a conceptual comparison rather than a documented historical evaluation.
 
 **Follow-up:** Does separation prove Clean Architecture? No. Current `Catalog::Sync`, `Catalog::Page`, `Catalog::Files` and controllers express concrete responsibilities, but ActiveRecord, Rails and filesystem concerns remain visible. Judge boundaries by dependency direction and testable behavior, not by process count or empty domain layers.
 

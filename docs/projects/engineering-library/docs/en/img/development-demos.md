@@ -1,14 +1,16 @@
 # Development demonstrations
 
-Docker startup (`docker compose up -d --build`) initializes catalog metadata, not annotation demonstrations. A fresh anonymous reader has empty collections. Demonstrations are optional, development-only, manual actions; cleanup never runs automatically. Do not reset PostgreSQL or remove its volume.
+Engineering Library uses one shared local PostgreSQL annotation dataset, organized by project, document and language, without accounts, sessions or reader profiles. Run the seed command once, then open or refresh any browser accessing the same installation. No enrollment, special cookie or browser action is required. An empty database shows empty collections.
 
-## Workflow A — CLI demonstration reader
+Docker startup initializes catalog metadata only. Seeding and cleanup are optional, explicit development commands and never run at boot or in production. Do not reset PostgreSQL or remove its volume.
 
-The CLI uses a dedicated persistent browser profile, by default `/tmp/engineering-note-demo-browser` (override with `DEMO_BROWSER_PROFILE`). Rails creates its random signed HttpOnly `engineering_reader` cookie through the normal bookmarks API. PostgreSQL stores only its SHA-256 digest. These records belong to that profile; running verification or opening a manifest link in a different browser does not transfer their ownership. A non-null `demo_key` identifies cleanup ownership, not public visibility. Never copy cookies or publish digests.
+## Commands
 
-With Node.js and Playwright installed on the host:
+From the repository root, apply migrations and install a host Playwright browser if needed:
 
 ```sh
+docker compose up -d --build
+docker compose exec backend bin/rails db:migrate
 cd frontend
 npm install --prefix /tmp/engineering-library-browser playwright
 export PLAYWRIGHT_MODULE=/tmp/engineering-library-browser/node_modules/playwright
@@ -19,34 +21,28 @@ npm run notes:demos:verify
 npm run notes:demos:manifest
 ```
 
-Set `PLAYWRIGHT_EXECUTABLE_PATH` to use an installed browser. Do not run commands concurrently against the same profile. `notes:demos` seeds or reconciles this profile only. `notes:demos:verify` reads persisted records and opens actual note indicators and previews. `notes:demos:manifest` performs read-only live anchor diagnostics; it never seeds or deletes records. It writes `/tmp/engineering-note-demo-manifest.json` with record IDs, document/language, logical anchors and `valid` flags plus valid/invalid totals, without cookie secrets or digests. After document edits, inspect invalid anchors and explicitly rerun seeding to reconcile demonstration anchors. User-created records are preserved.
+`PLAYWRIGHT_EXECUTABLE_PATH` may select an installed browser. The CLI launches a disposable browser only to measure real document anchors; it stores no persistent browser profile and all writes use the shared APIs. `notes:demos` reconciles explicit `demo_key` records without duplicates. It never adopts or overwrites a manual note/bookmark at a conflicting passage; a conflict is reported, and an interrupted run may leave a partial seed. Resolve the conflict and rerun explicitly.
 
-## Workflow B — current browser demonstrations
+`notes:demos:verify` reads the shared dataset through a fresh browser and opens real indicators/previews. `notes:demos:manifest` is read-only and writes `/tmp/engineering-note-demo-manifest.json` with navigable record URLs and valid/invalid anchor flags. It does not seed or delete data. Reconcile demonstrations explicitly after changing source documents; invalid annotations are never shown on unrelated text.
 
-Use the browser where you want the annotations to appear, consistently on `localhost:3099`. A separate browser, private window, profile, or `127.0.0.1` hostname may have a different identity.
+## Open the normal reader
 
-1. Open each of these four URLs:
-   - [Architecture, English](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=en&noteDemos=1)
-   - [Visual components, English](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=en&noteDemos=1)
-   - [Arquitetura, português](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=pt-BR&noteDemos=1)
-   - [Componentes visuais, português](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=pt-BR&noteDemos=1)
-2. Expand **Development note demonstrations** below the book, scrolling if necessary. Click **Seed current reader** once on each URL. This action populates only the open document and language, using your existing protected cookie. It does not adopt the CLI identity. Other documents show guidance links instead of an enabled seed button.
-3. Wait for the saved-count status. Notes and highlights refresh immediately; bookmark panels and page ribbons refresh too. Open **Highlights and Notes** and **My Bookmarks** in the normal toolbar. Use the filters or the generated passage links and click the superscript note indicator. **Download manifest** exports the passages created in this document; use the CLI read-only manifest for validation of its separate profile.
-4. Remove `noteDemos=1` or reload normally. The same browser keeps its data. Switch language to see that language's independent collection. No Docker restart is needed.
+- [architecture/current-state.md · en](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=en)
+- [architecture/current-state.md · pt-BR](http://localhost:3099/projects/engineering-library/docs/architecture/current-state.md?lang=pt-BR)
+- [img/visual-components.md · en](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=en)
+- [img/visual-components.md · pt-BR](http://localhost:3099/projects/engineering-library/docs/img/visual-components.md?lang=pt-BR)
 
-Repeating the action reconciles demonstrations without duplicates. A personal note or bookmark occupying the target passage causes a conflict, rather than being overwritten. An interrupted run may leave partial demonstrations; the error is displayed and saved state is refreshed. Resolve the conflict or use an empty development browser profile before retrying. Personal data is never removed to make room.
+Open **Highlights and Notes** and **My Bookmarks**, navigate to a saved passage and click its superscript note indicator. Page ribbons and highlight colors use the same persisted data. Opening a second independent browser or refreshing restores the same collection. Changes in one browser appear in another after refresh; there is no live push synchronization. English and Portuguese remain strictly independent and are never copied between languages.
 
-## Counts and database inspection
+## Expected counts
 
-Per document and language: 15 notes, 15 active highlights (14 with notes and one independent highlight), 3 bookmarks. Two documents and two languages give **60 notes, 60 highlights, 12 bookmarks per seeded reader**. Four notes have no color. Per language the project panel has 32 annotations, including 30 notes: yellow 6; blue, pink, orange, purple, red and green 4 each. The panel initially loads 20 entries; use its load-more control for the remainder. The seed manifest contains 76 creation scenarios; live validation checks 132 persisted anchors.
+Each document/language has 15 notes, 15 active highlights (14 with notes plus one independent highlight) and 3 bookmarks. Across both documents and languages: **60 notes, 60 highlights and 12 bookmarks**. Four notes have no color. Per language, the project panel has 32 combined annotations, including 30 notes: yellow 6, each of the other six colors 4. Initial pagination loads 20 entries. The seed creates 76 scenarios and the baseline manifest validates 132 persisted anchors. Manual annotations and preserved legacy duplicates may increase totals; they are not removed to force fixture counts.
 
-The two canonical document identities are `architecture/current-state.md` and `img/visual-components.md`, independent of language. Actual text anchors derive from the reader's measured DOM. The normal notes/highlights API is document-scoped; `/api/annotations?project=engineering-library&language=en` and `/api/bookmarks?project_slug=engineering-library&language=en` are project-wide. Every read remains cookie-owner and language scoped, with `no-store` caching.
-
-DBeaver connects to `localhost:5499`, database `engineering_library`, with your existing local credentials. These read-only queries aggregate **all** demo readers, not just the browser you have open. Two fully seeded identities double the totals. Row counts alone do not establish browser visibility.
+DBeaver uses the existing `localhost:5499` connection and local credentials, database `engineering_library`. Read-only diagnostics:
 
 ```sql
-SELECT language, document, count(*), count(DISTINCT reader_digest) AS owners
-FROM notes WHERE demo_key IS NOT NULL GROUP BY language, document;
+SELECT language, document, count(*) FROM notes
+WHERE demo_key IS NOT NULL GROUP BY language, document;
 SELECT language, color, count(*) FROM highlights
 WHERE demo_key IS NOT NULL GROUP BY language, color;
 SELECT language, document, count(*) FROM bookmarks
@@ -55,16 +51,16 @@ WHERE demo_key IS NOT NULL GROUP BY language, document;
 
 ## Explicit cleanup
 
-In the development interface, **Remove demonstration records** removes only the current browser's tagged demonstrations throughout this project, across both documents and languages, then refreshes the UI. It preserves personal records and other readers. It is not limited to the document shown.
-
-For the CLI fixture only, run this separately when removal is intended:
+Run separately only when you want to remove the shared demonstrations:
 
 ```sh
 BROWSER_BASE_URL=http://localhost:3099 npm run notes:demos:cleanup
 ```
 
-Use the same `DEMO_BROWSER_PROFILE` as the seed. This does not clean your normal browser. Legacy colors without explicit demo ownership may remain to avoid deleting personal highlights.
+Cleanup removes only tagged demonstration records throughout the Engineering Library project, in both documents and languages. Manual notes, highlights and bookmarks remain. If a manual note references a demonstration highlight, deleting that highlight nullifies the relationship and preserves its independently anchored Markdown. Every browser reflects cleanup after refresh. No browser identity is involved. Do not run seed and cleanup concurrently.
 
-## Validation on 2026-10-20 — visibility correction
+## Migration and regression tests
 
-The fresh temporary Edge reader started empty despite the existing CLI fixture. The explicit UI action passed in both documents and languages: immediate note indicators, ribbons and project bookmark lists, repeated seeding, all seven filter counts, notes filter, reload, isolation of another fresh reader, and explicit cleanup of the temporary owner. Run `npm run test:demos:browser` with the Playwright environment above. Rails regression coverage checks moved-anchor reconciliation, idempotency, owner isolation and cleanup preservation. See the task report for actual suite results and preview validation; this guide does not infer the identity of an already-open user browser. Firefox and Safari require separate validation; remote media depends on provider availability.
+See [shared migration](../architecture/current-state.md#shared-annotation-migration) for legacy duplicate preservation. The transition adds shared indexes before dropping obsolete ownership; it retains IDs, distinct note bodies and relationships. Rollback requires a reviewed backup because removed ownership cannot be reconstructed.
+
+`npm run test:demos:browser` requires an explicitly isolated QA installation (`SHARED_ANNOTATIONS_TEST=1` and `BROWSER_BASE_URL`), refuses nonempty annotation collections before destructive fixture checks, and verifies shared CRUD, two independent browser contexts, language filtering, seed idempotency and demonstration-only cleanup. Rails tests also exercise conflicting legacy rows in a temporary PostgreSQL schema. Ordinary application startup never invokes these tests.

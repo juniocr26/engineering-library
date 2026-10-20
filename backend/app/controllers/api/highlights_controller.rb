@@ -1,10 +1,10 @@
 module Api
-  # Shares the signed anonymous cookie, CSRF verification and catalog validation.
+  # Shared annotations with CSRF verification and catalog validation.
   class HighlightsController < BookmarksController
     before_action :require_document_scope
 
     def index
-      render json: { highlights: scope.order(:id).limit(500).map { |item| present(item) }, csrf_token: verifier.generate(@reader_digest, expires_in: 1.day, purpose: "bookmark-mutation") }
+      render json: { highlights: scope.order(:id).limit(500).map { |item| present(item) }, csrf_token: csrf_token }
     end
 
     def create
@@ -42,7 +42,7 @@ module Api
     private
 
     def scope
-      Highlight.where(reader_digest: @reader_digest, project: params[:project], document: params[:document], language: params[:language])
+      Highlight.where(project: params[:project], document: params[:document], language: params[:language])
     end
 
     def present(item) = item.as_json(only: %i[id project document language color segments created_at updated_at])

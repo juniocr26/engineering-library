@@ -16,7 +16,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       const identity = await (await fetch(`/api/highlights?${query}`)).json();
       const blocks = [...document.querySelectorAll('.reader-measure [data-highlight-block]')].filter(node => node.querySelector('p') && !node.dataset.highlightUnsupported);
       const segments = [blocks[0], blocks.at(-1)].map(node => { const text = node.textContent; return { block: node.dataset.highlightBlock, start: 0, end: 10, exact: text.slice(0,10), prefix: '', suffix: text.slice(10,58) }; });
-      const headers = { 'Content-Type': 'application/json', 'X-Reader-CSRF': identity.csrf_token };
+      const headers = { 'Content-Type': 'application/json', 'X-Annotation-CSRF': identity.csrf_token };
       const highlight = await (await fetch(`/api/highlights?${query}`, { method: 'POST', headers, body: JSON.stringify({ color: 'green', segments }) })).json();
       const response = await fetch(`/api/notes?${query}`, { method: 'POST', headers, body: JSON.stringify({ highlight_id: highlight.id, body: 'Logical end fixture' }) });
       if (!response.ok) throw Error(`Note fixture: ${response.status}`);
@@ -45,7 +45,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
     await page.setViewportSize({ width: 430, height: 900 }); await ready(page); await marker.waitFor();
     assert.equal(await marker.count(), 1);
     await page.evaluate(async ({ record, query }) => {
-      const response = await fetch(`/api/highlights/${record.highlight.id}?${query}`, { method: 'DELETE', headers: { 'X-Reader-CSRF': record.token } });
+      const response = await fetch(`/api/highlights/${record.highlight.id}?${query}`, { method: 'DELETE', headers: { 'X-Annotation-CSRF': record.token } });
       if (!response.ok) throw Error('Highlight cleanup failed');
     }, { record, query });
     await page.reload(); await ready(page); await marker.waitFor();
@@ -80,7 +80,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
     await page.mouse.move(box.x + 50, y); await page.mouse.wheel(0, -200);
     await page.waitForFunction(() => Number(document.querySelector('.note-preview-scroll').dataset.zoom) > 1);
     await page.evaluate(async ({ record, query }) => {
-      const response = await fetch(`/api/notes/${record.note.id}?${query}`, { method: 'DELETE', headers: { 'X-Reader-CSRF': record.token } });
+      const response = await fetch(`/api/notes/${record.note.id}?${query}`, { method: 'DELETE', headers: { 'X-Annotation-CSRF': record.token } });
       if (!response.ok) throw Error('Note cleanup failed');
     }, { record, query });
     console.log('PASS compact 320x480: visible actions, long-note scrolling, mouse text selection, touch pinch, wheel zoom');

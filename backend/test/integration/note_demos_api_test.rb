@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class NoteDemosApiTest < ActionDispatch::IntegrationTest
-  test 'development fixture is idempotent and cleanup preserves personal and other reader records' do
+  test 'shared fixture is idempotent and cleanup preserves manual annotations' do
     Catalog::Sync.call
     with_routing do |routes|
       routes.draw do
@@ -14,7 +14,7 @@ class NoteDemosApiTest < ActionDispatch::IntegrationTest
       end
       location = { project: 'engineering-library', document: 'README', language: 'en' }
       get '/api/notes', params: location
-      headers = { 'X-Reader-CSRF' => response.parsed_body.fetch('csrf_token') }
+      headers = { 'X-Annotation-CSRF' => response.parsed_body.fetch('csrf_token') }
       segment = { block: 'fixture-block', start: 0, end: 5, exact: 'Hello', prefix: '', suffix: '' }
       payload = location.merge(demo_key: 'visual-en-note', body: 'A note', segments: [segment], color: 'blue')
       2.times do
@@ -42,14 +42,18 @@ class NoteDemosApiTest < ActionDispatch::IntegrationTest
       assert_response :created
       stranger = open_session
       stranger.get '/api/notes', params: location
-      assert_empty stranger.response.parsed_body['notes']
-      stranger.post '/api/note_demos', params: payload, headers: { 'X-Reader-CSRF' => stranger.response.parsed_body.fetch('csrf_token') }, as: :json
+      assert_equal 1, stranger.response.parsed_body['notes'].size
+      stranger.post '/api/note_demos', params: payload, headers: { 'X-Annotation-CSRF' => stranger.response.parsed_body.fetch('csrf_token') }, as: :json
       assert_equal 201, stranger.response.status
+      demo_highlight = Highlight.create!(project: location[:project], document: location[:document], language: location[:language], color: 'red', segments: [segment.stringify_keys], demo_key: 'visual-en-manual-attachment')
+      manual_note = Note.create!(project: location[:project], document: location[:document], language: location[:language], segments: demo_highlight.segments, anchor_digest: Note.anchor_key(demo_highlight.segments), highlight: demo_highlight, body: 'Manual independent content')
       delete '/api/note_demos', params: location, headers: headers
       assert_response :no_content
+      assert_nil manual_note.reload.highlight_id
+      assert_equal 'Manual independent content', manual_note.body
       assert Highlight.exists?(personal)
       assert Bookmark.exists?(bookmark)
-      assert_equal 1, Note.where(demo_key: 'visual-en-note').count
+      assert_equal 0, Note.where(demo_key: 'visual-en-note').count
       assert_equal 0, Bookmark.where(demo_key: 'visual-en-bookmark').count
     end
   end

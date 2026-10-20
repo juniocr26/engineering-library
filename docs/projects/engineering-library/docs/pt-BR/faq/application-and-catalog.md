@@ -4,7 +4,7 @@ Leia a [arquitetura atual](../architecture/current-state.md), a [direção futur
 
 ### Q101 — Introdutória: Por que Rails com frontend Next.js separado?
 
-**Resposta:** Implementado: Rails serve metadados paginados do catálogo e favoritos anônimos apoiados pelo PostgreSQL; Next.js renderiza o leitor Markdown interno e busca JSON no servidor. Arquivos continuam como fonte de documentos e bios. Convenções Rails fornecem HTTP/persistência; Next fornece rotas React e layout no navegador, com builds, dependências e diagnóstico separados. Não há evidência de benchmark de frameworks. Renderização Rails poderia simplificar implantação, mas é comparação conceitual, sem avaliação histórica documentada.
+**Resposta:** Implementado: Rails serve metadados paginados do catálogo e anotações compartilhadas apoiados pelo PostgreSQL; Next.js renderiza o leitor Markdown interno e busca JSON no servidor. Arquivos continuam como fonte de documentos e bios. Convenções Rails fornecem HTTP/persistência; Next fornece rotas React e layout no navegador, com builds, dependências e diagnóstico separados. Não há evidência de benchmark de frameworks. Renderização Rails poderia simplificar implantação, mas é comparação conceitual, sem avaliação histórica documentada.
 
 **Aprofundamento:** A separação comprova Clean Architecture? Não. `Catalog::Sync`, `Catalog::Page`, `Catalog::Files` e controllers expressam responsabilidades concretas, mas ActiveRecord, Rails e filesystem permanecem visíveis. Avalie direção de dependência e comportamento testável, sem inferir camadas de domínio pelo número de processos.
 

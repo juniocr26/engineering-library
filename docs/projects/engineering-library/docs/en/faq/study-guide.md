@@ -2,13 +2,13 @@
 
 > The complete [technical FAQ](index.md) is the primary entry point for questions and answers. This study document retains historical headings and links for compatibility.
 
-> Source review — 2026-10-19: the current tree implements a Rails catalog API, PostgreSQL catalog records and anonymous bookmarks, plus an internal Next.js Markdown reader. The former documentation-only/scaffold description is superseded. No AI agent is implemented. See [current architecture](../architecture/current-state.md).
+> Source review — 2026-10-19: the current tree implements a Rails catalog API, PostgreSQL catalog records and shared annotations, plus an internal Next.js Markdown reader. The former documentation-only/scaffold description is superseded. No AI agent is implemented. See [current architecture](../architecture/current-state.md).
 
 These conceptual comparisons do not imply runtime integration. Implemented facts, general theory and hypothetical alternatives are explicitly separated.
 
 ### Q001 — Introductory: What is Engineering Library responsible for?
 
-**Answer:** Implemented: this repository maintains bilingual project documentation and serves it through a Next.js book reader backed by a Rails catalog API. PostgreSQL persists indexed project identity/visibility and anonymous bookmark locations; Markdown remains the source for document bodies and localized bios. `Catalog::Sync` validates both bios before serializing database writes inside a transaction with a PostgreSQL advisory lock. The catalog endpoint pages active projects, while Next reads scoped collection Markdown on the server. This is an implemented local application, with no claim of production deployment, payment flow or AI ingestion.
+**Answer:** Implemented: this repository maintains bilingual project documentation and serves it through a Next.js book reader backed by a Rails catalog API. PostgreSQL persists indexed project identity/visibility and shared annotation locations; Markdown remains the source for document bodies and localized bios. `Catalog::Sync` validates both bios before serializing database writes inside a transaction with a PostgreSQL advisory lock. The catalog endpoint pages active projects, while Next reads scoped collection Markdown on the server. This is an implemented local application, with no claim of production deployment, payment flow or AI ingestion.
 
 Follow-up: Why retain old interview answers instead of replacing them with dossiers? Answers teach reasoning and failure analysis, while dossiers explain mechanisms; both are required. Stable additional Q IDs preserve old numbering and bilingual alignment. Follow-up: What is the cost of self-contained explanations? Shared facts are repeated between project docs and library, so source review and explicit gaps must maintain consistency. Links alone would reduce duplication but fail the interview requirement. Semantic accuracy remains manual review; a successful link check cannot prove an answer is true.
 

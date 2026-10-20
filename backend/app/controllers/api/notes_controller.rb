@@ -1,16 +1,20 @@
 module Api
   class NotesController < HighlightsController
     def index
-      render json: { notes: scope.order(:id).limit(500).map { |item| present(item) }, csrf_token: verifier.generate(@reader_digest, expires_in: 1.day, purpose: "bookmark-mutation") }
+      render json: { notes: scope.order(:id).limit(500).map { |item| present(item) }, csrf_token: csrf_token }
     end
 
     def create
       return invalid_body unless params[:body].is_a?(String)
-      highlight = Highlight.where(reader_digest: @reader_digest, project: params[:project], document: params[:document], language: params[:language]).find_by(id: params[:highlight_id])
+      highlight = Highlight.where(project: params[:project], document: params[:document], language: params[:language]).find_by(id: params[:highlight_id])
       return render json: { error: "Highlight not found" }, status: :not_found unless highlight
       highlight.with_lock do
         key = Note.anchor_key(highlight.segments)
-        item = scope.find_by(anchor_digest: key)
+        item = scope.find_by(highlight_id: highlight.id)
+        # Only an unambiguous independent note can be explicitly reattached.
+        independent = scope.where(anchor_digest: key, highlight_id: nil).order(:id).limit(2).to_a unless item
+        item ||= independent.first if independent&.one?
+        item.update!(highlight: highlight) if item && item.highlight_id.nil?
         # Repeated creation opens the original; it never overwrites its Markdown.
         return render json: present(item) if item
         return render json: { error: "Note limit reached" }, status: :unprocessable_entity if scope.count >= 500
@@ -48,7 +52,7 @@ module Api
     end
 
     def scope
-      Note.where(reader_digest: @reader_digest, project: params[:project], document: params[:document], language: params[:language])
+      Note.where(project: params[:project], document: params[:document], language: params[:language])
     end
 
     def present(item) = item.as_json(only: %i[id highlight_id project document language segments body created_at updated_at])

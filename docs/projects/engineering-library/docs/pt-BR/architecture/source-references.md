@@ -36,7 +36,7 @@ Highlight.js fornece gramáticas de leitura para Rust, Go, Python, Ruby, JavaScr
 
 A busca existente do projeto inclui snapshots aprovados mesmo com disclosures recolhidos. Resultados preservam projeto, caminho completo, documento, ocorrência, revisão/hash, linha e trecho. Selecionar um resultado expande a ocorrência correta, repagina, navega até a linha e aplica o destaque vermelho. Código não aprovado fica fora da busca. Permanece o limite de 80 resultados, sem novo banco ou serviço externo.
 
-As marcações anônimas PostgreSQL mantêm a arquitetura existente. Marcar uma continuação salva a primeira linha lógica daquela página. Restaurar a âncora expande a ocorrência correta após a repaginação. Código ausente ou alterado gera aviso de posição indisponível. A expansão permanece durante viradas, redimensionamento e remedição de fontes. O session storage preserva ocorrências independentes ao navegar entre documentos, trocar idiomas e recarregar na mesma aba, quando disponível. Recolher remove explicitamente aquela ocorrência do estado salvo.
+As marcações compartilhadas PostgreSQL mantêm a arquitetura existente. Marcar uma continuação salva a primeira linha lógica daquela página. Restaurar a âncora expande a ocorrência correta após a repaginação. Código ausente ou alterado gera aviso de posição indisponível. A expansão permanece durante viradas, redimensionamento e remedição de fontes. O session storage preserva ocorrências independentes ao navegar entre documentos, trocar idiomas e recarregar na mesma aba, quando disponível. Recolher remove explicitamente aquela ocorrência do estado salvo.
 
 ## Verificação
 

@@ -1,12 +1,12 @@
 # Desenvolvimento da aplicação
 
-Revisão atual: 2026-10-19. Rails serve catálogo PostgreSQL e favoritos anônimos; Next renderiza o livro bilíngue interno. O setup abaixo mantém escopo de desenvolvimento; consulte [arquitetura atual](../architecture/current-state.md) e [guia do leitor](book-frontend.md) para responsabilidades presentes.
+Revisão atual: 2026-10-19. Rails serve catálogo PostgreSQL e anotações compartilhadas; Next renderiza o livro bilíngue interno. O setup abaixo mantém escopo de desenvolvimento; consulte [arquitetura atual](../architecture/current-state.md) e [guia do leitor](book-frontend.md) para responsabilidades presentes.
 
 ## Versões e arquitetura
 
 Ruby 3.4.11, Rails 8.1.4, PostgreSQL 18 (`18-bookworm`, com versão principal fixada), Node 24.22.0, Next.js 16.4.2, React 19.3.1, TypeScript 5.9.3 e ESLint 9.39.5. Gemfile.lock e package-lock.json fixam as dependências. Atualizações menores da imagem PostgreSQL são intencionais. As imagens são voltadas ao desenvolvimento.
 
-Navegador :3099 → Next.js :3000 → Rails :3000 no Compose → PostgreSQL :5432. Rails também é exposto em loopback :3098. Consultas Next ao catálogo usam `BACKEND_URL` no servidor, `cache: no-store` e timeout de cinco segundos. `/up` Rails continua como liveness de boot, sem consultar catálogo/banco. Serviços/models atuais implementam sync, paginação e favoritos anônimos; o leitor implementa transições de páginas. Não há autenticação de contas, inferência IA ou geração automática de documentação. Acesso do navegador à API usa rotas Next de mesma origem; o initializer CORS Rails revisado está inativo.
+Navegador :3099 → Next.js :3000 → Rails :3000 no Compose → PostgreSQL :5432. Rails também é exposto em loopback :3098. Consultas Next ao catálogo usam `BACKEND_URL` no servidor, `cache: no-store` e timeout de cinco segundos. `/up` Rails continua como liveness de boot, sem consultar catálogo/banco. Serviços/models atuais implementam sync, paginação e anotações compartilhadas; o leitor implementa transições de páginas. Não há autenticação de contas, inferência IA ou geração automática de documentação. Acesso do navegador à API usa rotas Next de mesma origem; o initializer CORS Rails revisado está inativo.
 
 ```text
 docker/

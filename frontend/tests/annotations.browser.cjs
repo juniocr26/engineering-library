@@ -24,7 +24,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
         const mutate = async (resource, method, body, document = documentId, language = 'en') => page.evaluate(async args => {
           const query = new URLSearchParams({ project: 'engineering-library', document: args.document, language: args.language });
           const identity = await (await fetch(`/api/highlights?${query}`)).json();
-          const response = await fetch(`/api/${args.resource}?${query}`, { method: args.method, headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': identity.csrf_token }, body: args.body === undefined ? undefined : JSON.stringify(args.body) });
+          const response = await fetch(`/api/${args.resource}?${query}`, { method: args.method, headers: { 'Content-Type': 'application/json', 'X-Annotation-CSRF': identity.csrf_token }, body: args.body === undefined ? undefined : JSON.stringify(args.body) });
           if (!response.ok) throw Error(`Mutation ${response.status}`);
           return response.status === 204 ? null : response.json();
         }, { resource, method, body, document, language });
@@ -93,15 +93,19 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
         await page.screenshot({ path: `/tmp/annotations-${width}.png` });
         // A stale record whose document left the catalog must not open a 404.
         await page.keyboard.press('Escape');
-        await page.route('**/api/annotations?**', async route => {
+        const missingDocument = async route => {
           const response = await route.fetch();
           const data = await response.json();
           data.annotations = [{ ...data.annotations[0], document: 'removed-document.md' }];
           await route.fulfill({ response, json: data });
-        }, { times: 1 });
+        };
+        // Strict Mode may abort its first read; cover the mounted effect's retry too.
+        await page.route('**/api/annotations?**', missingDocument);
         await page.getByRole('button', { name: 'Highlights and Notes', exact: true }).click();
+        await page.waitForFunction(() => document.querySelectorAll('.annotation-location').length === 1);
         await panel.locator('.annotation-location').click();
         await panel.getByText('The source document is unavailable. The annotation is preserved.', { exact: true }).waitFor();
+        await page.unroute('**/api/annotations?**', missingDocument);
         await page.keyboard.press('Escape');
         await page.getByRole('button', { name: 'Highlights and Notes', exact: true }).click();
         await panel.locator('.annotation-entry').nth(9).waitFor();
@@ -131,12 +135,12 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
         await page.screenshot({ path: `/tmp/annotations-failure-${width}.png` });
         throw error;
       } finally {
-        // Only records created with this isolated browser identity are removed.
+        // Only exact fixture IDs created by this test are removed from shared storage.
         for (const entry of created.reverse()) {
           await page.evaluate(async entry => {
             const query = new URLSearchParams({ project: 'engineering-library', document: 'architecture/current-state.md', language: entry.language || 'en' });
             const identity = await (await fetch(`/api/highlights?${query}`)).json();
-            await fetch(`/api/${entry.resource}?${query}`, { method: 'DELETE', headers: { 'X-Reader-CSRF': identity.csrf_token } });
+            await fetch(`/api/${entry.resource}?${query}`, { method: 'DELETE', headers: { 'X-Annotation-CSRF': identity.csrf_token } });
           }, entry).catch(() => {});
         }
         await context.close();

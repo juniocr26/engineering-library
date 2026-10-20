@@ -4,7 +4,7 @@ Revisão estática do código: 2026-10-19. Esta página descreve a árvore atual
 
 ## Propósito e limites da evidência
 
-A biblioteca mantém explicações de engenharia, FAQs e evidências em dois idiomas. Markdown em `docs/projects/` define documentos e bios. Rails serve metadados e favoritos anônimos; Next.js renderiza o livro interno. Foram examinados código e definições de testes, sem iniciar serviços ou executar testes dependentes de banco. Não se estabelece implantação em produção, capacidade medida ou agente de IA.
+A biblioteca mantém explicações de engenharia, FAQs e evidências em dois idiomas. Markdown em `docs/projects/` define documentos e bios. Rails serve metadados e anotações compartilhadas; Next.js renderiza o livro interno. Foram examinados código e definições de testes, sem iniciar serviços ou executar testes dependentes de banco. Não se estabelece implantação em produção, capacidade medida ou agente de IA.
 
 ## Base implementada
 
@@ -20,7 +20,7 @@ A biblioteca mantém explicações de engenharia, FAQs e evidências em dois idi
 
 Rails controla metadados indexados, paginação do catálogo e persistência de favoritos. Next controla Markdown, ordem lógica dos documentos e paginação física medida no navegador. Conteúdo de arquivos e metadados do banco têm fronteiras de consistência diferentes. `Catalog::Files.read` resolve caminhos reais dentro do projeto validado; `collectionFile` aplica verificações próprias no Next. Nenhuma delas constitui sandbox livre de corrida em filesystem hostil.
 
-Favoritos anônimos identificam o navegador por cookie assinado, HttpOnly e SameSite=Lax; o banco guarda seu digest SHA-256. Mutações exigem token do verifier vinculado ao digest e à finalidade. Isso oferece identidade local do navegador e proteção CSRF, sem login ou sincronização entre dispositivos. Índice único evita duplicação da localização lógica. O limite de 200 usa contagem antes do insert e não é um teto transacional sob concorrência. A sintaxe da âncora é validada; a existência de cada âncora não é verificada ao criar o favorito.
+Engineering Library usa um conjunto local compartilhado de anotações PostgreSQL, organizado por projeto, documento e idioma, sem contas, sessões ou perfis de leitor. Navegadores independentes leem e alteram as mesmas anotações. GET retorna token CSRF da aplicação com expiração; mutações exigem `X-Annotation-CSRF` e o proxy Next verifica Origin. O idioma continua obrigatório. Âncoras lógicas independem de páginas físicas; sua existência é conferida ao navegar, com aviso explícito para posição indisponível.
 
 ## Contrato do catálogo
 
@@ -30,8 +30,12 @@ Respostas técnicas ficam diretamente em `faq/index.md`. Caminhos `study-guide.m
 
 ## Segurança e evidência pendente
 
-O catálogo contém portfólio público. Não implementa autenticação de contas ou autorização de biblioteca privada. Isolamento de favoritos é mais restrito que controle de acesso aos documentos. Assinatura de cookies depende de segredo estável; perder a identidade do navegador impede acesso ordinário aos favoritos anteriores. Rejeição de padrões SVG e triagem dos snapshots são medidas defensivas, sem garantia genérica de sanitização.
+O catálogo contém portfólio público. As anotações compartilhadas destinam-se a esta instalação local; não há autenticação de contas ou autorização de biblioteca privada. Validação CSRF e verificações de origem protegem mutações do navegador sem estabelecer identidade de usuário. Rejeição de padrões SVG e triagem de snapshots são medidas defensivas, sem garantia genérica de sanitização.
 
-O validador atual verifica links locais, âncoras, idiomas, IDs Q, títulos preservados e alcance. Não comprova tradução, paginação runtime, URLs externas ou prontidão de implantação. Definições de testes cobrem sincronização, paginação, travessia de caminhos, isolamento anônimo e CSRF; ler esses testes não significa executá-los.
+O validador atual verifica links locais, âncoras, idiomas, IDs Q, títulos preservados e alcance. Não comprova tradução, paginação runtime, URLs externas ou prontidão de implantação. Definições de testes cobrem sincronização, paginação, travessia de caminhos, acesso compartilhado e separação por idioma e CSRF; ler esses testes não significa executá-los.
 
 Evidências: `backend/app/services/catalog/{files,sync,page,presenter}.rb`, `backend/app/controllers/api/{projects,bookmarks}_controller.rb`, `backend/db/schema.rb`, `backend/test/models/catalog_test.rb`, `backend/test/integration/{catalog_api,bookmarks_api}_test.rb`, `frontend/lib/{catalog,documentation,document-links}.ts` e `compose.yaml`. Veja [escopo da auditoria e pendências](../operations/documentation-audit-2026-10-19.md).
+
+## Migração de anotações compartilhadas
+
+Em 20/10/2026, o banco local manteve 60 notas, 60 destaques e 12 marcações durante a migração em duas fases. IDs, corpos, trechos e chaves estrangeiras são preservados. Em conflitos de chave de seed, o menor ID mantém a chave canônica; os seguintes recebem o prefixo determinístico `__legacy_demo__<id>:`. Continuam identificados para limpeza, sem mesclar notas distintas. A migração é irreversível porque a propriedade removida não pode ser reconstruída. Faça backup restrito antes de aplicá-la. Notas sem destaque mantêm âncoras independentes; listas combinadas usam chaves estrangeiras explícitas, sem inferir vínculos por texto idêntico.

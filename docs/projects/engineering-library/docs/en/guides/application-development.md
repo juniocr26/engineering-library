@@ -1,12 +1,12 @@
 # Application development
 
-Current review: 2026-10-19. Rails serves the PostgreSQL-backed catalog and anonymous bookmarks; Next renders the bilingual internal book. The setup below retains its development scope; see [current architecture](../architecture/current-state.md) and [reader guide](book-frontend.md) for present responsibilities.
+Current review: 2026-10-19. Rails serves the PostgreSQL-backed catalog and shared annotations; Next renders the bilingual internal book. The setup below retains its development scope; see [current architecture](../architecture/current-state.md) and [reader guide](book-frontend.md) for present responsibilities.
 
 ## Versions and architecture
 
 Ruby 3.4.11, Rails 8.1.4, PostgreSQL 18 (official `18-bookworm` major-pinned image), Node 24.22.0, Next.js 16.4.2, React 19.3.1, TypeScript 5.9.3, ESLint 9.39.5. Gemfile.lock and package-lock.json pin dependencies. PostgreSQL minor image updates are intentional; this development environment is not a production deployment.
 
-Browser :3099 → Next.js :3000 → Rails :3000 on Compose → PostgreSQL :5432. Rails is also exposed on loopback :3098. Next catalog requests use server-side `BACKEND_URL`, `cache: no-store` and a five-second timeout. Rails `/up` remains boot liveness, not a catalog/database query. Current services/models implement catalog sync, pagination and anonymous bookmarks; the reader also implements page-turn transitions. There is no account authentication, AI inference or automatic documentation-generation pipeline. Browser API access uses same-origin Next routes; the reviewed Rails CORS initializer is inactive.
+Browser :3099 → Next.js :3000 → Rails :3000 on Compose → PostgreSQL :5432. Rails is also exposed on loopback :3098. Next catalog requests use server-side `BACKEND_URL`, `cache: no-store` and a five-second timeout. Rails `/up` remains boot liveness, not a catalog/database query. Current services/models implement catalog sync, pagination and shared annotations; the reader also implements page-turn transitions. There is no account authentication, AI inference or automatic documentation-generation pipeline. Browser API access uses same-origin Next routes; the reviewed Rails CORS initializer is inactive.
 
 ```text
 docker/

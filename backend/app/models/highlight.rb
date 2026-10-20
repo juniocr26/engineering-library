@@ -1,6 +1,6 @@
 class Highlight < ApplicationRecord
   COLORS = %w[yellow blue pink orange purple red green].freeze
-  validates :reader_digest, :project, :document, :language, presence: true
+  validates :project, :document, :language, presence: true
   validates :project, length: { maximum: 100 }
   validates :document, length: { maximum: 240 }
   validates :language, inclusion: { in: %w[en pt-BR] }

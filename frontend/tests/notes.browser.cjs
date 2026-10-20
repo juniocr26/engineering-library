@@ -123,7 +123,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
       page.once('dialog', dialog => dialog.dismiss()); await page.getByRole('button', { name: 'Close note', exact: true }).click(); assert.ok(await editor.isVisible());
       await page.locator('#note-draft').fill(source);
       await page.getByRole('button', { name: 'Close note', exact: true }).click();
-      await page.evaluate(async ({ id, query, token }) => fetch(`/api/highlights/${id}?${query}`, { method: 'DELETE', headers: { 'X-Reader-CSRF': token } }), { id, query, token: highlights.csrf_token });
+      await page.evaluate(async ({ id, query, token }) => fetch(`/api/highlights/${id}?${query}`, { method: 'DELETE', headers: { 'X-Annotation-CSRF': token } }), { id, query, token: highlights.csrf_token });
       await page.reload(); await ready(page); await page.getByRole('button', { name: 'Open saved note', exact: true }).click(); assert.equal(await draft.inputValue(), source);
       await editor.getByRole('button', { name: 'Close note', exact: true }).click();
       await page.goto(`${base}${path}?lang=pt-BR`); await ready(page); assert.equal(await page.getByRole('button', { name: 'Abrir nota salva', exact: true }).count(), 0);

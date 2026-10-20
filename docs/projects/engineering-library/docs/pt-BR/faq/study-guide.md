@@ -2,13 +2,13 @@
 
 > A [FAQ técnica completa](index.md) é a entrada principal para perguntas e respostas. Este roteiro mantém títulos e links históricos por compatibilidade.
 
-> Revisão do código — 2026-10-19: a árvore atual implementa API de catálogo Rails, registros de catálogo e favoritos anônimos no PostgreSQL, além do leitor Markdown interno em Next.js. A descrição anterior de coleção sem aplicação/scaffold foi superada. Não há agente de IA implementado. Consulte a [arquitetura atual](../architecture/current-state.md).
+> Revisão do código — 2026-10-19: a árvore atual implementa API de catálogo Rails, registros de catálogo e anotações compartilhadas no PostgreSQL, além do leitor Markdown interno em Next.js. A descrição anterior de coleção sem aplicação/scaffold foi superada. Não há agente de IA implementado. Consulte a [arquitetura atual](../architecture/current-state.md).
 
 Comparações conceituais não implicam integração runtime. Fatos implementados, teoria e alternativas hipotéticas são separados explicitamente.
 
 ### Q001 — Introdutória: Qual a responsabilidade da Engineering Library?
 
-**Resposta:** Implementado: o repositório mantém documentação bilíngue e a apresenta em um leitor Next.js apoiado por uma API de catálogo Rails. PostgreSQL persiste identidade/visibilidade dos projetos indexados e localizações de favoritos anônimos; Markdown continua como fonte dos documentos e bios localizadas. `Catalog::Sync` valida as duas bios antes de serializar escritas em transação com advisory lock PostgreSQL. A API pagina projetos ativos; Next lê Markdown delimitado da coleção no servidor. Existe aplicação local implementada, sem alegação de implantação em produção, pagamentos ou ingestão por IA.
+**Resposta:** Implementado: o repositório mantém documentação bilíngue e a apresenta em um leitor Next.js apoiado por uma API de catálogo Rails. PostgreSQL persiste identidade/visibilidade dos projetos indexados e localizações de anotações compartilhadas; Markdown continua como fonte dos documentos e bios localizadas. `Catalog::Sync` valida as duas bios antes de serializar escritas em transação com advisory lock PostgreSQL. A API pagina projetos ativos; Next lê Markdown delimitado da coleção no servidor. Existe aplicação local implementada, sem alegação de implantação em produção, pagamentos ou ingestão por IA.
 
 Aprofundamento: Por que reter respostas antigas em vez de substituí-las por dossiês? Respostas ensinam raciocínio/falhas, dossiês explicam mecanismos; ambos são requisitos. IDs Q adicionais conservam numeração e alinhamento. Aprofundamento: Qual custo da autossuficiência? Fatos repetem entre projetos/biblioteca; revisão e lacunas explícitas precisam manter consistência. Links sozinhos reduziriam duplicação, mas descumpririam entrevistas. Precisão semântica continua revisão humana; links corretos não provam respostas verdadeiras.
 

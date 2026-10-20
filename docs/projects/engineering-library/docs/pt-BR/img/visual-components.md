@@ -21,7 +21,7 @@ Use nomes em kebab-case. O leitor resolve /img/ via /api/shared-assets/; /assets
 
 ![Reader persistence](/img/diagrams/reader-storage.svg)
 
-*Persistência anônima, SVG compartilhado com rótulo acessível.*
+*Persistência compartilhada, SVG compartilhado com rótulo acessível.*
 
 ![Engineering Library icon](/assets/icon-512.png)
 
@@ -40,7 +40,7 @@ flowchart LR
   Markdown[Markdown documentation] --> Next[Next.js reader]
   Next --> Rails[Rails API]
   Rails --> Postgres[(PostgreSQL)]
-  Cookie[Anonymous reader cookie] --> Rails
+  Browser[Local browser] --> Rails
 ```
 
 Markdown permanece fonte de verdade; PostgreSQL armazena anotações e metadados. Ollama/RAG são planejamento, não serviços ativos neste diagrama.
@@ -51,7 +51,7 @@ sequenceDiagram
   participant Rails
   participant PostgreSQL
   Reader->>Rails: Save annotation + CSRF
-  Rails->>Rails: Check anonymous ownership
+  Rails->>Rails: Check project, language and CSRF
   Rails->>PostgreSQL: Persist logical anchor
   PostgreSQL-->>Rails: Saved
   Rails-->>Reader: Annotation
@@ -70,41 +70,41 @@ A tabela seguinte combina largura, células longas e muitas linhas para inspecio
 
 | Case | Source | Ownership | Language | Position | Content | Expected behavior | Recovery |
 |---|---|---|---|---|---|---|---|
-| 1 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 2 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 3 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 4 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 5 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 6 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 7 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 8 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 9 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 10 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 11 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 12 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 13 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 14 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 15 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 16 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 17 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 18 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 19 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 20 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 21 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 22 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 23 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 24 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 25 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 26 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 27 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 28 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 29 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 30 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 31 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 32 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 33 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 34 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
-| 35 | Markdown logical block | Anonymous cookie | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 1 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 2 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 3 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 4 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 5 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 6 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 7 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 8 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 9 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 10 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 11 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 12 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 13 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 14 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 15 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 16 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 17 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 18 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 19 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 20 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 21 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 22 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 23 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 24 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 25 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 26 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 27 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 28 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 29 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 30 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 31 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 32 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 33 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 34 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
+| 35 | Markdown logical block | Shared PostgreSQL | pt-BR | Stable anchor | A deliberately long description preserves context across responsive layout changes and reader pagination | Scroll horizontally and expand the complete table | Keep the original source intact |
 
 ```typescript
 const anchor = { block: 'logical-content-id', start: 0, end: 12 };

@@ -5,7 +5,7 @@ class NotesApiTest < ActionDispatch::IntegrationTest
     Catalog::Sync.call
     @scope = { project: 'engineering-library', document: 'README', language: 'en' }
     get '/api/highlights', params: @scope
-    @headers = { 'X-Reader-CSRF' => response.parsed_body.fetch('csrf_token') }
+    @headers = { 'X-Annotation-CSRF' => response.parsed_body.fetch('csrf_token') }
     @segments = [{ block: 'a-real-logical-block', start: 0, end: 5, exact: 'Hello', prefix: '', suffix: ' world' }]
     post '/api/highlights', params: @scope.merge(color: 'green', segments: @segments), headers: @headers, as: :json
     @highlight = response.parsed_body.fetch('id')
@@ -21,7 +21,6 @@ class NotesApiTest < ActionDispatch::IntegrationTest
   test 'notes preserve exact Unicode and independent lifecycle across recolor removal and rehighlight' do
     id = create_note
     assert_equal @body, Note.find(id).body
-    assert_nil response.parsed_body['reader_digest']
     post '/api/notes', params: @scope.merge(highlight_id: @highlight, body: 'must not overwrite'), headers: @headers, as: :json
     assert_response :success
     assert_equal id, response.parsed_body['id']
@@ -55,18 +54,14 @@ class NotesApiTest < ActionDispatch::IntegrationTest
     assert_equal @body, response.parsed_body['notes'].find { |note| note['id'] == id }['body']
   end
 
-  test 'ownership scope CSRF language document and invalid payloads' do
+  test 'shared access CSRF language document and invalid payloads' do
     id = create_note
-    stranger = open_session
-    stranger.get '/api/notes', params: @scope
-    assert_empty stranger.response.parsed_body['notes']
-    token = stranger.response.parsed_body['csrf_token']
-    %w[patch delete].each do |verb|
-      stranger.public_send(verb, "/api/notes/#{id}", params: @scope.merge(body: 'stolen'), headers: { 'X-Reader-CSRF' => token }, as: :json)
-      assert_equal 404, stranger.response.status
-    end
-    stranger.post '/api/notes', params: @scope.merge(highlight_id: @highlight, body: 'stolen'), headers: { 'X-Reader-CSRF' => token }, as: :json
-    assert_equal 404, stranger.response.status
+    other_browser = open_session
+    other_browser.get '/api/notes', params: @scope
+    assert_equal [id], other_browser.response.parsed_body['notes'].map { |n| n['id'] }
+    token = other_browser.response.parsed_body['csrf_token']
+    other_browser.patch "/api/notes/#{id}", params: @scope.merge(body: @body), headers: { 'X-Annotation-CSRF' => token }, as: :json
+    assert_equal 200, other_browser.response.status
     [@scope.merge(language: 'pt-BR'), @scope.merge(document: 'architecture/current-state.md')].each do |scope|
       get '/api/notes', params: scope
       assert_empty response.parsed_body['notes']

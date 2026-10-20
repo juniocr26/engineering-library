@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/tmp/numbering-browser/node_modules/playwright');
 const assert = require('node:assert/strict');
+const trackRecords = require('./annotation-test-records.cjs');
 const base = process.env.BROWSER_BASE_URL || 'http://localhost:3000';
 const path = '/projects/env-auditor/docs/architecture/overview.md';
 const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=pt-BR';
 (async () => {
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
-  const contexts = [];
+  const cleanups = [];
   try {
     for (const width of [1728, 390]) {
       const context = await browser.newContext({ viewport: { width, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'] });
-      contexts.push(context);
+      cleanups.push(trackRecords(context, process.env.BROWSER_BASE_URL || 'http://localhost:3000'));
       const page = await context.newPage();
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
@@ -159,12 +160,7 @@ const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=
       console.log(`PASS ${width}px: real mouse drag in mixed Markdown, seven colors, note disabled, visible portal, copy, PostgreSQL CRUD/reload, language isolation, headings, inline code, page navigation`);
     }
   } finally {
-    for (const context of contexts) {
-      try {
-        const response = await context.request.get(`${base}/api/highlights?${scope}`);
-        if (response.ok()) { const data = await response.json(); for (const item of data.highlights) await context.request.delete(`${base}/api/highlights/${item.id}?${scope}`, { headers: { Origin: base, 'X-Reader-CSRF': data.csrf_token } }); }
-      } catch { /* No records exist if initialization failed. */ }
-    }
+    for (const cleanup of cleanups) await cleanup();
     await browser.close();
   }
 })().catch(error => { console.error(error); process.exit(1); });

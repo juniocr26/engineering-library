@@ -10,7 +10,7 @@ Commit `5052a8515b30278abea5fb81b37647482c10ba18` exists in Engineering Library.
 
 ## Current evidence and corrections
 
-Current catalog API, metadata synchronization, PostgreSQL schema, anonymous bookmark isolation, filesystem readers and current-vs-future architecture.
+The original audit covered catalog metadata synchronization, PostgreSQL persistence, filesystem readers and current-vs-future architecture. The later shared-annotation transition is documented in [current architecture](../architecture/current-state.md); it supersedes the persistence access model from this historical audit.
 
 Inspected Git HEAD (not a guarantee of a clean tree): `7b96b3545d5f257611257d23846606cbdefc0442`.
 

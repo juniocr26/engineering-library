@@ -12,13 +12,13 @@ As respostas abaixo foram verificadas em código atual e definições de testes 
 
 ## Entrevista da Engineering Library
 
-> Revisão do código — 2026-10-19: a árvore atual implementa API de catálogo Rails, registros de catálogo e favoritos anônimos no PostgreSQL, além do leitor Markdown interno em Next.js. A descrição anterior de coleção sem aplicação/scaffold foi superada. Não há agente de IA implementado. Consulte a [arquitetura atual](../architecture/current-state.md).
+> Revisão do código — 2026-10-19: a árvore atual implementa API de catálogo Rails, registros de catálogo e anotações compartilhadas no PostgreSQL, além do leitor Markdown interno em Next.js. A descrição anterior de coleção sem aplicação/scaffold foi superada. Não há agente de IA implementado. Consulte a [arquitetura atual](../architecture/current-state.md).
 
 Comparações conceituais não implicam integração runtime. Fatos implementados, teoria e alternativas hipotéticas são separados explicitamente.
 
 ### Q001 — Introdutória: Qual a responsabilidade da Engineering Library?
 
-**Resposta:** Implementado: o repositório mantém documentação bilíngue e a apresenta em um leitor Next.js apoiado por uma API de catálogo Rails. PostgreSQL persiste identidade/visibilidade dos projetos indexados e localizações de favoritos anônimos; Markdown continua como fonte dos documentos e bios localizadas. `Catalog::Sync` valida as duas bios antes de serializar escritas em transação com advisory lock PostgreSQL. A API pagina projetos ativos; Next lê Markdown delimitado da coleção no servidor. Existe aplicação local implementada, sem alegação de implantação em produção, pagamentos ou ingestão por IA.
+**Resposta:** Implementado: o repositório mantém documentação bilíngue e a apresenta em um leitor Next.js apoiado por uma API de catálogo Rails. PostgreSQL persiste identidade/visibilidade dos projetos indexados e localizações de anotações compartilhadas; Markdown continua como fonte dos documentos e bios localizadas. `Catalog::Sync` valida as duas bios antes de serializar escritas em transação com advisory lock PostgreSQL. A API pagina projetos ativos; Next lê Markdown delimitado da coleção no servidor. Existe aplicação local implementada, sem alegação de implantação em produção, pagamentos ou ingestão por IA.
 
 Aprofundamento: Por que reter respostas antigas em vez de substituí-las por dossiês? Respostas ensinam raciocínio/falhas, dossiês explicam mecanismos; ambos são requisitos. IDs Q adicionais conservam numeração e alinhamento. Aprofundamento: Qual custo da autossuficiência? Fatos repetem entre projetos/biblioteca; revisão e lacunas explícitas precisam manter consistência. Links sozinhos reduziriam duplicação, mas descumpririam entrevistas. Precisão semântica continua revisão humana; links corretos não provam respostas verdadeiras.
 
@@ -38,9 +38,9 @@ Aprofundamento: Qual custo? Leitura/parser crescem com bytes; percurso com vért
 
 **Resposta:** `Catalog::Sync` valida as duas bios e IDs estáveis duplicados antes da transação PostgreSQL. Seu advisory lock serializa sincronizações cooperantes no banco, sem bloquear editores de arquivos. Arquivos podem mudar após a validação; presenters também leem bios do disco depois. Mantenha metadados estáveis durante sync e sincronize explicitamente alterações de bio/nome/slug. Editar o corpo de um capítulo dispensa ingestão no banco. Projetos ausentes ficam inativos; IDs estáveis preservam a identidade do catálogo em renomeações suportadas. Isso não migra favoritos, cuja associação usa o slug textual. Sync bem-sucedido estabelece a atualização indexada sob aquelas entradas, sem snapshot atômico de todos os capítulos ou reparação automática de URLs antigas de favoritos.
 
-### Q005 — O que protege favoritos anônimos e quais garantias permanecem ausentes?
+### Q005 — O que protege anotações compartilhadas e quais garantias permanecem ausentes?
 
-**Resposta:** Um GET inicial cria cookie assinado; o servidor aplica hash ao token aleatório para delimitar linhas PostgreSQL. Mutações exigem `X-Reader-CSRF` com token do verifier vinculado ao digest e à finalidade. O índice único inclui leitor, projeto, documento, idioma e âncora, impedindo outra linha para a mesma localização lógica. Exclusão por outro leitor retorna não encontrado. Não há login, sincronização entre dispositivos ou identidade de recuperação quando o cookie se perde. A contagem antes do insert para 200 entradas é política de admissão, sem quota exata sob concorrência. Markdown comum tem existência verificada, mas não toda âncora; `@contents` é documento virtual reservado. Assim, favoritos de sintaxe válida podem ficar indisponíveis após alterações de documentos ou snapshots.
+**Resposta:** Todos os navegadores usam um conjunto local PostgreSQL, delimitado por projeto canônico, documento e idioma obrigatório. Tokens CSRF assinados com expiração e verificação de origem no proxy protegem mutações sem cookies ou perfis. IDs identificam anotações distintas; marcações legadas preservadas usam uma variante determinística de localização. O limite de admissão de 200 marcações não é quota exata sob concorrência. A existência do documento é validada, mas âncoras são conferidas na navegação; conteúdo alterado pode tornar uma posição indisponível. Consulte a [arquitetura atual](../architecture/current-state.md).
 
 
 ## Perguntas sobre aplicação e catálogo
@@ -51,7 +51,7 @@ Leia a [arquitetura atual](../architecture/current-state.md), a [direção futur
 
 ### Q101 — Introdutória: Por que Rails com frontend Next.js separado?
 
-**Resposta:** Implementado: Rails serve metadados paginados do catálogo e favoritos anônimos apoiados pelo PostgreSQL; Next.js renderiza o leitor Markdown interno e busca JSON no servidor. Arquivos continuam como fonte de documentos e bios. Convenções Rails fornecem HTTP/persistência; Next fornece rotas React e layout no navegador, com builds, dependências e diagnóstico separados. Não há evidência de benchmark de frameworks. Renderização Rails poderia simplificar implantação, mas é comparação conceitual, sem avaliação histórica documentada.
+**Resposta:** Implementado: Rails serve metadados paginados do catálogo e anotações compartilhadas apoiados pelo PostgreSQL; Next.js renderiza o leitor Markdown interno e busca JSON no servidor. Arquivos continuam como fonte de documentos e bios. Convenções Rails fornecem HTTP/persistência; Next fornece rotas React e layout no navegador, com builds, dependências e diagnóstico separados. Não há evidência de benchmark de frameworks. Renderização Rails poderia simplificar implantação, mas é comparação conceitual, sem avaliação histórica documentada.
 
 **Aprofundamento:** A separação comprova Clean Architecture? Não. `Catalog::Sync`, `Catalog::Page`, `Catalog::Files` e controllers expressam responsabilidades concretas, mas ActiveRecord, Rails e filesystem permanecem visíveis. Avalie direção de dependência e comportamento testável, sem inferir camadas de domínio pelo número de processos.
 

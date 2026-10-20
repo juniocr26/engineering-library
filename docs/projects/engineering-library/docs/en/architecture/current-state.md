@@ -4,7 +4,7 @@ Static source review: 2026-10-19. This page describes the current working tree; 
 
 ## Purpose and evidence boundary
 
-The Library maintains bilingual engineering explanations, project FAQs and source evidence. Markdown in `docs/projects/` owns document bodies and bios. Rails serves catalog metadata and anonymous bookmarks; Next.js renders the internal book reader. Source and test definitions were inspected, without starting services or executing database-backed tests. No production deployment, measured capacity or AI agent is established.
+The Library maintains bilingual engineering explanations, project FAQs and source evidence. Markdown in `docs/projects/` owns document bodies and bios. Rails serves catalog metadata and shared annotations; Next.js renders the internal book reader. Source and test definitions were inspected, without starting services or executing database-backed tests. No production deployment, measured capacity or AI agent is established.
 
 ## Implemented foundation
 
@@ -20,7 +20,7 @@ The Library maintains bilingual engineering explanations, project FAQs and sourc
 
 Rails owns indexed metadata, catalog pagination and bookmark persistence. Next owns Markdown rendering, logical document order and browser-measured physical pagination. Filesystem content and database metadata are different consistency boundaries. `Catalog::Files.read` resolves real paths within a validated project; `collectionFile` applies its own scoped checks on the Next side. Neither check is a race-free adversarial filesystem sandbox.
 
-Anonymous bookmarks identify a browser through a signed, HttpOnly, SameSite=Lax cookie; PostgreSQL stores its SHA-256 digest. Mutations require a verifier token bound to that digest and purpose. This is browser-local identity and CSRF protection, not login or cross-device synchronization. The database unique index prevents duplicate logical locations. The 200-bookmark admission check uses a count before insert, so it is not a transactional concurrency cap. Anchor syntax is validated, but existence of every anchor is not verified on creation.
+Engineering Library uses one shared local PostgreSQL annotation dataset, organized by project, document and language, without accounts, sessions or reader profiles. Independent browsers read and mutate the same annotations. GET returns an expiring application CSRF token; mutations require `X-Annotation-CSRF`, and the Next proxy verifies Origin. Language remains mandatory. Logical anchors are independent of physical pages; their existence is checked when navigating, with an explicit unavailable-location fallback.
 
 ## Catalog contract
 
@@ -30,8 +30,12 @@ Technical FAQ answers live directly in `faq/index.md`. Existing `study-guide.md`
 
 ## Security and unresolved evidence
 
-The catalog is public portfolio content. It has no user-account authentication or private-library authorization. Bookmark reader isolation is narrower than access control over documents. Cookie signing depends on a stable secret; losing browser identity prevents ordinary access to previous anonymous bookmarks. SVG rejection patterns and source-snapshot screening are defense measures, not general sanitization guarantees.
+The catalog is public portfolio content. Shared annotations are intended for this local installation; there is no account authentication or private-library authorization. CSRF validation and same-origin checks protect browser mutations without establishing user identity. SVG rejection patterns and source-snapshot screening are defense measures, not general sanitization guarantees.
 
-The current catalog validator checks local links, anchors, language paths, question IDs, retained headings and reachability. It cannot establish translation accuracy, runtime pagination, external URL reachability or deployment readiness. Application test definitions cover catalog synchronization, pagination, path traversal, anonymous isolation and CSRF; reading those tests is not executing them.
+The current catalog validator checks local links, anchors, language paths, question IDs, retained headings and reachability. It cannot establish translation accuracy, runtime pagination, external URL reachability or deployment readiness. Application test definitions cover catalog synchronization, pagination, path traversal, shared access and language separation and CSRF; reading those tests is not executing them.
 
 Evidence: `backend/app/services/catalog/{files,sync,page,presenter}.rb`, `backend/app/controllers/api/{projects,bookmarks}_controller.rb`, `backend/db/schema.rb`, `backend/test/models/catalog_test.rb`, `backend/test/integration/{catalog_api,bookmarks_api}_test.rb`, `frontend/lib/{catalog,documentation,document-links}.ts` and `compose.yaml`. See [audit scope and remaining work](../operations/documentation-audit-2026-10-19.md).
+
+## Shared annotation migration
+
+On 2026-10-20, the local database retained 60 notes, 60 highlights and 12 bookmarks through the expand/contract migration. Existing IDs, note bodies, ranges and foreign keys are preserved. Conflicting seed keys keep the earliest ID canonical and rename later keys with a deterministic `__legacy_demo__<id>:` prefix. They remain explicitly tagged for cleanup; no distinct notes are merged. The migration is irreversible because removed ownership cannot be reconstructed. Take a restricted database backup before applying it. Notes without highlights remain independently anchored; combined lists use explicit foreign-key relationships instead of guessing by identical text.

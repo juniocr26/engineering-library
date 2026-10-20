@@ -10,7 +10,7 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
   test "contents bookmarks use logical anchors and preserve document bookmarks" do
     get "/api/bookmarks", params: { language: "en", project_slug: "engineering-library" }
     csrf = response.parsed_body.fetch("csrf_token")
-    headers = { "X-Reader-CSRF" => csrf }
+    headers = { "X-Annotation-CSRF" => csrf }
     assert_difference "Bookmark.count", 2 do
       post "/api/bookmarks", params: location, headers: headers, as: :json
       assert_response :created
@@ -28,50 +28,34 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
     assert_equal [location[:document]], response.parsed_body.fetch("bookmarks").map { |item| item.fetch("document") }
   end
 
-  test "anonymous cookie, stable location, duplicate prevention and isolation" do
-    first = open_session
-    second = open_session
+  test "shared bookmarks need no cookies and mutations require CSRF" do
+    first, second = open_session, open_session
     first.get "/api/bookmarks", params: { language: "en" }
     assert_equal 200, first.response.status
-    cookie = first.response.headers["set-cookie"].to_s
-    assert_match(/httponly/i, cookie)
-    assert_match(/samesite=lax/i, cookie)
-    csrf = first.response.parsed_body["csrf_token"]
-    assert_no_difference "Bookmark.count" do
-      first.post "/api/bookmarks", params: location, as: :json
-      assert_equal 403, first.response.status
-    end
-    assert_difference "Bookmark.count", 1 do
-      first.post "/api/bookmarks", params: location, headers: { "X-Reader-CSRF" => csrf }, as: :json
-      assert_equal 201, first.response.status
-    end
+    assert_nil first.response.headers['set-cookie']
+    csrf = first.response.parsed_body.fetch('csrf_token')
+    first.post "/api/bookmarks", params: location, as: :json
+    assert_equal 403, first.response.status
+    first.post "/api/bookmarks", params: location, headers: { 'X-Annotation-CSRF' => csrf }, as: :json
+    assert_equal 201, first.response.status
     saved = first.response.parsed_body
-    assert_equal "purpose-and-evidence-boundary", saved["anchor"]
-    assert_nil saved["reader_digest"]
-    assert_nil saved["page"]
-    first.post "/api/bookmarks", params: location, headers: { "X-Reader-CSRF" => csrf }, as: :json
-    assert_equal saved["id"], first.response.parsed_body["id"]
+    first.post "/api/bookmarks", params: location, headers: { 'X-Annotation-CSRF' => csrf }, as: :json
+    assert_equal saved['id'], first.response.parsed_body['id']
     second.get "/api/bookmarks", params: { language: "en" }
-    assert_empty second.response.parsed_body["bookmarks"]
-    other_csrf = second.response.parsed_body["csrf_token"]
-    second.delete "/api/bookmarks/#{saved['id']}", params: { language: "en" }, headers: { "X-Reader-CSRF" => other_csrf }
-    assert_equal 404, second.response.status
-    second.post "/api/bookmarks", params: location, headers: { "X-Reader-CSRF" => csrf }, as: :json
-    assert_equal 403, second.response.status
-    first.get "/api/bookmarks", params: { language: "en" }
-    assert_equal 1, first.response.parsed_body["bookmarks"].length
-    assert_difference "Bookmark.count", -1 do
-      first.delete "/api/bookmarks/#{saved['id']}", params: { language: "en" }, headers: { "X-Reader-CSRF" => csrf }
-      assert_equal 204, first.response.status
-    end
+    assert_equal [saved['id']], second.response.parsed_body['bookmarks'].map { |b| b['id'] }
+    assert_nil second.response.headers['set-cookie']
+    second.delete "/api/bookmarks/#{saved['id']}", params: { language: 'en' }, headers: { 'X-Annotation-CSRF' => second.response.parsed_body.fetch('csrf_token') }
+    assert_equal 204, second.response.status
+    first.get '/api/bookmarks', params: { language: 'en' }
+    assert_empty first.response.parsed_body['bookmarks']
   end
 
-  test "project lists preserve reader isolation and other projects across reload and deletion" do
+  test "shared project lists preserve other projects across reload and deletion" do
     reader = open_session
     reader.get "/api/bookmarks", params: { language: "en" }
     csrf = reader.response.parsed_body.fetch("csrf_token")
     saved = %w[engineering-library env-auditor go-image-optimizer].map do |project|
-      reader.post "/api/bookmarks", params: location.merge(project: project, document: "README"), headers: { "X-Reader-CSRF" => csrf }, as: :json
+      reader.post "/api/bookmarks", params: location.merge(project: project, document: "README"), headers: { "X-Annotation-CSRF" => csrf }, as: :json
       assert_equal 201, reader.response.status
       reader.response.parsed_body
     end
@@ -83,13 +67,11 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
         assert_equal "no-store", reader.response.headers["Cache-Control"]
       end
     end
-    stranger = open_session
-    stranger.get "/api/bookmarks", params: { language: "en", project_slug: "engineering-library" }
-    assert_empty stranger.response.parsed_body.fetch("bookmarks")
-    stranger.delete "/api/bookmarks/#{saved.first.fetch('id')}", params: { language: "en" }, headers: { "X-Reader-CSRF" => stranger.response.parsed_body.fetch("csrf_token") }
-    assert_equal 404, stranger.response.status
+    other_browser = open_session
+    other_browser.get '/api/bookmarks', params: { language: 'en', project_slug: 'engineering-library' }
+    assert_equal [saved.first['id']], other_browser.response.parsed_body['bookmarks'].map { |b| b['id'] }
     assert_difference "Bookmark.count", -1 do
-      reader.delete "/api/bookmarks/#{saved.first.fetch('id')}", params: { language: "en" }, headers: { "X-Reader-CSRF" => csrf }
+      reader.delete "/api/bookmarks/#{saved.first.fetch('id')}", params: { language: "en" }, headers: { "X-Annotation-CSRF" => csrf }
       assert_equal 204, reader.response.status
     end
     reader.get "/api/bookmarks", params: { language: "en", project_slug: "engineering-library" }
@@ -110,7 +92,7 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
 
   test "language collections and deletes remain independent" do
     get "/api/bookmarks", params: { language: "en" }
-    headers = { "X-Reader-CSRF" => response.parsed_body.fetch("csrf_token") }
+    headers = { "X-Annotation-CSRF" => response.parsed_body.fetch("csrf_token") }
     ids = %w[en pt-BR].to_h do |language|
       post "/api/bookmarks", params: location.merge(document: "README", language: language), headers: headers, as: :json
       assert_response :created
@@ -136,7 +118,7 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
     csrf = response.parsed_body["csrf_token"]
     [{ project: "missing" }, { document: "../../.env.md" }, { document: "missing.md" }, { language: "fr" }, { anchor: "" }].each do |invalid|
       assert_no_difference "Bookmark.count" do
-        post "/api/bookmarks", params: location.merge(invalid), headers: { "X-Reader-CSRF" => csrf }, as: :json
+        post "/api/bookmarks", params: location.merge(invalid), headers: { "X-Annotation-CSRF" => csrf }, as: :json
         assert_response :unprocessable_entity
       end
     end

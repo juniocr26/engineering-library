@@ -27,7 +27,7 @@ export function NoteEditor({ note, highlightId, hasHighlight, query, csrf, langu
     if (remove) setDeleteError('');
     pending.current = true; setBusy(true); setMessage('');
     try {
-      const response = await fetch(`/api/notes${current ? `/${current.id}` : ''}?${query}`, { method: remove ? 'DELETE' : current ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Reader-CSRF': csrf }, body: remove ? undefined : JSON.stringify({ highlight_id: highlightId, body: draft }) });
+      const response = await fetch(`/api/notes${current ? `/${current.id}` : ''}?${query}`, { method: remove ? 'DELETE' : current ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Annotation-CSRF': csrf }, body: remove ? undefined : JSON.stringify({ highlight_id: highlightId, body: draft }) });
       if (!response.ok) throw Error();
       if (remove) { removed(current!.id); close(); }
       else { const value = await response.json(); setCurrent(value); setDraft(value.body); saved(value); setMessage(current ? (en ? 'Note updated successfully.' : 'Nota atualizada com sucesso.') : (en ? 'Note saved successfully.' : 'Nota salva com sucesso.')); }

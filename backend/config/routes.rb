@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   namespace :api do
     resources :annotations, only: [:index]
-    resource :note_demos, only: [:create, :destroy] if Rails.env.development?
+    if Rails.env.development?
+      get 'note_demos', to: 'note_demos#index'
+      resource :note_demos, only: [:create, :destroy]
+    end
     resources :notes, only: [:index, :create, :update, :destroy]
     resources :highlights, only: [:index, :create, :update, :destroy]
     resources :bookmarks, only: [:index, :create, :destroy]
