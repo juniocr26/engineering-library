@@ -3,6 +3,7 @@
 import { Fragment, memo, useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { renderIsolatedDiagram } from '../lib/isolated-diagram';
+import { ReaderCode } from './reader-code';
 import { SourceCode } from './source-code';
 import { ReaderTable, useTableScroll } from './reader-table';
 import { ExpandableMedia } from './expandable-media';
@@ -66,6 +67,7 @@ function disclosurePlugin(references: SourceReference[]) {
 
 export const MarkdownUnit = memo(function MarkdownUnit({ unit, project, document, language, query, plainTable = false, expanded, toggleSource, location }: { location?: string; expanded?: ReadonlySet<string>; toggleSource?: (id: string) => void; plainTable?: boolean; unit: Unit; project: string; document: string; language: Language; query: string }) {
   const scroll = useTableScroll(`${project}/${document}/${language}/${unit.tableOrigin ?? unit.id}`);
+  if (unit.command) return <ReaderCode unit={unit} language={language} query={query}/>;
   if (unit.code) return <SourceCode collapse={toggleSource ? () => toggleSource(unit.code!.id) : undefined} unit={unit} language={language} query={query} location={location}/>;
   const source = unit.table && unit.tablePart ? `${unit.table.header}${unit.table.rows.slice(unit.tablePart.start, unit.tablePart.end).join('\n')}\n\n${unit.table.definitions}` : unit.source;
   return <div className="reader-markdown" data-highlight-block={unit.id} data-highlight-unsupported={unit.table || /^\s*(```|~~~|!\[)/.test(unit.source) ? true : undefined}><Markdown skipHtml remarkPlugins={[remarkGfm]} rehypePlugins={[disclosurePlugin(unit.references ?? []), cursiveHeadings, numberedHeading(unit.navigationNumber)]} urlTransform={(url, key) => defaultUrlTransform(key === 'href' && unit.references?.some(ref => ref.href === url) ? url : resolveDocumentLink(project, document, language, url, key === 'src') ?? '')} components={{

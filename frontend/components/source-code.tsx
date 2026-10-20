@@ -1,6 +1,7 @@
 'use client';
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { CodeCopy } from './code-copy';
 import { ExpandIcon, ViewerDialog } from './expandable-media';
 import { useHorizontalDrag } from './use-horizontal-drag';
 import { useTableScroll } from './reader-table';
@@ -54,6 +55,7 @@ export function SourceCode({ unit, language, query, location, collapse }: { coll
   </section>
     <div className="media-controls">
       {overflow && <span className="reader-table-hint" role="img" aria-label={en ? 'Drag code horizontally' : 'Arrastar código horizontalmente'} title={en ? 'Drag the line numbers or empty space. Select text directly; use arrow keys to scroll.' : 'Arraste pelos números de linha ou espaço vazio. Selecione o texto diretamente; use as setas para rolar.'}>↔</span>}
+      <CodeCopy text={all.join('\n')} en={en}/>
       <button ref={button} type="button" className="media-expand" aria-label={en ? 'Expand code' : 'Ampliar código'} onClick={() => setOpen(true)}><ExpandIcon/></button>
     </div>
     {open && createPortal(<CodeViewer en={en} path={ref.path} close={() => { setOpen(false); requestAnimationFrame(() => button.current?.focus({ preventScroll: true })); }}>{content(0, all.length)}</CodeViewer>, document.body)}
