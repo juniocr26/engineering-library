@@ -6,19 +6,14 @@ O startup Docker inicializa apenas metadados do catálogo. Seed e limpeza são c
 
 ## Comandos
 
-Na raiz do repositório, aplique as migrações e instale Playwright no host, se necessário:
+Na raiz do repositório, inicie os serviços pelo shell do host. O startup aplica migrações; a imagem de desenvolvimento inclui Playwright e Chromium:
 
 ```sh
-docker compose up -d --build
-docker compose exec backend bin/rails db:migrate
-cd frontend
-npm install --prefix /tmp/engineering-library-browser playwright
-export PLAYWRIGHT_MODULE=/tmp/engineering-library-browser/node_modules/playwright
-/tmp/engineering-library-browser/node_modules/.bin/playwright install chromium
-export BROWSER_BASE_URL=http://localhost:3099
-npm run notes:demos
-npm run notes:demos:verify
-npm run notes:demos:manifest
+# Execute no shell do host, na raiz do repositório.
+docker compose up -d --build --wait --wait-timeout 300
+docker compose exec -T frontend npm run notes:demos
+docker compose exec -T frontend npm run notes:demos:verify
+docker compose exec -T frontend npm run notes:demos:manifest
 ```
 
 `PLAYWRIGHT_EXECUTABLE_PATH` permite selecionar um navegador instalado. O CLI abre um navegador descartável apenas para medir âncoras reais; não mantém perfil persistente e grava pelas APIs compartilhadas. `notes:demos` reconcilia registros identificados por `demo_key`, sem duplicatas. Não adota nem sobrescreve notas/marcações manuais em trechos ocupados; o conflito é informado e uma execução interrompida pode deixar seed parcial. Resolva o conflito e execute novamente de forma explícita.
@@ -54,7 +49,7 @@ WHERE demo_key IS NOT NULL GROUP BY language, document;
 Execute separadamente somente quando desejar remover as demonstrações compartilhadas:
 
 ```sh
-BROWSER_BASE_URL=http://localhost:3099 npm run notes:demos:cleanup
+docker compose exec -T frontend npm run notes:demos:cleanup
 ```
 
 A limpeza remove somente registros identificados como demonstração em todo o projeto Engineering Library, nos dois documentos e idiomas. Notas, destaques e marcações manuais permanecem. Se uma nota manual referencia um destaque de demonstração, a exclusão do destaque anula o vínculo e preserva o Markdown com sua âncora independente. Todos os navegadores refletem a limpeza após atualizar. Não há identidade de navegador envolvida. Não execute seed e limpeza simultaneamente.
@@ -63,4 +58,33 @@ A limpeza remove somente registros identificados como demonstração em todo o p
 
 Consulte a [migração compartilhada](../architecture/current-state.md#migração-de-anotações-compartilhadas) para a preservação de duplicatas legadas. A transição adiciona índices compartilhados antes de remover propriedade obsoleta; mantém IDs, corpos distintos e relacionamentos. Reverter exige backup revisado, pois a propriedade removida não pode ser reconstruída.
 
-`npm run test:demos:browser` exige instalação QA explicitamente isolada (`SHARED_ANNOTATIONS_TEST=1` e `BROWSER_BASE_URL`), recusa coleções não vazias antes das verificações de fixtures e valida CRUD compartilhado, dois contextos independentes, filtros de idioma, idempotência e limpeza exclusiva de demonstrações. Testes Rails também exercitam registros legados conflitantes em schema PostgreSQL temporário. O startup normal nunca executa esses testes.
+`test:demos:browser` exige instalação QA explicitamente isolada (`SHARED_ANNOTATIONS_TEST=1` e `BROWSER_BASE_URL`), recusa coleções não vazias antes das verificações de fixtures e valida CRUD compartilhado, dois contextos independentes, filtros de idioma, idempotência e limpeza exclusiva de demonstrações. Testes Rails também exercitam registros legados conflitantes em schema PostgreSQL temporário. O startup normal nunca executa esses testes.
+
+O frontend deve estar ativo para instalar e limpar demos. O manifesto fica no container; copie com `docker compose cp frontend:/tmp/engineering-note-demo-manifest.json /tmp/engineering-note-demo-manifest.json`. Os URLs desse manifesto usam a porta interna 3000; para abrir no host, substitua a origem por `http://localhost:3099`.
+
+## Test database / Banco de testes
+
+```sh
+docker compose exec -T -e RAILS_ENV=test backend sh -c 'bin/rails db:prepare && bin/rails test test/integration/note_demos_api_test.rb'
+```
+
+Esse teste cria demonstrações e anotações manuais sintéticas no banco com sufixo `_test` do PostgreSQL existente. Verifica idempotência e preservação de notas, destaques e marcações manuais após limpar demos.
+
+Para a regressão completa do CLI e navegador, use os mesmos três serviços. Os comandos abaixo criam apenas um banco temporário no PostgreSQL existente e recriam o backend existente para apontar a ele. O frontend continua usando `http://backend:3000`; não há outro servidor ou perfil de leitor. Requer os três serviços ativos, permissão do papel PostgreSQL para criar banco e nenhum outro processo editando anotações durante o teste: os navegadores verão temporariamente o dataset sintético. O trap restaura a configuração original em caso de falha; nesse caso, o banco temporário fica disponível para inspeção. Em sucesso, só esse banco temporário é removido. Não altere `.env` durante o procedimento e não execute diretamente a suíte contra o banco compartilhado.
+
+```sh
+(
+  set -eu
+  LIBRARY_QA_DB="engineering_library_workflow_check_$(date +%s)"
+  restore_backend() {
+    docker compose up -d --no-deps --wait --wait-timeout 300 backend
+  }
+  trap restore_backend EXIT
+  docker compose exec -T postgres sh -c 'createdb -U "$POSTGRES_USER" "$1"' sh "$LIBRARY_QA_DB"
+  POSTGRES_DB="$LIBRARY_QA_DB" docker compose up -d --no-deps --wait --wait-timeout 300 backend
+  docker compose exec -T -e SHARED_ANNOTATIONS_TEST=1 frontend npm run test:demos:browser
+  restore_backend
+  trap - EXIT
+  docker compose exec -T postgres sh -c 'dropdb -U "$POSTGRES_USER" "$1"' sh "$LIBRARY_QA_DB"
+)
+```

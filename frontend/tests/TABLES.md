@@ -4,10 +4,19 @@ All synthetic content is generated in `fixtures/tables.ts`. The fixtures contain
 
 ## Running
 
-From `frontend`, run `npm test`, `npm run typecheck`, `npm run lint` and `npm run build`. With Playwright installed externally, set `PLAYWRIGHT_MODULE` to its package path and, when needed, `PLAYWRIGHT_BROWSERS_PATH` to its browser cache.
+From the repository root, start `docker compose up -d --build --wait --wait-timeout 300`. Browser tooling is included in the development image.
 
-- `npm run test:tables`: starts its own isolated development server on port 3101 (`TABLE_READER_PORT` overrides it), exercises all four sizes at 390, 768 and 1440 pixels, and removes the temporary project afterward. `TABLE_STRESS_FOCUSED=1` skips the size matrix and runs only rendered edge cases and row-anchor checks.
-- `npm run test:tables:public`: requires the normal development server at `BOOK_READER_URL` (default `http://localhost:3000`). Verifies the public Engineering Library environment reference, comparing every original body row with the complete page traversal at all three widths.
+```sh
+docker compose exec -T frontend npm test
+docker compose exec -T frontend npm run typecheck
+docker compose exec -T frontend npm run lint
+docker compose exec -T frontend npm run build:check
+# Existing frontend, internal localhost:3000:
+docker compose exec -T frontend npm run test:tables:public
+```
+
+The synthetic `test:tables` runner starts a separate fixture server. It is outside the existing-services-only workflow; do not start it without approval. The public suite above uses the running frontend.
+
 - Existing reader, media-viewer and bookmark-control browser suites remain separate. The media suite now waits for the reader's actual idle state after page turns instead of assuming a fixed animation duration.
 
 The size matrix verifies exact row order and count, column count, repeated headers, bounded table/page dimensions, termination, keyboard scrolling, mouse dragging on desktop, emulated native touch scrolling on mobile/tablet, complete semantic fullscreen content, zoom/reset, Escape, focus return and viewport changes. Edge scenarios use rendered dimensions to exercise exactly one fitting row, insufficient remaining space near the bottom of a page, oversized rows and oversized headers. Unit tests also exercise alternating capacities and indivisible structures. The focused browser checks resolve row 117 at all three widths and instrument row measurements in a 500-row table: page turns and a height-only viewport change must perform zero additional row measurements.

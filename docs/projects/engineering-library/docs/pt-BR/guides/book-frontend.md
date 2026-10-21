@@ -45,26 +45,23 @@ Na raiz do repositório:
 ```sh
 docker compose up -d --build
 docker compose exec -T backend bundle exec rails db:prepare catalog:sync
-docker compose exec -T backend sh -c 'RAILS_ENV=test bundle exec rails db:prepare && bundle exec rails test'
+docker compose exec -T -e RAILS_ENV=test backend sh -c 'bundle exec rails db:prepare && bundle exec rails test'
 docker compose exec -T frontend npm test
 docker compose exec -T frontend npm run typecheck
 docker compose exec -T frontend npm run lint
-docker compose run --rm --no-deps frontend npm run build
+docker compose exec -T frontend npm run build:check
 python3 -B docs/validation/check_catalog.py
 git diff --check
 ```
 
-O Compose monta documentação em leitura em `/docs/projects`; Rails usa `CATALOG_ROOT=/docs/projects`. Dependências ficam nas imagens e cada contêiner frontend tem seu próprio tmpfs `.next`. Fora do Docker, o caminho padrão é `docs/projects`, irmão do Rails; `CATALOG_ROOT` permite substituição nos testes. Os testes usam o banco Rails de teste separado. Não execute build e servidor de desenvolvimento simultaneamente no mesmo `.next`; pare o desenvolvimento ou use outro diretório de build.
+O Compose monta documentação em `/docs/projects` (Rails em leitura; frontend com escrita para geração explícita de snapshots); Rails usa `CATALOG_ROOT=/docs/projects`. Dependências ficam nas imagens e o frontend usa tmpfs `.next`. Fora do Docker, o caminho padrão é `docs/projects`, irmão do Rails; `CATALOG_ROOT` permite substituição nos testes. Os testes usam o banco Rails de teste separado. Não execute build e servidor de desenvolvimento simultaneamente no mesmo `.next`; use `npm run build:check` dentro do frontend existente.
 
 Limites atuais: sem edição de documentação, autenticação ou sincronização de marcações entre dispositivos. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor resolve arquivos Markdown com escopo validado e preserva navegação por projeto e idioma.
 
-Verificação no navegador (instale Playwright e Chromium antes em diretório temporário):
+Verificação no navegador (frontend existente ativo; Playwright e Chromium incluídos na imagem):
 
 ```sh
-# Build and serve in one isolated container, using its own temporary cache.
-docker compose run --rm --no-deps --name engineering-library-preview frontend sh -c 'npm run build && exec npm run start -- --hostname 0.0.0.0 --port 3100'
-# In another terminal, with the external Playwright module path:
-docker compose exec -T frontend sh -c 'BROWSER_BASE_URL=http://engineering-library-preview:3100 PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
+docker compose exec -T frontend node tests/browser.cjs
 ```
 
 ## Identidade reutilizável de manuscrito
@@ -77,11 +74,11 @@ Concentre marcas fortes nas margens, cantos e espaços livres. O papel mais clar
 
 ## Sumário responsivo e motor compartilhado
 
-`lib/documentation.ts` une os caminhos canônicos dos dois idiomas, ordena categorias e arquivos, inclui README na ordenação normal e usa títulos H1 locais. Traduções ausentes ficam indisponíveis. Índices apenas navegacionais são omitidos; índices substantivos, como ENV, permanecem. O frontend lê `DOCUMENTATION_ROOT` (montagem somente leitura `/docs/projects` no Compose); fora do Docker, usa `../docs/projects`. PostgreSQL continua responsável apenas pelo catálogo de projetos.
+`lib/documentation.ts` une os caminhos canônicos dos dois idiomas, ordena categorias e arquivos, inclui README na ordenação normal e usa títulos H1 locais. Traduções ausentes ficam indisponíveis. Índices apenas navegacionais são omitidos; índices substantivos, como ENV, permanecem. O frontend lê `DOCUMENTATION_ROOT` (montagem `/docs/projects` no Compose, gravável para manutenção explícita de snapshots); fora do Docker, usa `../docs/projects`. PostgreSQL continua responsável apenas pelo catálogo de projetos.
 
 Títulos de capítulos principais (`depth: 0`) usam negrito (700); títulos de subseções em qualquer profundidade (`depth > 0`) usam peso normal (400). Esta regra global vale para todos os projetos do catálogo nos dois idiomas, no sumário, nas duas listas de navegação por capítulos e nos headings numerados do leitor. O peso segue a hierarquia canônica de `documentationEntries`, propagada às unidades do leitor como `navigationDepth`; nunca depende do texto do título, do nível do heading Markdown ou da disponibilidade de link. Descendentes dos títulos, incluindo elementos `strong` aninhados, herdam esse peso. Fontes, cores, numeração, layout, links e negritos fora desses títulos são preservados. Corrija os estilos de renderização em vez de alterar o Markdown de origem para compensar.
 
-Regressão: execute `npm run audit:navigation` e depois `PLAYWRIGHT_MODULE=/caminho/para/playwright node tests/chapter-weight.browser.cjs` com o frontend em execução (`BOOK_READER_URL`, padrão `http://localhost:3000`). A verificação no navegador cobre todos os projetos do catálogo e ambos os idiomas, capítulos 2 e 3, profundidades de subseções disponíveis de 1 a 3, ambas as listas de navegação e ênfase aninhada nos headings do leitor.
+Regressão: execute `docker compose exec -T frontend npm run audit:navigation` e depois `docker compose exec -T frontend node tests/chapter-weight.browser.cjs` com o frontend em execução (`BOOK_READER_URL`, padrão `http://localhost:3000`). A verificação no navegador cobre todos os projetos do catálogo e ambos os idiomas, capítulos 2 e 3, profundidades de subseções disponíveis de 1 a 3, ambas as listas de navegação e ênfase aninhada nos headings do leitor.
 
 `BookReader` recebe unidades e função de renderização. Um contêiner invisível e inerte mede alturas reais, incluindo espaçamento. `ResizeObserver`, carregamento de fontes e mudanças de idioma/conteúdo recalculam limites. Cabeçalhos permanecem com o primeiro item quando possível. Unidades maiores que a área disponível possuem rolagem local acessível. Numeração de capítulos independe dos fólios. Resize tenta preservar a primeira unidade visível.
 
@@ -126,7 +123,7 @@ Documentos ausentes usam `notFound()` do Next: a tela de erro pode chegar com HT
 Execute a regressão de navegador do leitor com Playwright instalado fora da árvore de dependências da aplicação:
 
 ```sh
-docker compose exec -T frontend env PLAYWRIGHT_BROWSERS_PATH=/tmp/el-browsers PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/document-reader-browser.cjs
+docker compose exec -T frontend node tests/document-reader-browser.cjs
 ```
 
 ## Navegação contínua pela sequência canônica
@@ -139,7 +136,7 @@ docker compose exec -T frontend env PLAYWRIGHT_BROWSERS_PATH=/tmp/el-browsers PL
 
 O App Router mantém o histórico de rotas. A entrada atual também conserva a âncora lógica da página, preservando os campos de histórico do Next; ao retornar, essa âncora é resolvida na geometria atual. Redimensionar preserva a posição lógica, em vez de um número físico antigo. URLs diretas abrem o início, salvo uma âncora ou intenção explícita de fim. Arquivos removidos após a descoberta usam a recuperação interna de documento não encontrado; traduções ausentes na descoberta não viram destinos.
 
-`tests/reading-order.test.ts` cobre o resolvedor. `tests/continuous-reading.browser.cjs` verifica os dois sentidos, mudanças de categoria, URLs diretas, encerramento no último documento, indicadores do destino, histórico, layouts responsivos e movimento reduzido usando a coleção real. A execução utiliza a mesma instalação externa de Playwright da regressão do leitor.
+`tests/reading-order.test.ts` cobre o resolvedor. `tests/continuous-reading.browser.cjs` verifica os dois sentidos, mudanças de categoria, URLs diretas, encerramento no último documento, indicadores do destino, histórico, layouts responsivos e movimento reduzido usando a coleção real. A execução utiliza a mesma instalação Playwright no container da regressão do leitor.
 
 
 Use o nome do diretório como slug técnico e defina um `name` oficial legível ao criar cada biografia (por exemplo `Env Auditor`, `Go Image Optimizer`, `URL Shortener`). Preserve siglas e nomes próprios; não traduza o nome oficial entre idiomas. Forneça as duas descrições localizadas e `icon.svg`. Não existe gerador separado de metadados. Bios legadas com nome ausente ou vazio recebem um nome derivado do slug com siglas comuns preservadas; bios ausentes, IDs inválidos e nomes que não sejam texto continuam inválidos. O fallback não substitui nomes explícitos. Cards, cabeçalhos do sumário e do leitor e rótulos de marcações usam o nome do catálogo; URLs e associações de marcações mantêm o slug. Execute `catalog:sync` após editar os metadados para atualizar a mesma linha no PostgreSQL pelo ID estável, sem migração de esquema.

@@ -8,7 +8,7 @@ const root = await mkdtemp('/tmp/engineering-table-test-');
 const appRoot = new URL('../', import.meta.url).pathname;
 const route = new URL(`file://${root}/app/table-stress-test/`);
 await mkdir(route, { recursive: true });
-for (const name of ['components', 'lib', 'tests', 'node_modules', 'public']) await symlink(`${appRoot}${name}`, `${root}/${name}`);
+for (const name of ['components', 'lib', 'tests', 'node_modules', 'public']) await symlink(name === 'node_modules' ? new URL('..', import.meta.resolve('next/package.json')).pathname : `${appRoot}${name}`, `${root}/${name}`);
 for (const name of ['package.json', 'tsconfig.json']) await copyFile(`${appRoot}${name}`, `${root}/${name}`);
 await symlink(`${appRoot}app/layout.tsx`, `${root}/app/layout.tsx`);
 await symlink(`${appRoot}app/globals.css`, `${root}/app/globals.css`);

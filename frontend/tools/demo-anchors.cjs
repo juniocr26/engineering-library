@@ -1,6 +1,6 @@
 // Read-only validation against the same measured logical text used by the reader.
 module.exports = async function inspectAnchors(page, documentId, language) {
-  return page.evaluate(async ({ documentId, language }) => {
+  const inspect = () => page.evaluate(async ({ documentId, language }) => {
     const query = new URLSearchParams({ project: 'engineering-library', document: documentId, language });
     const read = async resource => {
       const response = await fetch(`/api/${resource}?${resource === 'bookmarks' ? new URLSearchParams({ project_slug: 'engineering-library', language }) : query}`, { cache: 'no-store' });
@@ -25,4 +25,14 @@ module.exports = async function inspectAnchors(page, documentId, language) {
       valid: item.kind === 'bookmark' ? blocks.has(item.anchor) : item.segments.every(valid),
     }));
   }, { documentId, language });
+  try {
+    return await inspect();
+  } catch (error) {
+    // A cold Next development route can reload during the read-only API calls.
+    // Retry only the interrupted read, never a seed/cleanup mutation.
+    if (!error.message.includes('Execution context was destroyed')) throw error;
+    await page.locator('.reader[data-pagination="ready"]').waitFor();
+    await page.locator('.reader-stage[aria-busy="false"]').waitFor();
+    return inspect();
+  }
 };

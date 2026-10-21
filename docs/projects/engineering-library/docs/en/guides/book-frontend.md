@@ -48,26 +48,23 @@ From the repository root:
 ```sh
 docker compose up -d --build
 docker compose exec -T backend bundle exec rails db:prepare catalog:sync
-docker compose exec -T backend sh -c 'RAILS_ENV=test bundle exec rails db:prepare && bundle exec rails test'
+docker compose exec -T -e RAILS_ENV=test backend sh -c 'bundle exec rails db:prepare && bundle exec rails test'
 docker compose exec -T frontend npm test
 docker compose exec -T frontend npm run typecheck
 docker compose exec -T frontend npm run lint
-docker compose run --rm --no-deps frontend npm run build
+docker compose exec -T frontend npm run build:check
 python3 -B docs/validation/check_catalog.py
 git diff --check
 ```
 
-Compose mounts documentation read-only at `/docs/projects`; Rails uses `CATALOG_ROOT=/docs/projects`. Dependencies stay in images and each frontend container gets its own `.next` tmpfs. Outside Docker, the catalog defaults to the repository `docs/projects` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; stop development or use a separate build output directory.
+Compose mounts documentation at `/docs/projects` (Rails read-only; frontend writable for explicit snapshot generation); Rails uses `CATALOG_ROOT=/docs/projects`. Dependencies stay in images and the frontend uses a `.next` tmpfs. Outside Docker, the catalog defaults to the repository `docs/projects` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; use `npm run build:check` inside the existing frontend.
 
 Current limits: no documentation editing, authentication or cross-device bookmark synchronization. API downtime produces a localized retry state. The document reader resolves repository Markdown with scoped filesystem reads and preserves project/language navigation.
 
-Browser smoke checks (install Playwright and Chromium in a temporary directory first):
+Browser smoke checks (existing frontend running; browser tooling is included):
 
 ```sh
-# Build and serve in one isolated container, using its own temporary cache.
-docker compose run --rm --no-deps --name engineering-library-preview frontend sh -c 'npm run build && exec npm run start -- --hostname 0.0.0.0 --port 3100'
-# In another terminal, with the external Playwright module path:
-docker compose exec -T frontend sh -c 'BROWSER_BASE_URL=http://engineering-library-preview:3100 PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/browser.cjs'
+docker compose exec -T frontend node tests/browser.cjs
 ```
 
 ## Reusable manuscript identity
@@ -80,11 +77,11 @@ Keep strong marks at margins, corners and whitespace. The lighter paper supports
 
 ## Responsive Table of Contents reader
 
-`documentationEntries` unions canonical relative paths in both languages, sorts categories and filenames using stable case-insensitive canonical ordering, includes README normally and reads localized H1 titles. Missing counterparts are visibly unavailable. Navigation-only indexes are excluded; substantive indexes (including ENV references) remain entries. The frontend requires the read-only `/docs/projects` mount (`DOCUMENTATION_ROOT`), or defaults to `../docs/projects` outside Docker. PostgreSQL continues to paginate only the project catalog.
+`documentationEntries` unions canonical relative paths in both languages, sorts categories and filenames using stable case-insensitive canonical ordering, includes README normally and reads localized H1 titles. Missing counterparts are visibly unavailable. Navigation-only indexes are excluded; substantive indexes (including ENV references) remain entries. The frontend uses the `/docs/projects` mount (writable for explicit snapshot maintenance) (`DOCUMENTATION_ROOT`), or defaults to `../docs/projects` outside Docker. PostgreSQL continues to paginate only the project catalog.
 
 Top-level chapter titles (`depth: 0`) use bold weight (700); subsection titles at every depth (`depth > 0`) use normal weight (400). This global rule applies to every catalog project in both languages, across the table of contents, both chapter navigation lists and numbered reader headings. Weight follows the canonical hierarchy from `documentationEntries`, propagated to reader units as `navigationDepth`; it never depends on title text, Markdown heading level or link availability. Title descendants, including nested `strong` elements, inherit that weight. Existing fonts, colors, numbering, layout, links and bold text outside these titles are preserved. Fix rendering styles rather than changing source Markdown to compensate.
 
-Regression: run `npm run audit:navigation`, then `PLAYWRIGHT_MODULE=/path/to/playwright node tests/chapter-weight.browser.cjs` against the running frontend (`BOOK_READER_URL`, default `http://localhost:3000`). The browser check covers all catalog projects and both languages, chapters 2 and 3, available subsection depths 1–3, both navigation lists and nested emphasis in reader headings.
+Regression: run `docker compose exec -T frontend npm run audit:navigation`, then `docker compose exec -T frontend node tests/chapter-weight.browser.cjs` against the running frontend (`BOOK_READER_URL`, default `http://localhost:3000`). The browser check covers all catalog projects and both languages, chapters 2 and 3, available subsection depths 1–3, both navigation lists and nested emphasis in reader headings.
 
 `BookReader` consumes generic units and a render callback. A hidden, inert container measures actual unit heights and available body height; `ResizeObserver`, font completion and language/content changes trigger repagination. Headings stay with the first child when feasible. Oversized units have an accessible local scroll fallback. Chapter numbers remain independent of physical folios. Resizing anchors the first visible canonical unit where possible; a regrouped page gets a new combined content identity.
 
@@ -126,10 +123,10 @@ Every browser accessing this installation sees the same saved annotations after 
 
 Missing documents use Next `notFound()`: the error UI can arrive with HTTP 200 when the ancestor loading boundary has already started streaming; non-streamed responses use 404. Asset endpoints return 404 directly. Reference: [Next not-found](https://nextjs.org/docs/app/api-reference/file-conventions/not-found).
 
-Run the complete reader browser regression with an external Playwright installation:
+Run the complete reader browser regression with the browser included in the development image:
 
 ```sh
-docker compose exec -T frontend env PLAYWRIGHT_BROWSERS_PATH=/tmp/el-browsers PLAYWRIGHT_MODULE=/tmp/el-browser/node_modules/playwright node tests/document-reader-browser.cjs
+docker compose exec -T frontend node tests/document-reader-browser.cjs
 ```
 
 ## Canonical continuous reading navigation
@@ -142,4 +139,4 @@ docker compose exec -T frontend env PLAYWRIGHT_BROWSERS_PATH=/tmp/el-browsers PL
 
 App Router maintains browser route history. The current history entry also retains the logical page anchor, while preserving Next's history fields; returning resolves that anchor against current geometry. Resizing preserves the logical anchor rather than a stale physical number. Direct document URLs start at the beginning unless an explicit anchor or ending intent is supplied. Files removed after catalog discovery retain the existing internal not-found recovery; missing localized entries discovered initially never become destinations.
 
-Resolver cases are covered by `tests/reading-order.test.ts`; `tests/continuous-reading.browser.cjs` exercises both directions, category boundaries, direct routes, last-document termination, destination indicators, browser history, responsive layouts and reduced motion against the actual collection. Run it with the same external Playwright installation as the reader regression above.
+Resolver cases are covered by `tests/reading-order.test.ts`; `tests/continuous-reading.browser.cjs` exercises both directions, category boundaries, direct routes, last-document termination, destination indicators, browser history, responsive layouts and reduced motion against the actual collection. Run it with the same container browser as the reader regression above.

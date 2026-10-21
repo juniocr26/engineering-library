@@ -62,5 +62,5 @@ number. No cross-language structural equivalence is claimed for these findings.
 Browser test command (Playwright supplied by the test environment):
 
 ```sh
-PLAYWRIGHT_MODULE=/path/to/playwright node tests/heading-numbering.browser.cjs
+docker compose exec -T frontend node tests/heading-numbering.browser.cjs
 ```

@@ -39,7 +39,7 @@ docker compose exec -T frontend npm test
 docker compose exec -T backend bin/rails test
 ```
 
-Browser checks require an externally supplied Playwright installation (no new app
+Historical browser checks used an externally supplied Playwright installation (no new app
 dependency): set `PLAYWRIGHT_MODULE` to its module path and `BROWSER_BASE_URL` to the
 running frontend, then run:
 
@@ -71,3 +71,5 @@ running frontend, then run:
 
 Browser coverage uses Chromium; Safari and Firefox were not run. Logical anchors
 cannot restore content that has been removed from the canonical table of contents.
+
+Current reruns use the browser included in the existing frontend: `docker compose exec -T frontend node tests/contents-toolbar.browser.cjs`. Run from the repository root with the services active.

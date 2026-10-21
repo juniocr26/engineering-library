@@ -26,3 +26,5 @@ O leitor oferece busca no projeto, incluindo snapshots de código aprovados. Nã
 [Auditoria documental de 2026-10-19](projects/engineering-library/docs/pt-BR/operations/documentation-audit-2026-10-19.md) · [Source reference verification](source-reference-verification.md) · [Contents toolbar validation](validation/contents-toolbar.md).
 
 [Shared IMG assets / Recursos compartilhados](img/README.md)
+
+[Heading numbering validation](validation/heading-numbering.md) · [Navigation audit / Auditoria de navegação](validation/navigation-audit.md).

@@ -14,7 +14,7 @@ The Library maintains bilingual engineering explanations, project FAQs and sourc
 
 `Catalog::Page` selects active records with fixed page size five and deterministic `lower(display_name) COLLATE "C", stable_id` order. Offset pagination is simple and index-supported but is not a snapshot across requests during catalog changes. Next fetches catalog JSON server-side with `cache: 'no-store'` and a five-second timeout. Its collection filesystem reader is separate from the Rails metadata API.
 
-`compose.yaml` defines PostgreSQL, Rails and Next. Ports bind to loopback. PostgreSQL data uses `.dockerized-postgres` on the host; this is persistence, not a verified backup. Both application services receive the documentation collection read-only. Dependency/build directories remain development bind mounts. Startup health dependencies do not implement automatic application-level recovery after every dependency failure.
+`compose.yaml` defines PostgreSQL, Rails and Next. Ports bind to loopback. PostgreSQL data uses `.dockerized-postgres` on the host; this is persistence, not a verified backup. Rails receives the documentation collection read-only; frontend has writable `/docs` for explicit snapshot maintenance and a read-only `/sources` workspace mount. Dependency/build directories remain development bind mounts. Startup health dependencies do not implement automatic application-level recovery after every dependency failure.
 
 ## Responsibilities and trade-offs
 

@@ -6,7 +6,7 @@ const { chromium } = createRequire(import.meta.url)(process.env.PLAYWRIGHT_MODUL
 const root = await mkdtemp('/tmp/engineering-source-test-');
 const appRoot = new URL('../', import.meta.url).pathname;
 await mkdir(`${root}/app/source-stress-test`, { recursive: true });
-for (const name of ['components', 'lib', 'tests', 'node_modules', 'public']) await symlink(`${appRoot}${name}`, `${root}/${name}`);
+for (const name of ['components', 'lib', 'tests', 'node_modules', 'public']) await symlink(name === 'node_modules' ? new URL('..', import.meta.resolve('next/package.json')).pathname : `${appRoot}${name}`, `${root}/${name}`);
 for (const name of ['package.json', 'tsconfig.json']) await copyFile(`${appRoot}${name}`, `${root}/${name}`);
 for (const name of ['layout.tsx', 'globals.css']) await symlink(`${appRoot}app/${name}`, `${root}/app/${name}`);
 let server, browser;

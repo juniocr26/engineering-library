@@ -14,13 +14,13 @@ Cada disclosure possui um ID próprio derivado de projeto, documento independent
 
 Em 18/10/2026, o usuário autorizou snapshots do código referenciado dos seis projetos existentes, excluindo material sensível. Configurações, arquivos de ambiente, dependências, binários, arquivos acima de 512 KB, symlinks que escapam da raiz e padrões detectados de segredos são excluídos. A triagem complementa a autorização; não prova que qualquer conteúdo seja seguro para publicação. Os catálogos exibem apenas caminhos relativos aos repositórios.
 
-A geração é explícita, a partir do diretório frontend:
+Na raiz do repositório, com frontend ativo e fontes previamente aprovadas, execute:
 
 ```sh
-SOURCE_WORKSPACE=/caminho/do/portfolio \
-APPROVE_REFERENCED_SOURCE=yes \
-node --experimental-strip-types tools/build-source-catalog.ts
+docker compose exec -T -e SOURCE_WORKSPACE=/sources -e APPROVE_REFERENCED_SOURCE=yes frontend node --experimental-strip-types tools/build-source-catalog.ts
 ```
+
+O mount `/sources` lê o workspace pai somente para leitura; `/docs` permite gravar catálogos e relatório. O gerador limita projetos e arquivos conforme as regras de aprovação abaixo. O leitor continua limitado aos snapshots; não há endpoint para ler fontes arbitrárias. Uma instalação sem os repositórios irmãos pode usar o leitor normalmente, mas não gera snapshots dessas fontes ausentes.
 
 `DOCUMENTATION_ROOT` permite selecionar a coleção. `APPROVED_SOURCE_PROJECTS` delimita os projetos autorizados, separados por vírgula; o padrão são os seis autorizados nessa data. Novos projetos precisam de aprovação antes de incluir código. O gerador descobre documentos automaticamente, valida caminhos reais, lê código como texto, remove snapshots gerados obsoletos e nunca executa arquivos referenciados. Revise o diff antes de publicar.
 
@@ -42,4 +42,6 @@ As marcações compartilhadas PostgreSQL mantêm a arquitetura existente. Marcar
 
 O relatório gerado `docs/source-reference-report.json` e os catálogos enumeram ocorrências candidatas, integradas, excluídas e ausentes por projeto. Contagens incluem links repetidos e ambos os idiomas, não apenas arquivos únicos. Documentos sem referências continuam no fluxo comum.
 
-Testes focados cobrem colisões de nomes, isolamento, identidade bilíngue, repetições, intervalos, busca e marcações exatas, revisões, snapshots corrompidos, traversal, symlinks e cores. Testes de navegador exercitam 200 linhas sintéticas em celular, tablet e desktop e referências aprovadas de cada projeto. Execute `npm test`, `npm run typecheck`, `npm run lint`, `npm run build` e `node tests/source-reader.browser.mjs`, configurando os caminhos Playwright do ambiente. As marcações no teste de navegador usam transporte simulado; os testes Rails existentes verificam a persistência separadamente.
+Testes focados cobrem colisões de nomes, isolamento, identidade bilíngue, repetições, intervalos, busca e marcações exatas, revisões, snapshots corrompidos, traversal, symlinks e cores. Testes de navegador exercitam 200 linhas sintéticas em celular, tablet e desktop e referências aprovadas de cada projeto. Execute `docker compose exec -T frontend npm test`, `docker compose exec -T frontend npm run typecheck`, `docker compose exec -T frontend npm run lint`, `docker compose exec -T frontend npm run build:check`. As marcações no teste de navegador usam transporte simulado; os testes Rails existentes verificam a persistência separadamente.
+
+O teste `source-reader.browser.mjs` inicia um servidor de fixtures adicional e está fora do fluxo restrito aos serviços existentes. Sua etapa de catálogo também apresenta `ReferenceError: width is not defined`, observado na tentativa anterior; essa falha não foi corrigida neste ajuste operacional.

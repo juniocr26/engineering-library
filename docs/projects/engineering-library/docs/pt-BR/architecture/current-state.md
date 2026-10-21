@@ -14,7 +14,7 @@ A biblioteca mantém explicações de engenharia, FAQs e evidências em dois idi
 
 `Catalog::Page` seleciona registros ativos em páginas fixas de cinco, na ordem determinística `lower(display_name) COLLATE "C", stable_id`. Paginação por offset é simples e apoiada por índice, mas não forma snapshot entre requisições durante mudanças. Next busca JSON no servidor com `cache: 'no-store'` e timeout de cinco segundos. Sua leitura dos arquivos da coleção é separada da API de metadados Rails.
 
-`compose.yaml` define PostgreSQL, Rails e Next. Portas são publicadas em loopback. Dados PostgreSQL usam `.dockerized-postgres` do host: persistência, sem backup validado. Os dois serviços recebem a coleção documental somente para leitura. Diretórios de dependências/build são bind mounts de desenvolvimento. Dependências de health na partida não implementam recuperação automática da aplicação diante de toda falha posterior.
+`compose.yaml` define PostgreSQL, Rails e Next. Portas são publicadas em loopback. Dados PostgreSQL usam `.dockerized-postgres` do host: persistência, sem backup validado. Rails recebe a coleção documental somente para leitura; frontend tem `/docs` gravável para manutenção explícita de snapshots e o workspace `/sources` somente para leitura. Diretórios de dependências/build são bind mounts de desenvolvimento. Dependências de health na partida não implementam recuperação automática da aplicação diante de toda falha posterior.
 
 ## Responsabilidades e trade-offs
 

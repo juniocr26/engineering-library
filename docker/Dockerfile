@@ -26,6 +26,14 @@ COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci && npm cache clean --force
 
 FROM frontend-dependencies AS frontend-development
+# Browser tooling belongs only to the development target.
+USER root
+ENV PLAYWRIGHT_MODULE=/opt/browser/node_modules/playwright \
+    PLAYWRIGHT_BROWSERS_PATH=/opt/playwright
+RUN npm install --prefix /opt/browser --save-exact playwright@1.58.2 \
+    && /opt/browser/node_modules/.bin/playwright install --with-deps chromium \
+    && chmod -R a+rX /opt/browser /opt/playwright \
+    && npm cache clean --force
 ENV HOME=/tmp npm_config_cache=/tmp/npm-cache
 WORKDIR /app/frontend
 COPY --chown=1000:1000 frontend/ ./

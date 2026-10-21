@@ -1,5 +1,16 @@
 # Application development
 
+## Docker execution
+
+Run shell commands from this repository root. Node.js, npm, Ruby, Bundler, Rails and PostgreSQL clients execute inside containers; the host needs Docker with Compose. No host installation of these runtimes is required. `exec` requires a running service and uses `/app/frontend` or `/app/backend`; Build verification copies source into a temporary directory inside the existing frontend container to preserve the running server cache.
+
+For bootstrap, copy `.env.example` to `.env` and fill in private credentials, or use the optional host Python generator below; existing `.env` is preserved by the generator. Host Python 3.10+ is an optional exception: `python3 tools/init_dev_env.py` generates credentials; documentation validators use only the standard library; `tools/check_docker_startup.py` orchestrates Docker and probes host ports. Install Python only if choosing those host tools. Its presence is not assumed.
+
+Playwright 1.58.2, Chromium and system dependencies are installed in `frontend-development`, outside the application dependency target. Rebuild with `docker compose up -d --build --wait --wait-timeout 300`. Browsers running in frontend access `http://localhost:3000`, the same container's internal port; host browsers use `http://localhost:3099`. Other containers use `http://frontend:3000`. Demo scripts remain restricted to loopback.
+
+Other catalog projects document their source repositories, rather than operational commands for this installation; this policy does not claim additional Docker support for those projects. Older validation results are historical.
+
+
 Current review: 2026-10-19. Rails serves the PostgreSQL-backed catalog and shared annotations; Next renders the bilingual internal book. The setup below retains its development scope; see [current architecture](../architecture/current-state.md) and [reader guide](book-frontend.md) for present responsibilities.
 
 ## Versions and architecture
@@ -26,7 +37,7 @@ compose.yaml              PostgreSQL + independent Rails and Next.js services
 
 Install Docker Desktop on macOS or Docker Engine with the Compose plugin on Linux using the [official installation guide](https://docs.docker.com/engine/install/). Enable the engine, allow project file sharing, and ensure ports 3099, 3098 and 5499 are free. No host Ruby or Node installation is needed.
 
-The initial implementation generated `.env` locally with an ASCII alphanumeric 12-character database password containing upper/lowercase letters and digits, and a random Rails secret. Neither is committed. On a fresh clone run `python3 tools/init_dev_env.py` (Python 3.10+); it creates `.env` without replacing an existing file. The example lists all variables. On Linux set LOCAL_UID and LOCAL_GID to `id -u` and `id -g` before installing dependencies. macOS Docker Desktop supports the default 1000 IDs. Keep the bind-mounted source and dependency folders writable by these IDs. If previously created files belong to another ID, adjust ownership deliberately; do not recursively change PostgreSQL ownership to your app user. The official postgres entrypoint manages its own data ownership.
+The initial implementation generated `.env` locally with an ASCII alphanumeric 12-character database password containing upper/lowercase letters and digits, and a random Rails secret. Neither is committed. On a fresh clone use the optional Python bootstrap below or prepare `.env` manually; it creates `.env` without replacing an existing file. Host Python 3.10+ is an optional alternative. The example lists all variables. On Linux set LOCAL_UID and LOCAL_GID to `id -u` and `id -g` before installing dependencies. macOS Docker Desktop supports the default 1000 IDs. Keep the bind-mounted source and dependency folders writable by these IDs. If previously created files belong to another ID, adjust ownership deliberately; do not recursively change PostgreSQL ownership to your app user. The official postgres entrypoint manages its own data ownership.
 
 ```sh
 python3 tools/init_dev_env.py
@@ -49,14 +60,14 @@ docker compose build frontend
 # After updating manifests and lockfiles:
 docker compose up -d --build
 # Next build isolated from the running development server's cache:
-docker compose run --rm --no-deps frontend npm run build
+docker compose exec -T frontend npm run build:check
 docker compose exec backend bin/rails console
 docker compose logs -f backend frontend postgres
 # Five controlled cycles; preserves data and leaves the final cycle running:
 python3 tools/check_docker_startup.py --cycles 5
 ```
 
-Update lockfiles with compatible Ruby/Node tooling or a disposable container with writable dependencies, then rebuild the corresponding image. Do not install into a running application container. Old host packages and gems remain intact but are unused. Next's tmpfs cache uses memory and recompiles after container stop. Do not run `npm run build` inside the live development server: use the isolated command above.
+Update lockfiles using the package managers inside the existing containers, then rebuild the corresponding image. Dependencies installed only in a running container are not reproducible. Old host packages and gems remain intact but are unused. Next's tmpfs cache uses memory and recompiles after container stop. Do not run `npm run build` inside the live development server: use the isolated command above.
 
 ## DBeaver and persistence
 
@@ -89,13 +100,13 @@ docker compose exec -e RAILS_ENV=test backend bin/rails test
 docker compose exec backend bin/rails zeitwerk:check
 docker compose exec frontend npm run lint
 docker compose exec frontend npm run typecheck
-docker compose run --rm --no-deps frontend npm run build
+docker compose exec -T frontend npm run build:check
 curl --fail http://localhost:3098/up
 curl --fail http://localhost:3099
 python3 -B -m unittest discover -s tools -p test_check_docs.py -v
 ```
 
-The Rails suite exercises HTTP health, absence of password disclosure and a real SQL connection. Frontend lint/type/build checks are appropriate for this static scaffold; no extra browser-test library is installed. `/up` is liveness, not a full infrastructure readiness contract. Future milestone: define a first read-only collection/chapter API and render existing documentation while preserving its source and bilingual navigation. AI capabilities remain future work.
+The Rails suite exercises HTTP health, absence of password disclosure and a real SQL connection. Frontend unit/lint/type/build checks run in Docker; development images also include Playwright and Chromium for the documented browser suites. `/up` is liveness, not a full infrastructure readiness contract. Future milestone: define a first read-only collection/chapter API and render existing documentation while preserving its source and bilingual navigation. AI capabilities remain future work.
 
 ## Dependency audit limitation
 
@@ -109,3 +120,11 @@ The 22 existing Python validator tests pass. The six-repository documentation sc
 
 
 [ENV](../env/index.md) · [Database migration / Migração do banco](../operations/database-migration.md)
+
+## Validation of this change — 2026-10-21
+
+In existing services: 100 frontend tests, lint and TypeScript passed; `build:check` completed in a temporary directory inside frontend, preserving the server cache. Rails passed 25 tests and 408 assertions in the `_test` database. The demo regression passed using a synthetic database in the existing PostgreSQL, idempotent seeds, two browsers and cleanup preserving manual annotations. CLI setup and cleanup also passed, preserving two synthetic notes in different projects. The backend was restored to the original database; hashes and counts of 60 notes, 60 highlights and 12 bookmarks matched before/after. The temporary database was removed.
+
+Chromium ran inside frontend; manifest: 132 valid anchors, zero invalid. The five-viewport smoke passed after an initial navigation timeout. Snapshot generation passed on a temporary documentation copy without changing published snapshots. Anchor inspection now retries a single read interrupted by navigation, without repeating mutations. The additional QA stack from the previous attempt, its Compose file and its two images were removed; only the original three services remain.
+
+Host Python: 27 tests passed; catalog had no errors and one warning for identical IMG indexes. `npm ci` reported five existing high vulnerabilities; dependency remediation was not part of this task. The source suite that starts a fixture server failed with `width is not defined` during the previous attempt and remains outside the authorized workflow. Linux/x86 and production deployment were not validated.

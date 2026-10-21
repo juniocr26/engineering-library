@@ -14,17 +14,17 @@ Line anchors include occurrence ID, snapshot fingerprint and original source lin
 
 On 2026-10-18 the user authorized snapshots of referenced code from the six existing documented projects, excluding sensitive material. Configuration files, environment files, dependency trees, binaries, files above 512 KB, escaping symlinks and detected secret patterns are excluded. Screening supplements approval; it does not establish that arbitrary content is safe to publish. Catalogs expose repository-relative paths only.
 
-Generate snapshots explicitly from the frontend directory:
+From the repository root, with frontend running and source scope already approved, run:
 
 ```sh
-SOURCE_WORKSPACE=/path/to/portfolio \
-APPROVE_REFERENCED_SOURCE=yes \
-node --experimental-strip-types tools/build-source-catalog.ts
+docker compose exec -T -e SOURCE_WORKSPACE=/sources -e APPROVE_REFERENCED_SOURCE=yes frontend node --experimental-strip-types tools/build-source-catalog.ts
 ```
+
+The `/sources` mount reads the parent workspace read-only; `/docs` permits writing catalogs and the report. The generator restricts projects and files according to the approval rules below. The reader remains limited to snapshots; no endpoint exposes arbitrary source files. An installation without sibling repositories can use the reader normally but cannot generate snapshots from missing sources.
 
 `DOCUMENTATION_ROOT` optionally selects the collection. `APPROVED_SOURCE_PROJECTS` is a comma-separated explicit approval scope; its default is the six projects authorized on that date. Future projects need approval before their code is included. The generator discovers documents automatically, validates real paths, reads source as text, removes obsolete generated snapshots and never executes referenced files. Review generated changes before publication.
 
-The reader reads approved snapshots, checks hashes and never reads sibling repositories or fetches GitHub at runtime. Docker's existing read-only documentation mount includes catalogs and snapshots, so Rails and deployment need no sibling-repository mounts or generic file API. A GitHub revision is accepted only when it matches the approved record's revision or fingerprint. Unavailable pinned revisions produce an explicit state; current source is never silently substituted.
+The reader reads approved snapshots, checks hashes and never reads sibling repositories or fetches GitHub at runtime. Rails reads catalogs and snapshots from its read-only documentation mount. The frontend's source workspace mount is used for explicit maintenance; no generic source-file API was added. A GitHub revision is accepted only when it matches the approved record's revision or fingerprint. Unavailable pinned revisions produce an explicit state; current source is never silently substituted.
 
 ## Expansion, pagination and navigation
 
@@ -42,4 +42,6 @@ Shared PostgreSQL bookmarks retain the existing architecture. Bookmarking a cont
 
 The generated `docs/source-reference-report.json` and each catalog enumerate candidate occurrences, integrated occurrences, excluded references and missing files project by project. Counts include repeated links and both languages; they are not counts of unique files. Markdown without source references uses the ordinary reader flow.
 
-Focused tests cover file-name collisions, project isolation, bilingual identity, repeated disclosures, line ranges, exact search/bookmark locations, content changes, corrupt snapshots, traversal, symlinks and highlighting. Browser tests exercise synthetic 200-line code on mobile, tablet and desktop plus approved references from every catalog project. Run `npm test`, `npm run typecheck`, `npm run lint`, `npm run build` and `node tests/source-reader.browser.mjs` (with the environment's Playwright module/browser paths). Browser bookmark tests mock transport; the existing Rails tests exercise bookmark persistence separately.
+Focused tests cover file-name collisions, project isolation, bilingual identity, repeated disclosures, line ranges, exact search/bookmark locations, content changes, corrupt snapshots, traversal, symlinks and highlighting. Browser tests exercise synthetic 200-line code on mobile, tablet and desktop plus approved references from every catalog project. Run `docker compose exec -T frontend npm test`, `docker compose exec -T frontend npm run typecheck`, `docker compose exec -T frontend npm run lint`, `docker compose exec -T frontend npm run build:check`. Browser bookmark tests mock transport; the existing Rails tests exercise bookmark persistence separately.
+
+The `source-reader.browser.mjs` test starts an additional fixture server and is outside the existing-services-only workflow. Its catalog phase also has a `ReferenceError: width is not defined`, observed during the previous attempt; that failure was not fixed by this operational change.

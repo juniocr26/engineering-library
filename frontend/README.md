@@ -14,11 +14,10 @@ from 1× to 8×, bounded dragging, wheel zoom, two-pointer pinch, reset and Esca
 Native modal dialog behavior traps focus and blocks background interaction; closing
 returns focus to the expand button. The viewer is portaled outside the book.
 
-Run the optional browser regression against a running frontend with Playwright
-installed externally:
+Run the optional browser regression from the repository root against a running Compose frontend:
 
 ```sh
-PLAYWRIGHT_MODULE=/path/to/playwright node tests/media-viewer.browser.mjs
+docker compose exec -T frontend node tests/media-viewer.browser.mjs
 ```
 
 `MEDIA_DOCUMENT_URL` can select another document containing a rendered diagram or
