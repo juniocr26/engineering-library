@@ -4,7 +4,7 @@ import { referenceContainsLocation, sourceUnits } from '../lib/source-links';
 import { useMemo } from 'react';
 import { projectDisplayName } from '../lib/project-name';
 import { useEffect, useState, type ReactNode } from 'react';
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
 import { containsLocation } from '../lib/table-pagination';
 import { TextHighlights } from './text-highlights';

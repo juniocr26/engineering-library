@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import { pageNumbers } from '@/lib/pagination';
 import { catalogHref, messages, type Language } from '@/lib/i18n';
 export function Pagination({ page, total, language }: { page: number; total: number; language: Language }) {

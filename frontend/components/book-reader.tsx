@@ -1,6 +1,6 @@
 'use client';
 import { resolveTranslatedLocation } from '../lib/reading-position';
-import { useRouter } from 'next/navigation';
+import { useNavigationRouter as useRouter } from './navigation-loading';
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 import { paginateMeasured, samePagination, type BookUnit } from '../lib/book-pagination';
 import { containsLocation, type TableMeasurement } from '../lib/table-pagination';

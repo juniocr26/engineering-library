@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigationRouter as useRouter } from './navigation-loading';
 import { NotePreview } from './note-editor';
 import { noteExcerpt } from '../lib/annotation-excerpt';
 import { documentHref } from '../lib/document-links';

@@ -1,6 +1,6 @@
 import { normalizeCursiveLabel } from '../lib/cursive-headings';
 /* eslint-disable @next/next/no-img-element */
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import { ManuscriptDecorations } from './manuscript-decorations';
 import { DocumentLanguage } from './document-language';
 import { catalogHref, messages, type Language } from '@/lib/i18n';

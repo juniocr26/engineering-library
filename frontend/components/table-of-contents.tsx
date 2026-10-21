@@ -5,7 +5,7 @@ import { getReadingSequence, readingNeighbors } from '../lib/reading-order';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { BookReader } from './book-reader';
 import { ReaderTools } from './reader-tools';
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import { CONTENTS_DOCUMENT, bookmarkHref } from '../lib/document-links';
 import { projectDisplayName } from '../lib/project-name';
 import { catalogHref, messages, type Language } from '../lib/i18n';

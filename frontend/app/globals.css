@@ -638,3 +638,11 @@ inset:0}
 .reader-code-shell [data-code-text]{cursor:text}
 .reader-code-shell [data-dragging=true],.reader-code-shell [data-dragging=true] *{cursor:grabbing;user-select:none}
 .reader-code-shell .reader-code:focus-visible{outline:2px solid #17405a;outline-offset:-2px}
+
+/* Fixed sibling of the reader: never participates in page measurement. */
+.navigation-loading{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:16px;background:#170f0926;pointer-events:none}
+.navigation-loading__paper{position:relative;min-height:0;background-image:url('/assets/manuscript/parchment/aged-fibers.webp');background-size:100% 100%;display:flex;flex-direction:column;align-items:center;gap:10px;width:min(240px,100%);padding:24px 30px;color:#243d58;border:1px solid #936337;border-radius:5px;box-shadow:0 12px 36px #170b0640,inset 0 0 25px #5b2d0f45;font-size:19px}
+.navigation-loading__paper:before{border-width:5px}
+.navigation-loading__quill{transform-origin:30% 80%;animation:manuscript-writing 1.5s ease-in-out infinite}
+@keyframes manuscript-writing{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg) translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.navigation-loading__quill{animation:none}}

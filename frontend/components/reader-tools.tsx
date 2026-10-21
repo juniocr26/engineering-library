@@ -1,7 +1,7 @@
 'use client';
 import { headingTitle } from '../lib/heading-numbering';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import { AnnotationsPanel } from './annotations-panel';
 import { ReaderPanel } from './reader-panel';
 import { bookmarkHref, CONTENTS_DOCUMENT } from '../lib/document-links';

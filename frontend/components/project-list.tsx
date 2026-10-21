@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import type { Project } from '@/lib/catalog';
 import { catalogHref, type Language } from '@/lib/i18n';
 function ProjectIcon({ slug }: { slug: string }) {

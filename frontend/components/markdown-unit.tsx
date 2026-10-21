@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { Fragment, memo, useEffect, useState, type ReactNode } from 'react';
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import { renderIsolatedDiagram } from '../lib/isolated-diagram';
 import { ReaderCode } from './reader-code';
 import { SourceCode } from './source-code';

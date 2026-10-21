@@ -1,5 +1,5 @@
 import { projectDisplayName } from '@/lib/project-name';
-import Link from 'next/link';
+import Link from '@/components/navigation-link';
 import { LanguageSelector } from '@/components/book-layout';
 import { DocumentLanguage } from '@/components/document-language';
 import { TableOfContents } from '@/components/table-of-contents';
