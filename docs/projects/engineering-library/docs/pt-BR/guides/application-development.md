@@ -24,7 +24,7 @@ docker/
   Dockerfile              backend-dependencies, backend-development,
                           frontend-dependencies, frontend-development
   backend-entrypoint.sh   db:prepare catalog:sync; exec Rails
-  frontend-entrypoint.sh  lockfile consistency; exec Next.js
+  frontend-entrypoint.sh  npm ci in source bind mount; exec Next.js
 backend/                  Rails, Gemfile.lock
 frontend/                 Next.js, package-lock.json
 docs/                     Markdown
@@ -50,7 +50,6 @@ docker compose down
 
 O PostgreSQL cria o banco ao inicializar um cluster novo. Rails aguarda PostgreSQL saudável, executa `db:prepare catalog:sync` e inicia o servidor; falhas interrompem o processo. Next aguarda Rails saudável. As migrações futuras devem ser revisadas antes da inicialização. O sync atual atualiza metadados sem excluir registros.
 
-O único Dockerfile usa o contexto raiz e quatro targets: `backend-dependencies`, `backend-development`, `frontend-dependencies` e `frontend-development`. Gems ficam em `/usr/local/bundle`; pacotes Node em `/app/node_modules`, acima do código montado em `/app/frontend`. O mount vazio de `node_modules` mascara pacotes do host. `.next`, logs e temporários Rails usam tmpfs e são descartados ao parar. Dependências são instaladas a partir dos lockfiles durante o build, sem instalação nem acesso ao registry no startup. Os serviços rodam com LOCAL_UID/LOCAL_GID, padrão 1000:1000. São imagens de desenvolvimento.
 
 ## Dependências e comandos
 
@@ -67,7 +66,6 @@ docker compose logs -f backend frontend postgres
 python3 tools/check_docker_startup.py --cycles 5
 ```
 
-Atualize os lockfiles com os gerenciadores nos containers existentes; reconstrua a imagem correspondente. Dependências instaladas apenas em um container ativo não são reproduzíveis. Pacotes e gems antigos no host permanecem intactos, mas não são usados. O cache Next em tmpfs acelera o uso durante cada execução, custa memória e recompila após parar o contêiner. Não execute `npm run build` no servidor de desenvolvimento ativo: use o comando isolado acima.
 
 ## DBeaver e persistência
 
@@ -127,3 +125,35 @@ Nos serviços existentes: 100 testes frontend, lint e TypeScript passaram; `buil
 Chromium executou no frontend; manifesto: 132 âncoras válidas, zero inválidas. O smoke de cinco viewports passou após uma tentativa com timeout de navegação. Geração de snapshots passou numa cópia temporária da documentação, sem alterar snapshots publicados. A inspeção de âncoras agora repete uma única leitura interrompida por navegação, sem repetir mutações. A stack QA adicional da tentativa anterior, seu Compose e suas duas imagens foram removidos; restam os três serviços originais.
 
 Python no host: 27 testes passaram; catálogo sem erros, com um aviso de índices IMG idênticos. `npm ci` informou cinco vulnerabilidades altas existentes; não houve correção de dependências nesta tarefa. A suíte de fontes que inicia servidor de fixtures apresentou `width is not defined` na tentativa anterior e permanece fora do fluxo autorizado. Não houve validação Linux/x86 nem deploy de produção.
+
+## Fontes locais das dependências (desenvolvimento Docker)
+
+Os serviços existentes `frontend` e `backend` instalam dependências pelos entrypoints na inicialização. `npm ci --include=dev` preenche fisicamente `frontend/node_modules` (container `/app/frontend/node_modules`); `bundle install` com lockfile congelado preenche `backend/vendor/bundle/ruby/3.4.0/` (ABI Ruby atual) (container `/app/backend/vendor/bundle`). Esses caminhos pertencem aos bind mounts de código existentes, sem volume ou tmpfs aninhado de dependências. Pacotes nas camadas das imagens permanecem separados; a instalação de desenvolvimento não depende de arquivos ocultos pelos mounts. O startup precisa de acesso aos registries quando faltam pacotes locais; npm substitui sua árvore a cada inicialização e Bundler reaproveita gems instaladas conforme o lockfile. O cache npm fica em `/tmp` no container; recriações geralmente exigem acesso ao registry.
+
+Na raiz do repositório, após preparar `.env`:
+
+```sh
+docker compose config --quiet
+docker compose up -d --build --wait --wait-timeout 600
+# Atualizar após alterar lockfiles, sem concorrer com processos ativos:
+docker compose stop frontend backend
+docker compose up -d --wait --wait-timeout 600 backend frontend
+# Recriar somente containers de aplicação; preservar PostgreSQL e seus dados:
+docker compose up -d --force-recreate --no-deps --wait --wait-timeout 600 backend frontend
+# Inspecionar resolução nos serviços existentes ativos:
+docker compose exec -T frontend node -p 'require.resolve("next/package.json")'
+docker compose exec -T backend bundle check
+docker compose exec -T backend bundle show rails
+```
+
+Não é necessário Node.js, npm, Ruby ou Bundler no host. Mantenha as pastas graváveis pelo `LOCAL_UID`/`LOCAL_GID` configurado (padrão 1000:1000 no Docker Desktop); a instalação usa esse usuário, sem alterações recursivas de permissões. O conteúdo gerado já é ignorado pelo Git e pelos contextos Docker; preserve `backend/vendor/.keep` versionado. `.next`, logs e temporários Rails continuam efêmeros. Nunca exclua dados do banco nem use `docker compose down -v` para atualizar dependências. Targets de dependências e seus caminhos de instalação nas imagens permanecem inalterados; esses entrypoints e mounts do Compose são de desenvolvimento.
+
+VS Code pode ler fontes dos pacotes, declarações TypeScript e fontes das gems locais. O `frontend/tsconfig.json` inspecionado usa resolução bundler, plugin Next e alias `@/*`; não é necessário adicionar alias para caminhos do container. Os diretórios de tipos gerados em `.next` continuam em tmpfs apenas no container, indisponíveis localmente. O `.vscode/settings.json` ignorado inspecionado contém somente cores. A instalação local do VS Code tem suporte TypeScript integrado; nenhuma extensão Ruby foi encontrada em seu diretório local de extensões. Isso não é uma verificação de diagnósticos ao vivo. Gems físicas não fornecem IntelliSense Ruby sozinhas: Ruby LSP exige extensão, Ruby compatível e processo de language server ([documentação Ruby do VS Code](https://code.visualstudio.com/docs/languages/ruby)). Nenhum runtime, extensão ou arquitetura remota de editor foi instalado; solicite aprovação antes de introduzir essa abordagem. A execução da extensão ESLint também não foi validada. Módulos e gems nativos Linux executam nos containers, não no macOS. Comandos e verificações da aplicação continuam em Docker.
+
+## Validação das dependências no host — 2026-10-21
+
+Em macOS ARM64 com containers Docker Linux ARM64, `frontend/node_modules` estava inicialmente vazio e `backend/vendor` continha somente `.keep`. Os serviços existentes do Compose foram construídos e iniciados com sucesso, instalando pacotes dos lockfiles nos bind mounts. Os mounts efetivos foram inspecionados: nenhum volume nomeado/anônimo ou tmpfs mascara os caminhos de dependências. Arquivos regulares (sem symlinks exclusivos do container) foram lidos e verificados quanto a acesso de leitura/escrita no host: `frontend/node_modules/next/package.json`, `react/index.js`, `typescript/lib/typescript.d.ts` e `backend/vendor/bundle/ruby/3.4.0/gems/railties-8.1.4/lib/rails.rb`; os arquivos amostrados tinham modo 0644. Seus hashes SHA-256 coincidiram após recriação forçada de backend/frontend. Node resolveu Next em `/app/frontend/node_modules`; Bundler resolveu Rails, pg, Nokogiri e Puma em `/app/backend/vendor/bundle`. Dependências Ruby nativas foram carregadas com sucesso no Linux.
+
+Passaram as verificações executadas: configuração Compose, sintaxe shell, builds das imagens e startup, lint/typecheck/100 testes unitários/build otimizado isolado do frontend, Bundler check, Zeitwerk Rails, preparação do banco de testes e 25 testes Rails (408 assertions). Após a recriação, os três serviços ficaram saudáveis; verificações HTTP dentro do frontend retornaram 200 para a raiz do frontend e `/up` do backend. O ID do container PostgreSQL permaneceu igual; contagens e hashes dos registros completos de 60 notas, 60 destaques e 12 marcadores coincidiram antes/depois da recriação das aplicações. Não houve exclusão de volumes, operação no histórico Git nem upgrade de dependências. As regras existentes excluem dependências geradas do Git/contextos de build; `backend/vendor/.keep` versionado permanece.
+
+A validação do catálogo documental passou com um aviso de documentos idênticos; seus 22 testes passaram. npm reportou cinco vulnerabilidades altas e ESLint 9 sem suporte; nenhum audit fix foi aplicado. Downloads Playwright tiveram falhas de DNS nas URLs Microsoft e concluíram pelas URLs alternativas. Os testes Node emitiram avisos de tipo de módulo. Diagnósticos ao vivo do VS Code, IntelliSense Ruby e execução macOS das dependências nativas Linux não foram testados. Nenhuma extensão, runtime ou arquitetura alternativa de editor foi adicionada.

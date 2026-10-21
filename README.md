@@ -30,7 +30,6 @@ docker compose up --build
 docker compose down
 ```
 
-Docker uses only `docker/Dockerfile`, with `backend-dependencies`, `backend-development`, `frontend-dependencies` and `frontend-development` targets. Compose builds the runtimes independently; dependencies stay in images and development caches use tmpfs. Rails runs `db:prepare catalog:sync` before serving. After updating dependencies and their lockfiles, run `docker compose up -d --build`. No manual frontend restart is required.
 
 Frontend: http://localhost:3099 · Rails: http://localhost:3098/up · PostgreSQL/DBeaver: `localhost:5499`, database `engineering_library`. Rails → `postgres:5432`.
 
@@ -49,3 +48,27 @@ Optional demos, with services running (shell at repository root):
 docker compose exec -T frontend npm run notes:demos
 docker compose exec -T frontend npm run notes:demos:cleanup
 ```
+
+## Local dependency sources (Docker development)
+
+The existing `frontend` and `backend` services install dependencies through their entrypoints at startup. `npm ci --include=dev` populates physical `frontend/node_modules` (container `/app/frontend/node_modules`); frozen `bundle install` populates `backend/vendor/bundle/ruby/3.4.0/` (the current Ruby ABI) (container `/app/backend/vendor/bundle`). These paths are part of the existing source bind mounts, with no nested dependency volume or tmpfs. Image-layer packages remain separate; development installs do not depend on files hidden by source mounts. Startup needs registry access when packages are unavailable locally; npm replaces its dependency tree on every startup, while Bundler reuses installed locked gems. The npm cache is container-local under `/tmp`, so recreation generally needs registry access.
+
+From the repository root, after preparing `.env`:
+
+```sh
+docker compose config --quiet
+docker compose up -d --build --wait --wait-timeout 600
+# Refresh dependencies after changing lockfiles, without racing live processes:
+docker compose stop frontend backend
+docker compose up -d --wait --wait-timeout 600 backend frontend
+# Recreate only application containers; preserve PostgreSQL and its data:
+docker compose up -d --force-recreate --no-deps --wait --wait-timeout 600 backend frontend
+# Inspect resolution inside the existing running services:
+docker compose exec -T frontend node -p 'require.resolve("next/package.json")'
+docker compose exec -T backend bundle check
+docker compose exec -T backend bundle show rails
+```
+
+No host Node.js, npm, Ruby or Bundler is required. Keep the directories writable by the configured `LOCAL_UID`/`LOCAL_GID` (default 1000:1000 on Docker Desktop); installs run as this user, without recursive permission changes. Generated contents are already ignored by Git and Docker contexts; preserve tracked `backend/vendor/.keep`. `.next`, Rails logs and temporary files remain ephemeral. Never delete database data or use `docker compose down -v` to refresh dependencies. Dependency image targets and their installation paths are unchanged; these entrypoints and Compose mounts are for development.
+
+VS Code can read local package sources, TypeScript declarations and Ruby gem sources. The checked `frontend/tsconfig.json` uses bundler module resolution, the Next plugin and the `@/*` alias; no additional alias to container paths is needed. Its `.next` generated type directories remain container-only tmpfs, so those declarations are not available locally. The ignored `.vscode/settings.json` inspected here contains only color settings. The local VS Code installation has built-in TypeScript support; no Ruby language extension was found in its local extensions directory. This is not a live diagnostics check. Physical gems alone do not provide Ruby IntelliSense: Ruby LSP needs an extension, a compatible Ruby and a language-server process ([VS Code Ruby documentation](https://code.visualstudio.com/docs/languages/ruby)). No runtime, extension or remote editor architecture was installed; ask for approval before introducing such an approach. ESLint extension execution is also not validated. Linux native modules and gems are for container execution, not macOS execution. Application commands and checks remain in Docker.

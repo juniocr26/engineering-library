@@ -26,6 +26,8 @@ services:
     environment:
       HOME: /tmp
       RAILS_ENV: development
+      BUNDLE_PATH: /app/backend/vendor/bundle
+      BUNDLE_FROZEN: "true"
       CATALOG_ROOT: /docs/projects
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Set SECRET_KEY_BASE}
       POSTGRES_HOST: postgres
@@ -70,9 +72,8 @@ services:
       # Explicit maintenance output and approved source input; no new service.
       - ./docs:/docs
       - ..:/sources:ro
-    # Mask host packages/cache; Linux dependencies resolve from /app/node_modules.
+    # Dependencies use the source bind mount; only the build cache is ephemeral.
     tmpfs:
-      - /app/frontend/node_modules:mode=0555
       - /app/frontend/.next:mode=1777
     ports:
       - "127.0.0.1:${FRONTEND_PORT:-3099}:3000"

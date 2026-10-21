@@ -19,3 +19,7 @@ Other catalog projects document their source repositories, rather than operation
 Bilingual engineering knowledge and interview library with a Rails/Next.js/PostgreSQL development scaffold. Includes a book-themed bilingual frontend and a PostgreSQL-backed catalog API; the internal Markdown reader supports measured pagination, search, chapters and shared PostgreSQL bookmarks.
 
 [Project bio](bio/en.md)
+
+## Local dependency sources
+
+Docker development installs physical sources in `frontend/node_modules` and `backend/vendor/bundle`, using the existing services and lockfiles. See [installation, refresh and VS Code limitations](docs/en/guides/application-development.md#local-dependency-sources-docker-development). Runtime execution stays in Docker.

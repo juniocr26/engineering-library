@@ -19,7 +19,7 @@ ENTRYPOINT ["backend-entrypoint"]
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
 
 FROM node:24.22.0-bookworm-slim AS frontend-dependencies
-# Dependencies live above the source mount and remain available to Node/npm.
+# Image dependency target remains independent of development bind-mount installs.
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY frontend/package.json frontend/package-lock.json ./

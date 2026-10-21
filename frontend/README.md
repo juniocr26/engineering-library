@@ -32,3 +32,9 @@ fingerprint-aware bookmarks. See [source-reference architecture](../docs/project
 and the [Portuguese version](../docs/projects/engineering-library/docs/pt-BR/architecture/source-references.md).
 Generate approved snapshots explicitly with `tools/build-source-catalog.ts`;
 the reader never reads sibling repositories at runtime.
+
+## Local dependencies / Dependências locais
+
+The existing Compose services install physical dependency sources in `frontend/node_modules` and `backend/vendor/bundle`. All runtimes and package managers stay in Docker. See [installation, refresh and VS Code limitations](../docs/projects/engineering-library/docs/en/guides/application-development.md#local-dependency-sources-docker-development).
+
+Os serviços existentes do Compose instalam fontes físicas em `frontend/node_modules` e `backend/vendor/bundle`. Runtimes e gerenciadores permanecem no Docker. Consulte [instalação, atualização e limitações do VS Code](../docs/projects/engineering-library/docs/pt-BR/guides/application-development.md#fontes-locais-das-dependências-desenvolvimento-docker).

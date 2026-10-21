@@ -19,3 +19,7 @@ Os documentos dos demais projetos são referências dos repositórios de origem,
 Biblioteca bilíngue de engenharia e entrevistas com scaffold Rails/Next.js/PostgreSQL. Inclui frontend bilíngue em formato de livro e API de catálogo com PostgreSQL; o leitor Markdown interno oferece paginação medida, busca, capítulos e marcações compartilhadas no PostgreSQL.
 
 [Bio do projeto](bio/pt-BR.md)
+
+## Fontes locais das dependências
+
+O desenvolvimento Docker instala fontes físicas em `frontend/node_modules` e `backend/vendor/bundle`, pelos serviços e lockfiles existentes. Consulte [instalação, atualização e limitações do VS Code](docs/pt-BR/guides/application-development.md#fontes-locais-das-dependências-desenvolvimento-docker). A execução permanece no Docker.

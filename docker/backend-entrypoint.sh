@@ -1,7 +1,10 @@
 #!/bin/sh
 set -eu
 
-# Dependencies are installed in the image, never into a shared host directory.
+# Compose development installs into the source bind mount, hidden from image gems.
+if [ "${RAILS_ENV:-}" = development ]; then
+  bundle install
+fi
 bundle check
 if [ "${1:-}" = bundle ] && [ "${2:-}" = exec ] && [ "${3:-}" = rails ] && [ "${4:-}" = server ]; then
   mkdir -p tmp/pids
