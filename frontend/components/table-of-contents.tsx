@@ -66,7 +66,7 @@ export function TableOfContents({ entries, slug, language, projectName, catalogP
         setExpanded(next);
       }}>{expandedIds.has(entry.id) ? '−' : '+'}</button> : null;
       return <div className="toc-row" style={{ paddingInlineStart: `${Math.min(entry.depth ?? (entry.heading ? 0 : 1), 5) * 10}px` }}>
-        {toggle}{entry.heading ? <h2 className="toc-chapter">{content}</h2> : <div className="toc-document">{content}</div>}
+        {toggle}{entry.heading ? <h2 className="toc-chapter chapter-title" data-chapter-depth={entry.depth}>{content}</h2> : <div className="toc-document chapter-title" data-chapter-depth={entry.depth}>{content}</div>}
       </div>;
     }}/>;
   }}</ReaderTools></div>;

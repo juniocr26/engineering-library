@@ -23,6 +23,7 @@ import { headingTitle, numberedHeading, numberHeadingUnits } from '../lib/headin
         const entry = entries.find(e => e.id === unit.navigationId)!;
         assert.ok(entry);
         assert.equal(unit.navigationNumber, entry.number);
+        assert.equal(unit.navigationDepth, entry.depth);
         const tree: Root = { type: 'root', children: [{type: 'element', tagName: `h${unit.headingDepth}`, properties: {}, children: [{type: 'text', value: unit.text}]}] };
         numberedHeading(unit.navigationNumber)()(tree);
         const element = tree.children[0];

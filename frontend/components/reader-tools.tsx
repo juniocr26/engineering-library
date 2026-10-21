@@ -88,7 +88,7 @@ function Search({ project, language, close }: { project: string; language: Langu
 
 export function ReaderTools({ project, projectName, document: documentId, language, entries, title, headings = [], children }: {
   project: string; projectName?: string; document: string; language: Language; entries: TocEntry[]; title: string;
-  headings?: { id: string; text: string; navigationNumber?: string }[];
+  headings?: { id: string; text: string; navigationNumber?: string; navigationDepth?: number }[];
   children: (tools: { toolbar: (action: ReactNode) => ReactNode; pageAction: (page: BookUnit[]) => ReactNode }) => ReactNode;
 }) {
   const en = language === 'en';
@@ -142,8 +142,8 @@ export function ReaderTools({ project, projectName, document: documentId, langua
       {panel === 'annotations' && <AnnotationsPanel key={`${project}/${language}`} project={project} language={language} entries={entries} documentId={documentId} headings={headings} close={() => setPanel(null)}/>}
       {panel === 'search' && <Search project={project} language={language} close={() => setPanel(null)}/>}
       {panel === 'chapters' && <>
-        {headings.length > 0 && <h3>{title}</h3>}<ul className="reader-panel-list">{headings.map(unit => <li key={unit.id}><a href={`#${encodeURIComponent(unit.id)}`} onClick={() => setPanel(null)}>{unit.navigationNumber ? `${unit.navigationNumber} ${headingTitle(unit.text, unit.navigationNumber)}` : unit.text}</a></li>)}</ul>
-        <h3>{en ? 'Project documents' : 'Documentos do projeto'}</h3><ul className="reader-panel-list">{entries.map(entry => <li key={entry.id}>{entry.href ? <Link href={entry.href} aria-current={entry.id === documentId ? 'page' : undefined} onClick={() => setPanel(null)}>{entry.number} {headingTitle(entry.title, entry.number)}</Link> : <strong>{entry.number} {headingTitle(entry.title, entry.number)}</strong>}</li>)}</ul>
+        {headings.length > 0 && <h3>{title}</h3>}<ul className="reader-panel-list">{headings.map(unit => <li key={unit.id} className="chapter-title" data-chapter-depth={unit.navigationDepth}><a href={`#${encodeURIComponent(unit.id)}`} onClick={() => setPanel(null)}>{unit.navigationNumber ? `${unit.navigationNumber} ${headingTitle(unit.text, unit.navigationNumber)}` : unit.text}</a></li>)}</ul>
+        <h3>{en ? 'Project documents' : 'Documentos do projeto'}</h3><ul className="reader-panel-list">{entries.map(entry => <li key={entry.id} className="chapter-title" data-chapter-depth={entry.depth}>{entry.href ? <Link href={entry.href} aria-current={entry.id === documentId ? 'page' : undefined} onClick={() => setPanel(null)}>{entry.number} {headingTitle(entry.title, entry.number)}</Link> : <div>{entry.number} {headingTitle(entry.title, entry.number)}</div>}</li>)}</ul>
       </>}
       {panel === 'bookmarks' && <>
         <p>{en ? 'Shared in this local installation, organized by project and language.' : 'Compartilhadas nesta instalação local, organizadas por projeto e idioma.'}</p>

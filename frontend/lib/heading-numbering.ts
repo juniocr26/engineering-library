@@ -16,7 +16,7 @@ export function numberHeadingUnits(units: MarkdownUnit[], entries: TocEntry[], d
     if (unit.heading === undefined) return unit;
     const entry = sections.get(unit.id) ?? (first && unit.headingDepth === 1 ? title : undefined);
     first = false;
-    return entry ? { ...unit, navigationNumber: entry.number, navigationId: entry.id } : unit;
+    return entry ? { ...unit, navigationNumber: entry.number, navigationId: entry.id, navigationDepth: entry.depth } : unit;
   });
 }
 
