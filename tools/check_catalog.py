@@ -67,8 +67,9 @@ def main():
             raise ValueError('Invalid catalog lifecycle policy')
         temporary = set(names)
     # Historical provenance remains intact; it is not the permanent catalog.
-    projects = {slug: record for slug, record in manifest['projects'].items() if slug not in temporary}
     actual = project_directories(docs)
+    projects = {slug: record for slug, record in manifest['projects'].items()
+                if slug in actual and slug not in temporary}
     if actual != set(projects): errors.append(['project-collection-inventory-mismatch', sorted(actual)])
     private = {'vivabem', 'carteira-digital', 'cofre-paciente', 'hub-vivabem'}
     imported = 0
