@@ -11,8 +11,9 @@ RUN bundle install && bundle clean --force
 FROM backend-dependencies AS backend-development
 ENV RAILS_ENV=development HOME=/tmp
 COPY --chown=1000:1000 backend/ ./
-RUN mkdir -p tmp/pids log && chown -R 1000:1000 /app/backend
+RUN command -v make >/dev/null && mkdir -p tmp/pids log && chown -R 1000:1000 /app/backend
 COPY --chmod=755 docker/backend-entrypoint.sh /usr/local/bin/backend-entrypoint
+RUN sed -i 's/\r$//' /usr/local/bin/backend-entrypoint
 USER 1000:1000
 EXPOSE 3000
 ENTRYPOINT ["backend-entrypoint"]
@@ -39,6 +40,7 @@ WORKDIR /app/frontend
 COPY --chown=1000:1000 frontend/ ./
 RUN chown 1000:1000 /app/frontend
 COPY --chmod=755 docker/frontend-entrypoint.sh /usr/local/bin/frontend-entrypoint
+RUN sed -i 's/\r$//' /usr/local/bin/frontend-entrypoint
 USER 1000:1000
 EXPOSE 3000
 ENTRYPOINT ["frontend-entrypoint"]

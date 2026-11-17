@@ -2,10 +2,13 @@
 set -eu
 
 # Compose development installs into the source bind mount, hidden from image gems.
-if [ "${RAILS_ENV:-}" = development ]; then
+if ! bundle check; then
+  if [ "${RAILS_ENV:-}" != development ]; then
+    exit 1
+  fi
   bundle install
+  bundle check
 fi
-bundle check
 if [ "${1:-}" = bundle ] && [ "${2:-}" = exec ] && [ "${3:-}" = rails ] && [ "${4:-}" = server ]; then
   mkdir -p tmp/pids
   rm -f tmp/pids/server.pid

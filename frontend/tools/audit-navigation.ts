@@ -1,11 +1,12 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { collectionPath, languageDirectory } from '../lib/catalog-paths.ts';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import GithubSlugger from 'github-slugger';
 
-const root = process.env.DOCUMENTATION_ROOT ?? path.resolve(process.cwd(), '../docs/projects');
+const root = process.env.DOCUMENTATION_ROOT ?? path.resolve(process.cwd(), '../docs');
 const text = (node: { value?: string; children?: unknown[] }): string => node.value ?? (node.children ?? []).map(child => text(child as Parameters<typeof text>[0])).join('');
 async function files(dir: string): Promise<string[]> {
   return (await Promise.all((await readdir(dir, { withFileTypes: true })).filter(e => !e.isSymbolicLink()).map(e => e.isDirectory() ? files(path.join(dir, e.name)) : e.name.endsWith('.md') ? [path.join(dir, e.name)] : []))).flat();
@@ -13,9 +14,10 @@ async function files(dir: string): Promise<string[]> {
 const projects = [];
 for (const project of (await readdir(root, { withFileTypes: true })).filter(e => e.isDirectory()).map(e => e.name).sort()) {
   const documents = [];
-  for (const file of (await files(path.join(root, project))).sort()) {
-    const relative = path.relative(path.join(root, project), file);
-    const language = relative.startsWith('docs/en/') || relative === 'README.md' ? 'en' : relative.startsWith('docs/pt-BR/') || relative === 'README.pt-BR.md' ? 'pt-BR' : undefined;
+  for (const folder of ['en', 'pt-br']) for (const file of (await files(path.join(root, project, folder))).sort()) {
+    const relative = `${folder}/${path.relative(path.join(root, project, folder), file)}`;
+    if (relative.endsWith('/bio.md')) continue;
+    const language = relative.startsWith('en/') ? 'en' : relative.startsWith('pt-br/') ? 'pt-BR' : undefined;
     const source = await readFile(file, 'utf8');
     const slugger = new GithubSlugger();
     const stack: { depth: number; anchor: string }[] = [];
@@ -85,17 +87,17 @@ if (process.argv.includes('--validate')) {
         }
       }
       for (const doc of project.documents.filter(d => d.language === language)) {
-        const id = doc.relative.startsWith('README') ? 'README' : doc.relative.slice(`docs/${language}/`.length);
+        const id = doc.relative.endsWith('/README.md') ? 'README' : doc.relative.slice(`${languageDirectory(language)}/`.length);
         const entry = byId.get(id);
         if (!entry) {
-          const source = await readFile(path.join(root, project.project, doc.relative), 'utf8');
+          const source = await readFile(path.join(root, collectionPath(project.project, doc.relative)), 'utf8');
           const navigationOnly = !source.split('\n').filter(line => line.trim() && !/^#\s|^\s*(?:[-*]\s+)?\[[^\]]+\]\([^)]+\)\s*$/.test(line)).length;
           const reason = id === 'index.md' ? 'project navigation index' : id === 'faq/study-guide.md' ? 'legacy compatibility study guide (existing FAQ duplicates retained on disk)' : navigationOnly && id.endsWith('/index.md') ? 'navigation-only index' : undefined;
           excluded.push({ id, reason: reason ?? 'UNEXPECTED OMISSION', headings: doc.headings.length });
           if (!reason) errors.push(`${language}: omitted document ${id}`);
           continue;
         }
-        const units = markdownUnits(await readFile(path.join(root, project.project, doc.relative), 'utf8'));
+        const units = markdownUnits(await readFile(path.join(root, collectionPath(project.project, doc.relative)), 'utf8'));
         const numbered = numberHeadingUnits(units, entries, id);
         for (const unit of numbered.filter(u => u.heading !== undefined)) {
           const canonical = entries.find(e => e.id === unit.navigationId);

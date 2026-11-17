@@ -1,5 +1,17 @@
 name: engineering-library
 services:
+  ollama:
+    image: ollama/ollama:0.40.16@sha256:910d0d8107b538fb0894e63163eb195de0cc7aefcbc666dc62d3b18f71124592
+    environment:
+      OLLAMA_NO_CLOUD: "1"
+    volumes:
+      - ./ollama:/root/.ollama
+    healthcheck:
+      test: [CMD, ollama, list]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 12
   postgres:
     image: postgres:18-bookworm
     environment:
@@ -28,15 +40,19 @@ services:
       RAILS_ENV: development
       BUNDLE_PATH: /app/backend/vendor/bundle
       BUNDLE_FROZEN: "true"
-      CATALOG_ROOT: /docs/projects
+      CATALOG_ROOT: /docs
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Set SECRET_KEY_BASE}
       POSTGRES_HOST: postgres
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - ./docs/projects:/docs/projects:ro
+      # make docs owns only documentation/state; application sources stay read-only.
+      - ./docs:/docs
       - ./backend:/app/backend
+      - ./agent:/agent:ro
+      - ..:/sources:ro
+      # Per-project docs/ write mounts are prepared by tools/prepare_docs_mounts.py.
     tmpfs:
       - /app/backend/tmp:mode=1777
       - /app/backend/log:mode=1777
@@ -49,7 +65,8 @@ services:
       test: [CMD, ruby, -rnet/http, -e, 'exit(Net::HTTP.get_response(URI("http://127.0.0.1:3000/up")).code == "200" ? 0 : 1)']
       interval: 5s
       timeout: 3s
-      start_period: 120s
+      # Cold gem installation and Rails boot also run on Windows bind mounts.
+      start_period: 300s
       retries: 30
   frontend:
     build:
@@ -64,8 +81,9 @@ services:
       BROWSER_BASE_URL: http://localhost:3000
       BOOK_READER_URL: http://localhost:3000
       BACKEND_URL: http://backend:3000
-      DOCUMENTATION_ROOT: /docs/projects
+      DOCUMENTATION_ROOT: /docs
       NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "${WATCHPACK_POLLING:-1000}"
     volumes:
       - ./docs/img:/docs/img:ro
       - ./frontend:/app/frontend
@@ -84,5 +102,6 @@ services:
       test: [CMD, node, -e, 'fetch("http://127.0.0.1:3000").then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))']
       interval: 10s
       timeout: 8s
-      start_period: 120s
+      # Cold npm installation and Next.js compilation also use Windows shares.
+      start_period: 300s
       retries: 20

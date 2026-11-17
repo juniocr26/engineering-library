@@ -1,3 +1,4 @@
+import { languageDirectory } from '../lib/catalog-paths.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
@@ -9,7 +10,7 @@ test('all six heading levels, 120 FAQ questions, explicit bilingual IDs and docu
   process.env.DOCUMENTATION_ROOT = root;
   try {
     for (const language of ['en', 'pt-BR']) {
-      const directory = path.join(root, 'sample/docs', language, 'faq');
+      const directory = path.join(root, 'sample', languageDirectory(language as 'en' | 'pt-BR'), 'faq');
       await mkdir(directory, { recursive: true });
       await writeFile(path.join(directory, 'index.md'), `# FAQ\n\n<!-- reading-section:basics -->\n## ${language === 'en' ? 'Basics' : 'Fundamentos'}\n\n` + Array.from({ length: 120 }, (_, i) => `### Q${String(i + 1).padStart(3, '0')} — ${language} question\nAnswer\n`).join('\n') + '\n#### Detail\n##### Deeper\n###### Deepest\n\n```md\n## Not a heading\n```\n');
     }

@@ -10,12 +10,12 @@ import { resolveDocumentLink } from '../lib/document-links.ts';
 
 test('source links preserve project boundaries, line ranges and immutable revisions', () => {
   const resolve = (href: string) => sourceTarget('rust-event-relay', 'env/index.md', 'en', href);
-  assert.deepEqual(resolve('../../../../../../../rust-event-relay/backend/src/main.rs#L12-L18'), { path: 'backend/src/main.rs', start: 12, end: 18 });
-  assert.equal(resolve('../../../../../../../env-auditor/scripts/audit-envs.py'), null);
+  assert.deepEqual(resolve('../../../../../rust-event-relay/backend/src/main.rs#L12-L18'), { path: 'backend/src/main.rs', start: 12, end: 18 });
+  assert.equal(resolve('../../../../../url-shortener/scripts/audit-envs.py'), null);
   for (const href of ['#code', '../guide.md', 'https://example.com/main.rs', '/etc/passwd', '../../../../../etc/test.rs', '../../../../../rust-event-relay/%2e%2e/other.rs', 'file:///tmp/a.rs']) assert.equal(resolve(href), null);
   assert.deepEqual(resolve('https://github.com/juniocr26/rust-event-relay/blob/abc/backend/src/main.rs#L2'), { path: 'backend/src/main.rs', revision: 'abc', start: 2, end: 2 });
   assert.equal(resolve('https://github.com/other/rust-event-relay/blob/main/main.rs'), null);
-  assert.equal(resolve('../../../../../../../rust-event-relay/main.rs#L9-L2'), null);
+  assert.equal(resolve('../../../../../rust-event-relay/main.rs#L9-L2'), null);
 });
 test('shared measured pagination consumes each complete line once and resolves stable locations on resize', () => {
   const code = { id: 'source', path: 'file.rs', href: '', language: 'rust', status: 'available' as const, start: 20, lines: Array.from({ length: 150 }, (_, i) => `line ${i}`) };
@@ -31,14 +31,14 @@ test('shared measured pagination consumes each complete line once and resolves s
   assert.equal(sourceUnits([{ id: 'before', references: [code] }], new Set()).length, 1);
 });
 test('ordinary navigation and reference-style links retain their semantics', () => {
-  const units = markdownUnits('- [source][code]\n- [docs](../guide.md)\n\n[code]: ../../../../../../../env-auditor/scripts/audit-envs.py');
+  const units = markdownUnits('- [source][code]\n- [docs](../guide.md)\n\n[code]: ../../../../../url-shortener/scripts/audit-envs.py');
   assert.equal(units.length, 2);
-  assert.deepEqual(units[0].links, ['../../../../../../../env-auditor/scripts/audit-envs.py']);
-  assert.equal(resolveDocumentLink('env-auditor', 'env/index.md', 'en', '../../../../../../../env-auditor/docs/en/guide.md#setup'), '/projects/env-auditor/docs/guide.md?lang=en#setup');
-  assert.equal(resolveDocumentLink('env-auditor', 'env/index.md', 'en', 'https://github.com/juniocr26/env-auditor/blob/main/docs/en/guide.md'), '/projects/env-auditor/docs/guide.md?lang=en');
+  assert.deepEqual(units[0].links, ['../../../../../url-shortener/scripts/audit-envs.py']);
+  assert.equal(resolveDocumentLink('url-shortener', 'env/index.md', 'en', '../../../../../url-shortener/docs/en/guide.md#setup'), '/projects/url-shortener/docs/guide.md?lang=en#setup');
+  assert.equal(resolveDocumentLink('url-shortener', 'env/index.md', 'en', 'https://github.com/juniocr26/url-shortener/blob/main/docs/en/guide.md'), '/projects/url-shortener/docs/guide.md?lang=en');
 });
 test('every catalog project, both languages: approved references resolve and documents without code remain unchanged', async () => {
-  for (const project of ['engineering-library', 'env-auditor', 'go-image-optimizer', 'payment-reconciliation-lab', 'rust-event-relay', 'url-shortener']) for (const language of ['en', 'pt-BR'] as const) {
+  for (const project of ['engineering-library', 'go-image-optimizer', 'payment-reconciliation-lab', 'rust-event-relay', 'url-shortener']) for (const language of ['en', 'pt-BR'] as const) {
     let approved = 0; let plain = 0;
     for (const entry of (await documentationEntries(project, language)).filter(e => e.href && !e.documentId)) {
       const source = await documentationSource(project, entry.id, language);

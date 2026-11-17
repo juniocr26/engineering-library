@@ -11,11 +11,10 @@ module Api
     end
     def icon
       project = CatalogProject.find_by!(slug: params[:id], active: true)
-      svg = Catalog::Files.read(project.slug, "bio/icon.svg")
-      # Only locally maintained SVGs with no active or external content.
-      return head :not_found if svg.match?(/<script|<foreignObject|\bon\w+\s*=|href\s*=|<!DOCTYPE|<!ENTITY/i)
+      image = Catalog::Files.read(project.slug, "img/icon.webp", encoding: Encoding::BINARY)
+      return head :not_found unless image.start_with?("RIFF") && image.byteslice(8, 4) == "WEBP"
       response.headers["Content-Security-Policy"] = "default-src 'none'; style-src 'none'; sandbox"
-      send_data svg, type: "image/svg+xml", disposition: "inline"
+      send_data image, type: "image/webp", disposition: "inline"
     rescue Errno::ENOENT
       head :not_found
     end

@@ -10,9 +10,7 @@ const base = process.env.BOOK_READER_URL || 'http://localhost:3000';
     const page = await browser.newPage({viewport:{width:1728,height:980}, reducedMotion:'reduce'});
     const ready = () => page.locator('.reader[data-pagination="ready"] .reader-stage[aria-busy="false"]').waitFor();
     for (const report of reports) for (const localized of report.languages) {
-      const target = report.project === 'env-auditor'
-        ? localized.tree.find(e => e.id.includes('#section:') && e.documentId?.startsWith('architecture/')) || localized.tree.find(e => e.documentId?.startsWith('architecture/'))
-        : localized.tree.filter(e => e.documentId === 'faq/index.md').at(-1);
+      const target = localized.tree.filter(e => e.documentId === 'faq/index.md').at(-1);
       assert.ok(target);
       await page.goto(base + target.href);
       await ready();

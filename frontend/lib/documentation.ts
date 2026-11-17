@@ -2,14 +2,17 @@ import { readdir, readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { categoryLabels, type Language } from './i18n.ts';
 import { markdownUnits } from './markdown.ts';
+import { collectionPath, languageDirectory } from './catalog-paths.ts';
 import { documentHref, sourcePath } from './document-links.ts';
+const documentationRoot = () => process.env.DOCUMENTATION_ROOT ?? path.resolve(process.cwd(), '../docs');
 export type TocEntry = { id: string; number: string; title: string; href?: string; heading?: boolean; keepWithNext?: boolean; parentId?: string; documentId?: string; anchor?: string; depth?: number };
-const root = process.env.DOCUMENTATION_ROOT ?? path.resolve(process.cwd(), '../docs/projects');
+
 const titleOf = (source: string, fallback: string) => source.match(/^#\s+(.+)$/m)?.[1]?.replace(/\s+—.*$/, '') ?? fallback;
 export async function documentationEntries(slug: string, language: Language): Promise<TocEntry[]> {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return [];
+  const root = documentationRoot();
   let directory: string;
-  try { directory = await realpath(path.join(root, slug)); if (!directory.startsWith((await realpath(root)) + path.sep)) return []; } catch { return []; }
+  try { directory = await realpath(root);  } catch { return []; }
   async function files(relative: string): Promise<string[]> {
     try { const resolved = await realpath(path.join(directory, relative));
       if (!resolved.startsWith(directory + path.sep)) return [];
@@ -19,15 +22,17 @@ export async function documentationEntries(slug: string, language: Language): Pr
   }
   const localized = await Promise.all((['en', 'pt-BR'] as const).map(async lang => {
     const sources = new Map<string, { source: string; relative: string }>();
-    for (const relative of await files(`docs/${lang}`)) {
+    for (const physical of await files(`${slug}/${languageDirectory(lang)}`)) {
+      const relative = physical.slice(`${slug}/`.length);
+      if (relative === `${languageDirectory(lang)}/README.md` || relative === `${languageDirectory(lang)}/bio.md`) continue;
       const source = (await collectionFile(slug, relative))?.toString('utf8');
       if (source === undefined) continue;
       // Navigation-only indexes contain a title, backlink and list of links. Preserve substantive indexes.
       const substantive = source.split('\n').filter(line => line.trim() && !/^#\s|^\s*(?:[-*]\s+)?\[[^\]]+\]\([^)]+\)\s*$/.test(line));
       if (relative.endsWith('/index.md') && !substantive.length) continue;
-      sources.set(relative.slice(`docs/${lang}/`.length), { source, relative });
+      sources.set(relative.slice(`${languageDirectory(lang)}/`.length), { source, relative });
     }
-    const relative = lang === 'en' ? 'README.md' : 'README.pt-BR.md';
+    const relative = `${languageDirectory(lang)}/README.md`;
     const readme = (await collectionFile(slug, relative))?.toString('utf8');
     if (readme !== undefined) sources.set('README', { source: readme, relative });
     return sources;
@@ -105,10 +110,11 @@ export async function documentationEntries(slug: string, language: Language): Pr
 export async function collectionFile(slug: string, relative: string): Promise<Buffer | null> {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !relative || relative.split('/').some(part => !part || part === '.' || part === '..') || /[\\\0]/.test(relative)) return null;
   try {
-    const base = await realpath(root);
+    const base = await realpath(documentationRoot());
+    const physical = collectionPath(slug, relative);
     const project = await realpath(path.join(base, slug));
     if (!project.startsWith(base + path.sep)) return null;
-    const file = await realpath(path.join(project, relative));
+    const file = await realpath(path.join(base, physical));
     if (!file.startsWith(project + path.sep)) return null;
     return await readFile(file);
   } catch { return null; }

@@ -51,7 +51,7 @@ const assert = require('node:assert/strict');
         const preview = page.locator('dialog.note-preview'); await preview.waitFor();
         for (const diagram of await preview.locator('.reader-diagram').all()) await diagram.locator('img').waitFor();
         assert.equal(await preview.getByRole('alert').count(), 0);
-        for (const src of ['/assets/writer-library.jpg', '/api/shared-assets/diagrams/reader-storage.svg', 'https://www.w3.org/Icons/w3c_home.svg']) {
+        for (const src of ['/assets/writer-library.webp', '/api/shared-assets/engineering-library/img/diagrams/reader-storage.webp', 'https://www.w3.org/Icons/w3c_home.svg']) {
           if (!note.body.includes(src)) continue;
           const graphic = preview.locator(`img[src="${src}"]`).first();
           await graphic.waitFor();

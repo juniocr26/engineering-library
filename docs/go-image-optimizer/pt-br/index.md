@@ -1,0 +1,84 @@
+# Catálogo de documentação: go-image-optimizer
+
+[Introdução do projeto](README.md) | [Outro idioma](../en/index.md)
+
+Percurso: propósito/setup → arquitetura/contratos → segurança/falhas → testes/evidência → operações. Na biblioteca: catálogo/dossiê → entrevista por projeto → fundamentos → falhas. Marcos/refactors/handoff históricos descrevem datas originais; revisão/checklist explica escopo atual.
+
+## architecture
+
+Componentes, fluxos e fronteiras implementadas.
+
+- [Arquitetura](architecture/overview.md)
+
+## adr
+
+Decisões e consequências; IDs/histórico preservados.
+
+- [ADR 001: Codecs nativos de imagem](adr/001-native-image-codecs.md)
+
+## guides
+
+Setup, pré-requisitos e procedimentos de leitura.
+
+- [Go Image Optimizer](guides/project-guide.md)
+
+## testing
+
+Estratégia, inventários e evidências datadas.
+
+- [Documentação de Testes](testing/strategy.md)
+- [Validação documental — 2026-10-06](../../engineering-library/pt-br/testing/documentation.md)
+
+## docker
+
+Imagens, serviços, mounts e configuração local.
+
+- [Desenvolvimento Docker e recuperação](docker/development.md)
+- [Docker](docker/runtime.md)
+
+## api
+
+Contratos expostos e comportamento de clientes.
+
+- [API de imagens e contrato do proxy](api/contracts.md)
+
+## operations
+
+Diagnóstico, recuperação, checklists e registros históricos.
+
+- [go-image-optimizer: Checklist de conclusão do repositório](operations/completion-checklist.md)
+- [Implantação, diagnóstico e evidência](operations/deployment-and-diagnosis.md)
+
+## security
+
+Autenticação, autorização, dados e recursos.
+
+- [Limites de recursos e código nativo](security/resource-boundaries.md)
+
+Aplicabilidade e omissões estão justificadas no [checklist](operations/completion-checklist.md). Não há categorias vazias.
+
+## Roteiro prático de implementação e entrevista
+
+[Acompanhe uma requisição, examine falhas e pratique respostas](guides/implementation-study.md).
+
+## Capítulos
+
+- [adr](adr/index.md)
+- [api](api/index.md)
+- [architecture](architecture/index.md)
+- [docker](docker/index.md)
+- [env](env/index.md)
+- [faq](faq/index.md)
+- [guides](guides/index.md)
+- [operations](operations/index.md)
+- [security](security/index.md)
+- [testing](testing/index.md)
+
+
+<!-- make-docs:source-summary:start -->
+- [Rascunho gerado do código (não revisado)](guides/generated-source-summary.md)
+<!-- make-docs:source-summary:end -->
+
+- [Avaliação local e recuperação](testing/documentation-agent-evaluation.md)
+
+- [Revisão factual do rascunho gerado](guides/generated-source-review.md)

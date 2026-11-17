@@ -5,7 +5,6 @@ class Note < ApplicationRecord
   belongs_to :highlight, optional: true
   validates :project, :document, :language, :anchor_digest, presence: true
   validates :language, inclusion: { in: %w[en pt-BR] }
-  validates :body, exclusion: { in: [nil] }
   validate :safe_content
 
   # Context is retained for relocation; identity is the original logical block/range.

@@ -1,3 +1,4 @@
+import { collectionPath } from './catalog-paths.ts';
 import { sourcePath } from './document-links.ts';
 import type { Language } from './i18n.ts';
 export type SourceTarget = { path: string; start?: number; end?: number; revision?: string };
@@ -15,9 +16,9 @@ export function sourceTarget(project: string, document: string, language: Langua
       file = match[3]; revision = match[2]; hash = url.hash;
     } else {
       if (/^[a-z][\w+.-]*:|^\//i.test(href)) return null;
-      const url = new URL(href, `https://reader.invalid/workspace/engineering-library/docs/projects/${project}/${sourcePath(document, language)}`);
+      const url = new URL(href, `https://reader.invalid/workspace/engineering-library/docs/${collectionPath(project, sourcePath(document, language))}`);
       const decoded = decodeURIComponent(url.pathname);
-      const collection = `/workspace/engineering-library/docs/projects/${project}/`;
+      const collection = `/workspace/engineering-library/docs/${project}/`;
       const repository = `/workspace/${project}/`;
       if (decoded.startsWith(collection)) file = decoded.slice(collection.length);
       else if (decoded.startsWith(repository)) file = decoded.slice(repository.length);

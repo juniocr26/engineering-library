@@ -1,0 +1,29 @@
+# Optional local search. No host port, API key, account or cloud model.
+services:
+  research:
+    image: searxng/searxng@sha256:932f69dca010db9880bddebb2171f05d8e1a25d04a59149ff65409993d680024
+    profiles: [research]
+    entrypoint: [/bin/sh, -c]
+    command:
+      - >-
+        export SEARXNG_SECRET=$$(/usr/local/searxng/.venv/bin/python -c 'import secrets; print(secrets.token_hex(32))');
+        exec /usr/local/searxng/entrypoint.sh
+    environment:
+      SEARXNG_SETTINGS_PATH: /etc/searxng/settings.yml
+      GRANIAN_WORKERS: "1"
+      GRANIAN_HOST: "0.0.0.0"
+      GRANIAN_PORT: "8080"
+      FORCE_OWNERSHIP: "false"
+    volumes:
+      - ./docker/research-settings.yml:/etc/searxng/settings.yml:ro
+    tmpfs:
+      - /etc/searxng:mode=1777
+      - /var/cache/searxng:mode=1777
+    mem_limit: 512m
+    cpus: 1
+    healthcheck:
+      test: [CMD, /usr/local/searxng/.venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 6

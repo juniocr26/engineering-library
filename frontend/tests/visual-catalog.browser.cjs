@@ -14,7 +14,7 @@ const assert = require('node:assert/strict');
       await page.goto(`${base}/projects/engineering-library/docs/img/visual-components.md?lang=${language}`);
       await page.locator('.reader[data-pagination="ready"]').waitFor();
       // Measurement contains every logical unit, including media on later leaves.
-      for (const src of ['/assets/writer-library.jpg', '/api/shared-assets/diagrams/reader-storage.svg', '/assets/icon-512.png', 'https://www.w3.org/Icons/w3c_home.svg', 'https://www.w3.org/Icons/valid-xhtml10.gif', '/assets/image-missing.svg']) {
+      for (const src of ['/assets/writer-library.webp', '/api/shared-assets/engineering-library/img/diagrams/reader-storage.webp', '/assets/icon-512.webp', 'https://www.w3.org/Icons/w3c_home.svg', 'https://www.w3.org/Icons/valid-xhtml10.gif', '/assets/image-missing.webp']) {
         const img = page.locator(`img[src="${src}"]`).first();
         await img.waitFor({state: 'attached'});
         await page.waitForFunction(element => element.complete && element.naturalWidth > 0, await img.elementHandle());

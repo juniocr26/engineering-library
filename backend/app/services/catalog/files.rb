@@ -1,20 +1,34 @@
 require "yaml"
+require "json"
 module Catalog
   class Files
     LANGUAGES = %w[pt-BR en].freeze
     SLUG = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/
     def self.root
-      Pathname.new(ENV.fetch("CATALOG_ROOT", Rails.root.join("../docs/projects").to_s)).realpath
+      Pathname.new(ENV.fetch("CATALOG_ROOT", Rails.root.join("../docs").to_s)).realpath
     end
-    def self.read(slug, relative)
+    def self.temporary_projects
+      policy = root.join('.catalog-policy.json')
+      return [] unless policy.exist? || policy.symlink?
+      raise ArgumentError, 'Symlink catalog policy rejected' if policy.symlink?
+      data = JSON.parse(policy.read)
+      slugs = data['temporary_projects'] if data.is_a?(Hash) && data['schema'] == 1
+      raise ArgumentError, 'Invalid catalog lifecycle policy' unless slugs.is_a?(Array) && slugs.all? { |slug| slug.is_a?(String) && SLUG.match?(slug) } && slugs.uniq == slugs
+      slugs
+    rescue JSON::ParserError
+      raise ArgumentError, 'Invalid catalog lifecycle policy'
+    end
+    def self.read(slug, relative, encoding: "UTF-8")
       raise ArgumentError, "Invalid project identifier" unless SLUG.match?(slug)
       raise ArgumentError, "Invalid relative path" if Pathname.new(relative).absolute? || relative.split("/").include?("..")
-      path = root.join(slug, relative).realpath
-      raise ArgumentError, "Outside catalog" unless path.to_s.start_with?(root.join(slug).to_s + "/") && path.to_s.start_with?(root.to_s + "/")
-      path.read(encoding: "UTF-8")
+      base = root.join(slug).realpath
+      raise ArgumentError, "Outside catalog" unless base.to_s.start_with?(root.to_s + "/")
+      path = base.join(relative).realpath
+      raise ArgumentError, "Outside catalog" unless path.to_s.start_with?(base.to_s + "/")
+      path.read(encoding: encoding)
     end
     def self.bio(slug, language)
-      source = read(slug, "bio/#{language}.md")
+      source = read(slug, "#{language.downcase}/bio.md")
       match = source.match(/\A---\r?\n(.*?)\r?\n---\r?\n(.+)\z/m)
       raise ArgumentError, "Invalid bio" unless match
       data = YAML.safe_load(match[1], permitted_classes: [], aliases: false)
@@ -27,10 +41,10 @@ module Catalog
       slug.split("-").map { |word| acronyms.include?(word) ? word.upcase : word.capitalize }.join(" ")
     end
     def self.categories(slug, language)
-      source = read(slug, "docs/#{language}/index.md")
+      source = read(slug, "#{language.downcase}/index.md")
       source.scan(/^[-*] \[([^\]]+)\]\(([a-zA-Z0-9_-]+)\/index\.md\)/).filter_map do |label, category|
         begin
-          read(slug, "docs/#{language}/#{category}/index.md")
+          read(slug, "#{language.downcase}/#{category}/index.md")
           { name: label, url: "/projects/#{slug}/docs/#{category}/index.md?lang=#{language}" }
         rescue Errno::ENOENT, ArgumentError
           nil

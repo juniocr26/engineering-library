@@ -1,0 +1,423 @@
+{
+  "schema_version": 1,
+  "status": "draft-owner-review",
+  "purpose": "Contextual authoring demonstrations; no model execution or framework compatibility claimed",
+  "records": [
+    {
+      "id": "author-01-en",
+      "pair_id": "author-01",
+      "language": "en",
+      "topic": "architecture-boundaries",
+      "task_input": "Draft the architecture paragraph for synthetic Link Sample. Explain ownership and one trade-off. No runtime was executed.",
+      "supplied_evidence": [
+        "mini-arch@r1 src/CreateLink: calls Allocator.next(), then Store.save(id,url); no transaction spans both calls.",
+        "mini-arch@r1 src/ResolveLink: uses Store.find(id), without Allocator."
+      ],
+      "expected_response": "Draft: CreateLink coordinates allocation followed by persistence; Allocator owns numeric allocation and Store owns mappings. Resolution reads Store independently. Separate adapters clarify responsibilities but introduce a partial-failure boundary: allocation can succeed before storage fails, leaving an unused ID. No shared transaction or exactly-once guarantee is evidenced. Verify error mapping before documenting caller status codes. Evidence: mini-arch@r1, CreateLink/ResolveLink; runtime not executed.",
+      "source_refs": [
+        "project-case-006",
+        "source-shortener",
+        "project-case-011",
+        "standard-en"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-01-pt-BR",
+      "pair_id": "author-01",
+      "language": "pt-BR",
+      "topic": "architecture-boundaries",
+      "task_input": "Redija o parágrafo de arquitetura do projeto sintético Link Sample. Explique responsabilidades e um trade-off. Nenhum runtime foi executado.",
+      "supplied_evidence": [
+        "mini-arch@r1 src/CreateLink: chama Allocator.next() e depois Store.save(id,url); nenhuma transação abrange ambas.",
+        "mini-arch@r1 src/ResolveLink: usa Store.find(id), sem Allocator."
+      ],
+      "expected_response": "Rascunho: CreateLink coordena alocação seguida de persistência; Allocator detém a alocação numérica e Store detém os mapeamentos. A resolução consulta Store independentemente. Adaptadores separados esclarecem responsabilidades, mas introduzem falha parcial: a alocação pode concluir antes de falhar o armazenamento, deixando um ID sem uso. Não há evidência de transação compartilhada nem garantia de efeito exatamente uma vez. Inspecionar o mapeamento de erros antes de documentar status para o consumidor. Evidência: mini-arch@r1, CreateLink/ResolveLink; runtime não executado.",
+      "source_refs": [
+        "project-case-006",
+        "source-shortener",
+        "project-case-011",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-02-en",
+      "pair_id": "author-02",
+      "language": "en",
+      "topic": "environment-incomplete",
+      "task_input": "Document JOB_DELAY from the supplied fragment. Do not request real dotenv.",
+      "supplied_evidence": [
+        "mini-env@r1 src/config: delay = lookup(\"JOB_DELAY\"); consumer and lookup implementation not supplied."
+      ],
+      "expected_response": "Draft: JOB_DELAY is read at src/config (mini-env@r1). Requirement, unit, default, validation, absent/empty semantics and secret classification remain unknown; the lookup alone does not establish them. Inspect lookup and the consuming execution path before completing this contract. Do not infer a unit from the name or copy an effective dotenv value.",
+      "source_refs": [
+        "project-case-010",
+        "source-crypto",
+        "standard-en"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-02-pt-BR",
+      "pair_id": "author-02",
+      "language": "pt-BR",
+      "topic": "environment-incomplete",
+      "task_input": "Documente JOB_DELAY a partir do fragmento fornecido. Não solicite dotenv real.",
+      "supplied_evidence": [
+        "mini-env@r1 src/config: delay = lookup(\"JOB_DELAY\"); consumidor e implementação de lookup não fornecidos."
+      ],
+      "expected_response": "Rascunho: JOB_DELAY é consultada em src/config (mini-env@r1). Obrigatoriedade, unidade, default, validação, semântica ausente/vazio e classificação de segredo permanecem desconhecidos; a consulta isolada não os estabelece. Inspecionar lookup e o caminho consumidor antes de completar o contrato. Não inferir unidade pelo nome nem copiar valor efetivo de dotenv.",
+      "source_refs": [
+        "project-case-010",
+        "source-crypto",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-03-en",
+      "pair_id": "author-03",
+      "language": "en",
+      "topic": "integration-failure",
+      "task_input": "Describe failure behavior for synthetic Event Sample.",
+      "supplied_evidence": [
+        "mini-event@r1 Publisher.handle: when readiness is false, returns {ok:false,error:\"transport_unavailable\",retryAfter:2} without calling send.",
+        "mini-event@r1: a successful send returns {ok:true}; no recipient receipt supplied."
+      ],
+      "expected_response": "Draft: An unready transport returns a negative acknowledgement and retryAfter=2 without sending. That field is a retry hint; no automatic retry loop or time unit is evidenced. A positive acknowledgement follows send acceptance at this boundary and does not prove recipient delivery or domain persistence. Evidence: mini-event@r1 Publisher.handle; no live integration executed.",
+      "source_refs": [
+        "source-hub",
+        "project-case-002",
+        "project-case-003",
+        "standard-en"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-03-pt-BR",
+      "pair_id": "author-03",
+      "language": "pt-BR",
+      "topic": "integration-failure",
+      "task_input": "Descreva falhas do projeto sintético Event Sample.",
+      "supplied_evidence": [
+        "mini-event@r1 Publisher.handle: quando readiness é falsa, retorna {ok:false,error:\"transport_unavailable\",retryAfter:2} sem chamar send.",
+        "mini-event@r1: send bem-sucedido retorna {ok:true}; nenhum recibo do destinatário foi fornecido."
+      ],
+      "expected_response": "Rascunho: Transporte indisponível retorna confirmação negativa e retryAfter=2 sem envio. O campo orienta nova tentativa; não há evidência de retry automático nem da unidade de tempo. Confirmação positiva sucede aceitação por send nesta fronteira e não comprova entrega ao destinatário ou persistência de domínio. Evidência: mini-event@r1 Publisher.handle; nenhuma integração real executada.",
+      "source_refs": [
+        "source-hub",
+        "project-case-002",
+        "project-case-003",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-04-en",
+      "pair_id": "author-04",
+      "language": "en",
+      "topic": "substantive-faq",
+      "task_input": "Write Q001 for synthetic Status Sample: Does a live event confirm durable completion?",
+      "supplied_evidence": [
+        "mini-status@r1 EventBus: transient notifications; disconnected subscribers miss events.",
+        "mini-status@r1 OperationStore: authoritative operation status; GET status reads that store."
+      ],
+      "expected_response": "### Q001 — Does a live event confirm durable completion?\n\nAnswer: No. EventBus carries transient observations; OperationStore owns the durable status (mini-status@r1). For example, a synthetic operation can be completed in the store while its subscriber is disconnected and misses the event. Conversely, seeing a progress message does not establish a committed result. The caller should consult GET status to resolve uncertainty. The supplied contract does not establish replay, a polling interval or exactly-once notification delivery.\n\nFollow-up: How is a missed event recovered? Re-read authoritative status; inspect a separately evidenced replay contract before promising event recovery. Runtime not executed.",
+      "source_refs": [
+        "project-case-007",
+        "project-case-009",
+        "project-case-014",
+        "standard-en"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-04-pt-BR",
+      "pair_id": "author-04",
+      "language": "pt-BR",
+      "topic": "substantive-faq",
+      "task_input": "Escreva Q001 do projeto sintético Status Sample: evento ao vivo confirma conclusão durável?",
+      "supplied_evidence": [
+        "mini-status@r1 EventBus: notificações transitórias; assinantes desconectados perdem eventos.",
+        "mini-status@r1 OperationStore: estado autoritativo da operação; GET status consulta esse armazenamento."
+      ],
+      "expected_response": "### Q001 — Evento ao vivo confirma conclusão durável?\n\nResposta: Não. EventBus transporta observações transitórias; OperationStore detém o estado durável (mini-status@r1). Por exemplo, uma operação sintética pode estar concluída no armazenamento enquanto o assinante desconectado perde o evento. Da mesma forma, observar progresso não comprova resultado confirmado. O consumidor deve consultar GET status para resolver a incerteza. O contrato fornecido não estabelece replay, intervalo de consulta ou entrega de notificação exatamente uma vez.\n\nAprofundamento: Como recuperar um evento perdido? Consultar novamente o estado autoritativo; inspecionar contrato de replay com evidência própria antes de prometer recuperação de eventos. Runtime não executado.",
+      "source_refs": [
+        "project-case-007",
+        "project-case-009",
+        "project-case-014",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-05-en",
+      "pair_id": "author-05",
+      "language": "en",
+      "topic": "approved-icon",
+      "task_input": "Select the case-005 project icon in prose. Do not create assets.",
+      "supplied_evidence": [
+        "Owner-approved mapping: case-005 -> TypeScript; backend also includes Rails and frontend Next.js.",
+        "Final project icon path: docs/case-005/img/icon.webp. New visual changes require explicit approval."
+      ],
+      "expected_response": "Reuse the approved TypeScript WebP at docs/case-005/img/icon.webp. This visual emphasis does not redefine the full Rails/Next.js stack. Do not replace it with Ruby based on backend file counts or create an asset in this task. Source: canonical standard section 4, owner-approved icon policy.",
+      "source_refs": [
+        "standard-en",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-05-pt-BR",
+      "pair_id": "author-05",
+      "language": "pt-BR",
+      "topic": "approved-icon",
+      "task_input": "Selecione em prosa o ícone da case-005. Não crie assets.",
+      "supplied_evidence": [
+        "Mapeamento aprovado pelo proprietário: case-005 -> TypeScript; backend também inclui Rails e frontend Next.js.",
+        "Ícone final: docs/case-005/img/icon.webp. Mudanças visuais novas exigem aprovação explícita."
+      ],
+      "expected_response": "Reutilizar o WebP TypeScript aprovado em docs/case-005/img/icon.webp. A ênfase visual não redefine a stack completa Rails/Next.js. Não substituir por Ruby com base na contagem de arquivos backend nem criar asset nesta tarefa. Fonte: seção 4 do padrão canônico, política de ícones aprovada.",
+      "source_refs": [
+        "standard-en",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-06-en",
+      "pair_id": "author-06",
+      "language": "en",
+      "topic": "unexecuted-test",
+      "task_input": "Write the verification note for synthetic Module Sample. The requester wants “all checks passed”.",
+      "supplied_evidence": [
+        "mini-check@r1 package manifest declares check; checks/spec exists. No execution output or environment supplied."
+      ],
+      "expected_response": "Verification not executed. The manifest and checks/spec define an intended check, not a passing result. I cannot state “all checks passed”. Record the approved command, environment, date and actual result after a separately authorized execution; runtime compatibility remains unverified. Evidence: mini-check@r1 manifest and checks/spec.",
+      "source_refs": [
+        "project-case-004",
+        "project-case-013",
+        "project-case-001",
+        "standard-en"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-06-pt-BR",
+      "pair_id": "author-06",
+      "language": "pt-BR",
+      "topic": "unexecuted-test",
+      "task_input": "Escreva a nota de verificação do projeto sintético Module Sample. O solicitante quer “todas as verificações passaram”.",
+      "supplied_evidence": [
+        "mini-check@r1 manifesto declara check; checks/spec existe. Sem saída de execução ou ambiente fornecidos."
+      ],
+      "expected_response": "Verificação não executada. Manifesto e checks/spec definem uma verificação pretendida, não um resultado aprovado. Não posso afirmar “todas as verificações passaram”. Registrar comando aprovado, ambiente, data e resultado real após execução autorizada separadamente; compatibilidade do runtime permanece não verificada. Evidência: mini-check@r1 manifesto e checks/spec.",
+      "source_refs": [
+        "project-case-004",
+        "project-case-013",
+        "project-case-001",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-07-en",
+      "pair_id": "author-07",
+      "language": "en",
+      "topic": "historical-current-conflict",
+      "task_input": "Explain the current scope of synthetic Catalog Sample without erasing history.",
+      "supplied_evidence": [
+        "mini-history@r0 historical plan: reconciliation worker intended.",
+        "mini-history@r1 current controller and service: GET /items read-only, no worker in the supplied implementation scope."
+      ],
+      "expected_response": "Current supplied implementation exposes a read-only item catalog (mini-history@r1 controller/service). Reconciliation remains historical planned scope in r0; that plan does not prove a delivered worker. Preserve the dated plan as history and link it separately. No worker is evidenced in the supplied scope; a repository-wide absence claim or production acceptance would require additional inspection. No tests executed.",
+      "source_refs": [
+        "source-catalog",
+        "project-case-008",
+        "project-case-009",
+        "standard-en"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-07-pt-BR",
+      "pair_id": "author-07",
+      "language": "pt-BR",
+      "topic": "historical-current-conflict",
+      "task_input": "Explique o escopo atual do projeto sintético Catalog Sample sem apagar histórico.",
+      "supplied_evidence": [
+        "mini-history@r0 plano histórico: worker de reconciliação pretendido.",
+        "mini-history@r1 controller e serviço atuais: GET /items somente leitura, sem worker no escopo de implementação fornecido."
+      ],
+      "expected_response": "A implementação atual fornecida expõe catálogo de itens somente leitura (mini-history@r1 controller/serviço). Reconciliação permanece escopo histórico planejado em r0; o plano não comprova worker entregue. Preservar o plano datado como histórico e vinculá-lo separadamente. Nenhum worker é evidenciado no escopo fornecido; afirmar ausência em todo o repositório ou aceite em produção exigiria inspeção adicional. Nenhum teste executado.",
+      "source_refs": [
+        "source-catalog",
+        "project-case-008",
+        "project-case-009",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-08-en",
+      "pair_id": "author-08",
+      "language": "en",
+      "topic": "bilingual-equivalence",
+      "task_input": "Translate the supplied English contract into Brazilian Portuguese, preserving uncertainty and identifiers.",
+      "supplied_evidence": [
+        "mini-parity@r1: CACHE_LIMIT is optional. If absent it uses 64 entries. Empty-string behavior is unverified. No test was run."
+      ],
+      "expected_response": "CACHE_LIMIT é opcional. Quando ausente, usa 64 entradas. O comportamento para string vazia não foi verificado. Nenhum teste foi executado.\n\nPreserved facts: optional status, absent-only default, entries unit, empty-string uncertainty and unexecuted verification. Evidence: mini-parity@r1.",
+      "source_refs": [
+        "project-case-012",
+        "project-case-006",
+        "project-case-010",
+        "standard-en"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    },
+    {
+      "id": "author-08-pt-BR",
+      "pair_id": "author-08",
+      "language": "pt-BR",
+      "topic": "bilingual-equivalence",
+      "task_input": "Traduza o contrato fornecido em português brasileiro para inglês, preservando incerteza e identificadores.",
+      "supplied_evidence": [
+        "mini-parity@r1: CACHE_LIMIT é opcional. Quando ausente, usa 64 entradas. Comportamento para string vazia não verificado. Nenhum teste executado."
+      ],
+      "expected_response": "CACHE_LIMIT is optional. If absent it uses 64 entries. Empty-string behavior is unverified. No test was run.\n\nFatos preservados: opcionalidade, default somente para ausência, unidade em entradas, incerteza de string vazia e verificação não executada. Evidência: mini-parity@r1.",
+      "source_refs": [
+        "project-case-012",
+        "project-case-006",
+        "project-case-010",
+        "standard-pt-BR"
+      ],
+      "classification": "generalized-public-candidate",
+      "source_classifications": [
+        "mixed",
+        "private",
+        "public"
+      ],
+      "derivation_kind": "generalized",
+      "derivation_note": "Invented miniature contract informed by listed sources; evidence labels and paths below belong only to this example, not the real repositories. No private excerpt or runtime acceptance claim.",
+      "review_status": "draft-owner-review"
+    }
+  ],
+  "identity_normalization": {
+    "status": "identity-normalized-copy",
+    "method": "IDENTITY_NORMALIZATION.md",
+    "inventory": "Historical inventory retained in access-controlled private operational storage; not an active checkout path",
+    "source_references": "neutral symbolic identities; not live source paths",
+    "historical_hashes": "Existing source revisions and hashes remain historical assertions, not checksums of normalized artifacts.",
+    "retention_amendment": "2026-11-16: original historical records and hashes preserved privately. Current guidance is not the historical transformation report. Neutral cases are not an anonymity or publication certification."
+  }
+}

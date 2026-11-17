@@ -9,7 +9,7 @@ const assert = require('node:assert/strict');
     const page = await context.newPage();
     let saved = [
       { id: 1, project: 'engineering-library', document: 'README', language: 'en', anchor: 'engineering-library', excerpt: 'Library saved' },
-      { id: 2, project: 'env-auditor', document: 'README', language: 'en', anchor: 'env-auditor', excerpt: 'ENV saved' },
+      { id: 2, project: 'url-shortener', document: 'README', language: 'en', anchor: 'url-shortener', excerpt: 'URL saved' },
     ];
     const requested = [];
     await page.route('**/api/bookmarks{,?*,/**}', async route => {
@@ -33,13 +33,14 @@ const assert = require('node:assert/strict');
     await open('engineering-library');
     assert.equal(await page.locator('.reader-saved-bookmark').count(), 1);
     assert.match(await page.locator('.reader-saved-bookmark').innerText(), /Library saved/);
-    await open('env-auditor');
+    await open('url-shortener');
     assert.equal(await page.locator('.reader-saved-bookmark').count(), 1);
-    assert.match(await page.locator('.reader-saved-bookmark').innerText(), /ENV saved/);
+    assert.match(await page.locator('.reader-saved-bookmark').innerText(), /URL saved/);
     await page.reload();
+    await page.locator('.reader[data-pagination="ready"]').waitFor();
     await page.locator('.reader-toolbar').first().getByRole('button', { name: 'My Bookmarks', exact: true }).click();
     await page.locator('.reader-saved-bookmark').waitFor();
-    assert.match(await page.locator('.reader-saved-bookmark').innerText(), /ENV saved/);
+    assert.match(await page.locator('.reader-saved-bookmark').innerText(), /URL saved/);
     await page.locator('.reader-saved-bookmark').getByRole('button', { name: 'Remove bookmark', exact: true }).click();
     await page.getByText('No bookmarks saved for this project.', { exact: true }).waitFor();
     assert.deepEqual(saved.map(item => item.project), ['engineering-library']);
@@ -50,9 +51,9 @@ const assert = require('node:assert/strict');
       await page.getByText(language === 'en' ? 'No bookmarks saved for this project.' : 'Nenhuma marcação salva neste projeto.', { exact: true }).waitFor();
       assert.equal(await page.locator('.reader-saved-bookmark').count(), 0);
     }
-    assert.ok(requested.includes('env-auditor') && requested.includes('engineering-library') && requested.includes('go-image-optimizer'));
+    assert.ok(requested.includes('url-shortener') && requested.includes('engineering-library') && requested.includes('go-image-optimizer'));
     // Exercise the real same-origin proxy and Rails validation, without mocking fetch.
-    const response = await context.request.get(`${base}/api/bookmarks?project_slug=missing-project`);
+    const response = await context.request.get(`${base}/api/bookmarks?project_slug=missing-project&language=en`);
     assert.equal(response.status(), 422);
     assert.equal((await response.json()).error, 'Invalid project');
     console.log('PASS: project-scoped requests, switching, reload, removal, preservation, bilingual empty states, real proxy validation');

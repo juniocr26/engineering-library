@@ -1,3 +1,4 @@
+import { collectionPath, languageDirectory } from '../lib/catalog-paths.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm, symlink } from 'node:fs/promises';
@@ -10,23 +11,23 @@ test('canonical bilingual discovery, README, substantive indexes and missing tra
   process.env.DOCUMENTATION_ROOT = root;
   try {
     for (const lang of ['en', 'pt-BR']) {
-      const dir = path.join(root, 'sample', 'docs', lang, 'architecture');
+      const dir = path.join(root, 'sample', languageDirectory(lang as 'en' | 'pt-BR'), 'architecture');
       await mkdir(dir, { recursive: true });
       await writeFile(path.join(dir, 'index.md'), '# Architecture\n\n- [Overview](overview.md)\n');
       await writeFile(path.join(dir, 'overview.md'), lang === 'en' ? '# Overview' : '# Visão geral');
     }
-    await writeFile(path.join(root, 'sample', 'README.md'), '# README');
-    await writeFile(path.join(root, 'sample', 'README.pt-BR.md'), '# LEIA-ME');
+    await writeFile(path.join(root, collectionPath('sample', 'en/README.md')), '# README');
+    await writeFile(path.join(root, collectionPath('sample', 'pt-br/README.md')), '# LEIA-ME');
     for (const lang of ['en', 'pt-BR']) {
-      const dir = path.join(root, 'sample', 'docs', lang);
+      const dir = path.join(root, 'sample', languageDirectory(lang as 'en' | 'pt-BR'));
       await writeFile(path.join(dir, 'index.md'), '# Legacy contents\n\nCatalog introduction.');
       await mkdir(path.join(dir, 'faq'));
       await writeFile(path.join(dir, 'faq/index.md'), '# Technical FAQ\n\n### Q001 — Question\n\nAnswer.');
       await writeFile(path.join(dir, 'faq/study-guide.md'), '# Retained study guide\n\nAnswer.');
     }
-    await writeFile(path.join(root, 'sample', 'docs/en/architecture/alpha.md'), '# Only English');
-    await mkdir(path.join(root, 'sample', 'docs/en/env'));
-    await writeFile(path.join(root, 'sample', 'docs/en/env/index.md'), '# ENV\n\n## Runtime\nRequired configuration.');
+    await writeFile(path.join(root, collectionPath('sample', 'en/architecture/alpha.md')), '# Only English');
+    await mkdir(path.join(root, collectionPath('sample', 'en/env')));
+    await writeFile(path.join(root, collectionPath('sample', 'en/env/index.md')), '# ENV\n\n## Runtime\nRequired configuration.');
     const { documentationEntries, documentationSource } = await import('../lib/documentation.ts');
     const en = await documentationEntries('sample', 'en');
     const pt = await documentationEntries('sample', 'pt-BR');
@@ -56,7 +57,7 @@ test('canonical bilingual discovery, README, substantive indexes and missing tra
     assert.equal(await documentationSource('sample', '../../README.md', 'en'), null);
     assert.equal(await documentationSource('sample', '/etc/passwd.md', 'en'), null);
     assert.equal(await documentationSource('sample', 'architecture/missing.md', 'en'), null);
-    await symlink('/etc/passwd', path.join(root, 'sample/docs/en/architecture/escape.md'));
+    await symlink('/etc/passwd', path.join(root, collectionPath('sample', 'en/architecture/escape.md')));
     assert.equal(await documentationSource('sample', 'architecture/escape.md', 'en'), null);
     assert.deepEqual(await documentationEntries('../sample', 'en'), []);
   } finally { if (previous === undefined) delete process.env.DOCUMENTATION_ROOT; else process.env.DOCUMENTATION_ROOT = previous; await rm(root, { recursive: true, force: true }); }

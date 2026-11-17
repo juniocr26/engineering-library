@@ -3,8 +3,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
 const trackRecords = require('./annotation-test-records.cjs');
 const base = process.env.BROWSER_BASE_URL || 'http://localhost:3000';
-const path = '/projects/env-auditor/docs/architecture/overview.md';
-const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=pt-BR';
+const path = '/projects/url-shortener/docs/architecture/overview.md';
+const scope = 'project=url-shortener&document=architecture%2Foverview.md&language=pt-BR';
 (async () => {
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   const cleanups = [];
@@ -63,10 +63,13 @@ const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=
         assert.equal(await toolbar.evaluate(node => { const rect = node.getBoundingClientRect(); return node.contains(document.elementFromPoint(rect.x + 10, rect.y + 10)); }), true);
       };
       await page.goto(`${base}${path}?lang=pt-BR`); await ready();
-      const intro = page.locator('.reader-pages p').filter({ hasText: 'O README mantém' }).first();
-      assert.equal(await intro.locator('.source-reference').count(), 1);
+      const introAnchor = await page.locator('.reader-measure p').filter({ hasText: 'Base62,' }).first().evaluate(node => node.closest('[data-highlight-block]').dataset.highlightBlock);
+      await page.evaluate(anchor => { window.location.hash = anchor; }, introAnchor); await ready();
+      const intro = page.locator('.reader-pages p').filter({ hasText: 'Base62,' }).first();
+      await intro.locator('.source-reference').first().waitFor();
+      assert.equal(await intro.locator('.source-reference').count(), 3);
       // Real sentence crossing the interactive label, including its hidden arrow gap.
-      const sentence = 'O README mantém o contrato da CLI e todas as exclusões. A implementação é um script da biblioteca padrão, organizado em descoberta, parsing literal, planejamento e persistência por alvo.';
+      const sentence = 'Evidências: Base62, obfuscação, testes.';
       await intro.evaluate(node => {
         const range = document.createRange(); range.selectNodeContents(node);
         getSelection().removeAllRanges(); getSelection().addRange(range);
@@ -123,26 +126,27 @@ const scope = 'project=env-auditor&document=architecture%2Foverview.md&language=
       assert.equal((await list()).highlights.length, 0);
       await page.reload(); await ready();
       assert.equal((await list()).highlights.length, 0);
-      await intro.locator('.source-reference').click(); await ready();
-      assert.equal(await intro.locator('.source-reference').getAttribute('aria-expanded'), 'true');
-      await intro.locator('.source-reference').click(); await ready();
-      assert.equal(await intro.locator('.source-reference').getAttribute('aria-expanded'), 'false');
+      await intro.locator('.source-reference').first().click(); await ready();
+      assert.equal(await intro.locator('.source-reference').first().getAttribute('aria-expanded'), 'true');
+      await intro.locator('.source-reference').first().click(); await ready();
+      assert.equal(await intro.locator('.source-reference').first().getAttribute('aria-expanded'), 'false');
       // A heading near the top remains selectable; the entire heading is not a forbidden surface.
+      await page.goto(`${base}${path}?lang=pt-BR`); await ready();
       await drag(page.locator('.reader-pages h1').first(), 2, 10); await checkToolbar(); await page.keyboard.press('Escape');
       // Prose AFTER inline code in the same paragraph is eligible.
-      await page.evaluate(() => { const block = [...document.querySelectorAll('.reader-measure [data-highlight-block]')].find(node => node.textContent.includes('interpreta flags')); window.location.hash = block.dataset.highlightBlock; });
-      const prose = page.locator('.reader-pages p').filter({ hasText: 'interpreta flags' }).first();
-      const start = await prose.evaluate(node => node.textContent.indexOf('interpreta'));
+      await page.evaluate(() => { const block = [...document.querySelectorAll('.reader-measure [data-highlight-block]')].find(node => node.textContent.includes('é domínio matemático')); window.location.hash = block.dataset.highlightBlock; });
+      const prose = page.locator('.reader-pages p').filter({ hasText: 'é domínio matemático' }).first();
+      const start = await prose.evaluate(node => node.textContent.indexOf('é domínio'));
       await drag(prose, start, start + 35); await checkToolbar(); await page.keyboard.press('Escape');
       // Inline code is selectable prose; block code remains excluded.
       await drag(prose.locator('code').first(), 0, 3);
       await checkToolbar(); await page.keyboard.press('Escape');
       if (width === 1728) {
         // Resolve the logical paragraph onto its physical page, then choose the right leaf.
-        const target = await page.evaluate(() => [...document.querySelectorAll('.reader-measure [data-highlight-block]')].find(node => node.textContent.includes('verifica arquivo regular')).dataset.highlightBlock);
+        const target = await page.evaluate(() => [...document.querySelectorAll('.reader-measure [data-highlight-block]')].find(node => node.textContent.includes('valida sintaxe')).dataset.highlightBlock);
         await page.evaluate(target => { window.location.hash = target; }, target); await ready();
-        const lower = page.locator('.reader-pages p').filter({ hasText: 'verifica arquivo regular' }).first();
-        const lowerOffset = await lower.evaluate(node => node.textContent.indexOf('verifica'));
+        const lower = page.locator('.reader-pages p').filter({ hasText: 'valida sintaxe' }).first();
+        const lowerOffset = await lower.evaluate(node => node.textContent.indexOf('valida'));
         await drag(lower, lowerOffset, lowerOffset + 20); await checkToolbar(); await page.keyboard.press('Escape');
         const right = page.locator('.reader-pages > .reader-leaf').nth(1).locator('.reader-markdown > p').first();
         await right.waitFor();

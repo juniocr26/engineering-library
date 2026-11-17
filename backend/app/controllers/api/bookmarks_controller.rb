@@ -76,10 +76,10 @@ module Api
       # Virtual table of contents shares the bookmark schema.
       return true if document == "@contents"
       relative = if document == "README"
-        language == "en" ? "README.md" : "README.pt-BR.md"
+        "#{language.downcase}/README.md"
       else
         return false unless document.end_with?(".md") && document.split("/", -1).none? { |part| ["", ".", ".."].include?(part) }
-        "docs/#{language}/#{document}"
+        "#{language.downcase}/#{document}"
       end
       Catalog::Files.read(slug, relative)
       true

@@ -59,9 +59,9 @@ class CatalogTest < ActiveSupport::TestCase
       bio(root, "two", "identity", "Two")
       assert_raises(ArgumentError) { Catalog::Sync.call }
       assert_equal 1, CatalogProject.count
-      File.write(root.join("two/bio/en.md"), "invalid")
+      File.write(root.join("two/en/bio.md"), "invalid")
       assert_raises(ArgumentError) { Catalog::Sync.call }
-      File.delete(root.join("two/bio/en.md"))
+      File.delete(root.join("two/en/bio.md"))
       assert_raises(ArgumentError) { Catalog::Sync.call }
       assert CatalogProject.first.active
     end
@@ -81,7 +81,10 @@ class CatalogTest < ActiveSupport::TestCase
     ENV["CATALOG_ROOT"] = previous
   end
   def bio(root, slug, id, name)
-    FileUtils.mkdir_p(root.join(slug, "bio"))
-    %w[en pt-BR].each { |language| File.write(root.join(slug, "bio", "#{language}.md"), "---\nid: #{id}\nname: #{name}\n---\n\nA concise purpose.\n") }
+    %w[en pt-br].each do |language|
+      directory = root.join(slug, language)
+      FileUtils.mkdir_p(directory)
+      File.write(directory.join("bio.md"), "---\nid: #{id}\nname: #{name}\n---\n\nA concise purpose.\n")
+    end
   end
 end

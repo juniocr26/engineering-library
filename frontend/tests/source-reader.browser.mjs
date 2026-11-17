@@ -136,7 +136,7 @@ try {
     console.log(`PASS synthetic 200 lines: ${width}px, exact continuity, page bounds, line navigation, resize, persistent expansion, independent repeated disclosure, horizontal scrolling, bookmark restoration, collapse from first/middle/final segments, shared occurrence state, drag cursors, fullscreen zoom/focus/Escape, animated turns`);
     await page.close();
   }
-  for (const project of (process.env.SOURCE_FIXTURE_ONLY ? [] : ['engineering-library', 'env-auditor', 'go-image-optimizer', 'payment-reconciliation-lab', 'rust-event-relay', 'url-shortener'])) {
+  for (const project of (process.env.SOURCE_FIXTURE_ONLY ? [] : ['engineering-library', 'go-image-optimizer', 'payment-reconciliation-lab', 'rust-event-relay', 'url-shortener'])) {
     const response = await fetch(`http://localhost:3000/api/document-search/${project}?lang=en&q=return`);
     assert.equal(response.ok, true);
     const result = (await response.json()).results.find(r => r.anchor.includes('--line-'));

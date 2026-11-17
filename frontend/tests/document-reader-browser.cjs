@@ -104,7 +104,7 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('dialog').count(), 0);
 
   // Relative Markdown links and a real Mermaid diagram use the same reader.
-  await page.goto(`${base}/projects/env-auditor/docs/architecture/overview.md?lang=en`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/projects/rust-event-relay/docs/architecture/overview.md?lang=en`, { waitUntil: 'networkidle' });
   await ready();
   await page.locator('.reader-pages .reader-diagram svg').first().waitFor();
   await page.waitForTimeout(300);
@@ -116,7 +116,7 @@ const assert = require('node:assert/strict');
     observer.disconnect(); return mutations;
   });
   assert.equal(changes, 0, 'settled diagrams must not cause repagination loops');
-  assert.equal(await page.locator('.reader-pages .reader-markdown a').filter({ hasText: 'README' }).first().getAttribute('href'), '/projects/env-auditor/docs/README?lang=en');
+  assert.equal(await page.locator('.reader-pages .reader-markdown a').filter({ hasText: 'README' }).first().getAttribute('href'), '/projects/rust-event-relay/docs/README?lang=en');
   await page.locator('.reader-pages .reader-markdown a').filter({ hasText: 'README' }).first().click();
   await page.waitForURL(/\/docs\/README/); await ready();
   await page.locator('.reader-pages .reader-document-languages').getByRole('link', { name: 'Português' }).click();
@@ -127,16 +127,16 @@ const assert = require('node:assert/strict');
   const next = page.locator('.reader-pages').getByRole('button', { name: 'Próxima página', exact: true });
   if (await next.getAttribute('aria-disabled') === 'false') { await next.click(); assert.notEqual(await controls().innerText(), before); }
 
-  const invalid = await page.goto(`${base}/projects/env-auditor/docs/not-a-document.md?lang=en`);
+  const invalid = await page.goto(`${base}/projects/url-shortener/docs/not-a-document.md?lang=en`);
   // Next's parent loading boundary can stream a 200 before notFound resolves.
   assert.ok([200, 404].includes(invalid.status()));
   await page.getByRole('heading', { name: /Document not found/ }).waitFor();
   assert.match(await page.locator('body').innerText(), /Document not found/);
-  const traversal = await context.request.get(`${base}/api/document-assets/env-auditor/%252e%252e/secret.png`);
+  const traversal = await context.request.get(`${base}/api/document-assets/url-shortener/%252e%252e/secret.png`);
   assert.equal(traversal.status(), 404);
-  const image = await context.request.get(`${base}/api/document-assets/engineering-library/bio/icon.svg`);
+  const image = await context.request.get(`${base}/api/document-assets/engineering-library/img/icon.webp`);
   assert.equal(image.status(), 200);
-  assert.match(image.headers()['content-type'], /image\/svg\+xml/);
+  assert.match(image.headers()['content-type'], /image\/webp/);
   assert.match(image.headers()['content-security-policy'], /sandbox/);
   const outsider = await browser.newContext();
   const response = await outsider.request.get(`${base}/api/bookmarks?language=en`);

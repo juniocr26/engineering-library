@@ -5,7 +5,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   try {
     const page = await browser.newPage({ reducedMotion: 'reduce' });
-    for (const slug of ['go-image-optimizer', 'engineering-library', 'env-auditor']) {
+    for (const slug of ['go-image-optimizer', 'engineering-library', 'url-shortener']) {
       for (const language of ['pt-BR', 'en']) {
         for (const width of [390, 768, 1440]) {
           await page.setViewportSize({ width, height: 900 });

@@ -6,7 +6,7 @@ import type { Language } from './i18n.ts';
 type Catalog = { project?: string; files: Record<string, { status: SourceReference['status']; sha256?: string; snapshot?: string; revision?: string }> };
 export async function integrateSources(project: string, document: string, language: Language, units: MarkdownUnit[], read: typeof collectionFile = collectionFile): Promise<MarkdownUnit[]> {
   let catalog: Catalog = { files: {} };
-  try { catalog = JSON.parse((await read(project, 'links/catalog.json'))?.toString('utf8') ?? '{}'); } catch { /* Missing metadata denies source inclusion. */ }
+  try { catalog = JSON.parse((await read(project, 'en/links/catalog.json'))?.toString('utf8') ?? '{}'); } catch { /* Missing metadata denies source inclusion. */ }
   const cache = new Map<string, Promise<string[] | undefined>>();
   const occurrences = new Map<string, number>();
   const identities = units.map(unit => (unit.links ?? []).map(href => {
@@ -30,7 +30,7 @@ export async function integrateSources(project: string, document: string, langua
       if (status === 'available' && record) {
         const cacheKey = JSON.stringify([sourceKey, record.sha256]);
         if (!cache.has(cacheKey)) cache.set(cacheKey, (async () => {
-          const content = record.snapshot?.match(/^snapshots\/[a-f0-9]{64}\.txt$/) ? await read(project, `links/${record.snapshot}`) : null;
+          const content = record.snapshot?.match(/^snapshots\/[a-f0-9]{64}\.txt$/) ? await read(project, `en/links/${record.snapshot}`) : null;
           return content && content.length <= 512_000 && createHash('sha256').update(content).digest('hex') === record.sha256 ? content.toString('utf8').split('\n') : undefined;
         })());
         const all = await cache.get(cacheKey);

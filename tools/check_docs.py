@@ -12,14 +12,14 @@ import stat
 import sys
 from urllib.parse import unquote, urlsplit
 
-LANGS = ('en', 'pt-BR')
+LANGS = ('en', 'pt-br')
 CATEGORIES = {'architecture', 'adr', 'guides', 'testing', 'benchmarks', 'docker',
               'database', 'api', 'integrations', 'deployment', 'operations',
-              'security', 'observability', 'payments', 'interviews', 'faq', 'env'}
-DENIED = {'.git', '.hg', '.svn', '.aws', '.codex', '.agents', 'node_modules',
+              'security', 'observability', 'payments', 'interviews', 'faq', 'env', 'img'}
+DENIED = {'.git', '.hg', '.svn', '.github', '.vscode', '.vivabem-secrets', '.aws', '.codex', '.agents', 'node_modules',
           'vendor', 'target', '.cargo-cache', 'storage', 'data', 'backups',
           'backup', '.local-backups', '.env-audit-backups', '.venv', 'venv', '__pycache__',
-          'dist', 'build', '.next', '.cache', 'coverage'}
+          'dist', 'build', '.next', '.cache', 'coverage', '.docs-state', '.evaluations'}
 OBSOLETE = re.compile(r'(?<![\w-])(?:tecnical-interview|technical-interview)(?=/|\b)', re.I)
 PRIVATE_KEY = re.compile(r'-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----')
 INLINE = re.compile(r'!?\[[^\]\n]*\]\(\s*(<[^>]+>|[^\s)]+)(?:\s+["\'][^\n]*?["\'])?\s*\)')
@@ -30,6 +30,7 @@ REFERENCE = re.compile(r'!?\[([^\]\n]+)\](?:\[([^\]\n]*)\])')
 def blocked_part(part: str) -> bool:
     low = part.lower()
     return (low in DENIED or low.startswith(('.env', '.dockerized-'))
+            or re.match(r'^docs_(?:backup|codex)(?:$|[-_.])', low) is not None
             or low.endswith(('.pem', '.key', '.p12', '.pfx', '.sqlite', '.db'))
             or low in {'credentials', 'id_rsa', 'id_ed25519'})
 
@@ -69,9 +70,11 @@ def classify(root: Path, path: Path) -> str | None:
 
 
 def prose(text: str) -> str:
-    """Remove fenced blocks; keep heading text for slug generation."""
+    """Remove fenced/indented code; keep heading text for slug generation."""
     result = []
     fence = None
+    indented = False
+    blank_before = True
     for line in text.splitlines():
         match = re.match(r'^\s{0,3}(`{3,}|~{3,})', line)
         if match:
@@ -82,9 +85,17 @@ def prose(text: str) -> str:
                 fence = None
             result.append('')
         elif fence is None:
-            result.append(line)
+            if line.startswith(('    ', '\t')) and (indented or blank_before):
+                indented = True
+                result.append('')
+            elif indented and not line.strip():
+                result.append('')
+            else:
+                indented = False
+                result.append(line)
         else:
             result.append('')
+        blank_before = not line.strip()
     return '\n'.join(result)
 
 
@@ -131,7 +142,51 @@ def legacy_numbers(text: str):
     return re.findall(r'^#{2,3}\s+(\d+)\b', prose(text), re.M)
 
 
-def validate(workspace: Path, config: dict) -> dict:
+def discover_projects(library: Path, config: dict):
+    """Resolve only configured immediate repositories; never ingest source contents."""
+    library = Path(os.path.abspath(library))
+    boundary = library.parents[1]
+    projects, findings = {}, []
+    for relative, names in config['project_roots'].items():
+        root = Path(os.path.abspath(library / relative))
+        def issue(code, detail):
+            findings.append(dict(severity='error', code=code, path=relative, detail=detail))
+        if root not in (library.parent, boundary / root.name) or root == boundary:
+            issue('project-root-unsafe', 'Root must be the repository parent or a sibling workspace directory')
+            continue
+        if classify(boundary, root):
+            issue('project-root-unsafe', 'Restricted, symbolic or unreadable project root')
+            continue
+        try:
+            if not root.is_dir():
+                raise FileNotFoundError()
+            # Probe access without recursively walking or opening any child content.
+            with os.scandir(root) as entries:
+                next(entries, None)
+        except OSError:
+            issue('project-root-unreadable', 'Project root is missing or inaccessible')
+            continue
+        for name in names:
+            if not isinstance(name, str) or not name or '/' in name or name in {'.', '..'} or blocked_part(name):
+                issue('project-name-unsafe', 'Expected safe immediate repository name')
+                continue
+            if name in projects:
+                issue('repository-duplicate', 'Repository is assigned to multiple roots: ' + name)
+                continue
+            base = root / name
+            if classify(boundary, base) or (base / '.git').is_symlink():
+                issue('repository-unsafe', 'Restricted or symbolic repository: ' + name)
+            elif not base.is_dir() or not (base / '.git').exists():
+                issue('repository-missing', 'Expected repository not discovered: ' + name)
+            else:
+                projects[name] = base
+    if set(projects) != set(config['repositories']):
+        findings.append(dict(severity='error', code='repository-inventory-mismatch',
+                             path='tools/docs_manifest.json', detail='Resolved projects differ from configured inventory'))
+    return projects, findings
+
+
+def validate(workspace: Path, config: dict, library: Path | None = None) -> dict:
     root = Path(os.path.abspath(workspace))
     findings = []
     docs: dict[Path, str] = {}
@@ -148,13 +203,19 @@ def validate(workspace: Path, config: dict) -> dict:
 
     if classify(root, root):
         return {'errors': 1, 'warnings': 0, 'findings': [{'severity': 'error', 'code': 'workspace-unsafe', 'detail': 'Workspace root is unreadable or symbolic'}]}
-    try:
-        actual = sorted(p.name for p in root.iterdir() if not p.is_symlink()
-                        and p.is_dir() and not (p / '.git').is_symlink()
-                        and (p / '.git').exists())
-    except OSError:
-        finding('workspace-unreadable', root, 'Cannot enumerate workspace')
-        actual = []
+    project_paths = {}
+    if 'project_roots' in config:
+        project_paths, discovered_findings = discover_projects(library or Path(__file__).absolute().parents[1], config)
+        findings.extend(discovered_findings)
+        actual = sorted(project_paths)
+    else:
+        try:
+            actual = sorted(p.name for p in root.iterdir() if not p.is_symlink()
+                            and p.is_dir() and not (p / '.git').is_symlink()
+                            and (p / '.git').exists())
+        except OSError:
+            finding('workspace-unreadable', root, 'Cannot enumerate workspace')
+            actual = []
     exclusions = config.get('scope_exclusions', {})
     if not isinstance(exclusions, dict) or any(
             not isinstance(k, str) or not isinstance(v, str) or not v.strip()
@@ -178,7 +239,10 @@ def validate(workspace: Path, config: dict) -> dict:
         if not reason:
             finding('category-unjustified', root, f'Additional category {category} requires a reason')
     for repo in repos:
-        base = root / repo
+        # Project collections have a dedicated validator; inventory still includes them.
+        if repo in config.get('catalog_repositories', []) or ('project_roots' in config and repo not in project_paths):
+            continue
+        base = project_paths.get(repo, root / repo)
         if classify(root, base):
             finding('repository-unsafe', base, 'Unsafe repository path')
             continue
@@ -235,17 +299,16 @@ def validate(workspace: Path, config: dict) -> dict:
                 finding('obsolete-library-name', path, 'Obsolete local library naming detected')
             if path.is_relative_to(base / 'docs'):
                 rel = path.relative_to(base / 'docs')
-                if rel.name != 'index.md' and (len(rel.parts) < 3 or rel.parts[1] not in allowed_categories):
+                if rel.name != 'index.md' and (len(rel.parts) >= 3 and rel.parts[1] not in allowed_categories):
                     finding('category-invalid', path, 'Maintained document must be under a justified category')
-                peer = base / 'docs' / ('pt-BR' if rel.parts[0] == 'en' else 'en') / Path(*rel.parts[1:])
+                peer = base / 'docs' / ('pt-br' if rel.parts[0] == 'en' else 'en') / Path(*rel.parts[1:])
                 if classify(root, peer) or not peer.exists():
                     exception = str(path.relative_to(base))
                     if exception in exceptions.get(repo, []) and reasons.get(repo + '/' + exception):
                         finding('counterpart-exception', path, reasons[repo + '/' + exception], 'info')
                     else:
                         finding('counterpart-missing', path, 'Missing matching language relative path')
-        for required in ('README.md', 'README.pt-BR.md', 'docs/en/index.md', 'docs/pt-BR/index.md',
-                         'docs/en/operations/completion-checklist.md', 'docs/pt-BR/operations/completion-checklist.md'):
+        for required in ('README.md', 'README.pt-BR.md', 'docs/en/index.md', 'docs/pt-br/index.md'):
             if base / required not in docs:
                 finding('expected-document-missing', base / required, 'Required introduction/index/checklist missing or unreadable')
         for required in config.get('required_documents', {}).get(repo, []):
@@ -309,14 +372,17 @@ def validate(workspace: Path, config: dict) -> dict:
                 if not re.search(r'(?:Follow-up|Aprofundamento):', block):
                     finding('question-followup-missing', path, 'Q block has no follow-up')
             if '/en/' in str(path):
-                peer = Path(str(path).replace('/docs/en/', '/docs/pt-BR/'))
+                peer = Path(str(path).replace('/docs/en/', '/docs/pt-br/'))
                 if peer in docs:
                     if ids != question_ids(docs[peer]):
                         finding('question-language-mismatch', path, 'Bilingual new question IDs differ')
                     if legacy_numbers(text) != legacy_numbers(docs[peer]):
                         finding('legacy-numbering-mismatch', path, 'Retained numbered interview sections differ by language')
     for repo in repos:
-        base = root / repo
+        # Project collections have a dedicated validator; inventory still includes them.
+        if repo in config.get('catalog_repositories', []) or ('project_roots' in config and repo not in project_paths):
+            continue
+        base = project_paths.get(repo, root / repo)
         for lang in LANGS:
             start = base / 'docs' / lang / 'index.md'
             seen = {start}
@@ -351,7 +417,8 @@ def validate(workspace: Path, config: dict) -> dict:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--workspace', type=Path, default=Path(__file__).absolute().parents[2])
+    parser.add_argument('--discover-only', action='store_true', help='Check configured repository locations without reading documentation')
+    parser.add_argument('--workspace', type=Path, default=Path(__file__).absolute().parents[3])
     parser.add_argument('--config', type=Path, help='Safe tools/*.json metadata within workspace')
     args = parser.parse_args(argv)
     root = Path(os.path.abspath(args.workspace))
@@ -365,7 +432,12 @@ def main(argv=None) -> int:
             config = json.loads(config_path.read_text(encoding='utf-8'))
             if not isinstance(config, dict):
                 raise ValueError('object required')
-            report = validate(root, config)
+            if args.discover_only:
+                projects, findings = discover_projects(Path(__file__).absolute().parents[1], config)
+                report = {'repositories': {name: str(path) for name, path in sorted(projects.items())},
+                          'errors': len(findings), 'findings': findings}
+            else:
+                report = validate(root, config)
         except (OSError, UnicodeError, ValueError, TypeError, AttributeError):
             report = {'errors': 1, 'warnings': 0, 'findings': [{'severity': 'error', 'code': 'config-unreadable', 'detail': 'Invalid/unreadable safe metadata configuration'}]}
     print(json.dumps(report, ensure_ascii=False, indent=2))

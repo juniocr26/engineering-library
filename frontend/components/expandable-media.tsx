@@ -10,7 +10,7 @@ const labels = {
   'pt-BR': { image: 'Ampliar imagem', diagram: 'Ampliar diagrama', close: 'Fechar', in: 'Ampliar', out: 'Reduzir', reset: 'Restaurar zoom', failed: 'Não foi possível carregar a imagem.', help: 'Arraste para mover. Use os botões de zoom, a roda do mouse ou o gesto de pinça. Pressione Escape para fechar.' },
 };
 
-export const MISSING_IMAGE = '/assets/image-missing.svg';
+export const MISSING_IMAGE = '/assets/image-missing.webp';
 export function MissingImage({ alt, message }: { alt: string; message: string }) {
   return <img className="missing-image" src={MISSING_IMAGE} width={48} height={36} alt={`${message}${alt ? ` ${alt}` : ''}`} title={alt || message}/>;
 }

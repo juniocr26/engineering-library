@@ -48,7 +48,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
         }
       };
       await assertCentered(editor);
-      let source = '# Revisão 📚\n\n**Durable** *notes* ~~old~~\n\n- [x] Persist Unicode ação\n\n| Operation | Result |\n|---|---|\n| Remove color | Keep note |\n\n```typescript\nconst safe = "<script>alert(1)</script>";\n```\n\n![Persistence](/assets/notes/persistence.svg)\n\n```mermaid\nflowchart LR\n A --> B\n```';
+      let source = '# Revisão 📚\n\n**Durable** *notes* ~~old~~\n\n- [x] Persist Unicode ação\n\n| Operation | Result |\n|---|---|\n| Remove color | Keep note |\n\n```typescript\nconst safe = "<script>alert(1)</script>";\n```\n\n![Persistence](/assets/notes/persistence.webp)\n\n```mermaid\nflowchart LR\n A --> B\n```';
       const draft = editor.locator('textarea'); await draft.fill(source);
       await editor.getByRole('button', { name: 'Preview', exact: true }).click();
       const preview = page.getByRole('dialog', { name: 'Note preview', exact: true });

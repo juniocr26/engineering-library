@@ -21,7 +21,7 @@ class DocumentationValidatorTests(unittest.TestCase):
         self.repo = self.root / 'demo'
         (self.repo / '.git').mkdir(parents=True)
         self.config = {'repositories': ['demo']}
-        for lang, readme in [('en', 'README.md'), ('pt-BR', 'README.pt-BR.md')]:
+        for lang, readme in [('en', 'README.md'), ('pt-br', 'README.pt-BR.md')]:
             self.write(readme, f'# Demo\n\n[Index](docs/{lang}/index.md)\n')
             self.write(f'docs/{lang}/index.md', '# Index\n\n[Guide](guides/start.md)\n[Checklist](operations/completion-checklist.md)\n')
             self.write(f'docs/{lang}/guides/start.md', '# Start\n\n## Repeated\n\n## Repeated\n\n[Local](#repeated-1)\n')
@@ -36,8 +36,34 @@ class DocumentationValidatorTests(unittest.TestCase):
     def result(self):
         return checker.validate(self.root, self.config)
 
+    def test_recovery_evaluation_and_original_backups_are_restricted(self):
+        for part in ['.docs-state', '.evaluations', 'docs_backup', 'docs_backup-20261116', 'docs_backup_2', 'docs_codex-2']:
+            self.assertIsNotNone(checker.classify(self.root, self.repo / part / 'source.py'))
+        self.assertIsNone(checker.classify(self.root, self.repo / 'docs/en/guides/start.md'))
+
     def codes(self):
         return {f['code'] for f in self.result()['findings']}
+
+    def test_split_roots_discovery_and_failures(self):
+        library = self.root / 'Private' / 'library'
+        portfolio = self.root / 'Portfolio'
+        for base in (library, library.parent / 'script-auditoria-envs', portfolio / 'public'):
+            (base / '.git').mkdir(parents=True)
+        config = {'repositories': ['library', 'script-auditoria-envs', 'public'],
+                  'project_roots': {'../': ['library', 'script-auditoria-envs'],
+                                    '../../Portfolio': ['public']}}
+        paths, findings = checker.discover_projects(library, config)
+        self.assertEqual(findings, [])
+        self.assertEqual(len(paths), 3)
+        self.assertEqual(paths['library'], library)
+        config['project_roots']['../../Portfolio'].append('library')
+        self.assertIn('repository-duplicate', {f['code'] for f in checker.discover_projects(library, config)[1]})
+        config['project_roots'] = {'../../Missing': ['public']}
+        self.assertIn('project-root-unreadable', {f['code'] for f in checker.discover_projects(library, config)[1]})
+        config['project_roots'] = {'../../Portfolio': ['.vivabem-secrets', '.env', '.github', '.vscode']}
+        self.assertIn('project-name-unsafe', {f['code'] for f in checker.discover_projects(library, config)[1]})
+        with patch('os.scandir', side_effect=PermissionError):
+            self.assertIn('project-root-unreadable', {f['code'] for f in checker.discover_projects(library, config)[1]})
 
     def test_valid_tree_is_read_only(self):
         before = {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
@@ -46,12 +72,20 @@ class DocumentationValidatorTests(unittest.TestCase):
 
     def test_missing_repository_and_language_counterpart(self):
         self.config['repositories'].append('absent')
-        (self.repo / 'docs/pt-BR/guides/start.md').unlink()
+        (self.repo / 'docs/pt-br/guides/start.md').unlink()
         self.assertTrue({'repository-missing', 'counterpart-missing'} <= self.codes())
 
     def test_broken_file_anchor_and_reference(self):
         self.write('docs/en/guides/start.md', '# Start\n\n[Missing](missing.md)\n[Anchor](#nope)\n[Ref][undefined]\n')
         self.assertTrue({'link-missing', 'anchor-missing', 'reference-missing'} <= self.codes())
+
+    def test_indented_source_arrays_are_not_reference_links(self):
+        text = '# Start\n\n    value = arrays["first"]["second"]\n    [Not a link][missing]\n\nReal paragraph\n\n[Broken](missing.md)\n'
+        self.write('docs/en/guides/start.md', text)
+        codes = self.codes()
+        self.assertNotIn('reference-missing', codes)
+        self.assertIn('link-missing', codes)
+        self.assertIn('[Broken](missing.md)', checker.prose(text))
 
     def test_reference_percent_encoded_path_and_unicode_duplicate_heading(self):
         for lang in checker.LANGS:
@@ -61,7 +95,7 @@ class DocumentationValidatorTests(unittest.TestCase):
 
     def test_unreachable_and_invalid_category(self):
         for lang in checker.LANGS:
-            self.write(f'docs/{lang}/stray.md', '# Stray\n')
+            self.write(f'docs/{lang}/unknown/stray.md', '# Stray\n')
         self.assertTrue({'index-unreachable', 'category-invalid'} <= self.codes())
 
     def test_restricted_links_are_not_read_even_with_dotdot(self):
@@ -121,7 +155,7 @@ class DocumentationValidatorTests(unittest.TestCase):
             index = self.repo / f'docs/{lang}/index.md'
             index.write_text(index.read_text() + '[Interview](interviews/demo.md)\n')
         self.assertEqual(self.result()['errors'], 0)
-        self.write('docs/pt-BR/interviews/demo.md', '### Q002 — Test\n\nNo answer.\n')
+        self.write('docs/pt-br/interviews/demo.md', '### Q002 — Test\n\nNo answer.\n')
         self.assertTrue({'question-numbering', 'question-language-mismatch', 'question-answer-missing', 'question-followup-missing'} <= self.codes())
 
     def test_historical_language_exception_requires_reason(self):

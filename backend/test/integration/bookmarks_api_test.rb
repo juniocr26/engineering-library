@@ -54,7 +54,7 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
     reader = open_session
     reader.get "/api/bookmarks", params: { language: "en" }
     csrf = reader.response.parsed_body.fetch("csrf_token")
-    saved = %w[engineering-library env-auditor go-image-optimizer].map do |project|
+    saved = %w[engineering-library url-shortener go-image-optimizer].map do |project|
       reader.post "/api/bookmarks", params: location.merge(project: project, document: "README"), headers: { "X-Annotation-CSRF" => csrf }, as: :json
       assert_equal 201, reader.response.status
       reader.response.parsed_body
@@ -81,12 +81,12 @@ class BookmarksApiTest < ActionDispatch::IntegrationTest
   end
 
   test "project filter rejects unknown inactive and malformed identifiers" do
-    ["missing", "", "../env-auditor", ["env-auditor"]].each do |slug|
+    ["missing", "", "../url-shortener", ["url-shortener"]].each do |slug|
       get "/api/bookmarks", params: { language: "en", project_slug: slug }
       assert_response :unprocessable_entity
     end
-    CatalogProject.find_by!(slug: "env-auditor").update!(active: false)
-    get "/api/bookmarks", params: { language: "en", project_slug: "env-auditor" }
+    CatalogProject.find_by!(slug: "url-shortener").update!(active: false)
+    get "/api/bookmarks", params: { language: "en", project_slug: "url-shortener" }
     assert_response :unprocessable_entity
   end
 

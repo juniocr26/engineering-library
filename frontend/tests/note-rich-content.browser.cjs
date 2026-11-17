@@ -2,19 +2,20 @@
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const sharp = require('sharp');
 const base = process.env.BROWSER_BASE_URL || 'http://localhost:3000';
 const path = '/projects/engineering-library/docs/architecture/current-state.md';
 const query = 'project=engineering-library&document=architecture%2Fcurrent-state.md&language=en';
 const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="24"><rect width="80" height="24" fill="navy"/></svg>';
 const animatedSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="24"><rect width="80" height="24" fill="navy"><animate attributeName="opacity" values="1;.3;1" dur="1s" repeatCount="indefinite"/></rect></svg>';
 const formats = {
-  'image.png': ['image/png', fs.readFileSync('public/assets/icon-512.png')],
-  'image.jpg': ['image/jpeg', fs.readFileSync('public/assets/writer-library.jpg')],
   'image.webp': ['image/webp', fs.readFileSync('public/assets/manuscript/parchment/aged-fibers.webp')],
 };
 const gif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
-const source = '# Rich content 📚 ação\n\n**Markdown** <em>mixed HTML</em>\n\n<span style="color:navy">Styled presentation</span>\n\n<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 24"><text y="18">Inline SVG</text></svg>\n\n![Remote SVG](https://unlisted.test/badge.svg)\n\n![Animated SVG](https://unlisted.test/animated.svg)\n\n![GIF](https://unlisted.test/image.gif)\n\n![PNG](https://unlisted.test/image.png)\n\n![JPEG](https://unlisted.test/image.jpg)\n\n![WebP](https://unlisted.test/image.webp)\n\n![Broken URL](https://unlisted.test/missing.png)\n\n![Missing host](https://absent.test/image.webp)\n\n<img src="https://unlisted.test/html.svg" alt="HTML image">\n\n| Index | Value |\n|---|---|\n' + Array.from({ length: 1100 }, (_, i) => `| ${i} | retained |`).join('\n') + '\n\n```typescript\nconst answer = 42;\n```\n\n```mermaid\nflowchart LR\n A["<b>HTML label</b>"] --> B\n```\n\n```mermaid\ninvalid diagram\n```\n\n<script>parent.pwned=1</script>\n\nEnd of rich note.\n\n' + 'Long-form notes retain Unicode ação 📚 and original source. '.repeat(2500) + '\n\n' + fs.readFileSync(`${process.env.DOCUMENTATION_ROOT || '../docs/projects'}/engineering-library/docs/en/architecture/current-state.md`, 'utf8');
+const source = '# Rich content 📚 ação\n\n**Markdown** <em>mixed HTML</em>\n\n<span style="color:navy">Styled presentation</span>\n\n<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 24"><text y="18">Inline SVG</text></svg>\n\n![Remote SVG](https://unlisted.test/badge.svg)\n\n![Animated SVG](https://unlisted.test/animated.svg)\n\n![GIF](https://unlisted.test/image.gif)\n\n![PNG](https://unlisted.test/image.png)\n\n![JPEG](https://unlisted.test/image.jpg)\n\n![WebP](https://unlisted.test/image.webp)\n\n![Broken URL](https://unlisted.test/missing.png)\n\n![Missing host](https://absent.test/image.webp)\n\n<img src="https://unlisted.test/html.svg" alt="HTML image">\n\n| Index | Value |\n|---|---|\n' + Array.from({ length: 1100 }, (_, i) => `| ${i} | retained |`).join('\n') + '\n\n```typescript\nconst answer = 42;\n```\n\n```mermaid\nflowchart LR\n A["<b>HTML label</b>"] --> B\n```\n\n```mermaid\ninvalid diagram\n```\n\n<script>parent.pwned=1</script>\n\nEnd of rich note.\n\n' + 'Long-form notes retain Unicode ação 📚 and original source. '.repeat(2500) + '\n\n' + fs.readFileSync(`${process.env.DOCUMENTATION_ROOT || '../docs'}/engineering-library/en/architecture/current-state.md`, 'utf8');
 (async () => {
+  formats['image.png'] = ['image/png', await sharp('public/assets/icon-512.webp').png().toBuffer()];
+  formats['image.jpg'] = ['image/jpeg', await sharp('public/assets/writer-library.webp').jpeg().toBuffer()];
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   try {
     for (const width of [1440, 390]) {

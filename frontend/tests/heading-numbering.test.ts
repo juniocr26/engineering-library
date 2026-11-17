@@ -1,3 +1,4 @@
+import { languageDirectory } from '../lib/catalog-paths.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
@@ -13,7 +14,7 @@ import { headingTitle, numberedHeading, numberHeadingUnits } from '../lib/headin
     const { documentationEntries } = await import('../lib/documentation.ts');
     const { markdownUnits } = await import('../lib/markdown.ts');
     for (const inserted of [false, true]) for (const language of ['en', 'pt-BR'] as const) {
-      const directory = path.join(root, 'sample/docs', language, 'architecture');
+      const directory = path.join(root, 'sample', languageDirectory(language as 'en' | 'pt-BR'), 'architecture');
       await mkdir(directory, { recursive: true });
       const source = `# Architecture\n\n${inserted ? '## Earlier\n\n' : ''}<!-- reading-section:flow -->\n## Q005 — ADR 001 v2 2026\n\n` + Array.from({length: 12}, (_, i) => `### Detail ${i}\n`).join('\n');
       await writeFile(path.join(directory, 'overview.md'), source);

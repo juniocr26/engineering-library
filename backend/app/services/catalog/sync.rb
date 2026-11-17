@@ -3,10 +3,12 @@ module Catalog
     def self.call
       entries = []
       errors = []
+      temporary = Files.temporary_projects
       Files.root.children.sort.each do |directory|
         next unless directory.directory? && !directory.symlink? && Files::SLUG.match?(directory.basename.to_s)
-        next unless directory.join("README.md").file? || directory.join("bio").directory?
+        next unless directory.join("en/bio.md").file? || directory.join("pt-br/bio.md").file?
         slug = directory.basename.to_s
+        next if temporary.include?(slug)
         begin
           en = Files.bio(slug, "en")
           pt = Files.bio(slug, "pt-BR")

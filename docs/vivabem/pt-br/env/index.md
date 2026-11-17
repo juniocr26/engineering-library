@@ -1,0 +1,76 @@
+# Contrato de configuração sem valores
+
+## Insumos de servidor sem valores — 16/11/2026
+
+`DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`; `DB_URL`, `DB_SOCKET`, `MYSQL_ATTR_SSL_CA` e opções existentes continuam disponíveis quando aplicáveis. Conexões separadas `CARTEIRA_DIGITAL_DB_*` e `COFRE_PACIENTE_MONGODB_*` exigem configuração própria da infraestrutura.
+
+A infraestrutura fornece os valores pela interface de configuração existente. Este catálogo não inclui endereço privado, credencial, string de conexão ou caminho operacional de servidor.
+
+Revisado em 04/11/2026 por declarações do código, sem abrir dotenv, credenciais, dados runtime ou arquivos de assinatura. Exigências por funcionalidade diferem de requisitos de boot. Referência env() sozinha não torna uma variável globalmente obrigatória.
+
+| Chave / entrada | Contrato |
+| --- | --- |
+| `MERCADO_PAGO_AMBIENTE` | Integração financeira: exatamente teste/producao; sem ambiente implícito |
+| `MERCADO_PAGO_PUBLIC_KEY` | Credencial pública do SDK; Access Token privado não pertence ao Portal |
+| `CHAVE_GERAR_LOGIN, APP_KEY` | Segredos de autenticação/sessão; sem default operacional seguro |
+| `JWT_SECRET_CARTEIRA_DIGITAL, BASIC_AUTH_USER_CARTEIRA_DIGITAL, BASIC_AUTH_PASS_CARTEIRA_DIGITAL, URL_CARTEIRA_DIGITAL` | Necessários para a fronteira Carteira; claims de titular/path/corpo são verificações adicionais |
+| `JWT_SECRET_COFRE_PACIENTE, BASIC_AUTH_USER_COFRE_PACIENTE, BASIC_AUTH_PASS_COFRE_PACIENTE, URL_COFRE_PACIENTE` | Necessários para a fronteira Cofre |
+| `FCM_ENABLED, FCM_PROJECT_ID, FCM_SERVICE_ACCOUNT_PATH` | Push opcional; habilitar exige configuração válida de service account; não publique seus dados |
+
+## Entradas declaradas de configuração PHP
+
+O inventário registra somente nomes. Defaults e precedência de fallback permanecem no código vinculado; nenhum valor dotenv foi lido. Credenciais, bancos e integrações habilitadas devem ser provisionados privadamente. Integrações opcionais do framework não são habilitadas por aparecerem aqui.
+
+- `config/android.php` — `ANDROID_APP_PACKAGE_ID`, `ANDROID_APP_SHA256_FINGERPRINTS`.
+- `config/app.php` — `APP_DEBUG`, `APP_ENV`, `APP_FAKER_LOCALE`, `APP_FALLBACK_LOCALE`, `APP_KEY`, `APP_LOCALE`, `APP_MAINTENANCE_DRIVER`, `APP_MAINTENANCE_STORE`, `APP_NAME`, `APP_PREVIOUS_KEYS`, `APP_URL`, `TIMEZONE`.
+- `config/atendimento-emergencial.php` — `ATENDIMENTO_EMERGENCIAL_DIRECT_TIMEOUT_SECONDS`, `ATENDIMENTO_EMERGENCIAL_EMPTY_RETRY_SECONDS`, `ATENDIMENTO_EMERGENCIAL_QUEUE`, `ATENDIMENTO_EMERGENCIAL_QUEUE_CONNECTION`, `ATENDIMENTO_EMERGENCIAL_SEARCH_TIMEOUT_SECONDS`, `ATENDIMENTO_EMERGENCIAL_STAGE_TIMEOUT_SECONDS`, `ATENDIMENTO_EMERGENCIAL_START_TOLERANCE_MINUTES`, `ATENDIMENTO_EMERGENCIAL_STATE_TTL_SECONDS`, `DURACAO_CONSULTA_PANICO_MINUTOS`, `VALOR_CONSULTA_PANICO_REAIS`.
+- `config/atendimentos.php` — `AGENDAMENTO_RESERVA_TTL_SEGUNDOS`, `AGENDAMENTO_RESULTADO_TTL_SEGUNDOS`, `ATENDIMENTOS_FINALIZACAO_PERIODICA_HABILITADA`, `OPERACAO_FINANCEIRA_LOCK_TTL_SEGUNDOS`, `SALDO_CACHE_TTL_SEGUNDOS`, `TEMPO_MAXIMO_PACIENTE_FALTA_SEGUNDOS`, `TEMPO_MINIMO_PRESENCA_ATENDIMENTO_SEGUNDOS`, `TOLERANCIA_ESTORNO_ATENDIMENTO_MINUTOS`.
+- `config/audit.php` — `AUDIT_CARTEIRA_DIGITAL_ENV_LOCATION`, `AUDIT_CARTEIRA_DIGITAL_SCRIPT_LOCATION`, `AUDIT_COFRE_PACIENTE_ENV_LOCATION`, `AUDIT_COFRE_PACIENTE_SCRIPT_LOCATION`, `AUDIT_HUB_VIVABEM_ENV_LOCATION`, `AUDIT_HUB_VIVABEM_SCRIPT_LOCATION`, `AUDIT_PANEL_PASSWORD`, `AUDIT_PANEL_USER`, `AUDIT_SCRIPT_AUDITORIA_ENVS_LOCATION`, `AUDIT_VIVABEM_ENV_LOCATION`, `AUDIT_VIVABEM_SCRIPT_LOCATION`.
+- `config/auth.php` — `AUTH_GUARD`, `AUTH_PASSWORD_BROKER`, `AUTH_PASSWORD_RESET_TOKEN_TABLE`, `AUTH_PASSWORD_TIMEOUT`, `BASIC_AUTH_PASS`, `BASIC_AUTH_USER`, `CHAVE_GERAR_LOGIN`.
+- `config/cache.php` — `APP_NAME`, `AWS_ACCESS_KEY_ID`, `AWS_DEFAULT_REGION`, `AWS_SECRET_ACCESS_KEY`, `CACHE_PREFIX`, `CACHE_STORE`, `DB_CACHE_CONNECTION`, `DB_CACHE_LOCK_CONNECTION`, `DB_CACHE_LOCK_TABLE`, `DB_CACHE_TABLE`, `DYNAMODB_CACHE_TABLE`, `DYNAMODB_ENDPOINT`, `MEMCACHED_HOST`, `MEMCACHED_PASSWORD`, `MEMCACHED_PERSISTENT_ID`, `MEMCACHED_PORT`, `MEMCACHED_USERNAME`, `REDIS_CACHE_CONNECTION`, `REDIS_CACHE_LOCK_CONNECTION`.
+- `config/carteira-digital.php` — `BASIC_AUTH_PASS_CARTEIRA_DIGITAL`, `BASIC_AUTH_USER_CARTEIRA_DIGITAL`, `CARTEIRA_DIGITAL_TIMEOUT_SECONDS`, `JWT_SECRET_CARTEIRA_DIGITAL`, `URL_CARTEIRA_DIGITAL`.
+- `config/cofre-paciente.php` — `BASIC_AUTH_PASS_COFRE_PACIENTE`, `BASIC_AUTH_USER_COFRE_PACIENTE`, `COFRE_PACIENTE_TIMEOUT`, `JWT_SECRET_COFRE_PACIENTE`, `URL_COFRE_PACIENTE`.
+- `config/crypto.php` — `CRYPTO_ALGORITHM`, `CRYPTO_PRIVATE_KEY_FILE`.
+- `config/database.php` — `DB_CHARSET`, `DB_COLLATION`, `DB_CONNECTION`, `DB_CONNECT_TIMEOUT`, `DB_DATABASE`, `DB_ENCRYPT`, `DB_FOREIGN_KEYS`, `DB_HOST`, `DB_PASSWORD`, `DB_PORT`, `DB_SOCKET`, `DB_TRUST_SERVER_CERTIFICATE`, `DB_URL`, `DB_USERNAME`, `HUB_REDIS_APP_PASSWORD`, `MYSQL_ATTR_SSL_CA`, `REDIS_BACKOFF_ALGORITHM`, `REDIS_BACKOFF_BASE`, `REDIS_BACKOFF_CAP`, `REDIS_CACHE_DB`, `REDIS_CLIENT`, `REDIS_CLUSTER`, `REDIS_DB`, `REDIS_HOST`, `REDIS_MAX_RETRIES`, `REDIS_PASSWORD`, `REDIS_PERSISTENT`, `REDIS_PORT`, `REDIS_PREFIX`, `REDIS_URL`, `REDIS_USERNAME`.
+- `config/filesystems.php` — `APP_URL`, `AWS_ACCESS_KEY_ID`, `AWS_BUCKET`, `AWS_DEFAULT_REGION`, `AWS_ENDPOINT`, `AWS_SECRET_ACCESS_KEY`, `AWS_URL`, `AWS_USE_PATH_STYLE_ENDPOINT`, `FILESYSTEM_DISK`.
+- `config/finance-monitoring.php` — `COMPENSACAO_CRITICAL_RATE_PERCENT`, `COMPENSACAO_MIN_SAMPLES`, `COMPENSACAO_WARN_RATE_PERCENT`, `DLQ_CRITICAL_DEPTH`, `DLQ_CRITICAL_GROWTH`, `DLQ_MONITOR_TARGETS`, `DLQ_WARN_DEPTH`, `DLQ_WARN_GROWTH`.
+- `config/health.php` — `HEALTH_AUDIT_DATABASE`, `HEALTH_CARTEIRA_PURCHASE_DLQ`, `HEALTH_CARTEIRA_PURCHASE_QUEUE`, `HEALTH_CARTEIRA_VHOST`, `HEALTH_COFRE_QUEUE`, `HEALTH_COFRE_VHOST`, `HEALTH_DOCKER_PROXY_TOKEN`, `HEALTH_DOCKER_READ_URL`, `HEALTH_OPERATOR_CAN_INSPECT`, `HEALTH_OPERATOR_CAN_PUBLISH`, `HEALTH_OPERATOR_CAN_PURGE`, `HEALTH_OPERATOR_PASSWORD_HASH`, `HEALTH_OPERATOR_PROJECTS`, `HEALTH_OPERATOR_USERNAME`, `HEALTH_RABBITMQ_PASSWORD`, `HEALTH_RABBITMQ_URL`, `HEALTH_RABBITMQ_USER`, `HEALTH_SESSION_SECURE_COOKIE`, `RABBITMQ_COFRE_VHOST`, `RABBITMQ_ENVIO_EMAILS_QUEUE`, `RABBITMQ_GOOGLE_MEET_REMOVAL_QUEUE`, `RABBITMQ_VHOST`, `RABBITMQ_VIVABEM_VHOST`, `VIVABEM_SERVER_HEALTH_PASSWORD`, `VIVABEM_SERVER_HEALTH_USER`.
+- `config/hub-publisher.php` — `HUB_PUBLISHER_KID`, `HUB_PUBLISHER_PRIVATE_KEY_PATH`.
+- `config/jitsi.php` — `JITSI_API_KEY_ID`, `JITSI_APP_ID`, `JITSI_APP_SECRET`, `JITSI_DOMAIN`, `JITSI_JWT_AUDIENCE`, `JITSI_JWT_ISSUER`, `JITSI_JWT_SUB`, `JITSI_JWT_TTL`, `JITSI_PRIVATE_KEY`, `JITSI_PROVIDER`, `JITSI_RECORDING_ENABLED`, `JITSI_ROOM_PREFIX`, `JITSI_TRANSCRIPTION_ENABLED`.
+- `config/jwt.php` — `JWT_ALGO`, `JWT_BLACKLIST_ENABLED`, `JWT_BLACKLIST_GRACE_PERIOD`, `JWT_LEEWAY`, `JWT_PASSPHRASE`, `JWT_PRIVATE_KEY`, `JWT_PUBLIC_KEY`, `JWT_REFRESH_TTL`, `JWT_SECRET`, `JWT_TTL`.
+- `config/legal.php` — `LEGAL_CONTROLLER_NAME`, `LEGAL_MINIMUM_AGE`, `LEGAL_POLICY_EFFECTIVE_DATE`, `PRIVACY_CONTACT_EMAIL`, `SUPPORT_EMAIL`.
+- `config/logging.php` — `LOG_CHANNEL`, `LOG_DAILY_DAYS`, `LOG_DEPRECATIONS_CHANNEL`, `LOG_DEPRECATIONS_TRACE`, `LOG_PAPERTRAIL_HANDLER`, `LOG_SLACK_EMOJI`, `LOG_SLACK_USERNAME`, `LOG_SLACK_WEBHOOK_URL`, `LOG_STACK`, `LOG_STDERR_FORMATTER`, `LOG_SYSLOG_FACILITY`, `PAPERTRAIL_PORT`, `PAPERTRAIL_URL`.
+- `config/mail.php` — `APP_URL`, `MAIL_EHLO_DOMAIN`, `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`, `MAIL_HOST`, `MAIL_LOG_CHANNEL`, `MAIL_MAILER`, `MAIL_PASSWORD`, `MAIL_PORT`, `MAIL_SCHEME`, `MAIL_SENDMAIL_PATH`, `MAIL_URL`, `MAIL_USERNAME`, `POSTMARK_MESSAGE_STREAM_ID`.
+- `config/panel_access.php` — `ACCESS_EMAIL_TECNICAL_PANEL`.
+- `config/presenca.php` — `PSICOLOGO_PRESENCA_HEARTBEAT_TTL_SECONDS`, `PSICOLOGO_PRESENCA_MONITOR_INTERVAL_SECONDS`, `PSICOLOGO_PRESENCA_MONITOR_LOCK_SECONDS`, `VIVABEM_OFFICIAL_APP_DEVICE_ID_HEADER`, `VIVABEM_OFFICIAL_APP_HEADER`, `VIVABEM_OFFICIAL_APP_HEADER_VALUE`, `VIVABEM_OFFICIAL_APP_QUERY_PARAMETER`, `VIVABEM_OFFICIAL_APP_QUERY_VALUE`, `VIVABEM_OFFICIAL_APP_USER_AGENT_TOKEN`.
+- `config/psychologist-payments.php` — `TAXA_PSICOLOGO_PORCENTAGEM`.
+- `config/queue.php` — `AWS_ACCESS_KEY_ID`, `AWS_DEFAULT_REGION`, `AWS_SECRET_ACCESS_KEY`, `BEANSTALKD_QUEUE`, `BEANSTALKD_QUEUE_HOST`, `BEANSTALKD_QUEUE_RETRY_AFTER`, `DB_CONNECTION`, `DB_QUEUE`, `DB_QUEUE_CONNECTION`, `DB_QUEUE_RETRY_AFTER`, `DB_QUEUE_TABLE`, `QUEUE_CONNECTION`, `QUEUE_FAILED_DRIVER`, `REDIS_QUEUE`, `REDIS_QUEUE_CONNECTION`, `REDIS_QUEUE_RETRY_AFTER`, `SQS_PREFIX`, `SQS_QUEUE`, `SQS_SUFFIX`.
+- `config/sanctum.php` — `SANCTUM_STATEFUL_DOMAINS`, `SANCTUM_TOKEN_PREFIX`.
+- `config/services.php` — `ATENDIMENTO_EMERGENCIAL_QUEUE`, `ATENDIMENTO_EMERGENCIAL_QUEUE_CONNECTION`, `AWS_ACCESS_KEY_ID`, `AWS_DEFAULT_REGION`, `AWS_SECRET_ACCESS_KEY`, `FCM_ENABLED`, `FCM_PROJECT_ID`, `FCM_QUEUE`, `FCM_QUEUE_CONNECTION`, `FCM_SERVICE_ACCOUNT_BASE64`, `FCM_SERVICE_ACCOUNT_EMAIL`, `FCM_SERVICE_ACCOUNT_PATH`, `FCM_SERVICE_ACCOUNT_PRIVATE_KEY`, `FCM_SERVICE_ACCOUNT_PRIVATE_KEY_ID`, `FCM_WEB_API_KEY`, `FCM_WEB_APP_ID`, `FCM_WEB_AUTH_DOMAIN`, `FCM_WEB_MEASUREMENT_ID`, `FCM_WEB_MESSAGING_SENDER_ID`, `FCM_WEB_STORAGE_BUCKET`, `FCM_WEB_VAPID_KEY`, `GOOGLE_APPLICATION_CREDENTIALS`, `HUB_EVENT_PROJECT`, `MERCADO_PAGO_AMBIENTE`, `MERCADO_PAGO_PUBLIC_KEY`, `MONITOR_RABBITMQ_MANAGEMENT_HOST`, `MONITOR_RABBITMQ_MANAGEMENT_PORT`, `MONITOR_RABBITMQ_MANAGEMENT_URL`, `MONITOR_RABBITMQ_PASSWORD`, `MONITOR_RABBITMQ_USER`, `POSTMARK_TOKEN`, `RABBITMQ_COFRE_EXCHANGE`, `RABBITMQ_COFRE_HOST`, `RABBITMQ_COFRE_PASSWORD`, `RABBITMQ_COFRE_PORT`, `RABBITMQ_COFRE_USER`, `RABBITMQ_COFRE_VHOST`, `RABBITMQ_ENVIO_EMAILS_EXCHANGE`, `RABBITMQ_ENVIO_EMAILS_QUEUE`, `RABBITMQ_ENVIO_EMAILS_ROUTING_KEY`, `RABBITMQ_GOOGLE_MEET_REMOVAL_QUEUE`, `RABBITMQ_GOOGLE_MEET_REMOVAL_ROUTING_KEY`, `RABBITMQ_HOST`, `RABBITMQ_MANAGEMENT_HOST`, `RABBITMQ_MANAGEMENT_PORT`, `RABBITMQ_MANAGEMENT_URL`, `RABBITMQ_PASS`, `RABBITMQ_PASSWORD`, `RABBITMQ_PORT`, `RABBITMQ_USER`, `RABBITMQ_VHOST`, `RABBITMQ_VIVABEM_VHOST`, `RESEND_KEY`, `SLACK_BOT_USER_DEFAULT_CHANNEL`, `SLACK_BOT_USER_OAUTH_TOKEN`.
+- `config/session.php` — `APP_NAME`, `SESSION_CONNECTION`, `SESSION_COOKIE`, `SESSION_DOMAIN`, `SESSION_DRIVER`, `SESSION_ENCRYPT`, `SESSION_EXPIRE_ON_CLOSE`, `SESSION_HTTP_ONLY`, `SESSION_LIFETIME`, `SESSION_PARTITIONED_COOKIE`, `SESSION_PATH`, `SESSION_SAME_SITE`, `SESSION_SECURE_COOKIE`, `SESSION_STORE`, `SESSION_TABLE`.
+- `config/trustedproxy.php` — `TRUSTED_PROXIES`.
+- `config/videoconferencia.php` — `VIDEOCONFERENCIA_HEARTBEAT_MAX_SECONDS`, `VIDEOCONFERENCIA_HEARTBEAT_RECOVERY_MAX_SECONDS`, `VIDEOCONFERENCIA_PARTICIPANTE_ATIVO_TTL_SECONDS`, `VIDEOCONFERENCIA_PSICOLOGO_ATIVO_HEARTBEAT_TTL_SECONDS`, `VIDEOCONFERENCIA_PSICOLOGO_ATIVO_TTL_MARGIN_SECONDS`, `VIDEOCONFERENCIA_SESSION_TTL_SECONDS`.
+
+Use configuração/guia de ambiente/runbook existentes para alterações operacionais. Nunca cole valores privados no catálogo, copie ambiente efetivo ou execute atualizador mutante como verificação documental. Nenhum arquivo de ambiente, variável, esquema ou serviço foi alterado.
+
+<!-- reading-section: runtime-semantics -->
+## Semântica de runtime conferida — 2026-11-10
+
+A: declarações conferidas em `config/auth.php`, `config/panel_access.php`, `config/atendimentos.php`, `config/queue.php`, guard, sessão técnica e `docker/entrypoint.sh`. Obrigatoriedade é por feature; nenhum dotenv efetivo foi lido.
+
+| Configuração / fonte | Padrão ou ausência | Responsabilidade |
+| --- | --- | --- |
+| `AUTH_GUARD` / auth | web; driver redis-session, provider users | Autorização do produto exige também resolução Redis |
+| `CHAVE_GERAR_LOGIN` / auth | Sem default seguro; serviço de senha falha fechado quando ausente | Segredo privado de autenticação |
+| `ACCESS_EMAIL_TECNICAL_PANEL` / panel_access | Sem fallback declarado; desafio fixo em 600 segundos | Confirmação técnica por e-mail, sem equivaler ao login |
+| `SessaoPainelTecnico::TTL` | 90 segundos fixos, sem variável; heartbeat estende chave existente | Autorização técnica falha fechado com erro/expiração Redis |
+| `ATENDIMENTOS_FINALIZACAO_PERIODICA_HABILITADA` | false | Finalização periódica opcional mais prontidão criptográfica |
+| `TEMPO_MINIMO_PRESENCA_ATENDIMENTO_SEGUNDOS` | 900 | Padrão de avaliação de participação |
+| `TEMPO_MAXIMO_PACIENTE_FALTA_SEGUNDOS` | 60 | Padrão de avaliação de ausência |
+| `TOLERANCIA_ESTORNO_ATENDIMENTO_MINUTOS` | 5 | Tolerância de cálculo, sem confirmar estorno no provedor |
+| `QUEUE_CONNECTION` / queue | database | Jobs Laravel distintos de adaptadores AMQP explícitos |
+| `VIVABEM_RUN_MIGRATIONS` / entrypoint | 1; somente 0/1 aceitos | Bootstrap principal pode migrar; workers têm papéis separados |
+
+Schedule de monitoramento financeiro está condicionado a false apesar de existirem nomes de configuração. Não substituir entre si durações de presença, cookie, autorização do produto, sessão técnica e desafio. Inventário não comprova credenciais implantadas válidas, semântica completa de vazios ou toda integração opcional ativa.
+
+[Cockpit atual](../operations/technical-cockpit.md), [arquitetura atual](../architecture/overview.md) e [testes](../operations/backend-testing.md) fornecem consumidores/limites conferidos. Atualizar idiomas/coleção após mudanças em defaults, prontidão, guards ou bootstrap. Nenhum ambiente, chave ou startup foi alterado/executado nesta atualização documental.

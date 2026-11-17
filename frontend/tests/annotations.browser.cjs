@@ -125,7 +125,7 @@ const ready = async page => { await page.locator('.reader[data-pagination="ready
         await portuguese.getByRole('button', { name: 'Filtrar anotações', exact: true }).click();
         await portuguese.getByRole('menuitemradio', { name: 'Vermelho (1)', exact: true }).waitFor();
         await page.keyboard.press('Escape'); await page.keyboard.press('Escape');
-        await page.goto(`${base}/projects/env-auditor?lang=en`); await ready(page);
+        await page.goto(`${base}/projects/url-shortener?lang=en`); await ready(page);
         await page.getByRole('button', { name: 'Highlights and Notes', exact: true }).click();
         await panel.getByText('No highlights or notes in this project.', { exact: true }).waitFor();
         assert.deepEqual(errors, []);
