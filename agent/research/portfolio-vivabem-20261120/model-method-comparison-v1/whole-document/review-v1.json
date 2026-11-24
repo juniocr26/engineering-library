@@ -1,0 +1,116 @@
+{
+  "at": "2026-11-21T00:05:46.937283+00:00",
+  "method": "whole-document",
+  "complete_status": "REJECTED",
+  "raw_response_sha256": "4548758eb877a497147015a5c329b76e0d7f1444896ddcc95360db4bfc8d7a4f",
+  "model_content_sha256": "804137f37d6ecd0c29932dd38f7d7c982f6604b5c00008896809acc058b220a6",
+  "source": "source-freeze-v1.json spf13/cobra args.go",
+  "complete_rejection_reasons": [
+    "done_reason length at 1800 tokens",
+    "No Portuguese part",
+    "Usage fragment truncated inside a command field",
+    "Required test evidence, three FAQ pairs and limitations not delivered",
+    "No source line-range citations",
+    "Unqualified/incorrect source claims despite extensive correct copied source"
+  ],
+  "reviewed_diagnostic_claims": [
+    {
+      "id": "W01",
+      "normalized_output_claim": "legacyArgs returns an error if the command has subcommands and the first argument is not a valid subcommand.",
+      "outcome": "REFUTED",
+      "source_path": "args.go",
+      "first_line": 28,
+      "last_line": 38,
+      "reason": "The body tests HasSubCommands, root/parent status and nonempty args; it does not test argument membership. Child commands fall through even for unknown arguments."
+    },
+    {
+      "id": "W02",
+      "normalized_output_claim": "OnlyValidArgs returns an error if there are any positional arguments not in Command.ValidArgs.",
+      "outcome": "REFUTED_UNQUALIFIED",
+      "source_path": "args.go",
+      "first_line": 51,
+      "last_line": 65,
+      "reason": "With empty ValidArgs, no membership checking runs and nil is returned. The mandatory empty-list case was omitted."
+    },
+    {
+      "id": "W03",
+      "normalized_output_claim": "NoArgs returns an error if any arguments are included.",
+      "outcome": "SUPPORTED",
+      "source_path": "args.go",
+      "first_line": 41,
+      "last_line": 47,
+      "reason": "Selected branch compares len(args)>0 and otherwise returns nil."
+    },
+    {
+      "id": "W04",
+      "normalized_output_claim": "NoDuplicateArgs returns an error for duplicate positional arguments and uses a map of seen arguments.",
+      "outcome": "SUPPORTED",
+      "source_path": "args.go",
+      "first_line": 68,
+      "last_line": 79,
+      "reason": "Map lookup and early error return are present."
+    },
+    {
+      "id": "W05",
+      "normalized_output_claim": "ArbitraryArgs never returns an error.",
+      "outcome": "SUPPORTED",
+      "source_path": "args.go",
+      "first_line": 81,
+      "last_line": 84,
+      "reason": "The selected body solely returns nil."
+    },
+    {
+      "id": "W06",
+      "normalized_output_claim": "MatchAll returns an error if any combined validator returns an error.",
+      "outcome": "SUPPORTED",
+      "source_path": "args.go",
+      "first_line": 126,
+      "last_line": 136,
+      "reason": "The written loop returns the current err immediately. The prose fails to explicitly explain short-circuiting, but does not contradict it."
+    },
+    {
+      "id": "W07",
+      "normalized_output_claim": "ExactValidArgs returns an error for any argument outside ValidArgs.",
+      "outcome": "REFUTED_UNQUALIFIED",
+      "source_path": "args.go",
+      "first_line": 138,
+      "last_line": 144,
+      "reason": "Delegation to OnlyValidArgs inherits the empty-ValidArgs bypass; count and nonempty membership checks must be distinguished."
+    },
+    {
+      "id": "W08",
+      "normalized_output_claim": "ExactValidArgs is deprecated in favor of MatchAll(ExactArgs(n), OnlyValidArgs).",
+      "outcome": "SUPPORTED",
+      "source_path": "args.go",
+      "first_line": 138,
+      "last_line": 144,
+      "reason": "Matches explicit source comment and delegating return."
+    }
+  ],
+  "sampled_claims_supported": 5,
+  "sampled_claims_denominator": 8,
+  "sampled_unsupported_or_refuted": 3,
+  "claim_metric_scope": "Deliberately selected diagnostic claims, not an exhaustive precision estimate or random sample. Copied source and repeated prose not counted as independent claims.",
+  "critical_errors": [
+    "Missing required language and incomplete required output"
+  ],
+  "per_dimension": {
+    "factual_accuracy": "FAIL",
+    "provenance": "FAIL line citations absent",
+    "architecture_boundaries": "INCOMPLETE",
+    "relevant_completeness": "FAIL",
+    "API_behavior": "FAIL unqualified empty-list and legacyArgs descriptions",
+    "error_correctness": "PARTIAL",
+    "testing_documentation": "MISSING",
+    "example_validity": "FAIL truncated",
+    "EN_PT_equivalence": "FAIL Portuguese absent",
+    "FAQ_quality": "MISSING",
+    "existing_doc_preservation": "PASS no external edits",
+    "uncertainty": "MISSING required historical limitation"
+  },
+  "owner_approved": false,
+  "training_gold": false,
+  "no_prompt_retry": true,
+  "independent_human_review": false,
+  "review_method": "Separate source-review phase using frozen Git source. Manual diagnostics by Codex; not general automatic semantic verification."
+}

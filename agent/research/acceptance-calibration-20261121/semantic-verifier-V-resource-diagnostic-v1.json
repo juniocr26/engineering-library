@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-21T16:49:21.514140+00:00",
+  "trigger": "V/Cobra-C1 HTTP500 runner-stopped; versioned stop policy halted batch after9attempts,8returned; no original request retried.",
+  "observations": [
+    {
+      "observation": "container_state",
+      "command": [
+        "/usr/local/bin/docker",
+        "inspect",
+        "--format",
+        "{{json .State}} {{json .RestartCount}}",
+        "engineering-library-ollama-1"
+      ],
+      "exit_code": 0,
+      "stdout_path": ".local-backups/acceptance-calibration-20261121/V-runner-container_state-v1.stdout.log",
+      "stdout_sha256": "57c928fdeb131af02dfc253ad7c31e15476f114ecb1f66ea9fee48c2b6c3910f",
+      "stderr_path": ".local-backups/acceptance-calibration-20261121/V-runner-container_state-v1.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "safe_metadata_stdout": "{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":true,\"Dead\":false,\"Pid\":4281,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2026-11-21T13:25:14.299275754Z\",\"FinishedAt\":\"0001-01-01T00:00:00Z\",\"Health\":{\"Status\":\"healthy\",\"FailingStreak\":0,\"Log\":[{\"Start\":\"2026-11-21T16:48:35.066300303Z\",\"End\":\"2026-11-21T16:48:35.141510762Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T16:48:45.153857169Z\",\"End\":\"2026-11-21T16:48:45.236142377Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T16:48:55.246797215Z\",\"End\":\"2026-11-21T16:48:55.334137257Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T16:49:05.335254345Z\",\"End\":\"2026-11-21T16:49:05.420891553Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T16:49:15.422689586Z\",\"End\":\"2026-11-21T16:49:15.492407002Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"}]}} 0\n"
+    },
+    {
+      "observation": "cgroup_memory",
+      "command": [
+        "/usr/local/bin/docker",
+        "exec",
+        "engineering-library-ollama-1",
+        "sh",
+        "-c",
+        "for f in /sys/fs/cgroup/memory.events /sys/fs/cgroup/memory.current /sys/fs/cgroup/memory.peak /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.swap.current; do if test -r \"$f\"; then echo \"$f\"; cat \"$f\"; fi; done"
+      ],
+      "exit_code": 0,
+      "stdout_path": ".local-backups/acceptance-calibration-20261121/V-runner-cgroup_memory-v1.stdout.log",
+      "stdout_sha256": "9b17116e565a5103c9da1717d9f1561fef07d691813c93d5624f6ed83f8399ff",
+      "stderr_path": ".local-backups/acceptance-calibration-20261121/V-runner-cgroup_memory-v1.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "safe_metadata_stdout": "/sys/fs/cgroup/memory.events\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 2\noom_group_kill 0\n/sys/fs/cgroup/memory.current\n50388992\n/sys/fs/cgroup/memory.peak\n7345463296\n/sys/fs/cgroup/memory.max\nmax\n/sys/fs/cgroup/memory.swap.current\n2379776\n"
+    },
+    {
+      "observation": "all_container_usage",
+      "command": [
+        "/usr/local/bin/docker",
+        "stats",
+        "--no-stream",
+        "--format",
+        "{{.Name}} {{.MemUsage}} {{.MemPerc}} {{.CPUPerc}}"
+      ],
+      "exit_code": 0,
+      "stdout_path": ".local-backups/acceptance-calibration-20261121/V-runner-all_container_usage-v1.stdout.log",
+      "stdout_sha256": "37fee374202f82a4dfff77599a38206e96ebffc427680ec3a1c3a503f5545074",
+      "stderr_path": ".local-backups/acceptance-calibration-20261121/V-runner-all_container_usage-v1.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "safe_metadata_stdout": "engineering-library-frontend-1 479.9MiB / 7.75GiB 6.05% 1.96%\nengineering-library-backend-1 72.57MiB / 7.75GiB 0.91% 0.04%\nengineering-library-postgres-1 36.49MiB / 7.75GiB 0.46% 0.00%\nengineering-library-ollama-1 46.07MiB / 7.75GiB 0.58% 0.00%\n"
+    },
+    {
+      "observation": "ollama_logs",
+      "command": [
+        "/usr/local/bin/docker",
+        "logs",
+        "--since",
+        "2026-11-21T16:31:55Z",
+        "--tail",
+        "100",
+        "engineering-library-ollama-1"
+      ],
+      "exit_code": 0,
+      "stdout_path": ".local-backups/acceptance-calibration-20261121/V-runner-ollama_logs-v1.stdout.log",
+      "stdout_sha256": "c76d894110a9175f4a1a0deb17e552dff340f44686e42483bb6c6935c6c7f64d",
+      "stderr_path": ".local-backups/acceptance-calibration-20261121/V-runner-ollama_logs-v1.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "remaining_V9_and_R18_not_started": true,
+  "no_restart_limit_change_or_model_weight_mutation": true,
+  "interpretation": "Read-only resource/cgroup/runtime observations; do not infer individual request OOM causation without time-correlated evidence.",
+  "no_private_application_source_database_credentials_read": true,
+  "optimizer_updates": 0,
+  "gold": 0
+}

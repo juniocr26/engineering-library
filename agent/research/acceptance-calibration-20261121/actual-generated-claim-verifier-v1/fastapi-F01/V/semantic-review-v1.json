@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-21T17:31:41.435282+00:00",
+  "case": "fastapi-F01",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-F01",
+    "task": "fastapi",
+    "fact_id": "F01",
+    "original_pair": {
+      "en": "The default value of use_cache is True.",
+      "pt-BR": "O valor padrão de use_cache é True."
+    },
+    "expected_verdict": "SUPPORTED",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/fastapi/L/semantic-review-v2.json",
+    "source_review_sha256": "f36ec3cec48c2976dfa0f4c0ce928dd74f60d2588446a74f57d9a00d56e6f9cb",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15\n53:     use_cache: bool = True\n",
+    "source_role": "defining the default value of use_cache as True.",
+    "evidence": "The source defines the default value of use_cache as True.",
+    "reason": "The source does not explicitly state that use_cache is always True, only that it has a default value of True."
+  },
+  "content_sha256": "d3c252f6957b143f2e538f1044d0a5f009f3b51fd15adab16f43766c13cbec1d",
+  "primary_raw_label_agreement": false,
+  "rationale_support_for_requested_claim": "INSUFFICIENT",
+  "source_relationship_review": "Changes declareddefaultTrue into alwaysTrue runtimeinvariant, thenabstains. SourceevidenceacknowledgesdefaultTrue and frozenpairneverclaimedalwaysTrue.",
+  "evidence_form": "ACCURATE_DECLARATION_PARAPHRASE_WRONG_PROPOSITION",
+  "end_to_end_label_and_rationale_supported": false,
+  "grading_basis": "semantic-verifier-rationale-review-rubric-v1.json; evidence/reason additional unsupportedclaims remain defects despite correctclassification.",
+  "reviewer": "Samecampaignagent, frozenreferencesunchanged; notindependentowner/human",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

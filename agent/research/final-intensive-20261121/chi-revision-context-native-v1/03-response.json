@@ -1,0 +1,29 @@
+{
+  "go_version": "go1.27.4",
+  "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+  "path": "selected.go",
+  "platform": "darwin/arm64",
+  "profile": "go-standard-parser-declarations-v1",
+  "source_executed": false,
+  "source_sha256": "d0a2de078138dc57acdbf59749d567529637556158111eb1b7d99b545f18a4b1",
+  "syntax_only": true,
+  "units": [
+    {
+      "selector": "TestRequestSize",
+      "declaration_kind": "function",
+      "symbol": "middleware.TestRequestSize",
+      "start_line": 14,
+      "end_line": 61,
+      "quote": "func TestRequestSize(t *testing.T) {\n\tt.Parallel()\n\n\tconst limit = 10\n\n\tvar tests = []struct {\n\t\tname string\n\t\tbody string\n\t\twant int\n\t}{\n\t\t{\"should accept a body smaller than the limit\", \"short\", http.StatusOK},\n\t\t{\"should accept a body exactly at the limit\", strings.Repeat(\"a\", limit), http.StatusOK},\n\t\t{\"should reject a body one byte over the limit\", strings.Repeat(\"a\", limit+1), http.StatusRequestEntityTooLarge},\n\t\t{\"should accept an empty body\", \"\", http.StatusOK},\n\t}\n\n\tfor _, tt := range tests {\n\t\tt.Run(tt.name, func(t *testing.T) {\n\t\t\tt.Parallel()\n\n\t\t\tr := chi.NewRouter()\n\t\t\tr.Use(RequestSize(limit))\n\t\t\tr.Post(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\t\t\tb, err := io.ReadAll(r.Body)\n\t\t\t\tif err != nil {\n\t\t\t\t\tvar maxErr *http.MaxBytesError\n\t\t\t\t\tif !errors.As(err, &maxErr) {\n\t\t\t\t\t\tt.Errorf(\"expected *http.MaxBytesError, got %T: %v\", err, err)\n\t\t\t\t\t}\n\t\t\t\t\tw.WriteHeader(http.StatusRequestEntityTooLarge)\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\tif string(b) != tt.body {\n\t\t\t\t\tt.Errorf(\"got body %q, want %q\", b, tt.body)\n\t\t\t\t}\n\t\t\t\tw.WriteHeader(http.StatusOK)\n\t\t\t})\n\n\t\t\treq := httptest.NewRequest(http.MethodPost, \"/\", strings.NewReader(tt.body))\n\t\t\trec := httptest.NewRecorder()\n\t\t\tr.ServeHTTP(rec, req)\n\n\t\t\tif rec.Code != tt.want {\n\t\t\t\tt.Errorf(\"got status %d, want %d\", rec.Code, tt.want)\n\t\t\t}\n\t\t})\n\t}\n}",
+      "declaration": "func TestRequestSize(t *testing.T)",
+      "function_type": "func(t *testing.T)"
+    }
+  ],
+  "producer": {
+    "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+    "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+    "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+    "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+    "version": "1.6.1"
+  }
+}

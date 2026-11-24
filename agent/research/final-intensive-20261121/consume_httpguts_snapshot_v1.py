@@ -1,0 +1,14 @@
+import argparse,json,hashlib,subprocess
+from pathlib import Path
+ap=argparse.ArgumentParser();ap.add_argument('--root',required=True,type=Path);a=ap.parse_args();root=a.root.resolve();p=root/'agent/research/final-intensive-20261121';sha=lambda b:hashlib.sha256(b).hexdigest();m=json.loads((p/'go-vendored-httpguts-snapshot-manifest-v1.json').read_text());identity={}
+for r in m['records']:
+ f=root/r['saved_path'];b=f.read_bytes();assert not f.is_symlink();assert sha(b)==r['sha256'] and len(b)==r['bytes'];identity[r['source_relative_to_SDK']]=r['sha256']
+assert identity==m['source_identity_map'];assert 'sha256:'+sha(json.dumps(identity,sort_keys=True,separators=(',',':')).encode())==m['source_revision'];assert not m['upstream_bytes_equivalence_verified'] and not m['independence_certified']
+refs=json.loads((p/'go-vendored-httpguts-prospective-reference-v1.json').read_text());assert len(refs['references'])==14 and refs['evaluation_count']==0 and refs['model_calls']==0 and not refs['gold']
+for r in refs['references']:
+ b=(root/r['path']).read_bytes();assert sha(b)==r['file_sha256'];q='\n'.join(b.decode().splitlines()[r['start_line']-1:r['end_line']])+'\n';assert q==r['quote'] and sha(q.encode())==r['quote_sha256'];assert r['en'] and r['pt-BR']
+protocol=json.loads((p/'go-vendored-httpguts-type-intake-protocol-v1.json').read_text());binary=p/'offline-go-type-observer-v5/observer';assert sha(binary.read_bytes())==protocol['binary_sha256'];req=json.loads((p/'go-vendored-httpguts-type-intake-request-v1.json').read_text());req['export_root']=str(root)
+for r in req['standard_exports'].values():assert sha((root/r['path']).read_bytes())==r['sha256']
+r=subprocess.run([str(binary)],input=json.dumps(req).encode(),capture_output=True,timeout=30);expected=json.loads((p/'go-vendored-httpguts-type-intake-results-v1.json').read_text());assert r.returncode==expected['exit_code']==0;packet=json.loads(r.stdout);assert packet==expected['packet'];assert packet['status']=='INCONCLUSIVE_TYPE_OR_IMPORT_ERRORS' and not packet['relations'] and not packet['declarations'] and not packet['partial_type_info_admitted']
+spec=json.loads((p/'go-vendored-httpguts-go-spec-evidence-v1.json').read_text());b=(root/spec['saved_path']).read_bytes();assert sha(b)==spec['sha256'];section=b[spec['section_start_byte']:spec['section_end_byte']].decode();assert 'sign extended' in section and 'truncated' in section
+print(json.dumps({'status':'PASS_EXACT_LOCAL_VENDOR_SNAPSHOT_AND_INCONCLUSIVE_TYPE_INTAKE_RECOVERY','raw_snapshot_files':len(identity),'bilingual_composite_references':14,'type_probe':'EXPECTED_INCONCLUSIVE_NO_PARTIAL_DATA','local_language_reference_verified':True,'source_program_executed':False,'new_model_calls':0,'scope':'Hash/range/frozen-binary replay only; no independent semantic approval, upstream identity certification, target/runtime execution or model scoring.'}))

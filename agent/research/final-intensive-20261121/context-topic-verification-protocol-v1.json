@@ -1,0 +1,98 @@
+{
+  "frozen_at": "2026-11-21T23:12:22.171135+00:00",
+  "topics": [
+    "fastapi-request-context",
+    "chi-wrapper-context"
+  ],
+  "unit": "Separate source-property challenges, not free-prose semantic verifier or independent model evaluation.",
+  "checks": [
+    {
+      "id": "F-CACHE-ABSENT",
+      "source_property": "selected handler solve_dependencies keywords omit dependency_cache and **kwargs",
+      "required": true
+    },
+    {
+      "id": "F-NONERROR-GUARD",
+      "source_property": "selected normal endpoint call nested in then not errors",
+      "required": true
+    },
+    {
+      "id": "F-SERIALIZATION-ELSE",
+      "source_property": "selected serialization nested in else isinstance(raw_response, Response)",
+      "required": true
+    },
+    {
+      "id": "F-RECURSIVE-CACHE",
+      "source_property": "recursive solver explicit dependency_cache=dependency_cache",
+      "required": true
+    },
+    {
+      "id": "F-REQUIRED-ARGS",
+      "source_property": "owned example includes all nondefault keyword-only solver arguments",
+      "required": true
+    },
+    {
+      "id": "C-DISPATCH",
+      "source_property": "native source inspection preserves exact factory and base write owner quotes",
+      "required": true
+    },
+    {
+      "id": "C-READFROM-OWNERSHIP",
+      "source_property": "native selected ReadFrom is httpFancyWriter.ReadFrom, not http2FancyWriter.ReadFrom",
+      "required": true
+    },
+    {
+      "id": "C-EXAMPLE",
+      "source_property": "unchanged owned example parses with existing native Go syntax tool; no compilation/execution",
+      "required": true
+    }
+  ],
+  "negative_controls": [
+    {
+      "id": "F-N1",
+      "claim": "The selected handler explicitly passes dependency_cache.",
+      "reference": "CONTRADICTED"
+    },
+    {
+      "id": "F-N2",
+      "claim": "The selected ordinary endpoint call runs under the errors-present branch.",
+      "reference": "CONTRADICTED"
+    },
+    {
+      "id": "F-N3",
+      "claim": "Every raw_response goes through the selected serialize_response call.",
+      "reference": "CONTRADICTED"
+    },
+    {
+      "id": "C-N1",
+      "claim": "The shown WrapResponseWriter interface explicitly declares ReadFrom.",
+      "reference": "CONTRADICTED"
+    },
+    {
+      "id": "C-N2",
+      "claim": "The direct ReadFrom counter update requires err == nil.",
+      "reference": "CONTRADICTED"
+    },
+    {
+      "id": "C-N3",
+      "claim": "The tee/discard fallback adds the io.Copy count to the base counter a second time.",
+      "reference": "CONTRADICTED"
+    }
+  ],
+  "unknown_controls": [
+    {
+      "id": "F-U1",
+      "claim": "All server requests have exactly one globally isolated cache.",
+      "reference": "INSUFFICIENT"
+    },
+    {
+      "id": "C-U1",
+      "claim": "The selected wrapper fields prove successful delivery to every client.",
+      "reference": "INSUFFICIENT"
+    }
+  ],
+  "reviewer": "Same agent; separately acquired source and separate AST/native syntax procedures. No independent human.",
+  "new_model_calls": 0,
+  "gold": 0,
+  "optimizer_updates": 0
+}

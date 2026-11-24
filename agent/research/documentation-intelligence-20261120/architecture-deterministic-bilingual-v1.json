@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-20T11:22:59.622718+00:00",
+  "claims": [
+    {
+      "claim_id": "F1",
+      "en": "`BalanceService.summary` contains the written call `self._port.read(account_id)`.",
+      "pt-br": "`BalanceService.summary` contém a chamada escrita `self._port.read(account_id)`.",
+      "evidence_units": [
+        "service.py:BalanceService.summary"
+      ],
+      "status": "VERIFIED_WITH_LIMITATIONS",
+      "limitation": "Reviewed fixed owned syntax profile; no runtime receiver or external transport proof."
+    },
+    {
+      "claim_id": "F2",
+      "en": "`BalanceAdapter` declares `timeout=2.0` and forwards `timeout` to `self._client.get`; units and an enforced deadline are not established.",
+      "pt-br": "`BalanceAdapter` declara `timeout=2.0` e encaminha `timeout` a `self._client.get`; unidades e um deadline efetivo não estão estabelecidos.",
+      "evidence_units": [
+        "adapter.py:BalanceAdapter.__init__",
+        "adapter.py:BalanceAdapter.read"
+      ],
+      "status": "VERIFIED_WITH_LIMITATIONS",
+      "limitation": "Reviewed fixed owned syntax profile; no runtime receiver or external transport proof."
+    },
+    {
+      "claim_id": "F3",
+      "en": "`BalanceAdapter.read` catches `GatewayUnavailable` from the client call and raises `BalanceUnavailable` from `error`; this handler does not cover the mapper call.",
+      "pt-br": "`BalanceAdapter.read` captura `GatewayUnavailable` da chamada ao cliente e lança `BalanceUnavailable` a partir de `error`; esse handler não abrange a chamada ao mapeador.",
+      "evidence_units": [
+        "adapter.py:BalanceAdapter.read"
+      ],
+      "status": "VERIFIED_WITH_LIMITATIONS",
+      "limitation": "Reviewed fixed owned syntax profile; no runtime receiver or external transport proof."
+    },
+    {
+      "claim_id": "F4",
+      "en": "After the `try`, `BalanceAdapter.read` returns `balance_from_payload(account_id, payload)`.",
+      "pt-br": "Após o `try`, `BalanceAdapter.read` retorna `balance_from_payload(account_id, payload)`.",
+      "evidence_units": [
+        "adapter.py:BalanceAdapter.read"
+      ],
+      "status": "VERIFIED_WITH_LIMITATIONS",
+      "limitation": "Reviewed fixed owned syntax profile; no runtime receiver or external transport proof."
+    },
+    {
+      "claim_id": "F5",
+      "en": "`JsonClient.get` is declared on a protocol; concrete transport, internal retries and server authorization remain unknown.",
+      "pt-br": "`JsonClient.get` é declarado em um protocolo; transporte concreto, tentativas internas e autorização do servidor permanecem desconhecidos.",
+      "evidence_units": [
+        "client.py:JsonClient.get"
+      ],
+      "status": "VERIFIED_WITH_LIMITATIONS",
+      "limitation": "Reviewed fixed owned syntax profile; no runtime receiver or external transport proof."
+    },
+    {
+      "claim_id": "F6",
+      "en": "The selected bodies of `BalanceService.summary` and `balance_from_payload` contain no written exception handler; this statement does not describe `BalanceAdapter.read`.",
+      "pt-br": "Os corpos selecionados de `BalanceService.summary` e `balance_from_payload` não contêm handler de exceção escrito; essa afirmação não descreve `BalanceAdapter.read`.",
+      "evidence_units": [
+        "service.py:BalanceService.summary",
+        "mapping.py:balance_from_payload"
+      ],
+      "status": "VERIFIED_WITH_LIMITATIONS",
+      "limitation": "Reviewed fixed owned syntax profile; no runtime receiver or external transport proof."
+    }
+  ],
+  "claim_pack_sha256": "a4c4efa218ea7cae1c513af641d8529b47618cf632f321f5a7c943f5105cb871",
+  "model_calls": 0,
+  "neural_improvement": false,
+  "training_use_approved": false,
+  "scope": "Fixed six-fact renderer, not arbitrary chapter generation or automatic source approval.",
+  "review_author": "Codex; no independent human review"
+}

@@ -1,0 +1,1017 @@
+{
+  "at": "2026-11-20T16:39:43.631677+00:00",
+  "source_revisions": {
+    "previous": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+    "current": "26d48e0634e6ee9cdc0533996db289ce4b430177"
+  },
+  "claims": [
+    {
+      "id": "purpose",
+      "section": "purpose",
+      "en": "The selected `HTTPTransport` and `AsyncHTTPTransport` bodies adapt a request into `httpcore.Request`, call their pool, then write a `Response` construction. `ResponseStream` and `AsyncResponseStream` wrap the returned stream expressions. This chapter covers the pinned private implementation cuts, not the complete HTTPX API or a tested endpoint.",
+      "pt-br": "Os corpos selecionados de `HTTPTransport` e `AsyncHTTPTransport` adaptam uma requisição para `httpcore.Request`, chamam seu pool e depois escrevem a construção de `Response`. `ResponseStream` e `AsyncResponseStream` envolvem as expressões dos streams retornados. Este capítulo cobre os recortes privados de implementação fixados, em vez da API HTTPX completa ou de um endpoint testado.",
+      "evidence": [
+        "current:HTTPTransport.handle_request",
+        "current:AsyncHTTPTransport.handle_async_request",
+        "current:ResponseStream.__iter__",
+        "current:AsyncResponseStream.__aiter__"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "initialization",
+      "section": "architecture",
+      "en": "At the earlier cut, `HTTPCORE_EXC_MAP` is a module-level literal dictionary. At the later cut it starts as `{}`; `map_httpcore_exceptions` declares it global and calls `_load_httpcore_exceptions()` when its length is zero, before the selected `try`/`yield`. The loader imports `httpcore` locally and returns the literal mapping. This is source structure, not a startup-time, dependency-availability or thread-safety measurement.",
+      "pt-br": "No recorte anterior, `HTTPCORE_EXC_MAP` é um dicionário literal no nível do módulo. No recorte posterior ele começa como `{}`; `map_httpcore_exceptions` declara esse nome global e chama `_load_httpcore_exceptions()` quando seu tamanho é zero, antes do `try`/`yield` selecionado. O carregador importa `httpcore` localmente e retorna o mapa literal. Isso é estrutura de código, sem medir tempo de inicialização, disponibilidade da dependência ou segurança entre threads.",
+      "evidence": [
+        "previous:mapping_provider",
+        "previous:context",
+        "current:mapping_provider",
+        "current:context"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "stable-pairs",
+      "section": "architecture",
+      "en": "The fourteen ordered source/target reference pairs are unchanged across the two cuts. Each current target resolves through a written relative import to a class declaration in `_exceptions.py`, and its selected declared ancestry includes `RequestError`. The external classes were not imported; their runtime identities and matching behavior remain unverified. An unchanged mapping table does not certify old physical citations after its provider moves.",
+      "pt-br": "Os quatorze pares ordenados de referências de origem/destino permanecem iguais entre os dois recortes. Cada destino atual se vincula, por uma importação relativa escrita, a uma declaração de classe em `_exceptions.py`, e sua ancestralidade declarada selecionada inclui `RequestError`. As classes externas não foram importadas; suas identidades e seu comportamento de correspondência em execução continuam não verificados. Um mapa inalterado não certifica citações físicas antigas depois que seu provedor muda de lugar.",
+      "evidence": [
+        "previous:mapping_provider",
+        "current:mapping_provider",
+        "current:exception-import-wire",
+        "current:exception:TransportError",
+        "current:exception:RequestError",
+        "current:exception:HTTPError"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "handler",
+      "section": "errors",
+      "en": "The selected mapper catches `Exception`, tests `isinstance(exc, from_exc)`, and updates its accumulator when empty or when `issubclass(to_exc, mapped_exc)` holds. If no target was selected it uses a bare `raise`; otherwise it writes `message = str(exc)` followed by `raise mapped_exc(message) from exc`. This does not prove that every exception type is mapped, that every target relation is comparable or that every error is swallowed.",
+      "pt-br": "O mapeador selecionado captura `Exception`, testa `isinstance(exc, from_exc)` e atualiza seu acumulador quando ele está vazio ou quando `issubclass(to_exc, mapped_exc)` é verdadeiro. Se nenhum destino foi selecionado, usa `raise` sem argumento; caso contrário, escreve `message = str(exc)` seguido de `raise mapped_exc(message) from exc`. Isso não prova que todo tipo de exceção é mapeado, que toda relação entre destinos é comparável nem que todo erro é suprimido.",
+      "evidence": [
+        "current:context"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "request-boundary",
+      "section": "responsibilities",
+      "en": "In both selected request methods, `httpcore.Request(...)` is constructed before `with map_httpcore_exceptions()`. The protected statement is the pool call, synchronous or awaited. The response-stream assertion and `Response(...)` return construction come after that local block. Claiming that this one block encloses every request/response setup failure would exceed its written scope.",
+      "pt-br": "Nos dois métodos de requisição selecionados, `httpcore.Request(...)` é construído antes de `with map_httpcore_exceptions()`. A instrução protegida é a chamada ao pool, síncrona ou aguardada. A asserção do stream de resposta e a construção de retorno `Response(...)` ficam depois desse bloco local. Afirmar que esse único bloco abrange toda falha de preparação de requisição/resposta excederia seu escopo escrito.",
+      "evidence": [
+        "current:HTTPTransport.handle_request",
+        "current:AsyncHTTPTransport.handle_async_request"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "data-forwarding",
+      "section": "inputs_outputs",
+      "en": "The request construction forwards written expressions for `method`, `url`, `headers`, `content` and `extensions`. The response construction forwards `resp.status`, `resp.headers` and `resp.extensions`, and supplies the selected stream wrapper. The source body contains assertions about stream interfaces; it does not by itself certify all runtime bindings, body buffering, copying behavior or higher-level status handling.",
+      "pt-br": "A construção da requisição encaminha expressões escritas para `method`, `url`, `headers`, `content` e `extensions`. A construção da resposta encaminha `resp.status`, `resp.headers` e `resp.extensions`, além de fornecer o wrapper de stream selecionado. O corpo do código contém asserções sobre interfaces de stream; ele não certifica por si só todas as vinculações em execução, armazenamento do corpo em memória, comportamento de cópia nem tratamento de status em camadas superiores.",
+      "evidence": [
+        "current:HTTPTransport.handle_request",
+        "current:AsyncHTTPTransport.handle_async_request"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "iteration-and-close",
+      "section": "responsibilities",
+      "en": "The selected `ResponseStream.__iter__` and `AsyncResponseStream.__aiter__` loop inside an explicit mapper context. Their `close`/`aclose` bodies and the transport `close`/`aclose` bodies contain no explicit mapper context. Separately, `HTTPTransport.__exit__` and `AsyncHTTPTransport.__aexit__` do wrap their pool-exit call in that context. These local differences do not prove that a downstream close implementation can never translate errors.",
+      "pt-br": "Os métodos selecionados `ResponseStream.__iter__` e `AsyncResponseStream.__aiter__` executam seus laços dentro de um contexto explícito do mapeador. Seus corpos `close`/`aclose` e os corpos `close`/`aclose` dos transportes não contêm contexto explícito do mapeador. Separadamente, `HTTPTransport.__exit__` e `AsyncHTTPTransport.__aexit__` envolvem a chamada de saída do pool nesse contexto. Essas diferenças locais não provam que uma implementação posterior de fechamento nunca possa traduzir erros.",
+      "evidence": [
+        "current:ResponseStream.__iter__",
+        "current:AsyncResponseStream.__aiter__",
+        "current:ResponseStream.close",
+        "current:AsyncResponseStream.aclose",
+        "current:HTTPTransport.close",
+        "current:AsyncHTTPTransport.aclose",
+        "current:HTTPTransport.__exit__",
+        "current:AsyncHTTPTransport.__aexit__"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "request-context",
+      "section": "errors",
+      "en": "`request_context` selects `RequestError`, assigns `exc.request = request` only under `request is not None`, then writes `raise exc`. `HTTPStatusError` is declared with base `HTTPError`, while `RequestError` is separately declared with base `HTTPError`. The selected handler therefore does not justify a promise about every declared `HTTPError` subtype; no runtime exception hierarchy was instantiated here.",
+      "pt-br": "`request_context` seleciona `RequestError`, atribui `exc.request = request` apenas sob `request is not None` e depois escreve `raise exc`. `HTTPStatusError` é declarado com base `HTTPError`, enquanto `RequestError` é declarado separadamente com base `HTTPError`. Portanto, o handler selecionado não justifica uma promessa sobre todo subtipo declarado de `HTTPError`; nenhuma hierarquia de exceções em execução foi instanciada aqui.",
+      "evidence": [
+        "current:request_context",
+        "current:HTTPStatusError",
+        "current:exception:RequestError"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "request-attachment-limit",
+      "section": "errors",
+      "en": "The mapper constructs its selected exception with a message alone. `RequestError.__init__` declares an optional `request` defaulting to `None`, and the selected `HTTPError` property getter has a `RuntimeError` branch when its stored request is absent. These two files do not establish whether a higher client layer later attaches request context; the mapping call alone is not that guarantee.",
+      "pt-br": "O mapeador constrói a exceção selecionada apenas com uma mensagem. `RequestError.__init__` declara `request` opcional com padrão `None`, e o getter de propriedade selecionado em `HTTPError` possui um ramo de `RuntimeError` quando a requisição armazenada está ausente. Esses dois arquivos não estabelecem se uma camada superior do cliente depois acrescenta contexto da requisição; a chamada de mapeamento sozinha não fornece essa garantia.",
+      "evidence": [
+        "current:context",
+        "current:RequestError.__init__",
+        "current:exception:HTTPError"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "retry-configuration",
+      "section": "configuration",
+      "en": "Both selected transport constructors declare `retries=0`. Their `ConnectionPool`/`AsyncConnectionPool` call forwards that keyword, while the selected HTTP/SOCKS proxy constructor calls omit it. This is a keyword-forwarding observation, not a verified retry count, failure policy, timeout unit, TLS guarantee or proxy authentication result. The imported SSL/configuration helpers and external pool implementation are outside this evidence closure.",
+      "pt-br": "Ambos os construtores de transporte selecionados declaram `retries=0`. A chamada de `ConnectionPool`/`AsyncConnectionPool` encaminha essa opção, enquanto as chamadas selecionadas dos construtores de proxy HTTP/SOCKS a omitem. Isso é uma observação de encaminhamento de opção, sem verificar contagem de tentativas, política de falhas, unidade de timeout, garantia TLS ou resultado de autenticação de proxy. Os auxiliares importados de SSL/configuração e a implementação externa do pool ficam fora deste fechamento de evidências.",
+      "evidence": [
+        "current:HTTPTransport.__init__",
+        "current:AsyncHTTPTransport.__init__"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "dependency-cut",
+      "section": "configuration",
+      "en": "Both project manifests declare `requires-python = \">=3.8\"` and dependency `httpcore==1.*`. The wildcard constraint is not an exact installed httpcore revision. No package installation, wheel compatibility matrix or supported-version execution was performed, and the later source tag is not presented as the latest release.",
+      "pt-br": "Ambos os manifestos do projeto declaram `requires-python = \">=3.8\"` e a dependência `httpcore==1.*`. A restrição com curinga não é uma revisão instalada exata do httpcore. Não houve instalação de pacote, matriz de compatibilidade de wheels nem execução de versões suportadas, e a tag de código posterior não é apresentada como a versão mais recente.",
+      "evidence": [
+        "0.25.2:pyproject",
+        "0.28.1:pyproject"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "rights-and-scope",
+      "section": "limitations",
+      "en": "The original three-clause redistribution notice is preserved. License presence is not owner approval for training. Prior local HTTPX-name references and post-inspection profile development are declared; these source cuts and chapter/FAQ candidates are excluded from training. Source hashes and declared class relationships do not establish complete application behavior.",
+      "pt-br": "O aviso original de redistribuição com três cláusulas está preservado. A presença da licença não é aprovação do proprietário para treinamento. As referências locais anteriores ao nome HTTPX e o desenvolvimento do perfil depois da inspeção estão declarados; esses recortes de código e os candidatos de capítulo/perguntas frequentes estão excluídos do treinamento. Hashes de código e relações declaradas entre classes não estabelecem o comportamento completo da aplicação.",
+      "evidence": [
+        "current:license",
+        "current:context"
+      ],
+      "review": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    }
+  ],
+  "faq": [
+    {
+      "id": "stable-map",
+      "en_q": "Do the same mapping pairs make the whole chapter a NO-OP?",
+      "pt-br_q": "Os mesmos pares de mapeamento tornam o capítulo inteiro um NO-OP?",
+      "claim_id": "initialization",
+      "en_a": "At the earlier cut, `HTTPCORE_EXC_MAP` is a module-level literal dictionary. At the later cut it starts as `{}`; `map_httpcore_exceptions` declares it global and calls `_load_httpcore_exceptions()` when its length is zero, before the selected `try`/`yield`. The loader imports `httpcore` locally and returns the literal mapping. This is source structure, not a startup-time, dependency-availability or thread-safety measurement.",
+      "pt-br_a": "No recorte anterior, `HTTPCORE_EXC_MAP` é um dicionário literal no nível do módulo. No recorte posterior ele começa como `{}`; `map_httpcore_exceptions` declara esse nome global e chama `_load_httpcore_exceptions()` quando seu tamanho é zero, antes do `try`/`yield` selecionado. O carregador importa `httpcore` localmente e retorna o mapa literal. Isso é estrutura de código, sem medir tempo de inicialização, disponibilidade da dependência ou segurança entre threads.",
+      "evidence": [
+        "previous:mapping_provider",
+        "previous:context",
+        "current:mapping_provider",
+        "current:context"
+      ]
+    },
+    {
+      "id": "all-errors",
+      "en_q": "Does the mapper swallow or convert every exception?",
+      "pt-br_q": "O mapeador suprime ou converte toda exceção?",
+      "claim_id": "handler",
+      "en_a": "The selected mapper catches `Exception`, tests `isinstance(exc, from_exc)`, and updates its accumulator when empty or when `issubclass(to_exc, mapped_exc)` holds. If no target was selected it uses a bare `raise`; otherwise it writes `message = str(exc)` followed by `raise mapped_exc(message) from exc`. This does not prove that every exception type is mapped, that every target relation is comparable or that every error is swallowed.",
+      "pt-br_a": "O mapeador selecionado captura `Exception`, testa `isinstance(exc, from_exc)` e atualiza seu acumulador quando ele está vazio ou quando `issubclass(to_exc, mapped_exc)` é verdadeiro. Se nenhum destino foi selecionado, usa `raise` sem argumento; caso contrário, escreve `message = str(exc)` seguido de `raise mapped_exc(message) from exc`. Isso não prova que todo tipo de exceção é mapeado, que toda relação entre destinos é comparável nem que todo erro é suprimido.",
+      "evidence": [
+        "current:context"
+      ]
+    },
+    {
+      "id": "pool-boundary",
+      "en_q": "Are request construction and response construction inside the pool-call mapper block?",
+      "pt-br_q": "A construção da requisição e a da resposta ficam dentro do bloco de mapeamento da chamada ao pool?",
+      "claim_id": "request-boundary",
+      "en_a": "In both selected request methods, `httpcore.Request(...)` is constructed before `with map_httpcore_exceptions()`. The protected statement is the pool call, synchronous or awaited. The response-stream assertion and `Response(...)` return construction come after that local block. Claiming that this one block encloses every request/response setup failure would exceed its written scope.",
+      "pt-br_a": "Nos dois métodos de requisição selecionados, `httpcore.Request(...)` é construído antes de `with map_httpcore_exceptions()`. A instrução protegida é a chamada ao pool, síncrona ou aguardada. A asserção do stream de resposta e a construção de retorno `Response(...)` ficam depois desse bloco local. Afirmar que esse único bloco abrange toda falha de preparação de requisição/resposta excederia seu escopo escrito.",
+      "evidence": [
+        "current:HTTPTransport.handle_request",
+        "current:AsyncHTTPTransport.handle_async_request"
+      ]
+    },
+    {
+      "id": "close-context",
+      "en_q": "Do all close and context-exit paths show the same local mapping scope?",
+      "pt-br_q": "Todos os caminhos de fechamento e saída de contexto mostram o mesmo escopo local de mapeamento?",
+      "claim_id": "iteration-and-close",
+      "en_a": "The selected `ResponseStream.__iter__` and `AsyncResponseStream.__aiter__` loop inside an explicit mapper context. Their `close`/`aclose` bodies and the transport `close`/`aclose` bodies contain no explicit mapper context. Separately, `HTTPTransport.__exit__` and `AsyncHTTPTransport.__aexit__` do wrap their pool-exit call in that context. These local differences do not prove that a downstream close implementation can never translate errors.",
+      "pt-br_a": "Os métodos selecionados `ResponseStream.__iter__` e `AsyncResponseStream.__aiter__` executam seus laços dentro de um contexto explícito do mapeador. Seus corpos `close`/`aclose` e os corpos `close`/`aclose` dos transportes não contêm contexto explícito do mapeador. Separadamente, `HTTPTransport.__exit__` e `AsyncHTTPTransport.__aexit__` envolvem a chamada de saída do pool nesse contexto. Essas diferenças locais não provam que uma implementação posterior de fechamento nunca possa traduzir erros.",
+      "evidence": [
+        "current:ResponseStream.__iter__",
+        "current:AsyncResponseStream.__aiter__",
+        "current:ResponseStream.close",
+        "current:AsyncResponseStream.aclose",
+        "current:HTTPTransport.close",
+        "current:AsyncHTTPTransport.aclose",
+        "current:HTTPTransport.__exit__",
+        "current:AsyncHTTPTransport.__aexit__"
+      ]
+    },
+    {
+      "id": "all-http-errors",
+      "en_q": "Does request_context cover every HTTPError subtype?",
+      "pt-br_q": "request_context cobre todo subtipo de HTTPError?",
+      "claim_id": "request-context",
+      "en_a": "`request_context` selects `RequestError`, assigns `exc.request = request` only under `request is not None`, then writes `raise exc`. `HTTPStatusError` is declared with base `HTTPError`, while `RequestError` is separately declared with base `HTTPError`. The selected handler therefore does not justify a promise about every declared `HTTPError` subtype; no runtime exception hierarchy was instantiated here.",
+      "pt-br_a": "`request_context` seleciona `RequestError`, atribui `exc.request = request` apenas sob `request is not None` e depois escreve `raise exc`. `HTTPStatusError` é declarado com base `HTTPError`, enquanto `RequestError` é declarado separadamente com base `HTTPError`. Portanto, o handler selecionado não justifica uma promessa sobre todo subtipo declarado de `HTTPError`; nenhuma hierarquia de exceções em execução foi instanciada aqui.",
+      "evidence": [
+        "current:request_context",
+        "current:HTTPStatusError",
+        "current:exception:RequestError"
+      ]
+    },
+    {
+      "id": "attached-request",
+      "en_q": "Does mapping alone prove an attached request object?",
+      "pt-br_q": "Somente o mapeamento prova a presença de um objeto de requisição associado?",
+      "claim_id": "request-attachment-limit",
+      "en_a": "The mapper constructs its selected exception with a message alone. `RequestError.__init__` declares an optional `request` defaulting to `None`, and the selected `HTTPError` property getter has a `RuntimeError` branch when its stored request is absent. These two files do not establish whether a higher client layer later attaches request context; the mapping call alone is not that guarantee.",
+      "pt-br_a": "O mapeador constrói a exceção selecionada apenas com uma mensagem. `RequestError.__init__` declara `request` opcional com padrão `None`, e o getter de propriedade selecionado em `HTTPError` possui um ramo de `RuntimeError` quando a requisição armazenada está ausente. Esses dois arquivos não estabelecem se uma camada superior do cliente depois acrescenta contexto da requisição; a chamada de mapeamento sozinha não fornece essa garantia.",
+      "evidence": [
+        "current:context",
+        "current:RequestError.__init__",
+        "current:exception:HTTPError"
+      ]
+    },
+    {
+      "id": "retry-policy",
+      "en_q": "Does the retries parameter establish retries for every proxy or failure mode?",
+      "pt-br_q": "O parâmetro retries estabelece tentativas para todo proxy ou modo de falha?",
+      "claim_id": "retry-configuration",
+      "en_a": "Both selected transport constructors declare `retries=0`. Their `ConnectionPool`/`AsyncConnectionPool` call forwards that keyword, while the selected HTTP/SOCKS proxy constructor calls omit it. This is a keyword-forwarding observation, not a verified retry count, failure policy, timeout unit, TLS guarantee or proxy authentication result. The imported SSL/configuration helpers and external pool implementation are outside this evidence closure.",
+      "pt-br_a": "Ambos os construtores de transporte selecionados declaram `retries=0`. A chamada de `ConnectionPool`/`AsyncConnectionPool` encaminha essa opção, enquanto as chamadas selecionadas dos construtores de proxy HTTP/SOCKS a omitem. Isso é uma observação de encaminhamento de opção, sem verificar contagem de tentativas, política de falhas, unidade de timeout, garantia TLS ou resultado de autenticação de proxy. Os auxiliares importados de SSL/configuração e a implementação externa do pool ficam fora deste fechamento de evidências.",
+      "evidence": [
+        "current:HTTPTransport.__init__",
+        "current:AsyncHTTPTransport.__init__"
+      ]
+    }
+  ],
+  "units": {
+    "current:context": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 95,
+      "last_line": 118,
+      "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    global HTTPCORE_EXC_MAP\n    if len(HTTPCORE_EXC_MAP) == 0:\n        HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            # We want to map to the most specific exception we can find.\n            # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n            # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n\n        if mapped_exc is None:  # pragma: no cover\n            raise\n\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+      "quote_sha256": "9afd913fa34d8266e68b22d78534c99cb8f9e21afd00df250beecb8ab28404c7",
+      "kind": "complete-decorated-context-function",
+      "source_executed": false
+    },
+    "current:mapping_provider": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 74,
+      "last_line": 92,
+      "quote": "def _load_httpcore_exceptions() -> dict[type[Exception], type[httpx.HTTPError]]:\n    import httpcore\n\n    return {\n        httpcore.TimeoutException: TimeoutException,\n        httpcore.ConnectTimeout: ConnectTimeout,\n        httpcore.ReadTimeout: ReadTimeout,\n        httpcore.WriteTimeout: WriteTimeout,\n        httpcore.PoolTimeout: PoolTimeout,\n        httpcore.NetworkError: NetworkError,\n        httpcore.ConnectError: ConnectError,\n        httpcore.ReadError: ReadError,\n        httpcore.WriteError: WriteError,\n        httpcore.ProxyError: ProxyError,\n        httpcore.UnsupportedProtocol: UnsupportedProtocol,\n        httpcore.ProtocolError: ProtocolError,\n        httpcore.LocalProtocolError: LocalProtocolError,\n        httpcore.RemoteProtocolError: RemoteProtocolError,\n    }\n",
+      "quote_sha256": "29111a205dd79b83e56e5675237f8e5a72fb6e82119f99a9f0b6922f41597841",
+      "kind": "complete-loader-function",
+      "source_executed": false
+    },
+    "current:exception:TimeoutException": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 132,
+      "last_line": 137,
+      "quote": "class TimeoutException(TransportError):\n    \"\"\"\n    The base class for timeout errors.\n\n    An operation has timed out.\n    \"\"\"\n",
+      "quote_sha256": "536d798ba9490e3cff32c3687be63a360d142e0f6fff95d13696b9416c3868be",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:TransportError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 123,
+      "last_line": 126,
+      "quote": "class TransportError(RequestError):\n    \"\"\"\n    Base class for all exceptions that occur at the level of the Transport API.\n    \"\"\"\n",
+      "quote_sha256": "77356a131eb9d6cda11794ff8f083db5eaad5c8fc7b1beea93fdd456660df3d6",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:RequestError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 107,
+      "last_line": 120,
+      "quote": "class RequestError(HTTPError):\n    \"\"\"\n    Base class for all exceptions that may occur when issuing a `.request()`.\n    \"\"\"\n\n    def __init__(self, message: str, *, request: Request | None = None) -> None:\n        super().__init__(message)\n        # At the point an exception is raised we won't typically have a request\n        # instance to associate it with.\n        #\n        # The 'request_context' context manager is used within the Client and\n        # Response methods in order to ensure that any raised exceptions\n        # have a `.request` property set on them.\n        self._request = request\n",
+      "quote_sha256": "eddedbccb07728fd313976effc1b7ac96b7f94cf6ae94d54931da6b23feeede3",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:HTTPError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 74,
+      "last_line": 104,
+      "quote": "class HTTPError(Exception):\n    \"\"\"\n    Base class for `RequestError` and `HTTPStatusError`.\n\n    Useful for `try...except` blocks when issuing a request,\n    and then calling `.raise_for_status()`.\n\n    For example:\n\n    ```\n    try:\n        response = httpx.get(\"https://www.example.com\")\n        response.raise_for_status()\n    except httpx.HTTPError as exc:\n        print(f\"HTTP Exception for {exc.request.url} - {exc}\")\n    ```\n    \"\"\"\n\n    def __init__(self, message: str) -> None:\n        super().__init__(message)\n        self._request: Request | None = None\n\n    @property\n    def request(self) -> Request:\n        if self._request is None:\n            raise RuntimeError(\"The .request property has not been set.\")\n        return self._request\n\n    @request.setter\n    def request(self, request: Request) -> None:\n        self._request = request\n",
+      "quote_sha256": "e18e67dde03ecd15667a894e4050d2837ebe644bcc4772cfccc3c43f27ed7c83",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:ConnectTimeout": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 140,
+      "last_line": 143,
+      "quote": "class ConnectTimeout(TimeoutException):\n    \"\"\"\n    Timed out while connecting to the host.\n    \"\"\"\n",
+      "quote_sha256": "032a0d6ce5515e3dea3c376f51d9bed82b2b525bd0508ea1927bf4dfcc59c5e3",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:ReadTimeout": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 146,
+      "last_line": 149,
+      "quote": "class ReadTimeout(TimeoutException):\n    \"\"\"\n    Timed out while receiving data from the host.\n    \"\"\"\n",
+      "quote_sha256": "8b44c4395389afff4841401d6ecddc6c2079be23ff134f752778afce47cf1a8f",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:WriteTimeout": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 152,
+      "last_line": 155,
+      "quote": "class WriteTimeout(TimeoutException):\n    \"\"\"\n    Timed out while sending data to the host.\n    \"\"\"\n",
+      "quote_sha256": "bcc55bd535d1ab60af468eaf61c5bbc92c6e76fe619ffbea7a7dc2081d2b281a",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:PoolTimeout": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 158,
+      "last_line": 161,
+      "quote": "class PoolTimeout(TimeoutException):\n    \"\"\"\n    Timed out waiting to acquire a connection from the pool.\n    \"\"\"\n",
+      "quote_sha256": "24073133a86c4706578cdbf366bfc713dafdf980f52c0cfe70b01a953ebf6943",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:NetworkError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 167,
+      "last_line": 172,
+      "quote": "class NetworkError(TransportError):\n    \"\"\"\n    The base class for network-related errors.\n\n    An error occurred while interacting with the network.\n    \"\"\"\n",
+      "quote_sha256": "e1292af704587ef3125a5c027f530d28403beaf332e5810c63641757def89884",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:ConnectError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 187,
+      "last_line": 190,
+      "quote": "class ConnectError(NetworkError):\n    \"\"\"\n    Failed to establish a connection.\n    \"\"\"\n",
+      "quote_sha256": "2729d960ea2041236a2160056b90b985b519268cbd90a918eb4fac796c97197d",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:ReadError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 175,
+      "last_line": 178,
+      "quote": "class ReadError(NetworkError):\n    \"\"\"\n    Failed to receive data from the network.\n    \"\"\"\n",
+      "quote_sha256": "acf1134499d451fe58436d25e05334d3b456ddf1067be78cae402b659d500fc8",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:WriteError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 181,
+      "last_line": 184,
+      "quote": "class WriteError(NetworkError):\n    \"\"\"\n    Failed to send data through the network.\n    \"\"\"\n",
+      "quote_sha256": "a40757d91e8c8c89e90da3f61f4333ee65593c0b93e38c18666ed99e3be8ecb4",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:ProxyError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 202,
+      "last_line": 205,
+      "quote": "class ProxyError(TransportError):\n    \"\"\"\n    An error occurred while establishing a proxy connection.\n    \"\"\"\n",
+      "quote_sha256": "f3f76b358e82c03dd418539532acd54be4add1c47c74ba549723eb51897147cd",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:UnsupportedProtocol": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 208,
+      "last_line": 213,
+      "quote": "class UnsupportedProtocol(TransportError):\n    \"\"\"\n    Attempted to make a request to an unsupported protocol.\n\n    For example issuing a request to `ftp://www.example.com`.\n    \"\"\"\n",
+      "quote_sha256": "2d93e5631844e44cdd711ea5c116ddbeed091c59f55fc35f25ded0f670317066",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:ProtocolError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 216,
+      "last_line": 219,
+      "quote": "class ProtocolError(TransportError):\n    \"\"\"\n    The protocol was violated.\n    \"\"\"\n",
+      "quote_sha256": "50d5312cdfedc9e12e887ebd945c4dff6ad197f152ede0b2de58ddbdf0eb5920",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:LocalProtocolError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 222,
+      "last_line": 229,
+      "quote": "class LocalProtocolError(ProtocolError):\n    \"\"\"\n    A protocol was violated by the client.\n\n    For example if the user instantiated a `Request` instance explicitly,\n    failed to include the mandatory `Host:` header, and then issued it directly\n    using `client.send()`.\n    \"\"\"\n",
+      "quote_sha256": "0eecb32ceec6f2f6ea4ee69908ded76f3d7ae5c3d853bd7c2f5de744181adcfd",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:exception:RemoteProtocolError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 232,
+      "last_line": 237,
+      "quote": "class RemoteProtocolError(ProtocolError):\n    \"\"\"\n    The protocol was violated by the server.\n\n    For example, returning malformed HTTP.\n    \"\"\"\n",
+      "quote_sha256": "fd26177d904a5884aa0e6a362e999f835434ae51019125e95e53eaf46186b856",
+      "kind": "complete-declared-exception-class",
+      "source_executed": false
+    },
+    "current:HTTPTransport.handle_request": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 230,
+      "last_line": 259,
+      "quote": "    def handle_request(\n        self,\n        request: Request,\n    ) -> Response:\n        assert isinstance(request.stream, SyncByteStream)\n        import httpcore\n\n        req = httpcore.Request(\n            method=request.method,\n            url=httpcore.URL(\n                scheme=request.url.raw_scheme,\n                host=request.url.raw_host,\n                port=request.url.port,\n                target=request.url.raw_path,\n            ),\n            headers=request.headers.raw,\n            content=request.stream,\n            extensions=request.extensions,\n        )\n        with map_httpcore_exceptions():\n            resp = self._pool.handle_request(req)\n\n        assert isinstance(resp.stream, typing.Iterable)\n\n        return Response(\n            status_code=resp.status,\n            headers=resp.headers,\n            stream=ResponseStream(resp.stream),\n            extensions=resp.extensions,\n        )\n",
+      "quote_sha256": "9edcd0cdfa4b6872e902526042f467c9571c7f222fb2986e63375c9eddb062be",
+      "kind": "complete-selected-method",
+      "source_executed": false
+    },
+    "current:AsyncHTTPTransport.handle_async_request": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 374,
+      "last_line": 403,
+      "quote": "    async def handle_async_request(\n        self,\n        request: Request,\n    ) -> Response:\n        assert isinstance(request.stream, AsyncByteStream)\n        import httpcore\n\n        req = httpcore.Request(\n            method=request.method,\n            url=httpcore.URL(\n                scheme=request.url.raw_scheme,\n                host=request.url.raw_host,\n                port=request.url.port,\n                target=request.url.raw_path,\n            ),\n            headers=request.headers.raw,\n            content=request.stream,\n            extensions=request.extensions,\n        )\n        with map_httpcore_exceptions():\n            resp = await self._pool.handle_async_request(req)\n\n        assert isinstance(resp.stream, typing.AsyncIterable)\n\n        return Response(\n            status_code=resp.status,\n            headers=resp.headers,\n            stream=AsyncResponseStream(resp.stream),\n            extensions=resp.extensions,\n        )\n",
+      "quote_sha256": "4dfd2e15d472a02f00c8033af74acb24d614bbb3f46a6fefb100e82cf4f7bd51",
+      "kind": "complete-selected-method",
+      "source_executed": false
+    },
+    "current:ResponseStream.__iter__": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 125,
+      "last_line": 128,
+      "quote": "    def __iter__(self) -> typing.Iterator[bytes]:\n        with map_httpcore_exceptions():\n            for part in self._httpcore_stream:\n                yield part\n",
+      "quote_sha256": "c004ac791d8271d8a0e5524a8935f902e0045c594c672f3c732e25c9cba3de0b",
+      "kind": "complete-selected-stream-iteration-method",
+      "source_executed": false
+    },
+    "current:AsyncResponseStream.__aiter__": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 269,
+      "last_line": 272,
+      "quote": "    async def __aiter__(self) -> typing.AsyncIterator[bytes]:\n        with map_httpcore_exceptions():\n            async for part in self._httpcore_stream:\n                yield part\n",
+      "quote_sha256": "a9ccdb1d75b4c6f2043ec2010db42bb1147e5b0e1d57b7e2327f9e1c3b88e48b",
+      "kind": "complete-selected-stream-iteration-method",
+      "source_executed": false
+    },
+    "current:ResponseStream.close": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 130,
+      "last_line": 132,
+      "quote": "    def close(self) -> None:\n        if hasattr(self._httpcore_stream, \"close\"):\n            self._httpcore_stream.close()\n",
+      "quote_sha256": "dbd179a5a03f1b5640aecfe3ec56deeafe56c87c174655865c0fe3c97e6d9e97",
+      "kind": "complete-selected-close-method",
+      "source_executed": false
+    },
+    "current:AsyncResponseStream.aclose": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 274,
+      "last_line": 276,
+      "quote": "    async def aclose(self) -> None:\n        if hasattr(self._httpcore_stream, \"aclose\"):\n            await self._httpcore_stream.aclose()\n",
+      "quote_sha256": "e1bf7f8dd811938be4ac571b077273e1f27b5e00307c59ac4be5993819f2543d",
+      "kind": "complete-selected-close-method",
+      "source_executed": false
+    },
+    "current:HTTPTransport.close": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 261,
+      "last_line": 262,
+      "quote": "    def close(self) -> None:\n        self._pool.close()\n",
+      "quote_sha256": "26edbcd82cdd4172b3caf441da179483cbf32fed8b6b6709d6dde49553b30e19",
+      "kind": "complete-selected-close-method",
+      "source_executed": false
+    },
+    "current:AsyncHTTPTransport.aclose": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 405,
+      "last_line": 406,
+      "quote": "    async def aclose(self) -> None:\n        await self._pool.aclose()\n",
+      "quote_sha256": "cef6e5ca8a3e850162f4282a3bf1cb47e1a6b8fe035e48e9674aacea3845c3d3",
+      "kind": "complete-selected-close-method",
+      "source_executed": false
+    },
+    "current:request_context": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 366,
+      "last_line": 379,
+      "quote": "@contextlib.contextmanager\ndef request_context(\n    request: Request | None = None,\n) -> typing.Iterator[None]:\n    \"\"\"\n    A context manager that can be used to attach the given request context\n    to any `RequestError` exceptions that are raised within the block.\n    \"\"\"\n    try:\n        yield\n    except RequestError as exc:\n        if request is not None:\n            exc.request = request\n        raise exc\n",
+      "quote_sha256": "e8b21fd7b402c1aa5733189fce03241b4ba35d3a1cb9bb93d617795dfa10023e",
+      "kind": "complete-decorated-request-context-function",
+      "source_executed": false
+    },
+    "current:HTTPStatusError": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 258,
+      "last_line": 268,
+      "quote": "class HTTPStatusError(HTTPError):\n    \"\"\"\n    The response had an error HTTP status of 4xx or 5xx.\n\n    May be raised when calling `response.raise_for_status()`\n    \"\"\"\n\n    def __init__(self, message: str, *, request: Request, response: Response) -> None:\n        super().__init__(message)\n        self.request = request\n        self.response = response\n",
+      "quote_sha256": "63f51b6b73db04f543b59dda9575c22d16611fafeb02660380f4c1630206f8ce",
+      "kind": "complete-status-error-class",
+      "source_executed": false
+    },
+    "current:RequestError.__init__": {
+      "path": "httpx/_exceptions.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+      "first_line": 112,
+      "last_line": 120,
+      "quote": "    def __init__(self, message: str, *, request: Request | None = None) -> None:\n        super().__init__(message)\n        # At the point an exception is raised we won't typically have a request\n        # instance to associate it with.\n        #\n        # The 'request_context' context manager is used within the Client and\n        # Response methods in order to ensure that any raised exceptions\n        # have a `.request` property set on them.\n        self._request = request\n",
+      "quote_sha256": "374e4ac109ce723c61aea1f42aa3e3b0c29d165b65cbb8dac7e7be7343bb6f25",
+      "kind": "complete-selected-error-constructor",
+      "source_executed": false
+    },
+    "previous:context": {
+      "path": "httpx/_transports/default.py",
+      "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+      "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+      "first_line": 63,
+      "last_line": 83,
+      "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            # We want to map to the most specific exception we can find.\n            # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n            # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n\n        if mapped_exc is None:  # pragma: no cover\n            raise\n\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+      "quote_sha256": "02aaadccf48dd3d1b527f8d3d53eab8d2e56b93d554a30fbd908e20ba398599a",
+      "kind": "complete-decorated-context-function",
+      "source_executed": false
+    },
+    "previous:mapping_provider": {
+      "path": "httpx/_transports/default.py",
+      "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+      "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+      "first_line": 86,
+      "last_line": 101,
+      "quote": "HTTPCORE_EXC_MAP = {\n    httpcore.TimeoutException: TimeoutException,\n    httpcore.ConnectTimeout: ConnectTimeout,\n    httpcore.ReadTimeout: ReadTimeout,\n    httpcore.WriteTimeout: WriteTimeout,\n    httpcore.PoolTimeout: PoolTimeout,\n    httpcore.NetworkError: NetworkError,\n    httpcore.ConnectError: ConnectError,\n    httpcore.ReadError: ReadError,\n    httpcore.WriteError: WriteError,\n    httpcore.ProxyError: ProxyError,\n    httpcore.UnsupportedProtocol: UnsupportedProtocol,\n    httpcore.ProtocolError: ProtocolError,\n    httpcore.LocalProtocolError: LocalProtocolError,\n    httpcore.RemoteProtocolError: RemoteProtocolError,\n}\n",
+      "quote_sha256": "db9935977c08f4050803b671200ddc86d3ce64ac3ae5ea465954222b3bee00cb",
+      "kind": "complete-module-map-statement",
+      "source_executed": false
+    },
+    "current:exception-import-wire": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 39,
+      "last_line": 54,
+      "quote": "from .._exceptions import (\n    ConnectError,\n    ConnectTimeout,\n    LocalProtocolError,\n    NetworkError,\n    PoolTimeout,\n    ProtocolError,\n    ProxyError,\n    ReadError,\n    ReadTimeout,\n    RemoteProtocolError,\n    TimeoutException,\n    UnsupportedProtocol,\n    WriteError,\n    WriteTimeout,\n)\n",
+      "quote_sha256": "dab440dfb10189ed99924725a953d43476c25c87c1fafc6ddac3b4b8bbe154a4",
+      "kind": "complete-relative-exception-import-statement",
+      "source_executed": false
+    },
+    "current:HTTPTransport.__init__": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 136,
+      "last_line": 215,
+      "quote": "    def __init__(\n        self,\n        verify: ssl.SSLContext | str | bool = True,\n        cert: CertTypes | None = None,\n        trust_env: bool = True,\n        http1: bool = True,\n        http2: bool = False,\n        limits: Limits = DEFAULT_LIMITS,\n        proxy: ProxyTypes | None = None,\n        uds: str | None = None,\n        local_address: str | None = None,\n        retries: int = 0,\n        socket_options: typing.Iterable[SOCKET_OPTION] | None = None,\n    ) -> None:\n        import httpcore\n\n        proxy = Proxy(url=proxy) if isinstance(proxy, (str, URL)) else proxy\n        ssl_context = create_ssl_context(verify=verify, cert=cert, trust_env=trust_env)\n\n        if proxy is None:\n            self._pool = httpcore.ConnectionPool(\n                ssl_context=ssl_context,\n                max_connections=limits.max_connections,\n                max_keepalive_connections=limits.max_keepalive_connections,\n                keepalive_expiry=limits.keepalive_expiry,\n                http1=http1,\n                http2=http2,\n                uds=uds,\n                local_address=local_address,\n                retries=retries,\n                socket_options=socket_options,\n            )\n        elif proxy.url.scheme in (\"http\", \"https\"):\n            self._pool = httpcore.HTTPProxy(\n                proxy_url=httpcore.URL(\n                    scheme=proxy.url.raw_scheme,\n                    host=proxy.url.raw_host,\n                    port=proxy.url.port,\n                    target=proxy.url.raw_path,\n                ),\n                proxy_auth=proxy.raw_auth,\n                proxy_headers=proxy.headers.raw,\n                ssl_context=ssl_context,\n                proxy_ssl_context=proxy.ssl_context,\n                max_connections=limits.max_connections,\n                max_keepalive_connections=limits.max_keepalive_connections,\n                keepalive_expiry=limits.keepalive_expiry,\n                http1=http1,\n                http2=http2,\n                socket_options=socket_options,\n            )\n        elif proxy.url.scheme in (\"socks5\", \"socks5h\"):\n            try:\n                import socksio  # noqa\n            except ImportError:  # pragma: no cover\n                raise ImportError(\n                    \"Using SOCKS proxy, but the 'socksio' package is not installed. \"\n                    \"Make sure to install httpx using `pip install httpx[socks]`.\"\n                ) from None\n\n            self._pool = httpcore.SOCKSProxy(\n                proxy_url=httpcore.URL(\n                    scheme=proxy.url.raw_scheme,\n                    host=proxy.url.raw_host,\n                    port=proxy.url.port,\n                    target=proxy.url.raw_path,\n                ),\n                proxy_auth=proxy.raw_auth,\n                ssl_context=ssl_context,\n                max_connections=limits.max_connections,\n                max_keepalive_connections=limits.max_keepalive_connections,\n                keepalive_expiry=limits.keepalive_expiry,\n                http1=http1,\n                http2=http2,\n            )\n        else:  # pragma: no cover\n            raise ValueError(\n                \"Proxy protocol must be either 'http', 'https', 'socks5', or 'socks5h',\"\n                f\" but got {proxy.url.scheme!r}.\"\n            )\n",
+      "quote_sha256": "c5fe8f1eadf4fb491a7b7cb18ca729b208952caa5ed47ad062a558d0f5d880ae",
+      "kind": "complete-selected-constructor",
+      "source_executed": false
+    },
+    "current:HTTPTransport.__exit__": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 221,
+      "last_line": 228,
+      "quote": "    def __exit__(\n        self,\n        exc_type: type[BaseException] | None = None,\n        exc_value: BaseException | None = None,\n        traceback: TracebackType | None = None,\n    ) -> None:\n        with map_httpcore_exceptions():\n            self._pool.__exit__(exc_type, exc_value, traceback)\n",
+      "quote_sha256": "9c28d967bd2820ef7a72cf797e1e20cd09ed40f224e7dc595674e8b1e3445780",
+      "kind": "complete-selected-context-exit-method",
+      "source_executed": false
+    },
+    "current:AsyncHTTPTransport.__init__": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 280,
+      "last_line": 359,
+      "quote": "    def __init__(\n        self,\n        verify: ssl.SSLContext | str | bool = True,\n        cert: CertTypes | None = None,\n        trust_env: bool = True,\n        http1: bool = True,\n        http2: bool = False,\n        limits: Limits = DEFAULT_LIMITS,\n        proxy: ProxyTypes | None = None,\n        uds: str | None = None,\n        local_address: str | None = None,\n        retries: int = 0,\n        socket_options: typing.Iterable[SOCKET_OPTION] | None = None,\n    ) -> None:\n        import httpcore\n\n        proxy = Proxy(url=proxy) if isinstance(proxy, (str, URL)) else proxy\n        ssl_context = create_ssl_context(verify=verify, cert=cert, trust_env=trust_env)\n\n        if proxy is None:\n            self._pool = httpcore.AsyncConnectionPool(\n                ssl_context=ssl_context,\n                max_connections=limits.max_connections,\n                max_keepalive_connections=limits.max_keepalive_connections,\n                keepalive_expiry=limits.keepalive_expiry,\n                http1=http1,\n                http2=http2,\n                uds=uds,\n                local_address=local_address,\n                retries=retries,\n                socket_options=socket_options,\n            )\n        elif proxy.url.scheme in (\"http\", \"https\"):\n            self._pool = httpcore.AsyncHTTPProxy(\n                proxy_url=httpcore.URL(\n                    scheme=proxy.url.raw_scheme,\n                    host=proxy.url.raw_host,\n                    port=proxy.url.port,\n                    target=proxy.url.raw_path,\n                ),\n                proxy_auth=proxy.raw_auth,\n                proxy_headers=proxy.headers.raw,\n                proxy_ssl_context=proxy.ssl_context,\n                ssl_context=ssl_context,\n                max_connections=limits.max_connections,\n                max_keepalive_connections=limits.max_keepalive_connections,\n                keepalive_expiry=limits.keepalive_expiry,\n                http1=http1,\n                http2=http2,\n                socket_options=socket_options,\n            )\n        elif proxy.url.scheme in (\"socks5\", \"socks5h\"):\n            try:\n                import socksio  # noqa\n            except ImportError:  # pragma: no cover\n                raise ImportError(\n                    \"Using SOCKS proxy, but the 'socksio' package is not installed. \"\n                    \"Make sure to install httpx using `pip install httpx[socks]`.\"\n                ) from None\n\n            self._pool = httpcore.AsyncSOCKSProxy(\n                proxy_url=httpcore.URL(\n                    scheme=proxy.url.raw_scheme,\n                    host=proxy.url.raw_host,\n                    port=proxy.url.port,\n                    target=proxy.url.raw_path,\n                ),\n                proxy_auth=proxy.raw_auth,\n                ssl_context=ssl_context,\n                max_connections=limits.max_connections,\n                max_keepalive_connections=limits.max_keepalive_connections,\n                keepalive_expiry=limits.keepalive_expiry,\n                http1=http1,\n                http2=http2,\n            )\n        else:  # pragma: no cover\n            raise ValueError(\n                \"Proxy protocol must be either 'http', 'https', 'socks5', or 'socks5h',\"\n                \" but got {proxy.url.scheme!r}.\"\n            )\n",
+      "quote_sha256": "433c33239d86ec87383cba12229bd086b4a92985b25ff8b0859cf028f29250e0",
+      "kind": "complete-selected-constructor",
+      "source_executed": false
+    },
+    "current:AsyncHTTPTransport.__aexit__": {
+      "path": "httpx/_transports/default.py",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+      "first_line": 365,
+      "last_line": 372,
+      "quote": "    async def __aexit__(\n        self,\n        exc_type: type[BaseException] | None = None,\n        exc_value: BaseException | None = None,\n        traceback: TracebackType | None = None,\n    ) -> None:\n        with map_httpcore_exceptions():\n            await self._pool.__aexit__(exc_type, exc_value, traceback)\n",
+      "quote_sha256": "895cd70762f1a39b9d919331368ab45275d3855ac50425310680bcf94a30e562",
+      "kind": "complete-selected-context-exit-method",
+      "source_executed": false
+    },
+    "0.25.2:pyproject": {
+      "path": "pyproject.toml",
+      "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+      "source_sha256": "ebdd530f4666646a9f09eceeb86d176801eec7c651d61a9a0f55b8616e4cf6c3",
+      "first_line": 1,
+      "last_line": 132,
+      "quote": "[build-system]\nrequires = [\"hatchling\", \"hatch-fancy-pypi-readme\"]\nbuild-backend = \"hatchling.build\"\n\n[project]\nname = \"httpx\"\ndescription = \"The next generation HTTP client.\"\nlicense = \"BSD-3-Clause\"\nrequires-python = \">=3.8\"\nauthors = [\n    { name = \"Tom Christie\", email = \"tom@tomchristie.com\" },\n]\nclassifiers = [\n    \"Development Status :: 4 - Beta\",\n    \"Environment :: Web Environment\",\n    \"Framework :: AsyncIO\",\n    \"Framework :: Trio\",\n    \"Intended Audience :: Developers\",\n    \"License :: OSI Approved :: BSD License\",\n    \"Operating System :: OS Independent\",\n    \"Programming Language :: Python :: 3\",\n    \"Programming Language :: Python :: 3 :: Only\",\n    \"Programming Language :: Python :: 3.8\",\n    \"Programming Language :: Python :: 3.9\",\n    \"Programming Language :: Python :: 3.10\",\n    \"Programming Language :: Python :: 3.11\",\n    \"Programming Language :: Python :: 3.12\",\n    \"Topic :: Internet :: WWW/HTTP\",\n]\ndependencies = [\n    \"certifi\",\n    \"httpcore==1.*\",\n    \"anyio\",\n    \"idna\",\n    \"sniffio\",\n]\ndynamic = [\"readme\", \"version\"]\n\n[project.optional-dependencies]\nbrotli = [\n    \"brotli; platform_python_implementation == 'CPython'\",\n    \"brotlicffi; platform_python_implementation != 'CPython'\",\n]\ncli = [\n    \"click==8.*\",\n    \"pygments==2.*\",\n    \"rich>=10,<14\",\n]\nhttp2 = [\n    \"h2>=3,<5\",\n]\nsocks = [\n    \"socksio==1.*\",\n]\n\n[project.scripts]\nhttpx = \"httpx:main\"\n\n[project.urls]\nChangelog = \"https://github.com/encode/httpx/blob/master/CHANGELOG.md\"\nDocumentation = \"https://www.python-httpx.org\"\nHomepage = \"https://github.com/encode/httpx\"\nSource = \"https://github.com/encode/httpx\"\n\n[tool.hatch.version]\npath = \"httpx/__version__.py\"\n\n[tool.hatch.build.targets.sdist]\ninclude = [\n    \"/httpx\",\n    \"/CHANGELOG.md\",\n    \"/README.md\",\n    \"/tests\",\n]\n\n[tool.hatch.metadata.hooks.fancy-pypi-readme]\ncontent-type = \"text/markdown\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\npath = \"README.md\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\ntext = \"\\n## Release Information\\n\\n\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\npath = \"CHANGELOG.md\"\npattern = \"\\n(###.+?\\n)## \"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\ntext = \"\\n---\\n\\n[Full changelog](https://github.com/encode/httpx/blob/master/CHANGELOG.md)\\n\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]\npattern = 'src=\"(docs/img/.*?)\"'\nreplacement = 'src=\"https://raw.githubusercontent.com/encode/httpx/master/\\1\"'\n\n# https://beta.ruff.rs/docs/configuration/#using-rufftoml\n[tool.ruff]\nselect = [\"E\", \"F\", \"I\", \"B\", \"PIE\"]\nignore = [\"B904\", \"B028\"]\nline-length = 88\n\n[tool.ruff.pycodestyle]\nmax-line-length = 120\n\n[tool.ruff.isort]\ncombine-as-imports = true\n\n[tool.mypy]\nignore_missing_imports = true\nstrict = true\n\n[[tool.mypy.overrides]]\nmodule = \"tests.*\"\ndisallow_untyped_defs = false\ncheck_untyped_defs = true\n\n[tool.pytest.ini_options]\naddopts = \"-rxXs\"\nfilterwarnings = [\n  \"error\",\n  \"ignore: You seem to already have a custom sys.excepthook handler installed. I'll skip installing Trio's custom handler, but this means MultiErrors will not show full tracebacks.:RuntimeWarning\",\n  # See: https://github.com/agronholm/anyio/issues/508\n  \"ignore: trio.MultiError is deprecated since Trio 0.22.0:trio.TrioDeprecationWarning\"\n]\nmarkers = [\n  \"copied_from(source, changes=None): mark test as copied from somewhere else, along with a description of changes made to accodomate e.g. our test setup\",\n  \"network: marks tests which require network connection. Used in 3rd-party build environments that have network disabled.\"\n]\n\n[tool.coverage.run]\nomit = [\"venv/*\", \"httpx/_compat.py\"]\ninclude = [\"httpx/*\", \"tests/*\"]\n",
+      "quote_sha256": "ebdd530f4666646a9f09eceeb86d176801eec7c651d61a9a0f55b8616e4cf6c3",
+      "kind": "complete-project-metadata",
+      "source_executed": false
+    },
+    "0.28.1:pyproject": {
+      "path": "pyproject.toml",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "df6ead82c82909bacc1f54fa0de8edc52dab17742d548d41c284506e3c05706f",
+      "first_line": 1,
+      "last_line": 132,
+      "quote": "[build-system]\nrequires = [\"hatchling\", \"hatch-fancy-pypi-readme\"]\nbuild-backend = \"hatchling.build\"\n\n[project]\nname = \"httpx\"\ndescription = \"The next generation HTTP client.\"\nlicense = \"BSD-3-Clause\"\nrequires-python = \">=3.8\"\nauthors = [\n    { name = \"Tom Christie\", email = \"tom@tomchristie.com\" },\n]\nclassifiers = [\n    \"Development Status :: 4 - Beta\",\n    \"Environment :: Web Environment\",\n    \"Framework :: AsyncIO\",\n    \"Framework :: Trio\",\n    \"Intended Audience :: Developers\",\n    \"License :: OSI Approved :: BSD License\",\n    \"Operating System :: OS Independent\",\n    \"Programming Language :: Python :: 3\",\n    \"Programming Language :: Python :: 3 :: Only\",\n    \"Programming Language :: Python :: 3.8\",\n    \"Programming Language :: Python :: 3.9\",\n    \"Programming Language :: Python :: 3.10\",\n    \"Programming Language :: Python :: 3.11\",\n    \"Programming Language :: Python :: 3.12\",\n    \"Topic :: Internet :: WWW/HTTP\",\n]\ndependencies = [\n    \"certifi\",\n    \"httpcore==1.*\",\n    \"anyio\",\n    \"idna\",\n]\ndynamic = [\"readme\", \"version\"]\n\n[project.optional-dependencies]\nbrotli = [\n    \"brotli; platform_python_implementation == 'CPython'\",\n    \"brotlicffi; platform_python_implementation != 'CPython'\",\n]\ncli = [\n    \"click==8.*\",\n    \"pygments==2.*\",\n    \"rich>=10,<14\",\n]\nhttp2 = [\n    \"h2>=3,<5\",\n]\nsocks = [\n    \"socksio==1.*\",\n]\nzstd = [\n  \"zstandard>=0.18.0\",\n]\n\n[project.scripts]\nhttpx = \"httpx:main\"\n\n[project.urls]\nChangelog = \"https://github.com/encode/httpx/blob/master/CHANGELOG.md\"\nDocumentation = \"https://www.python-httpx.org\"\nHomepage = \"https://github.com/encode/httpx\"\nSource = \"https://github.com/encode/httpx\"\n\n[tool.hatch.version]\npath = \"httpx/__version__.py\"\n\n[tool.hatch.build.targets.sdist]\ninclude = [\n    \"/httpx\",\n    \"/CHANGELOG.md\",\n    \"/README.md\",\n    \"/tests\",\n]\n\n[tool.hatch.metadata.hooks.fancy-pypi-readme]\ncontent-type = \"text/markdown\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\npath = \"README.md\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\ntext = \"\\n## Release Information\\n\\n\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\npath = \"CHANGELOG.md\"\npattern = \"\\n(###.+?\\n)## \"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]\ntext = \"\\n---\\n\\n[Full changelog](https://github.com/encode/httpx/blob/master/CHANGELOG.md)\\n\"\n\n[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]\npattern = 'src=\"(docs/img/.*?)\"'\nreplacement = 'src=\"https://raw.githubusercontent.com/encode/httpx/master/\\1\"'\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\", \"PIE\"]\nignore = [\"B904\", \"B028\"]\n\n[tool.ruff.lint.isort]\ncombine-as-imports = true\n\n[tool.ruff.lint.per-file-ignores]\n\"__init__.py\" = [\"F403\", \"F405\"]\n\n[tool.mypy]\nignore_missing_imports = true\nstrict = true\n\n[[tool.mypy.overrides]]\nmodule = \"tests.*\"\ndisallow_untyped_defs = false\ncheck_untyped_defs = true\n\n[tool.pytest.ini_options]\naddopts = \"-rxXs\"\nfilterwarnings = [\n  \"error\",\n  \"ignore: You seem to already have a custom sys.excepthook handler installed. I'll skip installing Trio's custom handler, but this means MultiErrors will not show full tracebacks.:RuntimeWarning\",\n  # See: https://github.com/agronholm/anyio/issues/508\n  \"ignore: trio.MultiError is deprecated since Trio 0.22.0:trio.TrioDeprecationWarning\"\n]\nmarkers = [\n  \"copied_from(source, changes=None): mark test as copied from somewhere else, along with a description of changes made to accodomate e.g. our test setup\",\n  \"network: marks tests which require network connection. Used in 3rd-party build environments that have network disabled.\"\n]\n\n[tool.coverage.run]\nomit = [\"venv/*\"]\ninclude = [\"httpx/*\", \"tests/*\"]\n",
+      "quote_sha256": "df6ead82c82909bacc1f54fa0de8edc52dab17742d548d41c284506e3c05706f",
+      "kind": "complete-project-metadata",
+      "source_executed": false
+    },
+    "current:license": {
+      "path": "LICENSE.md",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "source_sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d",
+      "first_line": 1,
+      "last_line": 12,
+      "quote": "Copyright © 2019, [Encode OSS Ltd](https://www.encode.io/).\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\n\n* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.\n\n* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.\n\n* Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n",
+      "quote_sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d",
+      "kind": "complete-primary-license-notice",
+      "source_executed": false
+    }
+  },
+  "deduplicated_unit_aliases": {
+    "current:HTTPError": "current:exception:HTTPError"
+  },
+  "constructor_source_facts": {
+    "HTTPTransport": {
+      "signature": {
+        "positional_only": [],
+        "positional_or_keyword": [
+          "self",
+          "verify",
+          "cert",
+          "trust_env",
+          "http1",
+          "http2",
+          "limits",
+          "proxy",
+          "uds",
+          "local_address",
+          "retries",
+          "socket_options"
+        ],
+        "keyword_only": [],
+        "vararg": null,
+        "kwarg": null,
+        "defaults": {
+          "self": {
+            "kind": "required"
+          },
+          "verify": {
+            "kind": "literal",
+            "type": "bool",
+            "value": true
+          },
+          "cert": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "trust_env": {
+            "kind": "literal",
+            "type": "bool",
+            "value": true
+          },
+          "http1": {
+            "kind": "literal",
+            "type": "bool",
+            "value": true
+          },
+          "http2": {
+            "kind": "literal",
+            "type": "bool",
+            "value": false
+          },
+          "limits": {
+            "kind": "written-name",
+            "name": "DEFAULT_LIMITS",
+            "runtime_binding_verified": false
+          },
+          "proxy": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "uds": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "local_address": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "retries": {
+            "kind": "literal",
+            "type": "int",
+            "value": 0
+          },
+          "socket_options": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          }
+        },
+        "annotations": {
+          "self": null,
+          "verify": "ssl.SSLContext | str | bool",
+          "cert": "CertTypes | None",
+          "trust_env": "bool",
+          "http1": "bool",
+          "http2": "bool",
+          "limits": "Limits",
+          "proxy": "ProxyTypes | None",
+          "uds": "str | None",
+          "local_address": "str | None",
+          "retries": "int",
+          "socket_options": "typing.Iterable[SOCKET_OPTION] | None"
+        },
+        "return_annotation": "None",
+        "annotation_or_default_executed": false
+      },
+      "constructor_keyword_sets": {
+        "httpcore.ConnectionPool": [
+          "ssl_context",
+          "max_connections",
+          "max_keepalive_connections",
+          "keepalive_expiry",
+          "http1",
+          "http2",
+          "uds",
+          "local_address",
+          "retries",
+          "socket_options"
+        ],
+        "httpcore.HTTPProxy": [
+          "proxy_url",
+          "proxy_auth",
+          "proxy_headers",
+          "ssl_context",
+          "proxy_ssl_context",
+          "max_connections",
+          "max_keepalive_connections",
+          "keepalive_expiry",
+          "http1",
+          "http2",
+          "socket_options"
+        ],
+        "httpcore.SOCKSProxy": [
+          "proxy_url",
+          "proxy_auth",
+          "ssl_context",
+          "max_connections",
+          "max_keepalive_connections",
+          "keepalive_expiry",
+          "http1",
+          "http2"
+        ]
+      }
+    },
+    "AsyncHTTPTransport": {
+      "signature": {
+        "positional_only": [],
+        "positional_or_keyword": [
+          "self",
+          "verify",
+          "cert",
+          "trust_env",
+          "http1",
+          "http2",
+          "limits",
+          "proxy",
+          "uds",
+          "local_address",
+          "retries",
+          "socket_options"
+        ],
+        "keyword_only": [],
+        "vararg": null,
+        "kwarg": null,
+        "defaults": {
+          "self": {
+            "kind": "required"
+          },
+          "verify": {
+            "kind": "literal",
+            "type": "bool",
+            "value": true
+          },
+          "cert": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "trust_env": {
+            "kind": "literal",
+            "type": "bool",
+            "value": true
+          },
+          "http1": {
+            "kind": "literal",
+            "type": "bool",
+            "value": true
+          },
+          "http2": {
+            "kind": "literal",
+            "type": "bool",
+            "value": false
+          },
+          "limits": {
+            "kind": "written-name",
+            "name": "DEFAULT_LIMITS",
+            "runtime_binding_verified": false
+          },
+          "proxy": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "uds": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "local_address": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          },
+          "retries": {
+            "kind": "literal",
+            "type": "int",
+            "value": 0
+          },
+          "socket_options": {
+            "kind": "literal",
+            "type": "NoneType",
+            "value": null
+          }
+        },
+        "annotations": {
+          "self": null,
+          "verify": "ssl.SSLContext | str | bool",
+          "cert": "CertTypes | None",
+          "trust_env": "bool",
+          "http1": "bool",
+          "http2": "bool",
+          "limits": "Limits",
+          "proxy": "ProxyTypes | None",
+          "uds": "str | None",
+          "local_address": "str | None",
+          "retries": "int",
+          "socket_options": "typing.Iterable[SOCKET_OPTION] | None"
+        },
+        "return_annotation": "None",
+        "annotation_or_default_executed": false
+      },
+      "constructor_keyword_sets": {
+        "httpcore.AsyncConnectionPool": [
+          "ssl_context",
+          "max_connections",
+          "max_keepalive_connections",
+          "keepalive_expiry",
+          "http1",
+          "http2",
+          "uds",
+          "local_address",
+          "retries",
+          "socket_options"
+        ],
+        "httpcore.AsyncHTTPProxy": [
+          "proxy_url",
+          "proxy_auth",
+          "proxy_headers",
+          "proxy_ssl_context",
+          "ssl_context",
+          "max_connections",
+          "max_keepalive_connections",
+          "keepalive_expiry",
+          "http1",
+          "http2",
+          "socket_options"
+        ],
+        "httpcore.AsyncSOCKSProxy": [
+          "proxy_url",
+          "proxy_auth",
+          "ssl_context",
+          "max_connections",
+          "max_keepalive_connections",
+          "keepalive_expiry",
+          "http1",
+          "http2"
+        ]
+      }
+    }
+  },
+  "project_metadata": {
+    "0.25.2": {
+      "requires_python": ">=3.8",
+      "dependencies": [
+        "certifi",
+        "httpcore==1.*",
+        "anyio",
+        "idna",
+        "sniffio"
+      ]
+    },
+    "0.28.1": {
+      "requires_python": ">=3.8",
+      "dependencies": [
+        "certifi",
+        "httpcore==1.*",
+        "anyio",
+        "idna"
+      ]
+    }
+  },
+  "files": {
+    "httpx-chapter-candidates-v2/en.md": {
+      "bytes": 26183,
+      "sha256": "4907c4c8169d456bfeefc4f77892f1d15c8f5577a94115cbb1fd4bc20d829d10"
+    },
+    "httpx-chapter-candidates-v2/pt-br.md": {
+      "bytes": 27752,
+      "sha256": "9620bb5f593c6bacf979cb77b9b64966da6b9f2e20e3bdcf34fa835ebfafef4c"
+    },
+    "httpx-chapter-candidates-v2/httpx-boundary-example.py": {
+      "bytes": 187,
+      "sha256": "95429bdb006fc2170e6bf5cc0c93958457b91d7c48adc67b15283542b822b294"
+    }
+  },
+  "source_family": "encode/httpx",
+  "development_exposed": true,
+  "certified_neural_holdout": false,
+  "source_executed": false,
+  "application_http_requests": 0,
+  "model_calls": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_exclusion": true,
+  "published": false,
+  "review_change_log": [
+    "V2adds an explicit relative-import citation and per-row declared ancestry source links;corrects Portuguese source-cut heading and avoids describing identity as executed. V1remains preserved."
+  ],
+  "scope": "Selected pinned private source contracts and local declared ancestry, not general semantic/runtime/package/API certification."
+}

@@ -1,0 +1,29 @@
+{
+  "go_version": "go1.27.4",
+  "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+  "path": "selected.go",
+  "platform": "darwin/arm64",
+  "profile": "go-standard-parser-declarations-v1",
+  "source_executed": false,
+  "source_sha256": "7d58dce44f9245c08e61081159d26d5b3e79c30c005bdf93e930e484b7f03b7b",
+  "syntax_only": true,
+  "units": [
+    {
+      "selector": "TestWrapResponseWriterReadFromStatus",
+      "declaration_kind": "function",
+      "symbol": "middleware_test.TestWrapResponseWriterReadFromStatus",
+      "start_line": 15,
+      "end_line": 75,
+      "quote": "func TestWrapResponseWriterReadFromStatus(t *testing.T) {\n\treadErr := errors.New(\"upstream failed\")\n\tfor _, tc := range []struct {\n\t\tname          string\n\t\treader        io.Reader\n\t\tinitialStatus int\n\t\twantStatus    int\n\t\twantBytes     int\n\t\twantErr       bool\n\t}{\n\t\t{name: \"empty source\", reader: strings.NewReader(\"\"), wantStatus: http.StatusAccepted},\n\t\t{name: \"failed source\", reader: iotest.ErrReader(readErr), wantStatus: http.StatusBadGateway, wantErr: true},\n\t\t{name: \"successful source\", reader: strings.NewReader(\"ok\"), wantStatus: http.StatusOK, wantBytes: 2},\n\t\t{name: \"partial source\", reader: io.MultiReader(strings.NewReader(\"partial\"), iotest.ErrReader(readErr)), wantStatus: http.StatusOK, wantBytes: 7, wantErr: true},\n\t\t{name: \"explicit status\", reader: iotest.ErrReader(readErr), initialStatus: http.StatusCreated, wantStatus: http.StatusCreated, wantErr: true},\n\t} {\n\t\tt.Run(tc.name, func(t *testing.T) {\n\t\t\ttype result struct {\n\t\t\t\tstatus, bytes int\n\t\t\t\tcopied        int64\n\t\t\t\terr           error\n\t\t\t}\n\t\t\tresults := make(chan result, 1)\n\t\t\tserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\t\twrapped := middleware.NewWrapResponseWriter(w, r.ProtoMajor)\n\t\t\t\tif tc.initialStatus != 0 {\n\t\t\t\t\twrapped.WriteHeader(tc.initialStatus)\n\t\t\t\t}\n\t\t\t\t// Hide WriterTo so io.Copy exercises the response writer's ReaderFrom.\n\t\t\t\tn, err := io.Copy(wrapped, struct{ io.Reader }{tc.reader})\n\t\t\t\tif n == 0 {\n\t\t\t\t\tif err != nil {\n\t\t\t\t\t\twrapped.WriteHeader(http.StatusBadGateway)\n\t\t\t\t\t} else {\n\t\t\t\t\t\twrapped.WriteHeader(http.StatusAccepted)\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tresults <- result{status: wrapped.Status(), bytes: wrapped.BytesWritten(), copied: n, err: err}\n\t\t\t}))\n\t\t\tdefer server.Close()\n\t\t\tresp, err := server.Client().Get(server.URL)\n\t\t\tif err != nil {\n\t\t\t\tt.Fatal(err)\n\t\t\t}\n\t\t\tdefer resp.Body.Close()\n\t\t\tif _, err := io.Copy(io.Discard, resp.Body); err != nil {\n\t\t\t\tt.Fatal(err)\n\t\t\t}\n\t\t\tgot := <-results\n\t\t\tif resp.StatusCode != tc.wantStatus || got.status != tc.wantStatus {\n\t\t\t\tt.Errorf(\"client status = %d, wrapper status = %d, want %d\", resp.StatusCode, got.status, tc.wantStatus)\n\t\t\t}\n\t\t\tif got.bytes != tc.wantBytes || got.copied != int64(tc.wantBytes) {\n\t\t\t\tt.Errorf(\"BytesWritten = %d, copied = %d, want %d\", got.bytes, got.copied, tc.wantBytes)\n\t\t\t}\n\t\t\tif tc.wantErr && !errors.Is(got.err, readErr) || !tc.wantErr && got.err != nil {\n\t\t\t\tt.Errorf(\"copy error = %v, want upstream error = %t\", got.err, tc.wantErr)\n\t\t\t}\n\t\t})\n\t}\n}",
+      "declaration": "func TestWrapResponseWriterReadFromStatus(t *testing.T)",
+      "function_type": "func(t *testing.T)"
+    }
+  ],
+  "producer": {
+    "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+    "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+    "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+    "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+    "version": "1.6.1"
+  }
+}

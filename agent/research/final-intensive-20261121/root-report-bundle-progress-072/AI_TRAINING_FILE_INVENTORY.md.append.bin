@@ -1,0 +1,11 @@
+
+
+### Progresso intensivo 072 — identidade e diversidade do pacote de revisão
+
+A auditoria do pacote v20 verificou os 28 pares públicos e dois internos: 60 documentos com 60 hashes distintos e 30 conjuntos de pares distintos. Não há duplicatas exatas, nem duplicatas após normalização NFC e whitespace, nesse pacote. Os cinco pares originais públicos reprovados foram conferidos por seus dez hashes e não aparecem entre os documentos selecionados. Todos os recibos e arquivos de aviso/licença referenciados tiveram hashes conferidos.
+
+Os 28 pares públicos correspondem a 15 rótulos declarados de família, não a 28 famílias independentes. Há zero famílias certificadas como avaliação independente. As comparações de shingles de cinco tokens foram limitadas aos 28 textos EN: 378 comparações, maior Jaccard aproximado de 0,0337, nenhuma acima do limiar de triagem congelado de 0,60. Isso não prova ausência de duplicidade semântica, contaminação ou dependência compartilhada; não avaliou equivalência EN/PT por similaridade lexical.
+
+As 30 seleções mantêm explicitamente falsos owner_approved, publication_approved, training_gold_approved e training_eligible. Avisos MIT/Apache/BSD, alternativas declaradas no Redis e aviso proprietário interno são proveniência, não liberação jurídica ou de treino. O pacote continua para revisão de alvos exatos, sem promover qualquer registro original do dataset.
+
+A primeira tentativa de auditoria considerava apenas o basename en.md e deixou de reconhecer snapshots nomeados por hash com language explícito. A segunda recusou dois rótulos internos escritos como en.md/pt-br.md. Ambas as falhas e scripts foram preservados. A versão 3 registra a linguagem original e normaliza somente essas convenções conhecidas para a auditoria; não altera o pacote, não reduz o limiar e não declara falha no conteúdo bilíngue por causa dessas convenções. O fechamento v42 agrega as dependências exatas; a nova auditoria ainda aguarda recuperação no próximo checkpoint.

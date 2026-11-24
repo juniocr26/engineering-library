@@ -1,0 +1,72 @@
+{
+  "at": "2026-11-21T05:10:07.786342+00:00",
+  "hypothesis": "H46a model restricted to faithful PTtranslation of already source-reviewed EnglishFAQ may avoid factualanswer-selection and cross-languageomission failures seen in development H10/H26/H32, while the completechapter still passes every unchanged source/translation contract.",
+  "development_evidence_only": [
+    "click-encoding-comparison-review-v1.json",
+    "prose-field-comparison-review-v1.json",
+    "duckdb-capi-faq-review-v1.json"
+  ],
+  "no_OpenRA_or_Axum_material_or_tuning": true,
+  "family": "spf13/cobra",
+  "role": "DEVELOPMENT_EXPOSED_CURRENT_CAMPAIGN",
+  "parent_review": "cobra-validation-context-complete-review-v2.json",
+  "parent_files": [
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/cobra-validation-context-candidate-v2/en.md",
+      "sha256": "7a80c02bedc1aafdfab8ec73ef900b59e8f397787e757b324c61690759e6fcc6"
+    },
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/cobra-validation-context-candidate-v2/pt-BR.md",
+      "sha256": "3d24eeaa8186522bcc891ecaa043653d01c0a1f2c6085c1d4d65de8680a26a72"
+    }
+  ],
+  "source_inputs": [
+    {
+      "qid": "Q001",
+      "question_en": "Does an empty ValidArgs list itself reject input?",
+      "answer_en": "No. In the selected `OnlyValidArgs` body, membership validation is inside the nonempty-list guard and the subsequent return is `nil`."
+    },
+    {
+      "qid": "Q002",
+      "question_en": "Does constructing ExactArgs validate a later slice?",
+      "answer_en": "No. The factory returns a validator; its returned function performs the length comparison when called."
+    },
+    {
+      "qid": "Q003",
+      "question_en": "What does ValidateArgs use when Args is nil?",
+      "answer_en": "The selected method calls `ArbitraryArgs`, whose selected body returns `nil`. The `Find` path's `legacyArgs` call is separate."
+    },
+    {
+      "qid": "Q004",
+      "question_en": "Does MatchAll continue after a validator returns an error?",
+      "answer_en": "No. Its loop returns that first error before later loop iterations."
+    },
+    {
+      "qid": "Q005",
+      "question_en": "Must all flag validation precede pre-run hooks?",
+      "answer_en": "No. The selected required-flag and flag-group checks follow those hook blocks, while earlier flag parsing has its own error path."
+    }
+  ],
+  "task": "Translateall5questionsandanswers,donotanswerthequestionsanew orinterpretGo. Preserve exactidentifiers/condition/rationale/firsterror/default/hookphase semantics. Ordinaryfactorytranslationisallowed; codeidentifiersarenottranslated.",
+  "composition_frozen": [
+    "KeepentireEnglishparentbytesunchanged.",
+    "KeepexactPTparentprefixthroughFAQheadingandmaintenance/limitsfooterunchanged.",
+    "OnlyreplacePTFAQsectionwithall5unmodifiedmodelquestion/answertexts, deterministicboldparagraphwrapping/qidmapping.",
+    "Requiresall5uniqueqid/nonemptyboundedplainstrings andnoextrarecords; ifstructuralgateblocked,nofullchaptercomposed,reporttranslationcomponentseparately.",
+    "Neverrepairmodelwording,dropfaileditems,fillomittedrationaleorchoosebestofretries."
+  ],
+  "acceptance": "Full12dimensioncompletechaptercriteriaunchanged plusall5FAQEN/PTpairs/sourcecontracts. Avalidtranslation/paraphrase isnotrequiredtobeverbatimmanualPT; unsupportedfacts/translatedidentifiers/missingrationalesreject.",
+  "population_rule": "OnePTtranslationcomponentattempt. Ifafullchapterisactuallycomposed,itbecomesanadditionalheterogeneousneural-contributionhybridchapteroutput; ifgateblocked,itremainscomponentonlyandisexcludedfrom12existingcompleteoutputpopulation, aswithpriorroutinggates. Predefinedbeforeresults.",
+  "authorship": "OnlynewPTFAQlanguageismodel-authored;EnglishFAQandrestofbothchaptersarefixed/source-reviewed. Nofreewholechaptergeneration,neuralarchitecturereasoning,weightlearningorindependentfamilyclaim.",
+  "model": "llama3.2:3b",
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 1200
+  },
+  "no_retries": true,
+  "training_gold": false,
+  "owner_approved": false,
+  "application_catalog_external_writes": 0
+}

@@ -1,0 +1,60 @@
+{
+  "at": "2026-11-20T20:22:02.128619+00:00",
+  "status": "BOTH_STRICT_COPY_TASKS_REJECTED_GENERAL_ESCAPED_IMPORT_IMPOSSIBILITY_REFUTED",
+  "rows": [
+    {
+      "condition": "unconstrained-api-format",
+      "strict_full_object_accepted": false,
+      "strict_parse_status": "INVALID_OR_UNEXPECTED_JSON",
+      "complete_english_child_object_diagnostic_only": true,
+      "english_child_exact_values": {
+        "plain": true,
+        "quoted": true,
+        "unicode": false
+      },
+      "english_import_string_exact": true,
+      "not_a_salvaged_accepted_response": true,
+      "done_reason": "stop",
+      "model_seconds": 39.545941809,
+      "generated_tokens": 167,
+      "raw_response_sha256": "2cb7fec1cefeb17aa64e884588073795839aff27509061769a5c5bb376e305f7"
+    },
+    {
+      "condition": "schema-constrained-api-format",
+      "strict_full_object_accepted": false,
+      "strict_parse_status": "INVALID_OR_UNEXPECTED_JSON",
+      "complete_english_child_object_diagnostic_only": true,
+      "english_child_exact_values": {
+        "plain": true,
+        "quoted": true,
+        "unicode": false
+      },
+      "english_import_string_exact": true,
+      "not_a_salvaged_accepted_response": true,
+      "done_reason": "length",
+      "model_seconds": 128.4649566,
+      "generated_tokens": 800,
+      "raw_response_sha256": "2f2091d70b3d5c976f8ce8baedfb2b01fb321fb4e6fba0618ed6b294b8e6610b"
+    }
+  ],
+  "strict_complete_tasks_accepted": 0,
+  "condition_calls": 2,
+  "one_shared_owned_copy_task_group": true,
+  "same_prompts_and_options": true,
+  "strong_hypothesis": "The constrained format cannot represent escaped import quotes at all.",
+  "strong_hypothesis_status": "REFUTED_IN_THIS_BOUNDED_EXAMPLE",
+  "evidence": "The complete English child object in both raw responses contains the exact full quoted Go program,including import and errors.New strings. Parent JSON remained invalid and other fields were not exact.",
+  "unconstrained_failure": "Extra closing brace before pt-br makes full JSON invalid;Portuguese code translates owned failure and Unicode/newline content differs.",
+  "constrained_failure": "English quoted program is exact,but Unicode content differs;Portuguese quoted string degenerates into repeated escaped Unicode and hits800-token output ceiling,leaving incomplete JSON.",
+  "output_ceiling_is_not_service_quota": true,
+  "causal_long_chapter_root_cause_established": false,
+  "format_generalization_or_neural_improvement": false,
+  "no_further_retry_authorized": true,
+  "source_or_code_executed": false,
+  "no_chapter_rejection_reversed": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_excluded": true,
+  "publication": false,
+  "interpretation": "A local format condition can represent an escaped import yet still fail full task/cardinality/Unicode/identifier fidelity. Partial string evidence only refutes the strong representation-impossibility claim; it does not make either output acceptable or explain every longer chapter failure."
+}

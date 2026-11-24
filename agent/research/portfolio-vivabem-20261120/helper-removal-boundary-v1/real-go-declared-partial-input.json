@@ -1,0 +1,21 @@
+{
+  "id": "real-go-declared-partial",
+  "family": "prometheus-exposed-real-source",
+  "language": "go",
+  "previous_source": "package v1\nfunc (api *API) costComparison(ctx context.Context, qry promql.Query, qs string, start, end time.Time, step time.Duration, opts promql.QueryOpts) (*QueryCostComparison, annotations.Annotations, error) {\n\testimate, annos, err := api.estimateQueryCost(ctx, qs, start, end, step, opts)\n\tif err != nil {\n\t\treturn nil, annos, err\n\t}\n\n\tcomparison := &QueryCostComparison{\n\t\tEstimated: CostEstimate{\n\t\t\tSeriesTouched: estimate.SeriesTouched,\n\t\t\tSamplesRead:   estimate.SamplesRead,\n\t\t},\n\t}\n\n\tif s := qry.Stats(); s != nil && s.Samples != nil {\n\t\tcomparison.Actual = CostEstimate{\n\t\t\tSeriesTouched: s.Samples.TotalSeries,\n\t\t\tSamplesRead:   s.Samples.SamplesRead,\n\t\t\tPeakSamples:   int64(s.Samples.PeakSamples),\n\t\t}\n\t}\n\n\treturn comparison, annos, nil\n}\n",
+  "current_source": "package v1\nfunc (api *API) estimateForComparison(ctx context.Context, limitStart time.Time, qs string, start, end time.Time, step time.Duration, opts promql.QueryOpts) pendingCostComparison {\n\testimate, annos, err := api.estimateQueryCost(ctx, limitStart, qs, start, end, step, opts)\n\treturn pendingCostComparison{estimate: estimate, annos: annos, err: err}\n}\n",
+  "documentation": {
+    "en": "The selected query handler performs cost comparison after successful execution.",
+    "pt-br": "O manipulador selecionado compara o custo após a execução bem-sucedida."
+  },
+  "complete_scope": false,
+  "source_available": true,
+  "logical_contract_id": "prometheus.query-cost-comparison",
+  "metadata": {
+    "selector": "API.costComparison",
+    "previous_path": "web/api/v1/api.go",
+    "current_path": "web/api/v1/api.go",
+    "managed_ownership": false,
+    "human_authored": false
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-21T05:53:37.288048+00:00",
+  "hypothesis": "H54: owned C++ controls can demonstrate a nonvirtual wrapper containing virtual dispatch, base qualification, overload hiding and a compatible template-shaped operation independently from OpenCV runtime. These controls must not be attributed to original OpenCV algorithms or file persistence.",
+  "related_source_task": "opencv-algorithm-context-protocol-v1.json",
+  "execution_scope": "Only fully owned tiny C++ sources, standard host compiler/runtime, integer state and stdout. No OpenCV headers/linking, files/images/network/databases or external scripts/tests.",
+  "compiler": "existing /usr/bin/clang++, -std=c++17 -Wall -Wextra -pedantic-errors; compile<=15s/run<=3s per case",
+  "cases": [
+    {
+      "id": "base-default",
+      "compile": "PASS",
+      "run_json": {
+        "empty": 0,
+        "writes": 0
+      }
+    },
+    {
+      "id": "derived-via-base-wrapper",
+      "compile": "PASS",
+      "run_json": {
+        "empty": 1,
+        "writes": 1
+      }
+    },
+    {
+      "id": "qualified-base",
+      "compile": "PASS",
+      "run_json": {
+        "empty": 0,
+        "writes": 0
+      }
+    },
+    {
+      "id": "compatible-nonderived-template-shape",
+      "compile": "PASS",
+      "run_json": {
+        "accepted": 1,
+        "reads": 1
+      }
+    },
+    {
+      "id": "hidden-overload",
+      "compile": "REJECT",
+      "run_json": null
+    },
+    {
+      "id": "using-unhides-overload",
+      "compile": "PASS",
+      "run_json": {
+        "writes": 1
+      }
+    }
+  ],
+  "criteria": "Every compile result and every applicable runtime JSON must match. Preserve sources/binaries/stdout/stderr/commands; failed expectations remain evidence. Does not validate actual library instantiation/Ptr constraints, virtual targets, ABI or file persistence.",
+  "upstream_execution": false,
+  "production_changes": false,
+  "gold": false
+}

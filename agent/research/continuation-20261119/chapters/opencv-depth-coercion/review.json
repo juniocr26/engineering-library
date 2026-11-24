@@ -1,0 +1,81 @@
+{
+  "at": "2026-11-19T20:56:17.597026+00:00",
+  "status": "CODEX_SOURCE_REVIEWED_PENDING_OWNER_APPROVAL",
+  "repository": "opencv",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "historical_baseline_id": "OPENCV-COERCE",
+  "historical_model_created_at": "2026-11-19T00:58:45.755568551Z",
+  "historical_caller": "1.9.22",
+  "baseline_reused_without_new_inference": true,
+  "protocol": ".local-backups/continuation-20261119/historical-contract-chapters-v1/protocol.json",
+  "protocol_sha256": "9765b1cb35cc2362b941ab1fe46d05d0ecc9fbffb0c763a4f5b7b19d46167c3b",
+  "baseline_review": {
+    "at": "2026-11-19T01:04:15.585220+00:00",
+    "id": "OPENCV-COERCE",
+    "status": "REJECTED",
+    "reviewer": "Codex source review; not owner approval",
+    "protocol_sha256": "c7ae66bcaa214aedb6f4071149a60fdda7f39208f85f41aaeab13a4f2c41b41c",
+    "mount_mapping_amendment": "numeric-error-mount-amendment.json",
+    "raw_artifact": "numeric-error-results-v2.jsonl",
+    "raw_sha256": "d5444a18427e07b56fec78a3fc98f9631930829d198c864aeeb44efa53aa4c00",
+    "criteria": [
+      {
+        "criterion": "depth1==depth2 returns same depth before other branches.",
+        "en": "partial",
+        "pt-br": "partial"
+      },
+      {
+        "criterion": "If both depths<=CV_32S, chooses CV_16S only when !muldiv AND both<=CV_8S; otherwise CV_32S.",
+        "en": "incorrect",
+        "pt-br": "incorrect"
+      },
+      {
+        "criterion": "Other unequal-depth case chooses CV_64F if either CV_ELEM_SIZE1(depth)>4 else CV_32F.",
+        "en": "partial",
+        "pt-br": "partial"
+      },
+      {
+        "criterion": "Uses bitwise & and | on comparison results; no mutation or element conversion performed here; macro/type numeric definitions not supplied.",
+        "en": "partial",
+        "pt-br": "partial"
+      }
+    ],
+    "findings": "Places CV_8S test outside the both<=CV_32S branch and misses !muldiv requirement. Says both<=CV_32S always returnsCV_32S, contradicting CV_16S case. Equal-depth maximum wording happens to equal depth but obscures direct return. Both languages share critical branch error.",
+    "model_requests": 1,
+    "renderer": {
+      "status": "accepted",
+      "rendered_sha256": {
+        "en": "cb530719ea7e9efeec154f7f66af09cb4ae1a564418b3c0be3199f13f7ef7e9a",
+        "pt-br": "2001fbbd835a9863cca60e6dcd589abe496ea0b1238915965657696327fe9ba5"
+      }
+    },
+    "published": false,
+    "training_gold": false,
+    "owner_approved": false
+  },
+  "source_excerpts_sha256": "354482102d276548478e4d5197251b8d306e5592167a83f2c9f8648fd1d232e5",
+  "inline_code_span_sequences_equal": true,
+  "inline_spans_per_language": 10,
+  "source_program_executed": false,
+  "new_model_calls": 0,
+  "training_gold": false,
+  "owner_approved": false,
+  "publication": false,
+  "license_notices": [
+    {
+      "path": "agent/research/continuation-20261119/source-licenses/opencv.LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    }
+  ],
+  "chapters": {
+    "en": {
+      "sha256": "ec707961f0a2840d931c46ba1776610bbbbc0fd51fb5682ceee72c3688880a65",
+      "words": 620
+    },
+    "pt-br": {
+      "sha256": "28409f50eea7a8809ab885f5d6c7c131ece25a856d1433c8062ca5e1671320e0",
+      "words": 676
+    }
+  },
+  "review_findings": "All predicate/branch conditions and nesting checked against the entire selected function; comment rationale and helper/macro unknowns retained; complete EN/PT source review, not owner approval."
+}

@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-22T04:57:57.413954+00:00",
+  "checkpoint": 31,
+  "status": "FAILED_BEFORE_EXTRACTION",
+  "command": [
+    "python3",
+    "agent/research/final-intensive-20261121/checkpoint_v31.py",
+    "--number",
+    "31"
+  ],
+  "exit_code": 1,
+  "exception": "AssertionError: trusted archive member guard rejected parent components",
+  "archive": ".local-backups/final-intensive-20261121/checkpoint-031/research-reports-and-selected-dependencies.tar.gz",
+  "archive_sha256": "64bcdd84688f892e434476071574f221f26f2e60bf3807701367b4af8e35cf46",
+  "archive_bytes": 103841407,
+  "unsafe_member_headers": [
+    {
+      "name": "agent/research/documentation-intelligence-20261119/chapters/go-image-dimensions/../go-image-animation/en.md",
+      "regular": true,
+      "absolute": false,
+      "parent_component": true
+    },
+    {
+      "name": "agent/research/documentation-intelligence-20261119/chapters/go-image-dimensions/../go-image-animation/pt-br.md",
+      "regular": true,
+      "absolute": false,
+      "parent_component": true
+    }
+  ],
+  "cause": "New dimensions linked-document dependency edges retained lexical ../ paths. Their resolved destinations are inside repository, but archive names were not canonicalized. The extraction guard correctly refused them.",
+  "extraction_started": false,
+  "consumer_groups_run": 0,
+  "chapter_G9": "INCONCLUSIVE",
+  "old_archive_retained": true,
+  "next_action": "Separate versioned checkpoint producer canonicalizes each dependency only after checking relative provenance, no symlink leaf and resolved root confinement; new checkpoint number, no overwrite."
+}

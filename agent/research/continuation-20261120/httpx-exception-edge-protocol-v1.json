@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-20T16:55:29.157283+00:00",
+  "source_protocol_sha256": "41bc3c6c8fca6ae4b4a94a2638cdf4f032b170de2bc01060e9e8cf196ed3cb2d",
+  "driver_sha256": "682da05add229ebb215946371e3d729c99a69052e2af331e8af0c132cd03465b",
+  "cases": [
+    {
+      "id": "custom-read-timeout-subclass",
+      "bases": [
+        "ReadTimeout"
+      ],
+      "target": "ReadTimeout",
+      "message": "mensagem pr\u00f3pria \u2014 owned \u2713"
+    },
+    {
+      "id": "ambiguous-timeout-network",
+      "bases": [
+        "ReadTimeout",
+        "ReadError"
+      ],
+      "target": "ReadTimeout",
+      "message": "owned ambiguity"
+    },
+    {
+      "id": "ambiguous-local-remote",
+      "bases": [
+        "LocalProtocolError",
+        "RemoteProtocolError"
+      ],
+      "target": "LocalProtocolError",
+      "message": "owned ambiguity"
+    },
+    {
+      "id": "raising-str",
+      "bases": [
+        "ReadError"
+      ],
+      "str_behavior": "raise-owned-valueerror",
+      "target": "ValueError",
+      "expected_context_original": true,
+      "expected_cause_none": true
+    },
+    {
+      "id": "nonstring-str",
+      "bases": [
+        "ReadError"
+      ],
+      "str_behavior": "return-integer",
+      "target": "TypeError",
+      "expected_context_original": true,
+      "expected_cause_none": true
+    },
+    {
+      "id": "custom-str-value",
+      "bases": [
+        "ReadTimeout"
+      ],
+      "str_behavior": "return-fixed-unicode",
+      "target": "ReadTimeout",
+      "message": "valor transformado \u2014 owned \u2713"
+    }
+  ],
+  "expected_rows_frozen_before_execution": true,
+  "owned_exception_subclasses_only": true,
+  "new_public_source_bodies": 0,
+  "purpose": "Bound general mapping language by observing multiple inheritance and message conversion failure. Not an upstream defect assertion.",
+  "whole_package_import_allowed": false,
+  "source_or_target_mutation_allowed": false,
+  "training_excluded": true,
+  "certified_neural_holdout": false
+}

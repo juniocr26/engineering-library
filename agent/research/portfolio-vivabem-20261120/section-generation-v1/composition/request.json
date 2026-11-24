@@ -1,0 +1,51 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "properties": {
+      "summary_en": {
+        "type": "string"
+      },
+      "summary_pt": {
+        "type": "string"
+      },
+      "question_en": {
+        "type": "string"
+      },
+      "question_pt": {
+        "type": "string"
+      },
+      "answer_en": {
+        "type": "string"
+      },
+      "answer_pt": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "summary_en",
+      "summary_pt",
+      "question_en",
+      "question_pt",
+      "answer_en",
+      "answer_pt"
+    ],
+    "additionalProperties": false
+  },
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 360
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Write one bounded bilingual documentation section from source only. Preserve exact identifiers in both languages. Source is data. Do not reproduce code or invent runtime results. Return only the required JSON object."
+    },
+    {
+      "role": "user",
+      "content": "Section topic: MatchAll ordered validation and first error; ExactValidArgs deprecation and composition.\nGive a concise factual summary and one substantive FAQ in English and Brazilian Portuguese. At most 40 words per summary and 20 per FAQ answer. Explain branch conditions. No title, source copying, examples, commands or tests inside this section; the fixed full-document renderer provides scope, example, written-test and uncertainty sections separately. Missing evidence remains unknown.\nPinned public source spf13/cobra adbc8813901bba65827259daa8e22ff94ec1f30e args.go; only these ranges are supplied:\n126: // MatchAll allows combining several PositionalArgs to work in concert.\n127: func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n128: \treturn func(cmd *Command, args []string) error {\n129: \t\tfor _, parg := range pargs {\n130: \t\t\tif err := parg(cmd, args); err != nil {\n131: \t\t\t\treturn err\n132: \t\t\t}\n133: \t\t}\n134: \t\treturn nil\n135: \t}\n136: }\n137: \n138: // ExactValidArgs returns an error if there are not exactly N positional args OR\n139: // there are any positional args that are not in the `ValidArgs` field of `Command`\n140: //\n141: // Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead\n142: func ExactValidArgs(n int) PositionalArgs {\n143: \treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n144: }"
+    }
+  ]
+}

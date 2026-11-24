@@ -1,0 +1,331 @@
+{
+  "at": "2026-11-21T15:14:51.487289+00:00",
+  "task": "zod",
+  "method": "E",
+  "content_sha256": "6a871d59378e78f27d7f2dbf63fc69e42ebc4e197aed70e3272469f3142a9489",
+  "raw_response_sha256": "3b7fd18f95e18ae37a1c00ddb1a08da736eab97deaa5823c89934f74681a01d1",
+  "lossless_factual_records": [
+    {
+      "claim_id": "NEW-E-zod-Z01",
+      "reference_id": "Z01",
+      "original_generated_record": {
+        "id": "Z01",
+        "question_en": "Which async flag does the synchronous returned arrow set?",
+        "question_pt-BR": "Qual flago assíncrono a seta a seta retornada synchronous?",
+        "answer_en": "The synchronous returned arrow sets the `async` flag to `false`.",
+        "answer_pt-BR": "A seta retornada synchronous seta o flago assíncrono para `false`.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@0/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        71,
+        72
+      ],
+      "exact_source_evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+      "expected_interpretation": {
+        "en": "The synchronous returned arrow creates ctx with async: false.",
+        "pt-BR": "A arrow síncrona retornada cria ctx com async: false."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "EN false flag is correct; PT question is malformed/mixed-language and is not certified as a complete equivalent question.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z02",
+      "reference_id": "Z02",
+      "original_generated_record": {
+        "id": "Z02",
+        "question_en": "What call does the synchronous arrow make to the schema runner?",
+        "question_pt-BR": "Qual chamada a seta synchronous faz para o runner de esquema?",
+        "answer_en": "The synchronous arrow calls the schema runner with the `value` and `issues` parameters.",
+        "answer_pt-BR": "A seta synchronous faz chamada para o runner de esquema com os parâmetros `value` e `issues`.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@1/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        73,
+        73
+      ],
+      "exact_source_evidence": "  const result = schema._zod.run({ value, issues: [] }, ctx);",
+      "expected_interpretation": {
+        "en": "The synchronous arrow calls schema._zod.run with { value, issues: [] } and ctx.",
+        "pt-BR": "A arrow síncrona chama schema._zod.run com { value, issues: [] } e ctx."
+      },
+      "factual_verdict_en": "INSUFFICIENT",
+      "bilingual_or_relevance_reason": "Value/issues parameters does not preserve payload-object plus ctx argument roles. Ambiguous API shape, not an invented concrete positional call.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z03",
+      "reference_id": "Z03",
+      "original_generated_record": {
+        "id": "Z03",
+        "question_en": "What does the synchronous Promise guard throw?",
+        "question_pt-BR": "O que a seta synchronous de Promise faz quando result instanceof Promise?",
+        "answer_en": "The synchronous Promise guard throws a `$ZodAsyncError` when the result is a promise.",
+        "answer_pt-BR": "A seta synchronous de Promise faz lançar um erro `$ZodAsyncError` quando o resultado é uma promise.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@2/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        74,
+        76
+      ],
+      "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+      "expected_interpretation": {
+        "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+        "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Correct error class under selected synchronous Promise-guard question; no all-realms Promise guarantee inferred.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z04",
+      "reference_id": "Z04",
+      "original_generated_record": {
+        "id": "Z04",
+        "question_en": "What condition selects the normal failure branch?",
+        "question_pt-BR": "Qual condição seleciona a branch de falha normal?",
+        "answer_en": "The condition that selects the normal failure branch is `result.issues.length`.",
+        "answer_pt-BR": "A condição que seleciona a branch de falha normal é `result.issues.length`.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@3/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return, truthy result.issues.length selects failure.",
+        "pt-BR": "No retorno normal, result.issues.length truthy seleciona failure."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Normal failure condition result.issues.length is correct.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z05",
+      "reference_id": "Z05",
+      "original_generated_record": {
+        "id": "Z05",
+        "question_en": "What success flag is written in the no-issues literal?",
+        "question_pt-BR": "Qual flago de sucesso é escrito na literal sem issues?",
+        "answer_en": "The success flag written in the no-issues literal is `success: true`.",
+        "answer_pt-BR": "O flago de sucesso escrito na literal sem issues é `success: true`.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@4/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has success: true.",
+        "pt-BR": "No retorno normal sem issues, o literal tem success: true."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "success:true literal is correct.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z06",
+      "reference_id": "Z06",
+      "original_generated_record": {
+        "id": "Z06",
+        "question_en": "What guards construction in the error getter?",
+        "question_pt-BR": "O que protege a construção na getter de erro?",
+        "answer_en": "The construction in the error getter is guarded by the `error` property being undefined.",
+        "answer_pt-BR": "A construção na getter de erro é protegida pela propriedade `error` sendo undefined.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@5/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        87,
+        89
+      ],
+      "exact_source_evidence": "    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));",
+      "expected_interpretation": {
+        "en": "The error getter construction branch is guarded by !error.",
+        "pt-BR": "O ramo de construção no getter de error é condicionado por !error."
+      },
+      "factual_verdict_en": "CONTRADICTED",
+      "bilingual_or_relevance_reason": "Actual guard is !closure-local error, not an undefined-only property check.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z07",
+      "reference_id": "Z07",
+      "original_generated_record": {
+        "id": "Z07",
+        "question_en": "What assignment does the error setter make to local error?",
+        "question_pt-BR": "Qual atribuição a seta setter faz para a propriedade local de erro?",
+        "answer_en": "The error setter assigns the `error` property to the local `error` variable.",
+        "answer_pt-BR": "A seta setter atribui a propriedade `error` para a variável local de erro.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@6/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        96,
+        97
+      ],
+      "exact_source_evidence": "    set error(e: errors.$ZodError) {\n      error = e;",
+      "expected_interpretation": {
+        "en": "The error setter assigns e to the local error.",
+        "pt-BR": "O setter de error atribui e à variável local error."
+      },
+      "factual_verdict_en": "INSUFFICIENT",
+      "bilingual_or_relevance_reason": "Incoming setter e->local error becomes property error->local error; source dataflow role is wrong or ambiguous.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z08",
+      "reference_id": "Z08",
+      "original_generated_record": {
+        "id": "Z08",
+        "question_en": "What does the asynchronous arrow do when result instanceof Promise?",
+        "question_pt-BR": "O que a seta assíncrona faz quando result instanceof Promise?",
+        "answer_en": "The asynchronous arrow waits for the promise to resolve when `result instanceof Promise`.",
+        "answer_pt-BR": "A seta assíncrona espera pela resolve do promise quando `result instanceof Promise`.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@7/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        111,
+        114
+      ],
+      "exact_source_evidence": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;",
+      "expected_interpretation": {
+        "en": "The asynchronous arrow awaits result when result instanceof Promise.",
+        "pt-BR": "A arrow assíncrona aguarda result quando result instanceof Promise."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Await under Promise guard is preserved, without unconditional fulfillment; PT wording needs review.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z09",
+      "reference_id": "Z09",
+      "original_generated_record": {
+        "id": "Z09",
+        "question_en": "What error class is supplied to the core _safeParse factory binding?",
+        "question_pt-BR": "Qual classe de erro é fornecida para a fábrica de _safeParse do core?",
+        "answer_en": "The `$ZodRealError` class is supplied to the core `_safeParse` factory binding.",
+        "answer_pt-BR": "A classe `$ZodRealError` é fornecida para a fábrica de `_safeParse` do core.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@8/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        80,
+        80
+      ],
+      "exact_source_evidence": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);",
+      "expected_interpretation": {
+        "en": "The core safeParse binding supplies errors.$ZodRealError to _safeParse.",
+        "pt-BR": "O vínculo safeParse do core fornece errors.$ZodRealError a _safeParse."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Correct ZodRealError factory class.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-zod-Z10",
+      "reference_id": "Z10",
+      "original_generated_record": {
+        "id": "Z10",
+        "question_en": "What data property is written in the no-issues literal?",
+        "question_pt-BR": "Qual propriedade de dados é escrita na literal sem issues?",
+        "answer_en": "The data property written in the no-issues literal is `data: result.value`.",
+        "answer_pt-BR": "A propriedade de dados escrita na literal sem issues é `data: result.value`.",
+        "source": "@ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+      },
+      "original_json_object_path": "$/faq@9/0",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has data: result.value.",
+        "pt-BR": "No retorno normal sem issues, o literal tem data: result.value."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Correct data:result.value property.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    }
+  ],
+  "duplicate_keys": [
+    {
+      "object_path": "$",
+      "key": "faq",
+      "occurrences": 11
+    }
+  ],
+  "selected_english_atomic_metrics": {
+    "supported": 7,
+    "contradicted": 1,
+    "insufficient": 2,
+    "denominator": 10,
+    "scope": "Identifiable EN source propositions; malformed PT questions and missing source locations assessed separately."
+  },
+  "full_bilingual_atomic_precision": null,
+  "strict_individual_faq_pair_acceptance": null,
+  "whole_requested_faq_output": "REJECTED",
+  "reasons": [
+    "Wrong getter predicate Z06",
+    "Ambiguous setter/runner dataflow roles",
+    "Repeated faq key11times discards all but last entry under ordinary decoding",
+    "Only revision, without source path/lines",
+    "Several PT questions malformed or mixed-language"
+  ],
+  "uncertainty_control": "Explicit No/Não declines universal fulfillment; coarse justified abstention only",
+  "preflight_note": "An earlier unexecuted heredoc had a brace SyntaxError; no annotation files or predictions changed before this script.",
+  "annotation_preflight_v2": "v1 stopped on U-Z lookup after writing FastAPI and Cobra; v2 excludes the separately assessed uncertainty control and preserves those files.",
+  "original_outputs_and_reference_answers_unchanged": true,
+  "not_general_model_accuracy": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

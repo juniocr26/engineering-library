@@ -1,0 +1,19 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common="""
+
+### Progresso intensivo 075 — pacote LoRA atual e fechamento finito de recuperação
+
+O pacote de decisão do primeiro piloto foi atualizado para v2, referenciando as nove condições NO_GO v4, a identidade dos 30 pares, a exclusão conservadora de famílias e a recuperação demonstrada. Os hiperparâmetros históricos e o orçamento de tempo são exatamente iguais aos da v1. launch_allowed, training_authorized e ready_for_execution continuam falsos; do_not_pass_to_training_cli permanece verdadeiro. Zero alvo Gold, modelo/base carregado, framework instalado, adapter, otimizador ou estado de treino foi criado. Recuperação de pesquisa não é retomada de optimizer/RNG/cursor.
+
+O novo consumidor vinculou os 5.871 inputs imutáveis históricos do051 e os quatro prefixos de relatório por hashes, tamanhos e os modos aplicáveis, usando os beforeimages preservados do bundle073 para os relatórios. Também conferiu o pós-registro e o bootstrap pinado. Isso preserva a prova da restauração completa já realizada sem incluir recursivamente cada novo arquivo TAR dentro do seguinte. O arquivo051 não foi reextraído nessa leitura; a restauração física anterior e o consumo lógico atual têm recibos e escopos separados.
+
+O mesmo consumidor confronta os sete recibos de dados, os 4.654 eventos Python open e o controle de três leituras do workspace, sem abrir as raízes temporárias antigas. Os caminhos registrados são metadados históricos; os arquivos de evidência são resolvidos sob a raiz selecionada. Nenhuma taxa geral de segurança, precisão semântica ou ganho neural foi inferida. O fechamento v43 tem 647 dependências, incluindo os sidecars051 necessários; os arquivos originais de backup não foram alterados.
+
+O inventário020 enumera 4.928 arquivos no corte, dos quais 4.717 na pesquisa, com propósitos refinados para os novos artefatos e para os bootstraps051. O ledger25 aponta para esse corte e mantém os arrays históricos claramente datados. O volume tinha aproximadamente300,60GiB livres; os backups próprios somavam4,49GiB lógicos, não uso físico incremental. A estimativa de planejamento reserva5GiB para novo arquivo, restauração e consumo autônomo; não é medida de pico nativo LoRA nem custo monetário. Nenhum material foi apagado. Os novos artefatos ainda precisam da próxima restauração verificada.
+"""
+j=p/'root-report-bundle-progress-075';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v75.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

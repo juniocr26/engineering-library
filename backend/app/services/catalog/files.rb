@@ -1,0 +1,47 @@
+require "yaml"
+require "json"
+require_relative '../../../lib/documentation/locations'
+module Catalog
+  class Files
+    LANGUAGES = %w[pt-BR en].freeze
+    SLUG = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/
+    def self.root
+      Pathname.new(ENV.fetch("CATALOG_ROOT", Rails.root.join("../docs").to_s)).realpath
+    end
+    def self.read(slug, relative, encoding: "UTF-8")
+      raise ArgumentError, "Invalid project identifier" unless SLUG.match?(slug)
+      raise ArgumentError, "Invalid relative path" if Pathname.new(relative).absolute? || relative.split("/").include?("..")
+      base = root.join(slug).realpath
+      raise ArgumentError, "Outside catalog" unless base.to_s.start_with?(root.to_s + "/")
+      path = base.join(relative).realpath
+      raise ArgumentError, "Outside catalog" unless path.to_s.start_with?(base.to_s + "/")
+      path.read(encoding: encoding)
+    end
+    def self.bio(slug, language)
+      source = read(slug, "#{language.downcase}/bio.md")
+      match = source.match(/\A---\r?\n(.*?)\r?\n---\r?\n(.+)\z/m)
+      raise ArgumentError, "Invalid bio" unless match
+      data = YAML.safe_load(match[1], permitted_classes: [], aliases: false)
+      raise ArgumentError, "Invalid metadata" unless data.is_a?(Hash) && SLUG.match?(data["id"].to_s) && (data["name"].nil? || data["name"].is_a?(String)) && !match[2].strip.empty?
+      { id: data["id"], name: data["name"].to_s.strip.presence || display_name(slug), description: match[2].strip }
+    end
+    # Compatibility for older bios; explicit names always take precedence.
+    def self.display_name(slug)
+      acronyms = %w[api cli css html http https id json sql ui url ux]
+      slug.split("-").map { |word| acronyms.include?(word) ? word.upcase : word.capitalize }.join(" ")
+    end
+    def self.categories(slug, language)
+      source = read(slug, "#{language.downcase}/index.md")
+      source.scan(/^[-*] \[([^\]]+)\]\(([a-zA-Z0-9_-]+)\/index\.md\)/).filter_map do |label, category|
+        begin
+          read(slug, "#{language.downcase}/#{category}/index.md")
+          { name: label, url: "/projects/#{slug}/docs/#{category}/index.md?lang=#{language}" }
+        rescue Errno::ENOENT, ArgumentError
+          nil
+        end
+      end
+    rescue Errno::ENOENT
+      []
+    end
+  end
+end

@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-21T06:30:22.467146+00:00",
+  "hypothesis": "H57: raw inference prompt_eval_count can provide an observed local inference-input budget for three exact paired public-source FAQ excerpts, improving on byte/word heuristics without certifying future training-tokenizer/template/mask fit.",
+  "model": "llama3.2:3b",
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "source_batch": "agent/research/portfolio-vivabem-20261120/documentation-owner-review-batch-v3.json",
+  "source_batch_sha256": "8f092c00c134061963489076b6d1bebc75d9419a593997a14f28175ffe52968a",
+  "prior_byte_only_preflight": "pilot-target-length-preflight-v1.json",
+  "targets": [
+    {
+      "id": "documentation-review-fastapi-faq-boundary",
+      "repository": "fastapi",
+      "source_family": "fastapi/fastapi",
+      "target_path": "agent/research/portfolio-vivabem-20261120/pilot-raw-token-proxy-v1/fastapi/target.txt",
+      "target_sha256": "90515ee876e3c0dbb8ba5b343e870695c5a01698cf05356f187891e22eaf385c",
+      "target_UTF8_bytes": 696,
+      "request_path": "agent/research/portfolio-vivabem-20261120/pilot-raw-token-proxy-v1/fastapi/request.json",
+      "request_sha256": "ce0c7161453a88a0046677dbe7e1ced490ed937b0bb00156ea63aec6780a3b3c",
+      "public_source_provenance": [
+        {
+          "path": "LICENSE",
+          "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e",
+          "snapshot": "agent/research/portfolio-vivabem-20261120/public-source-evidence-v1/fastapi/05e6df7e906c3decba377c37548019973f40bf15/LICENSE",
+          "identified_text": "MIT license text",
+          "source_file_applicability_not_comprehensive": true
+        }
+      ],
+      "parent_review_sha256": "6c5ef134c6946d162f639347349e119cdb3e15aa61dd27bf1a5e302b27478057",
+      "training_gold": false
+    },
+    {
+      "id": "documentation-review-cobra-faq-boundary",
+      "repository": "cobra",
+      "source_family": "spf13/cobra",
+      "target_path": "agent/research/portfolio-vivabem-20261120/pilot-raw-token-proxy-v1/cobra/target.txt",
+      "target_sha256": "d8c8aa6f12dbc32374d7f1e2e022f2d16a032d2cfd4f966791faaa5c927bd5ce",
+      "target_UTF8_bytes": 405,
+      "request_path": "agent/research/portfolio-vivabem-20261120/pilot-raw-token-proxy-v1/cobra/request.json",
+      "request_sha256": "641fbdf05093c077b5596872b2b627c6ead00aa8a89be4e9f3f19bf632d2dd39",
+      "public_source_provenance": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "5e3400b93bbb099e83e52bab885e7441750673c21f97988ca3f1240639b63283",
+          "snapshot": "agent/research/portfolio-vivabem-20261120/public-source-evidence-v1/cobra/adbc8813901bba65827259daa8e22ff94ec1f30e/LICENSE.txt",
+          "identified_text": "Apache-2.0 license text",
+          "source_file_applicability_not_comprehensive": true
+        }
+      ],
+      "parent_review_sha256": "38520d071c80589aa5fd2b9754068e4769ca273660635a433fe6e8e283ed5a90",
+      "training_gold": false
+    },
+    {
+      "id": "documentation-review-zod-faq-boundary",
+      "repository": "zod",
+      "source_family": "colinhacks/zod",
+      "target_path": "agent/research/portfolio-vivabem-20261120/pilot-raw-token-proxy-v1/zod/target.txt",
+      "target_sha256": "8827bd0148712fbb9c0b8fe2ff5b100bb8949fa13facaa98afbd081da20b5586",
+      "target_UTF8_bytes": 619,
+      "request_path": "agent/research/portfolio-vivabem-20261120/pilot-raw-token-proxy-v1/zod/request.json",
+      "request_sha256": "332386c576a50a751e7cccc0f33b79f3fb6bc91ec41e1925304d30da1042642d",
+      "public_source_provenance": [
+        {
+          "path": "LICENSE",
+          "sha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8",
+          "snapshot": "agent/research/portfolio-vivabem-20261120/public-source-evidence-v1/zod/2a343ed2a4ffbea73fb83862ee1e317662292481/LICENSE",
+          "identified_text": "MIT license text",
+          "source_file_applicability_not_comprehensive": true
+        }
+      ],
+      "parent_review_sha256": "2092ebb0f0594a21f7a8334c31715e740961e8986ff7f0de053dde6efe39330c",
+      "training_gold": false
+    }
+  ],
+  "max_calls": 3,
+  "generation_output_cap_each": 1,
+  "endpoint": "LocalexistingOllama/api/generate,rawtrue,streamfalse,temperature0,numctx8192",
+  "interpretation_frozen": [
+    "Report server-supplied prompt_eval_count with observed model/digest/server metadata; do not estimate tokens from bytes or claim trainable-tokenizer equivalence.",
+    "Record cached-token field if present, otherwise unknown. Do not invent subtraction or infer portable exact tokenization.",
+    "Raw prompt contains both exact EN/PTexcerpts concatenated without newseparator/template/evidence. It is target-text-only, not full training input+source+template+target.",
+    "A raw inference count <=512 is not a training sequence-fit pass. fits_sequence512_training remainsnull and readinessNO-GO.",
+    "At most1generatedtoken serves only to obtain terminal API metadata; meaningless completion not a chapter/FAQ/claim/judgment accuracy task.",
+    "Aggregate these3generationrequests distinctly from28prior document/judgmentcalls and13complete methodattempts. No new complete-output denominator.",
+    "Abort remaining calls on digestchange,missingrequiredmetadata,unexpected generatedcount>1 or transportfailure; no automaticretry/modeldownload/frameworkinstall/training."
+  ],
+  "private_vivabem_material": false,
+  "evaluation_only_family_material": false,
+  "new_training_records": 0,
+  "gold": 0,
+  "optimizer_steps": 0,
+  "owner_approved": false
+}

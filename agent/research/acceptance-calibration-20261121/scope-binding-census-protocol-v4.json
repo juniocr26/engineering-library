@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-21T16:09:07.224261+00:00",
+  "before_V4_outcomes": true,
+  "extends": [
+    "scope-continuity-utility-protocol-v3.json",
+    "scope-binding-deletion-challenge-protocol-v1.json"
+  ],
+  "trigger": "Unchanged V3 predicts false MODIFY on3/4 inconclusive deletion/registry-order controls, despite recovering2/2 valid MODIFY in that cohort. Earlier zero false-MODIFY counts did not generalize.",
+  "hypothesis": "Before admitting a V3 MODIFY, an owner-qualified module binding-event census for both identity registry and every resolved provider/reexport target can detect extra Store/Del events while ignoring unrelated local/class-owned bindings. This may remove the three observed false admissions without sacrificing the two valid maintenance cases or earlier class/lambda continuity.",
+  "frozen_input_results": [
+    {
+      "path": "scope-continuity-utility-results-v3.json",
+      "sha256": "45249011668d4de8258331295ea9055b5adf073dbe664c0619c7b80048930237"
+    },
+    {
+      "path": "scope-binding-deletion-challenge-results-v1.json",
+      "sha256": "a445f4933883f2599789f4df43cfeff9fa55869f0295d0049ff8f7d064037871"
+    }
+  ],
+  "census_rules": [
+    "Parse only previously bounded acquired hash-verified source files; no control source execution.",
+    "Count module-owner binding events, preserving multiple events inside a single compound suite; do not collapse a delete and declaration to one set member.",
+    "Function/async-function declaration binds its name in outer scope; inspect decorators/defaults/annotations/return annotation evaluated in that scope, skip its body.",
+    "Class declaration binds its name; inspect decorators/bases/keywords evaluated outside, skip class body.",
+    "Lambda body has its own binding scope; inspect defaults only.",
+    "Import aliases bind their outer names; Name Store and Del count, with named pattern/exception captures included.",
+    "Require exactly one module binding event for CONTRACTS at its admitted marker and exactly one for each resolved provider/reexport name. Non-callable/missing/ambiguous/overwritten/del bindings remain inconclusive.",
+    "V4 only filters a V3 MODIFY to INCONCLUSIVE. It does not promote new decisions, reinterpret references, change source budgets or weaken existing refusals."
+  ],
+  "metrics": "Separate matrices per original11/owner7/continuity8/deletion6 cohorts; retain falseREMOVE, falseMODIFY, missedMODIFY, justifiedINC and zero-denominator nulls. All development-exposed; no generic safety or real catalog authority.",
+  "not_production_fix": true,
+  "not_independent_holdout": true,
+  "not_general_python_runtime_binding_resolution": true,
+  "source_and_permanent_tests_unchanged": true,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

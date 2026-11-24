@@ -1,0 +1,429 @@
+{
+  "at": "2026-11-22T03:38:17.522254+00:00",
+  "protocol_sha256": "f8348e40f037db7d291570c905c743dd41da77ae40233c2ee723112ea59aa0c6",
+  "records": [
+    {
+      "canonical_record_id": "faq:go-image-configuration:empty-port-fallback:en",
+      "file": "agent/research/documentation-intelligence-20261119/datasets/v10/faq-candidates.jsonl",
+      "line": 43,
+      "raw_record_sha256": "95f1f570c6ef0d0bc99e61a3632a3342cd1ef25a74912885583a639b883f7300",
+      "language": "en",
+      "question_identity": [
+        "go-image-configuration",
+        "empty-port-fallback"
+      ],
+      "question": "Is an explicitly empty PORT different from a missing value here?",
+      "answer": "The helper checks only whether the obtained string is empty, and uses the fallback on that branch. A nonempty value is forwarded without trimming, then validated. Parsing details belong to the imported integer conversion.",
+      "parent_document_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/go-image-configuration/en.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201",
+        "sha256": "13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201"
+      },
+      "question_alignment_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/faq-claim-alignment-v6.json#go-image-configuration:empty-port-fallback",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60",
+        "sha256": "d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+      },
+      "source_support_status": "SUPPORTED_WITH_DECLARED_SOURCE_CONTEXT",
+      "manual_semantic_basis": "getEnv emptystring conditional+Loadseam: nonemptyforwardunchanged; no triminhelper; conversiongrammarreserved toAtoi.",
+      "same_agent_not_independent_human": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "training_eligible": false
+    },
+    {
+      "canonical_record_id": "faq:go-image-configuration:zero-config-on-error:en",
+      "file": "agent/research/documentation-intelligence-20261119/datasets/v10/faq-candidates.jsonl",
+      "line": 44,
+      "raw_record_sha256": "368570aadb8931694166a6f0a5f511c622e148e3efdd42f22b4daf4ebe8ccc08",
+      "language": "en",
+      "question_identity": [
+        "go-image-configuration",
+        "zero-config-on-error"
+      ],
+      "question": "Does a validation error return the populated candidate?",
+      "answer": "The loader returns a zero configuration together with the error. Only the success branch returns the populated candidate and nil. The stored port remains a string; validation does not replace it with its parsed integer.",
+      "parent_document_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/go-image-configuration/en.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201",
+        "sha256": "13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201"
+      },
+      "question_alignment_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/faq-claim-alignment-v6.json#go-image-configuration:zero-config-on-error",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81",
+        "sha256": "9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81"
+      },
+      "source_support_status": "SUPPORTED_WITH_DECLARED_SOURCE_CONTEXT",
+      "manual_semantic_basis": "LoaderrorreturnsConfig{}anderr;successcfg,nil;validatePortlocalnumberdoesnotreplacePortstring.",
+      "same_agent_not_independent_human": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "training_eligible": false
+    },
+    {
+      "canonical_record_id": "faq:go-image-configuration:configuration-consumer:en",
+      "file": "agent/research/documentation-intelligence-20261119/datasets/v10/faq-candidates.jsonl",
+      "line": 45,
+      "raw_record_sha256": "2a72d6567e844f6391ec3d95d2d823d9539c7e5cfe8361f64f15d8521a9322c4",
+      "language": "en",
+      "question_identity": [
+        "go-image-configuration",
+        "configuration-consumer"
+      ],
+      "question": "Where is this configuration consumed?",
+      "answer": "The additional main source calls the loader and exits its error branch before constructing the server. The added server constructor uses the address method and router constructor, and assigns header/read/write/idle timeout fields. Those are written configuration choices, not observed listening, timeout enforcement or a running deployment.\n\nNo server was started for this review. Manually constructing a configuration still bypasses the loader; the address method itself does not enforce the validation contract.",
+      "parent_document_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/go-image-configuration/en.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201",
+        "sha256": "13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201"
+      },
+      "question_alignment_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/faq-claim-alignment-v6.json#go-image-configuration:configuration-consumer",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175",
+        "sha256": "4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175"
+      },
+      "source_support_status": "SUPPORTED_WITH_DECLARED_SOURCE_CONTEXT",
+      "manual_semantic_basis": "MainerrorbranchbeforeNewServer andwrittenServerfields; supplementaryConfig.Addrbody/Configexportedfield support trailingmanualconstruction/bypassclause, not networkenforcement.",
+      "same_agent_not_independent_human": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "training_eligible": false
+    },
+    {
+      "canonical_record_id": "faq:go-image-configuration:empty-port-fallback:pt-br",
+      "file": "agent/research/documentation-intelligence-20261119/datasets/v10/faq-candidates.jsonl",
+      "line": 46,
+      "raw_record_sha256": "6ad675e636a6296af64fa9e46edd591b285b9238f0c86394429aecf14ea75530",
+      "language": "pt-br",
+      "question_identity": [
+        "go-image-configuration",
+        "empty-port-fallback"
+      ],
+      "question": "PORT explicitamente vazio difere de um valor ausente aqui?",
+      "answer": "O helper verifica apenas se a string obtida está vazia e usa a alternativa nesse ramo. Um valor não vazio é encaminhado sem remover espaços e depois validado. Detalhes da análise pertencem à conversão inteira importada.",
+      "parent_document_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/go-image-configuration/pt-br.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0",
+        "sha256": "ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0"
+      },
+      "question_alignment_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/faq-claim-alignment-v6.json#go-image-configuration:empty-port-fallback",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60",
+        "sha256": "d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+      },
+      "source_support_status": "SUPPORTED_WITH_DECLARED_SOURCE_CONTEXT",
+      "manual_semantic_basis": "getEnv emptystring conditional+Loadseam: nonemptyforwardunchanged; no triminhelper; conversiongrammarreserved toAtoi.",
+      "same_agent_not_independent_human": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "training_eligible": false
+    },
+    {
+      "canonical_record_id": "faq:go-image-configuration:zero-config-on-error:pt-br",
+      "file": "agent/research/documentation-intelligence-20261119/datasets/v10/faq-candidates.jsonl",
+      "line": 47,
+      "raw_record_sha256": "e35b44d146afbe7a57a4a64be95aad0f712bba5ce0dd4596de087865ec0c28b8",
+      "language": "pt-br",
+      "question_identity": [
+        "go-image-configuration",
+        "zero-config-on-error"
+      ],
+      "question": "Um erro de validação retorna o candidato preenchido?",
+      "answer": "O carregador retorna uma configuração com valores zero junto do erro. Somente o ramo de sucesso retorna o candidato preenchido e nil. A porta armazenada continua string; a validação não a substitui pelo inteiro analisado.",
+      "parent_document_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/go-image-configuration/pt-br.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0",
+        "sha256": "ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0"
+      },
+      "question_alignment_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/faq-claim-alignment-v6.json#go-image-configuration:zero-config-on-error",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81",
+        "sha256": "9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81"
+      },
+      "source_support_status": "SUPPORTED_WITH_DECLARED_SOURCE_CONTEXT",
+      "manual_semantic_basis": "LoaderrorreturnsConfig{}anderr;successcfg,nil;validatePortlocalnumberdoesnotreplacePortstring.",
+      "same_agent_not_independent_human": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "training_eligible": false
+    },
+    {
+      "canonical_record_id": "faq:go-image-configuration:configuration-consumer:pt-br",
+      "file": "agent/research/documentation-intelligence-20261119/datasets/v10/faq-candidates.jsonl",
+      "line": 48,
+      "raw_record_sha256": "f41c1c1036800b2fddfd0d8db03bc87c39a935f6fe389614183c1a00ff4001d9",
+      "language": "pt-br",
+      "question_identity": [
+        "go-image-configuration",
+        "configuration-consumer"
+      ],
+      "question": "Onde essa configuração é consumida?",
+      "answer": "A fonte adicional de main chama o carregador e encerra seu ramo de erro antes de construir o servidor. O construtor de servidor acrescentado usa o método de endereço e o construtor de router e atribui campos de timeout de cabeçalho/leitura/escrita/inatividade. Essas são escolhas escritas de configuração, não escuta observada, aplicação medida de timeout ou implantação em execução.\n\nNenhum servidor foi iniciado para esta revisão. Construir manualmente uma configuração ainda desvia do carregador; o próprio método de endereço não impõe o contrato de validação.",
+      "parent_document_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/go-image-configuration/pt-br.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0",
+        "sha256": "ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0"
+      },
+      "question_alignment_ref": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/faq-claim-alignment-v6.json#go-image-configuration:configuration-consumer",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175",
+        "sha256": "4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175"
+      },
+      "source_support_status": "SUPPORTED_WITH_DECLARED_SOURCE_CONTEXT",
+      "manual_semantic_basis": "MainerrorbranchbeforeNewServer andwrittenServerfields; supplementaryConfig.Addrbody/Configexportedfield support trailingmanualconstruction/bypassclause, not networkenforcement.",
+      "same_agent_not_independent_human": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "training_eligible": false
+    }
+  ],
+  "source_edges": {
+    "backend/internal/config/config.go": {
+      "saved_path": "agent/research/final-intensive-20261121/go-image-configuration-source-context-v1/backend/internal/config/config.go",
+      "sha256": "fc00f62402fa3ea163eab2f97b1f9b5142aebc1e7cc90e7388a10775a31187cc"
+    },
+    "backend/cmd/api/main.go": {
+      "saved_path": "agent/research/final-intensive-20261121/go-image-configuration-source-context-v1/backend/cmd/api/main.go",
+      "sha256": "d020f4e4a8e8e8256399e0288c369d198a70340072679a9a1723ad2c61fd4f29"
+    },
+    "backend/internal/infrastructure/http/server.go": {
+      "saved_path": "agent/research/final-intensive-20261121/go-image-configuration-source-context-v1/backend/internal/infrastructure/http/server.go",
+      "sha256": "9c0188db5b0093209a240ad03704932c810c109cf5e67358774e14e4541c2c22"
+    }
+  },
+  "physical_quote_checks": [
+    {
+      "row": "faq:go-image-configuration:empty-port-fallback:en",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        30,
+        36
+      ],
+      "exact_quote_sha256": "d8c244ebc74dfce6726e0ef10252d3625ac53da8ec746eda2107898d39c08fb0",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+    },
+    {
+      "row": "faq:go-image-configuration:empty-port-fallback:en",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        14,
+        24
+      ],
+      "exact_quote_sha256": "71c4b6865175a452a40bf52da11c50bf176d92c67e8872ad54812e19024488f0",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+    },
+    {
+      "row": "faq:go-image-configuration:empty-port-fallback:en",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        38,
+        49
+      ],
+      "exact_quote_sha256": "697e541fe613ccbecd44ee602c8fce0dcc7696e577914e8be1628d13d29b39f4",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+    },
+    {
+      "row": "faq:go-image-configuration:zero-config-on-error:en",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        14,
+        24
+      ],
+      "exact_quote_sha256": "71c4b6865175a452a40bf52da11c50bf176d92c67e8872ad54812e19024488f0",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81"
+    },
+    {
+      "row": "faq:go-image-configuration:zero-config-on-error:en",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        38,
+        49
+      ],
+      "exact_quote_sha256": "697e541fe613ccbecd44ee602c8fce0dcc7696e577914e8be1628d13d29b39f4",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81"
+    },
+    {
+      "row": "faq:go-image-configuration:configuration-consumer:en",
+      "source_path": "backend/cmd/api/main.go",
+      "lines": [
+        17,
+        26
+      ],
+      "exact_quote_sha256": "8838852d4073933fecab0540c194ac4743721f0e63ca30efa5a1d0cb4fe7a47e",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175"
+    },
+    {
+      "row": "faq:go-image-configuration:configuration-consumer:en",
+      "source_path": "backend/internal/infrastructure/http/server.go",
+      "lines": [
+        11,
+        26
+      ],
+      "exact_quote_sha256": "a5757ae62514d460702078390b93e1333d5c2077d733b00142aca9a0752591ab",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175"
+    },
+    {
+      "row": "faq:go-image-configuration:empty-port-fallback:pt-br",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        30,
+        36
+      ],
+      "exact_quote_sha256": "d8c244ebc74dfce6726e0ef10252d3625ac53da8ec746eda2107898d39c08fb0",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+    },
+    {
+      "row": "faq:go-image-configuration:empty-port-fallback:pt-br",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        14,
+        24
+      ],
+      "exact_quote_sha256": "71c4b6865175a452a40bf52da11c50bf176d92c67e8872ad54812e19024488f0",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+    },
+    {
+      "row": "faq:go-image-configuration:empty-port-fallback:pt-br",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        38,
+        49
+      ],
+      "exact_quote_sha256": "697e541fe613ccbecd44ee602c8fce0dcc7696e577914e8be1628d13d29b39f4",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+    },
+    {
+      "row": "faq:go-image-configuration:zero-config-on-error:pt-br",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        14,
+        24
+      ],
+      "exact_quote_sha256": "71c4b6865175a452a40bf52da11c50bf176d92c67e8872ad54812e19024488f0",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81"
+    },
+    {
+      "row": "faq:go-image-configuration:zero-config-on-error:pt-br",
+      "source_path": "backend/internal/config/config.go",
+      "lines": [
+        38,
+        49
+      ],
+      "exact_quote_sha256": "697e541fe613ccbecd44ee602c8fce0dcc7696e577914e8be1628d13d29b39f4",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81"
+    },
+    {
+      "row": "faq:go-image-configuration:configuration-consumer:pt-br",
+      "source_path": "backend/cmd/api/main.go",
+      "lines": [
+        17,
+        26
+      ],
+      "exact_quote_sha256": "8838852d4073933fecab0540c194ac4743721f0e63ca30efa5a1d0cb4fe7a47e",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175"
+    },
+    {
+      "row": "faq:go-image-configuration:configuration-consumer:pt-br",
+      "source_path": "backend/internal/infrastructure/http/server.go",
+      "lines": [
+        11,
+        26
+      ],
+      "exact_quote_sha256": "a5757ae62514d460702078390b93e1333d5c2077d733b00142aca9a0752591ab",
+      "alignment_ref": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175"
+    }
+  ],
+  "unique_quote_spans": 5,
+  "pair_count": 3,
+  "entry_count": 6,
+  "scope": "Three correlated EN/PT inlineFAQpairs, not6independent documents/atomicfacts/modelaccuracy. Parent-reference equality alone not used as semantic proof.",
+  "additional_context_for_consumer_FAQ": {
+    "config_source_path": "backend/internal/config/config.go",
+    "lines": [
+      [
+        10,
+        12
+      ],
+      [
+        26,
+        28
+      ]
+    ],
+    "reason": "Main/server quote packet alone does not prove exportedPort/manualconstruction or bodyabsenceofvalidation; actual full Configsource and parent source_evidence_ref contain this context."
+  },
+  "bilingual_review": "Actual both-language fullanswers, conditions, negations,zero-value,error andruntime-limit clauses manually compared by sameagent; no mismatch observed.",
+  "parent_technical_review": {
+    "path": "agent/research/final-intensive-20261121/go-image-configuration-complete-review-v2.json",
+    "sha256": "e489286b6cc34b38a9e9585942e74a9b67e07d7967bddf7c4d1bb88a3b5ad4e0"
+  },
+  "external_dependency_edges": [
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/cmd/api/main.go",
+      "sha256": "d020f4e4a8e8e8256399e0288c369d198a70340072679a9a1723ad2c61fd4f29"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/config/config.go",
+      "sha256": "fc00f62402fa3ea163eab2f97b1f9b5142aebc1e7cc90e7388a10775a31187cc"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/http/server.go",
+      "sha256": "9c0188db5b0093209a240ad03704932c810c109cf5e67358774e14e4541c2c22"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201",
+      "sha256": "13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/92221b35398fb96a3b8d6e08afb479dff9ab1c1c69ff98083c5c0c8c2e89585c",
+      "sha256": "92221b35398fb96a3b8d6e08afb479dff9ab1c1c69ff98083c5c0c8c2e89585c"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0",
+      "sha256": "ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175",
+      "sha256": "4c1f27f0b82bc72e6416aa0c3508ead9a5e323c647b2b00ce5588cae0c7a1175"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81",
+      "sha256": "9547fb14ecc533a52ee8897f4a7f2332ed7bf305ff1909c1b45605078f86ed81"
+    },
+    {
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v5-reference-blobs/sha256/d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60",
+      "sha256": "d9b190d2734b915b5a1e3392da304ae9b114155228df1573b557570d7d845d60"
+    },
+    {
+      "path": "agent/research/documentation-intelligence-20261119/datasets/v10/faq-candidates.jsonl",
+      "sha256": "9ee07e59eca98992f18a39abeeae4df2ee76de5524b51cb97d26b0960250b894"
+    }
+  ],
+  "status": "SOURCE_REVIEWED_INLINE_FAQS_RECOVERED_PENDING_OWNER_REVIEW",
+  "semantic_performance_rate": null,
+  "originals_modified": false,
+  "new_gold": 0,
+  "new_model_calls": 0,
+  "extends": {
+    "path": "agent/research/final-intensive-20261121/go-image-config-inline-faq-review-results-v1.json",
+    "sha256": "37251cbb5ae3098ef7edd32e791c4f68b1f89d568bae69933cd53d658c414d89"
+  },
+  "recovery": {
+    "checkpoint": "agent/research/final-intensive-20261121/checkpoint-025.json",
+    "sha256": "51146169e34834b5c8742b96874d3758be71dc1ac8a55253628a9daa3da29324",
+    "consumer_exit_code": 0,
+    "scope": "Exact selected original rows,parentsections,sourcequotes and hashes; not genericsemanticverification or Gold."
+  },
+  "complete_document_count_added": 0
+}

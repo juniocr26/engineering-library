@@ -1,0 +1,216 @@
+{
+  "at": "2026-11-21T07:18:32.263139+00:00",
+  "extends": "fine-tuning-readiness-gate-reconciliation-v7.json",
+  "current_geometry_supplement": "fine-tuning-model-geometry-supplement-v4.json",
+  "gates": [
+    {
+      "id": 1,
+      "requirement": "model/tokenizer",
+      "status": "BLOCKED_TRAINABLE_BASE_TOKENIZER_UNVERIFIED",
+      "evidence": "DeployedGGUFgeometry/tokenIDsverified, not compatibletrainableweights/tokenizer/template. Padding/addBOSunknown; exactframeworkmodulemappingunverified. H57sameGGUF/server rawtargetinputcounters163/101/137observed withcached0/1/2;notapprovedtrainabletokenizer/template/mask/fullsequencefit.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/pilot-model-geometry-metadata-observation-v1.json",
+          "sha256": "60d9115ad9e9c05357c00e8719174f271e853e57546dcc9d7315b6f2ee3ef53f"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/fine-tuning-model-geometry-supplement-v4.json",
+          "sha256": "bcb67887dcbb530dc587f5dae9452f5b80bbc48a6bb2fd6dd181cb8e79f9959b"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/pilot-raw-token-proxy-review-v1.json",
+          "sha256": "3bc906fd14070b73da83184509eafd08725169c6293faf71c7771c618979d92e"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/pilot-target-length-preflight-v2.json",
+          "sha256": "2c7034781abda59401933a1f94b19e5984ccca27505a7dcdeda222fab63cd8fd"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "requirement": "approved targets and rights",
+      "status": "BLOCKED_GOLD_AND_RIGHTS",
+      "evidence": "305rowsretained;Gold0. Reviewbatchnottraining, proprietaryELderivativesrestricted andallcurrentfamiliestrainingexcluded.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/dataset-preservation-checkpoint009-v1.json",
+          "sha256": "e45db738ead508fcaa1cee0ff0d4e444f1665d97a4ead3e5b4681d28263e468a"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/documentation-owner-review-batch-v2.json",
+          "sha256": "aea3b0d4e591e14df7660f45ba55ce929837fa1b91540bb2922901e3a74847ad"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/research-archive-confidentiality-supplement-v1.json",
+          "sha256": "2f0064085e682037dbba7651a6705b1fecb448ee75fe731e6808f7c73b25a429"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/documentation-owner-review-batch-v3.json",
+          "sha256": "8f092c00c134061963489076b6d1bebc75d9419a593997a14f28175ffe52968a"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/dataset-preservation-checkpoint015-v1.json",
+          "sha256": "dbc75586ed7649ccee865d806470d22801e46d2ac08a0336325df8e880e1cf9f"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "requirement": "independent evaluation",
+      "status": "PARTIAL_NO_APPROVED_PILOT_EVALUATION",
+      "evidence": "Axum and OpenRA are already consumed prospective local evaluation-only cases, not pretraining-certified holdouts or approved adapter evaluation split. esp-hal remains metadata-only reserve. No owner-approved matched trainable-base/adapter eval population. H60developmentSQLX6claimconditioncases4/6vs2/6labels,0/2judgmentpackets;notindependentadapterevaluationoratruthverifier.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/evaluation-role-registry-v9.json",
+          "sha256": "1c36a3f937d04100f799a8a01d64f4a623b6411966ef1d40d606360700e095bf"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/axum-reserved-judgment-review-v1.json",
+          "sha256": "f048670d5c6ab1a492e9bccaeed229070e308722365b407ae426a97f233aa97a"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/sqlx-domain-judgment-review-v1.json",
+          "sha256": "a3ff75413025741c0f3e3ad7ed75f94675abaeb615f0baad85049e18b408f87a"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "requirement": "hardware feasibility",
+      "status": "PARTIAL_CAPACITY_NOT_TRAINING_PEAK",
+      "evidence": "M1Pro16GiB10coresverified; conditionalunquantizedf16rawbase5.984GiBandadapterstatearithmetic not actualpeak,freeRAM,thermal/throughputorMLXfeasibility.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/host-pilot-resource-observation-v2.json",
+          "sha256": "626b157cdc6eab295565b48b3a04106bc85b661d97b8a794432e4fa4387eacba"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/fine-tuning-model-geometry-supplement-v4.json",
+          "sha256": "bcb67887dcbb530dc587f5dae9452f5b80bbc48a6bb2fd6dd181cb8e79f9959b"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "requirement": "framework/environment",
+      "status": "BLOCKED_NO_COMPATIBLE_ENVIRONMENT",
+      "evidence": "Requiredframeworksnotpresent underobservedPython3.14.7; no installs/downloads/import-basedtrainingrun.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/host-pilot-resource-observation-v2.json",
+          "sha256": "626b157cdc6eab295565b48b3a04106bc85b661d97b8a794432e4fa4387eacba"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "requirement": "state persistence",
+      "status": "PARTIAL_RESEARCH_RECOVERY_ONLY",
+      "evidence": "Fullresearchcheckpoint016restored1365filesbeforeH60requests;H60terminaloutputsawaitoverlay. Existingoperationalverificationremainsbounded,nottrainedadapter/optimizer/RNG/datacursorresume.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/recovery-checkpoint-011.json",
+          "sha256": "9d58c5f02f9f983d48b339a0150bc9eb2e65908833e881b4b59e7fee55a6f9cb"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/checkpoint-011-controlplane-overlay-v1.json",
+          "sha256": "aafa410022e93e342d838731d4cc83a8421c843b7ae28e765a0fb82d159bebf0"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/recovery-checkpoint-015.json",
+          "sha256": "0b3d87a8a407d14cadf3c7cba70451e73d56f1c4425a420e07bdf9e3a4fe4dd5"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/recovery-checkpoint-016.json",
+          "sha256": "d39a5e59cf2b411c7b27775a2d04ca73f8992a790a7edb5a6ae23a5fcb295e0f"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "requirement": "pilot budget approval",
+      "status": "BLOCKED_NO_TRAINING_AUTHORIZATION",
+      "evidence": "Currentcampaignexplicitlyforbidstraining. Proposed16updatelimitsarenonexecutable preparation, no launchpermission.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/fine-tuning-pilot-proposal-v1.json",
+          "sha256": "edb4bd5651411b371306fe60ab61404027e6fa4f0ec2ad0a778df57f4f188761"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "requirement": "isolation/rollback",
+      "status": "PARTIAL_UNVALIDATED_ADAPTER_ROLLBACK",
+      "evidence": "Originalmodel/sourcepreserved;nofusion/upload/deployswitch. Futurecompatibleenvironmentandactualadapterrollbacknotvalidated.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/pilot-model-geometry-metadata-observation-v1.json",
+          "sha256": "60d9115ad9e9c05357c00e8719174f271e853e57546dcc9d7315b6f2ee3ef53f"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/recovery-checkpoint-011.json",
+          "sha256": "9d58c5f02f9f983d48b339a0150bc9eb2e65908833e881b4b59e7fee55a6f9cb"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "requirement": "evaluation/recovery reproducibility",
+      "status": "PARTIAL_NO_MATCHED_TRAINED_ADAPTER_EVALUATION",
+      "evidence": "27generationattemptsterminal; newOpenRArawreceipthashverifiedandwholeoutputrejected. Noapprovedtokenizedtargets/matchedbase-vs-adaptercomparison/realtrainingresume.",
+      "references": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/controlled-inference-lineage-audit-v1.json",
+          "sha256": "1486d5c3183a0ba7534c4bddd18f86c4fd38ed1c7a1ec78542e72f6f2aad4f44"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/pilot-target-length-preflight-v1.json",
+          "sha256": "5ab9ed2fe93ef13248370a9dc859204878640b8fb262359a77635f67a205ab3f"
+        }
+      ]
+    }
+  ],
+  "status": "NO-GO",
+  "launch_allowed": false,
+  "training_authorized": false,
+  "gold": 0,
+  "optimizer_steps": 0,
+  "framework_installations": 0,
+  "new_weight_downloads": 0,
+  "adapter_training_runs": 0,
+  "pilot_bounds_not_changed": {
+    "optimizer_updates_max": 16,
+    "batch_size": 1,
+    "gradient_accumulation": 1,
+    "sequence_length_tokens_max": 512,
+    "lora_rank": 4,
+    "selected_transformer_layers": 2,
+    "optimizer_wall_minutes_max": 10,
+    "total_wall_minutes_max": 30,
+    "lora_modules": "Explicit approved exact module names after inspecting chosen base; never accept omitted/global defaults.",
+    "scale": "Must be verified against pinned framework semantics; no assumed alpha/rank convention."
+  },
+  "owners_future_decisions_only": [
+    "Review/approve gold targets and rights",
+    "Approve model/tokenizer/framework and separate installation/download scope",
+    "Approve independent evaluation protocol and host resource budget",
+    "Authorize a specific future training run only after gates pass"
+  ],
+  "no_owner_questions_during_campaign": true,
+  "not_final_campaign_audit": true,
+  "current_model_generation_totals": {
+    "all_terminal_generation_calls": 33,
+    "document_or_judgment_calls": 30,
+    "raw_budget_probes": 3,
+    "generated_tokens": 14791,
+    "prompt_tokens": 33488,
+    "server_seconds": 2904.610779486,
+    "complete_neural_methods": "0/13",
+    "H60judgment_only_packets": "0/2",
+    "not_training": true
+  },
+  "current_token_budget_supplement": "fine-tuning-raw-token-proxy-supplement-v5.json",
+  "current_target_length_preflight": "pilot-target-length-preflight-v2.json"
+}

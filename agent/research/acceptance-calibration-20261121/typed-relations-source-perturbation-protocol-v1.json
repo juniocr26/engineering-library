@@ -1,0 +1,367 @@
+{
+  "at": "2026-11-21T19:17:19.219382+00:00",
+  "before_mutant_observations": true,
+  "purpose": "Verify frozen AST observers react to actual operator/argument/owner/source-role perturbations rather than merely copying known reference values.",
+  "cases": [
+    {
+      "id": "cobra-C01",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c01/source.go",
+      "sha256": "1918f2afd18319b61cb5dc27068f638f1245f1a8f718182a6fc76554a834ebbb",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "type PositionalArgs func(cmd *Command, args []string) error",
+        "new": "type PositionalArgs func(cmd *Command, args []string) bool",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "C01",
+        "normalized_relation": "type PositionalArgs func(cmd *Command, args []string) bool"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C02",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c02/source.go",
+      "sha256": "1ec66e5235707975dca4e2f4f11bdf4322371ebfdb00aa6a1478fe805d4be51b",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "if len(cmd.ValidArgs) > 0 {",
+        "new": "if len(cmd.ValidArgs) >= 0 {",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "C02",
+        "normalized_relation": "len(cmd.ValidArgs) >= 0"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C03",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c03/source.go",
+      "sha256": "45e693aef93ce33a3c43287d47e68bda3d88ce74a435bae4e5bce8fbc1a933f2",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "strings.SplitN(v, \"\\t\", 2)[0]",
+        "new": "strings.SplitN(v, \"\\t\", 2)[1]",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "C03",
+        "normalized_relation": "strings.SplitN(v, \"\\t\", 2)[1]"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C04",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c04/source.go",
+      "sha256": "7f4a67684716b49334cce8191e43c893d5779ed0c0a21bce3bcdec31089e7543",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {",
+        "new": "func ExactArgs(n int) PositionalArgs {\n\treturn nil\n}\nfunc unrelated(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": true,
+      "expected_changed_relation": null,
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C05",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c05/source.go",
+      "sha256": "d70d19732c77b6f36bce82e5294557c5f5a84694d72f455801e80246ffa9a9f3",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "if len(args) != n {",
+        "new": "if len(args) == n {",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "C05",
+        "normalized_relation": "len(args) == n"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C06",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c06/source.go",
+      "sha256": "a2151cd9542281690f33e9ae2441842984be6ccd9c2505b437380b787c50a178",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "for _, parg := range pargs {",
+        "new": "pargs = reverse(pargs)\n\t\tfor _, parg := range pargs {",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": true,
+      "expected_changed_relation": null,
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C07",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c07/source.go",
+      "sha256": "9a0c54d68a42a0eb127b74075509eb87dd6e74c62b5f0f7444d591476287fb4f",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "if err := parg(cmd, args); err != nil {\n\t\t\t\treturn err",
+        "new": "if err := parg(cmd, args); err != nil {\n\t\t\t\tcontinue",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": true,
+      "expected_changed_relation": null,
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C08",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c08/source.go",
+      "sha256": "4b9eee6dbb023bda9a3061db3295cdccb045708e8f951942143d2bef134e87d8",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "return MatchAll(ExactArgs(n), OnlyValidArgs)",
+        "new": "return MatchAll(OnlyValidArgs, ExactArgs(n))",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "C08",
+        "normalized_relation": "MatchAll(OnlyValidArgs, ExactArgs(n))"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "cobra-C09",
+      "task": "cobra",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/cobra-c09/source.go",
+      "sha256": "c7627be349de6b20e8d10570f820992128a2a5c2f67f18faf33bb200dcdc8e81",
+      "original_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "edit": {
+        "old": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+        "new": "// Use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": true,
+      "expected_changed_relation": null,
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z01",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z01/source.ts",
+      "sha256": "15580b02139905b79fc25e462fbfd8aa61aa885bbe25677ca804d14e2b8c1076",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+        "new": "const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z01",
+        "normalized_relation": "true"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z02",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z02/source.ts",
+      "sha256": "675dd61ad4f947c1ec03a14a90dd287dc07f92293f2220d23e988420308cd6bc",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "const result = schema._zod.run({ value, issues: [] }, ctx);",
+        "new": "const result = schema._zod.run({ value, issues: [] }, _ctx);",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z02",
+        "normalized_relation": "{ value, issues: [] }, _ctx"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z03",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z03/source.ts",
+      "sha256": "4138b97a6270c8600f183ed3de121e3002c8e59b3e79933924b1026b69398cc5",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "throw new core.$ZodAsyncError();",
+        "new": "throw new core.$ZodError();",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z03",
+        "normalized_relation": "throw new core.$ZodError()"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z04",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z04/source.ts",
+      "sha256": "68a5f66f5ec49fd7733b86066a581549f98992932b5a3cbecc170aa1af5464b2",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+        "new": "return !result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z04",
+        "normalized_relation": "!result.issues.length"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z05",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z05/source.ts",
+      "sha256": "a92d51fe160c94ef9e4fb1a2a017e97ce0339ccaf1d6d01a023e1741f96793ec",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+        "new": "return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: false, data: result.value } as any);",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z05",
+        "normalized_relation": "false"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z06",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z06/source.ts",
+      "sha256": "bd66b30e2c2e1b4363fe28d3fbdb8f1cb8cf09aa377599a09b1fec6cd85ad74c",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "if (!error) {",
+        "new": "if (error === undefined) {",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z06",
+        "normalized_relation": "error === undefined"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z07",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z07/source.ts",
+      "sha256": "e6ea1a01127142808338bf15c073f015f0aa8e5393b6a1baa259fd2e6abd6e05",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "set error(e: errors.$ZodError) {\n      error = e;",
+        "new": "set error(e: errors.$ZodError) {\n      e = error;",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z07",
+        "normalized_relation": "e = error"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z08",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z08/source.ts",
+      "sha256": "b3a54619b86fbda329ec55727058370fb27bca4925fea049e555c29afcd9969f",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "if (result instanceof Promise) result = await result;",
+        "new": "if (result instanceof Promise) result = result;",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": true,
+      "expected_changed_relation": null,
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z09",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z09/source.ts",
+      "sha256": "642ed94d49af534b72eeab55c16e41840fbacd66731a7de17686a22e4080053c",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);",
+        "new": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodError);",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z09",
+        "normalized_relation": "errors.$ZodError"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-Z10",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-z10/source.ts",
+      "sha256": "279a27d97d43d1b05a5c5d7ac4695dbab0cd7e0e37b494582b88dfc33e7dcfa8",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+        "new": "return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: value } as any);",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": false,
+      "expected_changed_relation": {
+        "id": "Z10",
+        "normalized_relation": "value"
+      },
+      "program_execution": false
+    },
+    {
+      "id": "zod-DUPLICATE_OWNER",
+      "task": "zod",
+      "path": "agent/research/acceptance-calibration-20261121/typed-relations-source-perturbation-v1/zod-duplicate_owner/source.ts",
+      "sha256": "42bacda6fe076d42ec8e765ad85db0667d03737d59573607840cfbe22ae14bc4",
+      "original_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "edit": {
+        "old": "function failure(Err: $ZodErrorClass,",
+        "new": "function failure() {}\nfunction failure(Err: $ZodErrorClass,",
+        "replace_count": 1
+      },
+      "expected_observer_refusal": true,
+      "expected_changed_relation": null,
+      "program_execution": false
+    }
+  ],
+  "observer_files": [
+    {
+      "path": "agent/research/acceptance-calibration-20261121/observe_cobra_typed_relations_v1.go",
+      "sha256": "ca93792a46be83eeb0ff402b1c29530b5e275bfb67af75a17efcd4cc1d00f7c3"
+    },
+    {
+      "path": "agent/research/acceptance-calibration-20261121/cobra-typed-relations-observer-v1",
+      "sha256": "541ae6f2c6e30758ffb5727fa900834714b3721299267644a6dca350560f66bd"
+    },
+    {
+      "path": "agent/research/acceptance-calibration-20261121/observe_zod_typed_relations_v1.cjs",
+      "sha256": "bb8655ec430c69a13bdd1ca600283eaae128fec3310d10d9c6d11763ccfc812d"
+    }
+  ],
+  "source_hash_gate": "Original pinned-source acceptance gate must reject every mutant SHA. Mutant extractor reactivity is measured separately; no original model output/score/reference is rewritten and no mutant note rendered.",
+  "limits": "Owned derived source text only, never executed or typechecked. Some mutants intentionally need not be well-typed. Structural-profile refusals are accounted outcomes, not source-semantic accuracy or neural improvement.",
+  "gold": 0,
+  "optimizer_updates": 0
+}

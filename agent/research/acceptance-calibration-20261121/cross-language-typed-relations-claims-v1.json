@@ -1,0 +1,468 @@
+{
+  "at": "2026-11-21T19:10:34.991239+00:00",
+  "before_extractor_observations": true,
+  "claims": [
+    {
+      "id": "C01-supported",
+      "task": "cobra",
+      "relation_id": "C01",
+      "owner": "PositionalArgs",
+      "requested_normalized_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C01-opposite",
+      "task": "cobra",
+      "relation_id": "C01",
+      "owner": "PositionalArgs",
+      "requested_normalized_relation": "func PositionalArgs(cmd *Command, args []string) error",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C01-missing-owner",
+      "task": "cobra",
+      "relation_id": "C01",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C02-supported",
+      "task": "cobra",
+      "relation_id": "C02",
+      "owner": "OnlyValidArgs",
+      "requested_normalized_relation": "len(cmd.ValidArgs) > 0",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C02-opposite",
+      "task": "cobra",
+      "relation_id": "C02",
+      "owner": "OnlyValidArgs",
+      "requested_normalized_relation": "cmd.HasSubCommands() && len(args) > 0",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C02-missing-owner",
+      "task": "cobra",
+      "relation_id": "C02",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "len(cmd.ValidArgs) > 0",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C03-supported",
+      "task": "cobra",
+      "relation_id": "C03",
+      "owner": "OnlyValidArgs",
+      "requested_normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C03-opposite",
+      "task": "cobra",
+      "relation_id": "C03",
+      "owner": "OnlyValidArgs",
+      "requested_normalized_relation": "strings.SplitN(v, \"\\t\", 2)[1]",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C03-missing-owner",
+      "task": "cobra",
+      "relation_id": "C03",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C04-supported",
+      "task": "cobra",
+      "relation_id": "C04",
+      "owner": "ExactArgs",
+      "requested_normalized_relation": "VALIDATOR_FUNCTION",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C04-opposite",
+      "task": "cobra",
+      "relation_id": "C04",
+      "owner": "ExactArgs",
+      "requested_normalized_relation": "VALIDATION_ERROR_IMMEDIATELY",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C04-missing-owner",
+      "task": "cobra",
+      "relation_id": "C04",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "VALIDATOR_FUNCTION",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C05-supported",
+      "task": "cobra",
+      "relation_id": "C05",
+      "owner": "ExactArgs",
+      "requested_normalized_relation": "len(args) != n",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C05-opposite",
+      "task": "cobra",
+      "relation_id": "C05",
+      "owner": "ExactArgs",
+      "requested_normalized_relation": "len(args) == n",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C05-missing-owner",
+      "task": "cobra",
+      "relation_id": "C05",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "len(args) != n",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C06-supported",
+      "task": "cobra",
+      "relation_id": "C06",
+      "owner": "MatchAll",
+      "requested_normalized_relation": "SUPPLIED_SLICE_ORDER",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C06-opposite",
+      "task": "cobra",
+      "relation_id": "C06",
+      "owner": "MatchAll",
+      "requested_normalized_relation": "REVERSE_SLICE_ORDER",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C06-missing-owner",
+      "task": "cobra",
+      "relation_id": "C06",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "SUPPLIED_SLICE_ORDER",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C07-supported",
+      "task": "cobra",
+      "relation_id": "C07",
+      "owner": "MatchAll",
+      "requested_normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C07-opposite",
+      "task": "cobra",
+      "relation_id": "C07",
+      "owner": "MatchAll",
+      "requested_normalized_relation": "CONTINUE_ALL_AND_RETURN_NIL",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C07-missing-owner",
+      "task": "cobra",
+      "relation_id": "C07",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C08-supported",
+      "task": "cobra",
+      "relation_id": "C08",
+      "owner": "ExactValidArgs",
+      "requested_normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C08-opposite",
+      "task": "cobra",
+      "relation_id": "C08",
+      "owner": "ExactValidArgs",
+      "requested_normalized_relation": "MatchAll(OnlyValidArgs, ExactArgs(n))",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C08-missing-owner",
+      "task": "cobra",
+      "relation_id": "C08",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "C09-supported",
+      "task": "cobra",
+      "relation_id": "C09",
+      "owner": "ExactValidArgs",
+      "requested_normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "C09-opposite",
+      "task": "cobra",
+      "relation_id": "C09",
+      "owner": "ExactValidArgs",
+      "requested_normalized_relation": "ACTIVE_RECOMMENDED_REPLACEMENT_FOR_MATCHALL",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "C09-missing-owner",
+      "task": "cobra",
+      "relation_id": "C09",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z01-supported",
+      "task": "zod",
+      "relation_id": "Z01",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "false",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z01-opposite",
+      "task": "zod",
+      "relation_id": "Z01",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "true",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z01-missing-owner",
+      "task": "zod",
+      "relation_id": "Z01",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "false",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z02-supported",
+      "task": "zod",
+      "relation_id": "Z02",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "{ value, issues: [] }, ctx",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z02-opposite",
+      "task": "zod",
+      "relation_id": "Z02",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "schema, value, _ctx",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z02-missing-owner",
+      "task": "zod",
+      "relation_id": "Z02",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "{ value, issues: [] }, ctx",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z03-supported",
+      "task": "zod",
+      "relation_id": "Z03",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "throw new core.$ZodAsyncError()",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z03-opposite",
+      "task": "zod",
+      "relation_id": "Z03",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "throw new core.$ZodError()",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z03-missing-owner",
+      "task": "zod",
+      "relation_id": "Z03",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "throw new core.$ZodAsyncError()",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z04-supported",
+      "task": "zod",
+      "relation_id": "Z04",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "result.issues.length",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z04-opposite",
+      "task": "zod",
+      "relation_id": "Z04",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "!result.issues.length",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z04-missing-owner",
+      "task": "zod",
+      "relation_id": "Z04",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "result.issues.length",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z05-supported",
+      "task": "zod",
+      "relation_id": "Z05",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "true",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z05-opposite",
+      "task": "zod",
+      "relation_id": "Z05",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "false",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z05-missing-owner",
+      "task": "zod",
+      "relation_id": "Z05",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "true",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z06-supported",
+      "task": "zod",
+      "relation_id": "Z06",
+      "owner": "failure",
+      "requested_normalized_relation": "!error",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z06-opposite",
+      "task": "zod",
+      "relation_id": "Z06",
+      "owner": "failure",
+      "requested_normalized_relation": "error === null",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z06-missing-owner",
+      "task": "zod",
+      "relation_id": "Z06",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "!error",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z07-supported",
+      "task": "zod",
+      "relation_id": "Z07",
+      "owner": "failure",
+      "requested_normalized_relation": "error = e",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z07-opposite",
+      "task": "zod",
+      "relation_id": "Z07",
+      "owner": "failure",
+      "requested_normalized_relation": "error = new Err(e)",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z07-missing-owner",
+      "task": "zod",
+      "relation_id": "Z07",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "error = e",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z08-supported",
+      "task": "zod",
+      "relation_id": "Z08",
+      "owner": "_safeParseAsync",
+      "requested_normalized_relation": "result = await result",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z08-opposite",
+      "task": "zod",
+      "relation_id": "Z08",
+      "owner": "_safeParseAsync",
+      "requested_normalized_relation": "return result without awaiting",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z08-missing-owner",
+      "task": "zod",
+      "relation_id": "Z08",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "result = await result",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z09-supported",
+      "task": "zod",
+      "relation_id": "Z09",
+      "owner": "safeParse",
+      "requested_normalized_relation": "errors.$ZodRealError",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z09-opposite",
+      "task": "zod",
+      "relation_id": "Z09",
+      "owner": "safeParse",
+      "requested_normalized_relation": "errors.$ZodError",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z09-missing-owner",
+      "task": "zod",
+      "relation_id": "Z09",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "errors.$ZodRealError",
+      "expected": "INSUFFICIENT"
+    },
+    {
+      "id": "Z10-supported",
+      "task": "zod",
+      "relation_id": "Z10",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "result.value",
+      "expected": "SUPPORTED"
+    },
+    {
+      "id": "Z10-opposite",
+      "task": "zod",
+      "relation_id": "Z10",
+      "owner": "_safeParse",
+      "requested_normalized_relation": "value",
+      "expected": "CONTRADICTED"
+    },
+    {
+      "id": "Z10-missing-owner",
+      "task": "zod",
+      "relation_id": "Z10",
+      "owner": "__missing_owner__",
+      "requested_normalized_relation": "result.value",
+      "expected": "INSUFFICIENT"
+    }
+  ],
+  "reference_source": "multiple-choice-source-relations-reference-v1.json",
+  "reference_sha256": "ab798c248bb4ffdad81c6f083fd62598f15beecf4a65bef41bc80cef7d04e5e0",
+  "count": 57,
+  "not_model_predictions": true,
+  "manual_normalized_role_mapping": true,
+  "gold": 0
+}

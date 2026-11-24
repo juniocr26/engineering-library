@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-21T03:49:03.109752+00:00",
+  "protocol": "duckdb-capi-evaluation-protocol-v2.json",
+  "development_exposed": true,
+  "source_facts": [
+    {
+      "id": "D1",
+      "path": "src/include/duckdb.h",
+      "lines": [
+        6509,
+        6525
+      ],
+      "source_sha256": "0a938c1a9e2a98b8039226266ead3ee0c89c7fcb9962de49e8b551d5eeae91df",
+      "quote": "/*!\n * Executes a SQL query within a connection and stores the full (materialized) result in the out_result pointer. If the\n * query fails to execute, DuckDBError is returned and the error message can be retrieved by calling\n * `duckdb_result_error`.\n *\n * Note that after running `duckdb_query`, `duckdb_destroy_result` must be called on the result object even if the query\n * fails, otherwise the error stored within the result will not be freed correctly.\n *\n * history:\n * - stable: v0.1.0\n *\n * @param connection The connection to perform the query in.\n * @param query The SQL query to run.\n * @param out_result The query result.\n * @return duckdb_state\n */\nDUCKDB_C_API duckdb_state duckdb_query(duckdb_connection connection, const char *query, duckdb_result *out_result);"
+    },
+    {
+      "id": "D2",
+      "path": "src/include/duckdb.h",
+      "lines": [
+        6651,
+        6663
+      ],
+      "source_sha256": "0a938c1a9e2a98b8039226266ead3ee0c89c7fcb9962de49e8b551d5eeae91df",
+      "quote": "#if DUCKDB_API_VERSION_AT_LEAST(0, 2, 9)\n/*!\n * Returns the error message contained within the result. The error is only set if `duckdb_query` returns `DuckDBError`.\n *\n * The result of this function must not be freed. It will be cleaned up when `duckdb_destroy_result` is called.\n *\n * history:\n * - stable: v0.2.9\n *\n * @param result The result object to fetch the error from.\n * @return const char*\n */\nDUCKDB_C_API const char *duckdb_result_error(duckdb_result *result);"
+    },
+    {
+      "id": "D3",
+      "path": "src/main/capi/v1/result-c.cpp",
+      "lines": [
+        611,
+        627
+      ],
+      "source_sha256": "4a0d7249d229c1aeb6fd1287718ce088c91536b978e7cbb493cb1e915103c550",
+      "quote": "const char *duckdb_result_error(duckdb_result *result) {\n\tif (!result || !result->internal_data) {\n\t\treturn nullptr;\n\t}\n\tauto &result_data = *(reinterpret_cast<duckdb::DuckDBResultData *>(result->internal_data));\n\treturn !result_data.HasError() ? nullptr : result_data.GetError().c_str();\n}\n\nduckdb_error_type duckdb_result_error_type(duckdb_result *result) {\n\tif (!result || !result->internal_data) {\n\t\treturn DUCKDB_ERROR_INVALID;\n\t}\n\tauto &result_data = *(reinterpret_cast<duckdb::DuckDBResultData *>(result->internal_data));\n\tif (!result_data.HasError()) {\n\t\treturn DUCKDB_ERROR_INVALID;\n\t}\n\treturn duckdb::ErrorTypeToC(result_data.GetErrorType());"
+    },
+    {
+      "id": "D4",
+      "path": "src/main/capi/v1/duckdb-c.cpp",
+      "lines": [
+        194,
+        202
+      ],
+      "source_sha256": "da75f396f2223b5dfd629e6aae7a6aa99b0ef59e77cebe56cd37b45cd67fc299",
+      "quote": "duckdb_state duckdb_query(duckdb_connection connection, const char *query, duckdb_result *out) {\n\tConnection *conn = reinterpret_cast<Connection *>(connection);\n\ttry {\n\t\tauto result = conn->Query(query);\n\t\treturn DuckDBTranslateResult(std::move(result), out);\n\t} catch (...) {\n\t\treturn DuckDBError;\n\t}\n}"
+    },
+    {
+      "id": "D5",
+      "path": "src/main/capi/v1/result-c.cpp",
+      "lines": [
+        350,
+        376
+      ],
+      "source_sha256": "4a0d7249d229c1aeb6fd1287718ce088c91536b978e7cbb493cb1e915103c550",
+      "quote": "duckdb_state DuckDBTranslateResult(unique_ptr<QueryResult> result_p, duckdb_result *out) {\n\tauto &result = *result_p;\n\tD_ASSERT(result_p);\n\tif (!out) {\n\t\t// no result to write to, only return the status\n\t\treturn !result.HasError() ? DuckDBSuccess : DuckDBError;\n\t}\n\n\tmemset(out, 0, sizeof(duckdb_result));\n\n\t// initialize the result_data object\n\tauto result_data = new DuckDBResultData();\n\tresult_data->result = std::move(result_p);\n\tresult_data->result_set_type = CAPIResultSetType::CAPI_RESULT_TYPE_NONE;\n\tout->internal_data = result_data;\n\n\tif (result.HasError()) {\n\t\t// write the error message\n\t\tout->deprecated_error_message = (char *)result.GetError().c_str(); // NOLINT\n\t\treturn DuckDBError;\n\t}\n\t// copy the data\n\t// first write the metadata\n\tout->deprecated_column_count = result.ColumnCount();\n\tout->deprecated_rows_changed = 0;\n\treturn DuckDBSuccess;\n}"
+    },
+    {
+      "id": "D6",
+      "path": "src/main/capi/v1/result-c.cpp",
+      "lines": [
+        494,
+        506
+      ],
+      "source_sha256": "4a0d7249d229c1aeb6fd1287718ce088c91536b978e7cbb493cb1e915103c550",
+      "quote": "void duckdb_destroy_result(duckdb_result *result) {\n\tif (result->deprecated_columns) {\n\t\tfor (idx_t i = 0; i < result->deprecated_column_count; i++) {\n\t\t\tDuckdbDestroyColumn(result->deprecated_columns[i], result->deprecated_row_count);\n\t\t}\n\t\tduckdb_free(result->deprecated_columns);\n\t}\n\tif (result->internal_data) {\n\t\tauto result_data = reinterpret_cast<duckdb::DuckDBResultData *>(result->internal_data);\n\t\tdelete result_data;\n\t}\n\tmemset(result, 0, sizeof(duckdb_result));\n}"
+    }
+  ],
+  "questions": [
+    {
+      "qid": "Q001",
+      "question_en": "Does the public API contract require duckdb_destroy_result for the result object even when duckdb_query fails?",
+      "question_pt": "O contrato público exige duckdb_destroy_result para o objeto de resultado mesmo quando duckdb_query falha?",
+      "expected_conclusion": "YES",
+      "required_semantics": [
+        "Header expressly requires cleanup even on failure, to free the stored error.",
+        "Refer to result object, not promise that every exceptional exit initialized arbitrary out memory."
+      ],
+      "evidence": [
+        "D1",
+        "D5"
+      ]
+    },
+    {
+      "qid": "Q002",
+      "question_en": "Should the caller manually free the pointer returned by duckdb_result_error?",
+      "question_pt": "O chamador deve liberar manualmente o ponteiro retornado por duckdb_result_error?",
+      "expected_conclusion": "NO",
+      "required_semantics": [
+        "Returned error message must not be freed separately.",
+        "Its cleanup belongs to duckdb_destroy_result."
+      ],
+      "evidence": [
+        "D2",
+        "D3"
+      ]
+    },
+    {
+      "qid": "Q003",
+      "question_en": "Does the selected duckdb_result_error implementation return nullptr when result is null or result->internal_data is null?",
+      "question_pt": "A implementação selecionada de duckdb_result_error retorna nullptr quando result é nulo ou result->internal_data é nulo?",
+      "expected_conclusion": "YES",
+      "required_semantics": [
+        "Both null conditions in the written guard imply nullptr.",
+        "Scope is this function; no universal null-safety claim for duckdb_destroy_result or every API."
+      ],
+      "evidence": [
+        "D3"
+      ]
+    },
+    {
+      "qid": "Q004",
+      "question_en": "Does the catch (...) branch of the selected duckdb_query guarantee that out is initialized and contains an error message?",
+      "question_pt": "O ramo catch (...) da implementação selecionada de duckdb_query garante que out seja inicializado e contenha uma mensagem de erro?",
+      "expected_conclusion": "NO",
+      "required_semantics": [
+        "Catch branch only returns DuckDBError.",
+        "No initialization or error-message assignment in that branch, so do not infer a blanket guarantee for every caught exception."
+      ],
+      "evidence": [
+        "D4",
+        "D5"
+      ]
+    }
+  ],
+  "complete_acceptance": "All4unique questions answered truthfully and completely in both languages, exact API identifiers/conditions, matching source citations, no invented runtime guarantee or manual repair; valid JSON not enough.",
+  "owner_approved": false,
+  "training_gold": false
+}

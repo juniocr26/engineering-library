@@ -1,0 +1,396 @@
+{
+  "module_source": "from pathlib import Path\nimport json,re,hashlib\n\ndef inconclusive(reason):\n return {'status':'INCONCLUSIVE','reason':reason,'runtime_verified':False,'document_lifecycle_action':None}\n\ndef compare_thresholds(old,new,intervals,complete):\n if type(old) is not int or type(new) is not int or not (0<=old<=1024 and 0<=new<=1024):\n  return inconclusive('unsupported threshold')\n if complete is not True or not isinstance(intervals,list) or not intervals:\n  return inconclusive('missing or incomplete domain')\n for interval in intervals:\n  if not isinstance(interval,list) or len(interval)!=2:return inconclusive('invalid interval shape')\n  lower,upper=interval\n  if type(lower) is not int or lower<0:return inconclusive('invalid lower bound')\n  if upper is not None and (type(upper) is not int or upper<lower):return inconclusive('invalid upper bound')\n lo,hi=min(old,new),max(old,new)-1\n witness=None\n if lo<=hi:\n  for lower,upper in intervals:\n   start=max(lo,lower);end=hi if upper is None else min(hi,upper)\n   if start<=end:witness=start;break\n return {'status':'DIFFERENT_ON_DECLARED_DOMAIN' if witness is not None else 'EQUIVALENT_ON_DECLARED_DOMAIN','difference_interval':[lo,hi] if lo<=hi else None,'witness_length':witness,'scope':'Guardbooleanbranchdecisiononly,conditionalondeclareddomain;notfullhelper/SQL/runtime/lifecycleequivalence.','runtime_verified':False,'document_lifecycle_action':None}\n\nPATTERN=re.compile(r'(?m)^(\\tif len\\(loc\\) < )([0-9]+)( \\{\\n\\t\\treturn bound\\n\\t\\})$')\n\ndef observe_source_pair(before,after,fact_bytes,config):\n sha=lambda b:hashlib.sha256(b).hexdigest()\n if sha(fact_bytes)!=config['reviewed_domain_fact_sha256']:return inconclusive('reviewed fact hash mismatch')\n try:fact=json.loads(fact_bytes)\n except (ValueError,UnicodeError):return inconclusive('invalid reviewed fact')\n if fact.get('id')!=config['fact_id'] or fact.get('producer')!='regexp.(*Regexp).FindStringIndex':return inconclusive('unsupported producer fact')\n limits=[]\n for text in [before,after]:\n  found=list(PATTERN.finditer(text))\n  if len(found)!=1:return inconclusive('selected canonical guard missing/ambiguous')\n  literal=found[0].group(2)\n  if str(int(literal))!=literal:return inconclusive('noncanonical decimal')\n  normalized=PATTERN.sub(lambda m:m.group(1)+'__LIMIT__'+m.group(3),text)\n  if sha(normalized.encode())!=config['normalized_context_sha256']:return inconclusive('other source context changed')\n  limits.append(int(literal))\n result=compare_thresholds(limits[0],limits[1],fact.get('length_intervals'),fact.get('complete_under_declared_contract'))\n result.update(source_profile='closed-sqlx-fixBound-context-v1',conditional_on_reviewed_contract=True,contract_truth_automatically_verified=False)\n return result\n",
+  "module_sha256": "db2f27294e09ea1cfc688da68e8df4a162153d6ce06563e1fbaf5e2c04d04580",
+  "math_controls": [
+    {
+      "id": "real-api-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "same-threshold",
+      "old_threshold": 1,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "match-only-domain",
+      "old_threshold": 0,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "no-match-only-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          0
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "two-offset-only",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          2,
+          2
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "all-lengths-counterfactual",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "changed-valid-match-branch",
+      "old_threshold": 1,
+      "new_threshold": 3,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "reverse-real-domain",
+      "old_threshold": 2,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "reverse-all-domain",
+      "old_threshold": 2,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "changed-no-match-branch",
+      "old_threshold": 0,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "singleton-difference",
+      "old_threshold": 2,
+      "new_threshold": 3,
+      "intervals": [
+        [
+          2,
+          2
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "incomplete-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": false,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "empty-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "negative-length-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          -1,
+          0
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "inverted-interval",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          3,
+          1
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "string-threshold",
+      "old_threshold": "1",
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "oversized-threshold",
+      "old_threshold": 1,
+      "new_threshold": 1025,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "invalid-upper-type",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          "many"
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "boolean-threshold",
+      "old_threshold": true,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "overlapping-union",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    }
+  ],
+  "config": {
+    "at": "2026-11-21T06:50:56.706054+00:00",
+    "protocol": "guard-domain-observer-protocol-v1.json",
+    "scope": "ClosedexactSQLXnamed.gocontextprofile,notgenericGoresolution. Fullcontextnormalizedhashisafrozenadmissionprecondition,not semanticproofbyhash.",
+    "normalized_context_sha256": "05022bca66cea99033650935e831e183e58671114dd0de4391502756ccedb04e",
+    "reviewed_domain_fact_sha256": "cf955363c3197f4ca91b0f19467c92fea3f211bc36e35b25c7533a1e77e60f1e",
+    "fact_id": "regexp-findstringindex-documented-shapes-v1",
+    "source_pair": "sqlx-values-revision-pair-freeze-v1.json"
+  },
+  "fact_text": "{\n  \"id\": \"regexp-findstringindex-documented-shapes-v1\",\n  \"producer\": \"regexp.(*Regexp).FindStringIndex\",\n  \"length_intervals\": [\n    [\n      0,\n      0\n    ],\n    [\n      2,\n      null\n    ]\n  ],\n  \"complete_under_declared_contract\": true,\n  \"evidence\": \"sqlx-values-revision-primary-contract-review-v1.json\",\n  \"evidence_sha256\": \"d4d3dee1d880b0891449c8e116a65632cd3030c8c53ec6e7fa4c8d2df9b1f6bb\",\n  \"scope\": \"ConditionalcurrentdocumentedAPIcontract,not historical/deployed runtime verification.\",\n  \"owner_approved\": false,\n  \"training_gold\": false\n}\n",
+  "primary_contract_text": "{\n  \"at\": \"2026-11-21T06:47:04.330616+00:00\",\n  \"api\": \"regexp.(*Regexp).FindStringIndex\",\n  \"source\": \"https://pkg.go.dev/regexp#Regexp.FindStringIndex\",\n  \"observed_doc_version\": \"go1.27.4\",\n  \"contract_paraphrase\": \"Official documentation says no match yields nil and a match is addressed by start/end indexes. The analysis uses lengths0or>=2; length1 is not a documented valid result shape.\",\n  \"scope\": \"Conditional documented-API argument, not a historical runtime experiment or certification of installed/compiler/library versions.\",\n  \"historical_source_retrieval_attempts\": [\n    {\n      \"url\": \"https://raw.githubusercontent.com/golang/go/go1.10/src/regexp/regexp.go\",\n      \"outcome\": \"webtool cachemiss\"\n    },\n    {\n      \"url\": \"https://github.com/golang/go/blob/go1.10/src/regexp/regexp.go\",\n      \"outcome\": \"webtool cachemiss\"\n    },\n    {\n      \"url\": \"https://go.googlesource.com/go/+/go1.10/src/regexp/regexp.go\",\n      \"outcome\": \"webtool URLinaccessible\"\n    }\n  ],\n  \"retrieval_failure_not_api_absence\": true,\n  \"no_complete_page_or_source_copy\": true\n}\n",
+  "before_source": "package sqlx\n\n// Named Query Support\n//\n//  * BindMap - bind query bindvars to map/struct args\n//\t* NamedExec, NamedQuery - named query w/ struct or map\n//  * NamedStmt - a pre-compiled named query which is a prepared statement\n//\n// Internal Interfaces:\n//\n//  * compileNamedQuery - rebind a named query, returning a query and list of names\n//  * bindArgs, bindMapArgs, bindAnyArgs - given a list of names, return an arglist\n//\nimport (\n\t\"bytes\"\n\t\"database/sql\"\n\t\"errors\"\n\t\"fmt\"\n\t\"reflect\"\n\t\"regexp\"\n\t\"strconv\"\n\t\"unicode\"\n\n\t\"github.com/jmoiron/sqlx/reflectx\"\n)\n\n// NamedStmt is a prepared statement that executes named queries.  Prepare it\n// how you would execute a NamedQuery, but pass in a struct or map when executing.\ntype NamedStmt struct {\n\tParams      []string\n\tQueryString string\n\tStmt        *Stmt\n}\n\n// Close closes the named statement.\nfunc (n *NamedStmt) Close() error {\n\treturn n.Stmt.Close()\n}\n\n// Exec executes a named statement using the struct passed.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Exec(arg interface{}) (sql.Result, error) {\n\targs, err := bindAnyArgs(n.Params, arg, n.Stmt.Mapper)\n\tif err != nil {\n\t\treturn *new(sql.Result), err\n\t}\n\treturn n.Stmt.Exec(args...)\n}\n\n// Query executes a named statement using the struct argument, returning rows.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Query(arg interface{}) (*sql.Rows, error) {\n\targs, err := bindAnyArgs(n.Params, arg, n.Stmt.Mapper)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn n.Stmt.Query(args...)\n}\n\n// QueryRow executes a named statement against the database.  Because sqlx cannot\n// create a *sql.Row with an error condition pre-set for binding errors, sqlx\n// returns a *sqlx.Row instead.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) QueryRow(arg interface{}) *Row {\n\targs, err := bindAnyArgs(n.Params, arg, n.Stmt.Mapper)\n\tif err != nil {\n\t\treturn &Row{err: err}\n\t}\n\treturn n.Stmt.QueryRowx(args...)\n}\n\n// MustExec execs a NamedStmt, panicing on error\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) MustExec(arg interface{}) sql.Result {\n\tres, err := n.Exec(arg)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treturn res\n}\n\n// Queryx using this NamedStmt\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Queryx(arg interface{}) (*Rows, error) {\n\tr, err := n.Query(arg)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn &Rows{Rows: r, Mapper: n.Stmt.Mapper, unsafe: isUnsafe(n)}, err\n}\n\n// QueryRowx this NamedStmt.  Because of limitations with QueryRow, this is\n// an alias for QueryRow.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) QueryRowx(arg interface{}) *Row {\n\treturn n.QueryRow(arg)\n}\n\n// Select using this NamedStmt\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Select(dest interface{}, arg interface{}) error {\n\trows, err := n.Queryx(arg)\n\tif err != nil {\n\t\treturn err\n\t}\n\t// if something happens here, we want to make sure the rows are Closed\n\tdefer rows.Close()\n\treturn scanAll(rows, dest, false)\n}\n\n// Get using this NamedStmt\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Get(dest interface{}, arg interface{}) error {\n\tr := n.QueryRowx(arg)\n\treturn r.scanAny(dest, false)\n}\n\n// Unsafe creates an unsafe version of the NamedStmt\nfunc (n *NamedStmt) Unsafe() *NamedStmt {\n\tr := &NamedStmt{Params: n.Params, Stmt: n.Stmt, QueryString: n.QueryString}\n\tr.Stmt.unsafe = true\n\treturn r\n}\n\n// A union interface of preparer and binder, required to be able to prepare\n// named statements (as the bindtype must be determined).\ntype namedPreparer interface {\n\tPreparer\n\tbinder\n}\n\nfunc prepareNamed(p namedPreparer, query string) (*NamedStmt, error) {\n\tbindType := BindType(p.DriverName())\n\tq, args, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tstmt, err := Preparex(p, q)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn &NamedStmt{\n\t\tQueryString: q,\n\t\tParams:      args,\n\t\tStmt:        stmt,\n\t}, nil\n}\n\n// convertMapStringInterface attempts to convert v to map[string]interface{}.\n// Unlike v.(map[string]interface{}), this function works on named types that\n// are convertible to map[string]interface{} as well.\nfunc convertMapStringInterface(v interface{}) (map[string]interface{}, bool) {\n\tvar m map[string]interface{}\n\tmtype := reflect.TypeOf(m)\n\tt := reflect.TypeOf(v)\n\tif !t.ConvertibleTo(mtype) {\n\t\treturn nil, false\n\t}\n\treturn reflect.ValueOf(v).Convert(mtype).Interface().(map[string]interface{}), true\n\n}\n\nfunc bindAnyArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\tif maparg, ok := convertMapStringInterface(arg); ok {\n\t\treturn bindMapArgs(names, maparg)\n\t}\n\treturn bindArgs(names, arg, m)\n}\n\n// private interface to generate a list of interfaces from a given struct\n// type, given a list of names to pull out of the struct.  Used by public\n// BindStruct interface.\nfunc bindArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\t// grab the indirected value of arg\n\tv := reflect.ValueOf(arg)\n\tfor v = reflect.ValueOf(arg); v.Kind() == reflect.Ptr; {\n\t\tv = v.Elem()\n\t}\n\n\terr := m.TraversalsByNameFunc(v.Type(), names, func(i int, t []int) error {\n\t\tif len(t) == 0 {\n\t\t\treturn fmt.Errorf(\"could not find name %s in %#v\", names[i], arg)\n\t\t}\n\n\t\tval := reflectx.FieldByIndexesReadOnly(v, t)\n\t\targlist = append(arglist, val.Interface())\n\n\t\treturn nil\n\t})\n\n\treturn arglist, err\n}\n\n// like bindArgs, but for maps.\nfunc bindMapArgs(names []string, arg map[string]interface{}) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\tfor _, name := range names {\n\t\tval, ok := arg[name]\n\t\tif !ok {\n\t\t\treturn arglist, fmt.Errorf(\"could not find name %s in %#v\", name, arg)\n\t\t}\n\t\targlist = append(arglist, val)\n\t}\n\treturn arglist, nil\n}\n\n// bindStruct binds a named parameter query with fields from a struct argument.\n// The rules for binding field names to parameter names follow the same\n// conventions as for StructScan, including obeying the `db` struct tags.\nfunc bindStruct(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindAnyArgs(names, arg, m)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\treturn bound, arglist, nil\n}\n\nvar valuesReg = regexp.MustCompile(`\\)\\s*(?i)VALUES\\s*\\(`)\n\nfunc findMatchingClosingBracketIndex(s string) int {\n\tcount := 0\n\tfor i, ch := range s {\n\t\tif ch == '(' {\n\t\t\tcount++\n\t\t}\n\t\tif ch == ')' {\n\t\t\tcount--\n\t\t\tif count == 0 {\n\t\t\t\treturn i\n\t\t\t}\n\t\t}\n\t}\n\treturn 0\n}\n\nfunc fixBound(bound string, loop int) string {\n\tloc := valuesReg.FindStringIndex(bound)\n\t// defensive guard when \"VALUES (...)\" not found\n\tif len(loc) < 1 {\n\t\treturn bound\n\t}\n\n\topeningBracketIndex := loc[1] - 1\n\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\n\t// defensive guard. must have closing bracket\n\tif index == 0 {\n\t\treturn bound\n\t}\n\tclosingBracketIndex := openingBracketIndex + index + 1\n\n\tvar buffer bytes.Buffer\n\n\tbuffer.WriteString(bound[0:closingBracketIndex])\n\tfor i := 0; i < loop-1; i++ {\n\t\tbuffer.WriteString(\",\")\n\t\tbuffer.WriteString(bound[openingBracketIndex:closingBracketIndex])\n\t}\n\tbuffer.WriteString(bound[closingBracketIndex:])\n\treturn buffer.String()\n}\n\n// bindArray binds a named parameter query with fields from an array or slice of\n// structs argument.\nfunc bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\t// do the initial binding with QUESTION;  if bindType is not question,\n\t// we can rebind it at the end.\n\tbound, names, err := compileNamedQuery([]byte(query), QUESTION)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\tarrayValue := reflect.ValueOf(arg)\n\tarrayLen := arrayValue.Len()\n\tif arrayLen == 0 {\n\t\treturn \"\", []interface{}{}, fmt.Errorf(\"length of array is 0: %#v\", arg)\n\t}\n\tvar arglist = make([]interface{}, 0, len(names)*arrayLen)\n\tfor i := 0; i < arrayLen; i++ {\n\t\telemArglist, err := bindAnyArgs(names, arrayValue.Index(i).Interface(), m)\n\t\tif err != nil {\n\t\t\treturn \"\", []interface{}{}, err\n\t\t}\n\t\targlist = append(arglist, elemArglist...)\n\t}\n\tif arrayLen > 1 {\n\t\tbound = fixBound(bound, arrayLen)\n\t}\n\t// adjust binding type if we weren't on question\n\tif bindType != QUESTION {\n\t\tbound = Rebind(bindType, bound)\n\t}\n\treturn bound, arglist, nil\n}\n\n// bindMap binds a named parameter query with a map of arguments.\nfunc bindMap(bindType int, query string, args map[string]interface{}) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindMapArgs(names, args)\n\treturn bound, arglist, err\n}\n\n// -- Compilation of Named Queries\n\n// Allow digits and letters in bind params;  additionally runes are\n// checked against underscores, meaning that bind params can have be\n// alphanumeric with underscores.  Mind the difference between unicode\n// digits and numbers, where '5' is a digit but '五' is not.\nvar allowedBindRunes = []*unicode.RangeTable{unicode.Letter, unicode.Digit}\n\n// FIXME: this function isn't safe for unicode named params, as a failing test\n// can testify.  This is not a regression but a failure of the original code\n// as well.  It should be modified to range over runes in a string rather than\n// bytes, even though this is less convenient and slower.  Hopefully the\n// addition of the prepared NamedStmt (which will only do this once) will make\n// up for the slightly slower ad-hoc NamedExec/NamedQuery.\n\n// compile a NamedQuery into an unbound query (using the '?' bindvar) and\n// a list of names.\nfunc compileNamedQuery(qs []byte, bindType int) (query string, names []string, err error) {\n\tnames = make([]string, 0, 10)\n\trebound := make([]byte, 0, len(qs))\n\n\tinName := false\n\tlast := len(qs) - 1\n\tcurrentVar := 1\n\tname := make([]byte, 0, 10)\n\n\tfor i, b := range qs {\n\t\t// a ':' while we're in a name is an error\n\t\tif b == ':' {\n\t\t\t// if this is the second ':' in a '::' escape sequence, append a ':'\n\t\t\tif inName && i > 0 && qs[i-1] == ':' {\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\tinName = false\n\t\t\t\tcontinue\n\t\t\t} else if inName {\n\t\t\t\terr = errors.New(\"unexpected `:` while reading named param at \" + strconv.Itoa(i))\n\t\t\t\treturn query, names, err\n\t\t\t}\n\t\t\tinName = true\n\t\t\tname = []byte{}\n\t\t} else if inName && i > 0 && b == '=' && len(name) == 0 {\n\t\t\trebound = append(rebound, ':', '=')\n\t\t\tinName = false\n\t\t\tcontinue\n\t\t\t// if we're in a name, and this is an allowed character, continue\n\t\t} else if inName && (unicode.IsOneOf(allowedBindRunes, rune(b)) || b == '_' || b == '.') && i != last {\n\t\t\t// append the byte to the name if we are in a name and not on the last byte\n\t\t\tname = append(name, b)\n\t\t\t// if we're in a name and it's not an allowed character, the name is done\n\t\t} else if inName {\n\t\t\tinName = false\n\t\t\t// if this is the final byte of the string and it is part of the name, then\n\t\t\t// make sure to add it to the name\n\t\t\tif i == last && unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\tname = append(name, b)\n\t\t\t}\n\t\t\t// add the string representation to the names list\n\t\t\tnames = append(names, string(name))\n\t\t\t// add a proper bindvar for the bindType\n\t\t\tswitch bindType {\n\t\t\t// oracle only supports named type bind vars even for positional\n\t\t\tcase NAMED:\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\trebound = append(rebound, name...)\n\t\t\tcase QUESTION, UNKNOWN:\n\t\t\t\trebound = append(rebound, '?')\n\t\t\tcase DOLLAR:\n\t\t\t\trebound = append(rebound, '$')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\tcase AT:\n\t\t\t\trebound = append(rebound, '@', 'p')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\t}\n\t\t\t// add this byte to string unless it was not part of the name\n\t\t\tif i != last {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t} else if !unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t}\n\t\t} else {\n\t\t\t// this is a normal byte and should just go onto the rebound query\n\t\t\trebound = append(rebound, b)\n\t\t}\n\t}\n\n\treturn string(rebound), names, err\n}\n\n// BindNamed binds a struct or a map to a query with named parameters.\n// DEPRECATED: use sqlx.Named` instead of this, it may be removed in future.\nfunc BindNamed(bindType int, query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(bindType, query, arg, mapper())\n}\n\n// Named takes a query using named parameters and an argument and\n// returns a new query with a list of args that can be executed by\n// a database.  The return value uses the `?` bindvar.\nfunc Named(query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(QUESTION, query, arg, mapper())\n}\n\nfunc bindNamedMapper(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tt := reflect.TypeOf(arg)\n\tk := t.Kind()\n\tswitch {\n\tcase k == reflect.Map && t.Key().Kind() == reflect.String:\n\t\tm, ok := convertMapStringInterface(arg)\n\t\tif !ok {\n\t\t\treturn \"\", nil, fmt.Errorf(\"sqlx.bindNamedMapper: unsupported map type: %T\", arg)\n\t\t}\n\t\treturn bindMap(bindType, query, m)\n\tcase k == reflect.Array || k == reflect.Slice:\n\t\treturn bindArray(bindType, query, arg, m)\n\tdefault:\n\t\treturn bindStruct(bindType, query, arg, m)\n\t}\n}\n\n// NamedQuery binds a named query and then runs Query on the result using the\n// provided Ext (sqlx.Tx, sqlx.Db).  It works with both structs and with\n// map[string]interface{} types.\nfunc NamedQuery(e Ext, query string, arg interface{}) (*Rows, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Queryx(q, args...)\n}\n\n// NamedExec uses BindStruct to get a query executable by the driver and\n// then runs Exec on the result.  Returns an error from the binding\n// or the query execution itself.\nfunc NamedExec(e Ext, query string, arg interface{}) (sql.Result, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Exec(q, args...)\n}\n",
+  "after_source": "package sqlx\n\n// Named Query Support\n//\n//  * BindMap - bind query bindvars to map/struct args\n//\t* NamedExec, NamedQuery - named query w/ struct or map\n//  * NamedStmt - a pre-compiled named query which is a prepared statement\n//\n// Internal Interfaces:\n//\n//  * compileNamedQuery - rebind a named query, returning a query and list of names\n//  * bindArgs, bindMapArgs, bindAnyArgs - given a list of names, return an arglist\n//\nimport (\n\t\"bytes\"\n\t\"database/sql\"\n\t\"errors\"\n\t\"fmt\"\n\t\"reflect\"\n\t\"regexp\"\n\t\"strconv\"\n\t\"unicode\"\n\n\t\"github.com/jmoiron/sqlx/reflectx\"\n)\n\n// NamedStmt is a prepared statement that executes named queries.  Prepare it\n// how you would execute a NamedQuery, but pass in a struct or map when executing.\ntype NamedStmt struct {\n\tParams      []string\n\tQueryString string\n\tStmt        *Stmt\n}\n\n// Close closes the named statement.\nfunc (n *NamedStmt) Close() error {\n\treturn n.Stmt.Close()\n}\n\n// Exec executes a named statement using the struct passed.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Exec(arg interface{}) (sql.Result, error) {\n\targs, err := bindAnyArgs(n.Params, arg, n.Stmt.Mapper)\n\tif err != nil {\n\t\treturn *new(sql.Result), err\n\t}\n\treturn n.Stmt.Exec(args...)\n}\n\n// Query executes a named statement using the struct argument, returning rows.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Query(arg interface{}) (*sql.Rows, error) {\n\targs, err := bindAnyArgs(n.Params, arg, n.Stmt.Mapper)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn n.Stmt.Query(args...)\n}\n\n// QueryRow executes a named statement against the database.  Because sqlx cannot\n// create a *sql.Row with an error condition pre-set for binding errors, sqlx\n// returns a *sqlx.Row instead.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) QueryRow(arg interface{}) *Row {\n\targs, err := bindAnyArgs(n.Params, arg, n.Stmt.Mapper)\n\tif err != nil {\n\t\treturn &Row{err: err}\n\t}\n\treturn n.Stmt.QueryRowx(args...)\n}\n\n// MustExec execs a NamedStmt, panicing on error\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) MustExec(arg interface{}) sql.Result {\n\tres, err := n.Exec(arg)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treturn res\n}\n\n// Queryx using this NamedStmt\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Queryx(arg interface{}) (*Rows, error) {\n\tr, err := n.Query(arg)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn &Rows{Rows: r, Mapper: n.Stmt.Mapper, unsafe: isUnsafe(n)}, err\n}\n\n// QueryRowx this NamedStmt.  Because of limitations with QueryRow, this is\n// an alias for QueryRow.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) QueryRowx(arg interface{}) *Row {\n\treturn n.QueryRow(arg)\n}\n\n// Select using this NamedStmt\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Select(dest interface{}, arg interface{}) error {\n\trows, err := n.Queryx(arg)\n\tif err != nil {\n\t\treturn err\n\t}\n\t// if something happens here, we want to make sure the rows are Closed\n\tdefer rows.Close()\n\treturn scanAll(rows, dest, false)\n}\n\n// Get using this NamedStmt\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (n *NamedStmt) Get(dest interface{}, arg interface{}) error {\n\tr := n.QueryRowx(arg)\n\treturn r.scanAny(dest, false)\n}\n\n// Unsafe creates an unsafe version of the NamedStmt\nfunc (n *NamedStmt) Unsafe() *NamedStmt {\n\tr := &NamedStmt{Params: n.Params, Stmt: n.Stmt, QueryString: n.QueryString}\n\tr.Stmt.unsafe = true\n\treturn r\n}\n\n// A union interface of preparer and binder, required to be able to prepare\n// named statements (as the bindtype must be determined).\ntype namedPreparer interface {\n\tPreparer\n\tbinder\n}\n\nfunc prepareNamed(p namedPreparer, query string) (*NamedStmt, error) {\n\tbindType := BindType(p.DriverName())\n\tq, args, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tstmt, err := Preparex(p, q)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn &NamedStmt{\n\t\tQueryString: q,\n\t\tParams:      args,\n\t\tStmt:        stmt,\n\t}, nil\n}\n\n// convertMapStringInterface attempts to convert v to map[string]interface{}.\n// Unlike v.(map[string]interface{}), this function works on named types that\n// are convertible to map[string]interface{} as well.\nfunc convertMapStringInterface(v interface{}) (map[string]interface{}, bool) {\n\tvar m map[string]interface{}\n\tmtype := reflect.TypeOf(m)\n\tt := reflect.TypeOf(v)\n\tif !t.ConvertibleTo(mtype) {\n\t\treturn nil, false\n\t}\n\treturn reflect.ValueOf(v).Convert(mtype).Interface().(map[string]interface{}), true\n\n}\n\nfunc bindAnyArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\tif maparg, ok := convertMapStringInterface(arg); ok {\n\t\treturn bindMapArgs(names, maparg)\n\t}\n\treturn bindArgs(names, arg, m)\n}\n\n// private interface to generate a list of interfaces from a given struct\n// type, given a list of names to pull out of the struct.  Used by public\n// BindStruct interface.\nfunc bindArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\t// grab the indirected value of arg\n\tv := reflect.ValueOf(arg)\n\tfor v = reflect.ValueOf(arg); v.Kind() == reflect.Ptr; {\n\t\tv = v.Elem()\n\t}\n\n\terr := m.TraversalsByNameFunc(v.Type(), names, func(i int, t []int) error {\n\t\tif len(t) == 0 {\n\t\t\treturn fmt.Errorf(\"could not find name %s in %#v\", names[i], arg)\n\t\t}\n\n\t\tval := reflectx.FieldByIndexesReadOnly(v, t)\n\t\targlist = append(arglist, val.Interface())\n\n\t\treturn nil\n\t})\n\n\treturn arglist, err\n}\n\n// like bindArgs, but for maps.\nfunc bindMapArgs(names []string, arg map[string]interface{}) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\tfor _, name := range names {\n\t\tval, ok := arg[name]\n\t\tif !ok {\n\t\t\treturn arglist, fmt.Errorf(\"could not find name %s in %#v\", name, arg)\n\t\t}\n\t\targlist = append(arglist, val)\n\t}\n\treturn arglist, nil\n}\n\n// bindStruct binds a named parameter query with fields from a struct argument.\n// The rules for binding field names to parameter names follow the same\n// conventions as for StructScan, including obeying the `db` struct tags.\nfunc bindStruct(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindAnyArgs(names, arg, m)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\treturn bound, arglist, nil\n}\n\nvar valuesReg = regexp.MustCompile(`\\)\\s*(?i)VALUES\\s*\\(`)\n\nfunc findMatchingClosingBracketIndex(s string) int {\n\tcount := 0\n\tfor i, ch := range s {\n\t\tif ch == '(' {\n\t\t\tcount++\n\t\t}\n\t\tif ch == ')' {\n\t\t\tcount--\n\t\t\tif count == 0 {\n\t\t\t\treturn i\n\t\t\t}\n\t\t}\n\t}\n\treturn 0\n}\n\nfunc fixBound(bound string, loop int) string {\n\tloc := valuesReg.FindStringIndex(bound)\n\t// defensive guard when \"VALUES (...)\" not found\n\tif len(loc) < 2 {\n\t\treturn bound\n\t}\n\n\topeningBracketIndex := loc[1] - 1\n\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\n\t// defensive guard. must have closing bracket\n\tif index == 0 {\n\t\treturn bound\n\t}\n\tclosingBracketIndex := openingBracketIndex + index + 1\n\n\tvar buffer bytes.Buffer\n\n\tbuffer.WriteString(bound[0:closingBracketIndex])\n\tfor i := 0; i < loop-1; i++ {\n\t\tbuffer.WriteString(\",\")\n\t\tbuffer.WriteString(bound[openingBracketIndex:closingBracketIndex])\n\t}\n\tbuffer.WriteString(bound[closingBracketIndex:])\n\treturn buffer.String()\n}\n\n// bindArray binds a named parameter query with fields from an array or slice of\n// structs argument.\nfunc bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\t// do the initial binding with QUESTION;  if bindType is not question,\n\t// we can rebind it at the end.\n\tbound, names, err := compileNamedQuery([]byte(query), QUESTION)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\tarrayValue := reflect.ValueOf(arg)\n\tarrayLen := arrayValue.Len()\n\tif arrayLen == 0 {\n\t\treturn \"\", []interface{}{}, fmt.Errorf(\"length of array is 0: %#v\", arg)\n\t}\n\tvar arglist = make([]interface{}, 0, len(names)*arrayLen)\n\tfor i := 0; i < arrayLen; i++ {\n\t\telemArglist, err := bindAnyArgs(names, arrayValue.Index(i).Interface(), m)\n\t\tif err != nil {\n\t\t\treturn \"\", []interface{}{}, err\n\t\t}\n\t\targlist = append(arglist, elemArglist...)\n\t}\n\tif arrayLen > 1 {\n\t\tbound = fixBound(bound, arrayLen)\n\t}\n\t// adjust binding type if we weren't on question\n\tif bindType != QUESTION {\n\t\tbound = Rebind(bindType, bound)\n\t}\n\treturn bound, arglist, nil\n}\n\n// bindMap binds a named parameter query with a map of arguments.\nfunc bindMap(bindType int, query string, args map[string]interface{}) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindMapArgs(names, args)\n\treturn bound, arglist, err\n}\n\n// -- Compilation of Named Queries\n\n// Allow digits and letters in bind params;  additionally runes are\n// checked against underscores, meaning that bind params can have be\n// alphanumeric with underscores.  Mind the difference between unicode\n// digits and numbers, where '5' is a digit but '五' is not.\nvar allowedBindRunes = []*unicode.RangeTable{unicode.Letter, unicode.Digit}\n\n// FIXME: this function isn't safe for unicode named params, as a failing test\n// can testify.  This is not a regression but a failure of the original code\n// as well.  It should be modified to range over runes in a string rather than\n// bytes, even though this is less convenient and slower.  Hopefully the\n// addition of the prepared NamedStmt (which will only do this once) will make\n// up for the slightly slower ad-hoc NamedExec/NamedQuery.\n\n// compile a NamedQuery into an unbound query (using the '?' bindvar) and\n// a list of names.\nfunc compileNamedQuery(qs []byte, bindType int) (query string, names []string, err error) {\n\tnames = make([]string, 0, 10)\n\trebound := make([]byte, 0, len(qs))\n\n\tinName := false\n\tlast := len(qs) - 1\n\tcurrentVar := 1\n\tname := make([]byte, 0, 10)\n\n\tfor i, b := range qs {\n\t\t// a ':' while we're in a name is an error\n\t\tif b == ':' {\n\t\t\t// if this is the second ':' in a '::' escape sequence, append a ':'\n\t\t\tif inName && i > 0 && qs[i-1] == ':' {\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\tinName = false\n\t\t\t\tcontinue\n\t\t\t} else if inName {\n\t\t\t\terr = errors.New(\"unexpected `:` while reading named param at \" + strconv.Itoa(i))\n\t\t\t\treturn query, names, err\n\t\t\t}\n\t\t\tinName = true\n\t\t\tname = []byte{}\n\t\t} else if inName && i > 0 && b == '=' && len(name) == 0 {\n\t\t\trebound = append(rebound, ':', '=')\n\t\t\tinName = false\n\t\t\tcontinue\n\t\t\t// if we're in a name, and this is an allowed character, continue\n\t\t} else if inName && (unicode.IsOneOf(allowedBindRunes, rune(b)) || b == '_' || b == '.') && i != last {\n\t\t\t// append the byte to the name if we are in a name and not on the last byte\n\t\t\tname = append(name, b)\n\t\t\t// if we're in a name and it's not an allowed character, the name is done\n\t\t} else if inName {\n\t\t\tinName = false\n\t\t\t// if this is the final byte of the string and it is part of the name, then\n\t\t\t// make sure to add it to the name\n\t\t\tif i == last && unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\tname = append(name, b)\n\t\t\t}\n\t\t\t// add the string representation to the names list\n\t\t\tnames = append(names, string(name))\n\t\t\t// add a proper bindvar for the bindType\n\t\t\tswitch bindType {\n\t\t\t// oracle only supports named type bind vars even for positional\n\t\t\tcase NAMED:\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\trebound = append(rebound, name...)\n\t\t\tcase QUESTION, UNKNOWN:\n\t\t\t\trebound = append(rebound, '?')\n\t\t\tcase DOLLAR:\n\t\t\t\trebound = append(rebound, '$')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\tcase AT:\n\t\t\t\trebound = append(rebound, '@', 'p')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\t}\n\t\t\t// add this byte to string unless it was not part of the name\n\t\t\tif i != last {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t} else if !unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t}\n\t\t} else {\n\t\t\t// this is a normal byte and should just go onto the rebound query\n\t\t\trebound = append(rebound, b)\n\t\t}\n\t}\n\n\treturn string(rebound), names, err\n}\n\n// BindNamed binds a struct or a map to a query with named parameters.\n// DEPRECATED: use sqlx.Named` instead of this, it may be removed in future.\nfunc BindNamed(bindType int, query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(bindType, query, arg, mapper())\n}\n\n// Named takes a query using named parameters and an argument and\n// returns a new query with a list of args that can be executed by\n// a database.  The return value uses the `?` bindvar.\nfunc Named(query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(QUESTION, query, arg, mapper())\n}\n\nfunc bindNamedMapper(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tt := reflect.TypeOf(arg)\n\tk := t.Kind()\n\tswitch {\n\tcase k == reflect.Map && t.Key().Kind() == reflect.String:\n\t\tm, ok := convertMapStringInterface(arg)\n\t\tif !ok {\n\t\t\treturn \"\", nil, fmt.Errorf(\"sqlx.bindNamedMapper: unsupported map type: %T\", arg)\n\t\t}\n\t\treturn bindMap(bindType, query, m)\n\tcase k == reflect.Array || k == reflect.Slice:\n\t\treturn bindArray(bindType, query, arg, m)\n\tdefault:\n\t\treturn bindStruct(bindType, query, arg, m)\n\t}\n}\n\n// NamedQuery binds a named query and then runs Query on the result using the\n// provided Ext (sqlx.Tx, sqlx.Db).  It works with both structs and with\n// map[string]interface{} types.\nfunc NamedQuery(e Ext, query string, arg interface{}) (*Rows, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Queryx(q, args...)\n}\n\n// NamedExec uses BindStruct to get a query executable by the driver and\n// then runs Exec on the result.  Returns an error from the binding\n// or the query execution itself.\nfunc NamedExec(e Ext, query string, arg interface{}) (sql.Result, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Exec(q, args...)\n}\n",
+  "source_recipes": [
+    {
+      "id": "real-source-pair",
+      "operations": [],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "changed-other-body",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "buffer.WriteString(\",\")",
+          "new": "buffer.WriteString(\";\")"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "changed-producer",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "loc := valuesReg.FindStringIndex(bound)",
+          "new": "loc := differentProducer(bound)"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "stale-domain-hash",
+      "operations": [
+        {
+          "target": "fact_bytes",
+          "kind": "append_utf8",
+          "text": " "
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "missing-guard",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "if len(loc) < 2 {",
+          "new": "if len(loc) <= 2 {"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "noncanonical-decimal-guard",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "if len(loc) < 2 {",
+          "new": "if len(loc) < 02 {"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    }
+  ],
+  "original_input_hashes": {
+    "real-source-pair": {
+      "before_sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1",
+      "after_sha256": "d90eb192ece48ad125c184270e7eeec9ee2360df01d401e598d7d2faedc6a2e7",
+      "fact_sha256": "cf955363c3197f4ca91b0f19467c92fea3f211bc36e35b25c7533a1e77e60f1e"
+    },
+    "changed-other-body": {
+      "before_sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1",
+      "after_sha256": "74c4cf9665e82936c76a7d3b19a2f4a65f45c1f0e7bcf5465b1813eda279eeeb",
+      "fact_sha256": "cf955363c3197f4ca91b0f19467c92fea3f211bc36e35b25c7533a1e77e60f1e"
+    },
+    "changed-producer": {
+      "before_sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1",
+      "after_sha256": "51b2a08dfb84d12834b2afd11a8c6afeecaa87208e428822ba6f101e3d50007d",
+      "fact_sha256": "cf955363c3197f4ca91b0f19467c92fea3f211bc36e35b25c7533a1e77e60f1e"
+    },
+    "stale-domain-hash": {
+      "before_sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1",
+      "after_sha256": "d90eb192ece48ad125c184270e7eeec9ee2360df01d401e598d7d2faedc6a2e7",
+      "fact_sha256": "674f0e2e3c57a8f36fd809c8fe91e1a96c65a4d73c6fc2b36f5b4b19d810d053"
+    },
+    "missing-guard": {
+      "before_sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1",
+      "after_sha256": "21aee5c60b399dea6cfb5d932922ad132b385b897a478d957a7538282c8c5f68",
+      "fact_sha256": "cf955363c3197f4ca91b0f19467c92fea3f211bc36e35b25c7533a1e77e60f1e"
+    },
+    "noncanonical-decimal-guard": {
+      "before_sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1",
+      "after_sha256": "9e113a8ae1dc9813639fee77cfd4e1376f508572006689ee440283fbef1acfa4",
+      "fact_sha256": "cf955363c3197f4ca91b0f19467c92fea3f211bc36e35b25c7533a1e77e60f1e"
+    }
+  }
+}

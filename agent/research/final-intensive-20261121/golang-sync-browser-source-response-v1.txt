@@ -1,0 +1,153 @@
+ (https://raw.githubusercontent.com/golang/sync/v0.16.0/semaphore/semaphore.go)
+citeturn3view0 [wordlim: 200] Crawled: 2 days ago; Content type: text/plain; Source: open({"ref_id":"https://raw.githubusercontent.com/golang/sync/v0.16.0/semaphore/semaphore.go","lineno":null}); Total lines: 150
+L0: // Copyright 2017 The Go Authors. All rights reserved.
+L1: // Use of this source code is governed by a BSD-style
+L2: // license that can be found in the LICENSE file.
+L3: 
+L4: // Package semaphore provides a weighted semaphore implementation.
+L5: package semaphore // import "golang.org/x/sync/semaphore"
+L6: 
+L7: import (
+L8: 	"container/list"
+L9: 	"context"
+L10: 	"sync"
+L11: )
+L12: 
+L13: type waiter struct {
+L14: 	n     int64
+L15: 	ready chan<- struct{} // Closed when semaphore acquired.
+L16: }
+L17: // NewWeighted creates a new weighted semaphore with the given
+L18: // maximum combined weight for concurrent access.
+L19: func NewWeighted(n int64) *Weighted {
+L20: 	w := &Weighted{size: n}
+L21: 	return w
+L22: }
+L23: 
+L24: // Weighted provides a way to bound concurrent access to a resource.
+L25: // The callers can request access with a given weight.
+L26: type Weighted struct {
+L27: 	size    int64
+L28: 	cur     int64
+L29: 	mu      sync.Mutex
+L30: 	waiters list.List
+L31: }
+L32: // Acquire acquires the semaphore with a weight of n, blocking until resources
+L33: // are available or ctx is done. On success, returns nil. On failure, returns
+L34: // ctx.Err() and leaves the semaphore unchanged.
+L35: func (s *Weighted) Acquire(ctx context.Context, n int64) error {
+L36: 	done := ctx.Done()
+L37: 	s.mu.Lock()
+L38: 	select {
+L39: 	case <-done:
+L40: 		// ctx becoming done has "happened before" acquiring the semaphore,
+L41: 		// whether it became done before the call began or while we were
+L42: 		// waiting for the mutex. We prefer to fail even if we could acquire
+L43: 		// the mutex without blocking.
+L44: 		s.mu.Unlock()
+L45: 		return ctx.Err()
+L46: 	default:
+L47: 	}
+L48: 	if s.size-s.cur >= n && s.waiters.Len() == 0 {
+L49: 		// Since we hold s.mu and haven't synchronized since checking done, if
+L50: 		// ctx becomes done before we return here, it becoming done must have
+L51: 		// "happened concurrently" with this call - it cannot "happen before"
+L52: 		// we return in this branch. So, we're ok to always acquire here.
+L53: 		s.cur += n
+L54: 		s.mu.Unlock()
+L55: 		return nil
+L56: 	}
+L57: 	if n > s.size {
+L58: 		// Don't make other Acquire calls block on one that's doomed to fail.
+L59: 		s.mu.Unlock()
+L60: 		<-done
+L61: 		return ctx.Err()
+L62: 	}
+L63: 
+L64: 	ready := make(chan struct{})
+L65: 	w := waiter{n: n, ready: ready}
+L66: 	elem := s.waiters.PushBack(w)
+L67: 	s.mu.Unlock()
+L68: 	select {
+L69: 	case <-done:
+L70: 		s.mu.Lock()
+L71: 		select {
+L72: 		case <-ready:
+L73: 			// Acquired the semaphore after we were canceled.
+L74: 			// Pretend we didn't and put the tokens back.
+L75: 			s.cur -= n
+L76: 			s.notifyWaiters()
+L77: 		default:
+L78: 			isFront := s.waiters.Front() == elem
+L79: 			s.waiters.Remove(elem)
+L80: 			// If we're at the front and there're extra tokens left, notify other waiters.
+L81: 			if isFront && s.size > s.cur {
+L82: 				s.notifyWaiters()
+L83: 			}
+L84: 		}
+L85: 		s.mu.Unlock()
+L86: 		return ctx.Err()
+L87: 	case <-ready:
+L88: 		// Acquired the semaphore. Check that ctx isn't already done.
+L89: 		// We check the done channel instead of calling ctx.Err because we
+L90: 		// already have the channel, and ctx.Err is O(n) with the nesting
+L91: 		// depth of ctx.
+L92: 		select {
+L93: 		case <-done:
+L94: 			s.Release(n)
+L95: 			return ctx.Err()
+L96: 		default:
+L97: 		}
+L98: 		return nil
+L99: 	}
+L100: }
+L101: // TryAcquire acquires the semaphore with a weight of n without blocking.
+L102: // On success, returns true. On failure, returns false and leaves the semaphore unchanged.
+L103: func (s *Weighted) TryAcquire(n int64) bool {
+L104: 	s.mu.Lock()
+L105: 	success := s.size-s.cur >= n && s.waiters.Len() == 0
+L106: 	if success {
+L107: 		s.cur += n
+L108: 	}
+L109: 	s.mu.Unlock()
+L110: 	return success
+L111: }
+L112: // Release releases the semaphore with a weight of n.
+L113: func (s *Weighted) Release(n int64) {
+L114: 	s.mu.Lock()
+L115: 	s.cur -= n
+L116: 	if s.cur < 0 {
+L117: 		s.mu.Unlock()
+L118: 		panic("semaphore: released more than held")
+L119: 	}
+L120: 	s.notifyWaiters()
+L121: 	s.mu.Unlock()
+L122: }
+L123: 
+L124: func (s *Weighted) notifyWaiters() {
+L125: 	for {
+L126: 		next := s.waiters.Front()
+L127: 		if next == nil {
+L128: 			break // No more waiters blocked.
+L129: 		}
+L130: 		w := next.Value.(waiter)
+L131: 		if s.size-s.cur < w.n {
+L132: 			// Not enough tokens for the next waiter.  We could keep going (to try to
+L133: 			// find a waiter with a smaller request), but under load that could cause
+L134: 			// starvation for large requests; instead, we leave all remaining waiters
+L135: 			// blocked.
+L136: 			//
+L137: 			// Consider a semaphore used as a read-write lock, with N tokens, N
+L138: 			// readers, and one writer.  Each reader can Acquire(1) to obtain a read
+L139: 			// lock.  The writer can Acquire(N) to obtain a write lock, excluding all
+L140: 			// of the readers.  If we allow the readers to jump ahead in the queue,
+L141: 			// the writer will starve — there is always one token available for every
+L142: 			// reader.
+L143: 			break
+L144: 		}
+L145: 		s.cur += w.n
+L146: 		s.waiters.Remove(next)
+L147: 		close(w.ready)
+L148: 	}
+L149: }
+

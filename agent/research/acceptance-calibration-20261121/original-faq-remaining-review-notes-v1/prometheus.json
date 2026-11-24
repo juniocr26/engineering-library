@@ -1,0 +1,277 @@
+{
+  "family": "source-repository:prometheus",
+  "source_atoms": [
+    {
+      "id": "PP01",
+      "proposition": "Set with empty string delegates and returns b.Del(n).",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        188,
+        192
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP02",
+      "proposition": "Set updates first matching pending addition and returns b.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        193,
+        197
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP03",
+      "proposition": "If none matched Set appends a Label then returns b.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        193,
+        202
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP04",
+      "proposition": "Del applies its written removal slice expression to matching pending entries.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        164,
+        170
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP05",
+      "proposition": "Del appends each requested name to b.del without a selected deduplication guard.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        164,
+        174
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP06",
+      "proposition": "Selected Set and Del bodies do not assign b.base or show a lock; no global concurrent-safety inference.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        164,
+        202
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP07",
+      "proposition": "Get searches pending additions first and returns matching value.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        204,
+        210
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP08",
+      "proposition": "After addition search Get checks deletion markers, otherwise calls base.Get.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        211,
+        215
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP09",
+      "proposition": "Builder.Range copies add/del into origAdd/origDel before its callbacks.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        218,
+        224
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP10",
+      "proposition": "Builder.Range callback filters visited base labels against origDel/origAdd.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        224,
+        228
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP11",
+      "proposition": "After base traversal Builder.Range invokes f on each origAdd entry.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        229,
+        232
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP12",
+      "proposition": "Keep callback returns for visited label names contained in ns.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        177,
+        181
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP13",
+      "proposition": "For other visited names callback appends label name to b.del.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        177,
+        183
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP14",
+      "proposition": "After normal base.Range completion Keep returns b in outer function.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        177,
+        185
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP15",
+      "proposition": "Selected Keep body has no assignment filtering b.add.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        177,
+        185
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "PP16",
+      "proposition": "Included-label callback return does not remove an old b.del marker.",
+      "source_path": "model/labels/labels_common.go",
+      "lines": [
+        177,
+        185
+      ],
+      "verdict": "SUPPORTED"
+    }
+  ],
+  "pair_notes": {
+    "addition-precedence": {
+      "source_atom_ids": [
+        "PP07",
+        "PP08"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Explicitly scoped to Builder.Getlookuporder, not Setclearingdeletionmarkers."
+    },
+    "deferred-deletion-bookkeeping": {
+      "source_atom_ids": [
+        "PP01",
+        "PP04",
+        "PP05",
+        "PP06"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Selectedmethodsmodifybookkeeping, notassignbase. Doesnotinferdatabaseoperations orimmediateglobalmaterialization."
+    },
+    "deletion-no-synchronization-proof": {
+      "source_atom_ids": [
+        "PP05",
+        "PP06",
+        "PP09",
+        "PP10",
+        "PP11"
+      ],
+      "verdict": "SUPPORTED_SOURCE_BEHAVIOR_PROCEDURAL_PROVENANCE_INSUFFICIENT",
+      "technical_source_verdict": "SUPPORTED",
+      "procedural_verdict": "INSUFFICIENT",
+      "parity": "PASS",
+      "note": "Technicalclausesholdwithinselectedsource. Statementthattheseextramethodswerenotsuppliedhistoricalneuralanswerisnotindependentlyboundtoanexactrawrequestinthisaudit. OldsourceexcerptcontainsonlySet/Delanddatedreviewrecordsconsumerexpansion,butneitherproveshistoricalinputexcludedfullfile/othercontext. Preserveasprovenancepending, notfalselycontradictedsourcebehavior.",
+      "unverified_original_clause": "These extra methods were reviewed for this candidate, not supplied to the historical neural answer.",
+      "future_review_or_edit_proposal": "Link exact historical request/context hashes proving source exclusion, or separately authorize removing that attribution while retaining source-supported consumer facts. No edit applied."
+    },
+    "callback-return-scope": {
+      "source_atom_ids": [
+        "PP07",
+        "PP08",
+        "PP12",
+        "PP14"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Innercallbackreturnandouterreturnseparated; normaltraversalcompletionexplicit. Doesnotclaimallcallbacks/traversalscomplete."
+    },
+    "keep-addition-preservation": {
+      "source_atom_ids": [
+        "PP11",
+        "PP15"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "No b.add assignmentinselectedbody; responsecarefullystateswhatbodycannotdocument, ratherthanruntimealiasing/globalabsenceproof."
+    },
+    "keep-does-not-restore-deletion": {
+      "source_atom_ids": [
+        "PP12",
+        "PP16"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Includedcallbackdoesnotappendnewmarkeranddoesnotremoveoldones; nofinalmaterialization/overridingadditionclaim."
+    }
+  },
+  "all_actual_EN_PT_answers_read_in_full": true,
+  "source_context_review": "FullselectedSet/Del/Keep/Get/Builder.Rangebodiesread. ActualLabelsbaseRange/Getimplementation/buildvariantnotresolved, matching explicitFAQlimits. No Prometheuscode/tests executed.",
+  "source_only_technical_pairs_supported": 6,
+  "all_claims_including_procedural_research_pass": {
+    "numerator": 5,
+    "denominator": 6,
+    "pending_provenance": 1
+  },
+  "bounded_provenance_trace_metadata": [
+    {
+      "path": "agent/research/continuation-20261119/chapters/prometheus-builder/review.json",
+      "sha256": "3e39c523d4fcbe546355ef7e866490236458fb7f33633f2a40ec78704357577c"
+    },
+    {
+      "path": "agent/research/continuation-20261119/chapters/prometheus-builder/source-excerpts.json",
+      "sha256": "055b6d42c3b4937f19c60dd89984361f9888ba1fbdc2e4ecb01ef389928e26f6"
+    },
+    {
+      "path": "agent/research/continuation-20261119/contract-wave1-review-final.json",
+      "sha256": "e1f3b8a20659079141986d8999aade0fedd329c971ae915125023dae1abfb9fd"
+    },
+    {
+      "path": "agent/research/continuation-20261119/contract-wave2-review.json",
+      "sha256": "cd67fb125bb2ce4b64163ad7c22f82d6a0eaa33f7ca3f05a500b920fcf9777d1"
+    },
+    {
+      "path": "agent/research/continuation-20261119/contract-wave3-review.json",
+      "sha256": "ebd951cf6774db89dbaff75eda471ff4b991411c3bbca993bce102d417cea145"
+    },
+    {
+      "path": "agent/research/continuation-20261119/contract-wave4-review.json",
+      "sha256": "778a7a89a252ad3426871c1a9ebd25608f381f49e6bc6b15f5a61e70303a0ffd"
+    },
+    {
+      "path": "agent/research/continuation-20261119/response-outcome-matrix-v4.json",
+      "sha256": "884e5c61ef01eda59c2a73b1886f5933798db475dc573387dc43447124934b5b"
+    }
+  ],
+  "full_universal_atomic_precision": null,
+  "reviewer": "Samecampaignagent, not independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "model_calls": 0,
+  "optimizer_updates": 0
+}

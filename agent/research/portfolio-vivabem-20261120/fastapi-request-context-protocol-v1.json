@@ -1,0 +1,25 @@
+{
+  "at": "2026-11-21T02:03:49.619864+00:00",
+  "hypothesis": "H18: independently connect the pinned FastAPI APIRoute handler factory to the dependency solver and endpoint/serialization paths, establishing only the written cache initialization boundaries rather than a global request-lifetime guarantee.",
+  "family": "fastapi/fastapi",
+  "revision": "05e6df7e906c3decba377c37548019973f40bf15",
+  "source_freeze": "source-freeze-v1.json",
+  "development_exposed": true,
+  "scope": [
+    "APIRoute.get_route_handler",
+    "get_request_handler and its returned app",
+    "solve_dependencies cache parameter/default/initialization and returned SolvedDependency",
+    "run_endpoint_function and serialize_response call sites"
+  ],
+  "criteria": [
+    "Unique lexical AST owners, imports and keyword argument links from exact Git source.",
+    "Identify whether routing passes dependency_cache, what solver default is, and where fresh literal initialization occurs.",
+    "Trace recursive cache propagation and returned cache without claiming repository-wide isolation, concurrency safety or object lifetimes beyond written paths.",
+    "Distinguish selected normal/error conditions and endpoint/serialization guarded reachability.",
+    "Separate written tests/static observations from executed FastAPI application behavior."
+  ],
+  "source_execution": false,
+  "external_tests": false,
+  "owner_approved": false,
+  "training_gold": false
+}

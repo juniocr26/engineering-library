@@ -1,0 +1,283 @@
+{
+  "cases": [
+    {
+      "id": "real-api-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "same-threshold",
+      "old_threshold": 1,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "match-only-domain",
+      "old_threshold": 0,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "no-match-only-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          0
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "two-offset-only",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          2,
+          2
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "all-lengths-counterfactual",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "changed-valid-match-branch",
+      "old_threshold": 1,
+      "new_threshold": 3,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "reverse-real-domain",
+      "old_threshold": 2,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "EQUIVALENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "reverse-all-domain",
+      "old_threshold": 2,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "changed-no-match-branch",
+      "old_threshold": 0,
+      "new_threshold": 1,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "singleton-difference",
+      "old_threshold": 2,
+      "new_threshold": 3,
+      "intervals": [
+        [
+          2,
+          2
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    },
+    {
+      "id": "incomplete-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          null
+        ]
+      ],
+      "complete": false,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "empty-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "negative-length-domain",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          -1,
+          0
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "inverted-interval",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          3,
+          1
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "string-threshold",
+      "old_threshold": "1",
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "oversized-threshold",
+      "old_threshold": 1,
+      "new_threshold": 1025,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "invalid-upper-type",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          "many"
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "boolean-threshold",
+      "old_threshold": true,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "overlapping-union",
+      "old_threshold": 1,
+      "new_threshold": 2,
+      "intervals": [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "complete": true,
+      "expected": "DIFFERENT_ON_DECLARED_DOMAIN"
+    }
+  ]
+}

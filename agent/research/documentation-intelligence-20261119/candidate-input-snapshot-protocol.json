@@ -1,0 +1,34 @@
+{
+  "at": "2026-11-20T06:17:42.523473+00:00",
+  "hypothesis": "One-shot candidate/workspace APIs may retain caller-owned mutable operation and inventory dictionaries after validation, permitting a stale or unvalidated isolated candidate under controlled trusted-process configuration drift.",
+  "reproductions": [
+    "Mutate original replacement text after successful validate_operation, before rewrite copies it.",
+    "Mutate action from the validated MODIFY to REMOVE after validation; inspect whether a non-retired owned claim is removed from the isolated candidate.",
+    "Mutate physical synthetic current source plus caller source_files digest during rewrite after source facts have been snapshotted; inspect whether final recheck accepts a changed inventory."
+  ],
+  "source_scope": "Owned synthetic temporary fixtures only; no real documents or external repositories changed.",
+  "proposed_control": "Freeze operation/specification containers per call before validation; preserve current source rechecks against the pinned copy. A later explicit newly valid configuration remains supported.",
+  "model_calls": 0,
+  "publication_authorized": false,
+  "owner_approved": false,
+  "implementation_before": [
+    {
+      "path": "agent/tools/documentation_candidates.py",
+      "sha256": "991762db69d8965e4d5b9afe410c36ade4e0da7d99c7dd3a424ded8924f33f97"
+    },
+    {
+      "path": "agent/tools/documentation_maintenance.py",
+      "sha256": "d95e5659913cad2b03ee96a610c5af3fa112419a9f1c11db1919c2275571e3b4"
+    },
+    {
+      "path": "agent/test/documentation_candidates_test.py",
+      "sha256": "f9411f817e7e48f2477054a8d4debd6e330aa556687d9ec953f3769c5804a579"
+    },
+    {
+      "path": "agent/test/documentation_maintenance_test.py",
+      "sha256": "c0669a32cf8a5b212171d8309212bd44c77600a53cbd7b35d4f90132d8c1a33c"
+    }
+  ],
+  "supplement_frozen_at": "2026-11-20T06:19:26.636246+00:00",
+  "additional_boundary_control": "prepare must be a strict Boolean, to avoid a truthy string causing candidate filesystem writes."
+}

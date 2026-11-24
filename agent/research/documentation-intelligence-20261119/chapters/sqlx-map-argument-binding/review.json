@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-20T00:29:51.276008+00:00",
+  "chapter_id": "sqlx-map-argument-binding",
+  "source_repository": "sqlx",
+  "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "allocation-order",
+      "path": "named.go",
+      "lines": [
+        197,
+        208
+      ],
+      "review": "Zero length and names capacity; iterates ordered names, not map order."
+    },
+    {
+      "id": "presence",
+      "path": "named.go",
+      "lines": [
+        200,
+        205
+      ],
+      "review": "Comma-ok presence, not nil/zero value; existing nil appended."
+    },
+    {
+      "id": "error-prefix",
+      "path": "named.go",
+      "lines": [
+        202,
+        203
+      ],
+      "review": "First missing name returns already accumulated arglist with fmt.Errorf; no later names processed."
+    },
+    {
+      "id": "duplicates-empty",
+      "path": "named.go",
+      "lines": [
+        197,
+        208
+      ],
+      "review": "No dedup, no map write, no names skips loop and returns allocated empty slice,nil."
+    },
+    {
+      "id": "caller-boundary",
+      "path": "named.go",
+      "lines": [
+        162,
+        229
+      ],
+      "review": "bindAnyArgs can route maps here; bindStruct discards returned partial slice when receiving an error."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "bc8b8cef2ae891b7ae81cdac0a02bf24309ac37e01308c3f98d0802291fa7df4",
+      "after_sha256": "bd9cfc3954f3a21a8e99cbb78d12226e949390ad2f9b37950e3cfdf8bddafb78",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -32,3 +32,21 @@\n \n After the loop, the final written statement is `return arglist, nil`. With no names, the loop body is skipped and the initially empty allocated slice reaches that return. The function's ordinary completed result has one appended value per successfully processed name, including duplicates. Caller handling of an error, subsequent SQL execution, object ownership and thread safety remain separate contracts. The corrected chapter is pending owner review, with no automatic training approval or claim that the local model learned these distinctions.\n \n+## Engineer FAQ and caller context\n+\n+<!-- reading-section: faq:present-nil-map-value -->\n+### Is a present nil value treated as a missing name?\n+\n+The guard uses the lookup presence flag, so a present nil value is appended. A missing key returns the accumulated prefix and an error. A nil map with no requested names performs no lookup and reaches the normal empty result.\n+\n+<!-- reading-section: faq:partial-result-versus-caller-error -->\n+### Is that partial result necessarily returned by a higher-level binder?\n+\n+The additional `bindAnyArgs` source routes a successfully converted map to `bindMapArgs`. The inspected `bindStruct` caller returns an empty query and an empty argument slice when that call reports an error. The helper's partial result and this caller's error result are different contracts.\n+\n+<!-- reading-section: faq:repeated-map-name-preservation -->\n+### Do repeated names consume or remove map entries?\n+\n+The selected loop only reads the map and appends a value. It has no delete or consumption marker; repeated present names can produce repeated positional values. A reference-valued element is not proved to be deep-copied.\n+\n+These are source-derived cases, not executions of SQLx or a database. No database configuration is required by the selected helper itself; connection setup and statement execution belong to other components.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "2a66ed3979d82d2a11f555a133e2d025b69e154fa17d744fc23a43766cc179a5",
+      "after_sha256": "3bfd50108b77246d5adbafeb8051b99f6d6817b5ba7bd7e9fa82f10375a835ce",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -32,3 +32,21 @@\n \n Após o laço, a instrução final escrita é `return arglist, nil`. Sem nomes, o corpo do laço é ignorado e a fatia alocada inicialmente vazia alcança esse retorno. O resultado comum concluído da função tem um valor acrescentado por nome processado com sucesso, incluindo repetições. Tratamento do erro pelo chamador, execução posterior de SQL, propriedade dos objetos e segurança entre threads continuam sendo contratos separados. O capítulo corrigido aguarda revisão do proprietário, sem aprovação automática para treinamento ou afirmação de que o modelo local aprendeu essas distinções.\n \n+## FAQ de engenharia e contexto do chamador\n+\n+<!-- reading-section: faq:present-nil-map-value -->\n+### Um valor nil presente é tratado como nome ausente?\n+\n+A guarda usa a flag de presença da busca, portanto um valor nil presente é acrescentado. Uma chave ausente retorna o prefixo acumulado e um erro. Um mapa nil sem nomes solicitados não realiza busca e alcança o resultado vazio normal.\n+\n+<!-- reading-section: faq:partial-result-versus-caller-error -->\n+### Esse resultado parcial necessariamente é retornado por um binder de nível superior?\n+\n+A fonte adicional de `bindAnyArgs` encaminha um mapa convertido com sucesso para `bindMapArgs`. O chamador `bindStruct` inspecionado retorna consulta vazia e fatia de argumentos vazia quando essa chamada relata erro. O resultado parcial do helper e o resultado de erro desse chamador são contratos distintos.\n+\n+<!-- reading-section: faq:repeated-map-name-preservation -->\n+### Nomes repetidos consomem ou removem entradas do mapa?\n+\n+O laço selecionado apenas lê o mapa e acrescenta um valor. Não possui delete ou marcador de consumo; nomes presentes repetidos podem gerar valores posicionais repetidos. Não há prova de cópia profunda de um elemento que contenha referência.\n+\n+Esses são casos derivados da fonte, não execuções do SQLx ou de um banco. O helper selecionado em si não exige configuração de banco; conexão e execução de instruções pertencem a outros componentes.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.336875+00:00",
+    "canonical_question_ids": [
+      "present-nil-map-value",
+      "partial-result-versus-caller-error",
+      "repeated-map-name-preservation"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/sqlx-map-argument-binding",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

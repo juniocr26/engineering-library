@@ -1,0 +1,88 @@
+{
+  "at": "2026-11-20T00:45:13.472966+00:00",
+  "chapter_id": "duckdb-boolean-factory",
+  "source_repository": "duckdb",
+  "revision": "e41515de6f7efb19b43293ab49cb967cd64ab9f9",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "constructor-role",
+      "path": "src/common/types/value.cpp",
+      "lines": [
+        134,
+        135
+      ],
+      "review": "LogicalType constructor moves type and initially sets null flag true; not a final factory result."
+    },
+    {
+      "id": "factory-state",
+      "path": "src/common/types/value.cpp",
+      "lines": [
+        490,
+        495
+      ],
+      "review": "Local result with BOOLEAN type, supplied bool stored, null=false, local Value returned."
+    },
+    {
+      "id": "static-declaration",
+      "path": "src/include/duckdb/common/types/value.hpp",
+      "lines": [
+        47,
+        53,
+        107,
+        108
+      ],
+      "review": "Constructor declarations and explicit static BOOLEAN(bool)->Value now independently inspected."
+    },
+    {
+      "id": "logical-type-id",
+      "path": "src/include/duckdb/common/types.hpp",
+      "lines": [
+        364,
+        366,
+        538,
+        538
+      ],
+      "review": "LogicalType has LogicalTypeId conversion constructor; BOOLEAN constant explicitly LogicalTypeId::BOOLEAN. No full compiler binding proof claimed."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "c6b15b9373a9b48edee88c58a8700d691eb7281251dc0b8a705044ea427d3515",
+      "after_sha256": "179c499bd86d2927fb840c7ea4b1f22da91dd12bddc693e25c643157912d3b5b",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -8,7 +8,7 @@\n \n The actual local-agent baseline called `Value::BOOLEAN` a constructor. The selected definition instead begins `Value Value::BOOLEAN(bool value)`: it has an explicit `Value` result type and an explicit return of a local result. Those details identify a factory function in the selected evidence. A constructor has a different declaration shape. This distinction matters because conflating the two hides the sequence of initialization followed by mutation.\n \n-The source packet includes the LogicalType constructor and the Boolean factory as separate excerpts from the same pinned file. The chapter does not infer whether the factory is static from its out-of-class definition alone. No declaration header was added to the evidence for that claim. It also does not claim a SQL query was parsed or evaluated: no DuckDB application was compiled or executed here.\n+The source packet includes the `Value(LogicalType)` constructor and the Boolean factory as separate excerpts from the same pinned file. The original selected packet did not establish whether the factory was static from its out-of-class definition alone. This campaign adds the matching declaration header, which explicitly declares the factory static. It also does not claim a SQL query was parsed or evaluated: no DuckDB application was compiled or executed here.\n \n ## The constructor establishes an intermediate state\n \n@@ -28,3 +28,26 @@\n \n No optimizer behavior, allocation cost, exception guarantee or copy-elision performance was measured. The evidence supports the sequence written in these excerpts, not a universal account of DuckDB values. The baseline's correct observations about storing the input and changing nullness are retained, while its declaration-role error is corrected. The bilingual chapters remain source-reviewed candidates pending owner approval; neither becomes training gold simply because its structure and code-span parity were checked.\n \n+## Engineer FAQ and the declaration boundary\n+\n+<!-- reading-section: faq:static-factory-identity -->\n+### Is BOOLEAN a constructor or a static factory?\n+\n+The added public header declares `DUCKDB_API static Value BOOLEAN(bool value);`. This establishes the static factory declaration at the frozen revision. The constructor is separately declared with a logical-type argument. The definition and declaration now support different roles without guessing from the uppercase name.\n+\n+<!-- reading-section: faq:false-versus-null -->\n+### Does a false payload mean SQL null?\n+\n+The payload and null flag are different written members. Both ordinary bool input paths assign `result.is_null = false`. A false payload therefore does not make that assignment a null result.\n+\n+<!-- reading-section: faq:no-query-pipeline-proof -->\n+### Does this source demonstrate a query or conversion pipeline?\n+\n+It shows construction, two assignments and return of a local Value. It does not parse SQL, execute a database statement or prove conversion, allocation, performance or exception guarantees for arbitrary inputs.\n+\n+| Conceptual bool input | Written payload assignment | Written final null flag |\n+| --- | --- | --- |\n+| true | true | false |\n+| false | false | false |\n+\n+These table rows are source-derived traces, not observed DuckDB executions. The additional type header declares the Boolean logical-type identifier and the logical-type conversion constructor; full build and overload verification remain outside this review.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "51d9011e19a9bd4df110be7ad5a4e8dcd10d775fc80b0866607f215f42015592",
+      "after_sha256": "a82049613e059b234e995ae44e3c4ca41e666924829de06b73897a4aebca66a8",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -8,7 +8,7 @@\n \n O baseline real do agente local chamou `Value::BOOLEAN` de construtor. A definição selecionada começa, porém, com `Value Value::BOOLEAN(bool value)`: possui tipo explícito de resultado `Value` e um return explícito de um resultado local. Esses detalhes identificam uma função factory na evidência selecionada. Um construtor tem outra forma de declaração. A distinção importa porque confundir os dois esconde a sequência de inicialização seguida de mutação.\n \n-O pacote de fonte inclui o construtor de LogicalType e a factory booleana como trechos separados do mesmo arquivo fixado. O capítulo não infere que a factory seja estática apenas pela definição fora da classe. Nenhum cabeçalho de declaração foi acrescentado à evidência para essa afirmação. Também não afirma interpretação ou avaliação de consulta SQL: nenhuma aplicação DuckDB foi compilada ou executada aqui.\n+O pacote de fonte inclui o construtor `Value(LogicalType)` e a factory booleana como trechos separados do mesmo arquivo fixado. O pacote selecionado original não estabelecia que a factory fosse estática apenas pela definição fora da classe. Esta campanha acrescenta o cabeçalho de declaração correspondente, que declara explicitamente a factory como estática. Também não afirma interpretação ou avaliação de consulta SQL: nenhuma aplicação DuckDB foi compilada ou executada aqui.\n \n ## O construtor estabelece um estado intermediário\n \n@@ -28,3 +28,26 @@\n \n Nenhum comportamento de otimizador, custo de alocação, garantia de exceção ou desempenho de elisão de cópia foi medido. A evidência sustenta a sequência escrita nesses trechos, não uma descrição universal dos valores DuckDB. As observações corretas do baseline sobre armazenar a entrada e mudar a nulidade são mantidas, enquanto seu erro de papel da declaração é corrigido. Os capítulos bilíngues continuam candidatos revisados contra a fonte e pendentes de aprovação do proprietário; nenhum se torna gold de treinamento apenas porque sua estrutura e paridade de trechos de código foram verificadas.\n \n+## FAQ de engenharia e limite da declaração\n+\n+<!-- reading-section: faq:static-factory-identity -->\n+### BOOLEAN é construtor ou factory estática?\n+\n+O cabeçalho público acrescentado declara `DUCKDB_API static Value BOOLEAN(bool value);`. Isso estabelece a declaração de factory estática na revisão congelada. O construtor é declarado separadamente com argumento de tipo lógico. Definição e declaração agora sustentam papéis distintos sem adivinhar pelo nome em maiúsculas.\n+\n+<!-- reading-section: faq:false-versus-null -->\n+### Um conteúdo falso significa SQL null?\n+\n+O conteúdo e a flag de nulidade são membros escritos distintos. Os dois caminhos comuns de entrada bool atribuem `result.is_null = false`. Um conteúdo falso, portanto, não transforma essa atribuição em resultado nulo.\n+\n+<!-- reading-section: faq:no-query-pipeline-proof -->\n+### Essa fonte demonstra um pipeline de consulta ou conversão?\n+\n+Mostra construção, duas atribuições e retorno de um Value local. Não interpreta SQL, executa instrução de banco ou prova garantias de conversão, alocação, desempenho ou exceção para entradas arbitrárias.\n+\n+| Entrada bool conceitual | Atribuição escrita ao conteúdo | Flag nula final escrita |\n+| --- | --- | --- |\n+| true | true | false |\n+| false | false | false |\n+\n+Essas linhas da tabela são percursos derivados da fonte, não execuções observadas do DuckDB. O cabeçalho adicional de tipos declara o identificador lógico booleano e o construtor de conversão de tipo lógico; verificação completa de build e sobrecargas permanece fora desta revisão.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "clarification": "Name the actual Value(LogicalType) constructor explicitly; its parameter type is not the name of the constructed class. First new candidate preserved privately before clarification.",
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.296384+00:00",
+    "canonical_question_ids": [
+      "static-factory-identity",
+      "false-versus-null",
+      "no-query-pipeline-proof"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/duckdb-boolean-factory",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

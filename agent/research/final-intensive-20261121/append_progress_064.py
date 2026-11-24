@@ -1,0 +1,17 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common="""
+
+### Progresso intensivo 064 — identidade de FAQ não é aprovação do alvo
+
+A auditoria por registro conferiu 148 FAQs não privadas, formando 74 identidades completas EN/PT. Os quatro tipos de referência de cada linha, os trechos físicos e seus hashes foram conferidos. Em 146 linhas, o campo answer coincide com o texto da seção FAQ; duas linhas de go-image-animation preservam também a seção posterior com diagrama. O payload histórico chama esse campo de answer_and_trailing_context. Essa preservação fiel não o transforma em alvo isolado de resposta. Os originais permanecem intactos e em quarentena.
+
+A triagem complementar encontrou 22 linhas com ao menos um marcador de contexto, tabela, bloco cercado ou título posterior: 16 com referência de contexto, quatro com tabela, quatro com bloco e duas com título de nível dois, com sobreposição. Esses sinais selecionam revisão; não provam erro factual. Nem as 146 coincidências literais nem a aceitação técnica do capítulo provam apoio semântico, direitos ou Gold. Todos os 148 registros conservam falsos os seis flags de aprovação e consumo automático. Oito registros privados não foram decodificados.
+
+O fechamento v39 reúne 547 dependências, incluindo os sete arquivos originais e os blobs e testemunhos das FAQs; a recuperação desse novo fechamento ainda precisa ser executada. O suplemento de prazo para o futuro par neural fixa 1.800 segundos totais, até 600 por pedido e reserva de 480 para avaliação/preservação, incluindo carregamento e transporte. Não foi executado pedido; um resultado desconhecido interrompe o par e não admite retry. Esse protocolo não autoriza nem altera o piloto LoRA. A campanha permanece ativa, abaixo de doze horas reais.
+"""
+j=p/'root-report-bundle-progress-064';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v64.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

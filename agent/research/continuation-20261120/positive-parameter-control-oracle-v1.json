@@ -1,0 +1,250 @@
+{
+  "at": "2026-11-20T14:05:19.016121+00:00",
+  "frozen_before_predictions": true,
+  "producer_sha256": "433b8a66dcc6e65cfc847b98a9c96ebc8242c11b5fbff5f2fe6837f9b4e4fd7f",
+  "prior_control_oracle_sha256": "437296d422e0a356c8eac5242974ae16a0ba335ac19e2d9a84f35f7053636964",
+  "new_cases": [
+    {
+      "id": "positive-present",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "removed-named-parameter-modifies",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api():\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "renamed-parameter-not-remove",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(old_name=0):\n    return 1\n",
+        "current_source": "def api(new_name=0):\n    return 1\n",
+        "documentation": {
+          "en": "api has an old_name parameter.",
+          "pt-br": "api possui parâmetro old_name."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "vararg-exact-name-present",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(*limit):\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "kwarg-exact-name-present",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(**limit):\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "arbitrary-kwargs-key-not-named-parameter",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(**options):\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "article-an-admitted",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has an limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "bilingual-presence-disagrees",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "positive-extra-runtime-claim",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter. It never fails.",
+          "pt-br": "api possui parâmetro limit. Nunca falha."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "missing-function-still-inconclusive",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def other():\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "keyword-rejection-not-inferred",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api():\n    return 1\n",
+        "documentation": {
+          "en": "api rejects limit as an unexpected keyword.",
+          "pt-br": "api rejeita limit como opção inesperada."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "case-sensitive-parameter-name",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(limit=None):\n    return 1\n",
+        "current_source": "def api(Limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has a limit parameter.",
+          "pt-br": "api possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    }
+  ],
+  "prior_cases_reused": 24,
+  "scope": "Parameter declarations,not keywordacceptance/runtime/retirement. Alternative English article is harmless closed-syntax variation."
+}

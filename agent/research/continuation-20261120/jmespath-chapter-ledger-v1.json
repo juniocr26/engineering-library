@@ -1,0 +1,214 @@
+{
+  "at": "2026-11-20T12:46:47.881058+00:00",
+  "claims": [
+    {
+      "id": "purpose",
+      "section": "purpose",
+      "en": "This chapter follows the written path from `compile` and `search` into `Parser.parse`; it documents the pinned source revision rather than a measured execution.",
+      "pt-br": "Este capítulo acompanha o caminho escrito de `compile` e `search` até `Parser.parse`; documenta a revisão fixada do código, sem representar uma execução medida.",
+      "evidence_ids": [
+        "compile",
+        "search",
+        "Parser.parse"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "facade",
+      "section": "architecture",
+      "en": "`compile(expression)` returns the expression `parser.Parser().parse(expression)`. `search(expression, data, options=None)` appends `.search(data, options=options)` to that chain.",
+      "pt-br": "`compile(expression)` retorna a expressão `parser.Parser().parse(expression)`. `search(expression, data, options=None)` acrescenta `.search(data, options=options)` a essa cadeia.",
+      "evidence_ids": [
+        "compile",
+        "search"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "import-wire",
+      "section": "dependencies",
+      "en": "The facade writes `from jmespath import parser`. The parser writes `from jmespath import visitor`. These imports identify source relationships; the runtime import loader was not checked.",
+      "pt-br": "A fachada declara `from jmespath import parser`. O parser declara `from jmespath import visitor`. Essas importações identificam relações no código; o carregador de importações em execução não foi verificado.",
+      "evidence_ids": [
+        "jmespath/__init__.py:import:1",
+        "jmespath/parser.py:import:32"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "cache-owner",
+      "section": "responsibilities",
+      "en": "`Parser.parse` first attempts `self._CACHE[expression]`. After a `KeyError`, it calls `self._do_parse(expression)` and contains the capacity check before its final cache assignment.",
+      "pt-br": "`Parser.parse` primeiro tenta `self._CACHE[expression]`. Após um `KeyError`, chama `self._do_parse(expression)` e contém a verificação de capacidade antes da atribuição final ao cache.",
+      "evidence_ids": [
+        "Parser.parse"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "configuration",
+      "section": "configuration",
+      "en": "`Parser._MAX_SIZE` is written as the integer 512. This is a class-level source value, not proof of a live cache occupancy limit under every execution.",
+      "pt-br": "`Parser._MAX_SIZE` está escrito como o inteiro 512. Esse é um valor no código da classe, sem constituir prova de um limite de ocupação do cache em toda execução.",
+      "evidence_ids": [
+        "Parser._MAX_SIZE",
+        "Parser.parse"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "input-wire",
+      "section": "inputs_outputs",
+      "en": "`search` forwards `data` and `options` to the written chained call. `ParsedResult.search` constructs `visitor.TreeInterpreter(options)`, calls `interpreter.visit(self.parsed, value)` and returns the local `result`. The returned runtime type is not established by these statements alone.",
+      "pt-br": "`search` encaminha `data` e `options` para a chamada encadeada escrita. `ParsedResult.search` constrói `visitor.TreeInterpreter(options)`, chama `interpreter.visit(self.parsed, value)` e retorna a variável local `result`. Essas instruções, isoladamente, não estabelecem o tipo retornado em execução.",
+      "evidence_ids": [
+        "search",
+        "ParsedResult.search"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "parse-errors",
+      "section": "error_handling",
+      "en": "`Parser._do_parse` catches `exceptions.LexerError` and `exceptions.ParseError`, assigns `e.expression = expression` and re-raises. For `exceptions.IncompleteExpressionError`, it calls `e.set_expression(expression)` and re-raises. The exception class implementations are outside this evidence pack.",
+      "pt-br": "`Parser._do_parse` captura `exceptions.LexerError` e `exceptions.ParseError`, atribui `e.expression = expression` e relança a exceção. Para `exceptions.IncompleteExpressionError`, chama `e.set_expression(expression)` e relança a exceção. As implementações dessas classes de exceção estão fora deste conjunto de evidências.",
+      "evidence_ids": [
+        "Parser._do_parse",
+        "jmespath/parser.py:import:31"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "eviction-errors",
+      "section": "error_handling",
+      "en": "The eviction block in `Parser.parse` catches `KeyError`, `StopIteration` and `RuntimeError`, then returns `parsed_result` before the final `self._CACHE[expression] = parsed_result` statement. This is written control flow, not a concurrency guarantee.",
+      "pt-br": "O bloco de remoção em `Parser.parse` captura `KeyError`, `StopIteration` e `RuntimeError`, e então retorna `parsed_result` antes da instrução final `self._CACHE[expression] = parsed_result`. Isso descreve o fluxo escrito, sem garantir comportamento concorrente.",
+      "evidence_ids": [
+        "Parser.parse"
+      ],
+      "scope": "written-source",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    },
+    {
+      "id": "limits",
+      "section": "limitations",
+      "en": "The source pack does not establish LRU behavior, thread safety, timeout units, retries, authentication or external API responses. Runtime helper resolution, package installation and example execution were not verified.",
+      "pt-br": "O conjunto de código não estabelece comportamento LRU, segurança entre threads, unidades de timeout, retentativas, autenticação ou respostas de APIs externas. A resolução de auxiliares em execução, a instalação do pacote e a execução do exemplo não foram verificadas.",
+      "evidence_ids": [
+        "Parser.parse",
+        "search",
+        "ParsedResult.search"
+      ],
+      "scope": "explicit-evidence-limit",
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "automated_entailment_proven": false
+    }
+  ],
+  "faq": [
+    {
+      "id": "facade-vs-cache",
+      "en_q": "Do unchanged facade signatures mean the cache chapter stays unchanged?",
+      "pt-br_q": "Assinaturas iguais na fachada significam que o capítulo do cache permanece igual?",
+      "claim": "configuration",
+      "en_a": "`Parser._MAX_SIZE` is written as the integer 512. This is a class-level source value, not proof of a live cache occupancy limit under every execution.",
+      "pt-br_a": "`Parser._MAX_SIZE` está escrito como o inteiro 512. Esse é um valor no código da classe, sem constituir prova de um limite de ocupação do cache em toda execução.",
+      "evidence_ids": [
+        "Parser._MAX_SIZE",
+        "Parser.parse"
+      ]
+    },
+    {
+      "id": "result-type",
+      "en_q": "Does this source path prove one fixed return type?",
+      "pt-br_q": "Esse caminho no código prova um único tipo de retorno?",
+      "claim": "input-wire",
+      "en_a": "`search` forwards `data` and `options` to the written chained call. `ParsedResult.search` constructs `visitor.TreeInterpreter(options)`, calls `interpreter.visit(self.parsed, value)` and returns the local `result`. The returned runtime type is not established by these statements alone.",
+      "pt-br_a": "`search` encaminha `data` e `options` para a chamada encadeada escrita. `ParsedResult.search` constrói `visitor.TreeInterpreter(options)`, chama `interpreter.visit(self.parsed, value)` e retorna a variável local `result`. Essas instruções, isoladamente, não estabelecem o tipo retornado em execução.",
+      "evidence_ids": [
+        "search",
+        "ParsedResult.search"
+      ]
+    },
+    {
+      "id": "translated-keys",
+      "en_q": "Should source identifiers change in the Portuguese chapter?",
+      "pt-br_q": "Os identificadores do código devem mudar no capítulo em português?",
+      "claim": "facade",
+      "en_a": "`compile(expression)` returns the expression `parser.Parser().parse(expression)`. `search(expression, data, options=None)` appends `.search(data, options=options)` to that chain.",
+      "pt-br_a": "`compile(expression)` retorna a expressão `parser.Parser().parse(expression)`. `search(expression, data, options=None)` acrescenta `.search(data, options=options)` a essa cadeia.",
+      "evidence_ids": [
+        "compile",
+        "search"
+      ]
+    },
+    {
+      "id": "exception-owner",
+      "en_q": "Which local method enriches parser errors here?",
+      "pt-br_q": "Qual método local acrescenta contexto aos erros do parser neste trecho?",
+      "claim": "parse-errors",
+      "en_a": "`Parser._do_parse` catches `exceptions.LexerError` and `exceptions.ParseError`, assigns `e.expression = expression` and re-raises. For `exceptions.IncompleteExpressionError`, it calls `e.set_expression(expression)` and re-raises. The exception class implementations are outside this evidence pack.",
+      "pt-br_a": "`Parser._do_parse` captura `exceptions.LexerError` e `exceptions.ParseError`, atribui `e.expression = expression` e relança a exceção. Para `exceptions.IncompleteExpressionError`, chama `e.set_expression(expression)` e relança a exceção. As implementações dessas classes de exceção estão fora deste conjunto de evidências.",
+      "evidence_ids": [
+        "Parser._do_parse",
+        "jmespath/parser.py:import:31"
+      ]
+    },
+    {
+      "id": "concurrency",
+      "en_q": "Does catching eviction errors prove thread safety?",
+      "pt-br_q": "Capturar erros na remoção prova segurança entre threads?",
+      "claim": "eviction-errors",
+      "en_a": "The eviction block in `Parser.parse` catches `KeyError`, `StopIteration` and `RuntimeError`, then returns `parsed_result` before the final `self._CACHE[expression] = parsed_result` statement. This is written control flow, not a concurrency guarantee.",
+      "pt-br_a": "O bloco de remoção em `Parser.parse` captura `KeyError`, `StopIteration` e `RuntimeError`, e então retorna `parsed_result` antes da instrução final `self._CACHE[expression] = parsed_result`. Isso descreve o fluxo escrito, sem garantir comportamento concorrente.",
+      "evidence_ids": [
+        "Parser.parse"
+      ]
+    },
+    {
+      "id": "unverified",
+      "en_q": "Which operational guarantees remain unknown?",
+      "pt-br_q": "Quais garantias operacionais permanecem desconhecidas?",
+      "claim": "limits",
+      "en_a": "The source pack does not establish LRU behavior, thread safety, timeout units, retries, authentication or external API responses. Runtime helper resolution, package installation and example execution were not verified.",
+      "pt-br_a": "O conjunto de código não estabelece comportamento LRU, segurança entre threads, unidades de timeout, retentativas, autenticação ou respostas de APIs externas. A resolução de auxiliares em execução, a instalação do pacote e a execução do exemplo não foram verificadas.",
+      "evidence_ids": [
+        "Parser.parse",
+        "search",
+        "ParsedResult.search"
+      ]
+    }
+  ],
+  "source_pack_sha256": "a5219b37e1d693b50308dbb67b02ba60c76cc8806f3fa9f64e5b3c48377ece2c",
+  "files": {
+    "chapter-candidates-v1/en.md": {
+      "sha256": "140415da40789d04835b05b30427b458a2c4b78584807cd04653be4d0df4574b",
+      "bytes": 9256
+    },
+    "chapter-candidates-v1/pt-br.md": {
+      "sha256": "82ecff5e9994d1dd9228adc590234337d6f999f815fbd0cba1f5e86a46dfcce0",
+      "bytes": 9814
+    }
+  },
+  "scope": "DETERMINISTIC_SOURCE_REVIEWED_TECHNICAL_CANDIDATE_NOT_NEURAL_IMPROVEMENT",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_exclusion": true,
+  "published_catalog_written": false,
+  "new_model_calls": 0,
+  "faq_overlap": "All six FAQ answers reuse chapter claims; not six independent training examples."
+}

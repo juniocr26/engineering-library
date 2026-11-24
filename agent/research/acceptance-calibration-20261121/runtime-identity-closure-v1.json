@@ -1,0 +1,117 @@
+{
+  "at": "2026-11-21T20:48:20.402386+00:00",
+  "observations": [
+    {
+      "command": [
+        "/usr/local/bin/docker",
+        "exec",
+        "engineering-library-backend-1",
+        "python3",
+        "-c",
+        "import json,urllib.request\ntags=json.load(urllib.request.urlopen('http://ollama:11434/api/tags',timeout=15))\nprint(json.dumps([{'name':m.get('name'),'digest':m.get('digest'),'size':m.get('size'),'details':m.get('details')}for m in tags.get('models',[])if m.get('name')=='llama3.2:3b']))\n"
+      ],
+      "exit_code": 0,
+      "stdout": "[{\"name\": \"llama3.2:3b\", \"digest\": \"a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72\", \"size\": 2019393189, \"details\": {\"parent_model\": \"\", \"format\": \"gguf\", \"family\": \"llama\", \"families\": [\"llama\"], \"parameter_size\": \"3.2B\", \"quantization_level\": \"Q4_K_M\", \"context_length\": 131072, \"embedding_length\": 3072, \"runner\": \"ggml\"}}]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/local/bin/docker",
+        "inspect",
+        "--format",
+        "{{json .State}}",
+        "engineering-library-ollama-1"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":true,\"Dead\":false,\"Pid\":4281,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2026-11-21T13:25:14.299275754Z\",\"FinishedAt\":\"0001-01-01T00:00:00Z\",\"Health\":{\"Status\":\"healthy\",\"FailingStreak\":0,\"Log\":[{\"Start\":\"2026-11-21T20:47:34.174551467Z\",\"End\":\"2026-11-21T20:47:34.25743405Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T20:47:44.260686805Z\",\"End\":\"2026-11-21T20:47:44.340261222Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T20:47:54.349096296Z\",\"End\":\"2026-11-21T20:47:54.421806004Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T20:48:04.422773342Z\",\"End\":\"2026-11-21T20:48:04.515398384Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"},{\"Start\":\"2026-11-21T20:48:14.525609889Z\",\"End\":\"2026-11-21T20:48:14.603410139Z\",\"ExitCode\":0,\"Output\":\"NAME           ID              SIZE      MODIFIED   \\nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \\n\"}]}}\n",
+      "stderr": ""
+    }
+  ],
+  "target_model": [
+    {
+      "name": "llama3.2:3b",
+      "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+      "size": 2019393189,
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "3.2B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 131072,
+        "embedding_length": 3072,
+        "runner": "ggml"
+      }
+    }
+  ],
+  "expected_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "digest_matches": true,
+  "container_state": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": true,
+    "Dead": false,
+    "Pid": 4281,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-11-21T13:25:14.299275754Z",
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+      "Status": "healthy",
+      "FailingStreak": 0,
+      "Log": [
+        {
+          "Start": "2026-11-21T20:47:34.174551467Z",
+          "End": "2026-11-21T20:47:34.25743405Z",
+          "ExitCode": 0,
+          "Output": "NAME           ID              SIZE      MODIFIED   \nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \n"
+        },
+        {
+          "Start": "2026-11-21T20:47:44.260686805Z",
+          "End": "2026-11-21T20:47:44.340261222Z",
+          "ExitCode": 0,
+          "Output": "NAME           ID              SIZE      MODIFIED   \nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \n"
+        },
+        {
+          "Start": "2026-11-21T20:47:54.349096296Z",
+          "End": "2026-11-21T20:47:54.421806004Z",
+          "ExitCode": 0,
+          "Output": "NAME           ID              SIZE      MODIFIED   \nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \n"
+        },
+        {
+          "Start": "2026-11-21T20:48:04.422773342Z",
+          "End": "2026-11-21T20:48:04.515398384Z",
+          "ExitCode": 0,
+          "Output": "NAME           ID              SIZE      MODIFIED   \nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \n"
+        },
+        {
+          "Start": "2026-11-21T20:48:14.525609889Z",
+          "End": "2026-11-21T20:48:14.603410139Z",
+          "ExitCode": 0,
+          "Output": "NAME           ID              SIZE      MODIFIED   \nllama3.2:3b    a80c4f17acd5    2.0 GB    6 days ago    \n"
+        }
+      ]
+    }
+  },
+  "framework_discoverability_no_imports": {
+    "mlx": false,
+    "mlx_lm": false,
+    "torch": false,
+    "transformers": false,
+    "peft": false,
+    "tokenizers": false
+  },
+  "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "host_platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "new_inference_calls": 0,
+  "native_imports": 0,
+  "installations": 0,
+  "limitations": "Dockerstate/tagidentityandpackagefindspecarenotnativeMLXcompatibility,tokenization,trainablebaseidentity,hardwaretrainingfeasibilityorweightfilefull-byteverification.",
+  "optimizer_updates": 0,
+  "gold": 0
+}

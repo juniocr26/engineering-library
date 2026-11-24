@@ -1,0 +1,408 @@
+{
+  "at": "2026-11-21T16:03:05.861817+00:00",
+  "task": "cobra",
+  "method": "J",
+  "content_sha256": "ea41dd214958b50f7170ea76f159edee2eb805b0a7b7fc9303e54d58a0f0e825",
+  "structure": {
+    "syntax_valid": true,
+    "frozen_subset_schema_errors": [],
+    "both_language_blocks": true,
+    "required_behavior_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08",
+      "C09"
+    ],
+    "not_semantic_proof": true
+  },
+  "required_fact_claims": [
+    {
+      "claim_id": "J-cobra-C01",
+      "reference_id": "C01",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        22,
+        22
+      ],
+      "exact_source_evidence": "type PositionalArgs func(cmd *Command, args []string) error",
+      "expected_interpretation": {
+        "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+        "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+      },
+      "original_generated_en": {
+        "id": "C01",
+        "text": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+        "source": "args.go:22"
+      },
+      "original_generated_pt_BR": {
+        "id": "C01",
+        "text": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error.",
+        "source": "args.go:22"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C02",
+      "reference_id": "C02",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        51,
+        65
+      ],
+      "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+      "expected_interpretation": {
+        "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+        "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+      },
+      "original_generated_en": {
+        "id": "C02",
+        "text": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+        "source": "args.go:51"
+      },
+      "original_generated_pt_BR": {
+        "id": "C02",
+        "text": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0.",
+        "source": "args.go:51"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C03",
+      "reference_id": "C03",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        55,
+        58
+      ],
+      "exact_source_evidence": "\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}",
+      "expected_interpretation": {
+        "en": "Allowlist entries are projected to the portion before the first tab.",
+        "pt-BR": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab."
+      },
+      "original_generated_en": {
+        "id": "C03",
+        "text": "Allowlist entries are projected to the portion before the first tab.",
+        "source": "args.go:55"
+      },
+      "original_generated_pt_BR": {
+        "id": "C03",
+        "text": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab.",
+        "source": "args.go:55"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C04",
+      "reference_id": "C04",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        107,
+        113
+      ],
+      "exact_source_evidence": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}",
+      "expected_interpretation": {
+        "en": "ExactArgs(n) returns a validator function.",
+        "pt-BR": "ExactArgs(n) retorna uma função validadora."
+      },
+      "original_generated_en": {
+        "id": "C04",
+        "text": "ExactArgs(n) returns a validator function.",
+        "source": "args.go:107"
+      },
+      "original_generated_pt_BR": {
+        "id": "C04",
+        "text": "ExactArgs(n) retorna uma função validadora.",
+        "source": "args.go:107"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C05",
+      "reference_id": "C05",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        108,
+        112
+      ],
+      "exact_source_evidence": "\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil",
+      "expected_interpretation": {
+        "en": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+        "pt-BR": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado."
+      },
+      "original_generated_en": {
+        "id": "C05",
+        "text": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+        "source": "args.go:108"
+      },
+      "original_generated_pt_BR": {
+        "id": "C05",
+        "text": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado.",
+        "source": "args.go:108"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C06",
+      "reference_id": "C06",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        127,
+        134
+      ],
+      "exact_source_evidence": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil",
+      "expected_interpretation": {
+        "en": "MatchAll invokes its validators in the order of the supplied slice.",
+        "pt-BR": "MatchAll chama seus validadores na ordem do slice fornecido."
+      },
+      "original_generated_en": {
+        "id": "C06",
+        "text": "MatchAll invokes its validators in the order of the supplied slice.",
+        "source": "args.go:127"
+      },
+      "original_generated_pt_BR": {
+        "id": "C06",
+        "text": "MatchAll chama seus validadores na ordem do slice fornecido.",
+        "source": "args.go:127"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C07",
+      "reference_id": "C07",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        129,
+        131
+      ],
+      "exact_source_evidence": "\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err",
+      "expected_interpretation": {
+        "en": "MatchAll returns immediately at the first non-nil validator error.",
+        "pt-BR": "MatchAll retorna imediatamente no primeiro erro não nil de um validador."
+      },
+      "original_generated_en": {
+        "id": "C07",
+        "text": "MatchAll returns immediately at the first non-nil validator error.",
+        "source": "args.go:129"
+      },
+      "original_generated_pt_BR": {
+        "id": "C07",
+        "text": "MatchAll retorna imediatamente no primeiro erro não nil de um validador.",
+        "source": "args.go:129"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C08",
+      "reference_id": "C08",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        142,
+        144
+      ],
+      "exact_source_evidence": "func ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}",
+      "expected_interpretation": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+      },
+      "original_generated_en": {
+        "id": "C08",
+        "text": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "source": "args.go:142"
+      },
+      "original_generated_pt_BR": {
+        "id": "C08",
+        "text": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "source": "args.go:142"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-cobra-C09",
+      "reference_id": "C09",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        141,
+        141
+      ],
+      "exact_source_evidence": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+      "expected_interpretation": {
+        "en": "The selected source comment marks ExactValidArgs deprecated.",
+        "pt-BR": "O comentário selecionado da fonte marca ExactValidArgs como deprecated."
+      },
+      "original_generated_en": {
+        "id": "C09",
+        "text": "The selected source comment marks ExactValidArgs deprecated.",
+        "source": "args.go:141"
+      },
+      "original_generated_pt_BR": {
+        "id": "C09",
+        "text": "O comentário selecionado da fonte marca ExactValidArgs como deprecated.",
+        "source": "args.go:141"
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    }
+  ],
+  "additional_claims": [
+    {
+      "claim_id": "J-cobra-FAQ-type-role",
+      "generated_en": {
+        "question": "What is the purpose of the PositionalArgs function?",
+        "answer": "The PositionalArgs function is used to validate positional arguments for a command."
+      },
+      "generated_pt_BR": {
+        "question": "Qualé o propósito do PositionalArgs function?",
+        "answer": "O PositionalArgs functionçã usado para validar argumentos posicionais para uma comando."
+      },
+      "verdict": "INSUFFICIENT",
+      "critical": true,
+      "source_context": {
+        "claim_id": "C01",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "type PositionalArgs func(cmd *Command, args []string) error",
+        "source_lines": [
+          22,
+          22
+        ],
+        "expected_interpretation": {
+          "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+          "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "reason": "Main C01 correctly says function type. FAQ instead calls it PositionalArgs function, without clarifying whether it means a callback value or an API declaration. Do not invent a concrete false signature; record ambiguity and malformed PT FAQ separately."
+    }
+  ],
+  "english_code_claim_metrics": {
+    "supported": 9,
+    "contradicted": 0,
+    "insufficient": 1,
+    "denominator": 10,
+    "scope": "Nine correct required EN propositions plus distinct FAQ type/function-role ambiguity; repeated limitations/FAQ language occurrences not extra successes. Main EN/PT reference-fact precision9/9 does not cover this added FAQ."
+  },
+  "required_coverage": {
+    "en": {
+      "numerator": 9,
+      "denominator": 9
+    },
+    "strict_required_bilingual": {
+      "numerator": 9,
+      "denominator": 9
+    }
+  },
+  "full_bilingual_precision": null,
+  "dimensions": [
+    {
+      "dimension": "factual correctness",
+      "score": 0,
+      "reason": "Main facts correct, but added API type/function role is not unambiguous."
+    },
+    {
+      "dimension": "relevant completeness",
+      "score": 0,
+      "reason": "Required execution disclaimers absent; error_boundaries only [] text."
+    },
+    {
+      "dimension": "architecture and dependencies",
+      "score": 1,
+      "reason": "Validator composition facts accurate within bounded args.go; FAQ identity ambiguity remains."
+    },
+    {
+      "dimension": "API contracts",
+      "score": 0,
+      "reason": "Main contracts correct; added FAQ role needs revision."
+    },
+    {
+      "dimension": "errors and exceptions",
+      "score": 0,
+      "reason": "No substantive boundary discussion in [] field; arbitrary callbacks merely scoped as unknown."
+    },
+    {
+      "dimension": "existing tests and actual execution status",
+      "score": 0,
+      "reason": "Required not-executed statement absent."
+    },
+    {
+      "dimension": "examples and commands",
+      "score": 0,
+      "reason": "Required examples/commands-unverified statement absent."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "score": 1,
+      "reason": "All nine main facts preserve meaning; FAQ PT has malformed mixed-language expressions."
+    },
+    {
+      "dimension": "FAQ correctness",
+      "score": 0,
+      "reason": "FAQ type/function role ambiguous and PT wording incomplete."
+    },
+    {
+      "dimension": "citation relevance",
+      "score": 1,
+      "reason": "args.go correct, but several locators point to declaration/loop/allocation rather than exact guard/projection/return lines."
+    },
+    {
+      "dimension": "explicit limitations",
+      "score": 1,
+      "reason": "Correctly declines no-panic guarantee, but required execution and example limits missing."
+    }
+  ],
+  "uncertainty": "Both languages decline establishing a guarantee that all supplied callbacks cannot panic; coarse justified abstention.",
+  "whole_note": "REJECTED",
+  "all_identifiable_code_claims_in_available_text_reviewed": true,
+  "no_whole_json_repair": true,
+  "not_autonomous_fact_discovery": "Correct bilingual fact bank supplied in original C/J prompt.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

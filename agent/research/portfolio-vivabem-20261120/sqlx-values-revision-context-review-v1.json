@@ -1,0 +1,182 @@
+{
+  "at": "2026-11-21T06:47:04.331269+00:00",
+  "pair_freeze": "sqlx-values-revision-pair-freeze-v1.json",
+  "fresh_git_files": [
+    {
+      "revision": "3ab43dbec9270483ab1935a7650dbe9cb68f0d5e",
+      "path": "named.go",
+      "bytes": 14483,
+      "sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1"
+    },
+    {
+      "revision": "3ab43dbec9270483ab1935a7650dbe9cb68f0d5e",
+      "path": "named_test.go",
+      "bytes": 12591,
+      "sha256": "db6b5705a75e8c146ecc478ff18eede6fc5997de5f80c2bd7d08e4d702ed3b1e"
+    },
+    {
+      "revision": "3ab43dbec9270483ab1935a7650dbe9cb68f0d5e",
+      "path": "LICENSE",
+      "bytes": 1077,
+      "sha256": "a0cc6c18255c47fad558e3a40ab10df927dd914156b267a819e073f8755991b3"
+    },
+    {
+      "revision": "3ab43dbec9270483ab1935a7650dbe9cb68f0d5e",
+      "path": "go.mod",
+      "bytes": 155,
+      "sha256": "6427b51cd8c0e84027a7cb6d637ce1057aaef9b5f1e1d2bebcb052892416259b"
+    },
+    {
+      "revision": "f107302e9b2571ebc44d84b934fa9100a7719540",
+      "path": "named.go",
+      "bytes": 14483,
+      "sha256": "d90eb192ece48ad125c184270e7eeec9ee2360df01d401e598d7d2faedc6a2e7"
+    },
+    {
+      "revision": "f107302e9b2571ebc44d84b934fa9100a7719540",
+      "path": "named_test.go",
+      "bytes": 12591,
+      "sha256": "db6b5705a75e8c146ecc478ff18eede6fc5997de5f80c2bd7d08e4d702ed3b1e"
+    },
+    {
+      "revision": "f107302e9b2571ebc44d84b934fa9100a7719540",
+      "path": "LICENSE",
+      "bytes": 1077,
+      "sha256": "a0cc6c18255c47fad558e3a40ab10df927dd914156b267a819e073f8755991b3"
+    },
+    {
+      "revision": "f107302e9b2571ebc44d84b934fa9100a7719540",
+      "path": "go.mod",
+      "bytes": 155,
+      "sha256": "6427b51cd8c0e84027a7cb6d637ce1057aaef9b5f1e1d2bebcb052892416259b"
+    }
+  ],
+  "native_source_quotes": [
+    {
+      "revision": "3ab43dbec9270483ab1935a7650dbe9cb68f0d5e",
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "named.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "d50d4f056187a9accd3779dd2147e72d1bbb7bde80d045265623b8b4b30cdcf1",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "fixBound",
+            "declaration_kind": "function",
+            "symbol": "sqlx.fixBound",
+            "start_line": 245,
+            "end_line": 269,
+            "quote": "func fixBound(bound string, loop int) string {\n\tloc := valuesReg.FindStringIndex(bound)\n\t// defensive guard when \"VALUES (...)\" not found\n\tif len(loc) < 1 {\n\t\treturn bound\n\t}\n\n\topeningBracketIndex := loc[1] - 1\n\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\n\t// defensive guard. must have closing bracket\n\tif index == 0 {\n\t\treturn bound\n\t}\n\tclosingBracketIndex := openingBracketIndex + index + 1\n\n\tvar buffer bytes.Buffer\n\n\tbuffer.WriteString(bound[0:closingBracketIndex])\n\tfor i := 0; i < loop-1; i++ {\n\t\tbuffer.WriteString(\",\")\n\t\tbuffer.WriteString(bound[openingBracketIndex:closingBracketIndex])\n\t}\n\tbuffer.WriteString(bound[closingBracketIndex:])\n\treturn buffer.String()\n}",
+            "declaration": "func fixBound(bound string, loop int) string",
+            "function_type": "func(bound string, loop int) string"
+          },
+          {
+            "selector": "findMatchingClosingBracketIndex",
+            "declaration_kind": "function",
+            "symbol": "sqlx.findMatchingClosingBracketIndex",
+            "start_line": 229,
+            "end_line": 243,
+            "quote": "func findMatchingClosingBracketIndex(s string) int {\n\tcount := 0\n\tfor i, ch := range s {\n\t\tif ch == '(' {\n\t\t\tcount++\n\t\t}\n\t\tif ch == ')' {\n\t\t\tcount--\n\t\t\tif count == 0 {\n\t\t\t\treturn i\n\t\t\t}\n\t\t}\n\t}\n\treturn 0\n}",
+            "declaration": "func findMatchingClosingBracketIndex(s string) int",
+            "function_type": "func(s string) int"
+          },
+          {
+            "selector": "bindArray",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindArray",
+            "start_line": 273,
+            "end_line": 301,
+            "quote": "func bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\t// do the initial binding with QUESTION;  if bindType is not question,\n\t// we can rebind it at the end.\n\tbound, names, err := compileNamedQuery([]byte(query), QUESTION)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\tarrayValue := reflect.ValueOf(arg)\n\tarrayLen := arrayValue.Len()\n\tif arrayLen == 0 {\n\t\treturn \"\", []interface{}{}, fmt.Errorf(\"length of array is 0: %#v\", arg)\n\t}\n\tvar arglist = make([]interface{}, 0, len(names)*arrayLen)\n\tfor i := 0; i < arrayLen; i++ {\n\t\telemArglist, err := bindAnyArgs(names, arrayValue.Index(i).Interface(), m)\n\t\tif err != nil {\n\t\t\treturn \"\", []interface{}{}, err\n\t\t}\n\t\targlist = append(arglist, elemArglist...)\n\t}\n\tif arrayLen > 1 {\n\t\tbound = fixBound(bound, arrayLen)\n\t}\n\t// adjust binding type if we weren't on question\n\tif bindType != QUESTION {\n\t\tbound = Rebind(bindType, bound)\n\t}\n\treturn bound, arglist, nil\n}",
+            "declaration": "func bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)",
+            "function_type": "func(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "revision": "f107302e9b2571ebc44d84b934fa9100a7719540",
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "named.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "d90eb192ece48ad125c184270e7eeec9ee2360df01d401e598d7d2faedc6a2e7",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "fixBound",
+            "declaration_kind": "function",
+            "symbol": "sqlx.fixBound",
+            "start_line": 245,
+            "end_line": 269,
+            "quote": "func fixBound(bound string, loop int) string {\n\tloc := valuesReg.FindStringIndex(bound)\n\t// defensive guard when \"VALUES (...)\" not found\n\tif len(loc) < 2 {\n\t\treturn bound\n\t}\n\n\topeningBracketIndex := loc[1] - 1\n\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\n\t// defensive guard. must have closing bracket\n\tif index == 0 {\n\t\treturn bound\n\t}\n\tclosingBracketIndex := openingBracketIndex + index + 1\n\n\tvar buffer bytes.Buffer\n\n\tbuffer.WriteString(bound[0:closingBracketIndex])\n\tfor i := 0; i < loop-1; i++ {\n\t\tbuffer.WriteString(\",\")\n\t\tbuffer.WriteString(bound[openingBracketIndex:closingBracketIndex])\n\t}\n\tbuffer.WriteString(bound[closingBracketIndex:])\n\treturn buffer.String()\n}",
+            "declaration": "func fixBound(bound string, loop int) string",
+            "function_type": "func(bound string, loop int) string"
+          },
+          {
+            "selector": "findMatchingClosingBracketIndex",
+            "declaration_kind": "function",
+            "symbol": "sqlx.findMatchingClosingBracketIndex",
+            "start_line": 229,
+            "end_line": 243,
+            "quote": "func findMatchingClosingBracketIndex(s string) int {\n\tcount := 0\n\tfor i, ch := range s {\n\t\tif ch == '(' {\n\t\t\tcount++\n\t\t}\n\t\tif ch == ')' {\n\t\t\tcount--\n\t\t\tif count == 0 {\n\t\t\t\treturn i\n\t\t\t}\n\t\t}\n\t}\n\treturn 0\n}",
+            "declaration": "func findMatchingClosingBracketIndex(s string) int",
+            "function_type": "func(s string) int"
+          },
+          {
+            "selector": "bindArray",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindArray",
+            "start_line": 273,
+            "end_line": 301,
+            "quote": "func bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\t// do the initial binding with QUESTION;  if bindType is not question,\n\t// we can rebind it at the end.\n\tbound, names, err := compileNamedQuery([]byte(query), QUESTION)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\tarrayValue := reflect.ValueOf(arg)\n\tarrayLen := arrayValue.Len()\n\tif arrayLen == 0 {\n\t\treturn \"\", []interface{}{}, fmt.Errorf(\"length of array is 0: %#v\", arg)\n\t}\n\tvar arglist = make([]interface{}, 0, len(names)*arrayLen)\n\tfor i := 0; i < arrayLen; i++ {\n\t\telemArglist, err := bindAnyArgs(names, arrayValue.Index(i).Interface(), m)\n\t\tif err != nil {\n\t\t\treturn \"\", []interface{}{}, err\n\t\t}\n\t\targlist = append(arglist, elemArglist...)\n\t}\n\tif arrayLen > 1 {\n\t\tbound = fixBound(bound, arrayLen)\n\t}\n\t// adjust binding type if we weren't on question\n\tif bindType != QUESTION {\n\t\tbound = Rebind(bindType, bound)\n\t}\n\treturn bound, arglist, nil\n}",
+            "declaration": "func bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)",
+            "function_type": "func(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    }
+  ],
+  "native_declarations": 6,
+  "whole_commit_changed_paths": [
+    "named.go"
+  ],
+  "named_go_only_change_is_threshold1_to2": true,
+  "other_selected_paths_bytes_equal": true,
+  "source_context": [
+    "Bothversionsimportstandardregexp,createvaluesRegviaregexp.MustCompileandassignlocdirectlyfromFindStringIndex.",
+    "No locwrite occursbetweenthat assignment andfirstguard/index.",
+    "Onlyonecharacter changesinfullnamed.go;otherselectedsource/test/notice/modulebytesunchanged."
+  ],
+  "contract_source": "sqlx-values-revision-primary-contract-review-v1.json",
+  "finding": "Guard predicates differ only for len(loc)==1. On the documented producer domain0or>=2, both choose the same first-guard branch. The commit subject is not evidence that the old no-match path panicked; oldguardalreadyreturnsfornil.",
+  "semantic_status": "CONDITIONAL_GUARD_EQUIVALENCE_ON_DOCUMENTED_DOMAIN_NOT_RUNTIME_PROOF",
+  "not_proven": [
+    "Historicalinstalledstdlib/runtimebehavior,fullprogram/ABI/performancecompatibility or allpaniccauses.",
+    "ArbitrarySQLvalidity,driveracceptanceorbulkoperationoutcomes.",
+    "Automaticlifecycle/modelaccuracy."
+  ],
+  "source_execution": false,
+  "database_operations": false,
+  "training_gold": false
+}

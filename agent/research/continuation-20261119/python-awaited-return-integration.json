@@ -1,0 +1,69 @@
+{
+  "id": "CONT-PYTHON-AWAITED-RETURN",
+  "status": "VERIFIED_INTEGRATED_OPTIONAL_PROFILE",
+  "at": "2026-11-19T14:31:09.163230+00:00",
+  "caller": "1.9.38",
+  "profile": "python-async-dispatch-and-return-v3",
+  "source": "starlette@271c277da0ff64e2048a4d46ecc812b9d61db5f6:starlette/concurrency.py:run_in_threadpool",
+  "problem": "Actual model reply omitted return await and made thread/concurrency guarantees outside selected helper evidence.",
+  "scope": "Bounded module-level assignment then awaited return. Records exact written expressions and conditional result propagation; no imported-helper semantics.",
+  "criteria": "private-research://continuation-20261119/python-return-candidate/criteria.json",
+  "before_after": {
+    "before": {
+      "status": "REFUSED",
+      "reason": "requires sole if/else body"
+    },
+    "after": {
+      "status": "RECORDED",
+      "ir": {
+        "declaration": "async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T",
+        "kind": "source-derived",
+        "qualified_symbol": "run_in_threadpool",
+        "line": 32,
+        "end_line": 34,
+        "quote": "async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:\n    func = functools.partial(func, *args, **kwargs)\n    return await anyio.to_thread.run_sync(func)\n",
+        "quote_sha256": "d6ae32f8faf0bafe2369d4009f7e3726f921da3364396d74dd868a28216a66cc",
+        "source_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83",
+        "source_executed": false,
+        "shape": "local-call-awaited-return",
+        "scope": "Syntactic assignment and awaited return; no binding/helper/runtime proof",
+        "local_target": "func",
+        "binding_call": "functools.partial(func, *args, **kwargs)",
+        "binding_callee": "functools.partial",
+        "returned_call": "anyio.to_thread.run_sync(func)",
+        "returned_callee": "anyio.to_thread.run_sync"
+      },
+      "en": "`run_in_threadpool` has declaration `async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T`. The body assigns the result of `functools.partial(func, *args, **kwargs)` to local `func`, then executes `return await anyio.to_thread.run_sync(func)`. If that awaited expression completes normally, its result is returned by this body. There is no try/except in the body. Annotations are recorded syntax, not evaluated types. These are source-derived syntax facts; name bindings, argument-binding behavior of helpers, thread scheduling and successful runtime completion are not verified.",
+      "pt-br": "`run_in_threadpool` tem declaração `async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T`. O corpo atribui o resultado de `functools.partial(func, *args, **kwargs)` à variável local `func`, depois executa `return await anyio.to_thread.run_sync(func)`. Se essa expressão aguardada termina normalmente, seu resultado é retornado por este corpo. Não há try/except no corpo. Anotações são sintaxe registrada, não tipos avaliados. São fatos sintáticos derivados da fonte; vínculos de nomes, comportamento de associação de argumentos dos auxiliares, escalonamento de threads e conclusão bem-sucedida em execução não foram verificados."
+    },
+    "source_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83",
+    "model_calls": 0,
+    "source_executed": false,
+    "baseline_reproduction_timing": "Original producer saved before implementation; refusal replayed after implementation, not a pre-change test run"
+  },
+  "controls": {
+    "native_python314_tests": 7,
+    "linux_python311_all_offline_tests": 36,
+    "ruby_full_tests": 243,
+    "ruby_full_assertions": 1573,
+    "failures": 0,
+    "targeted_ruby_tests": 19,
+    "targeted_ruby_assertions": 194,
+    "old_if_else_EN_PT_rendering_byte_identical": true,
+    "actual_command_first_run": 0,
+    "actual_command_second_run": "no-op",
+    "model_calls": 0,
+    "source_executed": false
+  },
+  "failures_preserved": [
+    "Initial negative fixture accidentally reconstructed the unchanged positive source; corrected targeted call replacement. Initial suite stopped at that test, then36Python/243Ruby all passed."
+  ],
+  "invalidation": "Existing producer+consumer SHA and explicit profile identity participate in source_analysis evidence; no model-fact reuse. Selected-source helper spelling change triggers new analysis.",
+  "limitations": [
+    "Only one real sourcefamily; renamed synthetic fixtures are controls, not independent transfer.",
+    "No import binding, scheduler, threadpool, successful execution or exception behavior from helper internals proven.",
+    "No automatic profile selection, new Harness, MCP, plugin or model weights.",
+    "Own deterministic prose remains draft and pending human approval."
+  ],
+  "artifacts_prefix": "private-research://continuation-20261119/python-return-candidate/"
+}

@@ -1,0 +1,159 @@
+{
+  "profile": "fastapi-written-dependency-cache-flow/1",
+  "status": "WRITTEN_FLOW_OBSERVED",
+  "facts": [
+    {
+      "id": "PF01",
+      "lexical_owner": "Dependant",
+      "written_fact": {
+        "use_cache_declared": true,
+        "scope_declared": null
+      },
+      "evidence": [
+        {
+          "path": "fastapi/dependencies/models.py",
+          "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+          "first_line": 53,
+          "last_line": 53,
+          "quote": "    use_cache: bool = True\n",
+          "quote_sha256": "4f6f361f57b25b3bbc90c756cfad081db228be6cb6edd8ecab30c7c519f25e64"
+        },
+        {
+          "path": "fastapi/dependencies/models.py",
+          "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+          "first_line": 55,
+          "last_line": 55,
+          "quote": "    scope: Literal[\"function\", \"request\"] | None = None\n",
+          "quote_sha256": "6c517185b4d32442eeb2aa2986f0de4bbd5bbd82eba21e1dca1f15f901c226cd"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "PF02",
+      "lexical_owner": "solve_dependencies",
+      "written_fact": {
+        "condition": "dependency_cache is None",
+        "assignment": "dependency_cache = {}",
+        "other_local_cache_name_rebindings": false
+      },
+      "evidence": [
+        {
+          "path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 700,
+          "last_line": 701,
+          "quote": "    if dependency_cache is None:\n        dependency_cache = {}\n",
+          "quote_sha256": "242d1b3c2d796c7809cca986dcd648ff3c03f7ed5e57c7dbbbfc43ddb12a28c5"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "PF03",
+      "lexical_owner": "solve_dependencies",
+      "written_fact": {
+        "call": "solve_dependencies",
+        "keyword": "dependency_cache",
+        "value": "dependency_cache",
+        "placement": "direct assignment in selected dependency loop"
+      },
+      "evidence": [
+        {
+          "path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 726,
+          "last_line": 737,
+          "quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n",
+          "quote_sha256": "659c7c8a236e1b07e9e38078fd181a48ea85f391c6b7c53d910e2a1003098253"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "PF04",
+      "lexical_owner": "solve_dependencies",
+      "written_fact": {
+        "read_condition": "sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache",
+        "assignment": "solved = dependency_cache[sub_dependant_cache_key]",
+        "dynamic_call_completion_verified": false
+      },
+      "evidence": [
+        {
+          "path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 746,
+          "last_line": 746,
+          "quote": "        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n",
+          "quote_sha256": "a7eaf3d31aa799c298e08df42ff2003b5ce133b7fa459e29b5f4b7ed4acb4647"
+        },
+        {
+          "path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 747,
+          "last_line": 747,
+          "quote": "            solved = dependency_cache[sub_dependant_cache_key]\n",
+          "quote_sha256": "b2bcb14c978643efbbcfcbb6a31339071c95f257a0856fe4ee73409ee69ab7ec"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "PF05",
+      "lexical_owner": "solve_dependencies",
+      "written_fact": {
+        "write_condition": "sub_dependant_cache_key not in dependency_cache",
+        "assignment": "dependency_cache[sub_dependant_cache_key] = solved",
+        "use_cache_in_this_guard": true,
+        "applies_only_when_control_reaches_guard": true
+      },
+      "evidence": [
+        {
+          "path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 774,
+          "last_line": 775,
+          "quote": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved\n",
+          "quote_sha256": "0c89ae9aaf6dbaae8626eb7fa79b63438971c3f65072c72f6a00232dd7590284"
+        }
+      ],
+      "runtime_verified": false
+    },
+    {
+      "id": "PF06",
+      "lexical_owner": "solve_dependencies",
+      "written_fact": {
+        "written_isinstance_assertions": [
+          "request_astack",
+          "function_astack"
+        ],
+        "type_name": "AsyncExitStack",
+        "assertions_enabled_at_runtime_unverified": true
+      },
+      "evidence": [
+        {
+          "path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 687,
+          "last_line": 689,
+          "quote": "    assert isinstance(request_astack, AsyncExitStack), (\n        \"fastapi_inner_astack not found in request scope\"\n    )\n",
+          "quote_sha256": "e38b07d14a37afdb525db9ea66ff03ebde498f5f736ba23709885c07a2d7a612"
+        },
+        {
+          "path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 691,
+          "last_line": 693,
+          "quote": "    assert isinstance(function_astack, AsyncExitStack), (\n        \"fastapi_function_astack not found in request scope\"\n    )\n",
+          "quote_sha256": "50229bbd3d822685a9221952df6b32a9720adf5fce9b588f6af7e9e004e1360f"
+        }
+      ],
+      "runtime_verified": false
+    }
+  ],
+  "source_program_executed": false,
+  "runtime_guarantee": false,
+  "arbitrary_prose_verified": false,
+  "owner_approved": false,
+  "training_gold": false
+}

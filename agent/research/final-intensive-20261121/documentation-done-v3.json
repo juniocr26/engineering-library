@@ -1,0 +1,107 @@
+{
+  "version": "documentation-done/3.0-research",
+  "frozen_at": "2026-11-21T22:44:42.896918+00:00",
+  "extends": "agent/research/acceptance-calibration-20261121/acceptance-protocol-v2.json",
+  "prior_sha256": "3ccaf0a6e89f1564abae1080450ce8ff5698460c55b78d41559cd59ef9adf827",
+  "scope": "New bounded research evaluations only; does not overwrite historical verdicts.",
+  "mandatory_gates": [
+    {
+      "id": "G1",
+      "name": "SOURCE_IDENTITY",
+      "requirement": "Repository, immutable revision, source paths and exact reviewed bytes match; working-tree drift is recorded separately."
+    },
+    {
+      "id": "G2",
+      "name": "FACTUAL_CORRECTNESS",
+      "requirement": "Every factual proposition reviewed; no critical contradiction, invented API or unsupported runtime guarantee."
+    },
+    {
+      "id": "G3",
+      "name": "ARCHITECTURAL_CONTEXT",
+      "requirement": "All frozen relevant callers, callees, configuration, dependencies, state, errors and lifecycle covered within declared boundary."
+    },
+    {
+      "id": "G4",
+      "name": "REQUIRED_COMPLETENESS",
+      "requirement": "Every predeclared mandatory requirement covered; no retrospective narrowing."
+    },
+    {
+      "id": "G5",
+      "name": "EXAMPLES_AND_TESTS",
+      "requirement": "Execution claims match actual receipts; static checks are labelled static; required examples validated at authorized level."
+    },
+    {
+      "id": "G6",
+      "name": "BILINGUAL_SEMANTICS",
+      "requirement": "Both required languages convey equivalent propositions, conditions, negations and identifiers."
+    },
+    {
+      "id": "G7",
+      "name": "DOCUMENTATION_MAINTENANCE",
+      "requirement": "ADD/MODIFY/REMOVE/NO-OP/INCONCLUSIVE supported by separately acquired scope evidence; absence in one file never authorizes REMOVE."
+    },
+    {
+      "id": "G8",
+      "name": "INDEPENDENT_VERIFICATION",
+      "requirement": "Separate source acquisition/verification procedure challenges output and negative controls; identify same-agent limits, never imply independent human review."
+    },
+    {
+      "id": "G9",
+      "name": "RECOVERABILITY_AND_PROVENANCE",
+      "requirement": "Candidate, frozen criteria, reviewed sources, references, model identity, evaluations and limitations recoverable with verified bindings."
+    }
+  ],
+  "gate_states": [
+    "PASS",
+    "FAIL",
+    "INCONCLUSIVE",
+    "N/A"
+  ],
+  "pass_rule": "All nine gates PASS, except predeclared justified N/A. Unknown critical evidence is INCONCLUSIVE. Any mandatory FAIL rejects. No critical unreviewed claim.",
+  "freeze_fields": [
+    "project_identity",
+    "source_revision",
+    "source_inventory",
+    "document_type",
+    "audience",
+    "interfaces_and_responsibilities",
+    "architecture_and_dependencies",
+    "behavior_and_errors",
+    "tests_and_examples",
+    "languages",
+    "lifecycle_action_scope",
+    "uncertainty_and_exclusions",
+    "independent_verification_criteria",
+    "gate_applicability"
+  ],
+  "approval_levels": {
+    "TECHNICALLY_ACCEPTED": "Exact reviewed candidate passes all applicable gates within frozen scope; not publication/training authorization.",
+    "PUBLICATION_APPROVED": "Technical acceptance plus separately authorized editorial, licensing, confidentiality and publication review.",
+    "TRAINING_GOLD_APPROVED": "Explicit owner training-use approval of exact example, cleared rights, lineage and evaluation exclusion; never inherited from technical acceptance."
+  },
+  "model_readiness": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "provisional_thresholds": {
+      "complete_acceptance": 0.8,
+      "critical_unsupported_claims_in_accepted": 0,
+      "unsafe_automatic_remove": 0,
+      "identifier_preservation": 0.95,
+      "required_bilingual_coverage": 1.0,
+      "uncertainty_promotion": 0,
+      "matched_baseline_regression": 0
+    },
+    "sampling": "Freeze diverse family-disjoint evaluation-only task groups, related dependency/revision/translation exclusions, reviewer and sample-size justification before inference. No sufficient independent sample currently established.",
+    "not_certification": true
+  },
+  "metric_fields": [
+    "numerator",
+    "denominator",
+    "population",
+    "method",
+    "baseline",
+    "confidence_limitations"
+  ],
+  "zero_denominator": null,
+  "independence": "Separate verification implementation is procedural independence only. Same-agent semantic judgments are not independent-human approval.",
+  "training_default_deny": true
+}

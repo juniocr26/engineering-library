@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-20T16:19:12.238778+00:00",
+  "command": [
+    "docker",
+    "exec",
+    "-e",
+    "RAILS_ENV=test",
+    "-e",
+    "DATABASE_URL=sqlite3::memory:",
+    "-w",
+    "/app/backend",
+    "engineering-library-backend-1",
+    "bundle",
+    "exec",
+    "ruby",
+    "-Itest",
+    "-e",
+    "Dir[\"test/offline/*_offline.rb\"].sort.each { |path| require_relative path }"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 23.700047208003525,
+  "permanent_tests_modified": false,
+  "new_permanent_tests": 0,
+  "model_calls": 0,
+  "upstream_application_executed": false,
+  "summary": {
+    "runs": 262,
+    "assertions": 1787,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  }
+}

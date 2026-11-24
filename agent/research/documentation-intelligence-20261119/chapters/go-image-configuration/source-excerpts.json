@@ -1,0 +1,102 @@
+{
+  "repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "license": {
+    "id": "MIT",
+    "path": "LICENSE",
+    "sha256": "52b5e2ea72b69e0293b77ab8ca3805404a2b921ea3deb5d433072f144c086446",
+    "retained_private": "private-research://continuation-20261119/sources/go-image-optimizer/LICENSE"
+  },
+  "source_executed": false,
+  "runtime_bindings_verified": false,
+  "sources": [
+    {
+      "path": "backend/internal/config/config.go",
+      "source_sha256": "fc00f62402fa3ea163eab2f97b1f9b5142aebc1e7cc90e7388a10775a31187cc",
+      "units": [
+        {
+          "selector": "Load",
+          "declaration_kind": "function",
+          "symbol": "config.Load",
+          "start_line": 14,
+          "end_line": 24,
+          "quote": "func Load() (Config, error) {\n\tcfg := Config{\n\t\tPort: getEnv(\"PORT\", \"8080\"),\n\t}\n\n\tif err := validatePort(cfg.Port); err != nil {\n\t\treturn Config{}, err\n\t}\n\n\treturn cfg, nil\n}",
+          "declaration": "func Load() (Config, error)",
+          "function_type": "func() (Config, error)"
+        },
+        {
+          "selector": "Config.Addr",
+          "declaration_kind": "method",
+          "symbol": "config.Config.Addr",
+          "start_line": 26,
+          "end_line": 28,
+          "quote": "func (c Config) Addr() string {\n\treturn net.JoinHostPort(\"\", c.Port)\n}",
+          "declaration": "func (c Config) Addr() string",
+          "function_type": "func() string",
+          "receiver_type": "Config",
+          "return_contract": {
+            "AST_expression_kinds": [
+              "*ast.CallExpr"
+            ],
+            "expressions": [
+              "net.JoinHostPort(\"\", c.Port)"
+            ],
+            "kind": "sole-return-expressions",
+            "runtime_completion_verified": false
+          }
+        },
+        {
+          "selector": "getEnv",
+          "declaration_kind": "function",
+          "symbol": "config.getEnv",
+          "start_line": 30,
+          "end_line": 36,
+          "quote": "func getEnv(key, fallback string) string {\n\tvalue := os.Getenv(key)\n\tif value == \"\" {\n\t\treturn fallback\n\t}\n\treturn value\n}",
+          "declaration": "func getEnv(key, fallback string) string",
+          "function_type": "func(key, fallback string) string"
+        },
+        {
+          "selector": "validatePort",
+          "declaration_kind": "function",
+          "symbol": "config.validatePort",
+          "start_line": 38,
+          "end_line": 49,
+          "quote": "func validatePort(port string) error {\n\tnumber, err := strconv.Atoi(port)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"PORT must be a number: %w\", err)\n\t}\n\n\tif number < 1 || number > 65535 {\n\t\treturn fmt.Errorf(\"PORT must be between 1 and 65535\")\n\t}\n\n\treturn nil\n}",
+          "declaration": "func validatePort(port string) error",
+          "function_type": "func(port string) error"
+        }
+      ],
+      "producer": {
+        "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+        "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+        "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.5.0"
+      }
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "backend/cmd/api/main.go",
+      "full_file_sha256": "d020f4e4a8e8e8256399e0288c369d198a70340072679a9a1723ad2c61fd4f29",
+      "ranges": [
+        {
+          "first_line": 17,
+          "last_line": 26,
+          "quote": "func main() {\n\tlogger := slog.New(slog.NewTextHandler(os.Stdout, nil))\n\n\tcfg, err := config.Load()\n\tif err != nil {\n\t\tlogger.Error(\"failed to load configuration\", \"error\", err)\n\t\tos.Exit(1)\n\t}\n\n\tserver := httpserver.NewServer(cfg, logger)\n"
+        }
+      ]
+    },
+    {
+      "path": "backend/internal/infrastructure/http/server.go",
+      "full_file_sha256": "9c0188db5b0093209a240ad03704932c810c109cf5e67358774e14e4541c2c22",
+      "ranges": [
+        {
+          "first_line": 11,
+          "last_line": 26,
+          "quote": "const (\n\treadHeaderTimeout     = 5 * time.Second\n\timageRequestTimeout   = 2 * time.Minute\n\tidleConnectionTimeout = 60 * time.Second\n)\n\nfunc NewServer(cfg config.Config, logger *slog.Logger) *http.Server {\n\treturn &http.Server{\n\t\tAddr:              cfg.Addr(),\n\t\tHandler:           NewRouter(logger),\n\t\tReadHeaderTimeout: readHeaderTimeout,\n\t\tReadTimeout:       imageRequestTimeout,\n\t\tWriteTimeout:      imageRequestTimeout,\n\t\tIdleTimeout:       idleConnectionTimeout,\n\t}\n}\n"
+        }
+      ]
+    }
+  ]
+}

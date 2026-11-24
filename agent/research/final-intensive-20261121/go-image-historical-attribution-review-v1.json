@@ -1,0 +1,104 @@
+{
+  "at": "2026-11-22T03:01:17.110481+00:00",
+  "records": [
+    {
+      "historical_display_id": "gio-animated-limits-caller",
+      "request": {
+        "path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-animated-limits-caller/recorded-request.json",
+        "sha256": "7b99159331d954c487f2f75deb3827fe22a60b8bdb618e8e5e60acf34747188e"
+      },
+      "response": {
+        "path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-animated-limits-caller/raw-response.json",
+        "sha256": "671084d19f13765b44d710be8925cc4bbeaeb86c38dfe7687a2d0450bbd0307b"
+      },
+      "supplied_evidence_ids": [
+        "S1"
+      ],
+      "source_quotes": {
+        "S1": "func ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n"
+      },
+      "fact_count": 1,
+      "response_created_at": "2026-11-19T13:16:00.551573722Z",
+      "done": true,
+      "done_reason": "stop",
+      "prompt_tokens_historical_only": 643,
+      "generated_tokens_historical_only": 216,
+      "model_tag_not_server_digest": "llama3.2:3b",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The ValidateAnimatedDimensions function validates the dimensions of an animated image. It checks if the image size is within the allowed limits, if the frame count is valid, and if the animation is not too large. If any of these conditions are not met, it returns an error. The function takes four parameters: width, height, frameCount, and maxPixels. It returns nil if all conditions are met, and an error otherwise.",
+          "pt-br": "A função ValidateAnimatedDimensions valida as dimensões de uma imagem animada. Ela verifica se o tamanho da imagem está dentro dos limites permitidos, se o número de quadros é válido e se a animação não é muito grande. Se nenhuma dessas condições for atendida, ela retorna um erro. A função recebe quatro parâmetros: largura, altura, número de quadros e maxPixels. Ela retorna nil se todas as condições forem atendidas, e um erro caso contrário."
+        }
+      ]
+    },
+    {
+      "historical_display_id": "gio-animated-limits-helpers",
+      "request": {
+        "path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-animated-limits-helpers/recorded-request.json",
+        "sha256": "5d0e8ae795cb583dc67beeb6b8c5c240dc19ea388c50d643e5fe2c3116c9e8ab"
+      },
+      "response": {
+        "path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-animated-limits-helpers/raw-response.json",
+        "sha256": "442983528de2203badb1bde5a5a5ac7c8741da5ed2b1c2f360af28c6a325cec8"
+      },
+      "supplied_evidence_ids": [
+        "S1",
+        "S2"
+      ],
+      "source_quotes": {
+        "S1": "func ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n",
+        "S2": "func ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n"
+      },
+      "fact_count": 5,
+      "response_created_at": "2026-11-19T13:18:26.369567136Z",
+      "done": true,
+      "done_reason": "stop",
+      "prompt_tokens_historical_only": 980,
+      "generated_tokens_historical_only": 562,
+      "model_tag_not_server_digest": "llama3.2:3b",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The ValidateAnimatedDimensions function checks if the frame count is positive and if the width is not larger than the maximum allowed pixels per frame, divided by the height. It also validates the image size by checking if the width and height are positive and if the width is not larger than the maximum allowed pixels, divided by the height.",
+          "pt-br": "A função ValidateAnimatedDimensions verifica se o número de quadros é positivo e se o ancho é menor que o número máximo de píxeis por quadro, dividido pelo alto. Ela também valida o tamanho da imagem, verificando se o ancho e o alto são positivos e se o ancho não é maior que o número máximo de píxeis, dividido pelo alto."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The ValidateImageSize function checks if the width and height are positive and if the width is not larger than the maximum allowed pixels, divided by the height. It returns an error if the width or height is zero or negative.",
+          "pt-br": "A função ValidateImageSize verifica se o ancho e o alto são positivos e se o ancho não é maior que o número máximo de píxeis, dividido pelo alto. Ela retorna um erro se o ancho ou o alto for zero ou negativo."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The ValidateImageSize function returns an error if the width is larger than the maximum allowed pixels, divided by the height. It returns nil if the width and height are valid.",
+          "pt-br": "A função ValidateImageSize retorna um erro se o ancho for maior que o número máximo de píxeis, dividido pelo alto. Ela retorna nil se o ancho e o alto forem válidos."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The ValidateImageSize function returns an error if the width is larger than the maximum allowed pixels, divided by the height. It returns nil if the width and height are valid.",
+          "pt-br": "A função ValidateImageSize retorna um erro se o ancho for maior que o número máximo de píxeis, dividido pelo alto. Ela retorna nil se o ancho e o alto forem válidos."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The ValidateImageSize function returns an error if the width is larger than the maximum allowed pixels, divided by the height. It returns nil if the width and height are valid.",
+          "pt-br": "A função ValidateImageSize retorna um erro se o ancho for maior que o número máximo de píxeis, dividido pelo alto. Ela retorna nil se o ancho e o alto forem válidos."
+        }
+      ]
+    }
+  ],
+  "finding": "HISTORICAL_CHAPTER_ATTRIBUTION_INACCURACY_CONFIRMED",
+  "caller_negation_error": "Confirmed specific PT any-versus-none inversion in actual response, despite final broad otherwise clause.",
+  "helper_exact_error": "First PT fact uses strict upper-width menor que wording, while source rejects width>bound and allows equality. It does not incorrectly reject nonpositive dimensions; its second fact explicitly says zero ou negativo and positivity statements agree with source.",
+  "original_chapter_error": "The original EN/PT clause links strict less-than wording to nonpositive rejection, conflating upper-bound equality with lower-bound positivity.",
+  "additional_historical_mechanisms": [
+    "Three identical helper output facts are preserved repetition, not independent facts.",
+    "Helper request had both S1 animation and S2 static helper; missing numerical constants do not justify blaming weights for unseen declaration values.",
+    "Request/response tag is not verified effective server digest; no cross-baseline model identity guarantee."
+  ],
+  "review_status": "ORIGINAL_PAIR_NOT_CURRENT_TECHNICALLY_ACCEPTED_PENDING_SEPARATE_CORRECTION_AND_RECOVERY",
+  "current_model_calls": 0,
+  "current_inference_tokens": 0,
+  "original_docs_or_rows_modified": false,
+  "prior_review_path": "go-image-animation-original-target-review-v1.json",
+  "prior_review_sha256": "a6d8893d500b5732fd2dbc052a8cd21d1af1d1d2fa78e69ac26ace5331034f95"
+}

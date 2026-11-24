@@ -1,0 +1,51 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "lines": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "F01": {
+            "type": "string"
+          },
+          "F04": {
+            "type": "string"
+          },
+          "F07": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "F01",
+          "F04",
+          "F07"
+        ]
+      }
+    },
+    "required": [
+      "lines"
+    ]
+  },
+  "keep_alive": 0,
+  "options": {
+    "temperature": 0,
+    "seed": 11621,
+    "num_ctx": 8192,
+    "num_predict": 500,
+    "num_thread": 4
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Copy the supplied exact_line_bank string values into the required JSON lines object without any change. Preserve leading spaces, tabs and every code character. Do not trim, translate, summarize, add line numbers, add newline terminators or interpret code. These are explicitly provided correct copy targets, not a source retrieval or semantic reasoning task. Return JSON only."
+    },
+    {
+      "role": "user",
+      "content": "Return the same exact strings for each ID. The correct answers are intentionally supplied for this copy/serialization control.\n\n{\"task\": \"fastapi\", \"exact_line_bank\": {\"F01\": \"    use_cache: bool = True\", \"F04\": \"            dependency_cache=dependency_cache,\", \"F07\": \"        if sub_dependant_cache_key not in dependency_cache:\"}}"
+    }
+  ]
+}

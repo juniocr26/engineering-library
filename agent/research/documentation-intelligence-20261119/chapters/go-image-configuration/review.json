@@ -1,0 +1,101 @@
+{
+  "at": "2026-11-20T01:04:27.988728+00:00",
+  "chapter_id": "go-image-configuration",
+  "source_repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "load-result",
+      "path": "backend/internal/config/config.go",
+      "lines": [
+        14,
+        24
+      ],
+      "review": "getEnv candidate validated; failure zeroConfig,err notcandidate; successcfg,nil."
+    },
+    {
+      "id": "empty-env",
+      "path": "backend/internal/config/config.go",
+      "lines": [
+        30,
+        36
+      ],
+      "review": "os.Getenv empty->fallback, nonemptyunchanged; no trim."
+    },
+    {
+      "id": "validation",
+      "path": "backend/internal/config/config.go",
+      "lines": [
+        38,
+        49
+      ],
+      "review": "Atoierrorwrappedbeforeinclusive1..65535guard; successnil, originalstringpreserved."
+    },
+    {
+      "id": "address",
+      "path": "backend/internal/config/config.go",
+      "lines": [
+        26,
+        28
+      ],
+      "review": "JoinHostPortemptyhostandstoredPort, no validation/listenerhere."
+    },
+    {
+      "id": "composition-entry",
+      "path": "backend/cmd/api/main.go",
+      "lines": [
+        17,
+        26
+      ],
+      "review": "main callsconfig.Load, logs/exits1 onerrorbeforeNewServer; staticpathnotexecuted."
+    },
+    {
+      "id": "server-config",
+      "path": "backend/internal/infrastructure/http/server.go",
+      "lines": [
+        11,
+        26
+      ],
+      "review": "NewServerusescfg.Addr,NewRouter; explicitheader5s/readwrite2min/idle60s fields, notmeasureddeadlines."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "81181b350edb1d5a74570b927373c6dd777ad2bfe15b23183bc032ea95103e02",
+      "after_sha256": "13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -25,3 +25,22 @@\n The method `Config.Addr` delegates to `net.JoinHostPort(\"\", c.Port)` and returns that call's result. The written host argument is empty and the written port argument is the receiver's stored field. This method does not call the loader or validator. A configuration constructed through some other path can therefore reach this method without passing the validation shown above. The body alone does not prove successful server binding or availability of the requested port.\n \n The helper-enriched model draft gained separate helper citations and the valid numeric range, but omitted the empty-value fallback, conversion-error path and exact loader returns. It also repeated one helper fact three times. More supplied source improved some coverage without establishing a complete explanation. This corrected chapter uses the whole supplied file to keep selection, validation, returned values and address construction distinct. Source was read and parsed; the external application was not executed. Human factual and bilingual approval remains pending.\n+\n+## Engineer FAQ and the entry-point consumer\n+\n+<!-- reading-section: faq:empty-port-fallback -->\n+### Is an explicitly empty PORT different from a missing value here?\n+\n+The helper checks only whether the obtained string is empty, and uses the fallback on that branch. A nonempty value is forwarded without trimming, then validated. Parsing details belong to the imported integer conversion.\n+\n+<!-- reading-section: faq:zero-config-on-error -->\n+### Does a validation error return the populated candidate?\n+\n+The loader returns a zero configuration together with the error. Only the success branch returns the populated candidate and nil. The stored port remains a string; validation does not replace it with its parsed integer.\n+\n+<!-- reading-section: faq:configuration-consumer -->\n+### Where is this configuration consumed?\n+\n+The additional main source calls the loader and exits its error branch before constructing the server. The added server constructor uses the address method and router constructor, and assigns header/read/write/idle timeout fields. Those are written configuration choices, not observed listening, timeout enforcement or a running deployment.\n+\n+No server was started for this review. Manually constructing a configuration still bypasses the loader; the address method itself does not enforce the validation contract.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "bbc4110b48e3c557d0e63ec89b934a664b678f65bac9ba7e61bf1fa38b4ab50b",
+      "after_sha256": "ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -25,3 +25,22 @@\n O método `Config.Addr` delega a `net.JoinHostPort(\"\", c.Port)` e retorna o resultado dessa chamada. O argumento de host escrito é vazio, e o argumento de porta é o campo armazenado no receptor. O método não chama o carregador nem o validador. Uma configuração construída por outro caminho pode, portanto, chegar a esse método sem passar pela validação mostrada acima. O corpo isolado não prova a vinculação bem-sucedida de um servidor nem a disponibilidade da porta solicitada.\n \n O rascunho do modelo com auxiliares ganhou citações separadas e a faixa numérica válida, mas omitiu a alternativa para valor vazio, o caminho de erro de conversão e os retornos exatos do carregador. Também repetiu três vezes um fato sobre o auxiliar. Fornecer mais fonte ampliou parte da cobertura sem estabelecer uma explicação completa. Este capítulo corrigido usa o arquivo fornecido inteiro para distinguir seleção, validação, valores retornados e construção de endereço. A fonte foi lida e analisada; a aplicação externa não foi executada. A aprovação humana factual e bilíngue permanece pendente.\n+\n+## FAQ de engenharia e consumidor no ponto de entrada\n+\n+<!-- reading-section: faq:empty-port-fallback -->\n+### PORT explicitamente vazio difere de um valor ausente aqui?\n+\n+O helper verifica apenas se a string obtida está vazia e usa a alternativa nesse ramo. Um valor não vazio é encaminhado sem remover espaços e depois validado. Detalhes da análise pertencem à conversão inteira importada.\n+\n+<!-- reading-section: faq:zero-config-on-error -->\n+### Um erro de validação retorna o candidato preenchido?\n+\n+O carregador retorna uma configuração com valores zero junto do erro. Somente o ramo de sucesso retorna o candidato preenchido e nil. A porta armazenada continua string; a validação não a substitui pelo inteiro analisado.\n+\n+<!-- reading-section: faq:configuration-consumer -->\n+### Onde essa configuração é consumida?\n+\n+A fonte adicional de main chama o carregador e encerra seu ramo de erro antes de construir o servidor. O construtor de servidor acrescentado usa o método de endereço e o construtor de router e atribui campos de timeout de cabeçalho/leitura/escrita/inatividade. Essas são escolhas escritas de configuração, não escuta observada, aplicação medida de timeout ou implantação em execução.\n+\n+Nenhum servidor foi iniciado para esta revisão. Construir manualmente uma configuração ainda desvia do carregador; o próprio método de endereço não impõe o contrato de validação.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.305159+00:00",
+    "canonical_question_ids": [
+      "empty-port-fallback",
+      "zero-config-on-error",
+      "configuration-consumer"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/go-image-configuration",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

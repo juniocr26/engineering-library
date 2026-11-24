@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-21T16:31:04.389906+00:00",
+  "case": "fastapi-C1",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-C1",
+    "task": "fastapi",
+    "claim": "The selected Dependant.scope class field has the declared default \"function\".",
+    "expected_verdict": "CONTRADICTED",
+    "reference_id": "F02",
+    "reviewer": "Same campaign agent, frozen source interpretation; not independent owner",
+    "critical": true,
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "scope": "Selected cards only; no project-wide runtime truth label"
+  },
+  "reference_anchor": {
+    "claim_id": "F02",
+    "task": "fastapi",
+    "family": "fastapi/fastapi",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_path": "fastapi/dependencies/models.py",
+    "source_file_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+    "exact_source_evidence": "    scope: Literal[\"function\", \"request\"] | None = None",
+    "source_lines": [
+      55,
+      55
+    ],
+    "expected_interpretation": {
+      "en": "The selected scope declaration has default None.",
+      "pt-BR": "A declaração selecionada de scope tem valor padrão None."
+    },
+    "reference_verdict": "SUPPORTED",
+    "critical": true,
+    "reviewer": "Codex same campaign agent; static source semantic review",
+    "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+    "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+    "not_independent_holdout": true
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "Implementation",
+    "evidence": "The scope is declared as \"function\" or \"request\".",
+    "reason": "The source code does not explicitly state that the default scope is \"function\". It only declares the scope as \"function\" or \"request\". The default value is not explicitly stated."
+  },
+  "content_sha256": "37a5e1b54750e01816d64475c957afae6d0dd1f95c5e2b7ee6dfac5041efa8b3",
+  "raw_response_sha256": "9683e4dc806207a068f5742906be5b3519a58aba7c8ab6c4589f58e2103e3c41",
+  "primary_raw_label_agreement": false,
+  "rationale_support_for_requested_claim": "CONTRADICTED",
+  "evidence_form": "Paraphrase of declared alternatives, attributed to wrong source file.",
+  "source_relationship_review": "Says default not explicitly stated despite models.py scope declaration ending = None.",
+  "diagnostic_note": "Type alternatives mistaken for missing default; should reject the concrete function-default claim.",
+  "end_to_end_label_and_rationale_supported": false,
+  "original_label_and_reference_unchanged": true,
+  "reviewer": "Same campaign agent; detailed rationale rubric fixed before reading any V/R outputs, but after some V predictions existed unread. Primary protocol/labels froze before predictions.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

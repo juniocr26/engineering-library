@@ -1,0 +1,82 @@
+{
+  "at": "2026-11-20T16:55:56.600238+00:00",
+  "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "cases": [
+    {
+      "id": "custom-read-timeout-subclass",
+      "checks": {
+        "exact_target": true,
+        "exact_message": true,
+        "original_explicit_cause": true
+      },
+      "all_pass": true,
+      "observed_class": "ReadTimeout",
+      "observed_message": "mensagem pr\u00f3pria \u2014 owned \u2713"
+    },
+    {
+      "id": "ambiguous-timeout-network",
+      "checks": {
+        "exact_target": true,
+        "exact_message": true,
+        "original_explicit_cause": true
+      },
+      "all_pass": true,
+      "observed_class": "ReadTimeout",
+      "observed_message": "owned ambiguity"
+    },
+    {
+      "id": "ambiguous-local-remote",
+      "checks": {
+        "exact_target": true,
+        "exact_message": true,
+        "original_explicit_cause": true
+      },
+      "all_pass": true,
+      "observed_class": "LocalProtocolError",
+      "observed_message": "owned ambiguity"
+    },
+    {
+      "id": "raising-str",
+      "checks": {
+        "exact_target": true,
+        "original_context": true,
+        "no_explicit_cause": true,
+        "owned_valueerror_identity": true
+      },
+      "all_pass": true,
+      "observed_class": "ValueError",
+      "observed_message": "owned __str__ failure"
+    },
+    {
+      "id": "nonstring-str",
+      "checks": {
+        "exact_target": true,
+        "original_context": true,
+        "no_explicit_cause": true
+      },
+      "all_pass": true,
+      "observed_class": "TypeError",
+      "observed_message": "__str__ returned non-string (type int)"
+    },
+    {
+      "id": "custom-str-value",
+      "checks": {
+        "exact_target": true,
+        "exact_message": true,
+        "original_explicit_cause": true
+      },
+      "all_pass": true,
+      "observed_class": "ReadTimeout",
+      "observed_message": "valor transformado \u2014 owned \u2713"
+    }
+  ],
+  "all_pass": true,
+  "new_distinct_cases": 6,
+  "selected_source_executed": true,
+  "whole_packages_imported": false,
+  "application_http_requests": 0,
+  "training_excluded": true,
+  "owner_approved": false,
+  "limitations": "Synthetic subclasses and message conversions inside owned namespaces; not an installed package, production transport, or upstream bug demonstration."
+}

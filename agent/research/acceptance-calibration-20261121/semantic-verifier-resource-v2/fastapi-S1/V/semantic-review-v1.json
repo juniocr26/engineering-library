@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-21T17:03:35.895332+00:00",
+  "case": "fastapi-S1",
+  "method": "V",
+  "expected": "SUPPORTED",
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "Implementation",
+    "evidence": "The variable `scope` is declared as `Literal[\"function\", \"request\"] | None = None` in `fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15`.\n\nHowever, in `fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15`, the variable `scope` is used with values \"function\" and \"request\", not None.",
+    "reason": "The source code shows that the `scope` variable is used with values \"function\" and \"request\", not None, which contradicts the declared default value of None in the `models.py` file."
+  },
+  "primary_raw_label_agreement": false,
+  "source_relationship_review": "Declared default None is changed into a question about other runtime values; alleged contradiction does not contradict the frozen class-default statement. Wrong utils.py path is attached to models.py declaration.",
+  "rationale_support_for_requested_claim": "INSUFFICIENT",
+  "end_to_end_label_and_rationale_supported": false,
+  "source_reference": "atomic-reference-ledger-v2.json#F02",
+  "owner_approved": false,
+  "training_gold": false
+}

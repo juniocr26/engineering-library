@@ -1,0 +1,178 @@
+{
+  "at": "2026-11-22T04:01:29.312512+00:00",
+  "protocol_sha256": "f7510ed2ae405878d7f85a536e05756c225ccb4a0a1aabb2bd96c91377b551d0",
+  "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+  "runtime": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+  "observations": {
+    "typescript": "5.9.3",
+    "cases": [
+      {
+        "id": "frontend/app/components/image-resize/image-resize-modal.tsx",
+        "source": "\"use client\";\n\nimport {\n  type RefObject,\n  type SyntheticEvent,\n  useEffect,\n  useId,\n  useRef,\n  useState,\n} from \"react\";\nimport { ImageSettingsDialog } from \"../image-upload/image-settings-dialog\";\nimport { ResizeSettings } from \"./resize-settings\";\nimport { BrowserImagePreview } from \"../image-upload/browser-image-preview\";\nimport {\n  formatBytes,\n  readDownloadName,\n  readErrorMessage,\n} from \"../image-upload/image-file\";\nimport { extensionForContentType } from \"../image-upload/image-format\";\nimport { CloseIcon, SpinnerIcon } from \"../image-upload/icons\";\nimport type { OptimizationResult } from \"../image-upload/types\";\nimport {\n  dimensionError,\n  targetDimensions,\n  type ImageInfo,\n  type ResizeOptions,\n} from \"./resize-options\";\n\ntype Props = {\n  file: File;\n  previewUrl: string;\n  returnFocusRef: RefObject<HTMLButtonElement | null>;\n  onClose: () => void;\n  onComplete: (result: OptimizationResult) => void;\n};\n\nconst buttonClass =\n  \"inline-flex h-12 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black transition focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#08a87d] disabled:cursor-not-allowed disabled:opacity-50\";\n\nexport function ImageResizeModal({\n  file,\n  previewUrl,\n  returnFocusRef,\n  onClose,\n  onComplete,\n}: Props) {\n  const headingRef = useRef<HTMLHeadingElement>(null);\n  const titleId = useId();\n  const [info, setInfo] = useState<ImageInfo | null>(null);\n  const [loadError, setLoadError] = useState<string | null>(null);\n  const [processError, setProcessError] = useState<string | null>(null);\n  const [attempt, setAttempt] = useState(0);\n  const [isSubmitting, setIsSubmitting] = useState(false);\n  const submissionRef = useRef(false);\n  const requestRef = useRef<AbortController | null>(null);\n  const [options, setOptions] = useState<ResizeOptions>({\n    mode: \"pixels\",\n    width: \"\",\n    height: \"\",\n    axis: \"width\",\n    reduction: 50,\n    keepAspectRatio: true,\n  });\n\n  useEffect(() => () => requestRef.current?.abort(), []);\n\n  useEffect(() => {\n    const controller = new AbortController();\n    setLoadError(null);\n    const body = new FormData();\n    body.append(\"image\", file);\n    async function inspect() {\n      try {\n        const response = await fetch(\"/api/images/resize/info\", {\n          method: \"POST\",\n          body,\n          signal: controller.signal,\n        });\n        if (!response.ok) throw new Error(await readErrorMessage(response));\n        const metadata: ImageInfo = await response.json();\n        if (\n          ![metadata.width, metadata.height, metadata.frameCount].every(\n            (n) => Number.isSafeInteger(n) && n > 0,\n          )\n        )\n          throw new Error(\"Could not read image dimensions.\");\n        if (controller.signal.aborted) return;\n        setInfo(metadata);\n        setOptions((current) => ({\n          ...current,\n          width: String(metadata.width),\n          height: String(metadata.height),\n        }));\n      } catch (error) {\n        if (!controller.signal.aborted)\n          setLoadError(\n            error instanceof Error\n              ? error.message\n              : \"Could not read image dimensions.\",\n          );\n      }\n    }\n    void inspect();\n    return () => controller.abort();\n  }, [file, attempt]);\n\n  const target = info ? targetDimensions(info, options) : null;\n  const validationError = info ? dimensionError(info, target) : null;\n  async function submit(event: SyntheticEvent<HTMLFormElement>) {\n    event.preventDefault();\n    event.stopPropagation();\n    if (!info || !target || validationError || submissionRef.current) return;\n    submissionRef.current = true;\n    setIsSubmitting(true);\n    setProcessError(null);\n    const controller = new AbortController();\n    requestRef.current = controller;\n    const body = new FormData();\n    body.append(\"image\", file);\n    for (const [key, value] of Object.entries(options)) {\n      // Number inputs can contain exponent notation (e.g. 1e2). Send the\n      // validated integer value in the decimal syntax expected by Go.\n      body.append(\n        key,\n        key === \"width\" || key === \"height\" ? String(Number(value)) : String(value),\n      );\n    }\n    try {\n      const response = await fetch(\"/api/images/resize\", {\n        method: \"POST\",\n        body,\n        signal: controller.signal,\n      });\n      if (!response.ok) throw new Error(await readErrorMessage(response));\n      const dimensions = {\n        originalWidth: Number(response.headers.get(\"X-Original-Width\")),\n        originalHeight: Number(response.headers.get(\"X-Original-Height\")),\n        width: Number(response.headers.get(\"X-Image-Width\")),\n        height: Number(response.headers.get(\"X-Image-Height\")),\n      };\n      if (\n        !Object.values(dimensions).every(\n          (n) => Number.isSafeInteger(n) && n > 0,\n        )\n      )\n        throw new Error(\n          \"The server returned an incomplete resize result. Please try again.\",\n        );\n      const blob = await response.blob();\n      const name =\n        readDownloadName(response.headers.get(\"Content-Disposition\")) ??\n        `${file.name.replace(/\\.[^/.]+$/, \"\")}_resized${extensionForContentType(blob.type)}`;\n      if (controller.signal.aborted) return;\n      onComplete({\n        operation: \"resize\",\n        name,\n        originalSize: file.size,\n        size: blob.size,\n        blob,\n        type: blob.type,\n        url: URL.createObjectURL(blob),\n        dimensions,\n      });\n    } catch (error) {\n      if (!controller.signal.aborted)\n        setProcessError(\n          error instanceof Error\n            ? error.message\n            : \"Could not resize this image. Please try again.\",\n        );\n    } finally {\n      submissionRef.current = false;\n      setIsSubmitting(false);\n    }\n  }\n\n  return (\n    <ImageSettingsDialog titleId={titleId} headingRef={headingRef} returnFocusRef={returnFocusRef} submissionRef={submissionRef} onClose={onClose}>\n      <form\n        onSubmit={submit}\n        aria-busy={isSubmitting}\n        className=\"flex max-h-[calc(100dvh-2rem)] flex-col\"\n      >\n        <header className=\"flex shrink-0 items-start gap-4 border-b border-[#dbe8f1] px-5 py-4 sm:px-6\">\n          <div className=\"min-w-0 flex-1\">\n            <h2\n              ref={headingRef}\n              tabIndex={-1}\n              id={titleId}\n              className=\"text-xl font-black text-[#066f57] outline-none\"\n            >\n              Resize image\n            </h2>\n            <p className=\"mt-1 text-sm leading-6 text-[#60708d]\">\n              Choose the dimensions that fit your needs.\n            </p>\n          </div>\n          <button\n            type=\"button\"\n            onClick={onClose}\n            disabled={isSubmitting}\n            aria-label=\"Close resize options\"\n            className=\"inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#d6e1ec] text-[#344464] transition hover:bg-[#f7fbff] focus-visible:outline focus-visible:outline-3 focus-visible:outline-[#08a87d] disabled:opacity-50\"\n          >\n            <CloseIcon />\n          </button>\n        </header>\n        <div className=\"grid min-h-0 gap-6 overflow-y-auto p-5 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] sm:p-6\">\n          <div className=\"min-w-0\">\n            <div className=\"rounded-2xl border border-[#dbe8f1] bg-[#f5f9fc] p-3\">\n              <BrowserImagePreview\n                alt=\"Original image\"\n                className=\"overflow-hidden rounded-xl bg-white\"\n                imageClassName=\"h-36 w-full object-contain sm:h-60\"\n                fallbackClassName=\"h-36 sm:h-60\"\n                fileName={file.name}\n                fileType={file.type}\n                src={previewUrl}\n                source={file}\n              />\n              <p className=\"mt-3 truncate text-sm font-bold\" title={file.name}>\n                {file.name}\n              </p>\n              <p className=\"mt-1 text-xs text-[#60708d]\">\n                {formatBytes(file.size)}\n                {info ? ` \u00b7 ${info.width} \u00d7 ${info.height} px` : \"\"}\n              </p>\n            </div>\n            <div\n              aria-live=\"polite\"\n              className=\"mt-3 rounded-xl border border-[#bddfe1] bg-[#f0fbf8] px-4 py-3\"\n            >\n              <p className=\"text-xs font-bold uppercase text-[#066f57]\">\n                Output dimensions\n              </p>\n              <p className=\"mt-1 text-xl font-black\">\n                {target && !validationError\n                  ? `${target.width} \u00d7 ${target.height} px`\n                  : \"\u2014\"}\n              </p>\n              {info && info.frameCount > 1 ? (\n                <p className=\"mt-1 text-xs text-[#60708d]\">\n                  {info.frameCount} animation frames\n                </p>\n              ) : null}\n            </div>\n          </div>\n          <div className=\"min-w-0\">\n            {!info ? (\n              <div\n                role={loadError ? \"alert\" : \"status\"}\n                className=\"flex min-h-40 flex-col items-center justify-center gap-3 text-center text-sm text-[#60708d]\"\n              >\n                {loadError ? (\n                  <>\n                    <p>{loadError}</p>\n                    <button\n                      type=\"button\"\n                      className={`${buttonClass} border border-[#bddfe1] text-[#066f57]`}\n                      onClick={() => setAttempt((n) => n + 1)}\n                    >\n                      Try again\n                    </button>\n                  </>\n                ) : (\n                  <>\n                    <SpinnerIcon />\n                    <p>Reading image dimensions\u2026</p>\n                  </>\n                )}\n              </div>\n            ) : (\n              <ResizeSettings\n                info={info}\n                options={options}\n                isSubmitting={isSubmitting}\n                onOptionsChange={(next) => {\n                  setOptions(next);\n                  setProcessError(null);\n                }}\n              />\n            )}\n            {processError ? (\n              <p\n                role=\"alert\"\n                className=\"mt-4 rounded-xl bg-[#fff5f5] px-3 py-3 text-sm text-[#991b1b]\"\n              >\n                {processError}\n              </p>\n            ) : null}\n          </div>\n        </div>\n        <footer className=\"flex shrink-0 flex-col-reverse gap-3 border-t border-[#dbe8f1] bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-end sm:px-6\">\n          {isSubmitting ? (\n            <span role=\"status\" className=\"text-sm text-[#60708d]\">\n              Resizing image\u2026\n            </span>\n          ) : null}\n          <button\n            type=\"button\"\n            disabled={isSubmitting}\n            onClick={onClose}\n            className={`${buttonClass} border border-[#bddfe1] text-[#066f57] hover:bg-[#f8fffd]`}\n          >\n            Cancel\n          </button>\n          <button\n            type=\"submit\"\n            disabled={!info || !!validationError || isSubmitting}\n            className={`${buttonClass} bg-[#081236] text-white hover:bg-[#14234a]`}\n          >\n            {isSubmitting ? <SpinnerIcon /> : null}Resize image\n          </button>\n        </footer>\n      </form>\n    </ImageSettingsDialog>\n  );\n}\n",
+        "source_sha256": "98d9b4b0e67d7093c963ef128d9f771684cdd8670dcc6bbde82f5eb9173ad58d",
+        "script_kind": "TSX",
+        "expected_zero_diagnostics": true,
+        "diagnostics": [],
+        "declarations": [],
+        "matched": true
+      },
+      {
+        "id": "frontend/app/components/image-resize/resize-options.ts",
+        "source": "export type ImageInfo = {\n  width: number;\n  height: number;\n  contentType: string;\n  format: string;\n  frameCount: number;\n};\n\nexport type ResizeOptions = {\n  mode: \"pixels\" | \"percentage\";\n  width: string;\n  height: string;\n  axis: \"width\" | \"height\";\n  reduction: number;\n  keepAspectRatio: boolean;\n};\n\nexport function targetDimensions(info: ImageInfo, options: ResizeOptions) {\n  let width = Number(options.width);\n  let height = Number(options.height);\n  if (\n    options.mode === \"pixels\" &&\n    (![width, height].every(Number.isSafeInteger) ||\n      width < 1 ||\n      height < 1 ||\n      width > 32_000_000 ||\n      height > 32_000_000)\n  ) {\n    return null;\n  }\n  if (options.mode === \"percentage\" || options.keepAspectRatio) {\n    let scale = (100 - options.reduction) / 100;\n    if (options.mode === \"pixels\") {\n      scale =\n        options.axis === \"height\" ? height / info.height : width / info.width;\n    }\n    width = Math.max(1, Math.round(info.width * scale));\n    height = Math.max(1, Math.round(info.height * scale));\n  }\n  return { width, height };\n}\n\nexport function dimensionError(\n  info: ImageInfo,\n  target: ReturnType<typeof targetDimensions>,\n) {\n  if (!target) return \"Enter a positive whole number for each dimension.\";\n  if (target.width * target.height > 32_000_000)\n    return \"The output must not exceed 32 million pixels.\";\n  if (target.width * target.height * info.frameCount > 64_000_000)\n    return \"This animation exceeds the output frame pixel limit.\";\n  return null;\n}\n",
+        "source_sha256": "881252126b6b188cecb0d4c71cd9457edd01afc595e806f1a538d27cd767a33a",
+        "script_kind": "TS",
+        "expected_zero_diagnostics": true,
+        "diagnostics": [],
+        "declarations": [
+          {
+            "name": "ImageInfo",
+            "kind": "TypeAliasDeclaration",
+            "start_line": 1,
+            "end_line": 7,
+            "type_text": "{\n  width: number;\n  height: number;\n  contentType: string;\n  format: string;\n  frameCount: number;\n}"
+          },
+          {
+            "name": "ResizeOptions",
+            "kind": "TypeAliasDeclaration",
+            "start_line": 9,
+            "end_line": 16,
+            "type_text": "{\n  mode: \"pixels\" | \"percentage\";\n  width: string;\n  height: string;\n  axis: \"width\" | \"height\";\n  reduction: number;\n  keepAspectRatio: boolean;\n}"
+          },
+          {
+            "name": "targetDimensions",
+            "kind": "FunctionDeclaration",
+            "start_line": 18,
+            "end_line": 41,
+            "parameters": [
+              {
+                "name": "info",
+                "type": "ImageInfo"
+              },
+              {
+                "name": "options",
+                "type": "ResizeOptions"
+              }
+            ],
+            "guards": [
+              {
+                "line": 21,
+                "condition": "options.mode === \"pixels\" &&\n    (![width, height].every(Number.isSafeInteger) ||\n      width < 1 ||\n      height < 1 ||\n      width > 32_000_000 ||\n      height > 32_000_000)",
+                "direct_branch_returns": [
+                  "null"
+                ],
+                "has_else": false
+              },
+              {
+                "line": 31,
+                "condition": "options.mode === \"percentage\" || options.keepAspectRatio",
+                "direct_branch_returns": [],
+                "has_else": false
+              }
+            ],
+            "called_expression_text": [
+              "Number",
+              "Number",
+              "[width, height].every",
+              "Math.max",
+              "Math.round",
+              "Math.max",
+              "Math.round"
+            ],
+            "explicit_throw_statements": 0,
+            "last_return": "{ width, height }"
+          },
+          {
+            "name": "dimensionError",
+            "kind": "FunctionDeclaration",
+            "start_line": 43,
+            "end_line": 53,
+            "parameters": [
+              {
+                "name": "info",
+                "type": "ImageInfo"
+              },
+              {
+                "name": "target",
+                "type": "ReturnType<typeof targetDimensions>"
+              }
+            ],
+            "guards": [
+              {
+                "line": 47,
+                "condition": "!target",
+                "direct_branch_returns": [
+                  "\"Enter a positive whole number for each dimension.\""
+                ],
+                "has_else": false
+              },
+              {
+                "line": 48,
+                "condition": "target.width * target.height > 32_000_000",
+                "direct_branch_returns": [
+                  "\"The output must not exceed 32 million pixels.\""
+                ],
+                "has_else": false
+              },
+              {
+                "line": 50,
+                "condition": "target.width * target.height * info.frameCount > 64_000_000",
+                "direct_branch_returns": [
+                  "\"This animation exceeds the output frame pixel limit.\""
+                ],
+                "has_else": false
+              }
+            ],
+            "called_expression_text": [],
+            "explicit_throw_statements": 0,
+            "last_return": "null"
+          }
+        ],
+        "matched": true
+      },
+      {
+        "id": "frontend/app/components/image-resize/resize-settings.tsx",
+        "source": "import { type Dispatch, type SetStateAction, useId } from \"react\";\nimport {\n  dimensionError,\n  targetDimensions,\n  type ImageInfo,\n  type ResizeOptions,\n} from \"./resize-options\";\n\nconst fieldClass =\n  \"mt-2 h-12 w-full rounded-xl border border-[#cfe0ec] bg-white px-3 text-base font-bold text-[#081236] outline-none focus:border-[#08a87d] focus:ring-2 focus:ring-[#08a87d]/20 disabled:bg-[#f1f5f9]\";\n\ntype Props = {\n  info: ImageInfo;\n  options: ResizeOptions;\n  isSubmitting: boolean;\n  onOptionsChange: Dispatch<SetStateAction<ResizeOptions>>;\n};\n\nexport function ResizeSettings({\n  info,\n  options,\n  isSubmitting,\n  onOptionsChange: setOptions,\n}: Props) {\n  const titleId = useId();\n  const target = targetDimensions(info, options);\n  const validationError = dimensionError(info, target);\n  const unchanged =\n    target && target.width === info.width && target.height === info.height;\n  const enlarging =\n    target && (target.width > info.width || target.height > info.height);\n  function changeDimension(axis: \"width\" | \"height\", value: string) {\n    setOptions((current) => {\n      const next = { ...current, [axis]: value, axis };\n      const n = Number(value);\n      if (info && current.keepAspectRatio && Number.isSafeInteger(n) && n > 0) {\n        const other = axis === \"width\" ? \"height\" : \"width\";\n        next[other] = String(\n          Math.max(1, Math.round((n * info[other]) / info[axis])),\n        );\n      }\n      return next;\n    });\n  }\n\n  return (\n    <fieldset disabled={isSubmitting} className=\"min-w-0\">\n      <legend className=\"sr-only\">Resize options</legend>\n      <div\n        className=\"grid grid-cols-2 gap-1 rounded-xl bg-[#edf3f8] p-1\"\n        role=\"tablist\"\n        aria-label=\"Resize mode\"\n      >\n        {([\"pixels\", \"percentage\"] as const).map((mode) => (\n          <button\n            key={mode}\n            id={`${titleId}-${mode}`}\n            aria-controls={`${titleId}-panel`}\n            type=\"button\"\n            role=\"tab\"\n            aria-selected={options.mode === mode}\n            tabIndex={options.mode === mode ? 0 : -1}\n            onKeyDown={(event) => {\n              if (\n                [\"ArrowLeft\", \"ArrowRight\", \"Home\", \"End\"].includes(event.key)\n              ) {\n                event.preventDefault();\n                const next =\n                  event.key === \"Home\"\n                    ? \"pixels\"\n                    : event.key === \"End\"\n                      ? \"percentage\"\n                      : mode === \"pixels\"\n                        ? \"percentage\"\n                        : \"pixels\";\n                setOptions({ ...options, mode: next });\n                document.getElementById(`${titleId}-${next}`)?.focus();\n              }\n            }}\n            onClick={() => {\n              setOptions({ ...options, mode });\n            }}\n            className={`rounded-lg px-3 py-3 text-sm font-black outline-offset-2 focus-visible:outline-[#08a87d] ${options.mode === mode ? \"bg-white text-[#066f57] shadow-sm\" : \"text-[#60708d]\"}`}\n          >\n            {mode === \"pixels\" ? \"Pixels\" : \"Percentage\"}\n          </button>\n        ))}\n      </div>\n      <div\n        role=\"tabpanel\"\n        id={`${titleId}-panel`}\n        aria-labelledby={`${titleId}-${options.mode}`}\n        className=\"mt-5\"\n      >\n        {options.mode === \"pixels\" ? (\n          <>\n            <p className=\"text-sm leading-6 text-[#60708d]\">\n              Set your output size in pixels.\n            </p>\n            <div className=\"mt-3 grid grid-cols-2 gap-3\">\n              <label className=\"text-sm font-bold\">\n                Width (px)\n                <input\n                  className={fieldClass}\n                  inputMode=\"numeric\"\n                  type=\"number\"\n                  min=\"1\"\n                  max=\"32000000\"\n                  step=\"1\"\n                  value={options.width}\n                  onChange={(e) => changeDimension(\"width\", e.target.value)}\n                  required\n                />\n              </label>\n              <label className=\"text-sm font-bold\">\n                Height (px)\n                <input\n                  className={fieldClass}\n                  inputMode=\"numeric\"\n                  type=\"number\"\n                  min=\"1\"\n                  max=\"32000000\"\n                  step=\"1\"\n                  value={options.height}\n                  onChange={(e) => changeDimension(\"height\", e.target.value)}\n                  required\n                />\n              </label>\n            </div>\n            <label className=\"mt-5 flex items-center gap-3 text-sm font-bold\">\n              <input\n                type=\"checkbox\"\n                className=\"h-4 w-4 accent-[#08a87d]\"\n                checked={options.keepAspectRatio}\n                onChange={(e) => {\n                  const checked = e.target.checked;\n                  setOptions((current) => {\n                    const next = {\n                      ...current,\n                      keepAspectRatio: checked,\n                    };\n                    if (checked) {\n                      const other = next.axis === \"width\" ? \"height\" : \"width\";\n                      const n = Number(next[next.axis]);\n                      if (Number.isSafeInteger(n) && n > 0)\n                        next[other] = String(\n                          Math.max(\n                            1,\n                            Math.round((n * info[other]) / info[next.axis]),\n                          ),\n                        );\n                    }\n                    return next;\n                  });\n                }}\n              />\n              Keep aspect ratio\n            </label>\n            <p className=\"mt-2 text-xs leading-5 text-[#60708d]\">\n              {options.keepAspectRatio\n                ? \"The other dimension adjusts automatically.\"\n                : \"Changing the proportions will stretch the image.\"}\n            </p>\n          </>\n        ) : (\n          <>\n            <p className=\"mb-3 text-sm leading-6 text-[#60708d]\">\n              Reduce width and height by the same percentage.\n            </p>\n            <div className=\"grid gap-2\">\n              {[25, 50, 75].map((reduction) => (\n                <label\n                  key={reduction}\n                  className={`flex cursor-pointer items-center justify-between rounded-xl border px-4 py-3 ${options.reduction === reduction ? \"border-[#08a87d] bg-[#f0fbf8]\" : \"border-[#dbe8f1]\"}`}\n                >\n                  <span>\n                    <span className=\"text-sm font-bold\">\n                      {reduction}% smaller\n                    </span>\n                    <span className=\"mt-1 block text-xs text-[#60708d]\">\n                      {Math.max(\n                        1,\n                        Math.round((info.width * (100 - reduction)) / 100),\n                      )}{\" \"}\n                      \u00d7{\" \"}\n                      {Math.max(\n                        1,\n                        Math.round((info.height * (100 - reduction)) / 100),\n                      )}{\" \"}\n                      px\n                    </span>\n                  </span>\n                  <input\n                    type=\"radio\"\n                    name=\"resize-reduction\"\n                    value={reduction}\n                    checked={options.reduction === reduction}\n                    onChange={() => {\n                      setOptions({ ...options, reduction });\n                    }}\n                    className=\"h-4 w-4 accent-[#08a87d]\"\n                  />\n                </label>\n              ))}\n            </div>\n          </>\n        )}\n      </div>\n      {validationError ? (\n        <p role=\"alert\" className=\"mt-3 text-sm font-bold text-[#991b1b]\">\n          {validationError}\n        </p>\n      ) : null}\n      {unchanged && !validationError ? (\n        <p className=\"mt-3 text-xs leading-5 text-[#60708d]\">\n          The dimensions are unchanged. The original file will be returned.\n        </p>\n      ) : null}\n      {enlarging && !validationError ? (\n        <p className=\"mt-3 text-xs leading-5 text-[#875a07]\">\n          Enlarging increases dimensions, but does not add detail.\n        </p>\n      ) : null}\n    </fieldset>\n  );\n}\n",
+        "source_sha256": "02585ed0bb3c9782f0d52b8a66ab1213b78c79d39707c688e6eceb157a1bddf2",
+        "script_kind": "TSX",
+        "expected_zero_diagnostics": true,
+        "diagnostics": [],
+        "declarations": [],
+        "matched": true
+      },
+      {
+        "id": "frontend/tests/resize-options.test.mjs",
+        "source": "import assert from \"node:assert/strict\";\nimport test from \"node:test\";\nimport {\n  targetDimensions,\n  dimensionError,\n} from \"../app/components/image-resize/resize-options.ts\";\n\nconst info = { width: 899, height: 1599, frameCount: 1 };\nconst defaults = {\n  mode: \"pixels\",\n  width: \"899\",\n  height: \"1599\",\n  axis: \"width\",\n  keepAspectRatio: true,\n  reduction: 50,\n};\n\nfor (const [name, overrides, expected] of [\n  [\"unchanged\", {}, { width: 899, height: 1599 }],\n  [\"enlarge from width\", { width: \"1798\", height: \"1\" }, { width: 1798, height: 3198 }],\n  [\"enlarge from height\", { width: \"1\", height: \"3198\", axis: \"height\" }, { width: 1798, height: 3198 }],\n  [\"independent enlargement and reduction\", { width: \"1798\", height: \"200\", keepAspectRatio: false }, { width: 1798, height: 200 }],\n  [\"25% smaller\", { mode: \"percentage\", reduction: 25 }, { width: 674, height: 1199 }],\n  [\"50% smaller\", { mode: \"percentage\", reduction: 50 }, { width: 450, height: 800 }],\n  [\"75% smaller\", { mode: \"percentage\", reduction: 75 }, { width: 225, height: 400 }],\n]) {\n  test(name, () => {\n    const target = targetDimensions(info, { ...defaults, ...overrides });\n    assert.deepEqual(target, expected);\n    assert.equal(dimensionError(info, target), null);\n  });\n}\n\ntest(\"invalid dimensions and resource budgets prevent submission\", () => {\n  for (const width of [\"\", \"0\", \"-1\", \"1.5\", \"NaN\", \"32000001\"]) {\n    assert.equal(targetDimensions(info, { ...defaults, width }), null);\n  }\n  const target = targetDimensions(info, {\n    ...defaults, width: \"10000\", height: \"10000\", keepAspectRatio: false,\n  });\n  assert.match(dimensionError(info, target), /32 million/);\n  assert.match(dimensionError({ ...info, frameCount: 100 }, { width: 1000, height: 1000 }), /frame pixel/);\n  assert.deepEqual(targetDimensions({ width: 1, height: 1, frameCount: 1 }, {\n    ...defaults, mode: \"percentage\", reduction: 75,\n  }), { width: 1, height: 1 });\n});\n",
+        "source_sha256": "34e1b429a90327a645523d3adebab7cc9848c272ff13677b8d7da331d901bcf1",
+        "script_kind": "JS",
+        "expected_zero_diagnostics": true,
+        "diagnostics": [],
+        "declarations": [],
+        "matched": true
+      },
+      {
+        "id": "owned-malformed-ts",
+        "source": "const broken: = ;",
+        "script_kind": "TS",
+        "expected_zero_diagnostics": false,
+        "diagnostics": [
+          {
+            "code": 1110,
+            "message": "Type expected."
+          },
+          {
+            "code": 1109,
+            "message": "Expression expected."
+          }
+        ],
+        "declarations": [],
+        "matched": true
+      }
+    ]
+  },
+  "node_used": false,
+  "target_source_executed": false,
+  "typechecked": false,
+  "module_resolution": false,
+  "new_installations": false,
+  "scope": "ExistingTypeScript5.9.3parser inexistingJSC; syntax/declaration/guardtext only, no types/modulebinding/runtime/browser/sourceexecution. OriginalNodev24.22.0producer runtime not recreated; exactsourcecode/hash inspected separately."
+}

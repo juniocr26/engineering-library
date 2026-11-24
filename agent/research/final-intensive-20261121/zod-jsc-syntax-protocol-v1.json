@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-21T23:41:53.216563+00:00",
+  "hypothesis": "Existing host JavaScriptCore can run the already installed TypeScript parser to validate exact revised Zod example fences despite absent Node, without executing Zod or installing a runtime.",
+  "runtime": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+  "parser": "frontend/node_modules/typescript/lib/typescript.js",
+  "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+  "reference_headers": [
+    {
+      "path": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/JavaScriptCore.framework/Headers/JSBase.h",
+      "sha256": "ba9466ac85ad50ea05cb43ae6ae93f42a6764980f93627b0e67330ef0c8ff8c4"
+    },
+    {
+      "path": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/JavaScriptCore.framework/Headers/JSContextRef.h",
+      "sha256": "d582a5d0227cd7f2a4b0766769357334130407a53abe6235c6a13d136920ee60"
+    },
+    {
+      "path": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/JavaScriptCore.framework/Headers/JSStringRef.h",
+      "sha256": "20091cc5435fd835d3a0f4ec5a2be8a76503aee57d88ae71b8834350f02e1482"
+    },
+    {
+      "path": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/JavaScriptCore.framework/Headers/JSValueRef.h",
+      "sha256": "63f922651d1a46bcbf6e6c22005dcfb56a517e3b5f2da5c1d20037381df92641"
+    }
+  ],
+  "cases": [
+    {
+      "id": "en",
+      "expected_zero_diagnostics": true
+    },
+    {
+      "id": "pt-BR",
+      "expected_zero_diagnostics": true
+    },
+    {
+      "id": "owned-malformed-negative",
+      "source": "const result = ;\n",
+      "expected_zero_diagnostics": false
+    }
+  ],
+  "scope": "Evaluate existing TypeScript compiler library and owned parser harness only. Parse candidate text as data; no target execution, imports, typecheck, host file access from JS, external network, packages, emit or installations.",
+  "success": "Both actual code fences identical and parse without diagnostics; malformed owned control refused. Existing review updated separately, not overwritten."
+}

@@ -1,0 +1,207 @@
+{
+  "at": "2026-11-22T03:03:15.258416+00:00",
+  "topic": "go-image-animation-original-dataset-target",
+  "status": "NOT_TECHNICALLY_ACCEPTED_ATTRIBUTION_ERROR",
+  "historical_status_preserved": "VERIFIED_WITH_LIMITATIONS",
+  "bound_original_references": [
+    {
+      "role": "en",
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/ae0706c96c4748068640cb9ee36259171e72a6eac083739e9fc73b0ac893c3ba",
+      "sha256": "ae0706c96c4748068640cb9ee36259171e72a6eac083739e9fc73b0ac893c3ba"
+    },
+    {
+      "role": "pt-BR",
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/90a14fd6d8a44aedde52258d8c29312409a2fd6bc01a82ca07ca1aea397cec7e",
+      "sha256": "90a14fd6d8a44aedde52258d8c29312409a2fd6bc01a82ca07ca1aea397cec7e"
+    },
+    {
+      "role": "prior_review",
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/de3ad4b5a5c4e0a423433ce40bde31823da7c2ca1855199698b0d1a33632fc41",
+      "sha256": "de3ad4b5a5c4e0a423433ce40bde31823da7c2ca1855199698b0d1a33632fc41"
+    },
+    {
+      "role": "prior_source_evidence",
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/36b93e8ebc23c9db42806dbe26dace1e20ea773186f1efefc8df2ba352e444e2",
+      "sha256": "36b93e8ebc23c9db42806dbe26dace1e20ea773186f1efefc8df2ba352e444e2"
+    }
+  ],
+  "source_claim_groups": [
+    {
+      "id": "A01",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        35,
+        38
+      ],
+      "meaning": "Static helper uses DefaultMaxDecodedPixels and returns its nonnil error before frame validation.",
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same Codex campaign agent, not independent atomic sample."
+    },
+    {
+      "id": "A02",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        23,
+        29
+      ],
+      "meaning": "Nonpositive dimensions return invalid-image before division by height.",
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same Codex campaign agent, not independent atomic sample."
+    },
+    {
+      "id": "A03",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        40,
+        42
+      ],
+      "meaning": "Nonpositive frame count returns invalid-image before aggregate division.",
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same Codex campaign agent, not independent atomic sample."
+    },
+    {
+      "id": "A04",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        44,
+        49
+      ],
+      "meaning": "Strict width>maxPixels/height/frameCount returns animation-too-large, otherwise nil.",
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same Codex campaign agent, not independent atomic sample."
+    },
+    {
+      "id": "A05",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        9,
+        16
+      ],
+      "meaning": "Separate32million static and64million aggregate constants; function uses its aggregate parameter, not an implicit replacement.",
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same Codex campaign agent, not independent atomic sample."
+    },
+    {
+      "id": "A06",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        35,
+        49
+      ],
+      "meaning": "No separate aggregate-budget positivity guard, encoded-byte measurement or decoder execution in selected function.",
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same Codex campaign agent, not independent atomic sample."
+    },
+    {
+      "id": "A07",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        35,
+        49
+      ],
+      "meaning": "Positive divisors on reached aggregate path follow previous dimension/frame guards; this does not establish whole decoder/runtime safety.",
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same Codex campaign agent, not independent atomic sample."
+    }
+  ],
+  "negative_controls": [
+    {
+      "id": "N1",
+      "claim": "All callers always pass the same compile-time aggregate constant.",
+      "verdict": "CONTRADICTED",
+      "basis": "Compressor configurable field/fallback differs from resize fixed MaxFramePixels path."
+    },
+    {
+      "id": "N2",
+      "claim": "Animation bound always runs before allocating decoded frames.",
+      "verdict": "CONTRADICTED",
+      "basis": "Selected compressGIF and compressAVIF call DecodeAll before animation check; chapter does not make this guarantee."
+    },
+    {
+      "id": "N3",
+      "claim": "A <= comparator is equivalent to the written > guard.",
+      "verdict": "CONTRADICTED",
+      "basis": "Strict comparison and equality boundary differ."
+    },
+    {
+      "id": "N4",
+      "claim": "The local helper explicitly rejects maxPixels<=0 before other checks.",
+      "verdict": "CONTRADICTED",
+      "basis": "No such guard appears; do not invent the error branch."
+    },
+    {
+      "id": "N5",
+      "claim": "Test source assertions prove the external suite passed now.",
+      "verdict": "INSUFFICIENT",
+      "basis": "Only source acquisition/read performed."
+    },
+    {
+      "id": "N6",
+      "claim": "Old VERIFIED_WITH_LIMITATIONS equals current G1-G9 all-PASS.",
+      "verdict": "CONTRADICTED",
+      "basis": "Current provenance/historical response and recovery checks remain pending."
+    }
+  ],
+  "gates": {
+    "G1": {
+      "status": "PASS",
+      "basis": "Exact immutable candidate/reference hashes and fresh same-revision Git source bytes match."
+    },
+    "G2": {
+      "status": "FAIL",
+      "basis": "Exact helper response places strict less-than at upper width bound, contradicting original chapter historical association with nonpositive-dimension rejection."
+    },
+    "G3": {
+      "status": "PASS",
+      "basis": "Relevant lexical callers/config/default/error declarations and selected integration test context read; no dynamic callgraph/runtime guarantee."
+    },
+    "G4": {
+      "status": "FAIL",
+      "basis": "Historical response explanation requires correction; whole declared scope cannot be accepted as written."
+    },
+    "G5": {
+      "status": "PASS",
+      "basis": "Source expressions and graph flow manually checked at authorized static level; Mermaid renderer and target app/tests not executed or claimed."
+    },
+    "G6": {
+      "status": "PASS",
+      "basis": "Full EN/PT predicates, negations, parameters, threeFAQs and diagram branches read against each other; no observed meaning mismatch in selected source behavior."
+    },
+    "G7": {
+      "status": "PASS",
+      "basis": "MODIFY historical error explanation; source implementation still unchanged. Do not REMOVE the chapter or claim source evolution."
+    },
+    "G8": {
+      "status": "PASS",
+      "basis": "Fresh Git acquisition plus six explicit source-backed adverse challenges; same-agent separate procedure, not human-independent review."
+    },
+    "G9": {
+      "status": "INCONCLUSIVE",
+      "basis": "New context/review artifacts not yet archived and operationally restored; immutable original references alone do not complete current closure."
+    }
+  },
+  "next_work": [
+    "Locate exact historical gio-animated-limits-caller/helpers request/response witnesses and actual protocol identifiers without using private external bodies.",
+    "Preserve source references and new context in next checkpoint and actually replay bounded consumer.",
+    "Do not add this pending pair to current accepted chapter count or treat source review as new neural success."
+  ],
+  "original_rows_or_documents_changed": false,
+  "owner_gold": false,
+  "publication_approved": false,
+  "model_calls": 0,
+  "technical_status": "FAIL_HISTORICAL_ATTRIBUTION",
+  "supersedes": "go-image-animation-original-target-review-v1.json",
+  "original_historical_status_not_edited": true,
+  "documents": [
+    {
+      "language": "en",
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/ae0706c96c4748068640cb9ee36259171e72a6eac083739e9fc73b0ac893c3ba",
+      "sha256": "ae0706c96c4748068640cb9ee36259171e72a6eac083739e9fc73b0ac893c3ba"
+    },
+    {
+      "language": "pt-BR",
+      "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/90a14fd6d8a44aedde52258d8c29312409a2fd6bc01a82ca07ca1aea397cec7e",
+      "sha256": "90a14fd6d8a44aedde52258d8c29312409a2fd6bc01a82ca07ca1aea397cec7e"
+    }
+  ]
+}

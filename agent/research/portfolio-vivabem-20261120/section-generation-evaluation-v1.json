@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-21T00:20:16.588488+00:00",
+  "hypothesis": "H7",
+  "documents": {
+    "en": {
+      "path": "agent/research/portfolio-vivabem-20261120/section-composed-candidate-v1/en.md",
+      "sha256": "fe5d2ea71308beb4bd3f8468aaa3cd474987cf21a3bddbf8a6ce03ce9f554ce4"
+    },
+    "pt": {
+      "path": "agent/research/portfolio-vivabem-20261120/section-composed-candidate-v1/pt-BR.md",
+      "sha256": "66fb05289d7cc4a25da127b38873525110fff9e00db664b88715ff50ffd28a6e"
+    }
+  },
+  "section_count": 5,
+  "all_section_json_valid": true,
+  "all_stopped_naturally": true,
+  "generated_tokens": 1210,
+  "aggregate_token_budget": 1800,
+  "server_seconds": 161.01701224,
+  "word_cap_violating_sections": [
+    "simple",
+    "allowlist",
+    "bounds",
+    "composition",
+    "legacy"
+  ],
+  "section_reviews": [
+    {
+      "section": "simple",
+      "outcome": "SOURCE_SUPPORTED_AT_WRITTEN_BODY_SCOPE",
+      "notes": "NoArgs, NoDuplicateArgs and ArbitraryArgs error descriptions align; generic branch wording and answer word cap require separate assessment."
+    },
+    {
+      "section": "allowlist",
+      "outcome": "REJECTED_CRITICAL_FACTUAL_ERROR",
+      "notes": "Both FAQ answers say an empty ValidArgs list causes an error, contradicting the len(ValidArgs)>0 gate and nil fallthrough. Additional invented cannot-determine/error-suggestion reasoning is absent from source."
+    },
+    {
+      "section": "bounds",
+      "outcome": "REJECTED_CONTRACT_ERROR",
+      "notes": "FAQ says ExactArgs factory returns nil for matching argument count. Factory returns a validator; that returned validator returns nil. Unordered-bound uncertainty is not behavior enforced by factories."
+    },
+    {
+      "section": "composition",
+      "outcome": "INCOMPLETE_REQUIRED_BEHAVIOR",
+      "notes": "Deprecation is correctly described, but first-error short circuit is not explained and the empty-list caveat is omitted."
+    },
+    {
+      "section": "legacy",
+      "outcome": "REJECTED_CRITICAL_POLARITY_ERROR",
+      "notes": "FAQ says HasParent plus nonempty args returns an error; source requires !HasParent, reversing root/child behavior."
+    }
+  ],
+  "complete_output_status": "REJECTED",
+  "complete_output_acceptance": {
+    "numerator": 0,
+    "denominator": 1
+  },
+  "format_hypothesis": "Structural completion improved in this bounded run; source correctness did not. Combined intervention, same family, no general causal claim.",
+  "critical_error_count": 2,
+  "critical_error_definition": "Empty-list behavior reversed and HasParent polarity reversed; factory/validator distinction is an additional contract error.",
+  "rendering_did_not_repair_model_claims": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "model_parameters_changed": false,
+  "independent_human_review": false
+}

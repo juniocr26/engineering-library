@@ -1,0 +1,128 @@
+{
+  "at": "2026-11-21T15:42:06.846810+00:00",
+  "before_any_new_seam_observations": true,
+  "hypothesis": "A narrow external research adapter that converts cached SubprocessError into explicit non-success and durably saves the exact delivery body before the existing job completion can account for known faults without overwriting immutable cached results, reinjecting quotes, replaying requests or claiming retrieval success. Broad unexpected exceptions and delivery-write failure remain UNKNOWN; late completion remains review-required.",
+  "source_files": [
+    {
+      "path": "agent/tools/documentation_retrieval.py",
+      "sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d"
+    },
+    {
+      "path": "agent/tools/documentation_job_budget.py",
+      "sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7"
+    },
+    {
+      "path": "agent/tools/documentation_workspace.py",
+      "sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604"
+    }
+  ],
+  "case_count": 10,
+  "conditions": [
+    "Existing JobBoundRetrieval with existing helper",
+    "Same existing helper/job budget plus isolated external research adapter"
+  ],
+  "cases": [
+    {
+      "id": "cached-timeout",
+      "cached": true,
+      "fault": "TimeoutExpired",
+      "reference_baseline_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_job": "COMPLETED",
+      "reference_adapter_helper": "INCONCLUSIVE"
+    },
+    {
+      "id": "cached-calledprocess",
+      "cached": true,
+      "fault": "CalledProcessError",
+      "reference_baseline_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_job": "COMPLETED",
+      "reference_adapter_helper": "INCONCLUSIVE"
+    },
+    {
+      "id": "cached-subprocess-generic",
+      "cached": true,
+      "fault": "SubprocessError",
+      "reference_baseline_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_job": "COMPLETED",
+      "reference_adapter_helper": "INCONCLUSIVE"
+    },
+    {
+      "id": "fresh-timeout",
+      "cached": false,
+      "fault": "TimeoutExpired",
+      "reference_baseline_job": "COMPLETED",
+      "reference_adapter_job": "COMPLETED",
+      "reference_adapter_helper": "INCONCLUSIVE"
+    },
+    {
+      "id": "cached-valueerror",
+      "cached": true,
+      "fault": "ValueError",
+      "reference_baseline_job": "COMPLETED",
+      "reference_adapter_job": "COMPLETED",
+      "reference_adapter_helper": "REFUSED"
+    },
+    {
+      "id": "cached-runtimeerror",
+      "cached": true,
+      "fault": "RuntimeError",
+      "reference_baseline_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_helper": null
+    },
+    {
+      "id": "cached-valid-duplicate",
+      "cached": true,
+      "fault": null,
+      "reference_baseline_job": "COMPLETED",
+      "reference_adapter_job": "COMPLETED",
+      "reference_adapter_helper": "DUPLICATE"
+    },
+    {
+      "id": "cached-corrupt-receipt",
+      "cached": true,
+      "fault": null,
+      "corrupt_receipt": true,
+      "reference_baseline_job": "COMPLETED",
+      "reference_adapter_job": "COMPLETED",
+      "reference_adapter_helper": "REFUSED"
+    },
+    {
+      "id": "cached-timeout-delivery-write-failure",
+      "cached": true,
+      "fault": "TimeoutExpired",
+      "delivery_write_failure": true,
+      "reference_baseline_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_helper": null
+    },
+    {
+      "id": "cached-timeout-late",
+      "cached": true,
+      "fault": "TimeoutExpired",
+      "advance_clock_seconds": 90,
+      "reference_baseline_job": "UNKNOWN_COMPLETION",
+      "reference_adapter_job": "LATE_COMPLETION_REVIEW_REQUIRED",
+      "reference_adapter_helper": "INCONCLUSIVE"
+    }
+  ],
+  "owned_source": "package owned\nfunc Helper() int { return 1 }\n",
+  "source_execution": false,
+  "Go_parser_only": "Existing native source parser invoked on owned source text; no Go program execution or external repository application/tests.",
+  "fault_injection": "Process-local unittest.mock on retrieval.extract only after successful cache seeding; real source modules/files unchanged. Exception objects are simulated, not a real timeout/kernel failure.",
+  "durability_observations": [
+    "Exact cached request/result/receipt hashes unchanged after each cached case (corruption seeded before observation and preimage retained)",
+    "Helper lock released",
+    "Helper steps/quote_bytes unchanged by cached revalidation fault",
+    "No quote in non-FOUND delivery",
+    "Separate immutable delivery body fsynced before existing job complete",
+    "Repeated identical job request has no second helper dispatch or reservation",
+    "Job completion/status distinguish COMPLETED non-success, UNKNOWN and late review"
+  ],
+  "not_production_fix_or_permanent_test": true,
+  "new_permanent_tests_require_separate_approval": true,
+  "not_neural_adapter_recovery": true,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "training_gold": false
+}

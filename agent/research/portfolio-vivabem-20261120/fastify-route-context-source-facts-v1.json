@@ -1,0 +1,99 @@
+{
+  "at": "2026-11-21T05:35:59.649972+00:00",
+  "protocol": "fastify-route-context-protocol-v1.json",
+  "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+  "stage": "SOURCE_REVIEW_NOT_COMPLETE_DOCUMENT_ACCEPTANCE",
+  "facts": [
+    {
+      "id": "FC1",
+      "source": "fastify.js:197-231",
+      "fact": "Public head shorthand supplies scalar HEAD to prepareRoute without isFastify; extended route supplies options without isFastify. all supplies this.supportedMethods, whose value is not established by this span."
+    },
+    {
+      "id": "FC2",
+      "source": "lib/route.js:163-170,206-211",
+      "fact": "prepareRoute copies options then overrides method/url/path/handler and calls route. route shallow-copies options then overwrites opts.isGeneratedHeadRoute with isFastify === true. User options.isGeneratedHeadRoute alone cannot survive that assignment on selected public route path."
+    },
+    {
+      "id": "FC3",
+      "source": "lib/route.js:231-245,637-647",
+      "fact": "Scalar method and each array element are normalized through string check, uppercase and supported-set check. Selected array remains an array; it is not collapsed to scalar HEAD. Empty array bypasses loop: no guarantee of usable route registration follows."
+    },
+    {
+      "id": "FC4",
+      "source": "lib/route.js:209-211,231-248",
+      "fact": "Shallow copy retains method array reference; indexed normalization writes into that array. No deep-copy or global nonmutation guarantee. headOpts is a shallow original-options copy conditional on shouldExposeHead and isGetRoute."
+    },
+    {
+      "id": "FC5",
+      "source": "lib/route.js:250-274",
+      "fact": "After normalization, prefixed root branch uses generated flag, not method equality. Explicit HEAD shorthand can take branch; selected generated HEAD recursive call supplies isFastify true and skips it. Slash options and ignore flags still govern local registrations."
+    },
+    {
+      "id": "FC6",
+      "source": "lib/route.js:279-303,365,457-459",
+      "fact": "addNewRoute mutates opts URL fields, runs onRoute hooks on non-prefixing branch before router.on. Actual router behavior/possible hook mutations remain outside selected lexical proof. Generated HEAD call occurs only under shouldExposeHead && isGetRoute && !isHeadRoute && !hasHEADHandler, with scalar HEAD, local path and isFastify true."
+    }
+  ],
+  "reachability": [
+    {
+      "case": "explicit public head shorthand, valid handler/prefix conditions",
+      "status": "PRODUCED_BY_SELECTED_PATH",
+      "method_shape": "scalar HEAD",
+      "generated_flag": false
+    },
+    {
+      "case": "extended route method array containing HEAD, successful prior validation",
+      "status": "PRODUCED_BY_SELECTED_PATH",
+      "method_shape": "array retained",
+      "generated_flag": false
+    },
+    {
+      "case": "automatic HEAD recursive construction",
+      "status": "PRODUCED_BY_SELECTED_PATH",
+      "method_shape": "scalar HEAD",
+      "generated_flag": true
+    },
+    {
+      "case": "automatic HEAD construction with array HEAD",
+      "status": "NOT_PRODUCED_BY_SELECTED_PATH",
+      "scope": "Selected recursive call only; not global JS impossibility."
+    },
+    {
+      "case": "actual final routing effects after hooks/router internals",
+      "status": "UNKNOWN"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "fastify-route-context-v1/fastify.js",
+      "bytes": 34848,
+      "sha256": "c64c8e3fd61261e76a849fe545d8f5eb8f9ea6136445fc86f1b30730e3b41d25"
+    },
+    {
+      "path": "fastify-route-context-v1/route.js",
+      "bytes": 24966,
+      "sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac"
+    },
+    {
+      "path": "fastify-route-context-v1/test/route-prefix.test.js",
+      "bytes": 24659,
+      "sha256": "80b9704e850c65c179287f20e9d8117e5ba23768de63dcf4cff8dfaef80fa979"
+    },
+    {
+      "path": "fastify-route-context-v1/types/route.d.ts",
+      "bytes": 12931,
+      "sha256": "d7fbd73b5792f1167d5b67f423ef1b3b323e85d68b1b2127bc16032e46b81596"
+    }
+  ],
+  "missing_optional_path": {
+    "path": "test/route.head.test.js",
+    "git_show_exit": 128,
+    "meaning": "Path absent at selected revision; no test outcome. Discover actual test paths before further inspection."
+  },
+  "upstream_tests_run": false,
+  "source_program_execution": false,
+  "chapter_composed": false,
+  "neural_calls": 0,
+  "gold": false
+}

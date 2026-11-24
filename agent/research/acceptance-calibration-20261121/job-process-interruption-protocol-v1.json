@@ -1,0 +1,112 @@
+{
+  "at": "2026-11-21T19:34:06.937416+00:00",
+  "before_observations": true,
+  "question": "After ungraceful process exit at immutable file publication boundaries, does reopening distinguish pending, corrupted, completed and body-verified evidence without helper replay?",
+  "process_stops": [
+    {
+      "id": "mid_config",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "REFUSED",
+      "expected_delivery": "NONE"
+    },
+    {
+      "id": "after_config",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "RESERVED",
+      "expected_delivery": "NONE"
+    },
+    {
+      "id": "mid_reservation",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "REFUSED",
+      "expected_delivery": "NONE"
+    },
+    {
+      "id": "after_reservation",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "UNKNOWN_COMPLETION",
+      "expected_delivery": "NONE"
+    },
+    {
+      "id": "mid_delivery",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "UNKNOWN_COMPLETION",
+      "expected_delivery": "PARTIAL"
+    },
+    {
+      "id": "after_delivery",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "UNKNOWN_COMPLETION",
+      "expected_delivery": "VALID"
+    },
+    {
+      "id": "mid_completion",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "REFUSED",
+      "expected_delivery": "VALID"
+    },
+    {
+      "id": "after_completion",
+      "stop_exit_code": 91,
+      "expected_reopen_status": "DUPLICATE_COMPLETED",
+      "expected_delivery": "VALID"
+    }
+  ],
+  "postcomplete_forks": [
+    {
+      "id": "completed_journal_missing_body",
+      "expected_budget_status": "DUPLICATE_COMPLETED",
+      "expected_delivery_gate": "MISSING_REFUSED"
+    },
+    {
+      "id": "completed_journal_tampered_body",
+      "expected_budget_status": "DUPLICATE_COMPLETED",
+      "expected_delivery_gate": "HASH_MISMATCH_REFUSED"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "agent/tools/documentation_job_budget.py",
+      "sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7"
+    },
+    {
+      "path": "agent/tools/documentation_workspace.py",
+      "sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604"
+    }
+  ],
+  "config": {
+    "job_id": "owned-process-stop",
+    "registry_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "max_steps": 1,
+    "max_quote_bytes": 6144,
+    "deadline_utc": "2026-11-21T20:01:00+00:00"
+  },
+  "clock": "2026-11-21T20:00:00+00:00",
+  "request": {
+    "request_id": "owned1",
+    "source_id": "owned",
+    "revision": "1111111111111111111111111111111111111111",
+    "path": "owned.go",
+    "qualified_symbol": "Helper",
+    "expected_sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "body": {
+    "status": "INCONCLUSIVE",
+    "source_executed": false,
+    "runtime_bindings_verified": false,
+    "owner_approved": false,
+    "reason": "Frozen owned synthetic subprocess fault body for publication-boundary research; no real retrieval or quote.",
+    "request_id": "owned1",
+    "research_only": true
+  },
+  "method": "Child process calls existing owned JobBudget and descriptor write_new using own new directories. Mid-write interception performs half an os.write then os._exit(91); no cleanup/finally. Other boundaries exit after existing call returns. Reopen in separate parent; no helper requests/parser/network/model calls. Missing/tampered body forks copy completed journals and never delete/modify original completed case.",
+  "limits": [
+    "Actual process interruption only, not host crash/powerloss/Metal/nativeadapterrestore. Unfsynced partial bytes may be visible through OS cache; no disk durability inferred.",
+    "REFUSED from partial journal is safe integrity behavior, not completed recovery. UNKNOWN_COMPLETION forbids replay.",
+    "After_config reopen reserve is an explicit owned control call that creates its first reservation, not startup auto dispatch; no helper dispatched.",
+    "Budget completion metadata hashes do not prove payload availability/integrity; separate body gate checks existence/exacthash.",
+    "No production or permanent test modifications; results do not apply an atomic-publication fix."
+  ],
+  "gold": 0,
+  "optimizer_updates": 0
+}

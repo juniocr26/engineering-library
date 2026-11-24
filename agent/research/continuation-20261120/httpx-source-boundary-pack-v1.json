@@ -1,0 +1,645 @@
+{
+  "at": "2026-11-20T16:03:17.361494+00:00",
+  "classification": "SOURCE_REVIEWED_FROZEN_TWO_CUT_BOUNDARY_PACK_NOT_A_GENERAL_RESOLVER",
+  "rows": [
+    {
+      "tag": "0.25.2",
+      "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+      "facts": {
+        "HTTPTransport.handle_request": {
+          "direct_statement_kinds": [
+            "Assert",
+            "Assign",
+            "With",
+            "Assert",
+            "Return"
+          ],
+          "pool_call_inside_selected_map_context": "self._pool.handle_request(req)",
+          "request_construction_before_map_context": true,
+          "response_construction_after_map_context": true,
+          "request_arguments": {
+            "method": "request.method",
+            "url": "httpcore.URL(scheme=request.url.raw_scheme, host=request.url.raw_host, port=request.url.port, target=request.url.raw_path)",
+            "headers": "request.headers.raw",
+            "content": "request.stream",
+            "extensions": "request.extensions"
+          },
+          "response_arguments": {
+            "status_code": "resp.status",
+            "headers": "resp.headers",
+            "stream": "ResponseStream(resp.stream)",
+            "extensions": "resp.extensions"
+          },
+          "direct_import_statements": [],
+          "actual_runtime_receiver_verified": false
+        },
+        "AsyncHTTPTransport.handle_async_request": {
+          "direct_statement_kinds": [
+            "Assert",
+            "Assign",
+            "With",
+            "Assert",
+            "Return"
+          ],
+          "pool_call_inside_selected_map_context": "await self._pool.handle_async_request(req)",
+          "request_construction_before_map_context": true,
+          "response_construction_after_map_context": true,
+          "request_arguments": {
+            "method": "request.method",
+            "url": "httpcore.URL(scheme=request.url.raw_scheme, host=request.url.raw_host, port=request.url.port, target=request.url.raw_path)",
+            "headers": "request.headers.raw",
+            "content": "request.stream",
+            "extensions": "request.extensions"
+          },
+          "response_arguments": {
+            "status_code": "resp.status",
+            "headers": "resp.headers",
+            "stream": "AsyncResponseStream(resp.stream)",
+            "extensions": "resp.extensions"
+          },
+          "direct_import_statements": [],
+          "actual_runtime_receiver_verified": false
+        },
+        "ResponseStream.__iter__": {
+          "explicit_iteration_map_context": true,
+          "iteration_kind": "For",
+          "stream_expression": "self._httpcore_stream",
+          "yield_expression": "yield part",
+          "source_only": true
+        },
+        "AsyncResponseStream.__aiter__": {
+          "explicit_iteration_map_context": true,
+          "iteration_kind": "AsyncFor",
+          "stream_expression": "self._httpcore_stream",
+          "yield_expression": "yield part",
+          "source_only": true
+        },
+        "ResponseStream.close": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "if hasattr(self._httpcore_stream, 'close'):\n    self._httpcore_stream.close()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "AsyncResponseStream.aclose": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "if hasattr(self._httpcore_stream, 'aclose'):\n    await self._httpcore_stream.aclose()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "HTTPTransport.close": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "self._pool.close()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "AsyncHTTPTransport.aclose": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "await self._pool.aclose()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "request_context": {
+          "written_handler_type": "RequestError",
+          "request_attached_only_under_written_condition": "request is not None",
+          "written_assignment": "exc.request = request",
+          "written_reraise": "raise exc",
+          "HTTPStatusError_declared_bases": [
+            "HTTPError"
+          ],
+          "RequestError_declared_bases": [
+            "HTTPError"
+          ],
+          "all_HTTPError_types_covered_by_this_written_handler_proven": false,
+          "runtime_context_or_exception_executed": false
+        },
+        "RequestError.__init__": {
+          "written_request_default": null,
+          "signature": {
+            "positional_only": [],
+            "positional_or_keyword": [
+              "self",
+              "message"
+            ],
+            "keyword_only": [
+              "request"
+            ],
+            "vararg": null,
+            "kwarg": null,
+            "defaults": {
+              "self": {
+                "kind": "required"
+              },
+              "message": {
+                "kind": "required"
+              },
+              "request": {
+                "kind": "literal",
+                "type": "NoneType",
+                "value": null
+              }
+            },
+            "annotations": {
+              "self": null,
+              "message": "str",
+              "request": "typing.Optional['Request']"
+            },
+            "return_annotation": "None",
+            "annotation_or_default_executed": false
+          },
+          "body_statements": [
+            "super().__init__(message)",
+            "self._request = request"
+          ],
+          "automatic_request_context_attachment_proven": false
+        }
+      },
+      "evidence": {
+        "HTTPTransport.handle_request": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 209,
+          "last_line": 237,
+          "quote": "    def handle_request(\n        self,\n        request: Request,\n    ) -> Response:\n        assert isinstance(request.stream, SyncByteStream)\n\n        req = httpcore.Request(\n            method=request.method,\n            url=httpcore.URL(\n                scheme=request.url.raw_scheme,\n                host=request.url.raw_host,\n                port=request.url.port,\n                target=request.url.raw_path,\n            ),\n            headers=request.headers.raw,\n            content=request.stream,\n            extensions=request.extensions,\n        )\n        with map_httpcore_exceptions():\n            resp = self._pool.handle_request(req)\n\n        assert isinstance(resp.stream, typing.Iterable)\n\n        return Response(\n            status_code=resp.status,\n            headers=resp.headers,\n            stream=ResponseStream(resp.stream),\n            extensions=resp.extensions,\n        )\n",
+          "quote_sha256": "b18e45cbe21e4e11bbad18894864983cef840e1c5682668ac756d70b2880c421",
+          "kind": "complete-selected-method",
+          "source_executed": false
+        },
+        "AsyncHTTPTransport.handle_async_request": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 347,
+          "last_line": 375,
+          "quote": "    async def handle_async_request(\n        self,\n        request: Request,\n    ) -> Response:\n        assert isinstance(request.stream, AsyncByteStream)\n\n        req = httpcore.Request(\n            method=request.method,\n            url=httpcore.URL(\n                scheme=request.url.raw_scheme,\n                host=request.url.raw_host,\n                port=request.url.port,\n                target=request.url.raw_path,\n            ),\n            headers=request.headers.raw,\n            content=request.stream,\n            extensions=request.extensions,\n        )\n        with map_httpcore_exceptions():\n            resp = await self._pool.handle_async_request(req)\n\n        assert isinstance(resp.stream, typing.AsyncIterable)\n\n        return Response(\n            status_code=resp.status,\n            headers=resp.headers,\n            stream=AsyncResponseStream(resp.stream),\n            extensions=resp.extensions,\n        )\n",
+          "quote_sha256": "a4d0fd5d0ba65309fc28e686680ef562850eca59c309b3500f33b387a3d2c7a9",
+          "kind": "complete-selected-method",
+          "source_executed": false
+        },
+        "ResponseStream.__iter__": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 108,
+          "last_line": 111,
+          "quote": "    def __iter__(self) -> typing.Iterator[bytes]:\n        with map_httpcore_exceptions():\n            for part in self._httpcore_stream:\n                yield part\n",
+          "quote_sha256": "c004ac791d8271d8a0e5524a8935f902e0045c594c672f3c732e25c9cba3de0b",
+          "kind": "complete-selected-stream-iteration-method",
+          "source_executed": false
+        },
+        "AsyncResponseStream.__aiter__": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 247,
+          "last_line": 250,
+          "quote": "    async def __aiter__(self) -> typing.AsyncIterator[bytes]:\n        with map_httpcore_exceptions():\n            async for part in self._httpcore_stream:\n                yield part\n",
+          "quote_sha256": "a9ccdb1d75b4c6f2043ec2010db42bb1147e5b0e1d57b7e2327f9e1c3b88e48b",
+          "kind": "complete-selected-stream-iteration-method",
+          "source_executed": false
+        },
+        "ResponseStream.close": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 113,
+          "last_line": 115,
+          "quote": "    def close(self) -> None:\n        if hasattr(self._httpcore_stream, \"close\"):\n            self._httpcore_stream.close()\n",
+          "quote_sha256": "dbd179a5a03f1b5640aecfe3ec56deeafe56c87c174655865c0fe3c97e6d9e97",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "AsyncResponseStream.aclose": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 252,
+          "last_line": 254,
+          "quote": "    async def aclose(self) -> None:\n        if hasattr(self._httpcore_stream, \"aclose\"):\n            await self._httpcore_stream.aclose()\n",
+          "quote_sha256": "e1bf7f8dd811938be4ac571b077273e1f27b5e00307c59ac4be5993819f2543d",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "HTTPTransport.close": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 239,
+          "last_line": 240,
+          "quote": "    def close(self) -> None:\n        self._pool.close()\n",
+          "quote_sha256": "26edbcd82cdd4172b3caf441da179483cbf32fed8b6b6709d6dde49553b30e19",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "AsyncHTTPTransport.aclose": {
+          "path": "httpx/_transports/default.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "ffdfd927d06a865abc2f5d328302ff62e1d0cca014fda38ae00c9983fc46fd13",
+          "first_line": 377,
+          "last_line": 378,
+          "quote": "    async def aclose(self) -> None:\n        await self._pool.aclose()\n",
+          "quote_sha256": "cef6e5ca8a3e850162f4282a3bf1cb47e1a6b8fe035e48e9674aacea3845c3d3",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "request_context": {
+          "path": "httpx/_exceptions.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "c4ac3e53abd6ef399d45e5001981cc7a061666e0c0b84e74dfd2f4f3b4877b84",
+          "first_line": 330,
+          "last_line": 343,
+          "quote": "@contextlib.contextmanager\ndef request_context(\n    request: typing.Optional[\"Request\"] = None,\n) -> typing.Iterator[None]:\n    \"\"\"\n    A context manager that can be used to attach the given request context\n    to any `RequestError` exceptions that are raised within the block.\n    \"\"\"\n    try:\n        yield\n    except RequestError as exc:\n        if request is not None:\n            exc.request = request\n        raise exc\n",
+          "quote_sha256": "a028c5561a3ca49750345609d904e4bc306e324074bcbba50385316c13c10c1a",
+          "kind": "complete-decorated-request-context-function",
+          "source_executed": false
+        },
+        "HTTPStatusError": {
+          "path": "httpx/_exceptions.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "c4ac3e53abd6ef399d45e5001981cc7a061666e0c0b84e74dfd2f4f3b4877b84",
+          "first_line": 226,
+          "last_line": 238,
+          "quote": "class HTTPStatusError(HTTPError):\n    \"\"\"\n    The response had an error HTTP status of 4xx or 5xx.\n\n    May be raised when calling `response.raise_for_status()`\n    \"\"\"\n\n    def __init__(\n        self, message: str, *, request: \"Request\", response: \"Response\"\n    ) -> None:\n        super().__init__(message)\n        self.request = request\n        self.response = response\n",
+          "quote_sha256": "7269546a241161ff1a5b91899fabeb3bfadb3ebe0ad0260ec521e0384e1f7ed8",
+          "kind": "complete-status-error-class",
+          "source_executed": false
+        },
+        "HTTPError": {
+          "path": "httpx/_exceptions.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "c4ac3e53abd6ef399d45e5001981cc7a061666e0c0b84e74dfd2f4f3b4877b84",
+          "first_line": 40,
+          "last_line": 70,
+          "quote": "class HTTPError(Exception):\n    \"\"\"\n    Base class for `RequestError` and `HTTPStatusError`.\n\n    Useful for `try...except` blocks when issuing a request,\n    and then calling `.raise_for_status()`.\n\n    For example:\n\n    ```\n    try:\n        response = httpx.get(\"https://www.example.com\")\n        response.raise_for_status()\n    except httpx.HTTPError as exc:\n        print(f\"HTTP Exception for {exc.request.url} - {exc}\")\n    ```\n    \"\"\"\n\n    def __init__(self, message: str) -> None:\n        super().__init__(message)\n        self._request: typing.Optional[\"Request\"] = None\n\n    @property\n    def request(self) -> \"Request\":\n        if self._request is None:\n            raise RuntimeError(\"The .request property has not been set.\")\n        return self._request\n\n    @request.setter\n    def request(self, request: \"Request\") -> None:\n        self._request = request\n",
+          "quote_sha256": "2bf8ce2aa08dc947f7dcec4347d2b70bbff6c5181017c7e7cc0a61186b6abb68",
+          "kind": "complete-error-class-with-property-pair",
+          "source_executed": false
+        },
+        "RequestError.__init__": {
+          "path": "httpx/_exceptions.py",
+          "revision": "cc206cf2dad42600479962ac1daaa44675cfaf56",
+          "source_sha256": "c4ac3e53abd6ef399d45e5001981cc7a061666e0c0b84e74dfd2f4f3b4877b84",
+          "first_line": 78,
+          "last_line": 88,
+          "quote": "    def __init__(\n        self, message: str, *, request: typing.Optional[\"Request\"] = None\n    ) -> None:\n        super().__init__(message)\n        # At the point an exception is raised we won't typically have a request\n        # instance to associate it with.\n        #\n        # The 'request_context' context manager is used within the Client and\n        # Response methods in order to ensure that any raised exceptions\n        # have a `.request` property set on them.\n        self._request = request\n",
+          "quote_sha256": "3082b3afa4b4626807bfd92e4689bfd5c9b511116131d7b0c30e129cf700bb51",
+          "kind": "complete-selected-error-constructor",
+          "source_executed": false
+        }
+      },
+      "checks": {
+        "HTTPTransport.handle_request:pool_call": true,
+        "HTTPTransport.handle_request:request_before": true,
+        "HTTPTransport.handle_request:response_after": true,
+        "AsyncHTTPTransport.handle_async_request:pool_call": true,
+        "AsyncHTTPTransport.handle_async_request:request_before": true,
+        "AsyncHTTPTransport.handle_async_request:response_after": true,
+        "ResponseStream.__iter__:context": true,
+        "AsyncResponseStream.__aiter__:context": true,
+        "ResponseStream.close:no_explicit_context": true,
+        "AsyncResponseStream.aclose:no_explicit_context": true,
+        "HTTPTransport.close:no_explicit_context": true,
+        "AsyncHTTPTransport.aclose:no_explicit_context": true,
+        "request_context:handler": true,
+        "httpstatuserror:parent": true,
+        "request_context:all_errors_not_claimed": true
+      },
+      "all_checks_pass": true,
+      "source_executed": false
+    },
+    {
+      "tag": "0.28.1",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "facts": {
+        "HTTPTransport.handle_request": {
+          "direct_statement_kinds": [
+            "Assert",
+            "Import",
+            "Assign",
+            "With",
+            "Assert",
+            "Return"
+          ],
+          "pool_call_inside_selected_map_context": "self._pool.handle_request(req)",
+          "request_construction_before_map_context": true,
+          "response_construction_after_map_context": true,
+          "request_arguments": {
+            "method": "request.method",
+            "url": "httpcore.URL(scheme=request.url.raw_scheme, host=request.url.raw_host, port=request.url.port, target=request.url.raw_path)",
+            "headers": "request.headers.raw",
+            "content": "request.stream",
+            "extensions": "request.extensions"
+          },
+          "response_arguments": {
+            "status_code": "resp.status",
+            "headers": "resp.headers",
+            "stream": "ResponseStream(resp.stream)",
+            "extensions": "resp.extensions"
+          },
+          "direct_import_statements": [
+            "import httpcore"
+          ],
+          "actual_runtime_receiver_verified": false
+        },
+        "AsyncHTTPTransport.handle_async_request": {
+          "direct_statement_kinds": [
+            "Assert",
+            "Import",
+            "Assign",
+            "With",
+            "Assert",
+            "Return"
+          ],
+          "pool_call_inside_selected_map_context": "await self._pool.handle_async_request(req)",
+          "request_construction_before_map_context": true,
+          "response_construction_after_map_context": true,
+          "request_arguments": {
+            "method": "request.method",
+            "url": "httpcore.URL(scheme=request.url.raw_scheme, host=request.url.raw_host, port=request.url.port, target=request.url.raw_path)",
+            "headers": "request.headers.raw",
+            "content": "request.stream",
+            "extensions": "request.extensions"
+          },
+          "response_arguments": {
+            "status_code": "resp.status",
+            "headers": "resp.headers",
+            "stream": "AsyncResponseStream(resp.stream)",
+            "extensions": "resp.extensions"
+          },
+          "direct_import_statements": [
+            "import httpcore"
+          ],
+          "actual_runtime_receiver_verified": false
+        },
+        "ResponseStream.__iter__": {
+          "explicit_iteration_map_context": true,
+          "iteration_kind": "For",
+          "stream_expression": "self._httpcore_stream",
+          "yield_expression": "yield part",
+          "source_only": true
+        },
+        "AsyncResponseStream.__aiter__": {
+          "explicit_iteration_map_context": true,
+          "iteration_kind": "AsyncFor",
+          "stream_expression": "self._httpcore_stream",
+          "yield_expression": "yield part",
+          "source_only": true
+        },
+        "ResponseStream.close": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "if hasattr(self._httpcore_stream, 'close'):\n    self._httpcore_stream.close()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "AsyncResponseStream.aclose": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "if hasattr(self._httpcore_stream, 'aclose'):\n    await self._httpcore_stream.aclose()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "HTTPTransport.close": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "self._pool.close()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "AsyncHTTPTransport.aclose": {
+          "selected_body_has_explicit_map_context": false,
+          "body_statements": [
+            "await self._pool.aclose()"
+          ],
+          "this_is_not_proof_all_close_errors_are_unmapped": true
+        },
+        "request_context": {
+          "written_handler_type": "RequestError",
+          "request_attached_only_under_written_condition": "request is not None",
+          "written_assignment": "exc.request = request",
+          "written_reraise": "raise exc",
+          "HTTPStatusError_declared_bases": [
+            "HTTPError"
+          ],
+          "RequestError_declared_bases": [
+            "HTTPError"
+          ],
+          "all_HTTPError_types_covered_by_this_written_handler_proven": false,
+          "runtime_context_or_exception_executed": false
+        },
+        "RequestError.__init__": {
+          "written_request_default": null,
+          "signature": {
+            "positional_only": [],
+            "positional_or_keyword": [
+              "self",
+              "message"
+            ],
+            "keyword_only": [
+              "request"
+            ],
+            "vararg": null,
+            "kwarg": null,
+            "defaults": {
+              "self": {
+                "kind": "required"
+              },
+              "message": {
+                "kind": "required"
+              },
+              "request": {
+                "kind": "literal",
+                "type": "NoneType",
+                "value": null
+              }
+            },
+            "annotations": {
+              "self": null,
+              "message": "str",
+              "request": "Request | None"
+            },
+            "return_annotation": "None",
+            "annotation_or_default_executed": false
+          },
+          "body_statements": [
+            "super().__init__(message)",
+            "self._request = request"
+          ],
+          "automatic_request_context_attachment_proven": false
+        }
+      },
+      "evidence": {
+        "HTTPTransport.handle_request": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 230,
+          "last_line": 259,
+          "quote": "    def handle_request(\n        self,\n        request: Request,\n    ) -> Response:\n        assert isinstance(request.stream, SyncByteStream)\n        import httpcore\n\n        req = httpcore.Request(\n            method=request.method,\n            url=httpcore.URL(\n                scheme=request.url.raw_scheme,\n                host=request.url.raw_host,\n                port=request.url.port,\n                target=request.url.raw_path,\n            ),\n            headers=request.headers.raw,\n            content=request.stream,\n            extensions=request.extensions,\n        )\n        with map_httpcore_exceptions():\n            resp = self._pool.handle_request(req)\n\n        assert isinstance(resp.stream, typing.Iterable)\n\n        return Response(\n            status_code=resp.status,\n            headers=resp.headers,\n            stream=ResponseStream(resp.stream),\n            extensions=resp.extensions,\n        )\n",
+          "quote_sha256": "9edcd0cdfa4b6872e902526042f467c9571c7f222fb2986e63375c9eddb062be",
+          "kind": "complete-selected-method",
+          "source_executed": false
+        },
+        "AsyncHTTPTransport.handle_async_request": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 374,
+          "last_line": 403,
+          "quote": "    async def handle_async_request(\n        self,\n        request: Request,\n    ) -> Response:\n        assert isinstance(request.stream, AsyncByteStream)\n        import httpcore\n\n        req = httpcore.Request(\n            method=request.method,\n            url=httpcore.URL(\n                scheme=request.url.raw_scheme,\n                host=request.url.raw_host,\n                port=request.url.port,\n                target=request.url.raw_path,\n            ),\n            headers=request.headers.raw,\n            content=request.stream,\n            extensions=request.extensions,\n        )\n        with map_httpcore_exceptions():\n            resp = await self._pool.handle_async_request(req)\n\n        assert isinstance(resp.stream, typing.AsyncIterable)\n\n        return Response(\n            status_code=resp.status,\n            headers=resp.headers,\n            stream=AsyncResponseStream(resp.stream),\n            extensions=resp.extensions,\n        )\n",
+          "quote_sha256": "4dfd2e15d472a02f00c8033af74acb24d614bbb3f46a6fefb100e82cf4f7bd51",
+          "kind": "complete-selected-method",
+          "source_executed": false
+        },
+        "ResponseStream.__iter__": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 125,
+          "last_line": 128,
+          "quote": "    def __iter__(self) -> typing.Iterator[bytes]:\n        with map_httpcore_exceptions():\n            for part in self._httpcore_stream:\n                yield part\n",
+          "quote_sha256": "c004ac791d8271d8a0e5524a8935f902e0045c594c672f3c732e25c9cba3de0b",
+          "kind": "complete-selected-stream-iteration-method",
+          "source_executed": false
+        },
+        "AsyncResponseStream.__aiter__": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 269,
+          "last_line": 272,
+          "quote": "    async def __aiter__(self) -> typing.AsyncIterator[bytes]:\n        with map_httpcore_exceptions():\n            async for part in self._httpcore_stream:\n                yield part\n",
+          "quote_sha256": "a9ccdb1d75b4c6f2043ec2010db42bb1147e5b0e1d57b7e2327f9e1c3b88e48b",
+          "kind": "complete-selected-stream-iteration-method",
+          "source_executed": false
+        },
+        "ResponseStream.close": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 130,
+          "last_line": 132,
+          "quote": "    def close(self) -> None:\n        if hasattr(self._httpcore_stream, \"close\"):\n            self._httpcore_stream.close()\n",
+          "quote_sha256": "dbd179a5a03f1b5640aecfe3ec56deeafe56c87c174655865c0fe3c97e6d9e97",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "AsyncResponseStream.aclose": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 274,
+          "last_line": 276,
+          "quote": "    async def aclose(self) -> None:\n        if hasattr(self._httpcore_stream, \"aclose\"):\n            await self._httpcore_stream.aclose()\n",
+          "quote_sha256": "e1bf7f8dd811938be4ac571b077273e1f27b5e00307c59ac4be5993819f2543d",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "HTTPTransport.close": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 261,
+          "last_line": 262,
+          "quote": "    def close(self) -> None:\n        self._pool.close()\n",
+          "quote_sha256": "26edbcd82cdd4172b3caf441da179483cbf32fed8b6b6709d6dde49553b30e19",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "AsyncHTTPTransport.aclose": {
+          "path": "httpx/_transports/default.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "first_line": 405,
+          "last_line": 406,
+          "quote": "    async def aclose(self) -> None:\n        await self._pool.aclose()\n",
+          "quote_sha256": "cef6e5ca8a3e850162f4282a3bf1cb47e1a6b8fe035e48e9674aacea3845c3d3",
+          "kind": "complete-selected-close-method",
+          "source_executed": false
+        },
+        "request_context": {
+          "path": "httpx/_exceptions.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+          "first_line": 366,
+          "last_line": 379,
+          "quote": "@contextlib.contextmanager\ndef request_context(\n    request: Request | None = None,\n) -> typing.Iterator[None]:\n    \"\"\"\n    A context manager that can be used to attach the given request context\n    to any `RequestError` exceptions that are raised within the block.\n    \"\"\"\n    try:\n        yield\n    except RequestError as exc:\n        if request is not None:\n            exc.request = request\n        raise exc\n",
+          "quote_sha256": "e8b21fd7b402c1aa5733189fce03241b4ba35d3a1cb9bb93d617795dfa10023e",
+          "kind": "complete-decorated-request-context-function",
+          "source_executed": false
+        },
+        "HTTPStatusError": {
+          "path": "httpx/_exceptions.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+          "first_line": 258,
+          "last_line": 268,
+          "quote": "class HTTPStatusError(HTTPError):\n    \"\"\"\n    The response had an error HTTP status of 4xx or 5xx.\n\n    May be raised when calling `response.raise_for_status()`\n    \"\"\"\n\n    def __init__(self, message: str, *, request: Request, response: Response) -> None:\n        super().__init__(message)\n        self.request = request\n        self.response = response\n",
+          "quote_sha256": "63f51b6b73db04f543b59dda9575c22d16611fafeb02660380f4c1630206f8ce",
+          "kind": "complete-status-error-class",
+          "source_executed": false
+        },
+        "HTTPError": {
+          "path": "httpx/_exceptions.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+          "first_line": 74,
+          "last_line": 104,
+          "quote": "class HTTPError(Exception):\n    \"\"\"\n    Base class for `RequestError` and `HTTPStatusError`.\n\n    Useful for `try...except` blocks when issuing a request,\n    and then calling `.raise_for_status()`.\n\n    For example:\n\n    ```\n    try:\n        response = httpx.get(\"https://www.example.com\")\n        response.raise_for_status()\n    except httpx.HTTPError as exc:\n        print(f\"HTTP Exception for {exc.request.url} - {exc}\")\n    ```\n    \"\"\"\n\n    def __init__(self, message: str) -> None:\n        super().__init__(message)\n        self._request: Request | None = None\n\n    @property\n    def request(self) -> Request:\n        if self._request is None:\n            raise RuntimeError(\"The .request property has not been set.\")\n        return self._request\n\n    @request.setter\n    def request(self, request: Request) -> None:\n        self._request = request\n",
+          "quote_sha256": "e18e67dde03ecd15667a894e4050d2837ebe644bcc4772cfccc3c43f27ed7c83",
+          "kind": "complete-error-class-with-property-pair",
+          "source_executed": false
+        },
+        "RequestError.__init__": {
+          "path": "httpx/_exceptions.py",
+          "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+          "source_sha256": "6f15bb7f1ce054c01d3536f04f4567ab4e202435b5fe023f1858903ee3328cbd",
+          "first_line": 112,
+          "last_line": 120,
+          "quote": "    def __init__(self, message: str, *, request: Request | None = None) -> None:\n        super().__init__(message)\n        # At the point an exception is raised we won't typically have a request\n        # instance to associate it with.\n        #\n        # The 'request_context' context manager is used within the Client and\n        # Response methods in order to ensure that any raised exceptions\n        # have a `.request` property set on them.\n        self._request = request\n",
+          "quote_sha256": "374e4ac109ce723c61aea1f42aa3e3b0c29d165b65cbb8dac7e7be7343bb6f25",
+          "kind": "complete-selected-error-constructor",
+          "source_executed": false
+        }
+      },
+      "checks": {
+        "HTTPTransport.handle_request:pool_call": true,
+        "HTTPTransport.handle_request:request_before": true,
+        "HTTPTransport.handle_request:response_after": true,
+        "AsyncHTTPTransport.handle_async_request:pool_call": true,
+        "AsyncHTTPTransport.handle_async_request:request_before": true,
+        "AsyncHTTPTransport.handle_async_request:response_after": true,
+        "ResponseStream.__iter__:context": true,
+        "AsyncResponseStream.__aiter__:context": true,
+        "ResponseStream.close:no_explicit_context": true,
+        "AsyncResponseStream.aclose:no_explicit_context": true,
+        "HTTPTransport.close:no_explicit_context": true,
+        "AsyncHTTPTransport.aclose:no_explicit_context": true,
+        "request_context:handler": true,
+        "httpstatuserror:parent": true,
+        "request_context:all_errors_not_claimed": true
+      },
+      "all_checks_pass": true,
+      "source_executed": false
+    }
+  ],
+  "checks_count": 30,
+  "all_checks_pass": true,
+  "source_executed": false,
+  "http_application_requests": 0,
+  "model_calls": 0,
+  "permanent_tests_or_production_modified": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_excluded": true,
+  "limits": [
+    "Complete selected physical methods/context/classes at the two frozen source hashes only.",
+    "A lack of an explicit local map context is not a guarantee that a downstream implementation never translates errors.",
+    "An imported contextmanager name and source-declared hierarchy do not prove all runtime bindings or client-layer behavior.",
+    "HTTPError property getter/setter are quoted as a complete class rather than collapsed into one ambiguous member selector."
+  ]
+}

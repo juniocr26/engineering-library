@@ -1,0 +1,143 @@
+{
+  "at": "2026-11-21T04:21:26.073554+00:00",
+  "hypothesis": "H40",
+  "protocol": "frontend-baseline-failure-diagnosis-protocol-v1.json",
+  "preserved_runtime_evidence": "frontend-baseline-sanitized-failures-v1.json",
+  "sources": [
+    {
+      "path": "frontend/tests/catalog-layout.test.ts",
+      "sha256": "cf5e08499ede159b19bec8d7ff45c8017655580726f40c683be23f0b151caf57",
+      "selected_spans": [
+        {
+          "lines": [
+            9,
+            19
+          ],
+          "span_sha256": "c65d05a34fdf6255c12e60d2607518564126edb7c5ef173750cd1f20670a5831"
+        }
+      ],
+      "source_body_not_republished": true
+    },
+    {
+      "path": "frontend/tests/source-references.test.ts",
+      "sha256": "b9d4becd5f37f58b11556c77a3cc1fc3876675f067880aacd03874d9c62aa751",
+      "selected_spans": [
+        {
+          "lines": [
+            40,
+            53
+          ],
+          "span_sha256": "381e59ec848ac7b7c7613711431df2a2ffccec46c38d3b0d7809147072465f6d"
+        }
+      ],
+      "source_body_not_republished": true
+    },
+    {
+      "path": "frontend/lib/documentation.ts",
+      "sha256": "7ced1df6985007adb3bc26594f542d493bba1ae1e4358d0b51b1e4424f85f49a",
+      "selected_spans": [
+        {
+          "lines": [
+            7,
+            15
+          ],
+          "span_sha256": "44004f09ee4b82bf42f67b609f6acd8a26f7d88a0ccac0c036e9f7c33d82c041"
+        },
+        {
+          "lines": [
+            110,
+            126
+          ],
+          "span_sha256": "8df6fa2c4b618c177be0320d4e3488f266930e383127b3e62a8bd6e980696aef"
+        }
+      ],
+      "source_body_not_republished": true
+    },
+    {
+      "path": "frontend/lib/source-references.ts",
+      "sha256": "ebeead25f1c90ac4ba2051ca4660879899e223cf5036a15786a0d6b0dfced8b2",
+      "selected_spans": [
+        {
+          "lines": [
+            7,
+            14
+          ],
+          "span_sha256": "781a497774e77796f4eb556c1e8fe3c60adc0d952f629cb36236b44dc00326d9"
+        },
+        {
+          "lines": [
+            23,
+            40
+          ],
+          "span_sha256": "ede9c76d86fb186d6d6025814db70835a6b04d6a3c052c97e51aea056ccddd65"
+        }
+      ],
+      "source_body_not_republished": true
+    },
+    {
+      "path": "frontend/lib/source-snapshot.ts",
+      "sha256": "089603ffff0d1365d87e130b64a4bc8e5ff6fbbf4f4989db0dc009f3fc446371",
+      "selected_spans": [
+        {
+          "lines": [
+            3,
+            19
+          ],
+          "span_sha256": "67cb1d286d75ba0f08794cf5f62d61d505b561519d1e67c09a288ce3730b2113"
+        }
+      ],
+      "source_body_not_republished": true
+    }
+  ],
+  "baseline_counts": {
+    "tests": 102,
+    "pass": 100,
+    "fail": 2
+  },
+  "findings": [
+    {
+      "test": "catalog-layout.test.ts",
+      "failing_line": 19,
+      "failure_stage": "READMEentrypresence before image traversal for an internal hidden state directory",
+      "status": "SOURCE_BACKED_TEST_INPUT_CONTRACT_MISMATCH",
+      "evidence": "The test enumerates all root directories without the reader slug filter. documentationEntries returns[] for invalidslug syntax; internal hidden state directory message was classified locally without raw disclosure.",
+      "not_established": [
+        "Imagebytesfailure",
+        "Unreadablevalidprojectchapters",
+        "Campaignregression",
+        "Runtimefix"
+      ]
+    },
+    {
+      "test": "source-references.test.ts",
+      "failing_line": 52,
+      "failure_stage": "No available/approved code references counted for one English catalog case",
+      "status": "ASSERTION_STAGE_ESTABLISHED_UNDERLYING_PROVISIONING_CAUSE_INCONCLUSIVE",
+      "evidence": "Local nonnegative integer approved starts0 and increments only for available refs; assertapproved>0 failed. This is not the plain-documents assertion on the next line.",
+      "possible_causes_not_observed": [
+        "No eligible document/source link",
+        "Missing/mismatched source catalog record",
+        "Unapproved/excluded/missing status",
+        "Snapshotrevision/hash/read failure"
+      ],
+      "not_established": [
+        "Specificcatalogor snapshotcauseat historicalrun",
+        "Brokenalready-available reference or fingerprint",
+        "Unsafeapprovalgate",
+        "Campaignregression",
+        "Runtimefix"
+      ]
+    }
+  ],
+  "interpretation": "Both original baseline failures remain. First concerns admitting an internal directory into a collection-wide test; second a required nonzero reference-availability premise. Existing102test counts do not certify all catalog/image/reference paths when these assertions stop early.",
+  "runtime_rerun": false,
+  "application_or_UI_started": false,
+  "test_UI_catalog_source_changes": false,
+  "private_raw_log_contents_or_private_document_names_republished": false,
+  "owner_actions_after_campaign": [
+    "Review admissible collection selection in later separately authorized test work.",
+    "Review source-catalog provisioning/availability with an explicitly scoped safe trace; do not mark unapproved sources available merely to satisfy a count."
+  ],
+  "no_approval_requested_during_campaign": true,
+  "training_gold": false
+}

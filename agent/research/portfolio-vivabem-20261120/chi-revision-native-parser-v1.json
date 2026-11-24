@@ -1,0 +1,75 @@
+{
+  "at": "2026-11-21T01:39:04.521702+00:00",
+  "conditions": [
+    {
+      "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+      "git_snapshot_matches": true,
+      "parser": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "middleware/wrap_writer.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "httpFancyWriter.ReadFrom",
+            "declaration_kind": "method",
+            "symbol": "middleware.httpFancyWriter.ReadFrom",
+            "start_line": 211,
+            "end_line": 226,
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "declaration": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error)",
+            "function_type": "func(r io.Reader) (int64, error)",
+            "receiver_type": "*httpFancyWriter"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+      "git_snapshot_matches": true,
+      "parser": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "middleware/wrap_writer.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "httpFancyWriter.ReadFrom",
+            "declaration_kind": "method",
+            "symbol": "middleware.httpFancyWriter.ReadFrom",
+            "start_line": 211,
+            "end_line": 229,
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "declaration": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error)",
+            "function_type": "func(r io.Reader) (int64, error)",
+            "receiver_type": "*httpFancyWriter"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    }
+  ],
+  "no_external_source_execution": true,
+  "parser_is_syntax_not_semantic_proof": true
+}

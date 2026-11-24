@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-20T05:27:20.248697+00:00",
+  "started": "2026-11-20T05:25:11.603140+00:00",
+  "status": "INDEPENDENT_RESTORED_CODE_KNOWLEDGE_AND_213_TESTS_PASSED_ON_MACOS_AND_LINUX_ARM64",
+  "archive_sha256": "0182d59cd82146cc2adef8be3189b88cecfbff6c4e45455ee634aa7ee35711e8",
+  "archive_bytes": 18321079,
+  "capture_metadata_sha256": "258c5f1be02a68e70f28ba3918bbd69d8f730124bde68518b261cb36155c6688",
+  "recovery_manifest_sha256": "b21c57dae2e1afa4747f4bd84e5feddea879ea82ce679d3ca79716232f128b53",
+  "files": 796,
+  "source_bytes": 42389582,
+  "restored": ".local-backups/documentation-intelligence-20261119/operational-recovery-v2/restored",
+  "knowledge_check": {
+    "status": "verified",
+    "action": "knowledge",
+    "model": "llama3.2:3b",
+    "runtime_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+    "git_embedded_small_blobs": 6,
+    "knowledge_files": 795
+  },
+  "byte_and_mode_verification": true,
+  "original_source_bytes_unchanged": true,
+  "weights_in_this_archive": false,
+  "git_metadata_in_this_archive": false,
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "model_calls": 0,
+  "training_runs": 0,
+  "remote_restore_verified": false,
+  "limitations": [
+    "Dated operational cut, not final campaign closure; later receipts/report/data additions require a subsequent cut.",
+    "Same host filesystem; no remote loss, Windows or cold image recovery proved.",
+    "Model weights and private source/runtime evidence are separately preserved; this archive alone is not full disaster recovery."
+  ],
+  "regressions": [
+    {
+      "log": ".local-backups/documentation-intelligence-20261119/operational-recovery-v2/restored-macos-python314-tests.stderr",
+      "sha256": "074a5d48a7f65c9688c67681ab7d1624a81588e143db713dbdf5e9c7c345797e",
+      "python_version": "3.14.7",
+      "tests": 213,
+      "seconds": 5.761,
+      "status": "PASSED"
+    },
+    {
+      "log": ".local-backups/documentation-intelligence-20261119/operational-recovery-v2/restored-linux-tests.stderr",
+      "sha256": "39e40a7d13cd0e468c74ccbb2daa81576c8f7188afcf3f8b57949c19a51ae933",
+      "python_version": "3.11.2",
+      "tests": 213,
+      "seconds": 3.132,
+      "status": "PASSED"
+    }
+  ],
+  "linux_receipt_sha256": "ecfe5ff9047b6b3a8065b82359cc1910362c9d69e35fece6e88aaa424fbd3eeb",
+  "earlier_discovery_failure": {
+    "python_version": "3.9.6",
+    "executable": "/usr/bin/python3",
+    "tests": 213,
+    "failures": 1,
+    "log_sha256": "77e8c480682f676fb179efd1febca084055be929b4bd9e0513063ab52a5712fb",
+    "failed_test": "test_source_comments_cannot_grant_authority_or_execute",
+    "observed_result": "INCONCLUSIVE rather than FOUND; worker nonzero",
+    "cause_evidence": "PATH in the restored workdir resolves python3 to system 3.9.6; the extractor references ast.Match, introduced after that runtime. Existing task runtime is explicit /opt/homebrew/bin/python3 3.14.7.",
+    "code_modified_to_pass": false,
+    "unsupported_runtime_not_certified": true
+  },
+  "cold_model_serving_verified": false,
+  "source_dependencies_separate": true,
+  "publication_authorized": false
+}

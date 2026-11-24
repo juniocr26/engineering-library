@@ -1,0 +1,323 @@
+{
+  "at": "2026-11-22T01:19:02.696831+00:00",
+  "task_id": "ESP_HAL_COMMANDS_JS_EVAL_01",
+  "upstream_identity": "esp-rs/esp-hal",
+  "source_revision": "e800b19c30bc208aa93d600fb158cf8cef42a4fe",
+  "language": "JavaScript",
+  "role": "PROSPECTIVE_EVALUATION_ONLY_EXPOSURE_BOUNDED_NOT_CERTIFIED_HOLDOUT",
+  "status": "FROZEN_NOT_EXECUTED",
+  "request": "Write one complete bilingual technical reference chapter, English followed by pt-BR, for esp-hal command parsing at the supplied exact revision. Audience: maintainers of CI command handling. Scope: parseHilCommand, parseTestSizeCommand, their local parsing/classification helpers, chips.json configuration and the selected dispatch/help integration boundaries. Explain exact matching/first-line behavior, normalized chips versus original names, deduplication, classification precedence, help versus error precedence, quick/full/explicit selection, canonical packages, all output fields/types, null/error results and distinction from authorization or actual workflow execution. Preserve identifiers and negation in both languages. Give one source-derived illustrative call/output example per API in each language with identical code bytes across languages; label examples unexecuted. Include corresponding FAQs: does parser success authorize dispatch, what determines chip order, and does help override invalid options? Cite supplied file names/line ranges near claims. Lifecycle action ADD applies only to an isolated proposed reference chapter. Do not edit external repositories, invoke GitHub APIs, send comments, trigger workflows, execute project source/tests or claim runtime test success. State uncertainties, especially runtime expression semantics beyond the selected source. Apply unchanged G1-G9 technical gates with independent procedure limits explicit.",
+  "sources": [
+    {
+      "name": "hil-parse.js",
+      "path": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "bytes": 6713,
+      "sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef"
+    },
+    {
+      "name": "chips.json",
+      "path": "agent/research/final-intensive-20261121/esp-hal-js-context-snapshots-v1/.github/chips.json",
+      "bytes": 2043,
+      "sha256": "144ba682c156dde2078fec6fc26164a5a9ca7758649ddd8ef43c6b5f29222ec1"
+    },
+    {
+      "name": "dispatch.yml",
+      "path": "agent/research/final-intensive-20261121/esp-hal-js-context-snapshots-v1/.github/workflows/dispatch.yml",
+      "bytes": 17530,
+      "sha256": "d2f951d49876dd006ffe70e3194df16d4a307272cecbe772fcb38e91943de955"
+    }
+  ],
+  "context_delivery_policy": "References are evaluator-only. Model context must be a frozen source-only envelope of full parser, chips JSON and selected line-numbered workflow ranges; actual token-fit remains unverified until authorized runtime.",
+  "reference_propositions": [
+    {
+      "id": "J01",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 5,
+      "end_line": 7,
+      "quote": "const CHIPS = require(\"../chips.json\");\nconst SOCS = CHIPS.map((c) => c.soc);\nconst QUICK = CHIPS.filter((c) => c.quick).map((c) => c.soc);\n",
+      "quote_sha256": "7f77db3ac6e49ed7e47f94e9447f2572067f68e294a90ddcfc38c784309e4fc3",
+      "reference_proposition": "SOCS preserves chips.json order; QUICK includes entries with truthy quick configuration.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J02",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 53,
+      "end_line": 58,
+      "quote": "function normalizeChip(word) {\n  const name = word.toLowerCase().replace(/[-_]/g, \"\");\n  if (!name) return null;\n  const soc = name.startsWith(\"esp32\") ? name : `esp32${name}`;\n  return SOCS.includes(soc) ? soc : null;\n}\n",
+      "quote_sha256": "200f1350552bc2ed9e9e04bbae223efa098ed5d5cf5555ea2e4cf0fef36407e3",
+      "reference_proposition": "normalizeChip lowercases, removes every hyphen/underscore, adds esp32 unless already present, then validates membership in SOCS.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J03",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 72,
+      "end_line": 77,
+      "quote": "function commandWords(body, command) {\n  const line = String(body || \"\").split(/\\r?\\n/, 1)[0].trim();\n  const match = line.match(new RegExp(`^${command}(?:\\\\s+(.*))?$`, \"i\"));\n  if (!match) return null;\n  return (match[1] || \"\").split(/[\\s,=]+/).filter(Boolean);\n}\n",
+      "quote_sha256": "a12b2b6204c03fda6412832556135a0b77a6148dd2e78693db31238c3114c1dc",
+      "reference_proposition": "commandWords reads only the first physical line before trim, uses a case-insensitive anchored command regex, and splits arguments on whitespace, comma or equals. A command on a later line is not read.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J04",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 11,
+      "end_line": 23,
+      "quote": "const NAME = /^[A-Za-z0-9_:-]+$/;\n\n// xtask takes these as flags too, but here their values are words like any\n// other, so the flags add nothing.\nconst FLAGS = [\"--test\", \"--tests\", \"-t\", \"--package\", \"--packages\"];\n\nconst HIL_PACKAGES = new Map([\n  [\"hil-test\", \"hil-test\"],\n  [\"test\", \"hil-test\"],\n  [\"tests\", \"hil-test\"],\n  [\"hil-test-radio\", \"hil-test-radio\"],\n  [\"radio\", \"hil-test-radio\"],\n]);\n",
+      "quote_sha256": "c5c3171ed2f686d819834bdabb6346c589d53ab54204b210313eb80a1110b35a",
+      "reference_proposition": "NAME permits ASCII letters/digits/underscore/colon/hyphen; listed test/package flags are ignored words; HIL aliases map test/tests to hil-test and radio to hil-test-radio.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J05",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 79,
+      "end_line": 95,
+      "quote": "function sortWords(words, { keywords, packages }) {\n  const sorted = { chips: [], keywords: [], packages: [], names: [], errors: [] };\n  const add = (list, value) => list.includes(value) || list.push(value);\n  for (const word of words) {\n    const lower = word.toLowerCase();\n    const chip = normalizeChip(word);\n    if (FLAGS.includes(lower)) continue;\n    if (chip) add(sorted.chips, chip);\n    else if (keywords.includes(lower)) add(sorted.keywords, lower);\n    else if (packages.has(lower)) add(sorted.packages, packages.get(lower));\n    else if (word.startsWith(\"-\")) sorted.errors.push(`Unknown option ${quote(word)}.`);\n    else if (looksLikeChip(word))\n      sorted.errors.push(`Unknown chip ${quote(word)}. Known chips are: ${SOCS.join(\", \")}.`);\n    else if (!NAME.test(word)) sorted.errors.push(`${quote(word)} is not a test or example name.`);\n    else add(sorted.names, word);\n  }\n  return sorted;\n",
+      "quote_sha256": "3227dcb39e3971ac2ac7a11863b296e1d263d6dbe8eedad3cfe12769383c5cdd",
+      "reference_proposition": "sortWords classifies known flags, chips, keywords and packages before unknown-option, chip-like and invalid-name errors, then names; its add helper deduplicates destination lists.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J06",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 83,
+      "end_line": 93,
+      "quote": "    const lower = word.toLowerCase();\n    const chip = normalizeChip(word);\n    if (FLAGS.includes(lower)) continue;\n    if (chip) add(sorted.chips, chip);\n    else if (keywords.includes(lower)) add(sorted.keywords, lower);\n    else if (packages.has(lower)) add(sorted.packages, packages.get(lower));\n    else if (word.startsWith(\"-\")) sorted.errors.push(`Unknown option ${quote(word)}.`);\n    else if (looksLikeChip(word))\n      sorted.errors.push(`Unknown chip ${quote(word)}. Known chips are: ${SOCS.join(\", \")}.`);\n    else if (!NAME.test(word)) sorted.errors.push(`${quote(word)} is not a test or example name.`);\n    else add(sorted.names, word);\n",
+      "quote_sha256": "675a9d4c79697075a7a492ec0badd78ea68636e1be9bd6908de017e44dcedeb2",
+      "reference_proposition": "Keyword/package comparison is lowercase, but accepted test/example name values preserve the original word; do not promise all tokens are lowercased.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J07",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 101,
+      "end_line": 111,
+      "quote": "function parseHilCommand(body) {\n  const words = [\"/hil\", \"/test\"].map((command) => commandWords(body, command)).find(Boolean);\n  if (!words) return null;\n\n  const result = { help: false, error: \"\", chips: \"\", selector: \"\", tests: \"\", package: \"\" };\n  const sorted = sortWords(words, {\n    keywords: [\"quick\", \"full\", \"all\", \"help\"],\n    packages: HIL_PACKAGES,\n  });\n  if (words.length === 0 || sorted.keywords.includes(\"help\")) return { ...result, help: true };\n  if (sorted.errors.length) return { ...result, error: sorted.errors.join(\"\\n\") };\n",
+      "quote_sha256": "1991ad3e576bdab32c298e381b255fe18f64286aef47d52d532d25cbf7edd14a",
+      "reference_proposition": "parseHilCommand recognizes /hil or /test, returns null for no match, then returns the base help result for no words or help keyword before returning sorted errors. Empty arrays are truthy in the find(Boolean) match.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J08",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 113,
+      "end_line": 124,
+      "quote": "  const full = sorted.keywords.includes(\"full\") || sorted.keywords.includes(\"all\");\n  const quick = sorted.keywords.includes(\"quick\");\n  const chips = SOCS.filter(\n    (soc) => full || (quick && QUICK.includes(soc)) || sorted.chips.includes(soc),\n  );\n  if (chips.length === 0) {\n    return { ...result, error: \"Name the chips to test, like `c6` or `esp32s3`, or `quick` or `full`.\" };\n  }\n\n  let selector = chips.join(\" \");\n  if (full) selector = \"full\";\n  else if (quick && sorted.chips.every((soc) => QUICK.includes(soc))) selector = \"quick\";\n",
+      "quote_sha256": "0a4f90b77707aa4d0921b455dd90ad331fae949ed6ddb9a2de99db70bbea2368",
+      "reference_proposition": "full/all selects every SOCS entry. quick unions configured quick entries with explicitly selected chips. No chips yields a descriptive error. Output chip order follows SOCS, not user order.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J09",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 122,
+      "end_line": 131,
+      "quote": "  let selector = chips.join(\" \");\n  if (full) selector = \"full\";\n  else if (quick && sorted.chips.every((soc) => QUICK.includes(soc))) selector = \"quick\";\n\n  return {\n    ...result,\n    chips: chips.join(\" \"),\n    selector,\n    tests: sorted.names.join(\",\"),\n    package: sorted.packages.length > 1 ? \"all\" : sorted.packages[0] || \"hil-test\",\n",
+      "quote_sha256": "896a315184d112d81eb2c3a3fb06a0edc9a2c7e8fc5ad46a73b8bdd0ac3b4424",
+      "reference_proposition": "selector becomes full for full/all, otherwise quick only when quick was requested and every explicit chip is in QUICK, otherwise the selected chip string. tests joins names with commas.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J10",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 126,
+      "end_line": 132,
+      "quote": "  return {\n    ...result,\n    chips: chips.join(\" \"),\n    selector,\n    tests: sorted.names.join(\",\"),\n    package: sorted.packages.length > 1 ? \"all\" : sorted.packages[0] || \"hil-test\",\n  };\n",
+      "quote_sha256": "791b26048f6855e489358ec815d7811b0737679629ac5830b7db2f73061bbeb3",
+      "reference_proposition": "Successful HIL output has help/error/chips/selector/tests/package; package is all when multiple canonical packages were selected, otherwise first canonical package or hil-test default.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J11",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 25,
+      "end_line": 31,
+      "quote": "// What `cargo xtask build --package` gets, empty for the default `examples`.\nconst SIZE_PACKAGES = new Map([\n  [\"examples\", \"\"],\n  [\"example\", \"\"],\n  [\"qa-test\", \"qa-test\"],\n  [\"qa\", \"qa-test\"],\n]);\n",
+      "quote_sha256": "341a5419c8a7ec5deaacc1313ccb9af2311474ed684960d7a45d51adc4b450cf",
+      "reference_proposition": "SIZE_PACKAGES maps examples/example to empty default and qa-test/qa to qa-test.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J12",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 137,
+      "end_line": 145,
+      "quote": "function parseTestSizeCommand(body) {\n  const words = commandWords(body, \"/test-size\");\n  if (!words) return null;\n\n  const sorted = sortWords(words, { keywords: [], packages: SIZE_PACKAGES });\n  const errors = [...sorted.errors];\n  if (sorted.names.length === 0) errors.push(\"Name the example to measure, like `hello_world`.\");\n  if (sorted.chips.length === 0) errors.push(\"Name at least one chip, like `c6` or `esp32s3`.\");\n  if (sorted.packages.length > 1) errors.push(\"Examples and `qa-test` binaries are measured one package at a time.\");\n",
+      "quote_sha256": "d65bb1d3fff9d338a235dd11e7ea25e3652b0b58f62c6b934c895e8a54306e11",
+      "reference_proposition": "parseTestSizeCommand returns null for nonmatch and accumulates errors for sorting, missing examples, missing chips and more than one canonical package; it has no separate help result.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J13",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 147,
+      "end_line": 152,
+      "quote": "  return {\n    error: errors.join(\"\\n\"),\n    examples: sorted.names.join(\" \"),\n    package: sorted.packages[0] || \"\",\n    chips: SOCS.filter((soc) => sorted.chips.includes(soc)),\n  };\n",
+      "quote_sha256": "dd343edd43f37cbb20c657c32882a818f8d0ce64025c0d562528471c1f55e8df",
+      "reference_proposition": "Size output examples joins names with spaces, chips is a SOCS-ordered array and package is the first canonical value or empty default. An error result still contains these fields.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J14",
+      "file": "chips.json",
+      "snapshot": "agent/research/final-intensive-20261121/esp-hal-js-context-snapshots-v1/.github/chips.json",
+      "file_sha256": "144ba682c156dde2078fec6fc26164a5a9ca7758649ddd8ef43c6b5f29222ec1",
+      "start_line": 1,
+      "end_line": 14,
+      "quote": "[\n  { \"soc\": \"esp32\",    \"arch\": \"xtensa\", \"rust-target\": \"xtensa-esp32-none-elf\",         \"ci-toolchain\": \"esp\",                    \"hil-runner\": \"esp32-jtag\"    },\n  { \"soc\": \"esp32s2\",  \"arch\": \"xtensa\", \"rust-target\": \"xtensa-esp32s2-none-elf\",       \"ci-toolchain\": \"esp\",                    \"hil-runner\": \"esp32s2-jtag\"  },\n  { \"soc\": \"esp32s3\",  \"arch\": \"xtensa\", \"rust-target\": \"xtensa-esp32s3-none-elf\",       \"ci-toolchain\": \"esp\",    \"quick\": true,  \"hil-runner\": \"esp32s3-usb\",  \"hil-radio-runner\": \"esp32s3-radio\" },\n  { \"soc\": \"esp32c2\",  \"arch\": \"riscv\",  \"rust-target\": \"riscv32imc-unknown-none-elf\",   \"ci-toolchain\": \"esp\",                    \"hil-runner\": \"esp32c2-jtag\"  },\n  { \"soc\": \"esp32c3\",  \"arch\": \"riscv\",  \"rust-target\": \"riscv32imc-unknown-none-elf\",   \"ci-toolchain\": \"esp\",                    \"hil-runner\": \"esp32c3-usb\"   },\n  { \"soc\": \"esp32c5\",  \"arch\": \"riscv\",  \"rust-target\": \"riscv32imac-unknown-none-elf\",  \"ci-toolchain\": \"stable\",                 \"hil-runner\": \"esp32c5-usb\"   },\n  { \"soc\": \"esp32c6\",  \"arch\": \"riscv\",  \"rust-target\": \"riscv32imac-unknown-none-elf\",  \"ci-toolchain\": \"stable\", \"quick\": true,  \"hil-runner\": \"esp32c6-usb\",  \"hil-radio-runner\": \"esp32c6-radio\" },\n  { \"soc\": \"esp32c61\", \"arch\": \"riscv\",  \"rust-target\": \"riscv32imac-unknown-none-elf\",  \"ci-toolchain\": \"stable\",                 \"hil-runner\": \"esp32c61-usb\"  },\n  { \"soc\": \"esp32h2\",  \"arch\": \"riscv\",  \"rust-target\": \"riscv32imac-unknown-none-elf\",  \"ci-toolchain\": \"stable\",                 \"hil-runner\": \"esp32h2-usb\"   },\n  { \"soc\": \"esp32h4\",  \"arch\": \"riscv\",  \"rust-target\": \"riscv32imafc-unknown-none-elf\", \"ci-toolchain\": \"stable\",                 \"hil-runner\": \"esp32h4-usb\"   },\n  { \"soc\": \"esp32p4\",  \"arch\": \"riscv\",  \"rust-target\": \"riscv32imafc-unknown-none-elf\", \"ci-toolchain\": \"stable\",                 \"hil-runner\": \"esp32p4\"       },\n  { \"soc\": \"esp32s31\", \"arch\": \"riscv\",  \"rust-target\": \"riscv32imafc-unknown-none-elf\", \"ci-toolchain\": \"stable\",                 \"hil-runner\": \"esp32s31-jtag\" }\n]\n",
+      "quote_sha256": "144ba682c156dde2078fec6fc26164a5a9ca7758649ddd8ef43c6b5f29222ec1",
+      "reference_proposition": "Pinned configuration lists twelve chips; only esp32s3 and esp32c6 have quick:true. Read configuration, not prose alone, for the actual quick set.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J15",
+      "file": "dispatch.yml",
+      "snapshot": "agent/research/final-intensive-20261121/esp-hal-js-context-snapshots-v1/.github/workflows/dispatch.yml",
+      "file_sha256": "d2f951d49876dd006ffe70e3194df16d4a307272cecbe772fcb38e91943de955",
+      "start_line": 256,
+      "end_line": 282,
+      "quote": "    needs: auth\n    if: github.event_name == 'issue_comment' &&\n      needs.auth.outputs.allowed == 'true' &&\n      (startsWith(github.event.comment.body, '/hil ') ||\n      startsWith(github.event.comment.body, '/test '))\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v6 # for `require`\n        with:\n          fetch-depth: 1\n\n      - name: Resolve dispatch parameters\n        id: mode\n        uses: actions/github-script@v7\n        with:\n          # A command that can't be run is answered by `hil-help`.\n          script: |\n            const { parseHilCommand } = require('./.github/scripts/hil-parse.js');\n            const res = parseHilCommand(context.payload.comment.body) || {};\n\n            core.setOutput('selector', res.selector || '');\n            core.setOutput('chips', res.chips || '');\n            core.setOutput('tests', res.tests || '');\n            core.setOutput('package', res.package || '');\n\n      - name: Dispatch HIL\n        if: steps.mode.outputs.chips != ''\n",
+      "quote_sha256": "86bc4900c910f543b8b4b1231ea4d9bd3738783f705a4dbe5d7fa231b1b92230",
+      "reference_proposition": "HIL dispatch job requires issue_comment and auth.allowed true plus its literal command prefix conditions; it maps parser output to workflow outputs and gates actual dispatch on nonempty chips. Parser recognition alone does not authorize dispatch.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J16",
+      "file": "dispatch.yml",
+      "snapshot": "agent/research/final-intensive-20261121/esp-hal-js-context-snapshots-v1/.github/workflows/dispatch.yml",
+      "file_sha256": "d2f951d49876dd006ffe70e3194df16d4a307272cecbe772fcb38e91943de955",
+      "start_line": 346,
+      "end_line": 371,
+      "quote": "  hil-help:\n    if: github.event_name == 'issue_comment' &&\n      github.event.issue.pull_request &&\n      (startsWith(github.event.comment.body, '/hil') ||\n      startsWith(github.event.comment.body, '/test')) &&\n      !startsWith(github.event.comment.body, '/test-')\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v6 # for `require`\n        with:\n          fetch-depth: 1\n\n      - name: Explain usage\n        uses: actions/github-script@v7\n        with:\n          script: |\n            const { parseHilCommand, USAGE } = require('./.github/scripts/hil-parse.js');\n            const res = parseHilCommand(context.payload.comment.body);\n            if (!res || (!res.help && !res.error)) return;\n\n            const login = context.payload.comment.user.login;\n            const problem = res.error ? `@${login}, this command can't be run:\\n${res.error}\\n\\n` : '';\n            await github.rest.issues.createComment({\n              ...context.repo,\n              issue_number: context.issue.number,\n              body: problem + USAGE,\n",
+      "quote_sha256": "055cfd62cbbeda57b5b862dd3a0edadfc689d4e69e92f24da4b8c489bd53f2ac",
+      "reference_proposition": "The separate HIL help job parses commands, returns when no help/error applies, otherwise prepares a usage/problem comment. This campaign never runs it or posts comments.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J17",
+      "file": "dispatch.yml",
+      "snapshot": "agent/research/final-intensive-20261121/esp-hal-js-context-snapshots-v1/.github/workflows/dispatch.yml",
+      "file_sha256": "d2f951d49876dd006ffe70e3194df16d4a307272cecbe772fcb38e91943de955",
+      "start_line": 374,
+      "end_line": 409,
+      "quote": "  binary-size:\n    needs: auth\n    if: github.event_name == 'issue_comment' &&\n      needs.auth.outputs.allowed == 'true' &&\n      startsWith(github.event.comment.body, '/test-size')\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v6 # for `require`\n        with:\n          fetch-depth: 1\n\n      - name: Extract parameters from comment\n        id: extract\n        uses: actions/github-script@v7\n        with:\n          script: |\n            const { parseTestSizeCommand, USAGE } = require('./.github/scripts/hil-parse.js');\n            const res = parseTestSizeCommand(context.payload.comment.body);\n            if (!res || res.error) {\n              const login = context.payload.comment.user.login;\n              const error = res?.error || 'Write the command as `/test-size` followed by its words.';\n              await github.rest.issues.createComment({\n                ...context.repo,\n                issue_number: context.issue.number,\n                body: `@${login}, this \\`/test-size\\` command can't be run:\\n${error}\\n\\n${USAGE}`,\n              });\n              core.setFailed(error);\n              return;\n            }\n\n            // `example_name` takes several examples, separated by spaces.\n            const chips = JSON.stringify(res.chips);\n            core.setOutput('example_name', res.examples);\n            core.setOutput('package', res.package);\n            core.setOutput('chips', chips);\n            core.setOutput('chips_escaped', JSON.stringify(chips).slice(1, -1));\n",
+      "quote_sha256": "9f313caec6e1a65f426044a167839f92ff66eeb118e8456c930b8e88312e515d",
+      "reference_proposition": "Size dispatch also requires auth and its prefix condition; missing/error result prepares an explanatory comment and setFailed then returns. Successful chips are JSON-encoded for downstream outputs.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    },
+    {
+      "id": "J18",
+      "file": "hil-parse.js",
+      "snapshot": "agent/research/final-intensive-20261121/javascript-prospective-source-snapshots-v1/esp-hal/.github/scripts/hil-parse.js",
+      "file_sha256": "d618539d3c82e4735d7fe0c357eb40390d7b266388796bc43eb22c5dab5ee3ef",
+      "start_line": 155,
+      "end_line": 155,
+      "quote": "module.exports = { parseHilCommand, parseTestSizeCommand, USAGE };\n",
+      "quote_sha256": "5a4831904531363423e4cda1d425bf51c9a8f4eb70fd27a01cece6dcce575f41",
+      "reference_proposition": "The CommonJS exports are parseHilCommand, parseTestSizeCommand and USAGE; helper functions are local implementation details.",
+      "method": "Same-agent source/context review; composite reference unit, not independent atomic metric."
+    }
+  ],
+  "negative_reference_claims": [
+    {
+      "id": "N01",
+      "claim": "Parser success authorizes any commenter to launch HIL.",
+      "expected": "UNSUPPORTED",
+      "basis": "J15"
+    },
+    {
+      "id": "N02",
+      "claim": "HIL output chips preserve user input order.",
+      "expected": "CONTRADICTED",
+      "basis": "J08"
+    },
+    {
+      "id": "N03",
+      "claim": "All names are converted to lowercase.",
+      "expected": "CONTRADICTED",
+      "basis": "J06"
+    },
+    {
+      "id": "N04",
+      "claim": "A matching command on the second physical line is parsed.",
+      "expected": "CONTRADICTED",
+      "basis": "J03"
+    },
+    {
+      "id": "N05",
+      "claim": "The /test-size command is a /test command to parseHilCommand.",
+      "expected": "CONTRADICTED",
+      "basis": "J03,J07"
+    },
+    {
+      "id": "N06",
+      "claim": "help plus an unknown option always returns the unknown-option error.",
+      "expected": "CONTRADICTED",
+      "basis": "J07"
+    },
+    {
+      "id": "N07",
+      "claim": "Size parsing combines examples and qa-test as one package.",
+      "expected": "CONTRADICTED",
+      "basis": "J12"
+    },
+    {
+      "id": "N08",
+      "claim": "HIL chips and size chips have the same output type.",
+      "expected": "CONTRADICTED",
+      "basis": "J10,J13"
+    },
+    {
+      "id": "N09",
+      "claim": "The quick set is hardcoded in normalizeChip.",
+      "expected": "CONTRADICTED",
+      "basis": "J01,J14"
+    },
+    {
+      "id": "N10",
+      "claim": "These workflow actions and HIL tests passed during this campaign.",
+      "expected": "UNSUPPORTED",
+      "basis": "No target execution; source syntax observation only."
+    }
+  ],
+  "exposure_audit": "esp-hal-parser-evaluation-exposure-v1.json",
+  "independence_limits": "No selected target symbol matches in7968boundedhistoricaltextfiles; metadata matches31files. Archives/external/pretraining not certified. No independent human review. Related revisions/translations/FAQs remain same family.",
+  "rights": "Repository MIT/Apache texts retained; per-file provenance/rights approval not inferred from presence of root license texts. Default deny training/publication.",
+  "tests": "No direct parser behavioral test receipt in selected scope. Two JS files syntax-parsed with existing TypeScript5.9.3; own malformed control refused. Syntax is not API/runtime/workflow behavior verification.",
+  "evaluation_gates": "Unchanged documentation-done-v3.json all applicable G1-G9; no scope narrowing or automatic promotion from reference hashes.",
+  "owner_approved": false,
+  "publication_approved": false,
+  "training_gold": false,
+  "training_eligible": false,
+  "new_inference_calls": 0,
+  "target_source_executed": false,
+  "github_actions_executed": false
+}

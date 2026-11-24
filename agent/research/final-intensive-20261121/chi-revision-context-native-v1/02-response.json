@@ -1,0 +1,29 @@
+{
+  "go_version": "go1.27.4",
+  "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+  "path": "selected.go",
+  "platform": "darwin/arm64",
+  "profile": "go-standard-parser-declarations-v1",
+  "source_executed": false,
+  "source_sha256": "81a98f72a81442a01a4353be9833fda6803f585bf768cebde5a34ebc1c44c390",
+  "syntax_only": true,
+  "units": [
+    {
+      "selector": "RequestSize",
+      "declaration_kind": "function",
+      "symbol": "middleware.RequestSize",
+      "start_line": 9,
+      "end_line": 18,
+      "quote": "func RequestSize(bytes int64) func(http.Handler) http.Handler {\n\tf := func(h http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tr.Body = http.MaxBytesReader(w, r.Body, bytes)\n\t\t\th.ServeHTTP(w, r)\n\t\t}\n\t\treturn http.HandlerFunc(fn)\n\t}\n\treturn f\n}",
+      "declaration": "func RequestSize(bytes int64) func(http.Handler) http.Handler",
+      "function_type": "func(bytes int64) func(http.Handler) http.Handler"
+    }
+  ],
+  "producer": {
+    "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+    "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+    "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+    "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+    "version": "1.6.1"
+  }
+}

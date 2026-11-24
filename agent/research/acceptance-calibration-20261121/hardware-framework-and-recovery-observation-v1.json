@@ -1,0 +1,122 @@
+{
+  "at": "2026-11-21T13:37:27.543149+00:00",
+  "host_platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "observations": [
+    {
+      "command": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "agent/recovery/bootstrap.py",
+        "verify"
+      ],
+      "started_at": "2026-11-21T13:37:25.534646+00:00",
+      "ended_at": "2026-11-21T13:37:27.528981+00:00",
+      "exit_code": 0,
+      "stdout": "{\"status\": \"verified\", \"action\": \"verify\", \"model\": \"llama3.2:3b\", \"runtime_digest\": \"a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72\", \"git_embedded_small_blobs\": 6, \"knowledge_files\": 1964}\n",
+      "stderr": "",
+      "logs": [
+        {
+          "path": "agent/research/acceptance-calibration-20261121/operational-verify.stdout",
+          "sha256": "6db6d625c53fd081004ec26d2b14d8e0a3aee4e8e97ef2281c1079c079f3da39"
+        },
+        {
+          "path": "agent/research/acceptance-calibration-20261121/operational-verify.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/usr/sbin/sysctl",
+        "-n",
+        "hw.memsize"
+      ],
+      "started_at": "2026-11-21T13:37:27.529161+00:00",
+      "ended_at": "2026-11-21T13:37:27.535106+00:00",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "sysctl: sysctl fmt -1 1024 1: Operation not permitted\n",
+      "logs": [
+        {
+          "path": "agent/research/acceptance-calibration-20261121/hw-memsize.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "agent/research/acceptance-calibration-20261121/hw-memsize.stderr",
+          "sha256": "4b48e95fc2c708e90935b4eb0c7fdbef56360fded00e57f1b083e052354d3774"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/usr/sbin/sysctl",
+        "-n",
+        "hw.physicalcpu"
+      ],
+      "started_at": "2026-11-21T13:37:27.535291+00:00",
+      "ended_at": "2026-11-21T13:37:27.539002+00:00",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "sysctl: sysctl fmt -1 1024 1: Operation not permitted\n",
+      "logs": [
+        {
+          "path": "agent/research/acceptance-calibration-20261121/hw-physicalcpu.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "agent/research/acceptance-calibration-20261121/hw-physicalcpu.stderr",
+          "sha256": "4b48e95fc2c708e90935b4eb0c7fdbef56360fded00e57f1b083e052354d3774"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/usr/sbin/sysctl",
+        "-n",
+        "machdep.cpu.brand_string"
+      ],
+      "started_at": "2026-11-21T13:37:27.539093+00:00",
+      "ended_at": "2026-11-21T13:37:27.542607+00:00",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "sysctl: sysctl fmt -1 1024 1: Operation not permitted\n",
+      "logs": [
+        {
+          "path": "agent/research/acceptance-calibration-20261121/machdep-cpu-brand_string.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "agent/research/acceptance-calibration-20261121/machdep-cpu-brand_string.stderr",
+          "sha256": "4b48e95fc2c708e90935b4eb0c7fdbef56360fded00e57f1b083e052354d3774"
+        }
+      ]
+    }
+  ],
+  "framework_discovery_no_imports": {
+    "mlx": {
+      "discoverable": false
+    },
+    "mlx_lm": {
+      "discoverable": false
+    },
+    "torch": {
+      "discoverable": false
+    },
+    "transformers": {
+      "discoverable": false
+    },
+    "peft": {
+      "discoverable": false
+    },
+    "tokenizers": {
+      "discoverable": false
+    }
+  },
+  "no_training_benchmark": true,
+  "no_installations": true,
+  "no_weights_downloaded": true,
+  "no_optimizer_or_adapter": true,
+  "readiness": "NO-GO",
+  "limits": "Package discoverability and physical memory do not demonstrate framework compatibility, tokenizer/masking correctness, free/peak unified memory or training throughput. Operational verify is local byte integrity, not clean-clone coldboot or remote recovery."
+}

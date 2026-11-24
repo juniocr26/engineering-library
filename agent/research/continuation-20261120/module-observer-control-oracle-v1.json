@@ -1,0 +1,60 @@
+{
+  "at": "2026-11-20T12:05:59.018365+00:00",
+  "cases": [
+    {
+      "id": "new-imported-module",
+      "source": "import os\ndef value(x=1):\n    return x\n",
+      "selector": "value",
+      "expected": "WRITTEN_CALLABLE_FACTS"
+    },
+    {
+      "id": "decorated",
+      "source": "@wrapper\ndef value():\n    return 1\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "duplicate-binding",
+      "source": "def value():\n    return 1\nvalue=None\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "conditional",
+      "source": "if available:\n    def value():\n        return 1\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "wildcard",
+      "source": "from untrusted import *\ndef value():\n    return 1\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "dynamic-globals",
+      "source": "globals()[\"value\"]=None\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "annotation-bound-absence",
+      "source": "def other(x: (value := 1)):\n    return x\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "match-bound-absence",
+      "source": "match payload:\n    case {\"x\": value}:\n        pass\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "literal-absent",
+      "source": "import os\ndef other():\n    return 1\n",
+      "selector": "value",
+      "expected": "NO_WRITTEN_MODULE_BINDING"
+    }
+  ],
+  "scope": "Own isolated admission controls, not permanent tests or independent public evaluation."
+}

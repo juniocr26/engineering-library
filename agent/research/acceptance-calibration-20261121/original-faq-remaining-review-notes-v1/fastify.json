@@ -1,0 +1,171 @@
+{
+  "family": "source-repository:fastify",
+  "source_atoms": [
+    {
+      "id": "FF01",
+      "proposition": "Three selected public hasDecorator/hasRequestDecorator/hasReplyDecorator declarations require a decoration argument of string | symbol, not an optional argument.",
+      "source_path": "types/instance.d.ts",
+      "lines": [
+        161,
+        163
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF02",
+      "proposition": "hasRequestDecorator is wired to decorator.existRequest.",
+      "source_path": "fastify.js",
+      "lines": [
+        288,
+        288
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF03",
+      "proposition": "hasReplyDecorator is wired to decorator.existReply.",
+      "source_path": "fastify.js",
+      "lines": [
+        289,
+        289
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF04",
+      "proposition": "Exports map existRequest and existReply to their selected normal-function wrappers.",
+      "source_path": "lib/decorate.js",
+      "lines": [
+        153,
+        155
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF05",
+      "proposition": "Request wrapper retains a plain checkExistence(this[kRequest].prototype, name) call after two name-guarded early checks.",
+      "source_path": "lib/decorate.js",
+      "lines": [
+        103,
+        107
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF06",
+      "proposition": "Reply wrapper retains a plain checkExistence(this[kReply].prototype, name) call after two name-guarded early checks.",
+      "source_path": "lib/decorate.js",
+      "lines": [
+        109,
+        113
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF07",
+      "proposition": "For falsy name the selected helper evaluates instance in this; the file begins use strict.",
+      "source_path": "lib/decorate.js",
+      "lines": [
+        82,
+        88
+      ],
+      "additional_source_lines": [
+        [
+          1,
+          1
+        ]
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF08",
+      "proposition": "kRequest and kReply are internal Symbol-valued keys, distinct from the explicit decoration argument.",
+      "source_path": "lib/symbols.js",
+      "lines": [
+        30,
+        30
+      ],
+      "additional_source_lines": [
+        [
+          47,
+          47
+        ]
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "FF09",
+      "proposition": "The selected strict normal helper plain call does not inherit the outer wrapper receiver; reaching its falsy branch with undefined this would fail the in-operator object-right-operand requirement.",
+      "source_path": "lib/decorate.js",
+      "lines": [
+        103,
+        113
+      ],
+      "primary_language_reference": "ecmascript-primary-reference-review-v1.json",
+      "verdict": "SUPPORTED_CONDITIONAL_STATIC_LANGUAGE_INTERPRETATION"
+    },
+    {
+      "id": "FF10",
+      "proposition": "The truthy-name helper branch uses membership checks on explicit instance/prototype and hasKey, so the conditional falsy-path explanation is not a claim that all lookups throw.",
+      "source_path": "lib/decorate.js",
+      "lines": [
+        82,
+        92
+      ],
+      "verdict": "SUPPORTED"
+    }
+  ],
+  "pair_notes": {
+    "helper-receiver-binding": {
+      "source_atom_ids": [
+        "FF02",
+        "FF03",
+        "FF04",
+        "FF05",
+        "FF06",
+        "FF07",
+        "FF09"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "self_containedness": "CONTEXT_LINKED",
+      "note": "Accurate distinction between outer method binding and selected plain normal helper call. Extra supplement paragraph is procedural provenance, not a new source fact; document/ref preservation checked separately. Refers to chapter conditional explanation, so not certified as standalone FAQ without its source context."
+    },
+    "internal-key-identity": {
+      "source_atom_ids": [
+        "FF01",
+        "FF02",
+        "FF03",
+        "FF08"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "self_containedness": "PASS",
+      "note": "Internal Symbol keys select receiver target; explicit string-or-symbol decoration name is a different argument. No claim arbitrary Symbol descriptions imply identity."
+    },
+    "omitted-identifier-guard": {
+      "source_atom_ids": [
+        "FF01",
+        "FF05",
+        "FF06",
+        "FF07",
+        "FF09",
+        "FF10"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "self_containedness": "CONTEXT_LINKED",
+      "note": "Requires declared identifier and preserves conditional language-level error explanation without claiming external Fastify execution. No blanket runtime false/throw claim; answer depends on linked chapter explanation for full detail."
+    }
+  },
+  "reviewer": "Samecampaignagent, staticpublicsourceandprimarylanguagerules, not independenthuman/owner",
+  "all_actual_EN_PT_answers_read_in_full": true,
+  "no_critical_unsupported_factual_claim_found": true,
+  "source_only_pair_review_pass": true,
+  "independent_standalone_faq_certification": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "model_calls": 0,
+  "optimizer_updates": 0
+}

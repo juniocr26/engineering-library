@@ -1,0 +1,130 @@
+{
+  "at": "2026-11-20T19:37:52.082475+00:00",
+  "observation": {
+    "caller_version": "1.9.43",
+    "helper_version": "0.1.4",
+    "card": {
+      "path": "httpx/_transports/default.py",
+      "line": 95,
+      "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    global HTTPCORE_EXC_MAP\n    if len(HTTPCORE_EXC_MAP) == 0:\n        HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            # We want to map to the most specific exception we can find.\n            # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n            # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n\n        if mapped_exc is None:  # pragma: no cover\n            raise\n\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+      "complete_unit": true,
+      "symbol": "map_httpcore_exceptions",
+      "enclosing_impl_hint": null,
+      "caught_exception_identifiers": [
+        "Exception"
+      ],
+      "direct_return_mapping_identifiers": [],
+      "complete_function": true,
+      "preparation": "Python AST range; complete source function, not runtime or dependency verification"
+    },
+    "helper_evidence": {
+      "selector": "map_httpcore_exceptions",
+      "declaration_kind": "function",
+      "first_line": 95,
+      "last_line": 118,
+      "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    global HTTPCORE_EXC_MAP\n    if len(HTTPCORE_EXC_MAP) == 0:\n        HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            # We want to map to the most specific exception we can find.\n            # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n            # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n\n        if mapped_exc is None:  # pragma: no cover\n            raise\n\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+      "quote_sha256": "9afd913fa34d8266e68b22d78534c99cb8f9e21afd00df250beecb8ab28404c7",
+      "quote_byte_start": 2620,
+      "quote_byte_end": 3492,
+      "decorated": true,
+      "syntax_only": true,
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "limitations": [
+        "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+        "Lexical class membership is not proof of a runtime interface or inheritance contract."
+      ]
+    },
+    "independent_source_hash_equal": true,
+    "helper_quote_byte_slice_verified": true,
+    "rows": [
+      {
+        "id": "translated-caught-name",
+        "status": "REFUSED",
+        "reason": "quoted Python exception identifiers differ between languages or their source spelling; factual review required"
+      },
+      {
+        "id": "correct-caught-name",
+        "status": "RENDERED",
+        "output": {
+          "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: helper-httpx-renderer-research. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"httpx/_transports/default.py\":[\"map_httpcore_exceptions\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `map_httpcore_exceptions` mapper catches `Exception` in the written handler.\n\nSource: `httpx/_transports/default.py:95`; SHA-256: `03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79`.\n\n    @contextlib.contextmanager\n    def map_httpcore_exceptions() -> typing.Iterator[None]:\n        global HTTPCORE_EXC_MAP\n        if len(HTTPCORE_EXC_MAP) == 0:\n            HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n        try:\n            yield\n        except Exception as exc:\n            mapped_exc = None\n    \n            for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n                if not isinstance(exc, from_exc):\n                    continue\n                # We want to map to the most specific exception we can find.\n                # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n                # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n                if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                    mapped_exc = to_exc\n    \n            if mapped_exc is None:  # pragma: no cover\n                raise\n    \n            message = str(exc)\n            raise mapped_exc(message) from exc\n\n\n",
+          "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: helper-httpx-renderer-research. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"httpx/_transports/default.py\":[\"map_httpcore_exceptions\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO mapeador `map_httpcore_exceptions` captura `Exception` no tratador escrito.\n\nFonte: `httpx/_transports/default.py:95`; SHA-256: `03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79`.\n\n    @contextlib.contextmanager\n    def map_httpcore_exceptions() -> typing.Iterator[None]:\n        global HTTPCORE_EXC_MAP\n        if len(HTTPCORE_EXC_MAP) == 0:\n            HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n        try:\n            yield\n        except Exception as exc:\n            mapped_exc = None\n    \n            for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n                if not isinstance(exc, from_exc):\n                    continue\n                # We want to map to the most specific exception we can find.\n                # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n                # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n                if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                    mapped_exc = to_exc\n    \n            if mapped_exc is None:  # pragma: no cover\n                raise\n    \n            message = str(exc)\n            raise mapped_exc(message) from exc\n\n\n"
+        }
+      },
+      {
+        "id": "unknown-qualified-owner",
+        "status": "REFUSED",
+        "reason": "quoted Python exception identifiers differ between languages or their source spelling; factual review required"
+      },
+      {
+        "id": "wrong-semantics-same-name",
+        "status": "RENDERED",
+        "output": {
+          "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: helper-httpx-renderer-research. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"httpx/_transports/default.py\":[\"map_httpcore_exceptions\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `map_httpcore_exceptions` mapper suppresses every `Exception` and never re-raises.\n\nSource: `httpx/_transports/default.py:95`; SHA-256: `03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79`.\n\n    @contextlib.contextmanager\n    def map_httpcore_exceptions() -> typing.Iterator[None]:\n        global HTTPCORE_EXC_MAP\n        if len(HTTPCORE_EXC_MAP) == 0:\n            HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n        try:\n            yield\n        except Exception as exc:\n            mapped_exc = None\n    \n            for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n                if not isinstance(exc, from_exc):\n                    continue\n                # We want to map to the most specific exception we can find.\n                # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n                # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n                if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                    mapped_exc = to_exc\n    \n            if mapped_exc is None:  # pragma: no cover\n                raise\n    \n            message = str(exc)\n            raise mapped_exc(message) from exc\n\n\n",
+          "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: helper-httpx-renderer-research. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"httpx/_transports/default.py\":[\"map_httpcore_exceptions\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO mapeador `map_httpcore_exceptions` suprime toda `Exception` e nunca relan\u00e7a.\n\nFonte: `httpx/_transports/default.py:95`; SHA-256: `03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79`.\n\n    @contextlib.contextmanager\n    def map_httpcore_exceptions() -> typing.Iterator[None]:\n        global HTTPCORE_EXC_MAP\n        if len(HTTPCORE_EXC_MAP) == 0:\n            HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n        try:\n            yield\n        except Exception as exc:\n            mapped_exc = None\n    \n            for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n                if not isinstance(exc, from_exc):\n                    continue\n                # We want to map to the most specific exception we can find.\n                # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n                # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n                if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                    mapped_exc = to_exc\n    \n            if mapped_exc is None:  # pragma: no cover\n                raise\n    \n            message = str(exc)\n            raise mapped_exc(message) from exc\n\n\n"
+        }
+      },
+      {
+        "id": "correct-cause",
+        "status": "RENDERED",
+        "output": {
+          "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: helper-httpx-renderer-research. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"httpx/_transports/default.py\":[\"map_httpcore_exceptions\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `map_httpcore_exceptions` mapper writes `raise mapped_exc(message) from exc` after obtaining the message.\n\nSource: `httpx/_transports/default.py:95`; SHA-256: `03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79`.\n\n    @contextlib.contextmanager\n    def map_httpcore_exceptions() -> typing.Iterator[None]:\n        global HTTPCORE_EXC_MAP\n        if len(HTTPCORE_EXC_MAP) == 0:\n            HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n        try:\n            yield\n        except Exception as exc:\n            mapped_exc = None\n    \n            for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n                if not isinstance(exc, from_exc):\n                    continue\n                # We want to map to the most specific exception we can find.\n                # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n                # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n                if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                    mapped_exc = to_exc\n    \n            if mapped_exc is None:  # pragma: no cover\n                raise\n    \n            message = str(exc)\n            raise mapped_exc(message) from exc\n\n\n",
+          "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: helper-httpx-renderer-research. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"httpx/_transports/default.py\":[\"map_httpcore_exceptions\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO mapeador `map_httpcore_exceptions` escreve `raise mapped_exc(message) from exc` depois de obter a mensagem.\n\nFonte: `httpx/_transports/default.py:95`; SHA-256: `03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79`.\n\n    @contextlib.contextmanager\n    def map_httpcore_exceptions() -> typing.Iterator[None]:\n        global HTTPCORE_EXC_MAP\n        if len(HTTPCORE_EXC_MAP) == 0:\n            HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n        try:\n            yield\n        except Exception as exc:\n            mapped_exc = None\n    \n            for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n                if not isinstance(exc, from_exc):\n                    continue\n                # We want to map to the most specific exception we can find.\n                # Eg if `exc` is an `httpcore.ReadTimeout`, we want to map to\n                # `httpx.ReadTimeout`, not just `httpx.TimeoutException`.\n                if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                    mapped_exc = to_exc\n    \n            if mapped_exc is None:  # pragma: no cover\n                raise\n    \n            message = str(exc)\n            raise mapped_exc(message) from exc\n\n\n"
+        }
+      },
+      {
+        "id": "unmapped-evidence-identity",
+        "status": "REFUSED",
+        "reason": "unknown source evidence ID"
+      }
+    ],
+    "source_executed": false,
+    "model_calls": 0,
+    "published_files_written": false
+  },
+  "checks": [
+    {
+      "id": "translated-caught-name",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "pass": true
+    },
+    {
+      "id": "correct-caught-name",
+      "expected": "RENDERED",
+      "observed": "RENDERED",
+      "pass": true
+    },
+    {
+      "id": "unknown-qualified-owner",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "pass": true
+    },
+    {
+      "id": "wrong-semantics-same-name",
+      "expected": "RENDERED",
+      "observed": "RENDERED",
+      "pass": true
+    },
+    {
+      "id": "correct-cause",
+      "expected": "RENDERED",
+      "observed": "RENDERED",
+      "pass": true
+    },
+    {
+      "id": "unmapped-evidence-identity",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "pass": true
+    }
+  ],
+  "passes": 6,
+  "cases": 6,
+  "source_executed": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "publication_authorized": false,
+  "limit": "An exact real helper quote plus successful existing renderer is not semantic entailment; false suppression claim with unchanged Exception is a known expected accepted limitation."
+}

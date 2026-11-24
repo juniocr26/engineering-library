@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-21T05:55:34.864433+00:00",
+  "protocol": "cpp-owned-dispatch-observation-protocol-v1.json",
+  "cases": [
+    {
+      "case": "base-default",
+      "compile_expectation_matches": true,
+      "run_expectation_matches": true,
+      "run_observed": true
+    },
+    {
+      "case": "derived-via-base-wrapper",
+      "compile_expectation_matches": true,
+      "run_expectation_matches": true,
+      "run_observed": true
+    },
+    {
+      "case": "qualified-base",
+      "compile_expectation_matches": true,
+      "run_expectation_matches": true,
+      "run_observed": true
+    },
+    {
+      "case": "compatible-nonderived-template-shape",
+      "compile_expectation_matches": true,
+      "run_expectation_matches": true,
+      "run_observed": true
+    },
+    {
+      "case": "hidden-overload",
+      "compile_expectation_matches": true,
+      "run_expectation_matches": null,
+      "run_observed": false
+    },
+    {
+      "case": "using-unhides-overload",
+      "compile_expectation_matches": true,
+      "run_expectation_matches": true,
+      "run_observed": true
+    }
+  ],
+  "compile_expectations": {
+    "matched": 6,
+    "total": 6,
+    "successful": 5,
+    "intentionally_rejected": 1
+  },
+  "runtime_expectations": {
+    "matched": 5,
+    "total": 5
+  },
+  "negative_compile_diagnostic": "One argument expected, two supplied; Base::write suggested. Not a missing include or dependency failure.",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "source_and_binary_hashes_reverified": true,
+  "semantics_scope": "Owned Base/Derived/Sink/NotDerived controls only. Nonvirtual wrapper invokes virtual method under base reference, qualified base bypass and overload hiding demonstrated for these programs.",
+  "not_proven": [
+    "Actual OpenCV Algorithm/Ptr/FileStorage instantiation, behavior, ABI or persistence.",
+    "A specific derived algorithm writes/reads all fields or cannot throw.",
+    "No inheritance requirement in any unrelated template; the owned compatible-shape example only illustrates why expression-shaped syntax alone does not establish one."
+  ],
+  "private_data_access": false,
+  "upstream_program_or_tests_execution": false,
+  "production_changes": false,
+  "gold": false
+}

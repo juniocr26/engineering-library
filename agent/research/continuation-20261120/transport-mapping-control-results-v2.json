@@ -1,0 +1,456 @@
+{
+  "at": "2026-11-20T16:06:43.657999+00:00",
+  "rows": [
+    {
+      "id": "owned-two-pair-map",
+      "expected": "WRITTEN_MAPPING_FACTS",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(to_exc, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(message) from exc",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "source_sha256": "6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+            "quote_sha256": "4e9426cb499647b704f27c3f99ed82e97945fa71bc59dba452eb8c1f9f2fd6c8",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "source_sha256": "6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "first_line": 22,
+            "last_line": 22,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "revision": "owned-sha256:6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "reverse-source-target-direction",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "literal mapping must have external class attributes -> imported local class names"
+      }
+    },
+    {
+      "id": "unimported-target",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "mapped target is not a uniquely imported class from the supplied exception module"
+      }
+    },
+    {
+      "id": "dictionary-unpacking",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "literal mapping must have external class attributes -> imported local class names"
+      }
+    },
+    {
+      "id": "duplicate-source-key",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "mixed source namespace or duplicate map key"
+      }
+    },
+    {
+      "id": "second-map-binding",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "unique literal module map initializer required"
+      }
+    },
+    {
+      "id": "target-import-shadowed",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "duplicate import identity"
+      }
+    },
+    {
+      "id": "missing-target-class",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "mapped target is not a uniquely imported class from the supplied exception module"
+      }
+    },
+    {
+      "id": "cyclic-target-declarations",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "cyclic declared exception ancestry"
+      }
+    },
+    {
+      "id": "mapped-cause-changed",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "translated exception/cause ownership differs"
+      }
+    },
+    {
+      "id": "unmapped-error-suppressed",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "unmapped path is not the direct bare raise"
+      }
+    },
+    {
+      "id": "specificity-condition-reversed",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "match/specificity predicates differ from reviewed direct profile"
+      }
+    },
+    {
+      "id": "different-catch-domain",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "direct Exception handler shape differs"
+      }
+    },
+    {
+      "id": "decorator-not-established",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "explicit contextlib contextmanager source decorator required"
+      }
+    },
+    {
+      "id": "contextlib-import-rebound",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "contextlib source import is unresolved/rebound"
+      }
+    },
+    {
+      "id": "decorated-target-class",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "0.0.2-research",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9",
+        "reason": "target hierarchy outside simple undecorated single-base declarations"
+      }
+    }
+  ],
+  "correct": 16,
+  "n": 16,
+  "source_executed": false,
+  "model_calls": 0,
+  "production_changes": false,
+  "producer_sha256": "1eeb4a57ff51747f9194733775a7ca83fadd2724a2ace347cde7994aa3de3fa9"
+}

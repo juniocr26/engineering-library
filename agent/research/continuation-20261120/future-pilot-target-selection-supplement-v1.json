@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-20T20:38:19.340789+00:00",
+  "status": "DATA_ONLY_TARGET_SELECTION_REVIEW_NOT_LAUNCH_CONFIG",
+  "extends": "future-pilot-admission-supplement-v1.json",
+  "evidence": "lora-target-shape-audit-v1.json",
+  "evidence_sha256": "c89b13875ca30708301297b00cb2fce5c87688c420cba66052a43429c95e3355",
+  "launch_allowed": false,
+  "owner_decision_still_required_for_future_training": true,
+  "source_versions": {
+    "mlx_lm": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+    "mlx_reference_tag": "v0.32.3",
+    "mlx_reference_revision": "64ea011cb65f14d9ce2737e60db9a4ae91ed7441",
+    "actual_environment_lock": null
+  },
+  "conditional_options": [
+    {
+      "choice": "Preserve pinned helper default all-seven projection paths",
+      "num_layers": 2,
+      "rank": 4,
+      "keys": null,
+      "conditional_module_count": 14,
+      "conditional_adapter_elements": 434176
+    },
+    {
+      "choice": "Explicitly restrict relative query/value projection paths",
+      "num_layers": 2,
+      "rank": 4,
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ],
+      "conditional_module_count": 4,
+      "conditional_adapter_elements": 81920
+    }
+  ],
+  "neither_option_selected_or_executed": true,
+  "future_preflight_requirements": [
+    "Require an explicit positive layer count within separately approved cap;zero is not a no-layer request under selected slice.",
+    "Pin actual compatible framework/model/tokenizer/weights and inspect actual module identities/shapes/trainable parameter names before any optimizer.",
+    "Require nonempty explicit approved target keys or an explicit owner decision to adopt current defaults.",
+    "Reject unintended full-model keys,overlapping relative/global paths and targets outside approved layers before conversion.",
+    "Keep rank/dropout/scale exact and typed;scale is a direct multiplier in selected LoRALinear,not automatically divided by rank.",
+    "Measure actual dtype,lazy/transient allocation,activation/gradient/optimizer/base-model memory;adapter counts are not total feasibility.",
+    "Revalidate all source assumptions for actual resolved framework version;minimum-versionreference is not installedenvironment proof."
+  ],
+  "memory_measured": false,
+  "model_or_tensor_or_optimizer_created": false,
+  "training_steps": 0,
+  "owner_gold": 0,
+  "readiness": "NO-GO_UNCHANGED",
+  "executable_command_emitted": false,
+  "framework_configuration_file_emitted": false
+}

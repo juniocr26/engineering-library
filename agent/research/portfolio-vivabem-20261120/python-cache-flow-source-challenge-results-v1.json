@@ -1,0 +1,189 @@
+{
+  "at": "2026-11-21T00:27:01.761577+00:00",
+  "cases": [
+    {
+      "id": "original",
+      "expected": "OBSERVE",
+      "observations": {
+        "extractor": {
+          "actual": "OBSERVE",
+          "reason": null,
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "OBSERVE",
+          "reason": null,
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "format-only-ast-roundtrip",
+      "expected": "OBSERVE",
+      "observations": {
+        "extractor": {
+          "actual": "OBSERVE",
+          "reason": null,
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "OBSERVE",
+          "reason": null,
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "default-false",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "original declared defaults not established",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "use_cache not declared True",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "initialization-inverted",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "cache initialization guard is absent or ambiguous",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "ambiguous or absent cache initializer",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "read-flag-inverted",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "cache read guard is absent or ambiguous",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "ambiguous or absent cache read",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "write-now-requires-flag",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "cache write guard is absent or ambiguous",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "ambiguous or absent cache write",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "recursive-cache-replaced",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "recursive cache passage differs",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "different cache expression passed",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "duplicate-root-class",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "Dependant is absent or ambiguous",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "ambiguous or absent Dependant",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "duplicate-root-solver",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "solve_dependencies is absent or ambiguous",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "ambiguous or absent solver",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "write-direction-reversed",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "cache write assignment differs",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "cache write direction differs",
+          "matches_expected": true
+        }
+      }
+    },
+    {
+      "id": "extra-cache-rebinding",
+      "expected": "REFUSE",
+      "observations": {
+        "extractor": {
+          "actual": "REFUSE",
+          "reason": "other cache-name rebinding present",
+          "matches_expected": true
+        },
+        "separate_ast_queries": {
+          "actual": "REFUSE",
+          "reason": "other cache rebinding",
+          "matches_expected": true
+        }
+      }
+    }
+  ],
+  "both_match": 11,
+  "case_denominator": 11,
+  "positive_source_shapes": 2,
+  "negative_source_shapes": 9,
+  "not_additional_independent_cases": "Two implementations over the same eleven inputs, not 22 independent examples.",
+  "original_sources_modified": false,
+  "source_program_executed": false,
+  "general_semantic_verification": false
+}

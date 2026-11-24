@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-22T08:50:12.472747+00:00",
+  "before_outcomes": true,
+  "consumer_sha256": "93c58bbdec9e5ea45c9f67b53636973a310e3b0188a98dd6c2ff91f1bb89bb95",
+  "cases": [
+    {
+      "id": "success-nonUTF8",
+      "code": "import sys;sys.stdout.buffer.write(bytes([111,107,255]));sys.stdout.flush()",
+      "timeout": 2,
+      "status": "EXIT_ZERO",
+      "exit": 0,
+      "stdout": "b2v/",
+      "stderr": ""
+    },
+    {
+      "id": "nonzero-stderr",
+      "code": "import sys;sys.stderr.buffer.write(b'failure');sys.exit(7)",
+      "timeout": 2,
+      "status": "NONZERO_EXIT",
+      "exit": 7,
+      "stdout": "",
+      "stderr": "ZmFpbHVyZQ=="
+    },
+    {
+      "id": "timeout-partial",
+      "code": "import sys,time;sys.stdout.buffer.write(b'before');sys.stdout.flush();sys.stderr.buffer.write(b'pending');sys.stderr.flush();time.sleep(10)",
+      "timeout": 0.5,
+      "status": "TIMEOUT_PARTIAL_CAPTURED_NO_RETRY",
+      "exit": null,
+      "stdout": "YmVmb3Jl",
+      "stderr": "cGVuZGluZw=="
+    },
+    {
+      "id": "missing-executable",
+      "code": null,
+      "timeout": 2,
+      "status": "LAUNCH_FAILURE_NO_RETRY",
+      "exit": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "scope": "Four owned child-process delivery controls, no framework/model/optimizer; timeout wait is one0.5second fault control, not campaign clock padding."
+}

@@ -1,0 +1,7 @@
+{
+  "verdict": "SUPPORTED",
+  "source_path": "packages/zod/src/v4/core/parse.ts @ 2a343ed2a4ffbea73fb83862ee1e317662292481",
+  "source_role": "code",
+  "evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n78:   const result = schema._zod.run({ value, issues: [] }, ctx);\n79:   if (result instanceof Promise) {\n80:     throw new core.$ZodAsyncError();\n81:   }\n82:   return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n83: };\n84: export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);\n",
+  "reason": "The source code defines a function `_safeParse` that returns a `success` flag as `true` when the parsing is successful."
+}

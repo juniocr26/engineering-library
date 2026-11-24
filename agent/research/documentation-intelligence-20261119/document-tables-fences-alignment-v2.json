@@ -1,0 +1,1945 @@
+{
+  "at": "2026-11-20T08:31:12.105596+00:00",
+  "schema": "manually-source-aligned-tables-fences-v2-document-rebind",
+  "status": "ALL_CURRENT_TABLE_DATA_ROWS_AND_FENCES_SOURCE_OR_RECEIPT_ALIGNED_WITH_LIMITS",
+  "physical_inventory": {
+    "path": ".local-backups/documentation-intelligence-20261119/candidate-document-artifacts-v2.json",
+    "sha256": "ce3106982a4563444791ea28ba3dd08d5fc25b7b6fd2b93049fe28a321020f59"
+  },
+  "canonical_language_files": 50,
+  "bilingual_tables": 6,
+  "table_language_instances": 12,
+  "paired_table_data_rows": 28,
+  "table_language_data_rows": 56,
+  "fence_language_instances": 12,
+  "unchanged_browser_diagrams": 6,
+  "shell_command_language_instances": 4,
+  "JSON_output_language_instances": 2,
+  "unique_source_spans": 27,
+  "source_spans": [
+    {
+      "id": "artifact-source-001",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 48,
+      "last_line": 50,
+      "quote": "\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n",
+      "quote_sha256": "c9cb77330aa9a83a02e0118e481b44e59e85dc4998e987bf8acf120260693491",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-002",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 52,
+      "last_line": 54,
+      "quote": "\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n",
+      "quote_sha256": "a274a4ee7d09a118b670b1c1dc0e31dfeeba8e67b9c5d9e55d8be335b0bc4706",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-003",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 61,
+      "last_line": 67,
+      "quote": "\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n",
+      "quote_sha256": "3f4c78e37ca4f84cd2607434fadf418e4ca0e86e30960f2267cbcf1f126c6b5c",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-004",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 56,
+      "last_line": 59,
+      "quote": "\tstatusCode := opts.StatusCode\n\tif statusCode == 0 {\n\t\tstatusCode = http.StatusTooManyRequests\n\t}\n",
+      "quote_sha256": "1dccd7ce0d682c0cc4b11b145edab4adac3312fd4c7c52bc922217be71d07c37",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-005",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 83,
+      "last_line": 85,
+      "quote": "\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n",
+      "quote_sha256": "1277fc04d68c481e7ece5b3810b97d00d35836a3409095b454a85663376fb510",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-006",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 107,
+      "last_line": 114,
+      "quote": "\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n",
+      "quote_sha256": "12bff0fe2df6d506971c9c0e293a78623e3321a6f895610d9a18ee897d414624",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-007",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 125,
+      "last_line": 127,
+      "quote": "\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n",
+      "quote_sha256": "73e166c79008feb7b6380e5f6d90bcec97bc6c2d3eb7e710389ece28078e147b",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-008",
+      "path": "middleware/throttle.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "first_line": 149,
+      "last_line": 163,
+      "quote": "func (t throttler) setRetryAfterHeaderIfNeeded(w http.ResponseWriter, ctxDone bool) {\n\tif t.retryAfterFn == nil {\n\t\treturn\n\t}\n\t// delay-seconds is non-negative, and rounding up avoids asking clients to\n\t// retry before the duration returned by RetryAfterFn has elapsed.\n\tdelay := t.retryAfterFn(ctxDone)\n\tseconds := delay / time.Second\n\tif delay < 0 {\n\t\tseconds = 0\n\t} else if delay%time.Second != 0 {\n\t\tseconds++\n\t}\n\tw.Header().Set(\"Retry-After\", strconv.FormatInt(int64(seconds), 10))\n}\n",
+      "quote_sha256": "190bcf708c1653fa4457e03a55af5ab3a8a413e47eca793b0582eadf91d8e60e",
+      "source_identity": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d"
+    },
+    {
+      "id": "artifact-source-009",
+      "path": "backend/lib/documentation/command.rb",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/engineering-library/committed-45c3cd0/backend/lib/documentation/command.rb",
+      "full_file_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+      "first_line": 20,
+      "last_line": 27,
+      "quote": "    EXTENSIONS = %w[.rb .py .js .ts .tsx .jsx .go .rs .php .java .kt .swift .sh .sql .toml .mod .yaml .yml .c .h .cc .hh .cpp .hpp .cxx .hxx .cs .gd].freeze\n    MANIFESTS = %w[package.json composer.json Cargo.toml go.mod].freeze\n    EXCLUDED = %w[.git .aws .codex .agents node_modules vendor target dist build coverage tmp log logs storage public docs docs_codex test tests spec fixtures .next .dockerized-postgres ollama skills agent].freeze\n    BYTE_BUDGET = 24_576\n    UNIT_QUOTE_LIMIT = 6_144\n    FILE_LIMIT = 12\n    DEFAULT_BYTE_BUDGET = 6_144\n    DEFAULT_FILE_LIMIT = 4\n",
+      "quote_sha256": "b02dd4506e3f07438aad2295be5d5a6b2665325b360ddf9109ca6e980ee89d9f",
+      "source_identity": {
+        "kind": "Git-object-equal-current-core",
+        "commit": "45c3cd00c528cf2075ceec56e97ab2a0b6ad387a"
+      }
+    },
+    {
+      "id": "artifact-source-010",
+      "path": "backend/lib/documentation/command.rb",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/engineering-library/committed-45c3cd0/backend/lib/documentation/command.rb",
+      "full_file_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+      "first_line": 294,
+      "last_line": 304,
+      "quote": "          owner = metadata['enclosing_impl_hint']\n          aliases = [symbol, owner && \"#{owner}.#{symbol}\", owner && \"#{owner}::#{symbol}\", *metadata.fetch('unit_aliases', [])].compact\n          aliases.include?(selector)\n        end\n        raise Error, \"unit missing, unsupported or ambiguous: #{path}:#{selector}\" unless matches.size == 1\n        start, lines, metadata = matches.first\n        quote = lines.join\n        raise Error, \"complete unit exceeds quotation limit: #{path}:#{selector}\" if quote.bytesize > UNIT_QUOTE_LIMIT\n        qualified = metadata['qualified_symbol']\n        owner = metadata['enclosing_impl_hint']\n        separator = %w[.py .java .go .cs].include?(extension) ? '.' : '::'\n",
+      "quote_sha256": "925e82300e8c758ccb73f32559acf20361616b68d7c28b88db04ed96b7d2ae15",
+      "source_identity": {
+        "kind": "Git-object-equal-current-core",
+        "commit": "45c3cd00c528cf2075ceec56e97ab2a0b6ad387a"
+      }
+    },
+    {
+      "id": "artifact-source-011",
+      "path": "backend/lib/documentation/project_command.rb",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/engineering-library/committed-45c3cd0/backend/lib/documentation/project_command.rb",
+      "full_file_sha256": "f134f6333522145079284d3c1e10599de66605984e1a8ad2fd49bcfaab3cbb73",
+      "first_line": 34,
+      "last_line": 49,
+      "quote": "    def evidence_cards(files)\n      cards = {}\n      files.each do |path,text|\n        selected = if @unit_selection && @unit_selection[path]\n          source_units(path,text,@unit_selection[path]).values\n        else\n          ranges = @ranges.fetch(path) { raise Error, 'section source needs explicit ranges or units' }\n          raise Error, 'invalid bounded range list' unless ranges.is_a?(Array) && (1..4).cover?(ranges.size)\n          lines = text.lines\n          ranges.map do |pair|\n            valid = pair.is_a?(Array) && pair.size == 2 && pair.all? { |n| n.is_a?(Integer) } && pair[0] >= 1 && pair[1] >= pair[0] && pair[1] <= lines.size\n            raise Error, 'range outside original source' unless valid\n            quote = lines[(pair[0]-1)...pair[1]].join\n            raise Error, 'source range exceeds bounded quotation' if quote.strip.empty? || quote.bytesize > 1900\n            { 'path' => path, 'line' => pair[0], 'quote' => quote, 'complete_unit' => false,\n              'preparation' => 'explicit original line range; surrounding dependencies and complete syntax are not implied' }\n",
+      "quote_sha256": "4eb9f784ea4cb85b5450c11ec69c3b2947bcddcc6e369fb292c2b660b44ff3bf",
+      "source_identity": {
+        "kind": "Git-object-equal-current-core",
+        "commit": "45c3cd00c528cf2075ceec56e97ab2a0b6ad387a"
+      }
+    },
+    {
+      "id": "artifact-source-012",
+      "path": "agent/tools/documentation_retrieval.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-body-claim-alignment-v7/source-cuts/agent/tools/documentation_retrieval.py",
+      "full_file_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+      "first_line": 16,
+      "last_line": 33,
+      "quote": "import sys\nimport threading\n\nfrom documentation_workspace import directory, read, relative_path, same_root, write_new, WorkspaceRefused\n\nVERSION = \"0.1.3\"\nLOADED_IMPLEMENTATION_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()\nLOADED_WORKSPACE_SHA256 = hashlib.sha256(Path(__file__).with_name(\"documentation_workspace.py\").read_bytes()).hexdigest()\nMAX_SOURCE = 65536\nMAX_QUOTE = 6144\nMAX_RESPONSE = 16384\nREQUEST_FIELDS = {\"request_id\", \"source_id\", \"revision\", \"path\", \"qualified_symbol\", \"expected_sha256\"}\nKEY = re.compile(r\"[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}\\Z\")\nHASH = re.compile(r\"[0-9a-f]{64}\\Z\")\nSELECTOR = re.compile(r\"[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*\\Z\")\n\n\nclass RetrievalRefused(ValueError):\n",
+      "quote_sha256": "012b13b5ba21b9e93151b336efda9d92624b1b32e9bec1b2abffcfbf7f05cf44",
+      "source_identity": {
+        "kind": "current-uncommitted-optional-tool-cut",
+        "not_default_Ruby_routing": true
+      }
+    },
+    {
+      "id": "artifact-source-013",
+      "path": "agent/tools/documentation_retrieval.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-body-claim-alignment-v7/source-cuts/agent/tools/documentation_retrieval.py",
+      "full_file_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+      "first_line": 273,
+      "last_line": 320,
+      "quote": "    def __init__(self, registry, journal_root, *, max_steps=4, max_quote_bytes=24576):\n        if type(max_steps) is not int or not 1 <= max_steps <= 16 or type(max_quote_bytes) is not int or not 1 <= max_quote_bytes <= 98304:\n            raise ValueError(\"invalid bounded retrieval budget\")\n        self.registry = copy.deepcopy(registry)\n        if not isinstance(self.registry, dict) or not 1 <= len(self.registry) <= 16:\n            raise ValueError(\"nonempty trusted source registry required\")\n        journal_path = Path(journal_root)\n        for source_id, entry in self.registry.items():\n            if not isinstance(source_id, str) or not KEY.fullmatch(source_id) or not isinstance(entry, dict) or set(entry) != {\"root\", \"revision\", \"files\"}:\n                raise ValueError(\"invalid trusted source entry\")\n            if not isinstance(entry[\"revision\"], str) or not re.fullmatch(r\"[0-9a-f]{40}(?:[0-9a-f]{24})?\", entry[\"revision\"]):\n                raise ValueError(\"immutable revision identity required\")\n            if not isinstance(entry[\"root\"], (str, Path)):\n                raise ValueError(\"trusted source root must be an explicit path\")\n            source_path = Path(entry[\"root\"])\n            if isinstance(entry[\"root\"], Path):\n                entry[\"root\"] = str(source_path)\n            if source_path == journal_path or source_path in journal_path.parents or journal_path in source_path.parents:\n                raise ValueError(\"source and journal roots must not overlap\")\n            with directory(source_path):\n                pass\n            if not isinstance(entry[\"files\"], dict) or not 1 <= len(entry[\"files\"]) <= 128:\n                raise ValueError(\"bounded explicit file registry required\")\n            for path, allowed in entry[\"files\"].items():\n                relative_path(path)\n                if not isinstance(allowed, dict) or set(allowed) != {\"sha256\", \"language\", \"selectors\"} or not isinstance(allowed[\"sha256\"], str) or not HASH.fullmatch(allowed[\"sha256\"]):\n                    raise ValueError(\"invalid registered file identity\")\n                if allowed[\"language\"] not in (\"python\", \"go\") or not isinstance(allowed[\"selectors\"], list) or not 1 <= len(allowed[\"selectors\"]) <= 64:\n                    raise ValueError(\"invalid registered language/selectors\")\n                if any(not isinstance(value, str) or not SELECTOR.fullmatch(value) for value in allowed[\"selectors\"]):\n                    raise ValueError(\"invalid registered selector\")\n                if len(set(allowed[\"selectors\"])) != len(allowed[\"selectors\"]):\n                    raise ValueError(\"duplicate registered selector\")\n        self.registry_sha256 = sha(canonical(self.registry))\n        self._registry_bytes = canonical(self.registry)\n        self._registry_sha256 = self.registry_sha256\n        self.journal_root = str(journal_root)\n        self.steps = 0\n        self.quote_bytes = 0\n        self.max_steps = max_steps\n        self.max_quote_bytes = max_quote_bytes\n        self._operation_config = (self.journal_root, self.max_steps, self.max_quote_bytes)\n        self._request_lock = threading.Lock()\n        # Existing explicitly owned directory; never create an arbitrary request root.\n        with directory(self.journal_root) as journal_fd:\n            info = os.fstat(journal_fd)\n            self.journal_identity = (info.st_dev, info.st_ino)\n        self._journal_identity_config = self.journal_identity\n",
+      "quote_sha256": "5edfd2c347f3643231361a37f3ca6b76f453665aae68b93a96d972cd285a0487",
+      "source_identity": {
+        "kind": "current-uncommitted-optional-tool-cut",
+        "not_default_Ruby_routing": true
+      }
+    },
+    {
+      "id": "artifact-source-014",
+      "path": "agent/tools/documentation_lifecycle.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-body-claim-alignment-v7/source-cuts/agent/tools/documentation_lifecycle.py",
+      "full_file_sha256": "980c98f1d87f4c96254cb6a288e06b867811e029c815f38bf972cd96f5b9ebdd",
+      "first_line": 345,
+      "last_line": 371,
+      "quote": "def decision(packet, *, observers=None):\n    output = {\n        \"profile\": \"bounded-documentation-lifecycle-v2\", \"version\": VERSION,\n        \"action\": \"INCONCLUSIVE\", \"technical_recommendation\": True,\n        \"owner_approved\": False, \"publication_authorized\": False,\n        \"training_gold\": False, \"source_executed\": False,\n        \"writes\": 0, \"model_calls\": 0, \"evidence\": {},\n        \"limitations\": [\n            \"Closed Python/Go development source/claim protocol, not arbitrary prose comprehension.\",\n            \"Scope and paths are fixture-declared; no Git tree or repository-wide completeness proof.\",\n            \"A recommendation does not authorize applying a change to human content.\",\n        ],\n    }\n\n    def finish(action, reason):\n        output.update(action=action, reason=reason)\n        metadata = packet.get(\"metadata\", {}) if isinstance(packet, dict) else {}\n        if not isinstance(metadata, dict):\n            metadata = {}\n        output[\"candidate_application\"] = (\n            \"HUMAN_ALIGNMENT_REQUIRED\"\n            if metadata.get(\"human_authored\") or metadata.get(\"managed_ownership\") is False\n            else \"ISOLATED_REVIEW_CANDIDATE_ONLY\"\n        )\n        return output\n\n    try:\n",
+      "quote_sha256": "4f92355a87aa517775369a649e7c215e1da573ecf9e340ff7cacd2502428db3f",
+      "source_identity": {
+        "kind": "current-uncommitted-optional-tool-cut",
+        "not_default_Ruby_routing": true
+      }
+    },
+    {
+      "id": "artifact-source-015",
+      "path": "src/common/types/value.cpp",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/duckdb/src/common/types/value.cpp",
+      "full_file_sha256": "554a9a9eeb7d79a7a5ecad6b4cec611203eb24f70ee5ffb616016296d492701c",
+      "first_line": 490,
+      "last_line": 495,
+      "quote": "Value Value::BOOLEAN(bool value) {\n\tValue result(LogicalType::BOOLEAN);\n\tresult.value_.boolean = value;\n\tresult.is_null = false;\n\treturn result;\n}\n",
+      "quote_sha256": "fa7c5d924cfbe6dd38dce48cf989c6337c191f12b84f26f967be8112ff59b575",
+      "source_identity": "e41515de6f7efb19b43293ab49cb967cd64ab9f9"
+    },
+    {
+      "id": "artifact-source-016",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "full_file_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "first_line": 114,
+      "last_line": 117,
+      "quote": "func clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n",
+      "quote_sha256": "7b7567d5204a3bb865f9d958f7588bec7a061164cfee93b567c294ad1a180d1d",
+      "source_identity": "48476de6e4450294b7769ab7af90805100bb21b5"
+    },
+    {
+      "id": "artifact-source-017",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "full_file_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "first_line": 114,
+      "last_line": 121,
+      "quote": "func clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n",
+      "quote_sha256": "db7a9a11669d2fbfae759ad77f7d181a3d4f3cc0ffacd1ebcd3e13aa6938be8d",
+      "source_identity": "48476de6e4450294b7769ab7af90805100bb21b5"
+    },
+    {
+      "id": "artifact-source-018",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "full_file_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "first_line": 114,
+      "last_line": 128,
+      "quote": "func clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}\n",
+      "quote_sha256": "e1e23083457c508c2080ffe45f57b4cb92fa77d2cd9e67a8691c0b91f50d947c",
+      "source_identity": "48476de6e4450294b7769ab7af90805100bb21b5"
+    },
+    {
+      "id": "artifact-source-019",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "full_file_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "first_line": 123,
+      "last_line": 125,
+      "quote": "\tif value > 100 {\n\t\treturn 100\n\t}\n",
+      "quote_sha256": "3fb55ac3bdebdc81e2db789d6289a657a2d9b4f44bbd1b70201a96c6863071ea",
+      "source_identity": "48476de6e4450294b7769ab7af90805100bb21b5"
+    },
+    {
+      "id": "artifact-source-020",
+      "path": "src/expire.c",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+      "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "first_line": 906,
+      "last_line": 909,
+      "quote": "/* TTL key */\nvoid ttlCommand(client *c) {\n    ttlGenericCommand(c, 0, 0);\n}\n",
+      "quote_sha256": "97baf80be833437ffa0f2b22772da3cf5bb789a98d2a1fad7c664cd20069cfa4",
+      "source_identity": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb"
+    },
+    {
+      "id": "artifact-source-021",
+      "path": "src/expire.c",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+      "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "first_line": 894,
+      "last_line": 903,
+      "quote": "    expire = kvobjGetExpire(kv);\n    if (expire != -1) {\n        ttl = output_abs ? expire : expire-commandTimeSnapshot();\n        if (ttl < 0) ttl = 0;\n    }\n    if (ttl == -1) {\n        addReplyLongLong(c,-1);\n    } else {\n        addReplyLongLong(c,output_ms ? ttl : ((ttl+500)/1000));\n    }\n",
+      "quote_sha256": "3947f11d97667985b5f098400c17cfa285e11c83e9ae8fb790de15098d7d7922",
+      "source_identity": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb"
+    },
+    {
+      "id": "artifact-source-022",
+      "path": "src/expire.c",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+      "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "first_line": 911,
+      "last_line": 914,
+      "quote": "/* PTTL key */\nvoid pttlCommand(client *c) {\n    ttlGenericCommand(c, 1, 0);\n}\n",
+      "quote_sha256": "e5d9e16466364712300624733627349db9377b3a8a748d928ed0a1357b4aeaea",
+      "source_identity": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb"
+    },
+    {
+      "id": "artifact-source-023",
+      "path": "src/expire.c",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+      "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "first_line": 916,
+      "last_line": 919,
+      "quote": "/* EXPIRETIME key */\nvoid expiretimeCommand(client *c) {\n    ttlGenericCommand(c, 0, 1);\n}\n",
+      "quote_sha256": "5d23a5f83bf33c28c5900d60ca8933477b2c479a3a70fcfe3283251505dc98df",
+      "source_identity": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb"
+    },
+    {
+      "id": "artifact-source-024",
+      "path": "src/expire.c",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+      "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "first_line": 921,
+      "last_line": 924,
+      "quote": "/* PEXPIRETIME key */\nvoid pexpiretimeCommand(client *c) {\n    ttlGenericCommand(c, 1, 1);\n}\n",
+      "quote_sha256": "374fc2ae35b3b79943acfbb1ffed7905f65154ebd40550222d1bc9d459fb8ffa",
+      "source_identity": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb"
+    },
+    {
+      "id": "artifact-source-025",
+      "path": "source/adapter.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/adapter.py",
+      "full_file_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+      "first_line": 11,
+      "last_line": 18,
+      "quote": "    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n",
+      "quote_sha256": "aa1cea5d43d07bab213c455ad35e549f45468c0108f386c8878dd4bc4ab0640a",
+      "source_identity": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96"
+    },
+    {
+      "id": "artifact-source-026",
+      "path": "source/adapter.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/adapter.py",
+      "full_file_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+      "first_line": 5,
+      "last_line": 18,
+      "quote": "class BalanceAdapter:\n    def __init__(self, client: JsonClient, token: str, timeout: float = 2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n",
+      "quote_sha256": "d36e3a2b06c3152f41c2a373e44a32fc0a3761dedf52a06ec193af812a3fe671",
+      "source_identity": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96"
+    },
+    {
+      "id": "artifact-source-027",
+      "path": "source/mapping.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/mapping.py",
+      "full_file_sha256": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+      "first_line": 4,
+      "last_line": 11,
+      "quote": "def balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+      "quote_sha256": "f8c7c0a583159341cdd574e6eedc4c48efe7a8673e60f94ccfed53627f2e80a3",
+      "source_identity": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96"
+    }
+  ],
+  "table_rows": [
+    {
+      "id": "chi-throttle-workflow:table-row:1",
+      "chapter": "chi-throttle-workflow",
+      "row_key": "Limit",
+      "row_index_excluding_header": 1,
+      "paired_cell_text": {
+        "en": [
+          "Limit",
+          "Values below 1 panic before channel creation."
+        ],
+        "pt-br": [
+          "Limit",
+          "Valores abaixo de 1 executam panic antes da criação dos canais."
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6022,
+          "last_byte": 6469,
+          "raw_sha256": "ca8e4a270bab8953cf00a4459ae2d6231227a9d7cf95bdcbfef38d85d5be0ae6"
+        },
+        "pt-br": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6716,
+          "last_byte": 7242,
+          "raw_sha256": "fc71c6246baa983bfcad488d770fd89176d7fc6081416e1dc9b0a405a93e8742"
+        }
+      },
+      "source_ids": [
+        "artifact-source-001"
+      ],
+      "manual_review_finding": "Valuesbelow1panic beforechannelconstruction;notanallconfigurationvalidation guarantee.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "chi-throttle-workflow:table-row:2",
+      "chapter": "chi-throttle-workflow",
+      "row_key": "BacklogLimit",
+      "row_index_excluding_header": 2,
+      "paired_cell_text": {
+        "en": [
+          "BacklogLimit",
+          "Negative values panic; zero passes this guard."
+        ],
+        "pt-br": [
+          "BacklogLimit",
+          "Valores negativos executam panic; zero passa por essa guarda."
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6022,
+          "last_byte": 6469,
+          "raw_sha256": "ca8e4a270bab8953cf00a4459ae2d6231227a9d7cf95bdcbfef38d85d5be0ae6"
+        },
+        "pt-br": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6716,
+          "last_byte": 7242,
+          "raw_sha256": "fc71c6246baa983bfcad488d770fd89176d7fc6081416e1dc9b0a405a93e8742"
+        }
+      },
+      "source_ids": [
+        "artifact-source-002"
+      ],
+      "manual_review_finding": "Negativevaluespanic whilezeropassestheactualguard,despitepositivepanicmessagewording.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "chi-throttle-workflow:table-row:3",
+      "chapter": "chi-throttle-workflow",
+      "row_key": "BacklogTimeout",
+      "row_index_excluding_header": 3,
+      "paired_cell_text": {
+        "en": [
+          "BacklogTimeout",
+          "Copied directly; no positivity guard is shown."
+        ],
+        "pt-br": [
+          "BacklogTimeout",
+          "Copiado diretamente; não há guarda de positividade mostrada."
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6022,
+          "last_byte": 6469,
+          "raw_sha256": "ca8e4a270bab8953cf00a4459ae2d6231227a9d7cf95bdcbfef38d85d5be0ae6"
+        },
+        "pt-br": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6716,
+          "last_byte": 7242,
+          "raw_sha256": "fc71c6246baa983bfcad488d770fd89176d7fc6081416e1dc9b0a405a93e8742"
+        }
+      },
+      "source_ids": [
+        "artifact-source-003"
+      ],
+      "manual_review_finding": "Directcopywithoutpositivityguardinoptionsconstructor;wrapperdefaultsareseparate.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "chi-throttle-workflow:table-row:4",
+      "chapter": "chi-throttle-workflow",
+      "row_key": "StatusCode",
+      "row_index_excluding_header": 4,
+      "paired_cell_text": {
+        "en": [
+          "StatusCode",
+          "Zero becomes the too-many-requests constant; another value is copied."
+        ],
+        "pt-br": [
+          "StatusCode",
+          "Zero torna-se a constante de excesso de requisições; outro valor é copiado."
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6022,
+          "last_byte": 6469,
+          "raw_sha256": "ca8e4a270bab8953cf00a4459ae2d6231227a9d7cf95bdcbfef38d85d5be0ae6"
+        },
+        "pt-br": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6716,
+          "last_byte": 7242,
+          "raw_sha256": "fc71c6246baa983bfcad488d770fd89176d7fc6081416e1dc9b0a405a93e8742"
+        }
+      },
+      "source_ids": [
+        "artifact-source-004"
+      ],
+      "manual_review_finding": "Zero selectsTooManyRequests; nonzero copiedwithoutuniversalstatusvalidationclaim.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "chi-throttle-workflow:table-row:5",
+      "chapter": "chi-throttle-workflow",
+      "row_key": "RetryAfterFn",
+      "row_index_excluding_header": 5,
+      "paired_cell_text": {
+        "en": [
+          "RetryAfterFn",
+          "Nil skips the retry-header helper body; another value is called on rejection paths."
+        ],
+        "pt-br": [
+          "RetryAfterFn",
+          "Nil pula o corpo do helper de cabeçalho; outro valor é chamado nos caminhos de rejeição."
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6022,
+          "last_byte": 6469,
+          "raw_sha256": "ca8e4a270bab8953cf00a4459ae2d6231227a9d7cf95bdcbfef38d85d5be0ae6"
+        },
+        "pt-br": {
+          "first_line": 43,
+          "last_line": 49,
+          "first_byte": 6716,
+          "last_byte": 7242,
+          "raw_sha256": "fc71c6246baa983bfcad488d770fd89176d7fc6081416e1dc9b0a405a93e8742"
+        }
+      },
+      "source_ids": [
+        "artifact-source-005",
+        "artifact-source-006",
+        "artifact-source-007",
+        "artifact-source-008"
+      ],
+      "manual_review_finding": "Nilskipstheheaderhelperbody;non-nilcallbackinvokedonwrittenrejectionpaths,notautomaticretry.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "documentation-agent-contracts:table-row:1",
+      "chapter": "documentation-agent-contracts",
+      "row_key": "explicit",
+      "row_index_excluding_header": 1,
+      "paired_cell_text": {
+        "en": [
+          "Ordinary explicit source",
+          "12 files and 24576 bytes"
+        ],
+        "pt-br": [
+          "Fonte explícita comum",
+          "12 arquivos e 24576 bytes"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 11420,
+          "last_byte": 11932,
+          "raw_sha256": "1212568b7722ff9aec61b316c40e9b68d6c0b09c019a0928854ab801ee4d2aa3"
+        },
+        "pt-br": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 12700,
+          "last_byte": 13289,
+          "raw_sha256": "52c79a7bf4867784544c148e51fa50a5c47ae5d7d49e8411dcc778cfa05c5990"
+        }
+      },
+      "source_ids": [
+        "artifact-source-009"
+      ],
+      "manual_review_finding": "Ordinaryexplicitselection12files24576bytes,not generalwhole-repositorycompleteness.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "documentation-agent-contracts:table-row:2",
+      "chapter": "documentation-agent-contracts",
+      "row_key": "automatic",
+      "row_index_excluding_header": 2,
+      "paired_cell_text": {
+        "en": [
+          "Automatic sample",
+          "4 files and 6144 bytes"
+        ],
+        "pt-br": [
+          "Amostra automática",
+          "4 arquivos e 6144 bytes"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 11420,
+          "last_byte": 11932,
+          "raw_sha256": "1212568b7722ff9aec61b316c40e9b68d6c0b09c019a0928854ab801ee4d2aa3"
+        },
+        "pt-br": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 12700,
+          "last_byte": 13289,
+          "raw_sha256": "52c79a7bf4867784544c148e51fa50a5c47ae5d7d49e8411dcc778cfa05c5990"
+        }
+      },
+      "source_ids": [
+        "artifact-source-009"
+      ],
+      "manual_review_finding": "Automaticsample4files6144bytes;not silentlytheexplicitselectionprofile.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "documentation-agent-contracts:table-row:3",
+      "chapter": "documentation-agent-contracts",
+      "row_key": "unit",
+      "row_index_excluding_header": 3,
+      "paired_cell_text": {
+        "en": [
+          "Complete selected unit",
+          "6144 quotation bytes"
+        ],
+        "pt-br": [
+          "Unidade completa selecionada",
+          "6144 bytes de citação"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 11420,
+          "last_byte": 11932,
+          "raw_sha256": "1212568b7722ff9aec61b316c40e9b68d6c0b09c019a0928854ab801ee4d2aa3"
+        },
+        "pt-br": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 12700,
+          "last_byte": 13289,
+          "raw_sha256": "52c79a7bf4867784544c148e51fa50a5c47ae5d7d49e8411dcc778cfa05c5990"
+        }
+      },
+      "source_ids": [
+        "artifact-source-009",
+        "artifact-source-010"
+      ],
+      "manual_review_finding": "Completeunitquotation6144bytes,not evidenceofallhelpers/imports/runtimebindings.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "documentation-agent-contracts:table-row:4",
+      "chapter": "documentation-agent-contracts",
+      "row_key": "range",
+      "row_index_excluding_header": 4,
+      "paired_cell_text": {
+        "en": [
+          "Project physical ranges",
+          "At most 4 cards, each at most 1900 quotation bytes"
+        ],
+        "pt-br": [
+          "Intervalos físicos do projeto",
+          "No máximo 4 cartões, cada um com até 1900 bytes de citação"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 11420,
+          "last_byte": 11932,
+          "raw_sha256": "1212568b7722ff9aec61b316c40e9b68d6c0b09c019a0928854ab801ee4d2aa3"
+        },
+        "pt-br": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 12700,
+          "last_byte": 13289,
+          "raw_sha256": "52c79a7bf4867784544c148e51fa50a5c47ae5d7d49e8411dcc778cfa05c5990"
+        }
+      },
+      "source_ids": [
+        "artifact-source-011"
+      ],
+      "manual_review_finding": "Project1..4range cards,eachnonemptyquote<=1900bytes,notcompleteunitproof.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "documentation-agent-contracts:table-row:5",
+      "chapter": "documentation-agent-contracts",
+      "row_key": "helper",
+      "row_index_excluding_header": 5,
+      "paired_cell_text": {
+        "en": [
+          "New helper prototype",
+          "Explicit frozen registry, default 4 extraction steps and 6144 bytes per complete quote"
+        ],
+        "pt-br": [
+          "Novo protótipo de helpers",
+          "Registro congelado explícito, padrão de 4 etapas de extração e 6144 bytes por citação completa"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 11420,
+          "last_byte": 11932,
+          "raw_sha256": "1212568b7722ff9aec61b316c40e9b68d6c0b09c019a0928854ab801ee4d2aa3"
+        },
+        "pt-br": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 12700,
+          "last_byte": 13289,
+          "raw_sha256": "52c79a7bf4867784544c148e51fa50a5c47ae5d7d49e8411dcc778cfa05c5990"
+        }
+      },
+      "source_ids": [
+        "artifact-source-012",
+        "artifact-source-013"
+      ],
+      "manual_review_finding": "Default4extractionstepsperhelperinstanceand6144completequotebytes;optionaljobbudgetisaseparatewrapper.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "documentation-agent-contracts:table-row:6",
+      "chapter": "documentation-agent-contracts",
+      "row_key": "lifecycle",
+      "row_index_excluding_header": 6,
+      "paired_cell_text": {
+        "en": [
+          "New lifecycle prototype",
+          "Explicit source/claim packet; technical recommendation and isolated candidate only"
+        ],
+        "pt-br": [
+          "Novo protótipo de ciclo documental",
+          "Pacote explícito de fonte/afirmação; apenas recomendação técnica e candidato isolado"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 11420,
+          "last_byte": 11932,
+          "raw_sha256": "1212568b7722ff9aec61b316c40e9b68d6c0b09c019a0928854ab801ee4d2aa3"
+        },
+        "pt-br": {
+          "first_line": 59,
+          "last_line": 66,
+          "first_byte": 12700,
+          "last_byte": 13289,
+          "raw_sha256": "52c79a7bf4867784544c148e51fa50a5c47ae5d7d49e8411dcc778cfa05c5990"
+        }
+      },
+      "source_ids": [
+        "artifact-source-014"
+      ],
+      "manual_review_finding": "Explicitpacketonly,recommendationandisolatedcandidate;zeroauthorityforpublication/training.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "duckdb-boolean-factory:table-row:1",
+      "chapter": "duckdb-boolean-factory",
+      "row_key": "true",
+      "row_index_excluding_header": 1,
+      "paired_cell_text": {
+        "en": [
+          "true",
+          "true",
+          "false"
+        ],
+        "pt-br": [
+          "true",
+          "true",
+          "false"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 48,
+          "last_line": 51,
+          "first_byte": 5075,
+          "last_byte": 5225,
+          "raw_sha256": "4b36334dafc0dea02b6d3921b55a2d7ccedea9f6618ce9a9f8b668437945da7a"
+        },
+        "pt-br": {
+          "first_line": 48,
+          "last_line": 51,
+          "first_byte": 5397,
+          "last_byte": 5556,
+          "raw_sha256": "08580d6c4c687ff69d75ee060d384264150a3516ccecedd82270da62223930dc"
+        }
+      },
+      "source_ids": [
+        "artifact-source-015"
+      ],
+      "manual_review_finding": "Conceptualtrueinputwritestruepayloadandfalsefinalnullflag;notanexecutedDuckDBtest.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "duckdb-boolean-factory:table-row:2",
+      "chapter": "duckdb-boolean-factory",
+      "row_key": "false",
+      "row_index_excluding_header": 2,
+      "paired_cell_text": {
+        "en": [
+          "false",
+          "false",
+          "false"
+        ],
+        "pt-br": [
+          "false",
+          "false",
+          "false"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 48,
+          "last_line": 51,
+          "first_byte": 5075,
+          "last_byte": 5225,
+          "raw_sha256": "4b36334dafc0dea02b6d3921b55a2d7ccedea9f6618ce9a9f8b668437945da7a"
+        },
+        "pt-br": {
+          "first_line": 48,
+          "last_line": 51,
+          "first_byte": 5397,
+          "last_byte": 5556,
+          "raw_sha256": "08580d6c4c687ff69d75ee060d384264150a3516ccecedd82270da62223930dc"
+        }
+      },
+      "source_ids": [
+        "artifact-source-015"
+      ],
+      "manual_review_finding": "Conceptualfalseinputwritesfalsepayloadandfalsefinalnullflag;nullnessnotpayload.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "go-image-quality:table-row:1",
+      "chapter": "go-image-quality",
+      "row_key": "zero82",
+      "row_index_excluding_header": 1,
+      "paired_cell_text": {
+        "en": [
+          "0",
+          "82",
+          "82"
+        ],
+        "pt-br": [
+          "0",
+          "82",
+          "82"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5484,
+          "last_byte": 5651,
+          "raw_sha256": "eb01b985c0258f58504bdfb2bca45a7f8c9ff846d3eb66e861f0eb4bbdd98e17"
+        },
+        "pt-br": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5906,
+          "last_byte": 6079,
+          "raw_sha256": "fa241a3316e6aada8058744d92c65c43393b6d85fce81c4cf7bca4119e1f3dca"
+        }
+      },
+      "source_ids": [
+        "artifact-source-016"
+      ],
+      "manual_review_finding": "Input0immediatelyreturnsfallback82;laterbranchesnotreached.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "go-image-quality:table-row:2",
+      "chapter": "go-image-quality",
+      "row_key": "zero140",
+      "row_index_excluding_header": 2,
+      "paired_cell_text": {
+        "en": [
+          "0",
+          "140",
+          "140"
+        ],
+        "pt-br": [
+          "0",
+          "140",
+          "140"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5484,
+          "last_byte": 5651,
+          "raw_sha256": "eb01b985c0258f58504bdfb2bca45a7f8c9ff846d3eb66e861f0eb4bbdd98e17"
+        },
+        "pt-br": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5906,
+          "last_byte": 6079,
+          "raw_sha256": "fa241a3316e6aada8058744d92c65c43393b6d85fce81c4cf7bca4119e1f3dca"
+        }
+      },
+      "source_ids": [
+        "artifact-source-016"
+      ],
+      "manual_review_finding": "Input0immediatelyreturnsfallback140withoutclamping;genericfallbacknotalowerbound.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "go-image-quality:table-row:3",
+      "chapter": "go-image-quality",
+      "row_key": "negative",
+      "row_index_excluding_header": 3,
+      "paired_cell_text": {
+        "en": [
+          "-5",
+          "82",
+          "1"
+        ],
+        "pt-br": [
+          "-5",
+          "82",
+          "1"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5484,
+          "last_byte": 5651,
+          "raw_sha256": "eb01b985c0258f58504bdfb2bca45a7f8c9ff846d3eb66e861f0eb4bbdd98e17"
+        },
+        "pt-br": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5906,
+          "last_byte": 6079,
+          "raw_sha256": "fa241a3316e6aada8058744d92c65c43393b6d85fce81c4cf7bca4119e1f3dca"
+        }
+      },
+      "source_ids": [
+        "artifact-source-017"
+      ],
+      "manual_review_finding": "Afterzero-case,negative-5returns1.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "go-image-quality:table-row:4",
+      "chapter": "go-image-quality",
+      "row_key": "lowerendpoint",
+      "row_index_excluding_header": 4,
+      "paired_cell_text": {
+        "en": [
+          "1",
+          "82",
+          "1"
+        ],
+        "pt-br": [
+          "1",
+          "82",
+          "1"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5484,
+          "last_byte": 5651,
+          "raw_sha256": "eb01b985c0258f58504bdfb2bca45a7f8c9ff846d3eb66e861f0eb4bbdd98e17"
+        },
+        "pt-br": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5906,
+          "last_byte": 6079,
+          "raw_sha256": "fa241a3316e6aada8058744d92c65c43393b6d85fce81c4cf7bca4119e1f3dca"
+        }
+      },
+      "source_ids": [
+        "artifact-source-018"
+      ],
+      "manual_review_finding": "Value1doesnotmeetstrictboundsandreturnsunchanged1.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "go-image-quality:table-row:5",
+      "chapter": "go-image-quality",
+      "row_key": "upperendpoint",
+      "row_index_excluding_header": 5,
+      "paired_cell_text": {
+        "en": [
+          "100",
+          "82",
+          "100"
+        ],
+        "pt-br": [
+          "100",
+          "82",
+          "100"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5484,
+          "last_byte": 5651,
+          "raw_sha256": "eb01b985c0258f58504bdfb2bca45a7f8c9ff846d3eb66e861f0eb4bbdd98e17"
+        },
+        "pt-br": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5906,
+          "last_byte": 6079,
+          "raw_sha256": "fa241a3316e6aada8058744d92c65c43393b6d85fce81c4cf7bca4119e1f3dca"
+        }
+      },
+      "source_ids": [
+        "artifact-source-018"
+      ],
+      "manual_review_finding": "Value100doesnotmeetstrictboundsandreturnsunchanged100.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "go-image-quality:table-row:6",
+      "chapter": "go-image-quality",
+      "row_key": "aboveupper",
+      "row_index_excluding_header": 6,
+      "paired_cell_text": {
+        "en": [
+          "101",
+          "82",
+          "100"
+        ],
+        "pt-br": [
+          "101",
+          "82",
+          "100"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5484,
+          "last_byte": 5651,
+          "raw_sha256": "eb01b985c0258f58504bdfb2bca45a7f8c9ff846d3eb66e861f0eb4bbdd98e17"
+        },
+        "pt-br": {
+          "first_line": 46,
+          "last_line": 53,
+          "first_byte": 5906,
+          "last_byte": 6079,
+          "raw_sha256": "fa241a3316e6aada8058744d92c65c43393b6d85fce81c4cf7bca4119e1f3dca"
+        }
+      },
+      "source_ids": [
+        "artifact-source-019"
+      ],
+      "manual_review_finding": "Value101returns100;thesearesource-derivedtraces,notcodecperformance.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "redis-ttl-replies:table-row:1",
+      "chapter": "redis-ttl-replies",
+      "row_key": "ttlCommand",
+      "row_index_excluding_header": 1,
+      "paired_cell_text": {
+        "en": [
+          "ttlCommand",
+          "0",
+          "0",
+          "Relative quantity converted to seconds"
+        ],
+        "pt-br": [
+          "ttlCommand",
+          "0",
+          "0",
+          "Quantidade relativa convertida em segundos"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 3731,
+          "last_byte": 4086,
+          "raw_sha256": "29619053538fe771ae0a1860c632ca5a1dd1a6b08a10e7e45c3366bb7211736b"
+        },
+        "pt-br": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 4068,
+          "last_byte": 4446,
+          "raw_sha256": "fd9d4910aac7ca8714685e19692aec86a123c45e90aaad2d5387c8a283a77c6f"
+        }
+      },
+      "source_ids": [
+        "artifact-source-020",
+        "artifact-source-021"
+      ],
+      "manual_review_finding": "Flags0,0selectrelativequantityandsecondsconversiononlyfornon-sentinels.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "redis-ttl-replies:table-row:2",
+      "chapter": "redis-ttl-replies",
+      "row_key": "pttlCommand",
+      "row_index_excluding_header": 2,
+      "paired_cell_text": {
+        "en": [
+          "pttlCommand",
+          "1",
+          "0",
+          "Relative quantity in milliseconds"
+        ],
+        "pt-br": [
+          "pttlCommand",
+          "1",
+          "0",
+          "Quantidade relativa em milissegundos"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 3731,
+          "last_byte": 4086,
+          "raw_sha256": "29619053538fe771ae0a1860c632ca5a1dd1a6b08a10e7e45c3366bb7211736b"
+        },
+        "pt-br": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 4068,
+          "last_byte": 4446,
+          "raw_sha256": "fd9d4910aac7ca8714685e19692aec86a123c45e90aaad2d5387c8a283a77c6f"
+        }
+      },
+      "source_ids": [
+        "artifact-source-022",
+        "artifact-source-021"
+      ],
+      "manual_review_finding": "Flags1,0selectrelativequantityinmilliseconds,notabsolutetime.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "redis-ttl-replies:table-row:3",
+      "chapter": "redis-ttl-replies",
+      "row_key": "expiretimeCommand",
+      "row_index_excluding_header": 3,
+      "paired_cell_text": {
+        "en": [
+          "expiretimeCommand",
+          "0",
+          "1",
+          "Absolute expiry converted to seconds"
+        ],
+        "pt-br": [
+          "expiretimeCommand",
+          "0",
+          "1",
+          "Expiração absoluta convertida em segundos"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 3731,
+          "last_byte": 4086,
+          "raw_sha256": "29619053538fe771ae0a1860c632ca5a1dd1a6b08a10e7e45c3366bb7211736b"
+        },
+        "pt-br": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 4068,
+          "last_byte": 4446,
+          "raw_sha256": "fd9d4910aac7ca8714685e19692aec86a123c45e90aaad2d5387c8a283a77c6f"
+        }
+      },
+      "source_ids": [
+        "artifact-source-023",
+        "artifact-source-021"
+      ],
+      "manual_review_finding": "Flags0,1selectabsoluteexpiryconverted toseconds;sentinelskeepseparatebranches.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "redis-ttl-replies:table-row:4",
+      "chapter": "redis-ttl-replies",
+      "row_key": "pexpiretimeCommand",
+      "row_index_excluding_header": 4,
+      "paired_cell_text": {
+        "en": [
+          "pexpiretimeCommand",
+          "1",
+          "1",
+          "Absolute expiry in milliseconds"
+        ],
+        "pt-br": [
+          "pexpiretimeCommand",
+          "1",
+          "1",
+          "Expiração absoluta em milissegundos"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 3731,
+          "last_byte": 4086,
+          "raw_sha256": "29619053538fe771ae0a1860c632ca5a1dd1a6b08a10e7e45c3366bb7211736b"
+        },
+        "pt-br": {
+          "first_line": 33,
+          "last_line": 38,
+          "first_byte": 4068,
+          "last_byte": 4446,
+          "raw_sha256": "fd9d4910aac7ca8714685e19692aec86a123c45e90aaad2d5387c8a283a77c6f"
+        }
+      },
+      "source_ids": [
+        "artifact-source-024",
+        "artifact-source-021"
+      ],
+      "manual_review_finding": "Flags1,1selectabsoluteexpiryinmilliseconds;replyserialization/networknotproved.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:table-row:1",
+      "chapter": "owned-adapter",
+      "row_key": "account",
+      "row_index_excluding_header": 1,
+      "paired_cell_text": {
+        "en": [
+          "account identifier",
+          "Adapter rejects empty and slash-containing values",
+          "This is not complete URL validation; annotations do not enforce types"
+        ],
+        "pt-br": [
+          "identificador da conta",
+          "Adaptador rejeita valores vazios e com barra",
+          "Não é validação completa de URL; anotações não impõem tipos"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 51,
+          "last_line": 57,
+          "first_byte": 2289,
+          "last_byte": 3014,
+          "raw_sha256": "29f3987fefdd44857de1c7f3565d12d00a983e0d9671d78c4858dc1eafb42d50"
+        },
+        "pt-br": {
+          "first_line": 53,
+          "last_line": 59,
+          "first_byte": 2470,
+          "last_byte": 3215,
+          "raw_sha256": "539ee0ea241ea45171838f0ed3560ff690e6e70ca67d1f35484b57d8f0fa6082"
+        }
+      },
+      "source_ids": [
+        "artifact-source-025"
+      ],
+      "manual_review_finding": "Rejectempty/slashcontainingidentifiers;notcompleteURLvalidationortypeenforcement.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:table-row:2",
+      "chapter": "owned-adapter",
+      "row_key": "token",
+      "row_index_excluding_header": 2,
+      "paired_cell_text": {
+        "en": [
+          "token",
+          "Constructor stores it; adapter interpolates the header",
+          "No credential validation or server authorization is visible"
+        ],
+        "pt-br": [
+          "token",
+          "Construtor armazena; adaptador interpola o header",
+          "Não há validação de credencial ou autorização do servidor visível"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 51,
+          "last_line": 57,
+          "first_byte": 2289,
+          "last_byte": 3014,
+          "raw_sha256": "29f3987fefdd44857de1c7f3565d12d00a983e0d9671d78c4858dc1eafb42d50"
+        },
+        "pt-br": {
+          "first_line": 53,
+          "last_line": 59,
+          "first_byte": 2470,
+          "last_byte": 3215,
+          "raw_sha256": "539ee0ea241ea45171838f0ed3560ff690e6e70ca67d1f35484b57d8f0fa6082"
+        }
+      },
+      "source_ids": [
+        "artifact-source-026"
+      ],
+      "manual_review_finding": "Store/interpolateheader,withoutcredentialorserverauthorizationvalidation.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:table-row:3",
+      "chapter": "owned-adapter",
+      "row_key": "timeout",
+      "row_index_excluding_header": 3,
+      "paired_cell_text": {
+        "en": [
+          "timeout",
+          "Constructor stores the default or override; adapter forwards it",
+          "No concrete network deadline is proved"
+        ],
+        "pt-br": [
+          "timeout",
+          "Construtor armazena padrão ou substituição; adaptador encaminha",
+          "Nenhum deadline real de rede é provado"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 51,
+          "last_line": 57,
+          "first_byte": 2289,
+          "last_byte": 3014,
+          "raw_sha256": "29f3987fefdd44857de1c7f3565d12d00a983e0d9671d78c4858dc1eafb42d50"
+        },
+        "pt-br": {
+          "first_line": 53,
+          "last_line": 59,
+          "first_byte": 2470,
+          "last_byte": 3215,
+          "raw_sha256": "539ee0ea241ea45171838f0ed3560ff690e6e70ca67d1f35484b57d8f0fa6082"
+        }
+      },
+      "source_ids": [
+        "artifact-source-026"
+      ],
+      "manual_review_finding": "Storedefault/overrideandforwardtimeout;missingconcreteclientmeansnorealdeadlineproof.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:table-row:4",
+      "chapter": "owned-adapter",
+      "row_key": "amount",
+      "row_index_excluding_header": 4,
+      "paired_cell_text": {
+        "en": [
+          "available amount",
+          "Mapper requires the exact built-in integer type",
+          "Booleans are rejected; nonnegative values and bounds are not required"
+        ],
+        "pt-br": [
+          "valor disponível",
+          "Mapeador exige o tipo inteiro embutido exato",
+          "Booleanos são rejeitados; valores não negativos e limites não são exigidos"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 51,
+          "last_line": 57,
+          "first_byte": 2289,
+          "last_byte": 3014,
+          "raw_sha256": "29f3987fefdd44857de1c7f3565d12d00a983e0d9671d78c4858dc1eafb42d50"
+        },
+        "pt-br": {
+          "first_line": 53,
+          "last_line": 59,
+          "first_byte": 2470,
+          "last_byte": 3215,
+          "raw_sha256": "539ee0ea241ea45171838f0ed3560ff690e6e70ca67d1f35484b57d8f0fa6082"
+        }
+      },
+      "source_ids": [
+        "artifact-source-027"
+      ],
+      "manual_review_finding": "Exactbuilt-ininttypeexcludesbool;nonnegativityandamountboundsnotrequired.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:table-row:5",
+      "chapter": "owned-adapter",
+      "row_key": "currency",
+      "row_index_excluding_header": 5,
+      "paired_cell_text": {
+        "en": [
+          "currency",
+          "Mapper requires a string of three characters",
+          "No ISO membership, uppercase or byte-length rule is checked"
+        ],
+        "pt-br": [
+          "moeda",
+          "Mapeador exige string com três caracteres",
+          "Não verifica presença na ISO, maiúsculas ou tamanho em bytes"
+        ]
+      },
+      "parent_tables": {
+        "en": {
+          "first_line": 51,
+          "last_line": 57,
+          "first_byte": 2289,
+          "last_byte": 3014,
+          "raw_sha256": "29f3987fefdd44857de1c7f3565d12d00a983e0d9671d78c4858dc1eafb42d50"
+        },
+        "pt-br": {
+          "first_line": 53,
+          "last_line": 59,
+          "first_byte": 2470,
+          "last_byte": 3215,
+          "raw_sha256": "539ee0ea241ea45171838f0ed3560ff690e6e70ca67d1f35484b57d8f0fa6082"
+        }
+      },
+      "source_ids": [
+        "artifact-source-027"
+      ],
+      "manual_review_finding": "strlength3only;notISO/uppercase/UTF8byte-lengthvalidation.",
+      "bilingual_review": "Entirepairedrowsreadandcheckedagainstphysicalsource;allnumbers/operators/identifiersandnegationspreserved.",
+      "source_program_executed": false,
+      "owner_approved": false,
+      "training_gold": false
+    }
+  ],
+  "fences": [
+    {
+      "chapter": "go-image-animation",
+      "language": "en",
+      "fence_language": "mermaid",
+      "document": "agent/research/documentation-intelligence-20261119/chapters/go-image-animation/en.md",
+      "document_sha256": "ae0706c96c4748068640cb9ee36259171e72a6eac083739e9fc73b0ac893c3ba",
+      "physical_fence": {
+        "kind": "code",
+        "language": "mermaid",
+        "first_line": 50,
+        "last_line": 59,
+        "first_byte": 5981,
+        "last_byte": 6328,
+        "raw": "```mermaid\nflowchart TD\n  A[\"ValidateAnimatedDimensions\"] --> B{\"ValidateImageSize returns error?\"}\n  B -- yes --> C[\"return err\"]\n  B -- no --> D{\"frameCount <= 0?\"}\n  D -- yes --> E[\"return ErrInvalidImage\"]\n  D -- no --> F{\"width > maxPixels/height/frameCount?\"}\n  F -- yes --> G[\"return ErrAnimationTooLarge\"]\n  F -- no --> H[\"return nil\"]\n```",
+        "raw_sha256": "276f6c9ad4e35630cc4797dc4e96adaadf04e46d416d0185ccfe054b1f6fb35e",
+        "value": "flowchart TD\n  A[\"ValidateAnimatedDimensions\"] --> B{\"ValidateImageSize returns error?\"}\n  B -- yes --> C[\"return err\"]\n  B -- no --> D{\"frameCount <= 0?\"}\n  D -- yes --> E[\"return ErrInvalidImage\"]\n  D -- no --> F{\"width > maxPixels/height/frameCount?\"}\n  F -- yes --> G[\"return ErrAnimationTooLarge\"]\n  F -- no --> H[\"return nil\"]",
+        "value_sha256": "e94bb019ed2d1f4bac253d7494a2fd8ea7ccc08fcce315ba8fd220eae87e5359"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_EXISTING_BROWSER_RENDERED_SOURCE_HASH_MATCH",
+      "browser_receipt": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "original_path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+        "immutable_snapshot": true
+      },
+      "browser_record_id": "go-image-animation-en-1",
+      "browser_exact_physical_body_sha256": "8cf9e187147dea6cf9f399ead5c241e55db88af97fa77a4b840ac75130f0efeb",
+      "AST_value_omits_exactly_one_physical_terminal_LF": true,
+      "new_browser_render_runs": 0,
+      "manual_semantic_review": "Flowdirection/branchesorparticipantmessagesreadagainstcurrentfrozenfunctions;same6earliervisuallyreviewedsources,noapplicationexecution."
+    },
+    {
+      "chapter": "go-image-animation",
+      "language": "pt-br",
+      "fence_language": "mermaid",
+      "document": "agent/research/documentation-intelligence-20261119/chapters/go-image-animation/pt-br.md",
+      "document_sha256": "90a14fd6d8a44aedde52258d8c29312409a2fd6bc01a82ca07ca1aea397cec7e",
+      "physical_fence": {
+        "kind": "code",
+        "language": "mermaid",
+        "first_line": 50,
+        "last_line": 59,
+        "first_byte": 6573,
+        "last_byte": 6922,
+        "raw": "```mermaid\nflowchart TD\n  A[\"ValidateAnimatedDimensions\"] --> B{\"ValidateImageSize retorna erro?\"}\n  B -- sim --> C[\"return err\"]\n  B -- nao --> D{\"frameCount <= 0?\"}\n  D -- sim --> E[\"return ErrInvalidImage\"]\n  D -- nao --> F{\"width > maxPixels/height/frameCount?\"}\n  F -- sim --> G[\"return ErrAnimationTooLarge\"]\n  F -- nao --> H[\"return nil\"]\n```",
+        "raw_sha256": "2c34ed0fcc31c9f2d063f7f4251909265a9236a0be839114cdb431c629fd0275",
+        "value": "flowchart TD\n  A[\"ValidateAnimatedDimensions\"] --> B{\"ValidateImageSize retorna erro?\"}\n  B -- sim --> C[\"return err\"]\n  B -- nao --> D{\"frameCount <= 0?\"}\n  D -- sim --> E[\"return ErrInvalidImage\"]\n  D -- nao --> F{\"width > maxPixels/height/frameCount?\"}\n  F -- sim --> G[\"return ErrAnimationTooLarge\"]\n  F -- nao --> H[\"return nil\"]",
+        "value_sha256": "dd97ae5236d858e5721e2cddb8a3af514531e45975b58c4753d3ae92728f5fa3"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_EXISTING_BROWSER_RENDERED_SOURCE_HASH_MATCH",
+      "browser_receipt": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "original_path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+        "immutable_snapshot": true
+      },
+      "browser_record_id": "go-image-animation-pt-br-1",
+      "browser_exact_physical_body_sha256": "45cf7f1d8791526177d2587b7fe24641cd7ddeb24ee90ca76daba3f6ecafbb99",
+      "AST_value_omits_exactly_one_physical_terminal_LF": true,
+      "new_browser_render_runs": 0,
+      "manual_semantic_review": "Flowdirection/branchesorparticipantmessagesreadagainstcurrentfrozenfunctions;same6earliervisuallyreviewedsources,noapplicationexecution."
+    },
+    {
+      "chapter": "go-image-compression-flow",
+      "language": "en",
+      "fence_language": "mermaid",
+      "document": "agent/research/documentation-intelligence-20261119/chapters/go-image-compression-flow/en.md",
+      "document_sha256": "f5075b82889e02ebe6e0c9e8f7e95fb62e82b6a03e7c293e937c8093dcff83dd",
+      "physical_fence": {
+        "kind": "code",
+        "language": "mermaid",
+        "first_line": 50,
+        "last_line": 58,
+        "first_byte": 6651,
+        "last_byte": 6958,
+        "raw": "```mermaid\nflowchart LR\n  R[\"NewRouter\"] --> C[\"compress.NewCompressor\"]\n  C --> U[\"imagecompression.NewUseCase\"]\n  U --> H[\"ProcessImage handler factory\"]\n  H --> E[\"UseCase.Execute with request context and bytes\"]\n  E --> K[\"Compressor.Compress with bytes\"]\n  K --> D[\"DetectFormat then codec helper\"]\n```",
+        "raw_sha256": "6440b1fa36fb202edfa93564c3538f8286494c91a45cce3f354418163835fcd1",
+        "value": "flowchart LR\n  R[\"NewRouter\"] --> C[\"compress.NewCompressor\"]\n  C --> U[\"imagecompression.NewUseCase\"]\n  U --> H[\"ProcessImage handler factory\"]\n  H --> E[\"UseCase.Execute with request context and bytes\"]\n  E --> K[\"Compressor.Compress with bytes\"]\n  K --> D[\"DetectFormat then codec helper\"]",
+        "value_sha256": "b0d72921c36c569697a479d63e05fa7fa3f903c21c4633dad36073eb4259c509"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_EXISTING_BROWSER_RENDERED_SOURCE_HASH_MATCH",
+      "browser_receipt": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "original_path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+        "immutable_snapshot": true
+      },
+      "browser_record_id": "go-image-compression-flow-en-1",
+      "browser_exact_physical_body_sha256": "7742f6bb68372c6b268b6dd3aa188ddacff1a0a4905ab75c8fbcf5717c76c461",
+      "AST_value_omits_exactly_one_physical_terminal_LF": true,
+      "new_browser_render_runs": 0,
+      "manual_semantic_review": "Flowdirection/branchesorparticipantmessagesreadagainstcurrentfrozenfunctions;same6earliervisuallyreviewedsources,noapplicationexecution."
+    },
+    {
+      "chapter": "go-image-compression-flow",
+      "language": "pt-br",
+      "fence_language": "mermaid",
+      "document": "agent/research/documentation-intelligence-20261119/chapters/go-image-compression-flow/pt-br.md",
+      "document_sha256": "d0ecf072f42438823974b494e4ee8423f757c71fe4736c56379defc9935c6308",
+      "physical_fence": {
+        "kind": "code",
+        "language": "mermaid",
+        "first_line": 50,
+        "last_line": 58,
+        "first_byte": 7214,
+        "last_byte": 7534,
+        "raw": "```mermaid\nflowchart LR\n  R[\"NewRouter\"] --> C[\"compress.NewCompressor\"]\n  C --> U[\"imagecompression.NewUseCase\"]\n  U --> H[\"Fabrica de handler ProcessImage\"]\n  H --> E[\"UseCase.Execute com contexto e bytes da requisicao\"]\n  E --> K[\"Compressor.Compress com bytes\"]\n  K --> D[\"DetectFormat e depois helper de codec\"]\n```",
+        "raw_sha256": "59d5122112beb61f107503a7819694265d1d66e69c9c4793ef8a274881ce9acd",
+        "value": "flowchart LR\n  R[\"NewRouter\"] --> C[\"compress.NewCompressor\"]\n  C --> U[\"imagecompression.NewUseCase\"]\n  U --> H[\"Fabrica de handler ProcessImage\"]\n  H --> E[\"UseCase.Execute com contexto e bytes da requisicao\"]\n  E --> K[\"Compressor.Compress com bytes\"]\n  K --> D[\"DetectFormat e depois helper de codec\"]",
+        "value_sha256": "c9118452f4560af7148743e25df2515ce3b13dde0e575f47d1ce8d14003724f9"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_EXISTING_BROWSER_RENDERED_SOURCE_HASH_MATCH",
+      "browser_receipt": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "original_path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+        "immutable_snapshot": true
+      },
+      "browser_record_id": "go-image-compression-flow-pt-br-1",
+      "browser_exact_physical_body_sha256": "dc73b7294a7c9789a590a9016962854e04720f005896722cf647a82100f3ceb4",
+      "AST_value_omits_exactly_one_physical_terminal_LF": true,
+      "new_browser_render_runs": 0,
+      "manual_semantic_review": "Flowdirection/branchesorparticipantmessagesreadagainstcurrentfrozenfunctions;same6earliervisuallyreviewedsources,noapplicationexecution."
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "en",
+      "fence_language": "mermaid",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+      "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+      "physical_fence": {
+        "kind": "code",
+        "language": "mermaid",
+        "first_line": 24,
+        "last_line": 38,
+        "first_byte": 1258,
+        "last_byte": 1744,
+        "raw": "```mermaid\nsequenceDiagram\n    participant S as \"BalanceService\"\n    participant A as \"BalanceAdapter\"\n    participant C as \"Injected JsonClient\"\n    participant M as \"balance_from_payload\"\n    S->>A: read(account_id)\n    A->>A: reject empty or slash-containing string\n    A->>C: get(relative path, headers, timeout)\n    C-->>A: payload on normal return\n    A->>M: account_id and payload\n    M-->>A: Balance on valid mapping\n    A-->>S: Balance\n    S-->>S: build three-field summary\n```",
+        "raw_sha256": "b4c1f5bc4a11e9849dc4e348d9b0f0ee29ed70d05f60b2a05d3226463281dfed",
+        "value": "sequenceDiagram\n    participant S as \"BalanceService\"\n    participant A as \"BalanceAdapter\"\n    participant C as \"Injected JsonClient\"\n    participant M as \"balance_from_payload\"\n    S->>A: read(account_id)\n    A->>A: reject empty or slash-containing string\n    A->>C: get(relative path, headers, timeout)\n    C-->>A: payload on normal return\n    A->>M: account_id and payload\n    M-->>A: Balance on valid mapping\n    A-->>S: Balance\n    S-->>S: build three-field summary",
+        "value_sha256": "33a014384344691afc82f0ac6f1b8ccaf66f3ac503c2b8db3806c7e7a34d24d6"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_EXISTING_BROWSER_RENDERED_SOURCE_HASH_MATCH",
+      "browser_receipt": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "original_path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+        "immutable_snapshot": true
+      },
+      "browser_record_id": "owned-adapter-en-1",
+      "browser_exact_physical_body_sha256": "044d42b279fe98e860309c85e1ed4f9cb05bf171c01e95d2c6c0dabc2fe8cd7f",
+      "AST_value_omits_exactly_one_physical_terminal_LF": true,
+      "new_browser_render_runs": 0,
+      "manual_semantic_review": "Flowdirection/branchesorparticipantmessagesreadagainstcurrentfrozenfunctions;same6earliervisuallyreviewedsources,noapplicationexecution."
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "en",
+      "fence_language": "sh",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+      "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+      "physical_fence": {
+        "kind": "code",
+        "language": "sh",
+        "first_line": 83,
+        "last_line": 85,
+        "first_byte": 4306,
+        "last_byte": 4416,
+        "raw": "```sh\npython3 agent/research/documentation-intelligence-20261119/owned-adapter/examples/balance_summary.py\n```",
+        "raw_sha256": "c7d17ecc1581bb730620746f2daecb2ef760ac558b3c0d337ab9710287dac79e",
+        "value": "python3 agent/research/documentation-intelligence-20261119/owned-adapter/examples/balance_summary.py",
+        "value_sha256": "a131f25b7157a82f380f3704b477c19a8fdcd8081f844472a75b70e26d457d9e"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "UNCHANGED_OWNED_FAKE_COMMAND_PREVIOUSLY_EXECUTED",
+      "prior_review": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "original_path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+        "immutable_snapshot": true
+      },
+      "actual_raw_log": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "sha256": "223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "original_path": ".local-backups/documentation-intelligence-20261119/owned-adapter-example-v1.stdout",
+        "immutable_snapshot": true
+      },
+      "new_command_executions": 0,
+      "scope": "Repositoryroot andadequatePython;syntheticfakeonly,noexternalgatewayexecution."
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "en",
+      "fence_language": "json",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+      "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+      "physical_fence": {
+        "kind": "code",
+        "language": "json",
+        "first_line": 90,
+        "last_line": 92,
+        "first_byte": 4552,
+        "last_byte": 4635,
+        "raw": "```json\n{\"account\": \"fixture-account\", \"available_minor\": 7, \"currency\": \"TST\"}\n```",
+        "raw_sha256": "db30591ad7184e00d3de5c67f898b6eb7c9dbc9590733376a7306fb1b3da8cbc",
+        "value": "{\"account\": \"fixture-account\", \"available_minor\": 7, \"currency\": \"TST\"}",
+        "value_sha256": "ecc137c539f82cd3f54668a27f2b5a1d8e9a2a00c543bf1ae3d96a77e22d731f"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_PAIRED_EXAMPLE_OUTPUT_MATCHES_RETAINED_STDOUT",
+      "prior_stdout": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "sha256": "223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "original_path": ".local-backups/documentation-intelligence-20261119/owned-adapter-example-v1.stdout",
+        "immutable_snapshot": true
+      },
+      "new_example_executions": 0
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "en",
+      "fence_language": "sh",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+      "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+      "physical_fence": {
+        "kind": "code",
+        "language": "sh",
+        "first_line": 100,
+        "last_line": 102,
+        "first_byte": 4993,
+        "last_byte": 5125,
+        "raw": "```sh\npython3 -m unittest discover -s agent/research/documentation-intelligence-20261119/owned-adapter/source -p test_adapter.py\n```",
+        "raw_sha256": "4a10b129cd1f5c03b0f9139a0aad506384f35e7f2bfd10df72265ca7a96630a8",
+        "value": "python3 -m unittest discover -s agent/research/documentation-intelligence-20261119/owned-adapter/source -p test_adapter.py",
+        "value_sha256": "eb7d169c9294c150a8c06acc1f5ea8d5622a241b8db45bb46969558df7208589"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "UNCHANGED_OWNED_FAKE_COMMAND_PREVIOUSLY_EXECUTED",
+      "prior_review": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "original_path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+        "immutable_snapshot": true
+      },
+      "actual_raw_log": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/f8f7b0ac7f2b53ac4e96000f166430c488f2c37e059ad5502b09d60f29d363b8",
+        "sha256": "f8f7b0ac7f2b53ac4e96000f166430c488f2c37e059ad5502b09d60f29d363b8",
+        "original_path": ".local-backups/documentation-intelligence-20261119/owned-adapter-public-tests-v1.stderr",
+        "immutable_snapshot": true
+      },
+      "new_command_executions": 0,
+      "scope": "Repositoryroot andadequatePython;syntheticfakeonly,noexternalgatewayexecution."
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "pt-br",
+      "fence_language": "mermaid",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+      "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+      "physical_fence": {
+        "kind": "code",
+        "language": "mermaid",
+        "first_line": 25,
+        "last_line": 39,
+        "first_byte": 1377,
+        "last_byte": 1870,
+        "raw": "```mermaid\nsequenceDiagram\n    participant S as \"BalanceService\"\n    participant A as \"BalanceAdapter\"\n    participant C as \"JsonClient injetado\"\n    participant M as \"balance_from_payload\"\n    S->>A: read(account_id)\n    A->>A: rejeitar string vazia ou com barra\n    A->>C: get(caminho relativo, headers, timeout)\n    C-->>A: payload no retorno normal\n    A->>M: account_id e payload\n    M-->>A: Balance no mapeamento válido\n    A-->>S: Balance\n    S-->>S: montar resumo com três campos\n```",
+        "raw_sha256": "537d69d90a8084990257130579ec94fc91e787d2f1604e3dc4f1d1932b2df175",
+        "value": "sequenceDiagram\n    participant S as \"BalanceService\"\n    participant A as \"BalanceAdapter\"\n    participant C as \"JsonClient injetado\"\n    participant M as \"balance_from_payload\"\n    S->>A: read(account_id)\n    A->>A: rejeitar string vazia ou com barra\n    A->>C: get(caminho relativo, headers, timeout)\n    C-->>A: payload no retorno normal\n    A->>M: account_id e payload\n    M-->>A: Balance no mapeamento válido\n    A-->>S: Balance\n    S-->>S: montar resumo com três campos",
+        "value_sha256": "74d90ed888d517b4ca330b4e7e1c31dfd5fdd58180390e437a32f5bc8b05f2f8"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_EXISTING_BROWSER_RENDERED_SOURCE_HASH_MATCH",
+      "browser_receipt": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+        "original_path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+        "immutable_snapshot": true
+      },
+      "browser_record_id": "owned-adapter-pt-br-1",
+      "browser_exact_physical_body_sha256": "01bfb45153d6ab3b1c8fe21306fb95602df8c362fe4031a4e8b0050a14dc4b15",
+      "AST_value_omits_exactly_one_physical_terminal_LF": true,
+      "new_browser_render_runs": 0,
+      "manual_semantic_review": "Flowdirection/branchesorparticipantmessagesreadagainstcurrentfrozenfunctions;same6earliervisuallyreviewedsources,noapplicationexecution."
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "pt-br",
+      "fence_language": "sh",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+      "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+      "physical_fence": {
+        "kind": "code",
+        "language": "sh",
+        "first_line": 88,
+        "last_line": 90,
+        "first_byte": 4626,
+        "last_byte": 4736,
+        "raw": "```sh\npython3 agent/research/documentation-intelligence-20261119/owned-adapter/examples/balance_summary.py\n```",
+        "raw_sha256": "c7d17ecc1581bb730620746f2daecb2ef760ac558b3c0d337ab9710287dac79e",
+        "value": "python3 agent/research/documentation-intelligence-20261119/owned-adapter/examples/balance_summary.py",
+        "value_sha256": "a131f25b7157a82f380f3704b477c19a8fdcd8081f844472a75b70e26d457d9e"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "UNCHANGED_OWNED_FAKE_COMMAND_PREVIOUSLY_EXECUTED",
+      "prior_review": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "original_path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+        "immutable_snapshot": true
+      },
+      "actual_raw_log": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "sha256": "223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "original_path": ".local-backups/documentation-intelligence-20261119/owned-adapter-example-v1.stdout",
+        "immutable_snapshot": true
+      },
+      "new_command_executions": 0,
+      "scope": "Repositoryroot andadequatePython;syntheticfakeonly,noexternalgatewayexecution."
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "pt-br",
+      "fence_language": "json",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+      "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+      "physical_fence": {
+        "kind": "code",
+        "language": "json",
+        "first_line": 95,
+        "last_line": 97,
+        "first_byte": 4876,
+        "last_byte": 4959,
+        "raw": "```json\n{\"account\": \"fixture-account\", \"available_minor\": 7, \"currency\": \"TST\"}\n```",
+        "raw_sha256": "db30591ad7184e00d3de5c67f898b6eb7c9dbc9590733376a7306fb1b3da8cbc",
+        "value": "{\"account\": \"fixture-account\", \"available_minor\": 7, \"currency\": \"TST\"}",
+        "value_sha256": "ecc137c539f82cd3f54668a27f2b5a1d8e9a2a00c543bf1ae3d96a77e22d731f"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "EXACT_PAIRED_EXAMPLE_OUTPUT_MATCHES_RETAINED_STDOUT",
+      "prior_stdout": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "sha256": "223e66f4527ebeded7b1558c387a6754a60f1935694056b053c1982514c57730",
+        "original_path": ".local-backups/documentation-intelligence-20261119/owned-adapter-example-v1.stdout",
+        "immutable_snapshot": true
+      },
+      "new_example_executions": 0
+    },
+    {
+      "chapter": "owned-adapter",
+      "language": "pt-br",
+      "fence_language": "sh",
+      "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+      "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+      "physical_fence": {
+        "kind": "code",
+        "language": "sh",
+        "first_line": 105,
+        "last_line": 107,
+        "first_byte": 5368,
+        "last_byte": 5500,
+        "raw": "```sh\npython3 -m unittest discover -s agent/research/documentation-intelligence-20261119/owned-adapter/source -p test_adapter.py\n```",
+        "raw_sha256": "4a10b129cd1f5c03b0f9139a0aad506384f35e7f2bfd10df72265ca7a96630a8",
+        "value": "python3 -m unittest discover -s agent/research/documentation-intelligence-20261119/owned-adapter/source -p test_adapter.py",
+        "value_sha256": "eb7d169c9294c150a8c06acc1f5ea8d5622a241b8db45bb46969558df7208589"
+      },
+      "owner_approved": false,
+      "training_gold": false,
+      "status": "UNCHANGED_OWNED_FAKE_COMMAND_PREVIOUSLY_EXECUTED",
+      "prior_review": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+        "original_path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+        "immutable_snapshot": true
+      },
+      "actual_raw_log": {
+        "path": ".local-backups/documentation-intelligence-20261119/document-tables-fences-v1/receipts/sha256/f8f7b0ac7f2b53ac4e96000f166430c488f2c37e059ad5502b09d60f29d363b8",
+        "sha256": "f8f7b0ac7f2b53ac4e96000f166430c488f2c37e059ad5502b09d60f29d363b8",
+        "original_path": ".local-backups/documentation-intelligence-20261119/owned-adapter-public-tests-v1.stderr",
+        "immutable_snapshot": true
+      },
+      "new_command_executions": 0,
+      "scope": "Repositoryroot andadequatePython;syntheticfakeonly,noexternalgatewayexecution."
+    }
+  ],
+  "new_model_calls": 0,
+  "new_browser_render_runs": 0,
+  "new_example_or_test_command_runs": 0,
+  "source_programs_executed_by_alignment": false,
+  "documentation_changed": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "limits": [
+    "Tableheadersarepresentation;28data rowsmappedmanually,nogenericnaturallanguageentailmentorindependentownerreview.",
+    "Numeric/source-derivedtracesareconditionalonsource/localbindingassumptions,notobservedexternalC++/Goapplicationruns.",
+    "Existing6diagramrendering/screenshotsandsyntheticexamplecommandrunsarereusedasdatedevidencewithcurrenthashmatches,notnewexecutions.",
+    "Physicalprose292groupsand77FAQpairledgersareseparateoverlappingevidence,notadditionalindependenttrainingexamples.",
+    "Noactivecatalog/UI/database/publicationortraininggateschanged."
+  ],
+  "prior_alignment": {
+    "path": "agent/research/documentation-intelligence-20261119/document-tables-fences-alignment-v1.json",
+    "sha256": "6c262d627cb5dd326498ec651a8d032148064d45506099d10c630bc6a1ab3917"
+  },
+  "changed_document_identities": [
+    {
+      "path": "agent/research/documentation-intelligence-20261119/chapters/documentation-agent-contracts/en.md",
+      "before_sha256": "d9084292d48ee7ff114d312c2b020f9d0224c7beb695614c56dee808352d1b65",
+      "after_sha256": "7985bd30a456d8489c0e223c38112ef42ae2d8a85202301743df4189dec320fd"
+    },
+    {
+      "path": "agent/research/documentation-intelligence-20261119/chapters/documentation-agent-contracts/pt-br.md",
+      "before_sha256": "ce50fecfa720c5c2411c77135811faa146545df7cbd26d2e12e7d247c1d824bb",
+      "after_sha256": "853531e25d54f25e3e6e44594a9c2805d09c1e7442296f11baf40b6d6344aff7"
+    }
+  ],
+  "table_or_fence_bytes_changed": false,
+  "source_span_objects_unchanged": true,
+  "previous_browser_renders_reused": true,
+  "new_AST_extraction_run": false
+}

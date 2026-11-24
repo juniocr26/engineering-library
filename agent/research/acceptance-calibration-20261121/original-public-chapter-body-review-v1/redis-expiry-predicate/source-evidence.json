@@ -1,0 +1,57 @@
+{
+  "repository": "redis",
+  "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+  "source_hashes": {
+    "src/expire.c": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d"
+  },
+  "source_program_executed": false,
+  "sources": [
+    {
+      "path": "src/expire.c",
+      "source_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "first_line": 668,
+      "last_line": 677,
+      "quote": "int checkAlreadyExpired(long long when) {\n    /* EXPIRE with negative TTL, or EXPIREAT with a timestamp into the past\n     * should never be executed as a DEL when load the AOF or in the context\n     * of a slave instance.\n     *\n     * Instead we add the already expired key to the database with expire time\n     * (possibly in the past) and wait for an explicit DEL from the master. */\n    if (server.current_client && server.current_client->flags & CLIENT_MASTER) return 0;\n    return (when <= commandTimeSnapshot() && !server.loading && !server.masterhost);\n}\n"
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "src/expire.c",
+      "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "ranges": [
+        {
+          "first_line": 823,
+          "last_line": 858,
+          "quote": "    if (checkAlreadyExpired(when)) {\n        robj *aux;\n\n        int deleted = dbGenericDelete(c->db,key,server.lazyfree_lazy_expire,DB_FLAG_KEY_EXPIRED);\n        serverAssertWithInfo(c,key,deleted);\n        server.dirty++;\n\n        /* Replicate/AOF this as an explicit DEL or UNLINK. */\n        aux = server.lazyfree_lazy_expire ? shared.unlink : shared.del;\n        rewriteClientCommandVector(c,2,aux,key);\n        keyModified(c,c->db,key,NULL,1);\n        notifyKeyspaceEvent(NOTIFY_GENERIC,\"del\",key,c->db->id);\n        addReply(c, shared.cone);\n        return;\n    } else {\n        kv = setExpire(c,c->db,key,when); /* might realloc kv */\n        addReply(c,shared.cone);\n        /* Propagate as PEXPIREAT millisecond-timestamp\n         * Only rewrite the command arg if not already PEXPIREAT */\n        if (c->cmd->proc != pexpireatCommand) {\n            rewriteClientCommandArgument(c,0,shared.pexpireat);\n        }\n\n        /* Avoid creating a string object when it's the same as argv[2] parameter  */\n        if (basetime != 0 || unit == UNIT_SECONDS) {\n            robj *when_obj = createStringObjectFromLongLong(when);\n            rewriteClientCommandArgument(c,2,when_obj);\n            decrRefCount(when_obj);\n        }\n\n        keyModified(c,c->db,key,kv,1);\n        notifyKeyspaceEvent(NOTIFY_GENERIC,\"expire\",key,c->db->id);\n        KSN_INVALIDATE_KVOBJ(kv);\n        server.dirty++;\n        return;\n    }\n"
+        }
+      ]
+    },
+    {
+      "path": "src/server.c",
+      "full_file_sha256": "7f30ba83792e79bbb7d76a493cb33e8b4fcaa60b20add9ae5b23d7cb074fdd9e",
+      "ranges": [
+        {
+          "first_line": 263,
+          "last_line": 278,
+          "quote": "mstime_t commandTimeSnapshot(void) {\n    /* When we are in the middle of a command execution, we want to use a\n     * reference time that does not change: in that case we just use the\n     * cached time, that we update before each call in the call() function.\n     * This way we avoid that commands such as RPOPLPUSH or similar, that\n     * may re-open the same key multiple times, can invalidate an already\n     * open object in a next call, if the next call will see the key expired,\n     * while the first did not.\n     * This is specifically important in the context of scripts, where we\n     * pretend that time freezes. This way a key can expire only the first time\n     * it is accessed and not in the middle of the script execution, making\n     * propagation to slaves / AOF consistent. See issue #1525 for more info.\n     * Note that we cannot use the cached server.mstime because it can change\n     * in processEventsWhileBlocked etc. */\n    return server.cmd_time_snapshot;\n}\n"
+        }
+      ]
+    },
+    {
+      "path": "src/server.h",
+      "full_file_sha256": "dc843ae72cb35c43496e2aafe700e3aceaf03ce5ef15e7f544aedeea668109f9",
+      "ranges": [
+        {
+          "first_line": 47,
+          "last_line": 47,
+          "quote": "typedef long long mstime_t; /* millisecond time type. */\n"
+        },
+        {
+          "first_line": 2750,
+          "last_line": 2750,
+          "quote": "    mstime_t cmd_time_snapshot; /* Time snapshot of the root execution nesting. */\n"
+        }
+      ]
+    }
+  ]
+}

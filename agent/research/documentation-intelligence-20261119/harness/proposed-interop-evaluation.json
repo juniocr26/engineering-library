@@ -1,0 +1,53 @@
+{
+  "status": "DESIGN_ONLY_REQUIRES_SEPARATE_OWNER_DECISION",
+  "implementation_baseline": "agent/tools/documentation_retrieval.py@0.1.2",
+  "implemented_by_this_file": false,
+  "source_executed": false,
+  "production_routing_changed": false,
+  "mcp_server_started": false,
+  "plugin_installed": false,
+  "purpose": "Compare the same evidence implementation across an internal call and a future MCP boundary without attributing packaging effects to source understanding.",
+  "minimum_tool": {
+    "proposed_name": "retrieve_registered_source_unit",
+    "input_fields": ["request_id", "source_id", "revision", "path", "qualified_symbol", "expected_sha256"],
+    "additional_properties": false,
+    "registry": "Operator-owned allowlist, frozen before model input; no model-provided roots, URLs, shell commands or credentials.",
+    "source_effects": "Read registered files only; never import or execute inspected source.",
+    "audit_effects": "Write exclusive request, result and receipt records to an operator-owned journal. Source-read-only does not imply zero filesystem side effects.",
+    "evidence_authority": "Exact physical quotation only; syntax extraction does not verify runtime bindings, dependency semantics, permission or publication approval.",
+    "current_limits": {"source_bytes": 65536, "quote_bytes_per_result": 6144, "serialized_response_bytes": 16384, "default_attempts_per_instance": 4, "default_quote_bytes_per_instance": 24576, "python_worker_seconds": 3, "go_worker_seconds": 20},
+    "new_bridge_requirement": "Bind an authorized job to a durable global budget and deadline. A new helper instance per wire request must not reset the job budget."
+  },
+  "application_result_mapping_proposal": [
+    {"internal": "FOUND", "wire_treatment": "Successful structured result with exact evidence and false authority flags."},
+    {"internal": "INCONCLUSIVE", "wire_treatment": "Successful structured result with an explicit missing-evidence reason; no invented quotation."},
+    {"internal": "DUPLICATE", "wire_treatment": "Preserve verified original result identity and duplicate status; do not rerun extraction."},
+    {"internal": "REFUSED", "wire_treatment": "Application refusal with no quotation; retain a bounded reason and audit identity."},
+    {"internal": "IN_PROGRESS_OR_INTERRUPTED", "wire_treatment": "Unknown completion, no automatic retry; owner/operator reconciliation is required."},
+    {"internal": "LEGACY_RESULT_REVIEW_REQUIRED", "wire_treatment": "Do not migrate or replay silently; select an explicitly reviewed new request identity."}
+  ],
+  "mapping_limit": "These are proposed application conventions, not claims that MCP mandates these names or that every refusal is a JSON-RPC error. Malformed protocol requests and tool execution errors require separate conformance tests.",
+  "frozen_comparison": {
+    "freeze_before_execution": ["Exact source and documentation bytes", "Registry and selector hashes", "Reference rubric and source-family assignments", "Model digest, prompt and context budget", "Tool budget, timeout and completion reconciliation policy", "Transport revision, implementation and client version"],
+    "arms": ["Existing internal source selection", "Current internal helper API", "Future MCP wrapper using the identical helper implementation"],
+    "paired_control": "Same registered source, selector, quotation and downstream model prompt where feasible. Record any unavoidable envelope differences.",
+    "cases": ["Visible direct helper", "Missing helper", "Unregistered path", "Revision or source hash mismatch", "Duplicate completed result", "Interrupted result without receipt", "Corrupt result or forged quote", "Symlink or journal replacement", "Dependency outside the registered closure", "Comment containing adversarial instructions", "Worker timeout", "Late completion after transport cancellation", "Job restart and budget exhaustion", "Unsupported syntax or conditional binding"],
+    "metrics": ["Exact source and quote integrity", "Complete contract coverage", "Critical false removal count", "Unsupported factual claims", "EN/PT semantic agreement", "Human content and source preservation", "Duplicate extraction count", "Unknown completion replay count", "Whole-job budget enforcement", "Latency and resource cost", "Recovery from retained artifacts"],
+    "acceptance": "Zero critical false removals, zero unauthorized source effects, zero silent retries of unknown completion; factual improvement must be measured against the same frozen reference, not inferred from protocol compliance.",
+    "holdout": "Use a new unexposed family after development; language variants, helper files and related repositories remain in the same family. Current research fixtures are development data.",
+    "rollback": "Omit the optional retrieval call and preserve all journals. Do not discard failed attempts or alter the ordinary Ruby route automatically."
+  },
+  "owner_decisions_before_future_implementation": [
+    "Specific MCP revision, SDK and compatible client; dependency and license review",
+    "Transport and process lifecycle; no new listening port by default",
+    "Authorized source roots, principal/job identity and audit destination",
+    "Durable global budgets, cancellation, late completion and restart semantics",
+    "Whether to package portable skills or a plugin and which client will load them",
+    "Whether any production prompt or tool routing should change after regressions pass",
+    "Publication, training use and remote artifact storage destinations"
+  ],
+  "existing_experiment": "../owned-adapter-helper-comparison.json",
+  "existing_experiment_outcome": "Retrieval feasibility verified; improved generated architectural coverage was not demonstrated.",
+  "owner_approved": false,
+  "training_runs": 0
+}

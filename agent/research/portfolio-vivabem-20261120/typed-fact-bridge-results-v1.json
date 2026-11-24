@@ -1,0 +1,1958 @@
+{
+  "at": "2026-11-21T03:35:13.439883+00:00",
+  "cases_sha256": "31dda816e1ad95d9d27e8a921a09c13ac00b6526b30523ae2a93f4de0696eb03",
+  "rows": [
+    {
+      "id": "starlette-modify",
+      "expected_action": "MODIFY",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "MODIFY",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "70d830e457cd4ca711204ae4dd24f67af718fa59e5ccb74a069c935efaab228c",
+            "shape_sha256": "0d849479554505ebdb3af7ded5e75119b9290ffd8bedac89c6fc1c7037bcffe6",
+            "typed_fact": {
+              "diagnostic_name_expression": "getattr(cast, \"__name__\", type(cast).__name__)"
+            },
+            "source_lines": [
+              125,
+              143
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            cast_name = getattr(cast, \"__name__\", type(cast).__name__)\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Positive verified current selected fact contradicts the supported registered old claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": {
+          "en": "The selected handler assigns `cast_name = getattr(cast, \"__name__\", type(cast).__name__)` and uses `cast_name` in the diagnostic.",
+          "pt-BR": "O tratador selecionado atribui `cast_name = getattr(cast, \"__name__\", type(cast).__name__)` e usa `cast_name` no diagnóstico."
+        }
+      }
+    },
+    {
+      "id": "starlette-unchanged-old",
+      "expected_action": "NO-OP",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "NO-OP",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Current verified selected fact matches the registered bilingual claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-already-current",
+      "expected_action": "NO-OP",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "NO-OP",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "70d830e457cd4ca711204ae4dd24f67af718fa59e5ccb74a069c935efaab228c",
+            "shape_sha256": "0d849479554505ebdb3af7ded5e75119b9290ffd8bedac89c6fc1c7037bcffe6",
+            "typed_fact": {
+              "diagnostic_name_expression": "getattr(cast, \"__name__\", type(cast).__name__)"
+            },
+            "source_lines": [
+              125,
+              143
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            cast_name = getattr(cast, \"__name__\", type(cast).__name__)\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Current verified selected fact matches the registered bilingual claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-false-source-fact",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "70d830e457cd4ca711204ae4dd24f67af718fa59e5ccb74a069c935efaab228c",
+            "shape_sha256": "0d849479554505ebdb3af7ded5e75119b9290ffd8bedac89c6fc1c7037bcffe6",
+            "typed_fact": {
+              "diagnostic_name_expression": "getattr(cast, \"__name__\", type(cast).__name__)"
+            },
+            "source_lines": [
+              125,
+              143
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            cast_name = getattr(cast, \"__name__\", type(cast).__name__)\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "supplied fact contradicts independently reacquired source",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-false-document-fact",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "70d830e457cd4ca711204ae4dd24f67af718fa59e5ccb74a069c935efaab228c",
+            "shape_sha256": "0d849479554505ebdb3af7ded5e75119b9290ffd8bedac89c6fc1c7037bcffe6",
+            "typed_fact": {
+              "diagnostic_name_expression": "getattr(cast, \"__name__\", type(cast).__name__)"
+            },
+            "source_lines": [
+              125,
+              143
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            cast_name = getattr(cast, \"__name__\", type(cast).__name__)\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "false typed value attached to registered prose/citation",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-missing-portuguese",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "70d830e457cd4ca711204ae4dd24f67af718fa59e5ccb74a069c935efaab228c",
+            "shape_sha256": "0d849479554505ebdb3af7ded5e75119b9290ffd8bedac89c6fc1c7037bcffe6",
+            "typed_fact": {
+              "diagnostic_name_expression": "getattr(cast, \"__name__\", type(cast).__name__)"
+            },
+            "source_lines": [
+              125,
+              143
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            cast_name = getattr(cast, \"__name__\", type(cast).__name__)\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "both registered document languages required",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-unregistered-prose",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "70d830e457cd4ca711204ae4dd24f67af718fa59e5ccb74a069c935efaab228c",
+            "shape_sha256": "0d849479554505ebdb3af7ded5e75119b9290ffd8bedac89c6fc1c7037bcffe6",
+            "typed_fact": {
+              "diagnostic_name_expression": "getattr(cast, \"__name__\", type(cast).__name__)"
+            },
+            "source_lines": [
+              125,
+              143
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            cast_name = getattr(cast, \"__name__\", type(cast).__name__)\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "unregistered prose requires independent human/source review",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-missing-revision",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "requested Git source object unavailable; no fetch",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-partial-disappearance",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "partial/unknown selected contract scope",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "starlette-human-preservation",
+      "expected_action": "MODIFY",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "MODIFY",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "HUMAN_ALIGNMENT_REQUIRED_NO_AUTOMATIC_APPLY",
+        "evidence": {
+          "previous": {
+            "family": "starlette",
+            "revision": "9b403a0c33f0e2eebba099e9e6aa1c1e9535daec",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "42d5f430d22e13578d2781aeadcb9b0c422ec0c9afd8fbd19155e244fa25dcb9",
+            "shape_sha256": "e371c819f52cd1ab136e760097a0da0ad16c4915b0da8c6c5f5ccdca386bdab0",
+            "typed_fact": {
+              "diagnostic_name_expression": "cast.__name__"
+            },
+            "source_lines": [
+              125,
+              142
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "starlette",
+            "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+            "path": "starlette/config.py",
+            "selector": "Config._perform_cast",
+            "source_sha256": "70d830e457cd4ca711204ae4dd24f67af718fa59e5ccb74a069c935efaab228c",
+            "shape_sha256": "0d849479554505ebdb3af7ded5e75119b9290ffd8bedac89c6fc1c7037bcffe6",
+            "typed_fact": {
+              "diagnostic_name_expression": "getattr(cast, \"__name__\", type(cast).__name__)"
+            },
+            "source_lines": [
+              125,
+              143
+            ],
+            "quote": "def _perform_cast(\n        self,\n        key: str,\n        value: Any,\n        cast: Callable[[Any], Any] | None = None,\n    ) -> Any:\n        if cast is None or value is None:\n            return value\n        elif cast is bool and isinstance(value, str):\n            mapping = {\"true\": True, \"1\": True, \"false\": False, \"0\": False}\n            value = value.lower()\n            if value not in mapping:\n                raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n            return mapping[value]\n        try:\n            return cast(value)\n        except (TypeError, ValueError):\n            cast_name = getattr(cast, \"__name__\", type(cast).__name__)\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+            "mechanism": "Python AST complete selected declaration fingerprint",
+            "manual_semantic_basis": "starlette-revision-independent-source-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Positive verified current selected fact contradicts the supported registered old claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": {
+          "en": "The selected handler assigns `cast_name = getattr(cast, \"__name__\", type(cast).__name__)` and uses `cast_name` in the diagnostic.",
+          "pt-BR": "O tratador selecionado atribui `cast_name = getattr(cast, \"__name__\", type(cast).__name__)` e usa `cast_name` no diagnóstico."
+        }
+      }
+    },
+    {
+      "id": "starlette-untrusted-extra",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "packet schema outside closed protocol",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-modify",
+      "expected_action": "MODIFY",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "MODIFY",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+            "shape_sha256": "a7bdb9ae702918357b49b2db0ecfecad4d9310ba876e018dc2f2f890d0891947",
+            "typed_fact": {
+              "fast_path_header_policy": "after rf.ReadFrom: if n > 0 && !wroteHeader then code=StatusOK,wroteHeader=true"
+            },
+            "source_lines": [
+              211,
+              229
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Positive verified current selected fact contradicts the supported registered old claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": {
+          "en": "After `rf.ReadFrom(r)`, the selected `n > 0 && !f.basicWriter.wroteHeader` guard assigns `f.basicWriter.code = http.StatusOK` and `f.basicWriter.wroteHeader = true`.",
+          "pt-BR": "Depois de `rf.ReadFrom(r)`, a condição selecionada `n > 0 && !f.basicWriter.wroteHeader` atribui `f.basicWriter.code = http.StatusOK` e `f.basicWriter.wroteHeader = true`."
+        }
+      }
+    },
+    {
+      "id": "chi-unchanged-old",
+      "expected_action": "NO-OP",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "NO-OP",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Current verified selected fact matches the registered bilingual claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-already-current",
+      "expected_action": "NO-OP",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "NO-OP",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+            "shape_sha256": "a7bdb9ae702918357b49b2db0ecfecad4d9310ba876e018dc2f2f890d0891947",
+            "typed_fact": {
+              "fast_path_header_policy": "after rf.ReadFrom: if n > 0 && !wroteHeader then code=StatusOK,wroteHeader=true"
+            },
+            "source_lines": [
+              211,
+              229
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Current verified selected fact matches the registered bilingual claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-false-source-fact",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+            "shape_sha256": "a7bdb9ae702918357b49b2db0ecfecad4d9310ba876e018dc2f2f890d0891947",
+            "typed_fact": {
+              "fast_path_header_policy": "after rf.ReadFrom: if n > 0 && !wroteHeader then code=StatusOK,wroteHeader=true"
+            },
+            "source_lines": [
+              211,
+              229
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "supplied fact contradicts independently reacquired source",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-false-document-fact",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+            "shape_sha256": "a7bdb9ae702918357b49b2db0ecfecad4d9310ba876e018dc2f2f890d0891947",
+            "typed_fact": {
+              "fast_path_header_policy": "after rf.ReadFrom: if n > 0 && !wroteHeader then code=StatusOK,wroteHeader=true"
+            },
+            "source_lines": [
+              211,
+              229
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "false typed value attached to registered prose/citation",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-missing-portuguese",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+            "shape_sha256": "a7bdb9ae702918357b49b2db0ecfecad4d9310ba876e018dc2f2f890d0891947",
+            "typed_fact": {
+              "fast_path_header_policy": "after rf.ReadFrom: if n > 0 && !wroteHeader then code=StatusOK,wroteHeader=true"
+            },
+            "source_lines": [
+              211,
+              229
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "both registered document languages required",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-unregistered-prose",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+            "shape_sha256": "a7bdb9ae702918357b49b2db0ecfecad4d9310ba876e018dc2f2f890d0891947",
+            "typed_fact": {
+              "fast_path_header_policy": "after rf.ReadFrom: if n > 0 && !wroteHeader then code=StatusOK,wroteHeader=true"
+            },
+            "source_lines": [
+              211,
+              229
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "unregistered prose requires independent human/source review",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-missing-revision",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "requested Git source object unavailable; no fetch",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-partial-disappearance",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "partial/unknown selected contract scope",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "chi-human-preservation",
+      "expected_action": "MODIFY",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "MODIFY",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "HUMAN_ALIGNMENT_REQUIRED_NO_AUTOMATIC_APPLY",
+        "evidence": {
+          "previous": {
+            "family": "chi",
+            "revision": "04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "7b6ed24d3d5bfd362e00851d117e74273b02597a1d9e9eb243cbf7aae22597c8",
+            "shape_sha256": "6155742abfbe591f7ea56e35c6141b4c2faf510b9bf8db392a6a65cca85f65fa",
+            "typed_fact": {
+              "fast_path_header_policy": "maybeWriteHeader before rf.ReadFrom"
+            },
+            "source_lines": [
+              211,
+              226
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tf.basicWriter.maybeWriteHeader()\n\tn, err := rf.ReadFrom(r)\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "chi",
+            "revision": "9f8adb1aabaa8a91180a821111d3f8e668d1c0bf",
+            "path": "middleware/wrap_writer.go",
+            "selector": "httpFancyWriter.ReadFrom",
+            "source_sha256": "b2011091cccb6a8a805d24bec4df20e631e3649a2812bdf41036fffb05ce3494",
+            "shape_sha256": "a7bdb9ae702918357b49b2db0ecfecad4d9310ba876e018dc2f2f890d0891947",
+            "typed_fact": {
+              "fast_path_header_policy": "after rf.ReadFrom: if n > 0 && !wroteHeader then code=StatusOK,wroteHeader=true"
+            },
+            "source_lines": [
+              211,
+              229
+            ],
+            "quote": "func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\n\tif f.basicWriter.tee != nil || f.basicWriter.discard {\n\t\t// Route through basicWriter.Write so that the tee and discard semantics\n\t\t// are honored (the fast ReaderFrom path below would bypass both, writing\n\t\t// straight to the original ResponseWriter). basicWriter.Write already\n\t\t// increments basicWriter.bytes, so we must NOT add n again here (that\n\t\t// would double-count).\n\t\tn, err := io.Copy(&f.basicWriter, r)\n\t\treturn n, err\n\t}\n\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\n\tn, err := rf.ReadFrom(r)\n\tif n > 0 && !f.basicWriter.wroteHeader {\n\t\tf.basicWriter.code = http.StatusOK\n\t\tf.basicWriter.wroteHeader = true\n\t}\n\tf.basicWriter.bytes += int(n)\n\treturn n, err\n}",
+            "mechanism": "Verified native Go syntax declaration + registered manual semantics",
+            "manual_semantic_basis": "chi-revision-maintenance-review-v1.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Positive verified current selected fact contradicts the supported registered old claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": {
+          "en": "After `rf.ReadFrom(r)`, the selected `n > 0 && !f.basicWriter.wroteHeader` guard assigns `f.basicWriter.code = http.StatusOK` and `f.basicWriter.wroteHeader = true`.",
+          "pt-BR": "Depois de `rf.ReadFrom(r)`, a condição selecionada `n > 0 && !f.basicWriter.wroteHeader` atribui `f.basicWriter.code = http.StatusOK` e `f.basicWriter.wroteHeader = true`."
+        }
+      }
+    },
+    {
+      "id": "chi-untrusted-extra",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "packet schema outside closed protocol",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-modify",
+      "expected_action": "MODIFY",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "MODIFY",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac",
+            "shape_sha256": "5b9597bd10b2e2b897eb7901a5e753e2580b4cba0c1050d2f699e624533aae96",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute"
+            },
+            "source_lines": [
+              253,
+              274
+            ],
+            "quote": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Positive verified current selected fact contradicts the supported registered old claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": {
+          "en": "The selected prefixed-root guard has `!opts.isGeneratedHeadRoute` as its third conjunct.",
+          "pt-BR": "A terceira condição da conjunção no guard selecionado de raiz com prefixo é `!opts.isGeneratedHeadRoute`."
+        }
+      }
+    },
+    {
+      "id": "fastify-unchanged-old",
+      "expected_action": "NO-OP",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "NO-OP",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Current verified selected fact matches the registered bilingual claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-already-current",
+      "expected_action": "NO-OP",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "NO-OP",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "ISOLATED_REVIEW_CANDIDATE_ONLY",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac",
+            "shape_sha256": "5b9597bd10b2e2b897eb7901a5e753e2580b4cba0c1050d2f699e624533aae96",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute"
+            },
+            "source_lines": [
+              253,
+              274
+            ],
+            "quote": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Current verified selected fact matches the registered bilingual claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-false-source-fact",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac",
+            "shape_sha256": "5b9597bd10b2e2b897eb7901a5e753e2580b4cba0c1050d2f699e624533aae96",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute"
+            },
+            "source_lines": [
+              253,
+              274
+            ],
+            "quote": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "supplied fact contradicts independently reacquired source",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-false-document-fact",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac",
+            "shape_sha256": "5b9597bd10b2e2b897eb7901a5e753e2580b4cba0c1050d2f699e624533aae96",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute"
+            },
+            "source_lines": [
+              253,
+              274
+            ],
+            "quote": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "false typed value attached to registered prose/citation",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-missing-portuguese",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac",
+            "shape_sha256": "5b9597bd10b2e2b897eb7901a5e753e2580b4cba0c1050d2f699e624533aae96",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute"
+            },
+            "source_lines": [
+              253,
+              274
+            ],
+            "quote": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "both registered document languages required",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-unregistered-prose",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac",
+            "shape_sha256": "5b9597bd10b2e2b897eb7901a5e753e2580b4cba0c1050d2f699e624533aae96",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute"
+            },
+            "source_lines": [
+              253,
+              274
+            ],
+            "quote": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "unregistered prose requires independent human/source review",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-missing-revision",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "requested Git source object unavailable; no fetch",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-partial-disappearance",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "partial/unknown selected contract scope",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "fastify-human-preservation",
+      "expected_action": "MODIFY",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "MODIFY",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "HUMAN_ALIGNMENT_REQUIRED_NO_AUTOMATIC_APPLY",
+        "evidence": {
+          "previous": {
+            "family": "fastify",
+            "revision": "0b076ca595d19951c536daf515c778b38cf6ba69",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "34169783bb0c140a62a16836b78c931ac3e4f31c3f35d7e349ff0b97bdc400ae",
+            "shape_sha256": "779951548bb0989eb7e8009f3d7c5c70537d2ada727ad907d7e9396648df7c63",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'"
+            },
+            "source_lines": [
+              252,
+              273
+            ],
+            "quote": "path === '/' && prefix.length > 0 && opts.method !== 'HEAD'\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          },
+          "current": {
+            "family": "fastify",
+            "revision": "7e0c8febb2a1ba4d55309cdc2ccd51694eca46d3",
+            "path": "lib/route.js",
+            "selector": "buildRouting.route",
+            "source_sha256": "35d66c66e91f1ef8f4e059079e34fc532e7681e52d1d4e7a6ad71844544b2eac",
+            "shape_sha256": "5b9597bd10b2e2b897eb7901a5e753e2580b4cba0c1050d2f699e624533aae96",
+            "typed_fact": {
+              "prefixed_root_guard": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute"
+            },
+            "source_lines": [
+              253,
+              274
+            ],
+            "quote": "path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute\n{\n      switch (opts.prefixTrailingSlash) {\n        case 'slash':\n          addNewRoute.call(this, { path, isFastify })\n          break\n        case 'no-slash':\n          addNewRoute.call(this, { path: '', isFastify })\n          break\n        case 'both':\n        default:\n          addNewRoute.call(this, { path: '', isFastify })\n          // If ignoreTrailingSlash is set to true we need to add only the '' route to prevent adding an incomplete one.\n          if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith('/'))) {\n            addNewRoute.call(this, { path, prefixing: true, isFastify })\n          }\n      }\n    }\nif (path[0] === '/' && prefix.endsWith('/')) {\n      // Ensure that '/prefix/' + '/route' gets registered as '/prefix/route'\n      addNewRoute.call(this, { path: path.slice(1), isFastify })\n    } else {\n      addNewRoute.call(this, { path, isFastify })\n    }",
+            "mechanism": "Existing TypeScript lexical guard/branch AST + registered manual semantics",
+            "manual_semantic_basis": "fastify-maintenance-source-guard-review-v2.json",
+            "source_executed": false,
+            "runtime_bindings_verified": false,
+            "repository_complete_scope_proven": false
+          }
+        },
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "Positive verified current selected fact contradicts the supported registered old claim.",
+        "preserve_existing_document_bytes": true,
+        "proposed_documentation": {
+          "en": "The selected prefixed-root guard has `!opts.isGeneratedHeadRoute` as its third conjunct.",
+          "pt-BR": "A terceira condição da conjunção no guard selecionado de raiz com prefixo é `!opts.isGeneratedHeadRoute`."
+        }
+      }
+    },
+    {
+      "id": "fastify-untrusted-extra",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "packet schema outside closed protocol",
+        "proposed_documentation": null
+      }
+    },
+    {
+      "id": "private-provider-refusal",
+      "expected_action": "INCONCLUSIVE",
+      "matches": true,
+      "result": {
+        "version": "typed-fact-lifecycle-bridge/0.0.1-research",
+        "action": "INCONCLUSIVE",
+        "technical_recommendation": true,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "application_writes": 0,
+        "source_executed_by_bridge": false,
+        "candidate_application": "OWNER_REVIEW_REQUIRED",
+        "evidence": {},
+        "limitations": [
+          "Three reviewed selected source shapes/facts only, not arbitrary code/prose.",
+          "Fingerprint integrity binds manual semantic registration; hashes are not general truth verification.",
+          "No complete repository, runtime/global-binding or independent human proof.",
+          "No source/absence-based REMOVE capability or automatic application."
+        ],
+        "reason": "unknown provider",
+        "proposed_documentation": null
+      }
+    }
+  ],
+  "matched": 34,
+  "total": 34,
+  "production_changed": false,
+  "application_writes": 0,
+  "training_gold": false,
+  "independent_evaluation": false
+}

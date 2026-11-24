@@ -1,0 +1,116 @@
+{
+  "frozen_at": "2026-11-21T22:55:44.498472+00:00",
+  "cases": [
+    {
+      "id": "original",
+      "helper": "exception-scope-controls-v2/original/helper.py",
+      "helper_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+      "job": "exception-scope-controls-v2/original/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      }
+    },
+    {
+      "id": "benign-comment",
+      "helper": "exception-scope-controls-v2/benign-comment/helper.py",
+      "helper_sha256": "c151cda94c47758cf7bf65e42b03bcca07c7f546cc38dd1b26dd5af4ce0ae826",
+      "job": "exception-scope-controls-v2/benign-comment/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      }
+    },
+    {
+      "id": "outer-adds-subprocess",
+      "helper": "exception-scope-controls-v2/outer-adds-subprocess/helper.py",
+      "helper_sha256": "68f397656f169011af051ef0da070d61e54100e9fa1426f3d028613847bc5b17",
+      "job": "exception-scope-controls-v2/outer-adds-subprocess/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": true,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      }
+    },
+    {
+      "id": "fresh-removes-subprocess",
+      "helper": "exception-scope-controls-v2/fresh-removes-subprocess/helper.py",
+      "helper_sha256": "bf82991eb218b519daf825f53601579064932fd0732eb9abf51ad4f7e1129257",
+      "job": "exception-scope-controls-v2/fresh-removes-subprocess/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": false,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      }
+    },
+    {
+      "id": "job-only-runtimeerror",
+      "helper": "exception-scope-controls-v2/job-only-runtimeerror/helper.py",
+      "helper_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+      "job": "exception-scope-controls-v2/job-only-runtimeerror/job.py",
+      "job_sha256": "fc6f891aef88ac771ac2d770e904cb45ae0c907cefeb546a449e7c590518984c",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": false,
+        "cached_call_count": 1
+      }
+    },
+    {
+      "id": "remove-cached-validation",
+      "helper": "exception-scope-controls-v2/remove-cached-validation/helper.py",
+      "helper_sha256": "5574e721e136f060b142a430fa091d6d9816f43a24a88dee61ee63d0cf9f26e2",
+      "job": "exception-scope-controls-v2/remove-cached-validation/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": null,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 0
+      }
+    },
+    {
+      "id": "unrelated-nested-function",
+      "helper": "exception-scope-controls-v2/unrelated-nested-function/helper.py",
+      "helper_sha256": "4bfcd08c386ff68fd4cb090c66945cb8f405b0a722fb01d96ba941b0240ea288",
+      "job": "exception-scope-controls-v2/unrelated-nested-function/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      }
+    },
+    {
+      "id": "unrelated-string-decoy",
+      "helper": "exception-scope-controls-v2/unrelated-string-decoy/helper.py",
+      "helper_sha256": "d8738bc991fea624637bb7288fc7c03fde3dae145e7d68d5cbab9e03db73fcac",
+      "job": "exception-scope-controls-v2/unrelated-string-decoy/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      }
+    }
+  ],
+  "hypothesis": "An owned AST procedure scoped to the exact lexical helper/job owners distinguishes explicit cached, fresh and job exception handlers, ignoring unrelated calls, comments and strings.",
+  "unit": "Eight synthetic static control-flow profiles, not application execution or generic exception inference.",
+  "criterion": "Observe only explicitly named handler types and literal lexical try containment; no dynamic class hierarchy, monkey patching or full call-graph guarantee.",
+  "independence": "Separate AST procedure after same-agent source reading. Not independent human/holdout.",
+  "producer_sha256": "d648eb99cb0f01806cfbd61feef2118876e2fd52201aa69e09f990b4b93d9dd5",
+  "source_program_execution": false,
+  "training_eligible": false
+}

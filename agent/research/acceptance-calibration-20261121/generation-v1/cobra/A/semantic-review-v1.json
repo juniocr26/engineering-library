@@ -1,0 +1,420 @@
+{
+  "at": "2026-11-21T13:50:24.946304+00:00",
+  "task": "cobra",
+  "method": "A",
+  "raw_response_sha256": "8e7ba98f7721a63058c61930d067ed1146ef9fd009546cf854c2af9458f226c8",
+  "content_sha256": "5e5605df3783dc666f17c11a4153aa4dc453d68ee675d4096d075ef26923e08f",
+  "extraction": "Decode only the fully emitted behavior array withJSONDecoder.raw_decode; entire output invalid/truncated. No braces/translation/answers repaired.",
+  "whole_output": "REJECTED",
+  "reasons": [
+    "length termination1800tokens",
+    "invalid whole JSON",
+    "missing entire pt-BR output",
+    "critical wrong OnlyValidArgs guard",
+    "placeholderpath citations",
+    "error_boundaries lacks explanation",
+    "unrequested repetitive FAQquestionarray crowds out limitations/uncertainty"
+  ],
+  "selected_behavior_atomic_claims": [
+    {
+      "id": "g1",
+      "parent": "C01",
+      "proposition": "PositionalArgs function signature",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "g2",
+      "parent": "C02",
+      "proposition": "OnlyValidArgs membership guard",
+      "verdict": "CONTRADICTED"
+    },
+    {
+      "id": "g3",
+      "parent": "C03",
+      "proposition": "Tab separates description",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "g4",
+      "parent": "C04",
+      "proposition": "ExactArgs returns callback",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "g5",
+      "parent": [
+        "C04",
+        "C05"
+      ],
+      "proposition": "Returned callback rejects length mismatch",
+      "verdict": "SUPPORTED",
+      "duplicate_occurrences_counted_once": true
+    },
+    {
+      "id": "g6",
+      "parent": "C06",
+      "proposition": "MatchAll invocation order",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "g7",
+      "parent": "C07",
+      "proposition": "MatchAll returns first nonnil error",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "g8",
+      "parent": "C08",
+      "proposition": "ExactValidArgs delegation",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "g9",
+      "parent": "C09",
+      "proposition": "ExactValidArgs deprecation",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "g10",
+      "parent": "C09",
+      "proposition": "Comment recommends MatchAll replacement",
+      "verdict": "SUPPORTED"
+    }
+  ],
+  "selected_behavior_supported_precision": {
+    "numerator": 9,
+    "denominator": 10,
+    "ratio": 0.9
+  },
+  "selected_behavior_unsupported_rate": {
+    "numerator": 1,
+    "denominator": 10,
+    "ratio": 0.1
+  },
+  "english_required_fact_coverage": {
+    "numerator": 7,
+    "denominator": 9
+  },
+  "strict_bilingual_fact_coverage": {
+    "numerator": 0,
+    "denominator": 9
+  },
+  "full_output_atomic_precision": null,
+  "full_precision_limit": "FAQgeneric role explanation outside selectedbehaviorarray not included; partialEnglishprecision is not fulloutputacceptance. Questions themselves are not factual assertions.",
+  "records": [
+    {
+      "claim_id": "NEW-A-cobra-C01",
+      "reference_id": "C01",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "type PositionalArgs func(cmd *Command, args []string) error",
+      "source_lines": [
+        22,
+        22
+      ],
+      "expected_interpretation": {
+        "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+        "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+      },
+      "generated_interpretation": {
+        "en": "The PositionalArgs function signature is func(cmd *Command, args []string) error.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "Signature is preserved; no execution claim.",
+      "citation": "path:lines 22-85",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": true
+    },
+    {
+      "claim_id": "NEW-A-cobra-C02",
+      "reference_id": "C02",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+      "source_lines": [
+        51,
+        65
+      ],
+      "expected_interpretation": {
+        "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+        "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+      },
+      "generated_interpretation": {
+        "en": "OnlyValidArgs performs membership checks when a root command with subcommands is invoked and there are no subcommands, or when a root command with subcommands is invoked and there are arguments, but the first argument does not match the command name.",
+        "pt-BR": null
+      },
+      "verdict": "CONTRADICTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "OnlyValidArgs membership is guarded by len(cmd.ValidArgs)>0 atargs.go52; generated condition imports root/subcommand logic from legacyArgs and does not state the actual guard.",
+      "citation": "path:lines 35-36, 44-45",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": false
+    },
+    {
+      "claim_id": "NEW-A-cobra-C03",
+      "reference_id": "C03",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}",
+      "source_lines": [
+        55,
+        58
+      ],
+      "expected_interpretation": {
+        "en": "Allowlist entries are projected to the portion before the first tab.",
+        "pt-BR": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab."
+      },
+      "generated_interpretation": {
+        "en": "Descriptions are separated from the allowlist entry by a tab character.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED_PARTIAL_REFERENCE_COVERAGE",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "A tab separates descriptions, but projection before first tab is omitted; generated weaker fact supported, required C03 not fully conveyed.",
+      "citation": "path:lines 54-57",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": false
+    },
+    {
+      "claim_id": "NEW-A-cobra-C04",
+      "reference_id": "C04",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}",
+      "source_lines": [
+        107,
+        113
+      ],
+      "expected_interpretation": {
+        "en": "ExactArgs(n) returns a validator function.",
+        "pt-BR": "ExactArgs(n) retorna uma função validadora."
+      },
+      "generated_interpretation": {
+        "en": "Constructing ExactArgs(n) returns a callback that rejects if the length of the received arguments is not equal to n.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "Returns callback; rejection belongs to returned callback, unlike earlier factory/result confusion.",
+      "citation": "path:lines 109-110",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": true
+    },
+    {
+      "claim_id": "NEW-A-cobra-C05",
+      "reference_id": "C05",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil",
+      "source_lines": [
+        108,
+        112
+      ],
+      "expected_interpretation": {
+        "en": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+        "pt-BR": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado."
+      },
+      "generated_interpretation": {
+        "en": "The returned ExactArgs callback rejects if the length of the received arguments is not equal to n.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "Correct mismatch condition; duplicates one proposition already conveyed within C04.",
+      "citation": "path:lines 109-110",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": true
+    },
+    {
+      "claim_id": "NEW-A-cobra-C06",
+      "reference_id": "C06",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil",
+      "source_lines": [
+        127,
+        134
+      ],
+      "expected_interpretation": {
+        "en": "MatchAll invokes its validators in the order of the supplied slice.",
+        "pt-BR": "MatchAll chama seus validadores na ordem do slice fornecido."
+      },
+      "generated_interpretation": {
+        "en": "MatchAll invokes supplied validators in the order they are supplied.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "Order of supplied validators retained.",
+      "citation": "path:lines 129-133",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": true
+    },
+    {
+      "claim_id": "NEW-A-cobra-C07",
+      "reference_id": "C07",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err",
+      "source_lines": [
+        129,
+        131
+      ],
+      "expected_interpretation": {
+        "en": "MatchAll returns immediately at the first non-nil validator error.",
+        "pt-BR": "MatchAll retorna imediatamente no primeiro erro não nil de um validador."
+      },
+      "generated_interpretation": {
+        "en": "If the first non-nil MatchAll validator error is encountered, the function returns that error.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "First nonnil error returned; source loopreturn controls later iterations.",
+      "citation": "path:lines 129-133",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": true
+    },
+    {
+      "claim_id": "NEW-A-cobra-C08",
+      "reference_id": "C08",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "func ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}",
+      "source_lines": [
+        142,
+        144
+      ],
+      "expected_interpretation": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+      },
+      "generated_interpretation": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "Exact delegation expression retained.",
+      "citation": "path:lines 143-144",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": true
+    },
+    {
+      "claim_id": "NEW-A-cobra-C09",
+      "reference_id": "C09",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "exact_source_evidence": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+      "source_lines": [
+        141,
+        141
+      ],
+      "expected_interpretation": {
+        "en": "The selected source comment marks ExactValidArgs deprecated.",
+        "pt-BR": "O comentário selecionado da fonte marca ExactValidArgs como deprecated."
+      },
+      "generated_interpretation": {
+        "en": "ExactValidArgs is deprecated and should be replaced with MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reviewer": "sameCodexcampaignagent; staticsemanticreading,notowner",
+      "reason": "Deprecation and recommended replacement match source comment.",
+      "citation": "path:lines 141-142",
+      "citation_relevance": "PLACEHOLDER_PATH_NOT_ACTUAL_SOURCE_PATH",
+      "coverage_complete": true
+    }
+  ],
+  "dimensions": [
+    {
+      "dimension": "factual correctness",
+      "score": 0,
+      "reason": "Critical wrong allowlist guard"
+    },
+    {
+      "dimension": "relevant completeness",
+      "score": 0,
+      "reason": "PT/limits/uncertaintymissing"
+    },
+    {
+      "dimension": "architecture and dependencies",
+      "score": 0,
+      "reason": "Wrong guard associated with other function"
+    },
+    {
+      "dimension": "API contracts",
+      "score": 0,
+      "reason": "OnlyValidArgs contract wrong"
+    },
+    {
+      "dimension": "errors and exceptions",
+      "score": 0,
+      "reason": "Onlycitationplaceholder"
+    },
+    {
+      "dimension": "existing tests and actual execution status",
+      "score": 0,
+      "reason": "Required nonexecution statement missing"
+    },
+    {
+      "dimension": "examples and commands",
+      "score": 0,
+      "reason": "Required unverified statement missing; no examples demanded"
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "score": 0,
+      "reason": "PTabsent"
+    },
+    {
+      "dimension": "FAQ correctness",
+      "score": 0,
+      "reason": "Unrequested repetitivequestions; incompleteboundedanswer"
+    },
+    {
+      "dimension": "citation relevance",
+      "score": 0,
+      "reason": "Literalpath:linesplaceholder"
+    },
+    {
+      "dimension": "explicit limitations",
+      "score": 0,
+      "reason": "Truncatedbeforelimitations"
+    }
+  ],
+  "new_complete_method_workflow_acceptance": false,
+  "historical0of13unchanged": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

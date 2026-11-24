@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-20T17:35:27.125312+00:00",
+  "hypothesis": "A self-consistent rewritten cache receipt may pass physical-byte checks while labeling another real source unit/body/module as the selected callable, or mislabeling declaration kind/decorator metadata. An exact complete selected lexical-unit check should reject those shapes. This is stronger than an arbitrary changed quote that differs from physical source, already covered by an existing test.",
+  "existing_tool_version": "0.1.3",
+  "existing_tool_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+  "cases": [
+    {
+      "id": "valid-plain",
+      "mutation": "none",
+      "source": "raise RuntimeError('owned source must never execute')\n\ndef selected(value=1):\n    return value + 1\n\ndef other(value=2):\n    return value + 2\n",
+      "source_sha256": "af65d3f44526344e6466f64103c840b9f9cfc0bd490daa647090256e5cd7a697",
+      "expected_status": "DUPLICATE"
+    },
+    {
+      "id": "valid-decorated-async",
+      "mutation": "none",
+      "source": "raise RuntimeError('owned source must never execute')\n\ndef mark(fn):\n    return fn\n\n@mark\nasync def selected(value=1):\n    return value + 1\n\ndef other(value=2):\n    return value + 2\n",
+      "source_sha256": "e22c63546281f2fb0de9d7e6cd36b721c92000f75713b7e9383254f0502348c3",
+      "expected_status": "DUPLICATE"
+    },
+    {
+      "id": "another-physical-callable",
+      "mutation": "other-callable",
+      "source": "raise RuntimeError('owned source must never execute')\n\ndef selected(value=1):\n    return value + 1\n\ndef other(value=2):\n    return value + 2\n",
+      "source_sha256": "af65d3f44526344e6466f64103c840b9f9cfc0bd490daa647090256e5cd7a697",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "only-return-line",
+      "mutation": "body-only",
+      "source": "raise RuntimeError('owned source must never execute')\n\ndef selected(value=1):\n    return value + 1\n\ndef other(value=2):\n    return value + 2\n",
+      "source_sha256": "af65d3f44526344e6466f64103c840b9f9cfc0bd490daa647090256e5cd7a697",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "whole-module-as-callable",
+      "mutation": "whole-module",
+      "source": "raise RuntimeError('owned source must never execute')\n\ndef selected(value=1):\n    return value + 1\n\ndef other(value=2):\n    return value + 2\n",
+      "source_sha256": "af65d3f44526344e6466f64103c840b9f9cfc0bd490daa647090256e5cd7a697",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "wrong-decorated-metadata",
+      "mutation": "decorated-flag",
+      "source": "raise RuntimeError('owned source must never execute')\n\ndef selected(value=1):\n    return value + 1\n\ndef other(value=2):\n    return value + 2\n",
+      "source_sha256": "af65d3f44526344e6466f64103c840b9f9cfc0bd490daa647090256e5cd7a697",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "wrong-function-kind",
+      "mutation": "async-kind",
+      "source": "raise RuntimeError('owned source must never execute')\n\ndef selected(value=1):\n    return value + 1\n\ndef other(value=2):\n    return value + 2\n",
+      "source_sha256": "af65d3f44526344e6466f64103c840b9f9cfc0bd490daa647090256e5cd7a697",
+      "expected_status": "REFUSED"
+    }
+  ],
+  "expected_frozen_before_observations": true,
+  "ownership": "All source and journal fixtures are isolated research-owned files; never executed as Python. Coordinated result/receipt rewriting is explicit controlled input, not evidence of an actual attacker or private-data incident.",
+  "permanent_tests_may_be_changed": false,
+  "new_model_calls": 0,
+  "authority_promotion_allowed": false
+}

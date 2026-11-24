@@ -1,0 +1,115 @@
+{
+  "at": "2026-11-21T17:21:04.582303+00:00",
+  "protocol": "native-mask-arithmetic-protocol-v1.json",
+  "records": [
+    {
+      "id": "short-padded-completion",
+      "batch_width": 33,
+      "effective_length": 6,
+      "supervised_target_global_positions": [
+        4,
+        5,
+        6
+      ],
+      "padding_target_global_positions": [
+        6
+      ],
+      "missing_real_completion_positions": [],
+      "supervised_token_count": 3,
+      "zero_loss_denominator": false,
+      "matches_frozen_arithmetic_reference": true,
+      "actual_framework_executed": false
+    },
+    {
+      "id": "exact-cap-no-padding",
+      "batch_width": 6,
+      "effective_length": 6,
+      "supervised_target_global_positions": [
+        4,
+        5
+      ],
+      "padding_target_global_positions": [],
+      "missing_real_completion_positions": [],
+      "supervised_token_count": 2,
+      "zero_loss_denominator": false,
+      "matches_frozen_arithmetic_reference": true,
+      "actual_framework_executed": false
+    },
+    {
+      "id": "truncated-completion",
+      "batch_width": 5,
+      "effective_length": 5,
+      "supervised_target_global_positions": [
+        4
+      ],
+      "padding_target_global_positions": [],
+      "missing_real_completion_positions": [
+        5
+      ],
+      "supervised_token_count": 1,
+      "zero_loss_denominator": false,
+      "matches_frozen_arithmetic_reference": true,
+      "actual_framework_executed": false
+    },
+    {
+      "id": "prompt-longer-than-cap",
+      "batch_width": 8,
+      "effective_length": 8,
+      "supervised_target_global_positions": [],
+      "padding_target_global_positions": [],
+      "missing_real_completion_positions": [
+        10,
+        11
+      ],
+      "supervised_token_count": 0,
+      "zero_loss_denominator": true,
+      "matches_frozen_arithmetic_reference": true,
+      "actual_framework_executed": false
+    },
+    {
+      "id": "unmasked-default-offset",
+      "batch_width": 33,
+      "effective_length": 6,
+      "supervised_target_global_positions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "padding_target_global_positions": [
+        6
+      ],
+      "missing_real_completion_positions": [],
+      "supervised_token_count": 6,
+      "zero_loss_denominator": false,
+      "matches_frozen_arithmetic_reference": true,
+      "actual_framework_executed": false
+    },
+    {
+      "id": "full-512-cap",
+      "batch_width": 512,
+      "effective_length": 512,
+      "supervised_target_global_positions": [
+        510,
+        511
+      ],
+      "padding_target_global_positions": [],
+      "missing_real_completion_positions": [],
+      "supervised_token_count": 2,
+      "zero_loss_denominator": false,
+      "matches_frozen_arithmetic_reference": true,
+      "actual_framework_executed": false
+    }
+  ],
+  "arithmetic_reference_matches": 6,
+  "cases": 6,
+  "finding": "Under the selectedsourceequations shortpaddedexamples includeonezero-padding target; fullcapexampledoesnot. Truncationcanomitcompletion/EOS oryieldzero supervisedtokens. Thisisnot nativeMLXruntimevalidation anddoesnot prove futuretokenizer-boundaryaccuracy.",
+  "no_upstream_code_executed": true,
+  "no_framework_installed_or_imported": true,
+  "no_actual_dataset_exported": true,
+  "no_weights_or_adapters_created": true,
+  "optimizer_updates": 0,
+  "gold": 0
+}

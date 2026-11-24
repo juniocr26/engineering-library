@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-21T16:18:05.487203+00:00",
+  "scope": "Actual installed GGUF/Ollama inference tokenizer/template observations only, not approved training examples or native trainable tokenizer fit.",
+  "official_metric_reference": {
+    "url": "https://docs.ollama.com/api/chat",
+    "short_witness_prompt": "Number of tokens in the prompt",
+    "short_witness_generation": "Number of tokens generated in the response",
+    "interpretation": "Prompt and generated counts are separate. Current docs distinguish cached prompt tokens; missing raw fields are unknown, not fabricated zero. This doc check does not certify identical behavior across every installed Ollama version."
+  },
+  "observations": [
+    {
+      "task": "fastapi",
+      "raw_response": "agent/research/acceptance-calibration-20261121/verified-fact-render-v1/fastapi/K/raw-response.json",
+      "raw_sha256": "3c46d6db3d0bd67bdc9ccea71397dfd3908aa1583b73ac78ca335ab849b840e5",
+      "reported_prompt_eval_count": 2653,
+      "reported_eval_count": 369,
+      "reported_prompt_plus_generated_tokens": 3022,
+      "prompt_alone_exceeds_proposed512": true,
+      "completion_alone_under_or_equal512": true,
+      "prompt_eval_cached_count": 15,
+      "cache_field_absence_means_unknown_not_zero": false
+    },
+    {
+      "task": "cobra",
+      "raw_response": "agent/research/acceptance-calibration-20261121/verified-fact-render-v1/cobra/K/raw-response.json",
+      "raw_sha256": "b272b3b67e3e0fe5cce510b7f74d41dec7d1ba1d5cc76e4eca187e2a50fd1c06",
+      "reported_prompt_eval_count": 2566,
+      "reported_eval_count": 377,
+      "reported_prompt_plus_generated_tokens": 2943,
+      "prompt_alone_exceeds_proposed512": true,
+      "completion_alone_under_or_equal512": true,
+      "prompt_eval_cached_count": 193,
+      "cache_field_absence_means_unknown_not_zero": false
+    },
+    {
+      "task": "zod",
+      "raw_response": "agent/research/acceptance-calibration-20261121/verified-fact-render-v1/zod/K/raw-response.json",
+      "raw_sha256": "af84aebdd11f1c238542bd5cf2656a6880a6f80d82da506203c1f2be1a21c1ad",
+      "reported_prompt_eval_count": 2094,
+      "reported_eval_count": 415,
+      "reported_prompt_plus_generated_tokens": 2509,
+      "prompt_alone_exceeds_proposed512": true,
+      "completion_alone_under_or_equal512": true,
+      "prompt_eval_cached_count": 193,
+      "cache_field_absence_means_unknown_not_zero": false
+    }
+  ],
+  "confirmed_boundary": "Every K completion is <=512 reported tokens, yet each prompt alone is2094\u20132653 tokens and total2509\u20133022. Completion-only/character proxies cannot establish full512training-pair fit. The exact future trainable tokenizer/template remains unknown.",
+  "not_a_training_tokenization_or_mask_test": true,
+  "same_base_requirement": "Current inference digest/format cannot substitute for the same unadapted trainable base in future baseline/adapted comparison.",
+  "time_budget_observation": {
+    "one_K_three_task_server_seconds": 684.322963271,
+    "twice_this_observed_cycle_seconds": 1368.645926542,
+    "plus_full_proposed600optimizer_seconds": 1968.645926542,
+    "total_proposed_ceiling_seconds": 1800,
+    "remaining_after_two_cycles_seconds": 431.3540734579999,
+    "limits": "Arithmetic for this installed CPU Docker inference workload only; not native training forecast, guaranteed future budget or reason to raise ceilings. Actual total must include semantic scoring and preservation."
+  },
+  "no_training_pairs_generated": true,
+  "gold": 0,
+  "optimizer_updates": 0
+}

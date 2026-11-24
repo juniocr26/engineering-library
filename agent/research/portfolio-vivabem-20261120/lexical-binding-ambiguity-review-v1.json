@@ -1,0 +1,88 @@
+{
+  "at": "2026-11-21T05:43:58.816957+00:00",
+  "protocol": "lexical-binding-ambiguity-protocol-v1.json",
+  "controls": [
+    {
+      "control": "function-var-reassignment.js",
+      "narrow_predeclared_policy_met": false,
+      "actual": "LEXICAL_LOCAL_FUNCTION_REFERENCE",
+      "symbol_declaration_kinds": [
+        "FunctionDeclaration"
+      ],
+      "runtime_target_proven": false
+    },
+    {
+      "control": "function-var-uninitialized.js",
+      "narrow_predeclared_policy_met": false,
+      "actual": "LEXICAL_LOCAL_FUNCTION_REFERENCE",
+      "symbol_declaration_kinds": [
+        "FunctionDeclaration"
+      ],
+      "runtime_target_proven": false
+    },
+    {
+      "control": "duplicate-function-declarations.js",
+      "narrow_predeclared_policy_met": true,
+      "actual": "UNRESOLVED_UNDER_NARROW_POLICY",
+      "symbol_declaration_kinds": [
+        "FunctionDeclaration",
+        "FunctionDeclaration"
+      ],
+      "runtime_target_proven": false
+    },
+    {
+      "control": "separate-inner-declaration.js",
+      "narrow_predeclared_policy_met": true,
+      "actual": "LEXICAL_LOCAL_FUNCTION_REFERENCE",
+      "symbol_declaration_kinds": [
+        "FunctionDeclaration"
+      ],
+      "runtime_target_proven": false
+    },
+    {
+      "control": "named-function-expression.js",
+      "narrow_predeclared_policy_met": true,
+      "actual": "UNRESOLVED_UNDER_NARROW_POLICY",
+      "symbol_declaration_kinds": [
+        "FunctionExpression"
+      ],
+      "runtime_target_proven": false
+    },
+    {
+      "control": "catch-parameter-shadow.js",
+      "narrow_predeclared_policy_met": true,
+      "actual": "UNRESOLVED_UNDER_NARROW_POLICY",
+      "symbol_declaration_kinds": [
+        "VariableDeclaration"
+      ],
+      "runtime_target_proven": false
+    },
+    {
+      "control": "block-local-function.js",
+      "narrow_predeclared_policy_met": true,
+      "actual": "LEXICAL_LOCAL_FUNCTION_REFERENCE",
+      "symbol_declaration_kinds": [
+        "FunctionDeclaration"
+      ],
+      "runtime_target_proven": false
+    },
+    {
+      "control": "function-parameter-target.js",
+      "narrow_predeclared_policy_met": true,
+      "actual": "UNRESOLVED_UNDER_NARROW_POLICY",
+      "symbol_declaration_kinds": [
+        "Parameter"
+      ],
+      "runtime_target_proven": false
+    }
+  ],
+  "narrow_policy_pass": 6,
+  "total_owned_controls": 8,
+  "original_mechanism_hypothesis": "Not observed as hypothesized: checker returned only FunctionDeclaration for both function+var snippets, rather than a mixed declarations list. Merely requiring all reported declarations to be functions would not fix these controls.",
+  "finding": "Two function+var collision controls retain lexical-local reference despite desired ambiguity abstention. That is a limitation for broader usage; original runtime_target_proven=false remains correct.",
+  "decision": "Do not apply a superficial declarations.length fix. Preserve V1 and both outcomes; any future collision-aware V2 requires a separate source-scope/assignment protocol and adverse controls. No production or research-observer behavior changed.",
+  "chapter_impact": "Fastify V2 complete chapter already states lexical binding/call is not runtime identity, property calls unresolved and manual cross-file review required. Source facts independently reconstructed; no new contradiction in accepted source-only text found here. No new chapter population entry.",
+  "model_calls": 0,
+  "upstream_execution": false,
+  "gold": false
+}

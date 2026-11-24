@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-21T17:31:41.434037+00:00",
+  "case": "fastapi-F04",
+  "method": "R",
+  "frozen_reference": {
+    "id": "fastapi-F04",
+    "task": "fastapi",
+    "fact_id": "F04",
+    "original_pair": {
+      "en": "The dependency_cache argument is passed to the recursive solve_dependencies call as an empty dictionary when it is None.",
+      "pt-BR": "O argumento dependency_cache é passado para a chamada recursiva solve_dependencies como uma dictionary vazia quando ela é None."
+    },
+    "expected_verdict": "INSUFFICIENT",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/fastapi/L/semantic-review-v2.json",
+    "source_review_sha256": "f36ec3cec48c2976dfa0f4c0ce928dd74f60d2588446a74f57d9a00d56e6f9cb",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "function",
+    "evidence": "The dependency_cache argument is passed to the recursive solve_dependencies call as an empty dictionary when it is None.",
+    "reason": "The source code does not explicitly state that the dependency_cache argument is passed as an empty dictionary when it is None. The code does not provide any clear indication of how the dependency_cache is handled when it is None. Therefore, the claim cannot be fully supported or contradicted based on the provided source evidence."
+  },
+  "content_sha256": "9a1ea014f7dc99040ee71cbc63021b6465e5d367ab1855776b9d49d0b2f655f3",
+  "primary_raw_label_agreement": true,
+  "rationale_support_for_requested_claim": "CONTRADICTED",
+  "source_relationship_review": "CorrectIlabel but reason falsely says no clear indication of cache handling whenNone; supplied700-701explicitlyinitializes{}. Evidencecopiesunsupportedtargetclaimratherthanliteral source.",
+  "evidence_form": "CLAIM_ECHO_AND_FALSE_CONTEXT_ABSENCE",
+  "end_to_end_label_and_rationale_supported": false,
+  "grading_basis": "semantic-verifier-rationale-review-rubric-v1.json; evidence/reason additional unsupportedclaims remain defects despite correctclassification.",
+  "reviewer": "Samecampaignagent, frozenreferencesunchanged; notindependentowner/human",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

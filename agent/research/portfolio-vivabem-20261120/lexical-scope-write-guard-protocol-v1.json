@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-21T05:46:07.977534+00:00",
+  "hypothesis": "H52: for selected strict JavaScript lexical function declarations, an explicit source-level binding-scope collision scan and conservative direct-write scan can close the H51 function+var ambiguity gap without treating unrelated inner bindings as the same target. This remains static advisory context, never runtime identity or general dataflow analysis.",
+  "prior": "lexical-binding-ambiguity-review-v1.json",
+  "policy": [
+    "Function declarations in a function body share that function binding scope; strict block functions remain in their selected block scope.",
+    "var declarations hoist to nearest function/source scope; let/const use selected lexical block/function-body scope; catch bindings handled separately.",
+    "A second declaration of the same name in that binding scope causes ambiguity abstention even if checker symbol lists omit it.",
+    "Any written direct assignment/update to the selected checker binding, or any property/element write on that binding, causes conservative abstention regardless of control flow/order.",
+    "Do not claim assignment executes, property write changes a call target, or all indirect/dynamic writes are detected. No runtime guarantee after a clean scan.",
+    "No broad support for sloppy AnnexB/with/eval/destructuring/loop-scope inference; global dynamic-scope indicator causes whole-file advisory abstention. Unhandled forms remain limitations.",
+    "Owned controls are research observations, not permanent test scaffolding. No upstream/app source execution."
+  ],
+  "frozen_owned_cases": {
+    "function-var-reassignment": "ABSTAIN",
+    "function-var-uninitialized": "ABSTAIN",
+    "duplicate-function-declarations": "ABSTAIN",
+    "separate-inner-declaration": "REFERENCE",
+    "named-function-expression": "UNRESOLVED",
+    "catch-parameter-shadow": "UNRESOLVED",
+    "block-local-function": "REFERENCE",
+    "function-parameter-target": "UNRESOLVED",
+    "direct-write-after-call": "ABSTAIN",
+    "nested-closure-write": "ABSTAIN",
+    "unrelated-inner-var": "REFERENCE",
+    "unrelated-inner-parameter-write": "REFERENCE",
+    "property-call-write": "ABSTAIN",
+    "computed-property-write": "ABSTAIN",
+    "shadowed-block-let": "UNRESOLVED",
+    "direct-clean-nested-call": "REFERENCE",
+    "dynamic-eval": "ABSTAIN",
+    "identifier-update": "ABSTAIN"
+  },
+  "acceptance": "Measure unchangedV1 then newV2 on exact owned cases; retain raw outputs and distinguish false abstention from unsafe reference retention. Reapply V2 to exposed frozen Fastify only after controls review; no claim of independent semantic/runtime accuracy.",
+  "production_changes": false,
+  "model_calls": 0,
+  "gold": false,
+  "evaluation_family_material_used": false
+}

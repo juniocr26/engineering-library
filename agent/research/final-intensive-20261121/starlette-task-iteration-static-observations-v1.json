@@ -1,0 +1,97 @@
+{
+  "at": "2026-11-22T04:41:52.981105+00:00",
+  "selected_ast_relations": {
+    "task_branch_test": "self.is_async",
+    "task_true_statement": "await self.func(*self.args, **self.kwargs)",
+    "task_else_statement": "await run_in_threadpool(self.func, *self.args, **self.kwargs)",
+    "task_return_nodes": 0,
+    "task_handler_nodes": 0,
+    "collection_await": "await task()",
+    "helper_return": "return await anyio.to_thread.run_sync(func)",
+    "iterator_initializer": "as_iterator = iter(iterator)",
+    "iterator_yield_statement": "yield (await anyio.to_thread.run_sync(_next, as_iterator))",
+    "iterator_catch_type": "_StopIteration",
+    "iterator_catch_body": [
+      "Break"
+    ],
+    "iterator_finalbody_count": 0,
+    "iterator_try_else_count": 0,
+    "iterator_loop_else_count": 0,
+    "next_return": "return next(iterator)",
+    "next_catch": "StopIteration",
+    "next_raise": "raise _StopIteration"
+  },
+  "parsed_Python_sources": [
+    "starlette/background.py",
+    "starlette/concurrency.py",
+    "starlette/_utils.py",
+    "starlette/responses.py",
+    "tests/test_background.py",
+    "tests/test_concurrency.py"
+  ],
+  "exact_source_range_bindings": [
+    {
+      "path": "starlette/background.py",
+      "lines": [
+        1,
+        36
+      ],
+      "quote_sha256": "0fe5e952915181406765e035b4783330e82e6dee8809564594e03830bd2ad53f"
+    },
+    {
+      "path": "starlette/concurrency.py",
+      "lines": [
+        1,
+        59
+      ],
+      "quote_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83"
+    },
+    {
+      "path": "starlette/_utils.py",
+      "lines": [
+        15,
+        22
+      ],
+      "quote_sha256": "8e9002c3d298e693b43b8f5bce06090539b14d1fbbee210fcf25c1c3823bdf5f"
+    },
+    {
+      "path": "starlette/_utils.py",
+      "lines": [
+        61,
+        65
+      ],
+      "quote_sha256": "6af4ce5d8c6a16cf5d3235805fb50bec894796d05abc526a3f804d221f31764f"
+    }
+  ],
+  "logical_original_document_links": [
+    {
+      "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-task-and-iteration/en.md",
+      "document_sha256": "7499809154d35681c525d7d69fc6c490ea43485f00433335c1152cb08fc10269",
+      "relative_link": "source-excerpts.json",
+      "resolved_target": "agent/research/documentation-intelligence-20261119/chapters/starlette-task-and-iteration/source-excerpts.json",
+      "target_sha256": "c12c2a5ab43a824e76299e9e05692e0ba464d61700cec0fc38788d11e059abe9"
+    },
+    {
+      "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-task-and-iteration/pt-br.md",
+      "document_sha256": "eea252b07c7eaf0b22251ac03ffbff086931217f83501b8378154a6c98d49f3c",
+      "relative_link": "source-excerpts.json",
+      "resolved_target": "agent/research/documentation-intelligence-20261119/chapters/starlette-task-and-iteration/source-excerpts.json",
+      "target_sha256": "c12c2a5ab43a824e76299e9e05692e0ba464d61700cec0fc38788d11e059abe9"
+    }
+  ],
+  "inline_code_spans_each": 38,
+  "FAQ_ids": [
+    "await-expression-versus-return-value",
+    "task-registration-versus-execution",
+    "async-callable-classifier-limit"
+  ],
+  "language_reference": {
+    "url": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions",
+    "checked_utc": "2026-11-22T04:41:52.981188+00:00",
+    "meaning": "Normal fallthrough gives None; return await explicitly propagates normally completed awaited result. Async function/coroutine syntax confirmed with official compound-statements reference.",
+    "additional_url": "https://docs.python.org/3/reference/compound_stmts.html#coroutines",
+    "limit": "Documented language rule, not runtime execution of target or archived upstreamwebpage."
+  },
+  "target_import_or_execution": false,
+  "new_model_calls": 0
+}

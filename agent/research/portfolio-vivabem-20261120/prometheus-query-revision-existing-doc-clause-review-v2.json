@@ -1,0 +1,75 @@
+{
+  "at": "2026-11-21T09:42:07.094777+00:00",
+  "before": "5ccc8ab7aa5f19a3a7f667c7fc4923a2af2095b4",
+  "after": "80cd8d97bdfce88014a652d15723559d00a15902",
+  "review_kind": "Expanded bounded source-to-existing-document alignment; never whole-page acceptance",
+  "clauses": [
+    {
+      "id": "D1",
+      "claim": "Positive HTTPtimeout above durationceiling no longer rejected by parser; effective cap requires engine/parentcontext reasoning.",
+      "result": "SOURCE_SUPPORTED_WITH_CONFIGURATION_CONTEXT",
+      "basis": "API.queryTimeout removesceilingcheck;enginefileunchangedhasexecutionContext/limits;currentGoWithDeadlinecontract;notarbitrarycustomengine or measured runtime."
+    },
+    {
+      "id": "D2",
+      "claim": "max_query_duration remains an override with ceilingerror semantics, falling back to startup timeout when configduration unset.",
+      "result": "SOURCE_SUPPORTED_WITH_FEATURE_SCOPE",
+      "basis": "API.extractQueryOpts/queryCostCeilings and unchanged engine.newQuery/resolveDurationLimit;notHTTPtimeoutpolicy."
+    },
+    {
+      "id": "D3",
+      "claim": "Costcomparison estimation moves after construction and before queryexecution.",
+      "result": "SOURCE_SUPPORTED",
+      "basis": "BothAPI.queryandqueryRange changed;oldcostComparisonafterExec/newestimateForComparisonbeforeExec."
+    },
+    {
+      "id": "D4",
+      "claim": "Estimationfailure returns warning rather than replacing a successful query result.",
+      "result": "QUALIFY_TO_SUCCESS_PATH",
+      "basis": "pendingCostComparison.finish executes after successfulExec. Existingrequest cancellation/timeout can stillfailExec, and execution-errorreturndoesnotmergependingestimatorwarnings. Notadefiniteglobaldocumentationcontradiction;avoidunqualifiedsuccessguarantee."
+    },
+    {
+      "id": "D5",
+      "claim": "Runtime errors during construction retain typed timeout/canceled classifications.",
+      "result": "SOURCE_SUPPORTED_FOR_SELECTED_PROMQL_TYPES",
+      "basis": "queryConstructionErroraddsErrQueryTimeout/ErrQueryCanceledchecksdelegatingunchangedreturnAPIError;notallrawcontext/arbitraryerrors."
+    },
+    {
+      "id": "D6",
+      "claim": "Remote-read estimates, sample-accounting semantics, recordingrulecoverage and all duration HTTPstatuspaths.",
+      "result": "INCONCLUSIVE_NOT_AUDITED_HERE",
+      "basis": "Theseotherchangeddoctopicsneedtheir owncaller/storage/rule/estimatortrace;rootdocs/commitdiffnotproof."
+    }
+  ],
+  "documentation_files_modified": false,
+  "owner_approved": false,
+  "training_eligible": false,
+  "extends": "prometheus-query-revision-existing-doc-clause-review-v1.json",
+  "D6_subtopic_updates": [
+    {
+      "subtopic": "standard server recording/alerting rule engine limits",
+      "status": "SOURCE_SUPPORTED_WITH_STANDARD_WIRING_AND_FEATURE_SCOPE",
+      "review": "prometheus-rule-limit-context-review-v1.json"
+    },
+    {
+      "subtopic": "remote reader enumeration versus density capability and fallback",
+      "status": "SOURCE_SUPPORTED_WITH_STORAGE_GUARDS",
+      "review": "prometheus-remote-estimate-context-review-v1.json",
+      "wording_qualification": "Same fallback annotation deduplicates by error string; not separately identifiable warning per selector."
+    },
+    {
+      "subtopic": "duration error/default status/rejection metric differences",
+      "status": "SOURCE_SUPPORTED_FOR_SELECTED_ERROR_PATHS",
+      "review": "prometheus-duration-error-context-review-v1.json",
+      "wording_qualification": "Typed versus raw/wrapped error and optional status override matter; no observed HTTP response."
+    },
+    {
+      "subtopic": "sample input units, child budget and materialized reuse",
+      "status": "SOURCE_SUPPORTED_FOR_SELECTED_ACCOUNTING_BRANCHES",
+      "review": "prometheus-sample-accounting-context-review-v1.json",
+      "wording_qualification": "Not physical I/O or exhaustive evaluator correctness."
+    }
+  ],
+  "original_D6_inconclusive_preserved_as_historical": true,
+  "full_pages_accepted": false
+}

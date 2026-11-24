@@ -1,0 +1,135 @@
+{
+  "at": "2026-11-21T18:28:41.119715+00:00",
+  "topic": "redis-expiry-predicate",
+  "family": "redis",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/redis-expiry-predicate/en.candidate.txt",
+      "sha256": "68f50a715fbc985f40092ffeaeeddfa08607efdbb5fe0bc8f99cd87c3b49663c",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/redis-expiry-predicate/pt-br.candidate.txt",
+      "sha256": "2b2eeedcf9dc5d372fd6b7bd0aad4075013155f64d5108ba3f647f0b046af6ff",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Currentclientlogicalguardprotectsdereference, bitflagmembership returns0beforetimehelper.",
+    "Inclusivewhen<=snapshot plus !loading&&!masterhost, exactshortcircuitorder and integertruthresult.",
+    "Predicatecontainsnodelete/insert/expiry/networkcalls; callertruebranchdbGenericDelete/rewrite/dirty/notify/reply, falsebranchsetExpire.",
+    "Snapshotgetterreturnsstoredcmd_time_snapshot documentedmillisecondstype; no clockrefresh/update/concurrencyguarantee.",
+    "Actualoldbaselineomitsearlyguard/exactcomparison/stateconjunction; itscommentrationalesummary is notliteral proof itassertedpredicateinvokesmutationcalls."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/redis/1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb/src/expire.c",
+      "source_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "source_path": "src/expire.c",
+      "source_lines": [
+        668,
+        677
+      ],
+      "exact_source_evidence": "int checkAlreadyExpired(long long when) {\n    /* EXPIRE with negative TTL, or EXPIREAT with a timestamp into the past\n     * should never be executed as a DEL when load the AOF or in the context\n     * of a slave instance.\n     *\n     * Instead we add the already expired key to the database with expire time\n     * (possibly in the past) and wait for an explicit DEL from the master. */\n    if (server.current_client && server.current_client->flags & CLIENT_MASTER) return 0;\n    return (when <= commandTimeSnapshot() && !server.loading && !server.masterhost);\n}",
+      "reviewed_interpretation": "Exactpredicateandcommentrationale.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/redis/1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb/src/expire.c",
+      "source_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "source_path": "src/expire.c",
+      "source_lines": [
+        823,
+        858
+      ],
+      "exact_source_evidence": "    if (checkAlreadyExpired(when)) {\n        robj *aux;\n\n        int deleted = dbGenericDelete(c->db,key,server.lazyfree_lazy_expire,DB_FLAG_KEY_EXPIRED);\n        serverAssertWithInfo(c,key,deleted);\n        server.dirty++;\n\n        /* Replicate/AOF this as an explicit DEL or UNLINK. */\n        aux = server.lazyfree_lazy_expire ? shared.unlink : shared.del;\n        rewriteClientCommandVector(c,2,aux,key);\n        keyModified(c,c->db,key,NULL,1);\n        notifyKeyspaceEvent(NOTIFY_GENERIC,\"del\",key,c->db->id);\n        addReply(c, shared.cone);\n        return;\n    } else {\n        kv = setExpire(c,c->db,key,when); /* might realloc kv */\n        addReply(c,shared.cone);\n        /* Propagate as PEXPIREAT millisecond-timestamp\n         * Only rewrite the command arg if not already PEXPIREAT */\n        if (c->cmd->proc != pexpireatCommand) {\n            rewriteClientCommandArgument(c,0,shared.pexpireat);\n        }\n\n        /* Avoid creating a string object when it's the same as argv[2] parameter  */\n        if (basetime != 0 || unit == UNIT_SECONDS) {\n            robj *when_obj = createStringObjectFromLongLong(when);\n            rewriteClientCommandArgument(c,2,when_obj);\n            decrRefCount(when_obj);\n        }\n\n        keyModified(c,c->db,key,kv,1);\n        notifyKeyspaceEvent(NOTIFY_GENERIC,\"expire\",key,c->db->id);\n        KSN_INVALIDATE_KVOBJ(kv);\n        server.dirty++;\n        return;\n    }",
+      "reviewed_interpretation": "Actualcallermutationbranches.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/redis/1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb/src/server.c",
+      "source_sha256": "7f30ba83792e79bbb7d76a493cb33e8b4fcaa60b20add9ae5b23d7cb074fdd9e",
+      "source_path": "src/server.c",
+      "source_lines": [
+        258,
+        278
+      ],
+      "exact_source_evidence": "/* Return the command time snapshot in milliseconds.\n * The time the command started is the logical time it runs,\n * and all the time readings during the execution time should\n * reflect the same time.\n * More details can be found in the comments below. */\nmstime_t commandTimeSnapshot(void) {\n    /* When we are in the middle of a command execution, we want to use a\n     * reference time that does not change: in that case we just use the\n     * cached time, that we update before each call in the call() function.\n     * This way we avoid that commands such as RPOPLPUSH or similar, that\n     * may re-open the same key multiple times, can invalidate an already\n     * open object in a next call, if the next call will see the key expired,\n     * while the first did not.\n     * This is specifically important in the context of scripts, where we\n     * pretend that time freezes. This way a key can expire only the first time\n     * it is accessed and not in the middle of the script execution, making\n     * propagation to slaves / AOF consistent. See issue #1525 for more info.\n     * Note that we cannot use the cached server.mstime because it can change\n     * in processEventsWhileBlocked etc. */\n    return server.cmd_time_snapshot;\n}",
+      "reviewed_interpretation": "Storedsnapshotgetter and statedrationale.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/redis/1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb/src/server.h",
+      "source_sha256": "dc843ae72cb35c43496e2aafe700e3aceaf03ce5ef15e7f544aedeea668109f9",
+      "source_path": "src/server.h",
+      "source_lines": [
+        47,
+        48
+      ],
+      "exact_source_evidence": "typedef long long mstime_t; /* millisecond time type. */\ntypedef long long ustime_t; /* microsecond time type. */",
+      "reviewed_interpretation": "Timeunittypedef.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/redis/1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb/src/server.h",
+      "source_sha256": "dc843ae72cb35c43496e2aafe700e3aceaf03ce5ef15e7f544aedeea668109f9",
+      "source_path": "src/server.h",
+      "source_lines": [
+        2748,
+        2751
+      ],
+      "exact_source_evidence": "    int accum_call_count_since_ustime; /* Command count since last ustime update */\n    monotime monotonic_us_when_ustime; /* Monotonic time when last ustime update */\n    mstime_t cmd_time_snapshot; /* Time snapshot of the root execution nesting. */\n    size_t blocking_op_nesting; /* Nesting level of blocking operation, used to reset blocked_last_cron. */",
+      "reviewed_interpretation": "Snapshotfieldtype/comment.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "REDIS-EXPIRED-GUARD",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/REDIS-EXPIRED-GUARD/raw-response.json",
+      "sha256": "1ae14f594a7ea2c97331e999c289f710b12eab4443676058fc555168a407be47",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/REDIS-EXPIRED-GUARD/origin.json",
+      "origin_sha256": "4ec79d5244e67c28474665532468cb0a80117a71e0ed3e59418646002026287e"
+    }
+  ],
+  "new_findings": [
+    {
+      "kind": "OVERSTATED_HISTORICAL_FAILURE_MECHANISM",
+      "verdict": "INSUFFICIENT",
+      "critical": false,
+      "original_en": "Turning that rationale into a promise that this function performs those operations was a critical error in the historical baseline.",
+      "original_pt": "Transformar essa justificativa em promessa de que a própria função realiza essas operações foi um erro crítico do baseline histórico.",
+      "reason": "The actual baseline repeats comment rationale as an idea and blurs function scope, but does not explicitly assert the predicate calls insert/delete/wait operations. Its omissions and scope ambiguity are confirmed; a promised executable mutation is stronger than the quoted evidence.",
+      "proposed_en": "The historical baseline repeated the comment rationale without separating it clearly from the predicate contract. The supplied function itself contains no insertion, deletion or network-wait operation.",
+      "proposed_pt": "O baseline histórico repetiu a justificativa do comentário sem separá-la claramente do contrato do predicado. A função fornecida não contém operação de inclusão, exclusão ou espera de rede.",
+      "applied": false
+    }
+  ],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 1,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "REVISE_CURRENT_PROSE_FINDINGS",
+  "complete_document_accepted": false,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

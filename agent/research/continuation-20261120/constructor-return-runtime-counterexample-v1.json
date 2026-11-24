@@ -1,0 +1,76 @@
+{
+  "at": "2026-11-20T12:24:18.827901+00:00",
+  "source": "def make():\n    class Value:\n        def __new__(cls):\n            return cls\n        def __copy__(self):\n            return self\n    return Value()\n",
+  "source_sha256": "ac37c140827242f813ada979e1900ccb99d8f19b14be6561cc01d9e1ecb9ad73",
+  "source_scope": "Fully owned synthetic counterexample executed in memory;no I/O/import/network.",
+  "observed_static_fact": {
+    "kind": "written-local-class-constructor-return",
+    "class_name": "Value",
+    "class_first_line": 2,
+    "class_last_line": 6,
+    "unconditional_direct_methods": {
+      "__new__": {
+        "first_line": 3,
+        "last_line": 4,
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "cls"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "cls": {
+              "kind": "required"
+            }
+          },
+          "annotations": {
+            "cls": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "return": {
+          "kind": "other-written-return",
+          "expression": "cls"
+        }
+      },
+      "__copy__": {
+        "first_line": 5,
+        "last_line": 6,
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            }
+          },
+          "annotations": {
+            "self": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "return": {
+          "kind": "other-written-return",
+          "expression": "self"
+        }
+      }
+    },
+    "instance_return_not_class_object": true,
+    "runtime_class_identity_verified": false
+  },
+  "actual_return_is_class_object": true,
+  "counterexample_refutes_field": true,
+  "reason": "A constructor call syntax does not prove instance result;__new__ may return the class object. Rename the fact to describe written call shape only,not runtime result.",
+  "external_source_executed": false,
+  "model_calls": 0,
+  "neural_training": false
+}

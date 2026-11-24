@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-22T08:49:46.234164+00:00",
+  "source": "agent/research/final-intensive-20261121/consume_weekend_capsule_v1.py",
+  "source_sha256": "7261c9396c8746a4e4c2d1f58bdb6f2410559cafbc5c0ca9c0ee8ce96e466c16",
+  "finding": "subprocess.run timeout is caught only by the outer generic exception branch. That branch preserves exception text and earlier consumer records, but does not copy TimeoutExpired stdout/stderr for the failing consumer into its receipt. text=True can also fail decoding a non-UTF8 result before a consumer record is appended.",
+  "status": "CONFIRMED_BY_STATIC_CONTROL_FLOW_NOT_OBSERVED_REAL_TIMEOUT",
+  "scope": "New isolated research consumer only; production sources unchanged. Successful v1 restore and its receipt remain valid.",
+  "proposal": "Version2 stores an attempted-consumer record for success, nonzero exit, timeout and launch failure; captures bytes and exact hashes/base64 with replacement-decoded text for reading; no retries.",
+  "new_controls_before_outcomes": [
+    "exit0 with nonUTF8 stdout",
+    "exit7 with stderr",
+    "timeout after partial stdout/stderr",
+    "missing executable launch failure"
+  ],
+  "model_or_framework_execution": false
+}

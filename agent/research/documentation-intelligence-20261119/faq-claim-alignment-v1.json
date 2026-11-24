@@ -1,0 +1,992 @@
+[
+  {
+    "id": "chi-middleware:timeout-construction",
+    "chapter": "chi-middleware",
+    "question_id": "timeout-construction",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does constructing Timeout start a request or a goroutine?",
+        "answer_and_trailing_context": "No request callback is invoked by the selected outer return. `Timeout` returns a middleware factory; applying it to a handler returns the wrapped handler. The selected callback has no goroutine that forcibly stops the next handler. Deadline cooperation still depends on that handler."
+      },
+      "pt-br": {
+        "question": "Construir Timeout inicia uma requisição ou goroutine?",
+        "answer_and_trailing_context": "O retorno externo selecionado não invoca o callback de requisição. `Timeout` retorna uma fábrica de middleware; aplicá-la a um handler retorna o handler envolvido. O callback selecionado não possui goroutine que interrompa à força o próximo handler. A cooperação com o prazo ainda depende desse handler."
+      }
+    },
+    "document_hashes": {
+      "en": "8586f3445191b6a04469809b5b20fef20c990c4fd335ccc8a39c6ded74c2db26",
+      "pt-br": "c769cbf927c79b2ee3356e7c701c740ca5a7e855d2f93f3b0bcf113c038734bd"
+    },
+    "source_backed_assertion": "The outer call returns a middleware function, applying it returns the wrapped handler, and the selected synchronous callback contains no go statement.",
+    "explicit_scope_limit": "The inspected body cannot establish cooperation by an arbitrary downstream handler.",
+    "evidence": [
+      {
+        "repository": "chi",
+        "source_path": "middleware/timeout.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/timeout.go",
+        "full_file_sha256": "3e83d007ec300b4ea605d97a336351e562ecd84b32c2b26206791d11ce7501c0",
+        "first_line": 32,
+        "last_line": 48,
+        "quote": "func Timeout(timeout time.Duration) func(next http.Handler) http.Handler {\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx, cancel := context.WithTimeout(r.Context(), timeout)\n\t\t\tdefer func() {\n\t\t\t\tcancel()\n\t\t\t\tif ctx.Err() == context.DeadlineExceeded {\n\t\t\t\t\tw.WriteHeader(http.StatusGatewayTimeout)\n\t\t\t\t}\n\t\t\t}()\n\n\t\t\tr = r.WithContext(ctx)\n\t\t\tnext.ServeHTTP(w, r)\n\t\t}\n\t\treturn http.HandlerFunc(fn)\n\t}\n}\n",
+        "quote_sha256": "f19a037b2616d7e75984474046c98922b1f99577b953d5d86c6e50b3ad44a180"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "chi-middleware:panic-response",
+    "chapter": "chi-middleware",
+    "question_id": "panic-response",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Will every panic produce an HTTP 500 response?",
+        "answer_and_trailing_context": "The branch for `http.ErrAbortHandler` re-panics before logging or the later status operation. For another recovered value, the selected status call is conditional on `r.Header.Get(\"Connection\") != \"Upgrade\"`. Earlier response writes and logging-helper failures are outside a guaranteed client-result claim."
+      },
+      "pt-br": {
+        "question": "Todo panic produzirá uma resposta HTTP 500?",
+        "answer_and_trailing_context": "O ramo de `http.ErrAbortHandler` executa panic novamente antes do logging ou da operação posterior de status. Para outro valor recuperado, a chamada de status selecionada depende de `r.Header.Get(\"Connection\") != \"Upgrade\"`. Escritas anteriores da resposta e falhas dos helpers de logging impedem garantir o resultado recebido pelo cliente."
+      }
+    },
+    "document_hashes": {
+      "en": "8586f3445191b6a04469809b5b20fef20c990c4fd335ccc8a39c6ded74c2db26",
+      "pt-br": "c769cbf927c79b2ee3356e7c701c740ca5a7e855d2f93f3b0bcf113c038734bd"
+    },
+    "source_backed_assertion": "ErrAbortHandler is re-raised before logging; another recovered value reaches the conditional status operation only after the logging branch completes.",
+    "explicit_scope_limit": "Client delivery, prior writes and imported logging-helper behavior are not verified.",
+    "evidence": [
+      {
+        "repository": "chi",
+        "source_path": "middleware/recoverer.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/recoverer.go",
+        "full_file_sha256": "efc38c7b32bfb29ebbe16b199832d1eff13179a34a025c07b53c733c11a2154c",
+        "first_line": 24,
+        "last_line": 43,
+        "quote": "\t\tdefer func() {\n\t\t\tif rvr := recover(); rvr != nil {\n\t\t\t\tif rvr == http.ErrAbortHandler {\n\t\t\t\t\t// we don't recover http.ErrAbortHandler so the response\n\t\t\t\t\t// to the client is aborted, this should not be logged\n\t\t\t\t\tpanic(rvr)\n\t\t\t\t}\n\n\t\t\t\tlogEntry := GetLogEntry(r)\n\t\t\t\tif logEntry != nil {\n\t\t\t\t\tlogEntry.Panic(rvr, debug.Stack())\n\t\t\t\t} else {\n\t\t\t\t\tPrintPrettyStack(rvr)\n\t\t\t\t}\n\n\t\t\t\tif r.Header.Get(\"Connection\") != \"Upgrade\" {\n\t\t\t\t\tw.WriteHeader(http.StatusInternalServerError)\n\t\t\t\t}\n\t\t\t}\n\t\t}()\n",
+        "quote_sha256": "36d2c012e0aa0e19b6aa010f8822a7c3a716d90727d47c9f7bd9fc42ea89a262"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "chi-middleware:helper-boundary",
+    "chapter": "chi-middleware",
+    "question_id": "helper-boundary",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Why keep the helper boundary explicit?",
+        "answer_and_trailing_context": "`GetLogEntry`, `logEntry.Panic` and `PrintPrettyStack` are distinct calls. This chapter reviews their selection at the call site; it does not claim a verified logging backend, durability guarantee or request-wide observability design."
+      },
+      "pt-br": {
+        "question": "Por que explicitar o limite dos helpers?",
+        "answer_and_trailing_context": "`GetLogEntry`, `logEntry.Panic` e `PrintPrettyStack` são chamadas distintas. Este capítulo revisa sua seleção no local da chamada; não afirma ter verificado um backend de logging, garantia de durabilidade ou projeto de observabilidade de toda a requisição."
+      }
+    },
+    "document_hashes": {
+      "en": "8586f3445191b6a04469809b5b20fef20c990c4fd335ccc8a39c6ded74c2db26",
+      "pt-br": "c769cbf927c79b2ee3356e7c701c740ca5a7e855d2f93f3b0bcf113c038734bd"
+    },
+    "source_backed_assertion": "GetLogEntry, logEntry.Panic and PrintPrettyStack occur as separate call-site operations selected by the nil branch.",
+    "explicit_scope_limit": "Backend identity, durability and request-wide observability are expressly unverified; absence of their source is not a removal decision.",
+    "evidence": [
+      {
+        "repository": "chi",
+        "source_path": "middleware/recoverer.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/recoverer.go",
+        "full_file_sha256": "efc38c7b32bfb29ebbe16b199832d1eff13179a34a025c07b53c733c11a2154c",
+        "first_line": 32,
+        "last_line": 37,
+        "quote": "\t\t\t\tlogEntry := GetLogEntry(r)\n\t\t\t\tif logEntry != nil {\n\t\t\t\t\tlogEntry.Panic(rvr, debug.Stack())\n\t\t\t\t} else {\n\t\t\t\t\tPrintPrettyStack(rvr)\n\t\t\t\t}\n",
+        "quote_sha256": "ca33cb907a8ceb157268efeeeb0b8eaa204f22ac41bfc9fed07c72b5a28a294f"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "starlette-server-error-flow:debug-handler-precedence",
+    "chapter": "starlette-server-error-flow",
+    "question_id": "debug-handler-precedence",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does debug mode also invoke the configured error handler?",
+        "answer_and_trailing_context": "The debug branch precedes the custom-handler selection. When debug is truthy and its helper completes normally, this source selects the debug response instead. A configured custom handler is not called by that selection path."
+      },
+      "pt-br": {
+        "question": "O modo debug também invoca o handler de erro configurado?",
+        "answer_and_trailing_context": "O ramo de debug precede a seleção do handler customizado. Quando debug é verdadeiro no teste de truthiness e seu helper conclui normalmente, essa fonte seleciona a resposta de debug. Um handler customizado configurado não é chamado por esse caminho de seleção."
+      }
+    },
+    "document_hashes": {
+      "en": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+      "pt-br": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a"
+    },
+    "source_backed_assertion": "The debug if branch precedes the handler-none and custom-handler branches; successful selection of debug excludes custom-handler selection.",
+    "explicit_scope_limit": "Completion of debug_response and imported threadpool behavior are conditional, not observed execution.",
+    "evidence": [
+      {
+        "repository": "starlette",
+        "source_path": "starlette/middleware/errors.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+        "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+        "first_line": 163,
+        "last_line": 178,
+        "quote": "        try:\n            await self.app(scope, receive, _send)\n        except Exception as exc:\n            request = Request(scope)\n            if self.debug:\n                # In debug mode, return traceback responses.\n                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n",
+        "quote_sha256": "ebbbfcbbbffc02ddebfde2c3c9eead1c04116cfd743a152602d2cbc271dd2744"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "starlette-server-error-flow:response-start-not-delivery-proof",
+    "chapter": "starlette-server-error-flow",
+    "question_id": "response-start-not-delivery-proof",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Is a response-start message proof that the client received headers?",
+        "answer_and_trailing_context": "The local flag is set before the original sender is awaited. A sender failure can therefore occur after the flag changes. The flag controls the later error-response invocation; it is not a delivery acknowledgment."
+      },
+      "pt-br": {
+        "question": "Uma mensagem de início de resposta prova que o cliente recebeu os cabeçalhos?",
+        "answer_and_trailing_context": "A flag local é definida antes de aguardar o emissor original. Uma falha do emissor pode, portanto, ocorrer depois que a flag muda. A flag controla a invocação posterior da resposta de erro; não é uma confirmação de entrega."
+      }
+    },
+    "document_hashes": {
+      "en": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+      "pt-br": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a"
+    },
+    "source_backed_assertion": "The response_started assignment precedes await send; the later response invocation tests that flag.",
+    "explicit_scope_limit": "A flag assignment is not an acknowledgment from the client or network.",
+    "evidence": [
+      {
+        "repository": "starlette",
+        "source_path": "starlette/middleware/errors.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+        "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+        "first_line": 154,
+        "last_line": 161,
+        "quote": "        response_started = False\n\n        async def _send(message: Message) -> None:\n            nonlocal response_started, send\n\n            if message[\"type\"] == \"http.response.start\":\n                response_started = True\n            await send(message)\n",
+        "quote_sha256": "74361b552c4e771dd0748e1dd3f5b8721435c01f7ac6c273fe7ef5d8f0599fc2"
+      },
+      {
+        "repository": "starlette",
+        "source_path": "starlette/middleware/errors.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+        "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+        "first_line": 180,
+        "last_line": 181,
+        "quote": "            if not response_started:\n                await response(scope, receive, send)\n",
+        "quote_sha256": "09a73dac1c4ebe966f4d56977fb19a2df7246aeeeda8dcc34485fdff8b18e055"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "starlette-server-error-flow:original-exception-rethrow",
+    "chapter": "starlette-server-error-flow",
+    "question_id": "original-exception-rethrow",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Is the original exception swallowed after a generated response?",
+        "answer_and_trailing_context": "The final written operation raises the caught exception after prior selected operations complete. A handler or response failure can prevent reaching that line, because no finally forces it. The separate non-HTTP delegation is outside this HTTP catch block.\n\nThe selected constructor accepts the application, optional handler and debug flag. This chapter has not verified server configuration, persistence, retry, authentication or an actual ASGI deployment; those responsibilities require their own source and runtime evidence."
+      },
+      "pt-br": {
+        "question": "A exceção original é silenciada depois de uma resposta gerada?",
+        "answer_and_trailing_context": "A operação final escrita lança a exceção capturada depois que as operações selecionadas anteriores concluem. Uma falha do handler ou da resposta pode impedir chegar a essa linha, pois não há finally que a force. A delegação separada não HTTP fica fora desse bloco de captura HTTP.\n\nO construtor selecionado recebe aplicação, handler opcional e flag de debug. Este capítulo não verificou configuração de servidor, persistência, retry, autenticação ou uma implantação ASGI real; essas responsabilidades exigem sua própria fonte e evidência de execução."
+      }
+    },
+    "document_hashes": {
+      "en": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+      "pt-br": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a"
+    },
+    "source_backed_assertion": "Non-HTTP delegation returns before the HTTP catch; the final raise exc follows handler/response operations with no enclosing finally in this complete method.",
+    "explicit_scope_limit": "Earlier raised exceptions can prevent reaching the final rethrow; no universal exception-preservation claim is made.",
+    "evidence": [
+      {
+        "repository": "starlette",
+        "source_path": "starlette/middleware/errors.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+        "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+        "first_line": 149,
+        "last_line": 186,
+        "quote": "    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:\n        if scope[\"type\"] != \"http\":\n            await self.app(scope, receive, send)\n            return\n\n        response_started = False\n\n        async def _send(message: Message) -> None:\n            nonlocal response_started, send\n\n            if message[\"type\"] == \"http.response.start\":\n                response_started = True\n            await send(message)\n\n        try:\n            await self.app(scope, receive, _send)\n        except Exception as exc:\n            request = Request(scope)\n            if self.debug:\n                # In debug mode, return traceback responses.\n                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n\n            if not response_started:\n                await response(scope, receive, send)\n\n            # We always continue to raise the exception.\n            # This allows servers to log the error, or allows test clients\n            # to optionally raise the error within the test case.\n            raise exc\n",
+        "quote_sha256": "a7d082263a5c5b23402d007a737a41794167b63e20ab0346e600189b6a592e19"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "starlette-task-and-iteration:await-expression-versus-return-value",
+    "chapter": "starlette-task-and-iteration",
+    "question_id": "await-expression-versus-return-value",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does awaiting BackgroundTask return the callback result?",
+        "answer_and_trailing_context": "The selected task method awaits an expression in either branch without returning it. If the method completes normally, it falls through to `None`. The separate `run_in_threadpool` helper returns its awaited result, but the surrounding task method does not forward that value. This follows the [Python function-return rules](https://docs.python.org/3/tutorial/controlflow.html#defining-functions), not an execution of Starlette."
+      },
+      "pt-br": {
+        "question": "Aguardar BackgroundTask retorna o resultado do callback?",
+        "answer_and_trailing_context": "O método de tarefa selecionado aguarda uma expressão em cada ramo sem retorná-la. Se conclui normalmente, alcança o final e retorna `None`. O helper separado `run_in_threadpool` retorna seu resultado aguardado, mas o método de tarefa envolvente não encaminha esse valor. Isso decorre das [regras de retorno de funções Python](https://docs.python.org/3/tutorial/controlflow.html#defining-functions), não de uma execução do Starlette."
+      }
+    },
+    "document_hashes": {
+      "en": "7499809154d35681c525d7d69fc6c490ea43485f00433335c1152cb08fc10269",
+      "pt-br": "eea252b07c7eaf0b22251ac03ffbff086931217f83501b8378154a6c98d49f3c"
+    },
+    "source_backed_assertion": "BackgroundTask.__call__ awaits expressions without returning them; run_in_threadpool separately returns its awaited result.",
+    "explicit_scope_limit": "Normal fallthrough to None is a Python language consequence, not an executed upstream test.",
+    "evidence": [
+      {
+        "repository": "starlette",
+        "source_path": "starlette/background.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/background.py",
+        "full_file_sha256": "0fe5e952915181406765e035b4783330e82e6dee8809564594e03830bd2ad53f",
+        "first_line": 19,
+        "last_line": 23,
+        "quote": "    async def __call__(self) -> None:\n        if self.is_async:\n            await self.func(*self.args, **self.kwargs)\n        else:\n            await run_in_threadpool(self.func, *self.args, **self.kwargs)\n",
+        "quote_sha256": "eefe65980ba39eb785d74ca27e9e00c77dd2837593c79c04f6fea61eecfcc7e1"
+      },
+      {
+        "repository": "starlette",
+        "source_path": "starlette/concurrency.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/concurrency.py",
+        "full_file_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83",
+        "first_line": 32,
+        "last_line": 34,
+        "quote": "async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:\n    func = functools.partial(func, *args, **kwargs)\n    return await anyio.to_thread.run_sync(func)\n",
+        "quote_sha256": "d6ae32f8faf0bafe2369d4009f7e3726f921da3364396d74dd868a28216a66cc"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "starlette-task-and-iteration:task-registration-versus-execution",
+    "chapter": "starlette-task-and-iteration",
+    "question_id": "task-registration-versus-execution",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does adding a task immediately run it or create parallel work?",
+        "answer_and_trailing_context": "The shown method constructs a task object and appends it. The collection call later awaits each reached task in sequence. A scheduling policy for a response, another process or a distributed queue is not established by these selected methods."
+      },
+      "pt-br": {
+        "question": "Adicionar uma tarefa a executa imediatamente ou cria trabalho paralelo?",
+        "answer_and_trailing_context": "O método mostrado constrói um objeto de tarefa e o acrescenta à lista. A chamada posterior da coleção aguarda cada tarefa alcançada em sequência. Esses métodos selecionados não estabelecem uma política de agendamento de resposta, outro processo ou fila distribuída."
+      }
+    },
+    "document_hashes": {
+      "en": "7499809154d35681c525d7d69fc6c490ea43485f00433335c1152cb08fc10269",
+      "pt-br": "eea252b07c7eaf0b22251ac03ffbff086931217f83501b8378154a6c98d49f3c"
+    },
+    "source_backed_assertion": "add_task constructs and appends a task; BackgroundTasks.__call__ awaits each reached task in a for loop.",
+    "explicit_scope_limit": "Response scheduling, another process and distributed queues require separate evidence.",
+    "evidence": [
+      {
+        "repository": "starlette",
+        "source_path": "starlette/background.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/background.py",
+        "full_file_sha256": "0fe5e952915181406765e035b4783330e82e6dee8809564594e03830bd2ad53f",
+        "first_line": 30,
+        "last_line": 36,
+        "quote": "    def add_task(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        task = BackgroundTask(func, *args, **kwargs)\n        self.tasks.append(task)\n\n    async def __call__(self) -> None:\n        for task in self.tasks:\n            await task()\n",
+        "quote_sha256": "e0f4cabc3b772976d473bd2336092bb22da0f965c82818a807b39787a5af9344"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "starlette-task-and-iteration:async-callable-classifier-limit",
+    "chapter": "starlette-task-and-iteration",
+    "question_id": "async-callable-classifier-limit",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Is every callable returning an awaitable classified as async?",
+        "answer_and_trailing_context": "The additional helper source unwraps `functools.partial` objects and checks the coroutine-function predicate on the object or its callable `__call__`. Its predicate binding is imported through a Python-version condition. This is narrower than universally examining future return values; imported predicate implementations and actual scheduling remain unverified.\n\nThe iterator wrapper catches its translated exhaustion class to break its loop. It does not supply a finally block that closes every possible underlying iterator. Callback failure, iterator exhaustion and consumer cleanup remain distinct contracts."
+      },
+      "pt-br": {
+        "question": "Todo callable que retorna um awaitable é classificado como assíncrono?",
+        "answer_and_trailing_context": "A fonte adicional do helper desembrulha objetos `functools.partial` e verifica o predicado de função coroutine no objeto ou em seu `__call__` callable. O vínculo desse predicado é importado por uma condição de versão do Python. Isso é mais restrito que examinar universalmente futuros valores retornados; implementações importadas dos predicados e escalonamento real continuam sem verificação.\n\nO wrapper de iteração captura sua classe traduzida de esgotamento para encerrar o laço. Não fornece um finally que feche todo iterador subjacente possível. Falha do callback, esgotamento do iterador e limpeza pelo consumidor continuam contratos distintos."
+      }
+    },
+    "document_hashes": {
+      "en": "7499809154d35681c525d7d69fc6c490ea43485f00433335c1152cb08fc10269",
+      "pt-br": "eea252b07c7eaf0b22251ac03ffbff086931217f83501b8378154a6c98d49f3c"
+    },
+    "source_backed_assertion": "The helper unwraps partials and checks imported coroutine-function predicates on the object or its callable __call__; imports vary by Python version.",
+    "explicit_scope_limit": "The predicate does not inspect every future return value; imported implementations and actual scheduling are unverified.",
+    "evidence": [
+      {
+        "repository": "starlette",
+        "source_path": "starlette/_utils.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/_utils.py",
+        "full_file_sha256": "413355d540af9e719cefaa92c1ed70af338e263c375cb336644309b1d242a6f4",
+        "first_line": 16,
+        "last_line": 22,
+        "quote": "if sys.version_info >= (3, 13):  # pragma: no cover\n    from inspect import iscoroutinefunction\n    from typing import TypeIs\nelse:  # pragma: no cover\n    from asyncio import iscoroutinefunction\n\n    from typing_extensions import TypeIs\n",
+        "quote_sha256": "8ff37363a220ba64b8d8bbc017663ebcee2859e445b198f1d235a4d24dddd0ab"
+      },
+      {
+        "repository": "starlette",
+        "source_path": "starlette/_utils.py",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/_utils.py",
+        "full_file_sha256": "413355d540af9e719cefaa92c1ed70af338e263c375cb336644309b1d242a6f4",
+        "first_line": 61,
+        "last_line": 65,
+        "quote": "def is_async_callable(obj: Any) -> Any:\n    while isinstance(obj, functools.partial):\n        obj = obj.func\n\n    return iscoroutinefunction(obj) or (callable(obj) and iscoroutinefunction(obj.__call__))\n",
+        "quote_sha256": "6af4ce5d8c6a16cf5d3235805fb50bec894796d05abc526a3f804d221f31764f"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "redis-ttl-replies:sentinels-before-rounding",
+    "chapter": "redis-ttl-replies",
+    "question_id": "sentinels-before-rounding",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Are -2 and -1 rounded or divided by 1000?",
+        "answer_and_trailing_context": "No. The missing-key path replies with -2 and returns before expiry conversion. The no-expiry path replies with -1 through its own sentinel branch. Neither goes through the ordinary non-sentinel arithmetic."
+      },
+      "pt-br": {
+        "question": "-2 e -1 são arredondados ou divididos por 1000?",
+        "answer_and_trailing_context": "Não. O caminho de chave ausente responde -2 e retorna antes da conversão da expiração. O caminho sem expiração responde -1 por seu próprio ramo de sentinela. Nenhum passa pela aritmética comum sem sentinela."
+      }
+    },
+    "document_hashes": {
+      "en": "2a7747ce54c4108de3f81d2ae06fc90756f3beb3aff0afbcbae2a77d27ab134d",
+      "pt-br": "eb872ed3ed677b1732402bf660328246a4b3b4046dd02072a3269f26932f6c33"
+    },
+    "source_backed_assertion": "The missing-key sentinel returns before arithmetic; the no-expiry sentinel selects its own reply branch; ordinary division is in the other branch.",
+    "explicit_scope_limit": "Reply-helper wire delivery is unverified.",
+    "evidence": [
+      {
+        "repository": "redis",
+        "source_path": "src/expire.c",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+        "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+        "first_line": 882,
+        "last_line": 904,
+        "quote": "void ttlGenericCommand(client *c, int output_ms, int output_abs) {\n    long long expire, ttl = -1;\n\n    /* If the key does not exist at all, return -2 */\n    kvobj *kv = lookupKeyReadWithFlags(c->db,c->argv[1],LOOKUP_NOTOUCH);\n    if (kv == NULL) {\n        addReplyLongLong(c,-2);\n        return;\n    }\n\n    /* The key exists. Return -1 if it has no expire, or the actual\n     * TTL value otherwise. */\n    expire = kvobjGetExpire(kv);\n    if (expire != -1) {\n        ttl = output_abs ? expire : expire-commandTimeSnapshot();\n        if (ttl < 0) ttl = 0;\n    }\n    if (ttl == -1) {\n        addReplyLongLong(c,-1);\n    } else {\n        addReplyLongLong(c,output_ms ? ttl : ((ttl+500)/1000));\n    }\n}\n",
+        "quote_sha256": "a5cff919027300b6a0cda02b5bcec0aeca70b38bfc1ef7c4f5511ad1173c42b9"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "redis-ttl-replies:clock-snapshot-refresh",
+    "chapter": "redis-ttl-replies",
+    "question_id": "clock-snapshot-refresh",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does commandTimeSnapshot read a fresh clock on each call?",
+        "answer_and_trailing_context": "The added helper implementation directly returns `server.cmd_time_snapshot`. The header declares the millisecond time type and describes this field as the root-execution snapshot. The getter itself contains no clock syscall; full update timing and runtime clock guarantees require their own evidence."
+      },
+      "pt-br": {
+        "question": "commandTimeSnapshot lê um relógio novo em cada chamada?",
+        "answer_and_trailing_context": "A implementação acrescentada do helper retorna diretamente `server.cmd_time_snapshot`. O cabeçalho declara o tipo temporal em milissegundos e descreve esse campo como snapshot da execução raiz. O getter em si não contém syscall de relógio; momento completo das atualizações e garantias do relógio em execução exigem sua própria evidência."
+      }
+    },
+    "document_hashes": {
+      "en": "2a7747ce54c4108de3f81d2ae06fc90756f3beb3aff0afbcbae2a77d27ab134d",
+      "pt-br": "eb872ed3ed677b1732402bf660328246a4b3b4046dd02072a3269f26932f6c33"
+    },
+    "source_backed_assertion": "The getter returns server.cmd_time_snapshot; mstime_t is declared as the millisecond type and the field comment names root-execution nesting.",
+    "explicit_scope_limit": "Commentary explains intent; the getter body itself does not prove full update timing or runtime clock guarantees.",
+    "evidence": [
+      {
+        "repository": "redis",
+        "source_path": "src/server.c",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/server.c",
+        "full_file_sha256": "7f30ba83792e79bbb7d76a493cb33e8b4fcaa60b20add9ae5b23d7cb074fdd9e",
+        "first_line": 263,
+        "last_line": 278,
+        "quote": "mstime_t commandTimeSnapshot(void) {\n    /* When we are in the middle of a command execution, we want to use a\n     * reference time that does not change: in that case we just use the\n     * cached time, that we update before each call in the call() function.\n     * This way we avoid that commands such as RPOPLPUSH or similar, that\n     * may re-open the same key multiple times, can invalidate an already\n     * open object in a next call, if the next call will see the key expired,\n     * while the first did not.\n     * This is specifically important in the context of scripts, where we\n     * pretend that time freezes. This way a key can expire only the first time\n     * it is accessed and not in the middle of the script execution, making\n     * propagation to slaves / AOF consistent. See issue #1525 for more info.\n     * Note that we cannot use the cached server.mstime because it can change\n     * in processEventsWhileBlocked etc. */\n    return server.cmd_time_snapshot;\n}\n",
+        "quote_sha256": "c724eb81b9acec2ae7bc023b4c8b825391f0d8848b9456841b306495d2c32483"
+      },
+      {
+        "repository": "redis",
+        "source_path": "src/server.h",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/server.h",
+        "full_file_sha256": "dc843ae72cb35c43496e2aafe700e3aceaf03ce5ef15e7f544aedeea668109f9",
+        "first_line": 47,
+        "last_line": 47,
+        "quote": "typedef long long mstime_t; /* millisecond time type. */\n",
+        "quote_sha256": "f92cb6d8f733f0971abeef6a4a83c3e918ce60508c732a9e5abb5e0b42017b0a"
+      },
+      {
+        "repository": "redis",
+        "source_path": "src/server.h",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/server.h",
+        "full_file_sha256": "dc843ae72cb35c43496e2aafe700e3aceaf03ce5ef15e7f544aedeea668109f9",
+        "first_line": 2750,
+        "last_line": 2750,
+        "quote": "    mstime_t cmd_time_snapshot; /* Time snapshot of the root execution nesting. */\n",
+        "quote_sha256": "ff6f32a0354253924ac49c51daf80b83faad6ef927b388404345f61f7b1d48c2"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "redis-ttl-replies:reply-versus-key-deletion",
+    "chapter": "redis-ttl-replies",
+    "question_id": "reply-versus-key-deletion",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does a successful TTL reply delete the key?",
+        "answer_and_trailing_context": "The selected generic body performs lookup, expiry selection and reply calls. It contains no explicit delete operation. Lookup-helper side effects and the client's actual wire delivery are not established by this excerpt, so this is not a global no-side-effect guarantee."
+      },
+      "pt-br": {
+        "question": "Uma resposta TTL bem-sucedida exclui a chave?",
+        "answer_and_trailing_context": "O corpo genérico selecionado realiza busca, seleção de expiração e chamadas de resposta. Não contém operação explícita de exclusão. Efeitos colaterais do helper de busca e entrega real pela rede ao cliente não são estabelecidos por esse trecho; portanto, isso não é garantia global de ausência de efeitos."
+      }
+    },
+    "document_hashes": {
+      "en": "2a7747ce54c4108de3f81d2ae06fc90756f3beb3aff0afbcbae2a77d27ab134d",
+      "pt-br": "eb872ed3ed677b1732402bf660328246a4b3b4046dd02072a3269f26932f6c33"
+    },
+    "source_backed_assertion": "The complete selected generic body calls lookup, expiry selection and reply helpers but contains no explicit delete operation.",
+    "explicit_scope_limit": "Lookup side effects and actual client delivery remain unknown; this is deliberately not a global no-side-effect claim.",
+    "evidence": [
+      {
+        "repository": "redis",
+        "source_path": "src/expire.c",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+        "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+        "first_line": 882,
+        "last_line": 904,
+        "quote": "void ttlGenericCommand(client *c, int output_ms, int output_abs) {\n    long long expire, ttl = -1;\n\n    /* If the key does not exist at all, return -2 */\n    kvobj *kv = lookupKeyReadWithFlags(c->db,c->argv[1],LOOKUP_NOTOUCH);\n    if (kv == NULL) {\n        addReplyLongLong(c,-2);\n        return;\n    }\n\n    /* The key exists. Return -1 if it has no expire, or the actual\n     * TTL value otherwise. */\n    expire = kvobjGetExpire(kv);\n    if (expire != -1) {\n        ttl = output_abs ? expire : expire-commandTimeSnapshot();\n        if (ttl < 0) ttl = 0;\n    }\n    if (ttl == -1) {\n        addReplyLongLong(c,-1);\n    } else {\n        addReplyLongLong(c,output_ms ? ttl : ((ttl+500)/1000));\n    }\n}\n",
+        "quote_sha256": "a5cff919027300b6a0cda02b5bcec0aeca70b38bfc1ef7c4f5511ad1173c42b9"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "redis-expiry-predicate:predicate-versus-key-deletion",
+    "chapter": "redis-expiry-predicate",
+    "question_id": "predicate-versus-key-deletion",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does the predicate itself delete an already-expired key?",
+        "answer_and_trailing_context": "Its body returns a decision. The separately inspected caller tests that decision, then invokes `dbGenericDelete` on the true branch, updates dirty state, rewrites the client command and issues notifications and a reply. The false branch invokes `setExpire` and its own update/notification sequence. Those are caller operations, not hidden operations performed by the predicate."
+      },
+      "pt-br": {
+        "question": "O próprio predicado exclui uma chave já expirada?",
+        "answer_and_trailing_context": "Seu corpo retorna uma decisão. O chamador inspecionado separadamente testa essa decisão e então invoca `dbGenericDelete` no ramo verdadeiro, atualiza o estado dirty, reescreve o comando do cliente e emite notificações e uma resposta. O ramo falso invoca `setExpire` e sua própria sequência de atualização e notificação. Essas são operações do chamador, não operações ocultas realizadas pelo predicado."
+      }
+    },
+    "document_hashes": {
+      "en": "68f50a715fbc985f40092ffeaeeddfa08607efdbb5fe0bc8f99cd87c3b49663c",
+      "pt-br": "2b2eeedcf9dc5d372fd6b7bd0aad4075013155f64d5108ba3f647f0b046af6ff"
+    },
+    "source_backed_assertion": "The predicate returns an integer decision; its caller performs dbGenericDelete and updates on the true branch, setExpire and updates on the other branch.",
+    "explicit_scope_limit": "Called helper internals, replication and actual mutation are not executed or universally verified.",
+    "evidence": [
+      {
+        "repository": "redis",
+        "source_path": "src/expire.c",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+        "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+        "first_line": 668,
+        "last_line": 677,
+        "quote": "int checkAlreadyExpired(long long when) {\n    /* EXPIRE with negative TTL, or EXPIREAT with a timestamp into the past\n     * should never be executed as a DEL when load the AOF or in the context\n     * of a slave instance.\n     *\n     * Instead we add the already expired key to the database with expire time\n     * (possibly in the past) and wait for an explicit DEL from the master. */\n    if (server.current_client && server.current_client->flags & CLIENT_MASTER) return 0;\n    return (when <= commandTimeSnapshot() && !server.loading && !server.masterhost);\n}\n",
+        "quote_sha256": "81cfb3d8a0a3efa51f8f7b561f51f29bb91c8800c55180e562dc10a2330ff4b4"
+      },
+      {
+        "repository": "redis",
+        "source_path": "src/expire.c",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+        "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+        "first_line": 823,
+        "last_line": 858,
+        "quote": "    if (checkAlreadyExpired(when)) {\n        robj *aux;\n\n        int deleted = dbGenericDelete(c->db,key,server.lazyfree_lazy_expire,DB_FLAG_KEY_EXPIRED);\n        serverAssertWithInfo(c,key,deleted);\n        server.dirty++;\n\n        /* Replicate/AOF this as an explicit DEL or UNLINK. */\n        aux = server.lazyfree_lazy_expire ? shared.unlink : shared.del;\n        rewriteClientCommandVector(c,2,aux,key);\n        keyModified(c,c->db,key,NULL,1);\n        notifyKeyspaceEvent(NOTIFY_GENERIC,\"del\",key,c->db->id);\n        addReply(c, shared.cone);\n        return;\n    } else {\n        kv = setExpire(c,c->db,key,when); /* might realloc kv */\n        addReply(c,shared.cone);\n        /* Propagate as PEXPIREAT millisecond-timestamp\n         * Only rewrite the command arg if not already PEXPIREAT */\n        if (c->cmd->proc != pexpireatCommand) {\n            rewriteClientCommandArgument(c,0,shared.pexpireat);\n        }\n\n        /* Avoid creating a string object when it's the same as argv[2] parameter  */\n        if (basetime != 0 || unit == UNIT_SECONDS) {\n            robj *when_obj = createStringObjectFromLongLong(when);\n            rewriteClientCommandArgument(c,2,when_obj);\n            decrRefCount(when_obj);\n        }\n\n        keyModified(c,c->db,key,kv,1);\n        notifyKeyspaceEvent(NOTIFY_GENERIC,\"expire\",key,c->db->id);\n        KSN_INVALIDATE_KVOBJ(kv);\n        server.dirty++;\n        return;\n    }\n",
+        "quote_sha256": "77b93c87f690c0300b061b954e79178c2a010fb3d6b3ede8240073f9108dd914"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "redis-expiry-predicate:inclusive-expiry-boundary",
+    "chapter": "redis-expiry-predicate",
+    "question_id": "inclusive-expiry-boundary",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Is an equal timestamp considered past the boundary?",
+        "answer_and_trailing_context": "The written comparison includes equality, but only after the current-client early-return guard has not fired. The loading and masterhost conditions still participate in the final conjunction. Time comparison alone is insufficient."
+      },
+      "pt-br": {
+        "question": "Um instante igual é considerado além da fronteira?",
+        "answer_and_trailing_context": "A comparação escrita inclui igualdade, mas só depois que a guarda de retorno antecipado do cliente atual não disparou. As condições loading e masterhost ainda participam da conjunção final. A comparação temporal isolada é insuficiente."
+      }
+    },
+    "document_hashes": {
+      "en": "68f50a715fbc985f40092ffeaeeddfa08607efdbb5fe0bc8f99cd87c3b49663c",
+      "pt-br": "2b2eeedcf9dc5d372fd6b7bd0aad4075013155f64d5108ba3f647f0b046af6ff"
+    },
+    "source_backed_assertion": "The comparison includes equality only after the current-client guard; !loading and !masterhost remain conjunctive conditions.",
+    "explicit_scope_limit": "Time comparison alone cannot establish the result.",
+    "evidence": [
+      {
+        "repository": "redis",
+        "source_path": "src/expire.c",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/expire.c",
+        "full_file_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+        "first_line": 675,
+        "last_line": 676,
+        "quote": "    if (server.current_client && server.current_client->flags & CLIENT_MASTER) return 0;\n    return (when <= commandTimeSnapshot() && !server.loading && !server.masterhost);\n",
+        "quote_sha256": "ac9f5476e655909a1a630b79897c9ed49e379db756257cf6da9a56de0afa991f"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "redis-expiry-predicate:clock-snapshot-value",
+    "chapter": "redis-expiry-predicate",
+    "question_id": "clock-snapshot-value",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "What time value does the inspected getter provide?",
+        "answer_and_trailing_context": "The additional implementation directly returns `server.cmd_time_snapshot`; its declaration uses the millisecond time type. It does not read a fresh clock in that body. The exact update schedule, all callers, clock reliability and concurrent access remain outside this bounded review.\n\nThese added source excerpts resolve the named getter and one actual caller without turning comments about replication or AOF loading into operations inside the predicate. No Redis command, server, key mutation or replication workflow was executed."
+      },
+      "pt-br": {
+        "question": "Qual valor temporal o getter inspecionado fornece?",
+        "answer_and_trailing_context": "A implementação adicional retorna diretamente `server.cmd_time_snapshot`; sua declaração usa o tipo temporal em milissegundos. Não lê um relógio novo nesse corpo. Cronograma exato de atualização, todos os chamadores, confiabilidade do relógio e acesso concorrente permanecem fora desta revisão delimitada.\n\nEsses trechos adicionais resolvem o getter nomeado e um chamador real sem transformar comentários sobre replicação ou carregamento de AOF em operações dentro do predicado. Nenhum comando, servidor, mutação de chave ou fluxo de replicação Redis foi executado."
+      }
+    },
+    "document_hashes": {
+      "en": "68f50a715fbc985f40092ffeaeeddfa08607efdbb5fe0bc8f99cd87c3b49663c",
+      "pt-br": "2b2eeedcf9dc5d372fd6b7bd0aad4075013155f64d5108ba3f647f0b046af6ff"
+    },
+    "source_backed_assertion": "The getter returns the snapshot field whose declared type is the millisecond time type.",
+    "explicit_scope_limit": "The exact update schedule, all callers, clock reliability and concurrent access remain outside this bounded review.",
+    "evidence": [
+      {
+        "repository": "redis",
+        "source_path": "src/server.c",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/server.c",
+        "full_file_sha256": "7f30ba83792e79bbb7d76a493cb33e8b4fcaa60b20add9ae5b23d7cb074fdd9e",
+        "first_line": 263,
+        "last_line": 278,
+        "quote": "mstime_t commandTimeSnapshot(void) {\n    /* When we are in the middle of a command execution, we want to use a\n     * reference time that does not change: in that case we just use the\n     * cached time, that we update before each call in the call() function.\n     * This way we avoid that commands such as RPOPLPUSH or similar, that\n     * may re-open the same key multiple times, can invalidate an already\n     * open object in a next call, if the next call will see the key expired,\n     * while the first did not.\n     * This is specifically important in the context of scripts, where we\n     * pretend that time freezes. This way a key can expire only the first time\n     * it is accessed and not in the middle of the script execution, making\n     * propagation to slaves / AOF consistent. See issue #1525 for more info.\n     * Note that we cannot use the cached server.mstime because it can change\n     * in processEventsWhileBlocked etc. */\n    return server.cmd_time_snapshot;\n}\n",
+        "quote_sha256": "c724eb81b9acec2ae7bc023b4c8b825391f0d8848b9456841b306495d2c32483"
+      },
+      {
+        "repository": "redis",
+        "source_path": "src/server.h",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/server.h",
+        "full_file_sha256": "dc843ae72cb35c43496e2aafe700e3aceaf03ce5ef15e7f544aedeea668109f9",
+        "first_line": 47,
+        "last_line": 47,
+        "quote": "typedef long long mstime_t; /* millisecond time type. */\n",
+        "quote_sha256": "f92cb6d8f733f0971abeef6a4a83c3e918ce60508c732a9e5abb5e0b42017b0a"
+      },
+      {
+        "repository": "redis",
+        "source_path": "src/server.h",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/redis/src/server.h",
+        "full_file_sha256": "dc843ae72cb35c43496e2aafe700e3aceaf03ce5ef15e7f544aedeea668109f9",
+        "first_line": 2750,
+        "last_line": 2750,
+        "quote": "    mstime_t cmd_time_snapshot; /* Time snapshot of the root execution nesting. */\n",
+        "quote_sha256": "ff6f32a0354253924ac49c51daf80b83faad6ef927b388404345f61f7b1d48c2"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "go-image-dimensions:wrapper-parameters",
+    "chapter": "go-image-dimensions",
+    "question_id": "wrapper-parameters",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does the wrapper take width and height as separate parameters?",
+        "answer_and_trailing_context": "It receives a configuration and a pixel budget. It extracts the width and height fields when calling the helper. Parser metadata and those argument expressions do not add parameters to the wrapper's declaration."
+      },
+      "pt-br": {
+        "question": "O wrapper recebe largura e altura como parâmetros separados?",
+        "answer_and_trailing_context": "Ele recebe uma configuração e um orçamento de pixels. Extrai os campos de largura e altura ao chamar o helper. Metadados do parser e essas expressões de argumentos não acrescentam parâmetros à declaração do wrapper."
+      }
+    },
+    "document_hashes": {
+      "en": "d9a51a95346d9830f93b1bf84a9b96e26012d72a1b766bbfd37840b5c44f1a83",
+      "pt-br": "cc712a850fdf110599a3b75de5633712abb4308069e7ce9d77add569d5830e06"
+    },
+    "source_backed_assertion": "ValidateDimensions declares cfg and maxPixels, then passes cfg.Width, cfg.Height and maxPixels to ValidateImageSize.",
+    "explicit_scope_limit": "Argument expressions do not become extra wrapper parameters; imported image.Config behavior is not executed.",
+    "evidence": [
+      {
+        "repository": "go-image-optimizer",
+        "source_path": "backend/internal/infrastructure/imaging/limits.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/limits.go",
+        "full_file_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+        "first_line": 19,
+        "last_line": 21,
+        "quote": "func ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n",
+        "quote_sha256": "3f7ad5ff4ee0899c292af91955b8d57acdcaca642b5600d3149aab28494d2cd9"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "go-image-dimensions:quotient-equality",
+    "chapter": "go-image-dimensions",
+    "question_id": "quotient-equality",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Is equality with the integer budget quotient rejected?",
+        "answer_and_trailing_context": "The written comparison is strictly greater than. After positive dimensions pass the earlier guard, equality with the quotient avoids that error branch. Nonpositive dimensions return their own earlier error before division."
+      },
+      "pt-br": {
+        "question": "A igualdade com o quociente inteiro do orçamento é rejeitada?",
+        "answer_and_trailing_context": "A comparação escrita é estritamente maior que. Depois que dimensões positivas passam pela guarda anterior, igualdade com o quociente evita esse ramo de erro. Dimensões não positivas retornam seu próprio erro anterior antes da divisão."
+      }
+    },
+    "document_hashes": {
+      "en": "d9a51a95346d9830f93b1bf84a9b96e26012d72a1b766bbfd37840b5c44f1a83",
+      "pt-br": "cc712a850fdf110599a3b75de5633712abb4308069e7ce9d77add569d5830e06"
+    },
+    "source_backed_assertion": "Nonpositive dimensions return before division; the next comparison uses strict greater-than, so quotient equality does not enter that error branch.",
+    "explicit_scope_limit": "This is written control flow under normal evaluation, not a measured memory or decoder-validity guarantee.",
+    "evidence": [
+      {
+        "repository": "go-image-optimizer",
+        "source_path": "backend/internal/infrastructure/imaging/limits.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/limits.go",
+        "full_file_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+        "first_line": 23,
+        "last_line": 33,
+        "quote": "func ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n",
+        "quote_sha256": "8a8fb9f8eb0d801f6e0895274319243f8bdc61322395ca5909e0c0514f7655b8"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "go-image-dimensions:explicit-budget-argument",
+    "chapter": "go-image-dimensions",
+    "question_id": "explicit-budget-argument",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does the static wrapper automatically use the named default?",
+        "answer_and_trailing_context": "It forwards its caller's budget unchanged. The named default is a separate declaration. The [animation validator](../go-image-animation/en.md) explicitly selects that static default before its different aggregate check; those choices must not be merged.\n\nThe budget concerns pixels, not encoded bytes or an exact resident-memory cap. Decoder validity, imported error identities and observed memory use remain outside this source review."
+      },
+      "pt-br": {
+        "question": "O wrapper estático usa automaticamente o padrão nomeado?",
+        "answer_and_trailing_context": "Ele encaminha sem alteração o orçamento do chamador. O padrão nomeado é uma declaração separada. O [validador de animação](../go-image-animation/pt-br.md) seleciona explicitamente esse padrão estático antes de sua verificação agregada distinta; essas escolhas não devem ser fundidas.\n\nO orçamento trata de pixels, não bytes codificados ou limite exato de memória residente. Validade do decodificador, identidades dos erros importados e uso observado de memória permanecem fora desta revisão de fonte."
+      }
+    },
+    "document_hashes": {
+      "en": "d9a51a95346d9830f93b1bf84a9b96e26012d72a1b766bbfd37840b5c44f1a83",
+      "pt-br": "cc712a850fdf110599a3b75de5633712abb4308069e7ce9d77add569d5830e06"
+    },
+    "source_backed_assertion": "The wrapper forwards its budget argument; constants are separate declarations; the animation validator explicitly passes DefaultMaxDecodedPixels.",
+    "explicit_scope_limit": "Pixel counts are not encoded-byte limits or exact resident-memory bounds.",
+    "evidence": [
+      {
+        "repository": "go-image-optimizer",
+        "source_path": "backend/internal/infrastructure/imaging/limits.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/limits.go",
+        "full_file_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+        "first_line": 19,
+        "last_line": 21,
+        "quote": "func ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n",
+        "quote_sha256": "3f7ad5ff4ee0899c292af91955b8d57acdcaca642b5600d3149aab28494d2cd9"
+      },
+      {
+        "repository": "go-image-optimizer",
+        "source_path": "backend/internal/infrastructure/imaging/limits.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/limits.go",
+        "full_file_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+        "first_line": 9,
+        "last_line": 16,
+        "quote": "const (\n\t// DefaultMaxDecodedPixels limits decoded image memory growth. A 32 MP RGBA\n\t// image needs roughly 128 MiB before encoder overhead.\n\tDefaultMaxDecodedPixels = 32_000_000\n\n\t// DefaultMaxAnimatedFramePixels caps canvas-sized animation work. The limit\n\t// is width * height * frame count, not bytes, so codecs can share it.\n\tDefaultMaxAnimatedFramePixels = 64_000_000\n",
+        "quote_sha256": "244593425ad59753043385dac97b99690f9d814e6839feefc994e9f6dca2275f"
+      },
+      {
+        "repository": "go-image-optimizer",
+        "source_path": "backend/internal/infrastructure/imaging/limits.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/go-image-optimizer/backend/internal/infrastructure/imaging/limits.go",
+        "full_file_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+        "first_line": 35,
+        "last_line": 38,
+        "quote": "func ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n",
+        "quote_sha256": "a6868ff2f5758d04ba581bda73069d0d5480bb9f21156313db2240957f9f88e9"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "sdk-dynamic-retry-policy:initial-interval-comment-mismatch",
+    "chapter": "sdk-dynamic-retry-policy",
+    "question_id": "initial-interval-comment-mismatch",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Is the configured initial interval 20 or 200 milliseconds?",
+        "answer_and_trailing_context": "The constant used by the body is 200 milliseconds. The nearby 20-millisecond comment disagrees with that declaration. The correction follows the written constant and preserves the discrepancy as review evidence."
+      },
+      "pt-br": {
+        "question": "O intervalo inicial configurado é 20 ou 200 milissegundos?",
+        "answer_and_trailing_context": "A constante usada pelo corpo é de 200 milissegundos. O comentário próximo de 20 milissegundos diverge dessa declaração. A correção segue a constante escrita e preserva a divergência como evidência de revisão."
+      }
+    },
+    "document_hashes": {
+      "en": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+      "pt-br": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8"
+    },
+    "source_backed_assertion": "The constant used for initialInterval is 200*time.Millisecond whereas the nearby explanatory comment names 20ms.",
+    "explicit_scope_limit": "Written code is followed while preserving the comment discrepancy; no runtime timing is observed.",
+    "evidence": [
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/internal_retry.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+        "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+        "first_line": 12,
+        "last_line": 21,
+        "quote": "const (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n)\n\n// Creates a retry policy which allows appropriate retries for the deadline passed in as context.\n// It uses the context deadline to set MaxInterval as 1/10th of context timeout\n// MaxInterval = Max(context_timeout/10, 20ms)\n// defaults to ExpirationInterval of 60 seconds, or uses context deadline as expiration interval\n",
+        "quote_sha256": "cacb5b7c4690fa10ccb322412806a1b537be4786407193e3cdabafd392e82f98"
+      },
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/internal_retry.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+        "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+        "first_line": 30,
+        "last_line": 33,
+        "quote": "\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n",
+        "quote_sha256": "dd0551b8467ad3ed7598c38fdf2cb019139fae8f68cbb8288c573bfae0e6692d"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "sdk-dynamic-retry-policy:future-deadline-not-sixty-second-cap",
+    "chapter": "sdk-dynamic-retry-policy",
+    "question_id": "future-deadline-not-sixty-second-cap",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does a future deadline always shorten the sixty-second default?",
+        "answer_and_trailing_context": "Only a strictly future deadline replaces the default, and the shown assignment uses its remaining duration directly. It does not take the minimum with sixty seconds. Missing or nonfuture deadlines leave the default path unchanged, subject to normal completion of the supplied methods."
+      },
+      "pt-br": {
+        "question": "Um deadline futuro sempre encurta o padrão de sessenta segundos?",
+        "answer_and_trailing_context": "Somente um deadline estritamente futuro substitui o padrão, e a atribuição mostrada usa diretamente sua duração restante. Não calcula o mínimo com sessenta segundos. Deadlines ausentes ou não futuros preservam o caminho padrão, sujeito à conclusão normal dos métodos fornecidos."
+      }
+    },
+    "document_hashes": {
+      "en": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+      "pt-br": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8"
+    },
+    "source_backed_assertion": "timeout starts at 60 seconds; only an ok strictly future deadline replaces it with expiration.Sub(now), without a minimum with the default.",
+    "explicit_scope_limit": "A supplied context method must complete normally; nil and nonfuture cases keep the default.",
+    "evidence": [
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/internal_retry.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+        "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+        "first_line": 12,
+        "last_line": 16,
+        "quote": "const (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n)\n",
+        "quote_sha256": "ee64bcedcde136c4b9b2814a4b8e38f8fbea01933525984a2780b541aa6bad08"
+      },
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/internal_retry.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+        "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+        "first_line": 22,
+        "last_line": 29,
+        "quote": "func createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n",
+        "quote_sha256": "168ddbd06f9851a99489ddf9c9cbe67e7df922d4332de0b615c90138faff49af"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  },
+  {
+    "id": "sdk-dynamic-retry-policy:policy-configuration-not-retry-schedule",
+    "chapter": "sdk-dynamic-retry-policy",
+    "question_id": "policy-configuration-not-retry-schedule",
+    "question_kind": "MANUALLY_REVIEWED_ARCHITECTURE_FAQ",
+    "faq_pair": {
+      "en": {
+        "question": "Does creating the policy perform a retry or guarantee a sleep duration?",
+        "answer_and_trailing_context": "The constructor function configures and returns a policy. The supplied `ComputeNextDelay` consumer separately checks attempts and expiration, computes and clamps an interval and applies jitter. Actual operation invocation, sleeping and cancellation belong to further consumers. Neither the stored maximum nor the default calculation alone is an observed service retry schedule.\n\nThe optional build-filtered evidence now supports the maximum expression's lexical binding under two explicit profiles, conditional on complete source and valid compilation. It does not turn policy configuration into an observed retry schedule, a full module/type proof or owner approval."
+      },
+      "pt-br": {
+        "question": "Criar a política realiza uma nova tentativa ou garante uma duração de espera?",
+        "answer_and_trailing_context": "A função construtora configura e retorna uma política. O consumidor fornecido `ComputeNextDelay` verifica separadamente tentativas e expiração, calcula e limita um intervalo e aplica jitter. Invocação real da operação, espera e cancelamento pertencem a outros consumidores. Nem o máximo armazenado nem o cálculo padrão isolado é um cronograma observado de novas tentativas do serviço.\n\nA evidência opcional com filtragem de build agora sustenta o vínculo léxico da expressão de máximo sob dois perfis explícitos, condicionado a fontes completas e compilação válida. Não transforma configuração de política em cronograma observado de tentativas, prova completa de módulo e tipos ou aprovação do proprietário."
+      }
+    },
+    "document_hashes": {
+      "en": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+      "pt-br": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8"
+    },
+    "source_backed_assertion": "The factory constructs, stores coefficient/maximum/expiration and returns a policy; ComputeNextDelay separately checks attempts/expiration, clamps and adds jitter.",
+    "explicit_scope_limit": "Actual operation invocation, sleeping and cancellation require further consumers; lexical bare-max binding is addressed separately by the build-census study.",
+    "evidence": [
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/internal_retry.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+        "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+        "first_line": 30,
+        "last_line": 38,
+        "quote": "\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n}\n",
+        "quote_sha256": "caa337df2ec15f548a78ec3faec52bbafd28bc9e1e88f7fe84497e9145784f0b"
+      },
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/common/backoff/retrypolicy.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/common/backoff/retrypolicy.go",
+        "full_file_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+        "first_line": 58,
+        "last_line": 68,
+        "quote": "func NewExponentialRetryPolicy(initialInterval time.Duration) *ExponentialRetryPolicy {\n\tp := &ExponentialRetryPolicy{\n\t\tinitialInterval:    initialInterval,\n\t\tbackoffCoefficient: retry.DefaultBackoffCoefficient,\n\t\tmaximumInterval:    retry.DefaultMaximumInterval,\n\t\texpirationInterval: retry.DefaultExpirationInterval,\n\t\tmaximumAttempts:    retry.DefaultMaximumAttempts,\n\t}\n\n\treturn p\n}\n",
+        "quote_sha256": "f31078f43958ade1bd8c9c0fe3fd826fd4ce7e9008a19904c7406c82db04dbed"
+      },
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/common/backoff/retrypolicy.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/common/backoff/retrypolicy.go",
+        "full_file_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+        "first_line": 90,
+        "last_line": 102,
+        "quote": "func (p *ExponentialRetryPolicy) SetBackoffCoefficient(backoffCoefficient float64) {\n\tp.backoffCoefficient = backoffCoefficient\n}\n\n// SetMaximumInterval sets the maximum interval for each retry\nfunc (p *ExponentialRetryPolicy) SetMaximumInterval(maximumInterval time.Duration) {\n\tp.maximumInterval = maximumInterval\n}\n\n// SetExpirationInterval sets the absolute expiration interval for all retries\nfunc (p *ExponentialRetryPolicy) SetExpirationInterval(expirationInterval time.Duration) {\n\tp.expirationInterval = expirationInterval\n}\n",
+        "quote_sha256": "9862499c5bd68b455ac5a35d6f9322fb1778492b18899f721750e7d40cb5d3ae"
+      },
+      {
+        "repository": "sdk-go",
+        "source_path": "internal/common/backoff/retrypolicy.go",
+        "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/common/backoff/retrypolicy.go",
+        "full_file_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+        "first_line": 109,
+        "last_line": 148,
+        "quote": "// ComputeNextDelay returns the next delay interval.  This is used by Retrier to delay calling the operation again\nfunc (p *ExponentialRetryPolicy) ComputeNextDelay(elapsedTime time.Duration, attempt int) time.Duration {\n\t// Check to see if we ran out of maximum number of attempts\n\tif p.maximumAttempts != retry.UnlimitedMaximumAttempts && attempt >= p.maximumAttempts {\n\t\treturn done\n\t}\n\n\t// Stop retrying after expiration interval is elapsed\n\tif p.expirationInterval != retry.UnlimitedInterval && elapsedTime > p.expirationInterval {\n\t\treturn done\n\t}\n\n\tnextInterval := float64(p.initialInterval) * math.Pow(p.backoffCoefficient, float64(attempt-1))\n\t// Disallow retries if initialInterval is negative or nextInterval overflows\n\tif nextInterval <= 0 {\n\t\treturn done\n\t}\n\tif p.maximumInterval != retry.UnlimitedInterval {\n\t\tnextInterval = math.Min(nextInterval, float64(p.maximumInterval))\n\t}\n\n\tif p.expirationInterval != retry.UnlimitedInterval {\n\t\tremainingTime := math.Max(0, float64(p.expirationInterval-elapsedTime))\n\t\tnextInterval = math.Min(remainingTime, nextInterval)\n\t}\n\n\t// Bail out if the next interval is smaller than initial retry interval\n\tnextDuration := time.Duration(nextInterval)\n\tif nextDuration < p.initialInterval {\n\t\treturn done\n\t}\n\n\t// add jitter to avoid global synchronization\n\tjitterPortion := max(\n\t\t// Prevent overflow\n\t\tint(retry.DefaultJitter*nextInterval), 1)\n\tnextInterval = nextInterval*(1-retry.DefaultJitter) + float64(rand.Intn(jitterPortion))\n\n\treturn time.Duration(nextInterval)\n}\n",
+        "quote_sha256": "015e5acb5f5bf0b3900152a414307fa46b0c82ef6c0a6729dba8dd733f17b1c0"
+      }
+    ],
+    "review_status": "SOURCE_ALIGNED_WITH_EXPLICIT_LIMITATIONS_PENDING_OWNER_REVIEW",
+    "review_author": "Codex, not an independent owner",
+    "runtime_executed": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "new_faq_created": false
+  }
+]

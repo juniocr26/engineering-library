@@ -1,0 +1,172 @@
+{
+  "at": "2026-11-21T19:21:06.331128+00:00",
+  "protocol": "line-addressed-source-copy-protocol-v1.json",
+  "tasks": [
+    {
+      "at": "2026-11-21T19:21:06.330316+00:00",
+      "task": "fastapi",
+      "method": "W",
+      "protocol": "line-addressed-source-copy-protocol-v1.json",
+      "model_content_sha256": "00c4c8e5711fedfd7f60d69d186a0c74decf4df5a9372f418c59dd088c8eab0e",
+      "records": [
+        {
+          "id": "F01",
+          "source_path": "fastapi/dependencies/models.py",
+          "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+          "physical_line": 53,
+          "expected_exact_line": "    use_cache: bool = True",
+          "generated_original_string": "    35: @dataclass(slots=True)\n",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned dataclass decorator from line35 plus number/newline, rather than use_cache declaration at53."
+        },
+        {
+          "id": "F04",
+          "source_path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "physical_line": 733,
+          "expected_exact_line": "            dependency_cache=dependency_cache,",
+          "generated_original_string": "    733:         solved = await call(**solved_result.values)\n",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned a different solver statement and falsely prefixed733, rather than recursive cache keyword/value."
+        },
+        {
+          "id": "F07",
+          "source_path": "fastapi/dependencies/utils.py",
+          "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "physical_line": 774,
+          "expected_exact_line": "        if sub_dependant_cache_key not in dependency_cache:",
+          "generated_original_string": "    774:         dependency_cache[sub_dependant_cache_key] = solved",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned later cache assignment rather than addressed write guard; number prefix retained."
+        }
+      ],
+      "primary_exact_count": 0,
+      "secondary_stripped_count": 0,
+      "requested_lines": 3,
+      "not_semantic_claim_or_complete_note_acceptance": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "optimizer_updates": 0
+    },
+    {
+      "at": "2026-11-21T19:21:06.330814+00:00",
+      "task": "cobra",
+      "method": "W",
+      "protocol": "line-addressed-source-copy-protocol-v1.json",
+      "model_content_sha256": "90d96ab593f907e2508be8b7817bc88c8eb8796c2f10b48b4bfb29d4237a463a",
+      "records": [
+        {
+          "id": "C01",
+          "source_path": "args.go",
+          "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+          "physical_line": 22,
+          "expected_exact_line": "type PositionalArgs func(cmd *Command, args []string) error",
+          "generated_original_string": "22",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned line number22 as text, not declaration."
+        },
+        {
+          "id": "C02",
+          "source_path": "args.go",
+          "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+          "physical_line": 52,
+          "expected_exact_line": "\tif len(cmd.ValidArgs) > 0 {",
+          "generated_original_string": "52",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned line number52 as text, not guard."
+        },
+        {
+          "id": "C08",
+          "source_path": "args.go",
+          "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+          "physical_line": 143,
+          "expected_exact_line": "\treturn MatchAll(ExactArgs(n), OnlyValidArgs)",
+          "generated_original_string": "143",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned line number143 as text, not delegation."
+        }
+      ],
+      "primary_exact_count": 0,
+      "secondary_stripped_count": 0,
+      "requested_lines": 3,
+      "not_semantic_claim_or_complete_note_acceptance": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "optimizer_updates": 0
+    },
+    {
+      "at": "2026-11-21T19:21:06.331016+00:00",
+      "task": "zod",
+      "method": "W",
+      "protocol": "line-addressed-source-copy-protocol-v1.json",
+      "model_content_sha256": "be8ae21d6dee8c06dead3a32a6341bbe21429cfd4e65030ed88b8c23007ed211",
+      "records": [
+        {
+          "id": "Z03",
+          "source_path": "packages/zod/src/v4/core/parse.ts",
+          "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+          "physical_line": 75,
+          "expected_exact_line": "    throw new core.$ZodAsyncError();",
+          "generated_original_string": "throw new core.$ZodAsyncError();",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": true,
+          "observed_failure_boundary": "Correct throw code after whitespace stripping, but leading physical indentation omitted. Exact-byte primary criterion fails."
+        },
+        {
+          "id": "Z06",
+          "source_path": "packages/zod/src/v4/core/parse.ts",
+          "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+          "physical_line": 88,
+          "expected_exact_line": "      if (!error) {",
+          "generated_original_string": "return {\n    success: false,\n    get error() {\n    ...",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned multiline object/getter fragment with ellipsis rather than one !error guard line."
+        },
+        {
+          "id": "Z07",
+          "source_path": "packages/zod/src/v4/core/parse.ts",
+          "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+          "physical_line": 97,
+          "expected_exact_line": "      error = e;",
+          "generated_original_string": "error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));\n",
+          "exact_full_line": false,
+          "secondary_stripped_code_equal": false,
+          "observed_failure_boundary": "Returned constructor assignment from getter rather than setter assignment direction at97."
+        }
+      ],
+      "primary_exact_count": 0,
+      "secondary_stripped_count": 1,
+      "requested_lines": 3,
+      "not_semantic_claim_or_complete_note_acceptance": true,
+      "owner_approved": false,
+      "training_gold": false,
+      "optimizer_updates": 0
+    }
+  ],
+  "calls": 3,
+  "normal_schema_valid": 3,
+  "exact_source_lines": {
+    "numerator": 0,
+    "denominator": 9
+  },
+  "secondary_whitespace_stripped_code_equal": {
+    "numerator": 1,
+    "denominator": 9
+  },
+  "generated_tokens": 183,
+  "server_reported_seconds": 328.62815073400003,
+  "interpretation": "Even explicit physical line addresses did not make this fixed local model preserve source lines:0/9exact,1/9whitespace-stripped. Observable failures include wrong owner/line association, copying numeric address instead of content, unrelated statement and ellipsis. This is a source-copy diagnostic, not9semantic claim trials or whole-note failure denominator. No retry/manual output repair.",
+  "output_budget": "All3normal stop with valid schema, no length/transport failure; these observed copy errors cannot be attributed to length termination. Internal cause or general model capability not proven.",
+  "complete_documents_requested": 0,
+  "complete_document_acceptance": null,
+  "neural_weight_improvement": false,
+  "gold": 0,
+  "optimizer_updates": 0
+}

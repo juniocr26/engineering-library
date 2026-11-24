@@ -1,0 +1,113 @@
+{
+  "at": "2026-11-20T20:33:31.781681+00:00",
+  "status": "FROZEN_BEFORE_OWN_SYMBOLIC_ARITHMETIC",
+  "hypothesis": "Pinned source/config metadata can quantify conditional adapter A/B element counts and demonstrate selection-boundary pitfalls,without creating tensors,loading a checkpoint,executing MLX selection/model code or measuring memory.",
+  "mlx_lm_revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "mlx_reference_revision": "64ea011cb65f14d9ce2737e60db9a4ae91ed7441",
+  "mlx_reference_tag": "v0.32.3",
+  "not_an_installed_or_resolved_environment": true,
+  "model_config": "training-primary-sources-v1/community-3b--config.json",
+  "model_config_sha256": "c546925585e48f43890d9dc5150df4fec73dd3780d92961c5ace451934cc4cd6",
+  "rank": 4,
+  "scale": 8.0,
+  "cases": [
+    {
+      "id": "default-last-two",
+      "num_layers": 2,
+      "explicit_keys": null,
+      "expected_modules": 14,
+      "expected_adapter_elements": 434176,
+      "expected_global_outside_layer_selection": false
+    },
+    {
+      "id": "explicit-qv-last-two",
+      "num_layers": 2,
+      "explicit_keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ],
+      "expected_modules": 4,
+      "expected_adapter_elements": 81920,
+      "expected_global_outside_layer_selection": false
+    },
+    {
+      "id": "zero-means-all-slice",
+      "num_layers": 0,
+      "explicit_keys": null,
+      "expected_modules": 196,
+      "expected_adapter_elements": 6078464,
+      "expected_global_outside_layer_selection": false
+    },
+    {
+      "id": "negative-means-all-slice",
+      "num_layers": -1,
+      "explicit_keys": null,
+      "expected_modules": 196,
+      "expected_adapter_elements": 6078464,
+      "expected_global_outside_layer_selection": false
+    },
+    {
+      "id": "explicit-empty-keys",
+      "num_layers": 2,
+      "explicit_keys": [],
+      "expected_modules": 0,
+      "expected_adapter_elements": 0,
+      "expected_global_outside_layer_selection": false
+    },
+    {
+      "id": "global-embedding-outside-layers",
+      "num_layers": 2,
+      "explicit_keys": [
+        "model.embed_tokens"
+      ],
+      "expected_modules": 1,
+      "expected_adapter_elements": 525312,
+      "expected_global_outside_layer_selection": true
+    },
+    {
+      "id": "global-first-layer-outside-last-two",
+      "num_layers": 2,
+      "explicit_keys": [
+        "model.layers.0.self_attn.q_proj"
+      ],
+      "expected_modules": 1,
+      "expected_adapter_elements": 24576,
+      "expected_global_outside_layer_selection": true
+    },
+    {
+      "id": "relative-plus-global-first",
+      "num_layers": 2,
+      "explicit_keys": [
+        "self_attn.q_proj",
+        "model.layers.0.self_attn.q_proj"
+      ],
+      "expected_modules": 3,
+      "expected_adapter_elements": 73728,
+      "expected_global_outside_layer_selection": true
+    },
+    {
+      "id": "explicit-all-layers",
+      "num_layers": 28,
+      "explicit_keys": null,
+      "expected_modules": 196,
+      "expected_adapter_elements": 6078464,
+      "expected_global_outside_layer_selection": false
+    }
+  ],
+  "source_conditions": [
+    "Regular model objects constructed according to the selected Llama config/source,without custom to_lora hooks or monkeypatching.",
+    "Pinned minimum-version Linear,QuantizedLinear and Module source definitions have no to_lora method;conditional fallback LoRALinear/LoRAEmbedding routes.",
+    "Named-module paths follow reviewed Module traversal and tree_flatten rules;no actual module instantiated.",
+    "Default discovery sees the seven projection names in each reviewed TransformerBlock;the embedding is outside layer blocks.",
+    "Source model config is metadata,not verification of weights/tokenizer/actualtensor dimensions."
+  ],
+  "memory_output_scope": "Only hypothetical element_bytes scenarios at2or4bytes per adapter element and a clearly assumed four-equal-buffer illustration. No actual dtype,optimizer state,activation,allocator,temp-buffer or total training-memory claim.",
+  "source_execution_allowed": false,
+  "only_owned_integer_arithmetic_and_symbolic_paths_allowed": true,
+  "nn_model_or_tensor_or_optimizer_creation_allowed": false,
+  "training_steps": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "launch_allowed": false,
+  "readiness": "NO-GO_UNCHANGED"
+}

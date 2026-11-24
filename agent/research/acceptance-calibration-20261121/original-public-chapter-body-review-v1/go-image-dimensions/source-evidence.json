@@ -1,0 +1,67 @@
+{
+  "repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "license": {
+    "id": "MIT",
+    "path": "LICENSE",
+    "sha256": "52b5e2ea72b69e0293b77ab8ca3805404a2b921ea3deb5d433072f144c086446",
+    "retained_private": "private-research://continuation-20261119/sources/go-image-optimizer/LICENSE"
+  },
+  "source_executed": false,
+  "runtime_bindings_verified": false,
+  "sources": [
+    {
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+      "units": [
+        {
+          "selector": "ValidateDimensions",
+          "declaration_kind": "function",
+          "symbol": "imaging.ValidateDimensions",
+          "start_line": 19,
+          "end_line": 21,
+          "quote": "func ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}",
+          "declaration": "func ValidateDimensions(cfg image.Config, maxPixels int) error",
+          "function_type": "func(cfg image.Config, maxPixels int) error",
+          "return_contract": {
+            "AST_expression_kinds": [
+              "*ast.CallExpr"
+            ],
+            "expressions": [
+              "ValidateImageSize(cfg.Width, cfg.Height, maxPixels)"
+            ],
+            "kind": "sole-return-expressions",
+            "runtime_completion_verified": false
+          }
+        },
+        {
+          "selector": "ValidateImageSize",
+          "declaration_kind": "function",
+          "symbol": "imaging.ValidateImageSize",
+          "start_line": 23,
+          "end_line": 33,
+          "quote": "func ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}",
+          "declaration": "func ValidateImageSize(width, height, maxPixels int) error",
+          "function_type": "func(width, height, maxPixels int) error"
+        }
+      ],
+      "producer": {
+        "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+        "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+        "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.5.0"
+      }
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+      "quote": "package imaging\n\nimport (\n\t\"image\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imageprocessing\"\n)\n\nconst (\n\t// DefaultMaxDecodedPixels limits decoded image memory growth. A 32 MP RGBA\n\t// image needs roughly 128 MiB before encoder overhead.\n\tDefaultMaxDecodedPixels = 32_000_000\n\n\t// DefaultMaxAnimatedFramePixels caps canvas-sized animation work. The limit\n\t// is width * height * frame count, not bytes, so codecs can share it.\n\tDefaultMaxAnimatedFramePixels = 64_000_000\n)\n\nfunc ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n\nfunc ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n\nfunc ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n",
+      "start_line": 1,
+      "end_line": 49,
+      "role": "Expanded correction evidence; not claimed to have been supplied in baseline"
+    }
+  ]
+}

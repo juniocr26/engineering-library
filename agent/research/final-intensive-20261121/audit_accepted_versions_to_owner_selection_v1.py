@@ -1,0 +1,13 @@
+"""Reconcile acceptance-version counts with exact public owner-selection bytes."""
+from pathlib import Path
+import json,hashlib,datetime
+P=Path(__file__).resolve().parent;ROOT=P.parents[2];h=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+m=P/'requested-metric-reconciliation-v23.json';b=P/'owner-review-batch-v20.json';metric=json.loads(m.read_bytes())['manual_chapter_version_accounting'];batch=json.loads(b.read_bytes());chosen=batch['public_manual_pairs']+batch['supplemental_technically_accepted_pairs'];key=lambda x:tuple(sorted(d['sha256'] for d in x['documents']));selected={key(x):x for x in chosen};assert len(selected)==len(chosen)==28
+rows=[]
+for r in metric['records']:
+ for doc in r['documents']:assert h(ROOT/doc['path'])==doc['sha256']
+ k=key(r);s=selected.get(k);rows.append({'topic':r['topic'],'version':r['version'],'technical_status':r['technical_status'],'documents':r['documents'],'selected_exact_public_pair_id':s['id'] if s else None,'selection_inference':'Exact two-document SHA set match only. Nonselection is not rejection, and acceptance is not owner/Gold/rights approval.'})
+selected_rows=[r for r in rows if r['selected_exact_public_pair_id'] is not None];accepted=[r for r in rows if r['technical_status']=='TECHNICALLY_ACCEPTED'];accepted_selected=[r for r in accepted if r['selected_exact_public_pair_id'] is not None];unselected_accepted=[r for r in accepted if r['selected_exact_public_pair_id'] is None];failed_selected=[r for r in selected_rows if r['technical_status']!='TECHNICALLY_ACCEPTED'];unmapped_selected=sorted(x['id'] for k,x in selected.items() if not any(key(r)==k for r in metric['records']))
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'metric_registry_sha256':h(m),'owner_batch_sha256':h(b),'public_related_version_count':len(rows),'technically_accepted_versions':len(accepted),'selected_public_pairs':len(chosen),'accepted_versions_matching_selection':len(accepted_selected),'accepted_versions_not_selected':len(unselected_accepted),'failed_or_inconclusive_versions_selected':failed_selected,'selected_pairs_not_found_in_version_registry':unmapped_selected,'records':rows,'unselected_accepted_versions':unselected_accepted,'scope':'Finite exact-byte set reconciliation; not a new factual/bilingual review, selection-policy inference, independent benchmark or approval. Internal two pairs excluded from both public sets.','neural_calls':0,'training_gold':0}
+with (P/'accepted-versions-owner-selection-reconciliation-v1.json').open('x') as f:json.dump(out,f,ensure_ascii=False,indent=2);f.write('\n')
+print(json.dumps({k:v for k,v in out.items() if k not in ('records','unselected_accepted_versions')}));assert not failed_selected and not unmapped_selected

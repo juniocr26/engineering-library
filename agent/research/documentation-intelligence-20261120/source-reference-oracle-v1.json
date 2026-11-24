@@ -1,0 +1,297 @@
+{
+  "frozen_utc": "2026-11-20T11:06:54.098615+00:00",
+  "status": "DEVELOPMENT_ONLY",
+  "evidence_limit": "Paths operator-declared, not independently Git-proven; acceptance never claims filesystem existence.",
+  "cases": [
+    {
+      "id": "already-current-after-relocation",
+      "expected": "NO-OP",
+      "rationale": "Current path in paired claim matches declared current source identity.",
+      "packet": {
+        "id": "already-current-after-relocation",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "pkg/current.py"
+        }
+      }
+    },
+    {
+      "id": "already-current-no-relocation",
+      "expected": "NO-OP",
+      "rationale": "Correct unchanged source reference.",
+      "packet": {
+        "id": "already-current-no-relocation",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/current.py",
+          "current_path": "pkg/current.py"
+        }
+      }
+    },
+    {
+      "id": "old-reference-after-relocation",
+      "expected": "MODIFY",
+      "rationale": "Only positively declared old reference needs revision.",
+      "packet": {
+        "id": "old-reference-after-relocation",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/previous.py for value.",
+          "pt-br": "Consulte pkg/previous.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "pkg/current.py"
+        }
+      }
+    },
+    {
+      "id": "unrelated-reference",
+      "expected": "INCONCLUSIVE",
+      "rationale": "A different target is neither positively old nor current.",
+      "packet": {
+        "id": "unrelated-reference",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/unrelated.py for value.",
+          "pt-br": "Consulte pkg/unrelated.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "pkg/current.py"
+        }
+      }
+    },
+    {
+      "id": "no-current-identity",
+      "expected": "INCONCLUSIVE",
+      "rationale": "Missing current path cannot prove a reference.",
+      "packet": {
+        "id": "no-current-identity",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py"
+        }
+      }
+    },
+    {
+      "id": "missing-current-definition",
+      "expected": "INCONCLUSIVE",
+      "rationale": "No selected callable in current file.",
+      "packet": {
+        "id": "missing-current-definition",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "pass\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "pkg/current.py"
+        }
+      }
+    },
+    {
+      "id": "partial-source",
+      "expected": "INCONCLUSIVE",
+      "rationale": "Incomplete source registry.",
+      "packet": {
+        "id": "partial-source",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": false,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "pkg/current.py"
+        }
+      }
+    },
+    {
+      "id": "conflicting-authority",
+      "expected": "INCONCLUSIVE",
+      "rationale": "Conflicting history.",
+      "packet": {
+        "id": "conflicting-authority",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "pkg/current.py",
+          "conflicting_history": true
+        }
+      }
+    },
+    {
+      "id": "bilingual-mismatch",
+      "expected": "INCONCLUSIVE",
+      "rationale": "Different reference paths in languages.",
+      "packet": {
+        "id": "bilingual-mismatch",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/other.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "pkg/current.py"
+        }
+      }
+    },
+    {
+      "id": "untrusted-non-string-path",
+      "expected": "INCONCLUSIVE",
+      "rationale": "Path identity must be a string.",
+      "packet": {
+        "id": "untrusted-non-string-path",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": [
+            "pkg/current.py"
+          ]
+        }
+      }
+    },
+    {
+      "id": "untrusted-relative-traversal",
+      "expected": "INCONCLUSIVE",
+      "rationale": "Invalid declared current identity must not authorize MODIFY.",
+      "packet": {
+        "id": "untrusted-relative-traversal",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/previous.py for value.",
+          "pt-br": "Consulte pkg/previous.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/previous.py",
+          "current_path": "../../outside.py"
+        }
+      }
+    },
+    {
+      "id": "untrusted-empty-current-path",
+      "expected": "INCONCLUSIVE",
+      "rationale": "Empty current path is not a source identity.",
+      "packet": {
+        "id": "untrusted-empty-current-path",
+        "family": "owned-source-reference-development",
+        "language": "python",
+        "previous_source": "def value():\n    return 1\n",
+        "current_source": "def value():\n    return 1\n",
+        "documentation": {
+          "en": "See pkg/current.py for value.",
+          "pt-br": "Consulte pkg/current.py para value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "sample.value",
+        "metadata": {
+          "previous_path": "pkg/current.py",
+          "current_path": ""
+        }
+      }
+    }
+  ]
+}

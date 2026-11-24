@@ -1,0 +1,276 @@
+Write one complete bilingual technical reference chapter, English followed by pt-BR, for esp-hal command parsing at the supplied exact revision. Audience: maintainers of CI command handling. Scope: parseHilCommand, parseTestSizeCommand, their local parsing/classification helpers, chips.json configuration and the selected dispatch/help integration boundaries. Explain exact matching/first-line behavior, normalized chips versus original names, deduplication, classification precedence, help versus error precedence, quick/full/explicit selection, canonical packages, all output fields/types, null/error results and distinction from authorization or actual workflow execution. Preserve identifiers and negation in both languages. Give one source-derived illustrative call/output example per API in each language with identical code bytes across languages; label examples unexecuted. Include corresponding FAQs: does parser success authorize dispatch, what determines chip order, and does help override invalid options? Cite supplied file names/line ranges near claims. Lifecycle action ADD applies only to an isolated proposed reference chapter. Do not edit external repositories, invoke GitHub APIs, send comments, trigger workflows, execute project source/tests or claim runtime test success. State uncertainties, especially runtime expression semantics beyond the selected source. Apply unchanged G1-G9 technical gates with independent procedure limits explicit.
+
+Exact revision: e800b19c30bc208aa93d600fb158cf8cef42a4fe
+
+
+SOURCE hil-parse.js L1-L155
+1: // Reads the `/hil` and `/test-size` commands. Like the tokens of `cargo xtask
+2: // build` and `test`, their words go in any order: a chip, a package, a keyword,
+3: // and everything else is a test or example name.
+4: 
+5: const CHIPS = require("../chips.json");
+6: const SOCS = CHIPS.map((c) => c.soc);
+7: const QUICK = CHIPS.filter((c) => c.quick).map((c) => c.soc);
+8: 
+9: // What an ELF basename or example name can look like, plus `::` for the
+10: // `test::filter` form xtask accepts.
+11: const NAME = /^[A-Za-z0-9_:-]+$/;
+12: 
+13: // xtask takes these as flags too, but here their values are words like any
+14: // other, so the flags add nothing.
+15: const FLAGS = ["--test", "--tests", "-t", "--package", "--packages"];
+16: 
+17: const HIL_PACKAGES = new Map([
+18:   ["hil-test", "hil-test"],
+19:   ["test", "hil-test"],
+20:   ["tests", "hil-test"],
+21:   ["hil-test-radio", "hil-test-radio"],
+22:   ["radio", "hil-test-radio"],
+23: ]);
+24: 
+25: // What `cargo xtask build --package` gets, empty for the default `examples`.
+26: const SIZE_PACKAGES = new Map([
+27:   ["examples", ""],
+28:   ["example", ""],
+29:   ["qa-test", "qa-test"],
+30:   ["qa", "qa-test"],
+31: ]);
+32: 
+33: const USAGE = `Usage, with the words of a command in any order. \`/hil\` is the previous spelling and still works.
+34: - \`/test quick\` — run a quick HIL matrix (only \`ESP32-S3\` (Xtensa) and \`ESP32-C6\` (RISC-V) tests)
+35: - \`/test full\` — run the full HIL matrix for all supported chips, \`all\` works too
+36: - \`/test <chip> [<chip> ...]\` — run the HIL tests **only** for the listed chips. Example: \`/test c3 s3\`
+37: - Add test names to run only those, in any position. Example: \`/test esp32 rmt c6 i2c\` or \`/test quick radio_basic::test_scan_doesnt_leak\`
+38: - Add \`radio\` to run radio HIL instead of the default \`hil-test\` package, or both package names to run both. Example: \`/test c6 radio\`
+39: - \`/test-size <example> [<example> ...] <chip> [<chip> ...]\` — run binary size analysis for the examples on the chips. Add \`qa\` for a binary of \`qa-test\`. Example: \`/test-size hello_world c3 c6\` or \`/test-size sleep_timer qa c3\`
+40: 
+41: Chips can be shortened as in xtask: \`c6\`, \`esp32-c6\` and \`ESP32C6\` all mean \`esp32c6\`. Only the first line of the comment is read, the rest is free text.
+42: If you aren't a repository **member/owner**, you must be **trusted for this PR**.
+43: Maintainers can grant access with a \`trusted-author\` label or with:
+44: \`\`\`
+45: /trust @<login>
+46: \`\`\`
+47: and revoke with:
+48: \`\`\`
+49: /revoke @<login>
+50: \`\`\``;
+51: 
+52: // `esp32-c6`, `ESP32C6` and `c6` name the same chip as `esp32c6`, as in xtask.
+53: function normalizeChip(word) {
+54:   const name = word.toLowerCase().replace(/[-_]/g, "");
+55:   if (!name) return null;
+56:   const soc = name.startsWith("esp32") ? name : `esp32${name}`;
+57:   return SOCS.includes(soc) ? soc : null;
+58: }
+59: 
+60: // A misspelled chip would otherwise be taken for a test or example name.
+61: function looksLikeChip(word) {
+62:   return /^esp32/i.test(word) || /^[a-z]\d+$/i.test(word);
+63: }
+64: 
+65: // Backticks would end the code span the word is quoted in.
+66: function quote(word) {
+67:   return `\`${word.replace(/`/g, "")}\``;
+68: }
+69: 
+70: // The words after the command on the first line of the comment. Commas
+71: // separate words like spaces do, and `--test=rmt` is `--test rmt`.
+72: function commandWords(body, command) {
+73:   const line = String(body || "").split(/\r?\n/, 1)[0].trim();
+74:   const match = line.match(new RegExp(`^${command}(?:\\s+(.*))?$`, "i"));
+75:   if (!match) return null;
+76:   return (match[1] || "").split(/[\s,=]+/).filter(Boolean);
+77: }
+78: 
+79: function sortWords(words, { keywords, packages }) {
+80:   const sorted = { chips: [], keywords: [], packages: [], names: [], errors: [] };
+81:   const add = (list, value) => list.includes(value) || list.push(value);
+82:   for (const word of words) {
+83:     const lower = word.toLowerCase();
+84:     const chip = normalizeChip(word);
+85:     if (FLAGS.includes(lower)) continue;
+86:     if (chip) add(sorted.chips, chip);
+87:     else if (keywords.includes(lower)) add(sorted.keywords, lower);
+88:     else if (packages.has(lower)) add(sorted.packages, packages.get(lower));
+89:     else if (word.startsWith("-")) sorted.errors.push(`Unknown option ${quote(word)}.`);
+90:     else if (looksLikeChip(word))
+91:       sorted.errors.push(`Unknown chip ${quote(word)}. Known chips are: ${SOCS.join(", ")}.`);
+92:     else if (!NAME.test(word)) sorted.errors.push(`${quote(word)} is not a test or example name.`);
+93:     else add(sorted.names, word);
+94:   }
+95:   return sorted;
+96: }
+97: 
+98: // `null` for a comment that is not a `/hil` or `/test` command. `help` when it asks
+99: // for the usage, `error` when it can't be run. `/test` stops at a word boundary, so
+100: // `/test-size` is not one of these.
+101: function parseHilCommand(body) {
+102:   const words = ["/hil", "/test"].map((command) => commandWords(body, command)).find(Boolean);
+103:   if (!words) return null;
+104: 
+105:   const result = { help: false, error: "", chips: "", selector: "", tests: "", package: "" };
+106:   const sorted = sortWords(words, {
+107:     keywords: ["quick", "full", "all", "help"],
+108:     packages: HIL_PACKAGES,
+109:   });
+110:   if (words.length === 0 || sorted.keywords.includes("help")) return { ...result, help: true };
+111:   if (sorted.errors.length) return { ...result, error: sorted.errors.join("\n") };
+112: 
+113:   const full = sorted.keywords.includes("full") || sorted.keywords.includes("all");
+114:   const quick = sorted.keywords.includes("quick");
+115:   const chips = SOCS.filter(
+116:     (soc) => full || (quick && QUICK.includes(soc)) || sorted.chips.includes(soc),
+117:   );
+118:   if (chips.length === 0) {
+119:     return { ...result, error: "Name the chips to test, like `c6` or `esp32s3`, or `quick` or `full`." };
+120:   }
+121: 
+122:   let selector = chips.join(" ");
+123:   if (full) selector = "full";
+124:   else if (quick && sorted.chips.every((soc) => QUICK.includes(soc))) selector = "quick";
+125: 
+126:   return {
+127:     ...result,
+128:     chips: chips.join(" "),
+129:     selector,
+130:     tests: sorted.names.join(","),
+131:     package: sorted.packages.length > 1 ? "all" : sorted.packages[0] || "hil-test",
+132:   };
+133: }
+134: 
+135: // `null` for a comment that is not a `/test-size` command, `error` when it
+136: // can't be run.
+137: function parseTestSizeCommand(body) {
+138:   const words = commandWords(body, "/test-size");
+139:   if (!words) return null;
+140: 
+141:   const sorted = sortWords(words, { keywords: [], packages: SIZE_PACKAGES });
+142:   const errors = [...sorted.errors];
+143:   if (sorted.names.length === 0) errors.push("Name the example to measure, like `hello_world`.");
+144:   if (sorted.chips.length === 0) errors.push("Name at least one chip, like `c6` or `esp32s3`.");
+145:   if (sorted.packages.length > 1) errors.push("Examples and `qa-test` binaries are measured one package at a time.");
+146: 
+147:   return {
+148:     error: errors.join("\n"),
+149:     examples: sorted.names.join(" "),
+150:     package: sorted.packages[0] || "",
+151:     chips: SOCS.filter((soc) => sorted.chips.includes(soc)),
+152:   };
+153: }
+154: 
+155: module.exports = { parseHilCommand, parseTestSizeCommand, USAGE };
+
+
+SOURCE chips.json L1-L14
+1: [
+2:   { "soc": "esp32",    "arch": "xtensa", "rust-target": "xtensa-esp32-none-elf",         "ci-toolchain": "esp",                    "hil-runner": "esp32-jtag"    },
+3:   { "soc": "esp32s2",  "arch": "xtensa", "rust-target": "xtensa-esp32s2-none-elf",       "ci-toolchain": "esp",                    "hil-runner": "esp32s2-jtag"  },
+4:   { "soc": "esp32s3",  "arch": "xtensa", "rust-target": "xtensa-esp32s3-none-elf",       "ci-toolchain": "esp",    "quick": true,  "hil-runner": "esp32s3-usb",  "hil-radio-runner": "esp32s3-radio" },
+5:   { "soc": "esp32c2",  "arch": "riscv",  "rust-target": "riscv32imc-unknown-none-elf",   "ci-toolchain": "esp",                    "hil-runner": "esp32c2-jtag"  },
+6:   { "soc": "esp32c3",  "arch": "riscv",  "rust-target": "riscv32imc-unknown-none-elf",   "ci-toolchain": "esp",                    "hil-runner": "esp32c3-usb"   },
+7:   { "soc": "esp32c5",  "arch": "riscv",  "rust-target": "riscv32imac-unknown-none-elf",  "ci-toolchain": "stable",                 "hil-runner": "esp32c5-usb"   },
+8:   { "soc": "esp32c6",  "arch": "riscv",  "rust-target": "riscv32imac-unknown-none-elf",  "ci-toolchain": "stable", "quick": true,  "hil-runner": "esp32c6-usb",  "hil-radio-runner": "esp32c6-radio" },
+9:   { "soc": "esp32c61", "arch": "riscv",  "rust-target": "riscv32imac-unknown-none-elf",  "ci-toolchain": "stable",                 "hil-runner": "esp32c61-usb"  },
+10:   { "soc": "esp32h2",  "arch": "riscv",  "rust-target": "riscv32imac-unknown-none-elf",  "ci-toolchain": "stable",                 "hil-runner": "esp32h2-usb"   },
+11:   { "soc": "esp32h4",  "arch": "riscv",  "rust-target": "riscv32imafc-unknown-none-elf", "ci-toolchain": "stable",                 "hil-runner": "esp32h4-usb"   },
+12:   { "soc": "esp32p4",  "arch": "riscv",  "rust-target": "riscv32imafc-unknown-none-elf", "ci-toolchain": "stable",                 "hil-runner": "esp32p4"       },
+13:   { "soc": "esp32s31", "arch": "riscv",  "rust-target": "riscv32imafc-unknown-none-elf", "ci-toolchain": "stable",                 "hil-runner": "esp32s31-jtag" }
+14: ]
+
+
+SOURCE dispatch.yml L256-L282
+256:     needs: auth
+257:     if: github.event_name == 'issue_comment' &&
+258:       needs.auth.outputs.allowed == 'true' &&
+259:       (startsWith(github.event.comment.body, '/hil ') ||
+260:       startsWith(github.event.comment.body, '/test '))
+261:     runs-on: ubuntu-latest
+262:     steps:
+263:       - uses: actions/checkout@v6 # for `require`
+264:         with:
+265:           fetch-depth: 1
+266: 
+267:       - name: Resolve dispatch parameters
+268:         id: mode
+269:         uses: actions/github-script@v7
+270:         with:
+271:           # A command that can't be run is answered by `hil-help`.
+272:           script: |
+273:             const { parseHilCommand } = require('./.github/scripts/hil-parse.js');
+274:             const res = parseHilCommand(context.payload.comment.body) || {};
+275: 
+276:             core.setOutput('selector', res.selector || '');
+277:             core.setOutput('chips', res.chips || '');
+278:             core.setOutput('tests', res.tests || '');
+279:             core.setOutput('package', res.package || '');
+280: 
+281:       - name: Dispatch HIL
+282:         if: steps.mode.outputs.chips != ''
+
+
+SOURCE dispatch.yml L346-L371
+346:   hil-help:
+347:     if: github.event_name == 'issue_comment' &&
+348:       github.event.issue.pull_request &&
+349:       (startsWith(github.event.comment.body, '/hil') ||
+350:       startsWith(github.event.comment.body, '/test')) &&
+351:       !startsWith(github.event.comment.body, '/test-')
+352:     runs-on: ubuntu-latest
+353:     steps:
+354:       - uses: actions/checkout@v6 # for `require`
+355:         with:
+356:           fetch-depth: 1
+357: 
+358:       - name: Explain usage
+359:         uses: actions/github-script@v7
+360:         with:
+361:           script: |
+362:             const { parseHilCommand, USAGE } = require('./.github/scripts/hil-parse.js');
+363:             const res = parseHilCommand(context.payload.comment.body);
+364:             if (!res || (!res.help && !res.error)) return;
+365: 
+366:             const login = context.payload.comment.user.login;
+367:             const problem = res.error ? `@${login}, this command can't be run:\n${res.error}\n\n` : '';
+368:             await github.rest.issues.createComment({
+369:               ...context.repo,
+370:               issue_number: context.issue.number,
+371:               body: problem + USAGE,
+
+
+SOURCE dispatch.yml L374-L409
+374:   binary-size:
+375:     needs: auth
+376:     if: github.event_name == 'issue_comment' &&
+377:       needs.auth.outputs.allowed == 'true' &&
+378:       startsWith(github.event.comment.body, '/test-size')
+379:     runs-on: ubuntu-latest
+380:     steps:
+381:       - uses: actions/checkout@v6 # for `require`
+382:         with:
+383:           fetch-depth: 1
+384: 
+385:       - name: Extract parameters from comment
+386:         id: extract
+387:         uses: actions/github-script@v7
+388:         with:
+389:           script: |
+390:             const { parseTestSizeCommand, USAGE } = require('./.github/scripts/hil-parse.js');
+391:             const res = parseTestSizeCommand(context.payload.comment.body);
+392:             if (!res || res.error) {
+393:               const login = context.payload.comment.user.login;
+394:               const error = res?.error || 'Write the command as `/test-size` followed by its words.';
+395:               await github.rest.issues.createComment({
+396:                 ...context.repo,
+397:                 issue_number: context.issue.number,
+398:                 body: `@${login}, this \`/test-size\` command can't be run:\n${error}\n\n${USAGE}`,
+399:               });
+400:               core.setFailed(error);
+401:               return;
+402:             }
+403: 
+404:             // `example_name` takes several examples, separated by spaces.
+405:             const chips = JSON.stringify(res.chips);
+406:             core.setOutput('example_name', res.examples);
+407:             core.setOutput('package', res.package);
+408:             core.setOutput('chips', chips);
+409:             core.setOutput('chips_escaped', JSON.stringify(chips).slice(1, -1));

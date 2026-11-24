@@ -1,0 +1,11 @@
+--- agent/research/portfolio-vivabem-20261120/sqlx-named-context-candidate-v2/pt-BR.md
++++ agent/research/final-intensive-20261121/sqlx-named-context-candidate-v3/pt-BR.md
+@@ -6,7 +6,7 @@
+ 
+ ## Entradas públicas e limite da execução
+ 
+-A função de pacote `Named` chama `bindNamedMapper` usando `QUESTION` e o mapper do pacote (`named.go:417-435`). Retorna uma string de consulta, argumentos posicionais e um erro; não recebe um identificador de banco do qual possa selecionar o formato do driver. A função de pacote `BindNamed` recebe um tipo de binding explícito e está marcada como obsoleta na fonte selecionada. Já o método de nome semelhante `DB.BindNamed` usa o nome do driver e o mapper do objeto de banco (`sqlx.go:300-303`). Essas entradas não devem ser confundidas.
++A função de pacote `Named` chama `bindNamedMapper` usando `QUESTION` e o mapper do pacote (`named.go:417-435`). Retorna uma string de consulta, argumentos posicionais e um erro; não recebe um identificador de banco do qual possa selecionar o formato do driver. A função de pacote `BindNamed` recebe um tipo de binding explícito e está marcada como obsoleta na fonte selecionada. Evidência: `named.go:408-412`. Já o método de nome semelhante `DB.BindNamed` usa o nome do driver e o mapper do objeto de banco (`sqlx.go:300-303`). Essas entradas não devem ser confundidas.
+ 
+ Os métodos de conveniência `DB.NamedExec` e `DB.NamedQuery` encaminham para os invólucros do pacote (`sqlx.go:305-315`). Esses invólucros usam `BindType(e.DriverName())` e `mapperFor(e)`, retornam um erro de binding antes da chamada selecionada ao executor e então delegam a `e.Exec` ou `e.Queryx` (`named.go:441-458`). São APIs de execução, não apenas auxiliares de formatação. A interface `Ext` combina capacidades de binding, consulta e execução (`sqlx.go:89-101`); essa fonte não determina efeitos ou resultados do driver concreto.
+ 

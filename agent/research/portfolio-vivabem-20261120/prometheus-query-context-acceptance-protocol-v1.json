@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-21T08:05:00.355831+00:00",
+  "before_candidate": true,
+  "revision": "b2a602494b65bda38316eabaef7e0d834a6814dd",
+  "role": "DEVELOPMENT_EXPOSED",
+  "hypothesis_ref": "prometheus-query-context-protocol-v1.json",
+  "dimensions": [
+    "factual_accuracy",
+    "source_provenance",
+    "architecture_boundaries",
+    "relevant_completeness",
+    "API_behavior",
+    "errors",
+    "tests_versus_execution",
+    "example_validity",
+    "EN_PT_equivalence",
+    "FAQ_completeness",
+    "preservation",
+    "uncertainty"
+  ],
+  "required_source_groups": [
+    "Query interface versus concrete query state; Exec once as documented contract, not observed guard",
+    "Construction: newQuery before queue/parse/preprocess; not evaluation and not assumed pure",
+    "Instant/range differences; range scalar/vector check, HTTP range guards not automatically engine guards",
+    "Cancellation assignment inside Engine.exec; Cancel nil check, signal not wait or buffer cleanup",
+    "q.executionContext default timeout versus construction deadline; cost feature and cause qualifiers",
+    "Numeric limit requested0 inherits ceiling, ceiling0 unbounded unless override, aboveceiling error not silentclamp",
+    "query.Close returns matrix point slices to pools, no explicit Cancel, nilreset or idempotence proof",
+    "Reader querier.Close deferred separately from query.Close; errors from deferred Close not explicitly propagated",
+    "HTTP query/queryRange return Close finalizer; named-result fallback only when finalizer nil, outer wrapper defers finalizer around response handling",
+    "Engine.Close closes active tracker if present; not per-queryClose, not implicit safe live shutdown",
+    "Result and warnings/error may coexist; matrix assignment includes range late-error path",
+    "Existing cancellation/timeout tests use NewTestQuery/TestStmt, not executed real storage integration",
+    "Native Go quotations33 across9successfulrequests; one ambiguity refusal resolved by packagequalifiedselectors; no typecheck/application execution",
+    "Bounded source-only reproducible example and at least6complete paired FAQ answers"
+  ],
+  "critical_rejections": [
+    "Close cancels execution or blocks until stopped",
+    "Cancel returns pooled buffers or guarantees immediate stop",
+    "Engine.Close safely stops all in-flight queries",
+    "requested limit0 always disables finite ceiling",
+    "all constructor paths are pure or all range guards are in Engine.NewRangeQuery",
+    "Exec one-time contract enforced by observed runtime check",
+    "Close idempotence or concurrent safety asserted without proof",
+    "HTTP query handler always calls Close before returning its result value",
+    "all panics recovered by evaluator defer across entire API/engine",
+    "tests or syntax-only parser portrayed as executed Prometheus queries"
+  ],
+  "candidate_not_yet_created": true,
+  "owner_approved": false,
+  "training_eligible": false
+}

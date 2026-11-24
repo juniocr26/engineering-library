@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-21T03:42:18.910204+00:00",
+  "hypothesis": "H30: the isolated prior outer-handler candidate can contain cached operational faults without weakening same-instance concurrent suppression or durable journal semantics. Cached revalidation failure must preserve prior successful bytes; fresh failure is a durable INCONCLUSIVE result and must not be silently retried under the same ID.",
+  "baseline": "HelperRetrieval0.1.5unchanged",
+  "baseline_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+  "candidate": "Prior research-only outer-handler inclusion of subprocess.SubprocessError, REFUSED delivery semantics; not applied to production.",
+  "implementations": [
+    "current",
+    "prior-isolated-handler-candidate"
+  ],
+  "phases": [
+    "cached-success-revalidation",
+    "fresh-extraction"
+  ],
+  "faults": [
+    "TimeoutExpired",
+    "CalledProcessError"
+  ],
+  "scenario_count": 8,
+  "criteria": [
+    "Owned fixed Go input only; native syntax parser baseline, never execute source program.",
+    "Use threading.Event handshakes with5second failure bounds, not artificial sleeps or actual hung processes.",
+    "While faulting extraction is held, same-helper concurrent request returns IN_PROGRESS_OR_INTERRUPTED without new extraction/journal activity.",
+    "Lock released on return/exception; completed request reservation/result/receipt byte integrity preserved.",
+    "Cached faults preserve completed FOUND journal bytes, budget and quoted count, then recovery returns DUPLICATE original FOUND without quote reinjection. Current implementation may raise fault; prior candidate must return REFUSED/no evidence.",
+    "Fresh faults return durable INCONCLUSIVE in both implementations; same-ID recovery returns DUPLICATE original INCONCLUSIVE without parsing/retrying. New ID may recover independently, consuming a distinct budget step.",
+    "Record before/during/after/recovery journals, error delivery, extraction-call counters, budget/lock state. No permanent tests, source changes, deletions or private data."
+  ],
+  "independent_general_accuracy": false,
+  "training_gold": false,
+  "owner_approved": false,
+  "no_actual_timeout_or_process_outage": true
+}

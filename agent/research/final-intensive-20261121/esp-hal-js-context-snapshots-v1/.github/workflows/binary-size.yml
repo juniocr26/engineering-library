@@ -1,0 +1,133 @@
+# Measures how much a pull request changes the size of an example, on request
+# (`/test-size`, see `dispatch.yml`). Builds the example at the pull request
+# head and at the commit it branched from, and reports every section that
+# changed in a comment on the pull request.
+#
+# `binary-size-nightly.yml` measures what `main` gained in a day the same way.
+
+name: Binary Size Analysis
+
+run-name: >-
+  ${{ format('Binary size for PR #{0}{1}',
+      inputs.pr_number,
+      inputs.distinct_id != '' && format(' [dispatch-id: {0}]', inputs.distinct_id) || ''
+  ) }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number to analyze"
+        required: true
+        type: string
+      example_name:
+        description: "Example directory name to analyze (e.g., embassy_dhcp)"
+        required: true
+        type: string
+      package:
+        description: "Optional --package argument (e.g., qa)"
+        required: false
+        default: ""
+        type: string
+      chips:
+        description: 'JSON array of chips to test, e.g. ["esp32c3","esp32c6"]'
+        required: true
+        type: string
+      comment_id:
+        description: "Comment ID to update with binary size results"
+        required: false
+        default: ""
+        type: string
+      distinct_id:
+        description: "Correlation marker set by the dispatcher; do not set manually"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  # Read at compile time by the Wi-Fi examples.
+  SSID: SSID
+  PASSWORD: PASSWORD
+  STATIC_IP: 1.1.1.1
+  GATEWAY_IP: 1.1.1.1
+  HOST_IP: 1.1.1.1
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      base: ${{ steps.range.outputs.base }}
+      head: ${{ steps.range.outputs.head }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: .github/scripts
+
+      - name: Resolve the commits to compare
+        id: range
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+        with:
+          script: |
+            const { resolvePullRequestRange } = require('./.github/scripts/binary-size.js');
+            await resolvePullRequestRange({ github, context, core });
+
+  # Builds the pull request's code, so it gets no write access.
+  measure:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        soc: ${{ fromJSON(inputs.chips) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/measure-binary-size
+        with:
+          soc: ${{ matrix.soc }}
+          examples: ${{ inputs.example_name }}
+          package: ${{ inputs.package }}
+          base: ${{ needs.prepare.outputs.base }}
+          head: ${{ needs.prepare.outputs.head }}
+
+  report:
+    needs: [prepare, measure]
+    # Report what was measured, also when some chips failed.
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: .github/scripts
+
+      # Nothing to download when every build failed.
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: sizes-*
+          path: sizes
+          merge-multiple: true
+
+      - name: Report on the pull request
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          COMMENT_ID: ${{ inputs.comment_id }}
+          CHIPS: ${{ inputs.chips }}
+          BASE: ${{ needs.prepare.outputs.base }}
+          HEAD: ${{ needs.prepare.outputs.head }}
+        with:
+          script: |
+            const { reportPullRequest } = require('./.github/scripts/binary-size.js');
+            await reportPullRequest({ github, context, core });

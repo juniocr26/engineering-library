@@ -1,0 +1,134 @@
+{
+  "at": "2026-11-20T19:22:46.462573+00:00",
+  "status": "FROZEN_BEFORE_EVALUATION",
+  "packet": {
+    "id": "owned-helper-binding",
+    "family": "owned-helper-binding",
+    "language": "python",
+    "documentation": {
+      "en": "f composes outer and inner with x.",
+      "pt-br": "f compõe outer e inner com x."
+    },
+    "complete_scope": true,
+    "source_available": true,
+    "positive_retirement_evidence": null,
+    "logical_contract_id": "owned.f",
+    "metadata": {},
+    "previous_source": "def inner(a, b):\n    return a\n\ndef outer(a, b):\n    return (a, b)\n\ndef f(y, x):\n    return outer(inner(y, x), x)\n",
+    "current_source": "def inner(a, b):\n    return a\n\ndef outer(a, b):\n    return (a, b)\n\ndef f(y, x):\n    return outer(inner(y, x), x)\n"
+  },
+  "cases": [
+    {
+      "id": "valid",
+      "expected_action": "NO-OP",
+      "expected_physical_binding": true
+    },
+    {
+      "id": "inline-source-drift",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "registered-hash-drift",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "logical-contract-drift",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "source-symlink",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "root-replacement-before",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "registration-drift",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "same-bytes-leaf-replacement-during",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "changed-bytes-during",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "root-replacement-during",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "producer-mismatch",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "request-mismatch",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "selector-mismatch",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "remove-action",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "write-count-bool",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "model-count-one",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "source-execution-unknown",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "owner-approval-true",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "publication-unknown",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "candidate-authority-true",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    },
+    {
+      "id": "missing-execution-flag",
+      "expected_action": "INCONCLUSIVE",
+      "expected_physical_binding": false
+    }
+  ],
+  "producer_sha256": "3e128f57fcc22a6586593916f4f2a63f5401fe7a725237cc07262ce991b41534",
+  "scope": "Owned finite composition controls; existing physical gate reused, no novel path-safety algorithm claimed. Original eight exposed Boltons packets checked separately unchanged.",
+  "source_execution_allowed": false,
+  "permanent_tests_modified": false,
+  "training_excluded": true,
+  "owner_approved": false,
+  "previous_invalid_fixture": "v1 fixture inner(x) was outside the existing closed two-argument inner composition profile; 18/21 outcome is retained but fault refusals from that run do not independently demonstrate fault detection."
+}

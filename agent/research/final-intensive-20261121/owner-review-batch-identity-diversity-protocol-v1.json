@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-22T09:06:36.998733+00:00",
+  "before_similarity_outcomes": true,
+  "batch": {
+    "path": "agent/research/final-intensive-20261121/owner-review-batch-v20.json",
+    "sha256": "6da28ccb5d4ae3f55cacec10404bf4deafbe58cfd29a6f0fb2815273ab481e93"
+  },
+  "role": "EXACT_TARGET_IDENTITY_FAMILY_LABEL_AND_RIGHTS_FLAG_AUDIT_NOT_NEW_SEMANTIC_SCORING",
+  "expected_public_pairs": 28,
+  "expected_internal_pairs": 2,
+  "checks": [
+    "Verify every selected document, gate receipt and rights/notice file SHA.",
+    "Count exact paired/documenthashduplicates and NFC+whitespace-normalized text duplicates separately.",
+    "Keep15orotherobserved declaredfamilylabels distinct from dependency-disjoint independence; do not assume familylabel meansindependent.",
+    "Verify all five failedoriginalpairs arehash-disjointfromselectedtargets.",
+    "Require explicitfalse owner/publication/trainingGold/eligibility flags; missingisunknown,notapproval.",
+    "Collect notice labels as provenance,notlegaltrainingclearance."
+  ],
+  "near_duplicate_triage": {
+    "public_EN_pairs_only": true,
+    "tokenizer": "Unicode regex word or single nonword nonsitespace token, casefolded",
+    "shingle_tokens": 5,
+    "measure": "Jaccard of unique five-token shingle sets",
+    "review_threshold": 0.6,
+    "action": "Review signal only; no deletion,merge,semanticidentity,contaminationclearance or targetpromotion.",
+    "limitations": "Shared boilerplate/technicalsyntax can produce similarity; low similarity does not establish semantic or family independence."
+  },
+  "originals_modified": false,
+  "model_calls": 0,
+  "training_approval": false
+}

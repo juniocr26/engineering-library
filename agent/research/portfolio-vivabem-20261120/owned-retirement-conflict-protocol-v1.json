@@ -1,0 +1,48 @@
+{
+  "at": "2026-11-21T09:31:40.487138+00:00",
+  "hypothesis": "H75",
+  "question": "Does H74 corroborate retirement despite a changed declaration remaining at the exact selected identity, or lose uncertainty in malformed trusted evidence?",
+  "frozen_before_outcomes": true,
+  "cases": [
+    {
+      "id": "changed-selected-symbol-with-retirement",
+      "after": {
+        "old.py": "def answer():\n    return 8\n"
+      },
+      "retirement": {
+        "selector": "old.py:answer",
+        "reason": "declared retired"
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "changed-other-symbol-with-retirement",
+      "after": {
+        "new.py": "def answer():\n    return 8\n"
+      },
+      "retirement": {
+        "selector": "old.py:answer",
+        "reason": "declared retired"
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "retirement-wrong-type",
+      "after": {},
+      "retirement": "retired",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "retirement-empty-reason",
+      "after": {},
+      "retirement": {
+        "selector": "old.py:answer",
+        "reason": ""
+      },
+      "expected": "ABSENCE_NOT_RETIREMENT"
+    }
+  ],
+  "oracle_scope": "Conservative uncertainty for explicit same-name declarations with changed bodies; source continuity or retirement cannot be established by exact body equality alone. No semantic equivalence assumed.",
+  "no_new_neural_or_lifecycle_population": true,
+  "production_changes": 0
+}

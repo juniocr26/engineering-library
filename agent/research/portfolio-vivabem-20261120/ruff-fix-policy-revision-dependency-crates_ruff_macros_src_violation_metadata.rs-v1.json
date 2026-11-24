@@ -1,0 +1,7 @@
+{
+  "before": "47a28e3a2e2cfcc711f6f68eb7267731478e4a81",
+  "after": "0e1bf0d2f6bf100ec93f164efcd98514fb12b348",
+  "path": "crates/ruff_macros/src/violation_metadata.rs",
+  "returncode": 0,
+  "diff": "diff --git a/crates/ruff_macros/src/violation_metadata.rs b/crates/ruff_macros/src/violation_metadata.rs\nindex e52c140e10..d14094f34a 100644\n--- a/crates/ruff_macros/src/violation_metadata.rs\n+++ b/crates/ruff_macros/src/violation_metadata.rs\n@@ -36,8 +36,8 @@ pub(crate) fn violation_metadata(input: DeriveInput) -> syn::Result<TokenStream>\n                 crate::registry::Rule::#name\n             }\n \n-            fn explain() -> Option<&'static str> {\n-                Some(#docs)\n+            fn explain() -> &'static str {\n+                #docs\n             }\n \n             fn status() -> crate::codes::RuleStatus {\n"
+}

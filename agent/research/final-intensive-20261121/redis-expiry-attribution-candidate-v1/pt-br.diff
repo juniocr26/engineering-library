@@ -1,0 +1,16 @@
+--- original/pt-br.md
++++ isolated-correction/pt-br.md
+@@ -16,11 +16,11 @@
+ 
+ ## Justificativa do comentário e operações reais
+ 
+-O comentário do código discute instantes de expiração passados, carregamento de um arquivo de append-only, contexto de replicação e espera por uma exclusão explícita enviada pelo mestre. Ele explica a razão da guarda e das condições de estado. O corpo da função não insere uma chave, exclui uma chave, propaga um comando, configura uma expiração nem espera uma mensagem de rede. Transformar essa justificativa em promessa de que a própria função realiza essas operações foi um erro crítico do baseline histórico. O contrato corrigido descreve o predicado e mantém o fluxo de banco ao redor fora da evidência selecionada.
++O comentário do código discute instantes de expiração passados, carregamento de um arquivo de append-only, contexto de replicação e espera por uma exclusão explícita enviada pelo mestre. Ele explica a razão da guarda e das condições de estado. O corpo da função não insere uma chave, exclui uma chave, propaga um comando, configura uma expiração nem espera uma mensagem de rede. O baseline histórico repetiu essa justificativa como política ampla sem preservar as guardas exatas; não afirmou explicitamente que este predicado executa inserção, exclusão ou espera. O contrato corrigido descreve o predicado e mantém o fluxo de banco ao redor fora da evidência selecionada.
+ 
+ ## Comparação e estado da revisão
+ 
+-O baseline reconheceu em termos gerais uma verificação de expiração, mas omitiu o retorno antecipado do cliente atual e confundiu os papéis do servidor. Também perdeu a comparação exata e a guarda final de estado, apresentando a justificativa do comentário como comportamento. Esta correção restaura essas condições sem afirmar que o modelo local as aprendeu. As duas versões preservam as mesmas expressões técnicas e limites. Hashes exatos, linhas físicas das citações, resposta original, identidade histórica do caller e achados da revisão continuam nos artefatos correspondentes; essas verificações de integridade ajudam a revisão, mas não substituem a aprovação do proprietário.
++O baseline reconheceu em termos gerais uma verificação de expiração, mas omitiu o retorno antecipado do cliente atual e confundiu os papéis do servidor. Também não preservou a comparação inclusiva nem a conjunção exata e os campos negados, embora tenha mencionado carregamento e uma condição de papel mestre. Sua formulação de política repetiu a justificativa do comentário de modo mais amplo que as condições do código permitem. Esta correção restaura essas condições sem afirmar que o modelo local as aprendeu. As duas versões preservam as mesmas expressões técnicas e limites. Hashes exatos, linhas físicas das citações, resposta original, identidade histórica do caller e achados da revisão continuam nos artefatos correspondentes; essas verificações de integridade ajudam a revisão, mas não substituem a aprovação do proprietário.
+ 
+ ## FAQ de engenharia e responsabilidade real do chamador
+ 

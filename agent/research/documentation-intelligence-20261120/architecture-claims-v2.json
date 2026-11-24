@@ -1,0 +1,430 @@
+{
+  "claims": [
+    {
+      "id": "F1",
+      "kind": "written_call",
+      "caller": "BalanceService.summary",
+      "callee_expression": "self._port.read",
+      "arguments": [
+        "account_id"
+      ],
+      "evidence": [
+        "service.py:BalanceService.summary"
+      ]
+    },
+    {
+      "id": "F2",
+      "kind": "constructor_default_and_forwarded_keyword",
+      "owner": "BalanceAdapter",
+      "parameter": "timeout",
+      "default_expression": "2.0",
+      "callee_expression": "self._client.get",
+      "keyword": "timeout",
+      "enforced_deadline": "UNKNOWN",
+      "evidence": [
+        "adapter.py:BalanceAdapter.__init__",
+        "adapter.py:BalanceAdapter.read"
+      ]
+    },
+    {
+      "id": "F3",
+      "kind": "written_exception_translation",
+      "owner": "BalanceAdapter.read",
+      "caught_type_expression": "GatewayUnavailable",
+      "raises": [
+        {
+          "exception_expression": "BalanceUnavailable('gateway unavailable')",
+          "cause_expression": "error"
+        }
+      ],
+      "covers_mapper_call": false,
+      "evidence": [
+        "adapter.py:BalanceAdapter.read"
+      ]
+    },
+    {
+      "id": "F4",
+      "kind": "written_mapper_call_after_try",
+      "caller": "BalanceAdapter.read",
+      "callee_expression": "balance_from_payload",
+      "arguments": [
+        "account_id",
+        "payload"
+      ],
+      "evidence": [
+        "adapter.py:BalanceAdapter.read"
+      ]
+    },
+    {
+      "id": "F5",
+      "kind": "declared_protocol_only",
+      "interface": "JsonClient.get",
+      "concrete_transport": "UNKNOWN",
+      "internal_retries": "UNKNOWN",
+      "server_authorization": "UNKNOWN",
+      "evidence": [
+        "client.py:JsonClient.get"
+      ]
+    },
+    {
+      "id": "F6",
+      "kind": "no_written_exception_handler_in_selected_body",
+      "owners": [
+        "BalanceService.summary",
+        "balance_from_payload"
+      ],
+      "evidence": [
+        "service.py:BalanceService.summary",
+        "mapping.py:balance_from_payload"
+      ]
+    }
+  ],
+  "evidence": {
+    "service.py:BalanceService.summary": {
+      "file": "service.py",
+      "selector": "BalanceService.summary",
+      "source_sha256": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523",
+      "first_line": 7,
+      "last_line": 9,
+      "quote": "    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n",
+      "quote_sha256": "051c32c1d3702979127a37f01a8a8bd7b751fb8bbf593eedbe0f57ec967e02fd",
+      "declared_parameters": [
+        "self",
+        "account_id"
+      ],
+      "declared_annotations": {
+        "self": null,
+        "account_id": "str"
+      },
+      "declared_defaults": {},
+      "calls": [
+        {
+          "callee_expression": "self._port.read",
+          "arguments": [
+            "account_id"
+          ],
+          "keywords": {},
+          "physical_line": 8
+        }
+      ],
+      "assignments": [
+        {
+          "targets": [
+            "balance"
+          ],
+          "value": "self._port.read(account_id)",
+          "physical_line": 8
+        }
+      ],
+      "handlers": [],
+      "top_level_statement_kinds": [
+        "Assign",
+        "Return"
+      ],
+      "top_level_returns": [
+        "{'account': balance.account_id, 'available_minor': balance.available_minor, 'currency': balance.currency}"
+      ],
+      "try_blocks": [],
+      "source_executed": false,
+      "runtime_receiver_identity_verified": false
+    },
+    "adapter.py:BalanceAdapter.__init__": {
+      "file": "adapter.py",
+      "selector": "BalanceAdapter.__init__",
+      "source_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+      "first_line": 6,
+      "last_line": 9,
+      "quote": "    def __init__(self, client: JsonClient, token: str, timeout: float = 2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n",
+      "quote_sha256": "944b29d748f3255267cee8d55fe4d15d9f73891b5a84a506f2359b90dcd7a03a",
+      "declared_parameters": [
+        "self",
+        "client",
+        "token",
+        "timeout"
+      ],
+      "declared_annotations": {
+        "self": null,
+        "client": "JsonClient",
+        "token": "str",
+        "timeout": "float"
+      },
+      "declared_defaults": {
+        "timeout": "2.0"
+      },
+      "calls": [],
+      "assignments": [
+        {
+          "targets": [
+            "self._client"
+          ],
+          "value": "client",
+          "physical_line": 7
+        },
+        {
+          "targets": [
+            "self._token"
+          ],
+          "value": "token",
+          "physical_line": 8
+        },
+        {
+          "targets": [
+            "self._timeout"
+          ],
+          "value": "timeout",
+          "physical_line": 9
+        }
+      ],
+      "handlers": [],
+      "top_level_statement_kinds": [
+        "Assign",
+        "Assign",
+        "Assign"
+      ],
+      "top_level_returns": [],
+      "try_blocks": [],
+      "source_executed": false,
+      "runtime_receiver_identity_verified": false
+    },
+    "adapter.py:BalanceAdapter.read": {
+      "file": "adapter.py",
+      "selector": "BalanceAdapter.read",
+      "source_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+      "first_line": 11,
+      "last_line": 22,
+      "quote": "    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n            )\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable(\"gateway unavailable\") from error\n        return balance_from_payload(account_id, payload)\n",
+      "quote_sha256": "ff28a6c5b813bdfc58eecb4509872b3017b53d786ca166b53c11af3b9992f719",
+      "declared_parameters": [
+        "self",
+        "account_id"
+      ],
+      "declared_annotations": {
+        "self": null,
+        "account_id": "str"
+      },
+      "declared_defaults": {},
+      "calls": [
+        {
+          "callee_expression": "balance_from_payload",
+          "arguments": [
+            "account_id",
+            "payload"
+          ],
+          "keywords": {},
+          "physical_line": 22
+        },
+        {
+          "callee_expression": "ValueError",
+          "arguments": [
+            "'invalid account identifier'"
+          ],
+          "keywords": {},
+          "physical_line": 13
+        },
+        {
+          "callee_expression": "self._client.get",
+          "arguments": [
+            "f'/sandbox/accounts/{account_id}/balance'"
+          ],
+          "keywords": {
+            "headers": "{'Authorization': f'Bearer {self._token}'}",
+            "timeout": "self._timeout"
+          },
+          "physical_line": 15
+        },
+        {
+          "callee_expression": "BalanceUnavailable",
+          "arguments": [
+            "'gateway unavailable'"
+          ],
+          "keywords": {},
+          "physical_line": 21
+        }
+      ],
+      "assignments": [
+        {
+          "targets": [
+            "payload"
+          ],
+          "value": "self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)",
+          "physical_line": 15
+        }
+      ],
+      "handlers": [
+        {
+          "type_expression": "GatewayUnavailable",
+          "binding": "error",
+          "raises": [
+            {
+              "exception_expression": "BalanceUnavailable('gateway unavailable')",
+              "cause_expression": "error"
+            }
+          ],
+          "physical_line": 20
+        }
+      ],
+      "top_level_statement_kinds": [
+        "If",
+        "Try",
+        "Return"
+      ],
+      "top_level_returns": [
+        "balance_from_payload(account_id, payload)"
+      ],
+      "try_blocks": [
+        {
+          "body_statement_kinds": [
+            "Assign"
+          ],
+          "body_statements": [
+            "payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)"
+          ],
+          "else_count": 0,
+          "finally_count": 0
+        }
+      ],
+      "source_executed": false,
+      "runtime_receiver_identity_verified": false
+    },
+    "client.py:JsonClient.get": {
+      "file": "client.py",
+      "selector": "JsonClient.get",
+      "source_sha256": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+      "first_line": 7,
+      "last_line": 8,
+      "quote": "    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+      "quote_sha256": "ed2abb9741dbee2e37878eafd3df6c566be102baa2ae3454fcba7356bcfb0ade",
+      "declared_parameters": [
+        "self",
+        "path",
+        "headers",
+        "timeout"
+      ],
+      "declared_annotations": {
+        "self": null,
+        "path": "str",
+        "headers": "dict[str, str]",
+        "timeout": "float"
+      },
+      "declared_defaults": {},
+      "calls": [],
+      "assignments": [],
+      "handlers": [],
+      "top_level_statement_kinds": [
+        "Expr"
+      ],
+      "top_level_returns": [],
+      "try_blocks": [],
+      "source_executed": false,
+      "runtime_receiver_identity_verified": false
+    },
+    "mapping.py:balance_from_payload": {
+      "file": "mapping.py",
+      "selector": "balance_from_payload",
+      "source_sha256": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+      "first_line": 4,
+      "last_line": 11,
+      "quote": "def balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+      "quote_sha256": "f8c7c0a583159341cdd574e6eedc4c48efe7a8673e60f94ccfed53627f2e80a3",
+      "declared_parameters": [
+        "account_id",
+        "payload"
+      ],
+      "declared_annotations": {
+        "account_id": "str",
+        "payload": "Mapping[str, object]"
+      },
+      "declared_defaults": {},
+      "calls": [
+        {
+          "callee_expression": "Balance",
+          "arguments": [],
+          "keywords": {
+            "account_id": "account_id",
+            "available_minor": "amount",
+            "currency": "currency"
+          },
+          "physical_line": 11
+        },
+        {
+          "callee_expression": "type",
+          "arguments": [
+            "amount"
+          ],
+          "keywords": {},
+          "physical_line": 7
+        },
+        {
+          "callee_expression": "ValueError",
+          "arguments": [
+            "'available_minor must be an integer'"
+          ],
+          "keywords": {},
+          "physical_line": 8
+        },
+        {
+          "callee_expression": "ValueError",
+          "arguments": [
+            "'currency must have three characters'"
+          ],
+          "keywords": {},
+          "physical_line": 10
+        },
+        {
+          "callee_expression": "isinstance",
+          "arguments": [
+            "currency",
+            "str"
+          ],
+          "keywords": {},
+          "physical_line": 9
+        },
+        {
+          "callee_expression": "len",
+          "arguments": [
+            "currency"
+          ],
+          "keywords": {},
+          "physical_line": 9
+        }
+      ],
+      "assignments": [
+        {
+          "targets": [
+            "amount"
+          ],
+          "value": "payload['available_minor']",
+          "physical_line": 5
+        },
+        {
+          "targets": [
+            "currency"
+          ],
+          "value": "payload['currency']",
+          "physical_line": 6
+        }
+      ],
+      "handlers": [],
+      "top_level_statement_kinds": [
+        "Assign",
+        "Assign",
+        "If",
+        "If",
+        "Return"
+      ],
+      "top_level_returns": [
+        "Balance(account_id=account_id, available_minor=amount, currency=currency)"
+      ],
+      "try_blocks": [],
+      "source_executed": false,
+      "runtime_receiver_identity_verified": false
+    }
+  },
+  "runtime_binding_verified": false,
+  "scope": "Owned fixed syntax shape with manual source review; not a general architecture resolver.",
+  "at": "2026-11-20T11:22:03.312181+00:00",
+  "pack_sha256": "02afde1be7f472bdd2ed485ac4d99f4af65839b9039b6bef361ab7810d17a572",
+  "owner_approved": false,
+  "training_gold": false,
+  "status": "SOURCE_REVIEWED_BOUNDED_CLAIM_VALUES"
+}

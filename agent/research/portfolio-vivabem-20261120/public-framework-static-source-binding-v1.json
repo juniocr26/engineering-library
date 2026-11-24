@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-21T08:58:12.633273+00:00",
+  "commit": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "Python_AST_modules_parsed": 8,
+  "framework_modules_imported": 0,
+  "framework_functions_executed": 0,
+  "units": [
+    {
+      "path": "mlx_lm/tuner/utils.py",
+      "selector": "linear_to_lora_layers",
+      "start": 46,
+      "end": 126,
+      "quote": "def linear_to_lora_layers(\n    model: nn.Module,\n    num_layers: int,\n    config: Dict,\n    use_dora: bool = False,\n):\n    \"\"\"\n    Convert some of the models linear layers to lora layers.\n\n    Args:\n        model (nn.Module): The neural network model.\n        num_layers (int): The number of blocks to convert to lora layers\n        starting from the last layer.\n        config (dict): More configuration parameters for LoRA, including the\n          rank, scale, and optional layer keys.\n        use_dora (bool): If True, uses DoRA instead of LoRA.\n          Default: ``False``\n    \"\"\"\n    if \"scale\" not in config:\n        hint = \"\"\n        if \"alpha\" in config:\n            hint = (\n                \" Found 'alpha' instead \u2014 mlx-lm's LoRA config uses 'scale', \"\n                \"not 'alpha' (unlike some other LoRA frameworks). See LORA.md.\"\n            )\n        raise KeyError(f\"LoRA config is missing required key 'scale'.{hint}\")\n\n    def to_lora(layer):\n        if not use_dora and hasattr(layer, \"to_lora\"):\n            return layer.to_lora(\n                r=config[\"rank\"],\n                scale=config[\"scale\"],\n                dropout=config[\"dropout\"],\n            )\n\n        if isinstance(layer, (nn.Linear, nn.QuantizedLinear)):\n            LoRALayer = DoRALinear if use_dora else LoRALinear\n        elif isinstance(layer, (SwitchLinear, QuantizedSwitchLinear)):\n            if use_dora:\n                raise ValueError(f\"{type(layer).__name__} doesn't support DoRA yet.\")\n            LoRALayer = LoRASwitchLinear\n        elif isinstance(layer, (nn.Embedding, nn.QuantizedEmbedding)):\n            LoRALayer = DoRAEmbedding if use_dora else LoRAEmbedding\n        else:\n            raise ValueError(\n                f\"Can't convert layer of type {type(layer).__name__} to LoRA\"\n            )\n\n        return LoRALayer.from_base(\n            layer,\n            r=config[\"rank\"],\n            scale=config[\"scale\"],\n            dropout=config[\"dropout\"],\n        )\n\n    if (keys := config.get(\"keys\", None)) is None:\n        keys = set()\n\n        def get_keys_for_lora(p, m):\n            types = (\n                nn.Linear,\n                nn.QuantizedLinear,\n                SwitchLinear,\n                QuantizedSwitchLinear,\n                nn.Embedding,\n                nn.QuantizedEmbedding,\n            )\n            if hasattr(m, \"to_lora\") or isinstance(m, types):\n                keys.add(p)\n\n        for l in model.layers:\n            l.apply_to_modules(get_keys_for_lora)\n\n    for l in model.layers[-max(num_layers, 0) :]:\n        lora_layers = [(k, to_lora(m)) for k, m in l.named_modules() if k in keys]\n        if lora_layers:\n            l.update_modules(tree_unflatten(lora_layers))\n\n    lora_modules = [(k, to_lora(m)) for k, m in model.named_modules() if k in keys]\n    if lora_modules:\n        model.update_modules(tree_unflatten(lora_modules))\n",
+      "quote_sha256": "2348bc223a1877c34ceac97bce61c0f7b03f2a1ca78acf9b836b4293d3933c1e",
+      "file_sha256": "e1260940a0e974ed573ae59f348254b46628be8633347e10818f28b76d7809da",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/utils.py#L46-L126"
+    },
+    {
+      "path": "mlx_lm/tuner/lora.py",
+      "selector": "LoRALinear.from_base",
+      "start": 13,
+      "end": 32,
+      "quote": "    def from_base(\n        linear: nn.Linear,\n        r: int = 8,\n        dropout: float = 0.0,\n        scale: float = 20.0,\n    ):\n        # TODO remove when input_dims and output_dims are attributes\n        # on linear and quantized linear\n        output_dims, input_dims = linear.weight.shape\n        if isinstance(linear, nn.QuantizedLinear):\n            input_dims = input_dims * 32 // linear.bits\n        lora_lin = LoRALinear(\n            input_dims=input_dims,\n            output_dims=output_dims,\n            r=r,\n            dropout=dropout,\n            scale=scale,\n        )\n        lora_lin.linear = linear\n        return lora_lin\n",
+      "quote_sha256": "2f242033c99895d355c77f8a3d0705fb4e8d06e8e4f66ba234842fad8e7b7267",
+      "file_sha256": "b9bfcad99c2934cad484f73a21ec9b912756751531efd7aa4c0fa3fd4357f407",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/lora.py#L13-L32"
+    },
+    {
+      "path": "mlx_lm/tuner/lora.py",
+      "selector": "LoRALinear.__init__",
+      "start": 67,
+      "end": 93,
+      "quote": "    def __init__(\n        self,\n        input_dims: int,\n        output_dims: int,\n        r: int = 8,\n        dropout: float = 0.0,\n        scale: float = 20.0,\n        bias: bool = False,\n    ):\n        super().__init__()\n\n        # Regular linear layer weights\n        self.linear = nn.Linear(input_dims, output_dims, bias=bias)\n\n        self.dropout = nn.Dropout(p=dropout)\n\n        # Scale for low-rank update\n        self.scale = scale\n\n        # Low rank lora weights\n        scale = 1 / math.sqrt(input_dims)\n        self.lora_a = mx.random.uniform(\n            low=-scale,\n            high=scale,\n            shape=(input_dims, r),\n        )\n        self.lora_b = mx.zeros(shape=(r, output_dims))\n",
+      "quote_sha256": "39323151122898e6f9086deb12a66152f254460fc22bee281ff14e46a39e6eb5",
+      "file_sha256": "b9bfcad99c2934cad484f73a21ec9b912756751531efd7aa4c0fa3fd4357f407",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/lora.py#L67-L93"
+    },
+    {
+      "path": "mlx_lm/tuner/lora.py",
+      "selector": "LoRALinear.__call__",
+      "start": 95,
+      "end": 98,
+      "quote": "    def __call__(self, x):\n        y = self.linear(x)\n        z = (self.dropout(x) @ self.lora_a) @ self.lora_b\n        return y + (self.scale * z).astype(x.dtype)\n",
+      "quote_sha256": "f1c8f5be2bdaf5bd6c95aa2d7a19f46b28fa2c4fb260bb2d2c4bb295d57fbb76",
+      "file_sha256": "b9bfcad99c2934cad484f73a21ec9b912756751531efd7aa4c0fa3fd4357f407",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/lora.py#L95-L98"
+    },
+    {
+      "path": "mlx_lm/models/llama/config.py",
+      "selector": "ModelArgs.__post_init__",
+      "start": 34,
+      "end": 39,
+      "quote": "    def __post_init__(self):\n        if self.num_key_value_heads is None:\n            self.num_key_value_heads = self.num_attention_heads\n\n        if self.layer_types is None:\n            self.layer_types = [\"full_attention\"] * self.num_hidden_layers\n",
+      "quote_sha256": "de0274da7975e11198fccb981dd7db43171613ec6503ec7a08bf6e20024e84e6",
+      "file_sha256": "a38cb667b0eb627082063fc5287edc49d957f3446d909cb9dd435bff265ba0db",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/models/llama/config.py#L34-L39"
+    },
+    {
+      "path": "mlx_lm/models/llama/layers.py",
+      "selector": "Attention.__init__",
+      "start": 21,
+      "end": 47,
+      "quote": "    def __init__(self, args: ModelArgs):\n        super().__init__()\n\n        dim = args.hidden_size\n        self.n_heads = n_heads = args.num_attention_heads\n        self.n_kv_heads = n_kv_heads = args.num_key_value_heads\n\n        self.head_dim = head_dim = args.head_dim or args.hidden_size // n_heads\n\n        self.scale = head_dim**-0.5\n        if hasattr(args, \"attention_bias\"):\n            attention_bias = args.attention_bias\n        else:\n            attention_bias = False\n\n        self.q_proj = nn.Linear(dim, n_heads * head_dim, bias=attention_bias)\n        self.k_proj = nn.Linear(dim, n_kv_heads * head_dim, bias=attention_bias)\n        self.v_proj = nn.Linear(dim, n_kv_heads * head_dim, bias=attention_bias)\n        self.o_proj = nn.Linear(n_heads * head_dim, dim, bias=attention_bias)\n\n        self.rope = initialize_rope(\n            self.head_dim,\n            args.rope_theta,\n            args.rope_traditional,\n            args.rope_scaling,\n            args.max_position_embeddings,\n        )\n",
+      "quote_sha256": "d5fac00960b2e18f4315b0edd39b9b964f57468ac561bf01fb50e70bc2312fe0",
+      "file_sha256": "e1369f2450337cb479b6ec6bb99fe126f6a1a9bf2dd9848e6f67a85e994baad0",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/models/llama/layers.py#L21-L47"
+    },
+    {
+      "path": "mlx_lm/models/llama/layers.py",
+      "selector": "TransformerBlock.__init__",
+      "start": 100,
+      "end": 111,
+      "quote": "    def __init__(self, args: ModelArgs, use_sliding: bool = False):\n        super().__init__()\n        self.num_attention_heads = args.num_attention_heads\n        self.hidden_size = args.hidden_size\n        self.use_sliding = use_sliding\n        self.self_attn = Attention(args)\n        self.mlp = MLP(args)\n        self.input_layernorm = nn.RMSNorm(args.hidden_size, eps=args.rms_norm_eps)\n        self.post_attention_layernorm = nn.RMSNorm(\n            args.hidden_size, eps=args.rms_norm_eps\n        )\n        self.args = args\n",
+      "quote_sha256": "ce223ae37cccafadb9f597438f88104e7f0094e06fa202af83ca572260badf63",
+      "file_sha256": "e1369f2450337cb479b6ec6bb99fe126f6a1a9bf2dd9848e6f67a85e994baad0",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/models/llama/layers.py#L100-L111"
+    },
+    {
+      "path": "mlx_lm/models/llama/model.py",
+      "selector": "LlamaModel.__init__",
+      "start": 23,
+      "end": 42,
+      "quote": "    def __init__(self, args: ModelArgs):\n        super().__init__()\n        self.args = args\n        self.vocab_size = args.vocab_size\n        self.num_hidden_layers = args.num_hidden_layers\n        self.layer_types = args.layer_types\n        self.sliding_window = args.sliding_window\n        assert self.vocab_size > 0\n        self.embed_tokens = nn.Embedding(args.vocab_size, args.hidden_size)\n        self.layers = [\n            TransformerBlock(args=args, use_sliding=layer_type == \"sliding_attention\")\n            for layer_type in self.layer_types\n        ]\n        self.norm = nn.RMSNorm(args.hidden_size, eps=args.rms_norm_eps)\n        self.fa_idx = self.layer_types.index(\"full_attention\")\n        self.swa_idx = None\n        for e, l in enumerate(self.layers):\n            if l.use_sliding:\n                self.swa_idx = e\n                break\n",
+      "quote_sha256": "73addfcb99068d85854c1da4f8008d96101d7df73c2f68248a0ca3f2e169ff21",
+      "file_sha256": "6624a934fe75ec5627305029367e92a3245ef2c4650d86730601fe4ee44e64d9",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/models/llama/model.py#L23-L42"
+    },
+    {
+      "path": "mlx_lm/models/llama/model.py",
+      "selector": "Model.layers",
+      "start": 132,
+      "end": 133,
+      "quote": "    def layers(self):\n        return self.model.layers\n",
+      "quote_sha256": "905e8746f6e71bcb3ff504d7bb0bfeea8f214f291a072910c64c9ded940b71a6",
+      "file_sha256": "6624a934fe75ec5627305029367e92a3245ef2c4650d86730601fe4ee44e64d9",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/models/llama/model.py#L132-L133"
+    }
+  ],
+  "pinned_llama_Git_blob_checks": [
+    {
+      "path": "mlx_lm/models/llama/__init__.py",
+      "github_git_blob_sha1": "39363eb3c9f1c09074709f18b7c4ff091f02152e",
+      "raw_body_git_blob_matches": true
+    },
+    {
+      "path": "mlx_lm/models/llama/checkpoint.py",
+      "github_git_blob_sha1": "49aae6af97ead62f7ee3b85e771629723abb6002",
+      "raw_body_git_blob_matches": true
+    },
+    {
+      "path": "mlx_lm/models/llama/config.py",
+      "github_git_blob_sha1": "3802403f20afaab7a23ad9e24a59278feaa4400c",
+      "raw_body_git_blob_matches": true
+    },
+    {
+      "path": "mlx_lm/models/llama/layers.py",
+      "github_git_blob_sha1": "ce8badc93d7e83b53ce64c643e7efe7bc54b2cb8",
+      "raw_body_git_blob_matches": true
+    },
+    {
+      "path": "mlx_lm/models/llama/model.py",
+      "github_git_blob_sha1": "f4e3ef6fe73ffb781b2f0a07c0cd508f482162a9",
+      "raw_body_git_blob_matches": true
+    }
+  ],
+  "source_only": true
+}

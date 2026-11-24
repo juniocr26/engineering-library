@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-21T08:14:35.394395+00:00",
+  "path": "web/api/v1/errors_test.go",
+  "before": "5ccc8ab7aa5f19a3a7f667c7fc4923a2af2095b4",
+  "after": "80cd8d97bdfce88014a652d15723559d00a15902",
+  "returncode": 0,
+  "diff": "diff --git a/web/api/v1/errors_test.go b/web/api/v1/errors_test.go\nindex cabb3282b..81eef27b8 100644\n--- a/web/api/v1/errors_test.go\n+++ b/web/api/v1/errors_test.go\n@@ -100,6 +100,30 @@ func TestApiStatusCodes(t *testing.T) {\n \t\t\texpectedString: \"context canceled\",\n \t\t\texpectedCode:   statusClientClosedConnection,\n \t\t},\n+\n+\t\t\"promql.ErrTooManySeries\": {\n+\t\t\terr:            promql.ErrTooManySeries(\"some error\"),\n+\t\t\texpectedString: `\"errorType\":\"cost_limit\"`,\n+\t\t\texpectedCode:   http.StatusUnprocessableEntity,\n+\t\t},\n+\n+\t\t\"promql.ErrTooManySamplesRead\": {\n+\t\t\terr:            promql.ErrTooManySamplesRead(\"some error\"),\n+\t\t\texpectedString: `\"errorType\":\"cost_limit\"`,\n+\t\t\texpectedCode:   http.StatusUnprocessableEntity,\n+\t\t},\n+\n+\t\t\"overridden error code for cost limit\": {\n+\t\t\terr:            promql.ErrTooManySeries(\"some error\"),\n+\t\t\texpectedString: \"too many series\",\n+\t\t\toverrideErrorCode: func(errNum errorNum, _ error) (code int, override bool) {\n+\t\t\t\tif errNum == ErrorCostLimit {\n+\t\t\t\t\treturn 999, true\n+\t\t\t\t}\n+\t\t\t\treturn 0, false\n+\t\t\t},\n+\t\t\texpectedCode: 999,\n+\t\t},\n \t} {\n \t\tfor k, q := range map[string]storage.SampleAndChunkQueryable{\n \t\t\t\"error from queryable\": errorTestQueryable{err: tc.err},\n",
+  "stderr": ""
+}

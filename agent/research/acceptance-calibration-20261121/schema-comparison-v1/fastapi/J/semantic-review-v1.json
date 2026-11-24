@@ -1,0 +1,574 @@
+{
+  "at": "2026-11-21T16:03:05.859914+00:00",
+  "task": "fastapi",
+  "method": "J",
+  "content_sha256": "c3a5f23f505951f78a9949359d398f85a75e55f25b83a8e0fce8fcb34d87547b",
+  "structure": {
+    "syntax_valid": false,
+    "reason": "Length-truncated whole JSON, no PT block; complete behavior array read losslessly as an available substructure only."
+  },
+  "required_fact_claims": [
+    {
+      "claim_id": "J-fastapi-F01",
+      "reference_id": "F01",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/models.py",
+      "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "source_lines": [
+        53,
+        53
+      ],
+      "exact_source_evidence": "    use_cache: bool = True",
+      "expected_interpretation": {
+        "en": "The selected class declares use_cache: bool = True.",
+        "pt-BR": "A classe selecionada declara use_cache: bool = True."
+      },
+      "original_generated_en": {
+        "id": "F01",
+        "text": "The selected class declares use_cache: bool = True.",
+        "source": "fastapi/dependencies/models.py:[53, 53]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F02",
+      "reference_id": "F02",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/models.py",
+      "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "source_lines": [
+        55,
+        55
+      ],
+      "exact_source_evidence": "    scope: Literal[\"function\", \"request\"] | None = None",
+      "expected_interpretation": {
+        "en": "The selected scope declaration has default None.",
+        "pt-BR": "A declaração selecionada de scope tem valor padrão None."
+      },
+      "original_generated_en": {
+        "id": "F02",
+        "text": "The selected scope declaration has default None.",
+        "source": "fastapi/dependencies/models.py:[55, 55]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F03",
+      "reference_id": "F03",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        700,
+        701
+      ],
+      "exact_source_evidence": "    if dependency_cache is None:\n        dependency_cache = {}",
+      "expected_interpretation": {
+        "en": "When dependency_cache is None the local is assigned an empty dictionary.",
+        "pt-BR": "Quando dependency_cache é None, a variável local recebe um dicionário vazio."
+      },
+      "original_generated_en": {
+        "id": "F03",
+        "text": "When dependency_cache is None the local is assigned an empty dictionary.",
+        "source": "fastapi/dependencies/utils.py:[700, 701]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F04",
+      "reference_id": "F04",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        726,
+        737
+      ],
+      "exact_source_evidence": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )",
+      "expected_interpretation": {
+        "en": "The written recursive solve_dependencies call passes dependency_cache=dependency_cache.",
+        "pt-BR": "A chamada recursiva escrita de solve_dependencies passa dependency_cache=dependency_cache."
+      },
+      "original_generated_en": {
+        "id": "F04",
+        "text": "The written recursive solve_dependencies call passes dependency_cache=dependency_cache.",
+        "source": "fastapi/dependencies/utils.py:[726, 737]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F05",
+      "reference_id": "F05",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        746,
+        747
+      ],
+      "exact_source_evidence": "        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]",
+      "expected_interpretation": {
+        "en": "The reuse branch requires both use_cache and membership of the key in dependency_cache.",
+        "pt-BR": "O ramo de reutilização exige use_cache e a presença da chave em dependency_cache."
+      },
+      "original_generated_en": {
+        "id": "F05",
+        "text": "The reuse branch requires both use_cache and membership of the key in dependency_cache.",
+        "source": "fastapi/dependencies/utils.py:[746, 747]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F06",
+      "reference_id": "F06",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        774,
+        775
+      ],
+      "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+      "expected_interpretation": {
+        "en": "If control reaches the write guard with the key absent, it assigns solved into dependency_cache.",
+        "pt-BR": "Se o controle alcança a condição de escrita com a chave ausente, atribui solved em dependency_cache."
+      },
+      "original_generated_en": {
+        "id": "F06",
+        "text": "If control reaches the write guard with the key absent, it assigns solved into dependency_cache.",
+        "source": "fastapi/dependencies/utils.py:[774, 775]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F07",
+      "reference_id": "F07",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        774,
+        775
+      ],
+      "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+      "expected_interpretation": {
+        "en": "The selected write guard does not test use_cache.",
+        "pt-BR": "A condição selecionada de escrita não testa use_cache."
+      },
+      "original_generated_en": {
+        "id": "F07",
+        "text": "The selected write guard does not test use_cache.",
+        "source": "fastapi/dependencies/utils.py:[774, 775]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F08",
+      "reference_id": "F08",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        687,
+        689
+      ],
+      "exact_source_evidence": "    assert isinstance(request_astack, AsyncExitStack), (\n        \"fastapi_inner_astack not found in request scope\"\n    )",
+      "expected_interpretation": {
+        "en": "The selected source asserts isinstance(request_astack, AsyncExitStack).",
+        "pt-BR": "A fonte selecionada contém assert isinstance(request_astack, AsyncExitStack)."
+      },
+      "original_generated_en": {
+        "id": "F08",
+        "text": "The selected source asserts isinstance(request_astack, AsyncExitStack).",
+        "source": "fastapi/dependencies/utils.py:[687, 689]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    },
+    {
+      "claim_id": "J-fastapi-F09",
+      "reference_id": "F09",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        691,
+        693
+      ],
+      "exact_source_evidence": "    assert isinstance(function_astack, AsyncExitStack), (\n        \"fastapi_function_astack not found in request scope\"\n    )",
+      "expected_interpretation": {
+        "en": "The selected source asserts isinstance(function_astack, AsyncExitStack).",
+        "pt-BR": "A fonte selecionada contém assert isinstance(function_astack, AsyncExitStack)."
+      },
+      "original_generated_en": {
+        "id": "F09",
+        "text": "The selected source asserts isinstance(function_astack, AsyncExitStack).",
+        "source": "fastapi/dependencies/utils.py:[691, 693]"
+      },
+      "original_generated_pt_BR": null,
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "reviewer": "Same campaign agent, raw/source read without repair"
+    }
+  ],
+  "additional_claims": [
+    {
+      "claim_id": "J-fastapi-FAQ-1",
+      "exact_generated_sentence": "The use_cache parameter determines whether the dependency should be cached or not",
+      "raw_occurrences": 1,
+      "verdict": "CONTRADICTED",
+      "reason": "Conflates reuse control with a blanket write/cache ban; absent-key write guard omits use_cache.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-2",
+      "exact_generated_sentence": "If use_cache is True, the dependency will be cached if it is already in the cache",
+      "raw_occurrences": 1,
+      "verdict": "INSUFFICIENT",
+      "reason": "Could mean already-cached poststate or a new write; does not identify a supported action/condition unambiguously.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-3",
+      "exact_generated_sentence": "If use_cache is False, the dependency will not be cached",
+      "raw_occurrences": 1,
+      "verdict": "CONTRADICTED",
+      "reason": "False use_cache flag does not generally ban the later absent-key write.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-4",
+      "exact_generated_sentence": "If the key is not in the cache, the dependency will be resolved and cached for future use",
+      "raw_occurrences": 1,
+      "verdict": "INSUFFICIENT",
+      "reason": "Omits earlier errors/completion/control-flow qualifications; no unconditional future reuse established.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-5",
+      "exact_generated_sentence": "If the key is in the cache, the cached value will be returned",
+      "raw_occurrences": 1,
+      "verdict": "CONTRADICTED",
+      "reason": "Key membership alone omits the use_cache conjunct required for the selected read/reuse branch.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-6",
+      "exact_generated_sentence": "If the key is not in the cache and use_cache is False, the function will return None",
+      "raw_occurrences": 1,
+      "verdict": "CONTRADICTED",
+      "reason": "No selected absent-key/use_cache=False return-None branch; function returns SolvedDependency after its flow.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-7",
+      "exact_generated_sentence": "If the key is not in the cache and use_cache is True, the function will return the cached value",
+      "raw_occurrences": 30,
+      "verdict": "CONTRADICTED",
+      "reason": "Absent key does not select a cached-value read; the function itself returns a SolvedDependency object.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-8",
+      "exact_generated_sentence": "If the key is in the cache and use_cache is False, the function will return the cached value",
+      "raw_occurrences": 1,
+      "verdict": "CONTRADICTED",
+      "reason": "False flag does not enter the shown read/reuse branch; literal function-return assertion also has wrong return role.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    },
+    {
+      "claim_id": "J-fastapi-FAQ-9",
+      "exact_generated_sentence": "If the key is in the cache and use_cache is True, the function will return the cached value",
+      "raw_occurrences": 28,
+      "verdict": "CONTRADICTED",
+      "reason": "Selected branch assigns solved from cache; solve_dependencies itself returns SolvedDependency, not that raw cached value.",
+      "critical": true,
+      "source_context": {
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "spans": [
+          {
+            "lines": [
+              726,
+              775
+            ],
+            "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+          },
+          {
+            "lines": [
+              818,
+              829
+            ],
+            "exact_quote": "        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+          }
+        ]
+      }
+    }
+  ],
+  "english_code_claim_metrics": {
+    "supported": 9,
+    "contradicted": 7,
+    "insufficient": 2,
+    "denominator": 18,
+    "scope": "All identifiable EN code propositions in9 behavior entries and9 unique FAQ sentences.65 FAQ occurrences are not65 independent facts. Metadata/source locators and empty error section are not code claims. Whole output remains invalid and missing PT."
+  },
+  "required_coverage": {
+    "en": {
+      "numerator": 9,
+      "denominator": 9
+    },
+    "strict_required_bilingual": {
+      "numerator": 0,
+      "denominator": 9
+    }
+  },
+  "full_bilingual_precision": null,
+  "dimensions": [
+    {
+      "dimension": "factual correctness",
+      "score": 0,
+      "reason": "False FAQ overrides nine correct EN reference facts."
+    },
+    {
+      "dimension": "relevant completeness",
+      "score": 0,
+      "reason": "Truncated JSON and missing PT/mandatory execution disclaimers."
+    },
+    {
+      "dimension": "architecture and dependencies",
+      "score": 0,
+      "reason": "FAQ conflates cache reuse, cache writes and function return role."
+    },
+    {
+      "dimension": "API contracts",
+      "score": 0,
+      "reason": "Invented return-None/cached-value API behavior."
+    },
+    {
+      "dimension": "errors and exceptions",
+      "score": 1,
+      "reason": "Written assertions correct, but error_boundaries None and false FAQ contract."
+    },
+    {
+      "dimension": "existing tests and actual execution status",
+      "score": 0,
+      "reason": "Required not-executed statement missing."
+    },
+    {
+      "dimension": "examples and commands",
+      "score": 0,
+      "reason": "Required examples/commands-unverified statement missing."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "score": 0,
+      "reason": "No PT block."
+    },
+    {
+      "dimension": "FAQ correctness",
+      "score": 0,
+      "reason": "Seven contradicted and two ambiguous/unsupported unique FAQ propositions."
+    },
+    {
+      "dimension": "citation relevance",
+      "score": 1,
+      "reason": "EN main references correctly point to frozen source intervals; whole bilingual output incomplete."
+    },
+    {
+      "dimension": "explicit limitations",
+      "score": 0,
+      "reason": "Limitations never completed."
+    }
+  ],
+  "uncertainty": "No completed uncertainty field before truncation.",
+  "whole_note": "REJECTED",
+  "all_identifiable_code_claims_in_available_text_reviewed": true,
+  "no_whole_json_repair": true,
+  "not_autonomous_fact_discovery": "Correct bilingual fact bank supplied in original C/J prompt.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

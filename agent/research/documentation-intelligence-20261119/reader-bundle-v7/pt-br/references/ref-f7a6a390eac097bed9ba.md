@@ -1,0 +1,156 @@
+# Registro de evidência: implementation-safety-cut-ledger.json
+
+Este é um artefato bruto de pesquisa de um recorte datado. Resultados e saídas rejeitadas do modelo mantêm o status registrado. Ler o registro não aprova publicação nem treinamento.
+
+SHA-256: `f7a6a390eac097bed9bafcac3f6f6f875600aa92967e7cabeb79a4976770231f`. Bytes originais: `7363`.
+
+Caminho original: `agent/research/documentation-intelligence-20261119/implementation-safety-cut-ledger.json`.
+
+<!-- reading-section:reference:f7a6a390eac097bed9ba:consumers -->
+## Referenciado por
+
+- [Agente de documentação: contratos de fonte, identidade e propriedade](../chapters/documentation-agent-contracts.md)
+
+<!-- reading-section:reference:f7a6a390eac097bed9ba:artifact -->
+## Artefato original
+
+O bloco reproduz o artefato UTF-8 exato; acrescenta-se uma quebra final apenas para exibição se ela não existir no original.
+
+<!-- artifact-body:f7a6a390eac097bed9bafcac3f6f6f875600aa92967e7cabeb79a4976770231f:start -->
+````json
+{
+  "at": "2026-11-20T06:38:08.151301+00:00",
+  "status": "HISTORICAL_RECOVERY_CUTS_DISTINGUISHED_FROM_CURRENT_FIXED_IMPLEMENTATIONS",
+  "implementations": [
+    {
+      "path": "agent/tools/documentation_candidates.py",
+      "prior_preserved_path": ".local-backups/documentation-intelligence-20261119/candidate-input-snapshot-v1/before-fix/agent/tools/documentation_candidates.py",
+      "prior_sha256": "991762db69d8965e4d5b9afe410c36ade4e0da7d99c7dd3a424ded8924f33f97",
+      "prior_status": "REJECTED_FOR_CURRENT_USE_UNDER_MUTABLE_CALLER_INPUTS",
+      "current_version": "0.1.1",
+      "current_sha256": "b5ee241983c3e7219fa7ccec8c571e587363088b11781be06272d652519822ca",
+      "current_status": "EXPERIMENTAL_FIXED_SNAPSHOT_REGRESSIONS_PASSED_PENDING_OWNER_REVIEW"
+    },
+    {
+      "path": "agent/tools/documentation_maintenance.py",
+      "prior_preserved_path": ".local-backups/documentation-intelligence-20261119/candidate-input-snapshot-v1/before-fix/agent/tools/documentation_maintenance.py",
+      "prior_sha256": "d95e5659913cad2b03ee96a610c5af3fa112419a9f1c11db1919c2275571e3b4",
+      "prior_status": "REJECTED_FOR_CURRENT_USE_UNDER_MUTABLE_CALLER_INPUTS",
+      "current_version": "0.1.1",
+      "current_sha256": "35cd85cdd7b9861a585c8ec46c4f5aa7624cd1cc795022f7db60cc09fb5664e6",
+      "current_status": "EXPERIMENTAL_FIXED_SNAPSHOT_REGRESSIONS_PASSED_PENDING_OWNER_REVIEW"
+    },
+    {
+      "path": "agent/tools/documentation_lifecycle.py",
+      "prior_preserved_path": ".local-backups/documentation-intelligence-20261119/candidate-input-snapshot-v1/before-fix/agent/tools/documentation_lifecycle.py",
+      "prior_sha256": "c44c75997fd8562ecf2bc2cfec0dd326634b80f434bf6a2818ed401693d4b54b",
+      "prior_status": "REJECTED_FOR_CURRENT_USE_UNDER_MUTABLE_CALLER_INPUTS",
+      "current_version": "0.3.5",
+      "current_sha256": "980c98f1d87f4c96254cb6a288e06b867811e029c815f38bf972cd96f5b9ebdd",
+      "current_status": "EXPERIMENTAL_FIXED_SNAPSHOT_REGRESSIONS_PASSED_PENDING_OWNER_REVIEW"
+    },
+    {
+      "path": "agent/tools/documentation_faq.py",
+      "prior_preserved_path": ".local-backups/documentation-intelligence-20261119/candidate-input-snapshot-v1/before-fix/agent/tools/documentation_faq.py",
+      "prior_sha256": "bf30f5bf0998a809170b568634aabf9cb1d4191c370d7b5f5747c75fa7e949cb",
+      "prior_status": "REJECTED_FOR_CURRENT_USE_UNDER_MUTABLE_CALLER_INPUTS",
+      "current_version": "0.1.1",
+      "current_sha256": "d84374e91b1a90eeb8934d1d9ed342078dd3b9b7196c7af29c38fa9a5520bc00",
+      "current_status": "EXPERIMENTAL_FIXED_SNAPSHOT_REGRESSIONS_PASSED_PENDING_OWNER_REVIEW"
+    }
+  ],
+  "prior_verified_recovery_receipts": [
+    "operational-recovery-current-v2.json",
+    "operational-recovery-current-v3.json",
+    "source-evidence-delta-recovery-v2.json"
+  ],
+  "prior_recovery_verification_still_valid": true,
+  "prior_behavioral_test_pass_is_not_current_safety_certification": true,
+  "rollback_policy": "Retain old bytes as failure/recovery evidence. Do not recommend resuming known caller-drift application/planner code merely because its dated recovery or older tests passed. Current fixed code still requires owner review; no automatic production switch.",
+  "current_code_tests": 238,
+  "current_code_platforms_verified": [
+    "macOS Python3.14.7"
+  ],
+  "current_238_independent_linux_restore": "PENDING",
+  "six_path_evaluation": {
+    "path": "typed-input-snapshot-evaluation-v2.json",
+    "sha256": "c308d92f8d35480973b92b397b8819e2585970ae05daac9492be2f941643f73a"
+  },
+  "owner_approved": false,
+  "training_gold": false,
+  "originals_deleted": false,
+  "dated_followups": [
+    {
+      "at": "2026-11-20T06:59:28.625560+00:00",
+      "status": "CURRENT_238_TEST_CODE_INDEPENDENT_RESTORE_PASSED_MACOS_AND_LINUX",
+      "receipt": "agent/research/documentation-intelligence-20261119/operational-recovery-current-v4.json",
+      "sha256": "ee1d1d32f5d81bc32627ff38686959d5a24debb9ed8499523ddde5f838031fdb",
+      "historical_pending_field_retained_as_prior_observation": true,
+      "owner_approved": false
+    },
+    {
+      "at": "2026-11-20T07:17:12.522173+00:00",
+      "status": "MAINTENANCE_CLI_ADMISSION_CORRECTED_AND_OPTIONAL_CONDITIONAL_FAQ_REVISION_ADDED",
+      "current_maintenance": {
+        "version": "0.1.2",
+        "sha256": "fd72ef8717a394856c00f77e1d132626b3b2dd183af64b0b3e7139ec528eadfe"
+      },
+      "prior_maintenance_0_1_1_status": "Preserved and rejected for nonregular raw CLI specification admission; earlier typed-input guards remain valid for their dated scope.",
+      "prior_maintenance_source": ".local-backups/documentation-intelligence-20261119/maintenance-spec-boundary-v1/documentation_maintenance.py",
+      "new_optional_conditional_faq_revision": {
+        "version": "0.1.0",
+        "sha256": "12fe499d0ba74833ef4d918f10c9a594b82937993ef63a3374ba9c89d388545b",
+        "development_reference_matches": 16,
+        "REMOVE_supported": false
+      },
+      "current_local_tests": 264,
+      "current_independent_linux_restore": "PENDING",
+      "prior_238_restore_remains_valid_dated_evidence": true,
+      "owner_approved": false
+    },
+    {
+      "at": "2026-11-20T07:22:32.179196+00:00",
+      "status": "CURRENT_264_TEST_CODE_RESTORED_AND_PASSED_MACOS_AND_LINUX",
+      "receipt": "agent/research/documentation-intelligence-20261119/operational-recovery-current-v5.json",
+      "sha256": "c5a2f29d2460861c1dc9c3efe1a96643fcd58877197b3cd037f70aa8a6d5d3cf",
+      "prior_pending_fields_retained_as_dated_observations": true,
+      "owner_approved": false
+    },
+    {
+      "at": "2026-11-20T08:26:52.581582+00:00",
+      "reason": "New physical NO-OP binding correction independently restored and all271tests passed on bothplatforms.",
+      "previous_ledger_sha256": "f20b4b03eb65cdac22f305b037d218504e250bdbe438d663d4faa23265b2ceef",
+      "receipt": "agent/research/documentation-intelligence-20261119/operational-recovery-current-v6.json",
+      "receipt_sha256": "f948e565d0ed612443c095b4ce03a5ef09387c599dbe78bfb72a3272e6d24e4b",
+      "current_candidate_version": "0.1.2",
+      "current_workspace_version": "0.1.3",
+      "current_code_tests": 271,
+      "original_current_fields_are_dated": true,
+      "owner_approved": false
+    }
+  ],
+  "append_only_supplements": [
+    {
+      "at": "2026-11-20T08:25:11.004083+00:00",
+      "reason": "Physical NO-OP target binding defect reproduced in memory and workspace APIs after264-test cut.",
+      "previous_ledger_sha256": "66ab853c966f158d454e053a5f5cc6d94454214709f538876018d4d31725603e",
+      "previous_ledger_preserved": ".local-backups/documentation-intelligence-20261119/implementation-safety-ledger-before-physical-noop-v1.json",
+      "current_candidate_version": "0.1.2",
+      "current_workspace_version": "0.1.3",
+      "unsafe_for_current_NOOP_target_certification": {
+        "candidate_versions_through": "0.1.1",
+        "workspace_versions_through": "0.1.2"
+      },
+      "old_capsules_preserved": true,
+      "earlier_current_fields_are_dated_observations": true,
+      "working_suite_test_methods": 271,
+      "restored_current_suite": "PENDING_NEW_CUT",
+      "evaluation": "agent/research/documentation-intelligence-20261119/noop-document-binding-evaluation-v1.json",
+      "no_original_docs_written": true,
+      "owner_approved": false,
+      "training_runs": 0
+    }
+  ]
+}
+````
+<!-- artifact-body:f7a6a390eac097bed9bafcac3f6f6f875600aa92967e7cabeb79a4976770231f:end -->

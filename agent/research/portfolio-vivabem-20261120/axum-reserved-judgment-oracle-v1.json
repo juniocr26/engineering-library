@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-21T01:52:35.213342+00:00",
+  "never_sent_to_model": true,
+  "claims": [
+    {
+      "id": "AX01",
+      "claim": "The selected Router::nest guard rejects an empty path OR the root slash path.",
+      "expected": "SUPPORTED",
+      "evidence_range": [
+        218,
+        221
+      ]
+    },
+    {
+      "id": "AX02",
+      "claim": "In Router::nest, the selected guard permits an empty path and only rejects the root slash.",
+      "expected": "REFUTED",
+      "evidence_range": [
+        218,
+        221
+      ]
+    },
+    {
+      "id": "AX03",
+      "claim": "The selected Router::nest_service root/empty-path panic text recommends merge.",
+      "expected": "REFUTED",
+      "evidence_range": [
+        245,
+        247
+      ]
+    },
+    {
+      "id": "AX04",
+      "claim": "The selected Router::nest_service where-clause includes T: Service<Request, Error = Infallible> + Clone + Send + Sync + static lifetime.",
+      "expected": "SUPPORTED",
+      "evidence_range": [
+        239,
+        244
+      ]
+    },
+    {
+      "id": "AX05",
+      "claim": "The selected Router::nest destructuring binds path_router while matching default_fallback and catch_all_fallback with underscore patterns.",
+      "expected": "SUPPORTED",
+      "evidence_range": [
+        223,
+        230
+      ]
+    },
+    {
+      "id": "AX06",
+      "claim": "Every non-empty non-root path is guaranteed to be registered successfully without any panic in the selected methods.",
+      "expected": "INSUFFICIENT",
+      "evidence_range": [
+        218,
+        252
+      ]
+    },
+    {
+      "id": "AX07",
+      "claim": "The Axum test suite passed during this evaluation.",
+      "expected": "INSUFFICIENT",
+      "evidence_range": [
+        218,
+        252
+      ]
+    },
+    {
+      "id": "AX08",
+      "claim": "In the selected Router::nest_service body, the root/empty-path guard occurs after its call to this.path_router.nest_service.",
+      "expected": "REFUTED",
+      "evidence_range": [
+        245,
+        251
+      ]
+    }
+  ],
+  "evidence_range_limit": "Reference ranges need not match exact endpoints if returned range is valid and supports the reason; AX06/07 insufficiency is about evidence limits, not proof of a runtime counterexample."
+}

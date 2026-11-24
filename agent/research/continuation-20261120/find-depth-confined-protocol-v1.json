@@ -1,0 +1,109 @@
+{
+  "at": "2026-11-20T15:19:45.738944+00:00",
+  "hypothesis": "The exact historical function filters yielded roots by max_depth but does not prune the mutable native os.walk dirs list; ignored directory basenames also filter yielding rather than traversal.",
+  "source_revision": "c23dbdadb6fecdf505eb4231559561913b84c13f",
+  "source_path": "agent/research/documentation-intelligence-20261120/public-sources/25.0.0/boltons/fileutils.py",
+  "source_sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc",
+  "quote": "def iter_find_files(directory, patterns, ignored=None, include_dirs=False, max_depth=None):\n    \"\"\"Returns a generator that yields file paths under a *directory*,\n    matching *patterns* using `glob`_ syntax (e.g., ``*.txt``). Also\n    supports *ignored* patterns.\n\n    Args:\n        directory (str): Path that serves as the root of the\n            search. Yielded paths will include this as a prefix.\n        patterns (str or list): A single pattern or list of\n            glob-formatted patterns to find under *directory*.\n        ignored (str or list): A single pattern or list of\n            glob-formatted patterns to ignore.\n        include_dirs (bool): Whether to include directories that match\n           patterns, as well. Defaults to ``False``.\n        max_depth (int): traverse up to this level of subdirectory.\n           I.e., 0 for the specified *directory* only, 1 for *directory* \n           and one level of subdirectory.\n\n    For example, finding Python files in the current directory:\n\n    >>> _CUR_DIR = os.path.dirname(os.path.abspath(__file__))\n    >>> filenames = sorted(iter_find_files(_CUR_DIR, '*.py'))\n    >>> os.path.basename(filenames[-1])\n    'urlutils.py'\n\n    Or, Python files while ignoring emacs lockfiles:\n\n    >>> filenames = iter_find_files(_CUR_DIR, '*.py', ignored='.#*')\n\n    .. _glob: https://en.wikipedia.org/wiki/Glob_%28programming%29\n\n    \"\"\"\n    if isinstance(patterns, str):\n        patterns = [patterns]\n    pats_re = re.compile('|'.join([fnmatch.translate(p) for p in patterns]))\n\n    if not ignored:\n        ignored = []\n    elif isinstance(ignored, str):\n        ignored = [ignored]\n    ign_re = re.compile('|'.join([fnmatch.translate(p) for p in ignored]))\n    start_depth = len(directory.split(os.path.sep))\n    for root, dirs, files in os.walk(directory):\n        if max_depth is not None and (len(root.split(os.path.sep)) - start_depth) > max_depth:\n            continue\n        if include_dirs:\n            for basename in dirs:\n                if pats_re.match(basename):\n                    if ignored and ign_re.match(basename):\n                        continue\n                    filename = os.path.join(root, basename)\n                    yield filename\n\n        for basename in files:\n            if pats_re.match(basename):\n                if ignored and ign_re.match(basename):\n                    continue\n                filename = os.path.join(root, basename)\n                yield filename\n    return\n",
+  "quote_sha256": "61186c725dd52fe8443906b312c52c3eda144dd6b75f477b71100d21f7214ff9",
+  "selector": "iter_find_files",
+  "first_line": 492,
+  "last_line": 551,
+  "calls": [
+    "'|'.join",
+    "directory.split",
+    "fnmatch.translate",
+    "ign_re.match",
+    "isinstance",
+    "len",
+    "os.path.join",
+    "os.walk",
+    "pats_re.match",
+    "re.compile",
+    "root.split"
+  ],
+  "frozen_before_predictions": true,
+  "cases": [
+    {
+      "id": "unbounded-yields-all",
+      "max_depth": null,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt"
+      ]
+    },
+    {
+      "id": "depth0-yields-root-only",
+      "max_depth": 0,
+      "expected_yields": [
+        "tree/root.txt"
+      ]
+    },
+    {
+      "id": "depth1-yields-two-levels",
+      "max_depth": 1,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt"
+      ]
+    },
+    {
+      "id": "depth2-yields-all",
+      "max_depth": 2,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt"
+      ]
+    },
+    {
+      "id": "negative-depth-yields-none",
+      "max_depth": -1,
+      "expected_yields": []
+    },
+    {
+      "id": "ignored-directory-name-does-not-prune",
+      "max_depth": null,
+      "patterns": "*",
+      "ignored": "deep",
+      "include_dirs": true,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt",
+        "tree/root.skip",
+        "tree/deep/nested"
+      ]
+    },
+    {
+      "id": "depth0-can-yield-child-directory",
+      "max_depth": 0,
+      "patterns": "*",
+      "include_dirs": true,
+      "expected_yields": [
+        "tree/deep",
+        "tree/root.txt",
+        "tree/root.skip"
+      ]
+    }
+  ],
+  "expected_native_roots_for_every_case": [
+    "tree",
+    "tree/deep",
+    "tree/deep/nested"
+  ],
+  "source_execution_allowed_for_this_protocol_only": true,
+  "execution_scope": "Exact reviewed generator function only; no public module import. A facade wraps native os.walk on a new three-directory owned tree and records dirs before/after each yield. Trusted stdlib re/fnmatch and path operations only; no public files written.",
+  "maximum_tree_directories": 3,
+  "maximum_tree_files": 4,
+  "whole_public_module_imported": false,
+  "model_calls": 0,
+  "neural_training": false,
+  "scope_limits": [
+    "Historical25.0.0 cut, not current/latest-release behavior.",
+    "Fully consumed generator on one tiny controlled tree; no race, permission, symlink, arbitrary-path or performance guarantee.",
+    "Same cases may be repeated on actual Linux; that adds environment evidence, not independent test cases.",
+    "No upstream patch or active documentation publication."
+  ]
+}

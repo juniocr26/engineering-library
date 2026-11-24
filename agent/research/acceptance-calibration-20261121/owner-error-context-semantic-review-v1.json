@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-21T16:38:25.399144+00:00",
+  "purpose": "Expanded callee-context review for the unchanged owner chapter; not a revision to frozen V/R/L source inputs or reference answers.",
+  "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+  "source_integrity": {
+    "parse.ts": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+    "util.ts": "08dd3e160148ebec37321dc082bdd0c74581ddb3e8f579654f5fa1ca07cf402d",
+    "errors.ts": "ad19a7ec2af7abc5ed11a0ba279a015272adff8d2548ac531fc9216b0a37112a"
+  },
+  "observations": [
+    {
+      "id": "CTX-FINALIZE-CALLBACK",
+      "source_path": "packages/zod/src/v4/core/util.ts",
+      "lines": [
+        1005,
+        1013
+      ],
+      "exact_quote": "  const schemaError = iss.schema !== iss.inst ? iss.schema?._zod.def?.error : undefined;\n  const message = iss.message\n    ? iss.message\n    : (unwrapMessage(iss.inst?._zod.def?.error?.(iss as never)) ??\n      unwrapMessage(schemaError?.(iss as never)) ??\n      unwrapMessage(ctx?.error?.(iss as never)) ??\n      unwrapMessage(config.customError?.(iss)) ??\n      unwrapMessage(config.localeError?.(iss)) ??\n      \"Invalid input\");",
+      "interpretation": "When no truthy iss.message/earlier non-nullish map result wins, the helper may invoke error-map callbacks including ctx.error/config.customError/config.localeError. The shown helper has no local catch around those calls. A throwing callback can prevent normal return. This is a conditional possibility, not an observed failure or a claim every callback runs.",
+      "verdict": "SUPPORTED_WITH_EXPLICIT_CONDITIONS"
+    },
+    {
+      "id": "CTX-INPUT-CONDITIONAL",
+      "source_path": "packages/zod/src/v4/core/util.ts",
+      "lines": [
+        1015,
+        1026
+      ],
+      "exact_quote": "  // an explicit own-key copy beats object rest with excluded keys, which v8 routes through a generic runtime call; Object.keys rather than for-in so an issue pushed with a prototype does not leak inherited keys, and an own __proto__ key is dropped rather than assigned through the setter\n  const full: any = {};\n  for (const k of Object.keys(iss)) {\n    if (k === \"inst\" || k === \"schema\" || k === \"continue\" || k === \"input\" || k === \"__proto__\") continue;\n    full[k] = (iss as any)[k];\n  }\n  full.path ??= [];\n  full.message = message;\n  if (ctx?.reportInput) {\n    full.input = iss.input;\n  }\n  return full;",
+      "interpretation": "The initial key copy omits input, then ctx.reportInput truthiness can add full.input = iss.input. An unconditional finalizeIssue-always-drops-input claim is contradicted by the expanded callee source.",
+      "verdict": "SUPPORTED_CONDITIONAL_FACT"
+    },
+    {
+      "id": "CTX-COMMENT-NOT-GUARANTEE",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "lines": [
+        88,
+        94
+      ],
+      "exact_quote": "      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));\n        // finalizeIssue drops `input`, so the built error holds nothing; keeping the raw issues past this point pins the parsed value for the life of the result\n        issues = undefined as any;\n        ctx = undefined as any;\n      }\n      return error;",
+      "interpretation": "The source comment about dropped input is not a universal object-retention or process-memory guarantee. The original owner chapter explicitly avoids certifying memory reclamation, and that caution is supported by expanded context.",
+      "verdict": "COMMENT_UNIVERSALIZATION_NOT_ADMITTED"
+    }
+  ],
+  "construction_and_finalization_boundary": "The getter clears captures after its new Err(issues.map(...)) assignment. Normal argument/construction completion is necessary before those assignments; owned language probe demonstrates that sequencing only, not Zod runtime.",
+  "existing_chapter_source_fact_contradiction_found": false,
+  "proposed_reviewer_wording_still_needs_clarification": true,
+  "no_original_chapter_or_reference_edits": true,
+  "new_upstream_source_executions": 0,
+  "new_model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-20T00:32:58.805656+00:00",
+  "chapter_id": "starlette-task-and-iteration",
+  "source_repository": "starlette",
+  "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "construction",
+      "path": "starlette/background.py",
+      "lines": [
+        12,
+        17
+      ],
+      "review": "Stores callable/args/kwargs; is_async flag computed by helper; no callback call here."
+    },
+    {
+      "id": "task-call",
+      "path": "starlette/background.py",
+      "lines": [
+        19,
+        23
+      ],
+      "review": "Two awaited expression statements; no local return/except; normal completion falls through to None, callback result not forwarded."
+    },
+    {
+      "id": "collection",
+      "path": "starlette/background.py",
+      "lines": [
+        26,
+        36
+      ],
+      "review": "Constructor/list copy, add constructs/appends, call awaits sequentially with no local error catch."
+    },
+    {
+      "id": "await-return",
+      "path": "starlette/concurrency.py",
+      "lines": [
+        32,
+        34
+      ],
+      "review": "Partial binding expression followed by return await; result of normal helper completion returned."
+    },
+    {
+      "id": "exception-owner",
+      "path": "starlette/concurrency.py",
+      "lines": [
+        37,
+        59
+      ],
+      "review": "_next translates StopIteration; iterator wrapper yields awaited result and catches translated class with break."
+    },
+    {
+      "id": "classifier",
+      "path": "starlette/_utils.py",
+      "lines": [
+        15,
+        22,
+        61,
+        65
+      ],
+      "review": "Version-conditional import binding; actual implementation unwraps partials and checks coroutine function on object/callable.__call__. No universal awaitable classification."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "a77213cdb593d6bad316e81e652669b150e8d95dad74586c9280281137713eae",
+      "after_sha256": "7499809154d35681c525d7d69fc6c490ea43485f00433335c1152cb08fc10269",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -26,6 +26,25 @@\n \n The async generator `iterate_in_threadpool` assigns `iter(iterator)` to `as_iterator` before entering `while True`. Within the loop it tries `yield await anyio.to_thread.run_sync(_next, as_iterator)`. A normally completed awaited result is yielded to the consumer; it is not a final return value. Its `except _StopIteration` handler contains `break`. The neural baseline incorrectly described this outer handler as reraising the exception. The helper raises the translated name; the outer written handler terminates its loop. Those operations belong to different bodies.\n \n-The wrapper contains no loop else, try else or finally and does not demonstrate cleanup of an arbitrary underlying iterator. Other errors are not caught by this specific written handler, but the exact runtime exception-matching outcome depends on bindings and execution. There is no source basis for a batching, retry or concurrent-prefetch guarantee. The source-derived profile added in this campaign preserves the initializer, yielded call and `break` without converting unresolved helpers into semantic facts.\n+The wrapper contains no loop else, try else or finally and does not demonstrate cleanup of an arbitrary underlying iterator. Other errors are not caught by this specific written handler, but the exact runtime exception-matching outcome depends on bindings and execution. There is no source basis for a batching, retry or concurrent-prefetch guarantee. The source-derived profile added in the previous campaign preserves the initializer, yielded call and `break` without converting unresolved helpers into semantic facts.\n \n This chapter is a corrected research candidate, not a model-weight improvement or approved training answer. The deterministic iteration extension was verified on this actual family and owned controls; independent real-repository transfer is not established.\n+\n+## Engineer FAQ and classification evidence\n+\n+<!-- reading-section: faq:await-expression-versus-return-value -->\n+### Does awaiting BackgroundTask return the callback result?\n+\n+The selected task method awaits an expression in either branch without returning it. If the method completes normally, it falls through to `None`. The separate `run_in_threadpool` helper returns its awaited result, but the surrounding task method does not forward that value. This follows the [Python function-return rules](https://docs.python.org/3/tutorial/controlflow.html#defining-functions), not an execution of Starlette.\n+\n+<!-- reading-section: faq:task-registration-versus-execution -->\n+### Does adding a task immediately run it or create parallel work?\n+\n+The shown method constructs a task object and appends it. The collection call later awaits each reached task in sequence. A scheduling policy for a response, another process or a distributed queue is not established by these selected methods.\n+\n+<!-- reading-section: faq:async-callable-classifier-limit -->\n+### Is every callable returning an awaitable classified as async?\n+\n+The additional helper source unwraps `functools.partial` objects and checks the coroutine-function predicate on the object or its callable `__call__`. Its predicate binding is imported through a Python-version condition. This is narrower than universally examining future return values; imported predicate implementations and actual scheduling remain unverified.\n+\n+The iterator wrapper catches its translated exhaustion class to break its loop. It does not supply a finally block that closes every possible underlying iterator. Callback failure, iterator exhaustion and consumer cleanup remain distinct contracts.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "5402b6aff6c6fe2da232e82f6b5a21bfa5b634224ca8473540812e988e9f2f64",
+      "after_sha256": "eea252b07c7eaf0b22251ac03ffbff086931217f83501b8378154a6c98d49f3c",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -26,6 +26,25 @@\n \n O gerador assíncrono `iterate_in_threadpool` atribui `iter(iterator)` a `as_iterator` antes de entrar em `while True`. Dentro do laço, tenta `yield await anyio.to_thread.run_sync(_next, as_iterator)`. Um resultado aguardado que conclui normalmente é emitido ao consumidor com yield; não é um valor final de return. Seu tratador `except _StopIteration` contém `break`. O baseline neural descreveu incorretamente esse tratador externo como relançamento da exceção. O helper lança o nome traduzido; o tratador externo escrito encerra seu laço. Essas operações pertencem a corpos diferentes.\n \n-O wrapper não contém else do laço, else do try ou finally e não demonstra limpeza de um iterador subjacente arbitrário. Outros erros não são capturados por esse tratador escrito específico, mas o resultado exato da correspondência de exceções em execução depende dos vínculos e da execução. Não há base na fonte para garantir lotes, novas tentativas ou pré-carregamento concorrente. O perfil derivado da fonte acrescentado nesta campanha preserva inicializador, chamada emitida e `break` sem transformar helpers não resolvidos em fatos semânticos.\n+O wrapper não contém else do laço, else do try ou finally e não demonstra limpeza de um iterador subjacente arbitrário. Outros erros não são capturados por esse tratador escrito específico, mas o resultado exato da correspondência de exceções em execução depende dos vínculos e da execução. Não há base na fonte para garantir lotes, novas tentativas ou pré-carregamento concorrente. O perfil derivado da fonte acrescentado na campanha anterior preserva inicializador, chamada emitida e `break` sem transformar helpers não resolvidos em fatos semânticos.\n \n Este capítulo é um candidato corrigido de pesquisa, não uma melhoria dos pesos do modelo nem resposta aprovada para treinamento. A extensão determinística de iteração foi verificada nesta família real e em controles próprios; transferência independente para outro repositório real não foi estabelecida.\n+\n+## FAQ de engenharia e evidência da classificação\n+\n+<!-- reading-section: faq:await-expression-versus-return-value -->\n+### Aguardar BackgroundTask retorna o resultado do callback?\n+\n+O método de tarefa selecionado aguarda uma expressão em cada ramo sem retorná-la. Se conclui normalmente, alcança o final e retorna `None`. O helper separado `run_in_threadpool` retorna seu resultado aguardado, mas o método de tarefa envolvente não encaminha esse valor. Isso decorre das [regras de retorno de funções Python](https://docs.python.org/3/tutorial/controlflow.html#defining-functions), não de uma execução do Starlette.\n+\n+<!-- reading-section: faq:task-registration-versus-execution -->\n+### Adicionar uma tarefa a executa imediatamente ou cria trabalho paralelo?\n+\n+O método mostrado constrói um objeto de tarefa e o acrescenta à lista. A chamada posterior da coleção aguarda cada tarefa alcançada em sequência. Esses métodos selecionados não estabelecem uma política de agendamento de resposta, outro processo ou fila distribuída.\n+\n+<!-- reading-section: faq:async-callable-classifier-limit -->\n+### Todo callable que retorna um awaitable é classificado como assíncrono?\n+\n+A fonte adicional do helper desembrulha objetos `functools.partial` e verifica o predicado de função coroutine no objeto ou em seu `__call__` callable. O vínculo desse predicado é importado por uma condição de versão do Python. Isso é mais restrito que examinar universalmente futuros valores retornados; implementações importadas dos predicados e escalonamento real continuam sem verificação.\n+\n+O wrapper de iteração captura sua classe traduzida de esgotamento para encerrar o laço. Não fornece um finally que feche todo iterador subjacente possível. Falha do callback, esgotamento do iterador e limpeza pelo consumidor continuam contratos distintos.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.341243+00:00",
+    "canonical_question_ids": [
+      "await-expression-versus-return-value",
+      "task-registration-versus-execution",
+      "async-callable-classifier-limit"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/starlette-task-and-iteration",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

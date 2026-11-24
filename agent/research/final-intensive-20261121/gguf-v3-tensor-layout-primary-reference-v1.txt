@@ -1,0 +1,489 @@
+ (https://raw.githubusercontent.com/ggml-org/ggml/master/docs/gguf.md)
+citeturn19view0 [wordlim: 200] Crawled: today; Content type: text/plain; Source: find({"ref_id":"turn18view0","pattern":"gguf_tensor_info_t"}); Total lines: 747
+L111: testCases.forEach(({ filename, expected }) => {
+L112:   const result = parseGGUFFilename(filename);
+L113:   const passed = JSON.stringify(result) === JSON.stringify(expected);
+L114:   console.log(`${filename}: ${passed ? "PASS" : "FAIL"}`);
+L115:   if (!passed) {
+L116:       console.log(result);
+L117:       console.log(expected);
+L118:   }
+L119: });
+L120: ```
+L121: 
+L122: </details>
+L123: ### File Structure
+L124: 
+L125: ![image](https://github.com/ggerganov/ggml/assets/1991296/c3623641-3a1d-408e-bfaf-1b7c4e16aa63)
+L126: *diagram by [@mishig25](https://github.com/mishig25) (GGUF v3)*
+L127: 
+L128: GGUF files are structured as follows. They use a global alignment specified in the `general.alignment` metadata field, referred to as `ALIGNMENT` below. Where required, the file is padded with `0x00` bytes to the next multiple of `general.alignment`.
+L129: Fields, including arrays, are written sequentially without alignment unless otherwise specified.
+L130: 
+L131: Models are little-endian by default. They can also come in big-endian for use with big-endian computers; in this case, all values (including metadata values and tensors) will also be big-endian. At the time of writing, there is no way to determine if a model is big-endian; this may be rectified in future versions. If no additional information is provided, assume the model is little-endian.
+L132: The `ggml_type` values below mirror `enum ggml_type` in [`include/ggml.h`](../include/ggml.h), which is authoritative and gains new values over time, so readers should take type codes and block sizes from there.
+L133: ```c
+L134: enum ggml_type: uint32_t {
+L135:     GGML_TYPE_F32     = 0,
+L136:     GGML_TYPE_F16     = 1,
+L137:     GGML_TYPE_Q4_0    = 2,
+L138:     GGML_TYPE_Q4_1    = 3,
+L139:     // GGML_TYPE_Q4_2 = 4, support has been removed
+L140:     // GGML_TYPE_Q4_3 = 5, support has been removed
+L141:     GGML_TYPE_Q5_0    = 6,
+L142:     GGML_TYPE_Q5_1    = 7,
+L143:     GGML_TYPE_Q8_0    = 8,
+L144:     GGML_TYPE_Q8_1    = 9,
+L145:     GGML_TYPE_Q2_K    = 10,
+L146:     GGML_TYPE_Q3_K    = 11,
+L147:     GGML_TYPE_Q4_K    = 12,
+L148:     GGML_TYPE_Q5_K    = 13,
+L149:     GGML_TYPE_Q6_K    = 14,
+L150:     GGML_TYPE_Q8_K    = 15,
+L151:     GGML_TYPE_IQ2_XXS = 16,
+L152:     GGML_TYPE_IQ2_XS  = 17,
+L153:     GGML_TYPE_IQ3_XXS = 18,
+L154:     GGML_TYPE_IQ1_S   = 19,
+L155:     GGML_TYPE_IQ4_NL  = 20,
+L156:     GGML_TYPE_IQ3_S   = 21,
+L157:     GGML_TYPE_IQ2_S   = 22,
+L158:     GGML_TYPE_IQ4_XS  = 23,
+L159:     GGML_TYPE_I8      = 24,
+L160:     GGML_TYPE_I16     = 25,
+L161:     GGML_TYPE_I32     = 26,
+L162:     GGML_TYPE_I64     = 27,
+L163:     GGML_TYPE_F64     = 28,
+L164:     GGML_TYPE_IQ1_M   = 29,
+L165:     GGML_TYPE_BF16    = 30,
+L166:     // GGML_TYPE_Q4_0_4_4 = 31, support has been removed from gguf files
+L167:     // GGML_TYPE_Q4_0_4_8 = 32,
+L168:     // GGML_TYPE_Q4_0_8_8 = 33,
+L169:     GGML_TYPE_TQ1_0   = 34,
+L170:     GGML_TYPE_TQ2_0   = 35,
+L171:     // GGML_TYPE_IQ4_NL_4_4 = 36,
+L172:     // GGML_TYPE_IQ4_NL_4_8 = 37,
+L173:     // GGML_TYPE_IQ4_NL_8_8 = 38,
+L174:     GGML_TYPE_MXFP4   = 39, // MXFP4 (1 block)
+L175:     GGML_TYPE_NVFP4   = 40, // NVFP4 (4 blocks, E4M3 scale)
+L176:     GGML_TYPE_Q1_0    = 41,
+L177:     GGML_TYPE_Q2_0    = 42,
+L178:     GGML_TYPE_F8_E4M3 = 43,
+L179:     GGML_TYPE_COUNT   = 44,
+L180: };
+L181: enum gguf_metadata_value_type: uint32_t {
+L182:     // The value is a 8-bit unsigned integer.
+L183:     GGUF_METADATA_VALUE_TYPE_UINT8 = 0,
+L184:     // The value is a 8-bit signed integer.
+L185:     GGUF_METADATA_VALUE_TYPE_INT8 = 1,
+L186:     // The value is a 16-bit unsigned little-endian integer.
+L187:     GGUF_METADATA_VALUE_TYPE_UINT16 = 2,
+L188:     // The value is a 16-bit signed little-endian integer.
+L189:     GGUF_METADATA_VALUE_TYPE_INT16 = 3,
+L190:     // The value is a 32-bit unsigned little-endian integer.
+L191:     GGUF_METADATA_VALUE_TYPE_UINT32 = 4,
+L192:     // The value is a 32-bit signed little-endian integer.
+L193:     GGUF_METADATA_VALUE_TYPE_INT32 = 5,
+L194:     // The value is a 32-bit IEEE754 floating point number.
+L195:     GGUF_METADATA_VALUE_TYPE_FLOAT32 = 6,
+L196:     // The value is a boolean.
+L197:     // 1-byte value where 0 is false and 1 is true.
+L198:     // Anything else is invalid, and should be treated as either the model being invalid or the reader being buggy.
+L199:     GGUF_METADATA_VALUE_TYPE_BOOL = 7,
+L200:     // The value is a UTF-8 non-null-terminated string, with length prepended.
+L201:     GGUF_METADATA_VALUE_TYPE_STRING = 8,
+L202:     // The value is an array of other values, with the length and type prepended.
+L203:     ///
+L204:     // Arrays can be nested, and the length of the array is the number of elements in the array, not the number of bytes.
+L205:     GGUF_METADATA_VALUE_TYPE_ARRAY = 9,
+L206:     // The value is a 64-bit unsigned little-endian integer.
+L207:     GGUF_METADATA_VALUE_TYPE_UINT64 = 10,
+L208:     // The value is a 64-bit signed little-endian integer.
+L209:     GGUF_METADATA_VALUE_TYPE_INT64 = 11,
+L210:     // The value is a 64-bit IEEE754 floating point number.
+L211:     GGUF_METADATA_VALUE_TYPE_FLOAT64 = 12,
+L212: };
+L213: // A string in GGUF.
+L214: struct gguf_string_t {
+L215:     // The length of the string, in bytes.
+L216:     uint64_t len;
+L217:     // The string as a UTF-8 non-null-terminated string.
+L218:     char string[len];
+L219: };
+L220: union gguf_metadata_value_t {
+L221:     uint8_t uint8;
+L222:     int8_t int8;
+L223:     uint16_t uint16;
+L224:     int16_t int16;
+L225:     uint32_t uint32;
+L226:     int32_t int32;
+L227:     float float32;
+L228:     uint64_t uint64;
+L229:     int64_t int64;
+L230:     double float64;
+L231:     bool bool_;
+L232:     gguf_string_t string;
+L233:     struct {
+L234:         // Any value type is valid, including arrays.
+L235:         gguf_metadata_value_type type;
+L236:         // Number of elements, not bytes
+L237:         uint64_t len;
+L238:         // The array of values.
+L239:         gguf_metadata_value_t array[len];
+L240:     } array;
+L241: };
+L242: struct gguf_metadata_kv_t {
+L243:     // The key of the metadata. It is a standard GGUF string, with the following caveats:
+L244:     // - It must be a valid ASCII string.
+L245:     // - It must be a hierarchical key, where each segment is `lower_snake_case` and separated by a `.`.
+L246:     // - It must be at most 2^16-1/65535 bytes long.
+L247:     // Any keys that do not follow these rules are invalid.
+L248:     gguf_string_t key;
+L249:     // The type of the value.
+L250:     // Must be one of the `gguf_metadata_value_type` values.
+L251:     gguf_metadata_value_type value_type;
+L252:     // The value.
+L253:     gguf_metadata_value_t value;
+L254: };
+L255: struct gguf_header_t {
+L256:     // Magic number to announce that this is a GGUF file.
+L257:     // Must be `GGUF` at the byte level: `0x47` `0x47` `0x55` `0x46`.
+L258:     // Your executor might do little-endian byte order, so it might be
+L259:     // check for 0x46554747 and letting the endianness cancel out.
+L260:     // Consider being *very* explicit about the byte order here.
+L261:     uint32_t magic;
+L262:     // The version of the format implemented.
+L263:     // Must be `3` for version described in this spec, which introduces big-endian support.
+L264:     //
+L265:     // This version should only be increased for structural changes to the format.
+L266:     // Changes that do not affect the structure of the file should instead update the metadata
+L267:     // to signify the change.
+L268:     uint32_t version;
+L269:     // The number of tensors in the file.
+L270:     // This is explicit, instead of being included in the metadata, to ensure it is always present
+L271:     // for loading the tensors.
+L272:     uint64_t tensor_count;
+L273:     // The number of metadata key-value pairs.
+L274:     uint64_t metadata_kv_count;
+L275:     // The metadata key-value pairs.
+L276:     gguf_metadata_kv_t metadata_kv[metadata_kv_count];
+L277: };
+L278: uint64_t align_offset(uint64_t offset) {
+L279:     return offset + (ALIGNMENT - (offset % ALIGNMENT)) % ALIGNMENT;
+L280: }
+L281: struct gguf_tensor_info_t {
+L282:     // The name of the tensor. It is a standard GGUF string, with the caveat that
+L283:     // it must be at most 64 bytes long.
+L284:     gguf_string_t name;
+L285:     // The number of dimensions in the tensor.
+L286:     // Currently at most 4, but this may change in the future.
+L287:     uint32_t n_dimensions;
+L288:     // The dimensions of the tensor.
+L289:     uint64_t dimensions[n_dimensions];
+L290:     // The type of the tensor.
+L291:     ggml_type type;
+L292:     // The offset of the tensor's data in this file in bytes.
+L293:     //
+L294:     // This offset is relative to `tensor_data`, not to the start
+L295:     // of the file, to make it easier for writers to write the file.
+L296:     // Readers should consider exposing this offset relative to the
+L297:     // file to make it easier to read the data.
+L298:     //
+L299:     // Must be a multiple of `ALIGNMENT`. That is, `align_offset(offset) == offset`.
+L300:     uint64_t offset;
+L301: };
+L302: struct gguf_file_t {
+L303:     // The header of the file.
+L304:     gguf_header_t header;
+L305: 
+L306:     // Tensor infos, which can be used to locate the tensor data.
+L307:     gguf_tensor_info_t tensor_infos[header.tensor_count];
+L308:     // Padding to the nearest multiple of `ALIGNMENT`.
+L309:     //
+L310:     // That is, if `sizeof(header) + sizeof(tensor_infos)` is not a multiple of `ALIGNMENT`,
+L311:     // this padding is added to make it so.
+L312:     //
+L313:     // This can be calculated as `align_offset(position) - position`, where `position` is
+L314:     // the position of the end of `tensor_infos` (i.e. `sizeof(header) + sizeof(tensor_infos)`).
+L315:     uint8_t _padding[];
+L316:     // Tensor data.
+L317:     //
+L318:     // This is arbitrary binary data corresponding to the weights of the model. This data should be close
+L319:     // or identical to the data in the original model file, but may be different due to quantization or
+L320:     // other optimizations for inference. Any such deviations should be recorded in the metadata or as
+L321:     // part of the architecture definition.
+L322:     //
+L323:     // Each tensor's data must be stored within this array, and located through its `tensor_infos` entry.
+L324:     // The offset of each tensor's data must be a multiple of `ALIGNMENT`, and the space between tensors
+L325:     // should be padded to `ALIGNMENT` bytes.
+L326:     uint8_t tensor_data[];
+L327: };
+L328: ```
+L329: ## Standardized key-value pairs
+L330: 
+L331: The following key-value pairs are standardized. This list may grow in the future as more use cases are discovered. Where possible, names are shared with the original model definitions to make it easier to map between the two.
+L332: 
+L333: Not all of these are required, but they are all recommended. Keys that are required are bolded. For omitted pairs, the reader should assume that the value is unknown and either default or error as appropriate.
+L334: The community can develop their own key-value pairs to carry additional data. However, these should be namespaced with the relevant community name to avoid collisions. For example, the `rustformers` community might use `rustformers.` as a prefix for all of their keys.
+L335: 
+L336: If a particular community key is widely used, it may be promoted to a standardized key.
+L337: By convention, most counts/lengths/etc are `uint64` unless otherwise specified. This is to allow for larger models to be supported in the future. Some models may use `uint32` for their values; it is recommended that readers support both.
+L338: ### General
+L339: #### Required
+L340: - **`general.architecture: string`**: describes what architecture this model implements. All lowercase ASCII, with only `[a-z0-9]+` characters allowed. Known values include:
+L341:   - `llama`
+L342:   - `mpt`
+L343:   - `gptneox`
+L344:   - `gptj`
+L345:   - `gpt2`
+L346:   - `bloom`
+L347:   - `falcon`
+L348:   - `mamba`
+L349:   - `rwkv`
+L350: - **`general.quantization_version: uint32`**: The version of the quantization format. Not required if the model is not quantized (i.e. no tensors are quantized). If any tensors are quantized, this _must_ be present. This is separate to the quantization scheme of the tensors itself; the quantization version may change without changing the scheme's name (e.g. the quantization scheme is Q5_K, and the quantization version is 4).
+L351: - **`general.alignment: uint32`**: the global alignment to use, as described above. This can vary to allow for different alignment schemes, but it must be a multiple of 8. Some writers may not write the alignment. If the alignment is **not** specified, assume it is `32`.
+L352: #### General metadata
+L353: - `general.name: string`: The name of the model. This should be a human-readable name that can be used to identify the model. It should be unique within the community that the model is defined in.
+L354: - `general.author: string`: The author of the model.
+L355: - `general.version: string`: The version of the model.
+L356: - `general.organization: string`: The organization of the model.
+L357: - `general.basename: string`: The base model name / architecture of the model
+L358: - `general.finetune: string`: What has the base model been optimized toward.
+L359: - `general.description: string`: free-form description of the model including anything that isn't covered by the other fields
+L360: - `general.quantized_by: string`: The name of the individual who quantized the model
+L361: - `general.size_label: string`: Size class of the model, such as number of weights and experts. (Useful for leader boards)
+L362: - `general.license: string`: License of the model, expressed as a [SPDX license expression](https://spdx.github.io/spdx-spec/v2-draft/SPDX-license-expressions/) (e.g. `"MIT OR Apache-2.0`). Do not include any other information, such as the license text or the URL to the license.
+L363: - `general.license.name: string`: Human friendly license name
+L364: - `general.license.link: string`: URL to the license.
+L365: - `general.url: string`: URL to the model's homepage. This can be a GitHub repo, a paper, etc.
+L366: - `general.doi: string`: Digital Object Identifier (DOI) https://www.doi.org/
+L367: - `general.uuid: string`: [Universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
+L368: - `general.repo_url: string`: URL to the model's repository such as a GitHub repo or HuggingFace repo
+L369: - `general.tags: string[]`: List of tags that can be used as search terms for a search engine or social media
+L370: - `general.languages: string[]`: What languages can the model speak. Encoded as [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) two letter codes
+L371: - `general.datasets: string[]`: Links or references to datasets that the model was trained upon
+L372: - `general.file_type: uint32`: An enumerated value describing the type of the majority of the tensors in the file. Optional; can be inferred from the tensor types.
+L373:   - `ALL_F32 = 0`
+L374:   - `MOSTLY_F16 = 1`
+L375:   - `MOSTLY_Q4_0 = 2`
+L376:   - `MOSTLY_Q4_1 = 3`
+L377:   - `MOSTLY_Q4_1_SOME_F16 = 4`
+L378:   - `MOSTLY_Q4_2 = 5` (support removed)
+L379:   - `MOSTLY_Q4_3 = 6` (support removed)
+L380:   - `MOSTLY_Q8_0 = 7`
+L381:   - `MOSTLY_Q5_0 = 8`
+L382:   - `MOSTLY_Q5_1 = 9`
+L383:   - `MOSTLY_Q2_K = 10`
+L384:   - `MOSTLY_Q3_K_S = 11`
+L385:   - `MOSTLY_Q3_K_M = 12`
+L386:   - `MOSTLY_Q3_K_L = 13`
+L387:   - `MOSTLY_Q4_K_S = 14`
+L388:   - `MOSTLY_Q4_K_M = 15`
+L389:   - `MOSTLY_Q5_K_S = 16`
+L390:   - `MOSTLY_Q5_K_M = 17`
+L391:   - `MOSTLY_Q6_K = 18`
+L392: #### Source metadata
+L393: 
+L394: Information about where this model came from. This is useful for tracking the provenance of the model, and for finding the original source if the model is modified. For a model that was converted from GGML, for example, these keys would point to the model that was converted from.
+L395: - `general.source.url: string`: URL to the source of the model's homepage. This can be a GitHub repo, a paper, etc.
+L396: - `general.source.doi: string`: Source Digital Object Identifier (DOI) https://www.doi.org/
+L397: - `general.source.uuid: string`: Source [Universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
+L398: - `general.source.repo_url: string`: URL to the source of the model's repository such as a GitHub repo or HuggingFace repo
+L399: - `general.base_model.count: uint32`: Number of parent models
+L400: - `general.base_model.{id}.name: string`: The name of the parent model.
+L401: - `general.base_model.{id}.author: string`: The author of the parent model.
+L402: - `general.base_model.{id}.version: string`: The version of the parent model.
+L403: - `general.base_model.{id}.organization: string`: The organization of the parent model.
+L404: - `general.base_model.{id}.url: string`: URL to the source of the parent model's homepage. This can be a GitHub repo, a paper, etc.
+L405: - `general.base_model.{id}.doi: string`: Parent Digital Object Identifier (DOI) https://www.doi.org/
+L406: - `general.base_model.{id}.uuid: string`: Parent [Universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
+L407: - `general.base_model.{id}.repo_url: string`: URL to the source of the parent model's repository such as a GitHub repo or HuggingFace repo
+L408: ### LLM
+L409: 
+L410: In the following, `[llm]` is used to fill in for the name of a specific LLM architecture. For example, `llama` for LLaMA, `mpt` for MPT, etc. If mentioned in an architecture's section, it is required for that architecture, but not all keys are required for all architectures. Consult the relevant section for more information.
+L411: - `[llm].context_length: uint64`: Also known as `n_ctx`. length of the context (in tokens) that the model was trained on. For most architectures, this is the hard limit on the length of the input. Architectures, like RWKV, that are not reliant on transformer-style attention may be able to handle larger inputs, but this is not guaranteed.
+L412: - `[llm].embedding_length: uint64`: Also known as `n_embd`. Embedding layer size.
+L413: - `[llm].block_count: uint64`: The number of blocks of attention+feed-forward layers (i.e. the bulk of the LLM). Does not include the input or embedding layers.
+L414: - `[llm].feed_forward_length: uint64`: Also known as `n_ff`. The length of the feed-forward layer.
+L415: - `[llm].use_parallel_residual: bool`: Whether or not the parallel residual logic should be used.
+L416: - `[llm].tensor_data_layout: string`: When a model is converted to GGUF, tensors may be rearranged to improve performance. This key describes the layout of the tensor data. This is not required; if not present, it is assumed to be `reference`.
+L417:   - `reference`: tensors are laid out in the same order as the original model
+L418:   - further options can be found for each architecture in their respective sections
+L419: - `[llm].expert_count: uint32`: Number of experts in MoE models (optional for non-MoE arches).
+L420: - `[llm].expert_used_count: uint32`: Number of experts used during each token token evaluation (optional for non-MoE arches).
+L421: #### Attention
+L422: - `[llm].attention.head_count: uint64`: Also known as `n_head`. Number of attention heads.
+L423: - `[llm].attention.head_count_kv: uint64`: The number of heads per group used in Grouped-Query-Attention. If not present or if present and equal to `[llm].attention.head_count`, the model does not use GQA.
+L424: - `[llm].attention.max_alibi_bias: float32`: The maximum bias to use for ALiBI.
+L425: - `[llm].attention.clamp_kqv: float32`: Value (`C`) to clamp the values of the `Q`, `K`, and `V` tensors between (`[-C, C]`).
+L426: - `[llm].attention.layer_norm_epsilon: float32`: Layer normalization epsilon.
+L427: - `[llm].attention.layer_norm_rms_epsilon: float32`: Layer RMS normalization epsilon.
+L428: - `[llm].attention.key_length: uint32`: The optional size of a key head, $d_k$. If not specified, it will be `n_embd / n_head`.
+L429: - `[llm].attention.value_length: uint32`: The optional size of a value head, $d_v$. If not specified, it will be `n_embd / n_head`.
+L430: #### RoPE
+L431: 
+L432: - `[llm].rope.dimension_count: uint64`: The number of rotary dimensions for RoPE.
+L433: - `[llm].rope.freq_base: float32`: The base frequency for RoPE.
+L434: ##### Scaling
+L435: 
+L436: The following keys describe RoPE scaling parameters:
+L437: 
+L438: - `[llm].rope.scaling.type: string`: Can be `none`, `linear`, or `yarn`.
+L439: - `[llm].rope.scaling.factor: float32`: A scale factor for RoPE to adjust the context length.
+L440: - `[llm].rope.scaling.original_context_length: uint32_t`: The original context length of the base model.
+L441: - `[llm].rope.scaling.finetuned: bool`: True if model has been finetuned with RoPE scaling.
+L442: Note that older models may not have these keys, and may instead use the following key:
+L443: 
+L444: - `[llm].rope.scale_linear: float32`: A linear scale factor for RoPE to adjust the context length.
+L445: 
+L446: It is recommended that models use the newer keys if possible, as they are more flexible and allow for more complex scaling schemes. Executors will need to support both indefinitely.
+L447: #### SSM
+L448: 
+L449: - `[llm].ssm.conv_kernel: uint32`: The size of the rolling/shift state.
+L450: - `[llm].ssm.inner_size: uint32`: The embedding size of the states.
+L451: - `[llm].ssm.state_size: uint32`: The size of the recurrent state.
+L452: - `[llm].ssm.time_step_rank: uint32`: The rank of time steps.
+L453: 
+L454: #### Models
+L455: 
+L456: The following sections describe the metadata for each model architecture. Each key specified _must_ be present.
+L457: ##### LLaMA
+L458: 
+L459: - `llama.context_length`
+L460: - `llama.embedding_length`
+L461: - `llama.block_count`
+L462: - `llama.feed_forward_length`
+L463: - `llama.rope.dimension_count`
+L464: - `llama.attention.head_count`
+L465: - `llama.attention.layer_norm_rms_epsilon`
+L466: ###### Optional
+L467: 
+L468: - `llama.rope.scale`
+L469: - `llama.attention.head_count_kv`
+L470: - `llama.tensor_data_layout`:
+L471:   - `Meta AI original pth`:
+L472:     ```python
+L473:     def permute(weights: NDArray, n_head: int) -> NDArray:
+L474:         return (weights.reshape(n_head, 2, weights.shape[0] // n_head // 2, *weights.shape[1:])
+L475:                     .swapaxes(1, 2)
+L476:                     .reshape(weights.shape))
+L477:     ```
+L478: - `llama.expert_count`
+L479: - `llama.expert_used_count`
+L480: ##### MPT
+L481: 
+L482: - `mpt.context_length`
+L483: - `mpt.embedding_length`
+L484: - `mpt.block_count`
+L485: - `mpt.attention.head_count`
+L486: - `mpt.attention.alibi_bias_max`
+L487: - `mpt.attention.clip_kqv`
+L488: - `mpt.attention.layer_norm_epsilon`
+L489: 
+L490: ##### GPT-NeoX
+L491: 
+L492: - `gptneox.context_length`
+L493: - `gptneox.embedding_length`
+L494: - `gptneox.block_count`
+L495: - `gptneox.use_parallel_residual`
+L496: - `gptneox.rope.dimension_count`
+L497: - `gptneox.attention.head_count`
+L498: - `gptneox.attention.layer_norm_epsilon`
+L499: 
+L500: ###### Optional
+L501: 
+L502: - `gptneox.rope.scale`
+L503: ##### GPT-J
+L504: 
+L505: - `gptj.context_length`
+L506: - `gptj.embedding_length`
+L507: - `gptj.block_count`
+L508: - `gptj.rope.dimension_count`
+L509: - `gptj.attention.head_count`
+L510: - `gptj.attention.layer_norm_epsilon`
+L511: 
+L512: ###### Optional
+L513: 
+L514: - `gptj.rope.scale`
+L515: 
+L516: ##### GPT-2
+L517: 
+L518: - `gpt2.context_length`
+L519: - `gpt2.embedding_length`
+L520: - `gpt2.block_count`
+L521: - `gpt2.attention.head_count`
+L522: - `gpt2.attention.layer_norm_epsilon`
+L523: ##### BLOOM
+L524: 
+L525: - `bloom.context_length`
+L526: - `bloom.embedding_length`
+L527: - `bloom.block_count`
+L528: - `bloom.feed_forward_length`
+L529: - `bloom.attention.head_count`
+L530: - `bloom.attention.layer_norm_epsilon`
+L531: 
+L532: ##### Falcon
+L533: 
+L534: - `falcon.context_length`
+L535: - `falcon.embedding_length`
+L536: - `falcon.block_count`
+L537: - `falcon.attention.head_count`
+L538: - `falcon.attention.head_count_kv`
+L539: - `falcon.attention.use_norm`
+L540: - `falcon.attention.layer_norm_epsilon`
+L541: ###### Optional
+L542: 
+L543: - `falcon.tensor_data_layout`:
+L544: 
+L545:   - `jploski` (author of the original GGML implementation of Falcon):
+L546:     ```python
+L547:     # The original query_key_value tensor contains n_head_kv "kv groups",
+L548:     # each consisting of n_head/n_head_kv query weights followed by one key
+L549:     # and one value weight (shared by all query heads in the kv group).
+L550:     # This layout makes it a big pain to work with in GGML.
+L551:     # So we rearrange them here,, so that we have n_head query weights
+L552:     # followed by n_head_kv key weights followed by n_head_kv value weights,
+L553:     # in contiguous fashion.
+L554:     if "query_key_value" in src:
+L555:         qkv = model[src].view(
+L556:             n_head_kv, n_head // n_head_kv + 2, head_dim, head_dim * n_head)
+L557: 
+L558:         q = qkv[:, :-2 ].reshape(n_head * head_dim, head_dim * n_head)
+L559:         k = qkv[:, [-2]].reshape(n_head_kv * head_dim, head_dim * n_head)
+L560:         v = qkv[:, [-1]].reshape(n_head_kv * head_dim, head_dim * n_head)
+L561: 
+L562:         model[src] = torch.cat((q,k,v)).reshape_as(model[src])
+L563:     ```
+L564: ##### Mamba
+L565: 
+L566: - `mamba.context_length`
+L567: - `mamba.embedding_length`
+L568: - `mamba.block_count`
+L569: - `mamba.ssm.conv_kernel`
+L570: - `mamba.ssm.inner_size`
+L571: - `mamba.ssm.state_size`
+L572: - `mamba.ssm.time_step_rank`
+L573: - `mamba.attention.layer_norm_rms_epsilon`
+L574: ##### RWKV
+L575: 
+L576: The vocabulary size is the same as the number of rows in the `head` matrix.
+L577: 
+L578: - `rwkv.architecture_version: uint32`: The only allowed value currently is 4. Version 5 is expected to appear some time in the future.
+L579: - `rwkv.context_length: uint64`: Length of the context used during training or fine-tuning. RWKV is able to handle larger context than this limit, but the output quality may suffer.
+L580: - `rwkv.block_count: uint64`
+L581: - `rwkv.embedding_length: uint64`
+L582: - `rwkv.feed_forward_length: uint64`
+L583: ##### Whisper
+L584: 
+L585: Keys that do not have types defined should be assumed to share definitions with `llm.` keys.
+L586: (For example, `whisper.context_length` is equivalent to `llm.context_length`.)
+L587: This is because they are both transformer models.
+L588: 
+L589: - `whisper.encoder.context_length`
+L590: - `whisper.encoder.embedding_length`
+L591: - `whisper.encoder.block_count`
+L592: - `whisper.encoder.mels_count: uint64`
+L593: - `whisper.encoder.attention.head_count`
+--------------------------------------------------------------------------------
+ (https://raw.githubusercontent.com/ggml-org/ggml/master/docs/gguf.md)
+citeturn19view1 [wordlim: 200] Crawled: today; Content type: text/plain; Source: find({"ref_id":"turn18view0","pattern":"Defaults to `32`"}); Total lines: 747
+No matching text found for "Defaults to `32`"

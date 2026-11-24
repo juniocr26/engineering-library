@@ -1,0 +1,175 @@
+{
+  "at": "2026-11-21T05:24:36.303906+00:00",
+  "hypothesis": "H46",
+  "protocol": "cobra-faq-translation-protocol-v1.json",
+  "request_freeze": "cobra-faq-translation-request-freeze-v1.json",
+  "composition": "cobra-faq-translation-composition-v1.json",
+  "independent_review": "cobra-faq-translation-independent-preservation-source-review-v1.json",
+  "source_families": [
+    "spf13/cobra"
+  ],
+  "development_exposed": true,
+  "no_OpenRA_or_Axum_material_or_tuning": true,
+  "parent_review": "cobra-validation-context-complete-review-v2.json",
+  "model_contribution": "PTFAQquestion/answertranslationonly; allENandPTnonFAQbodyfixed/source-reviewed. Not freewholechaptergeneration or autonomousfactdiscovery.",
+  "records": [
+    {
+      "qid": "Q001",
+      "actual": {
+        "qid": "Q001",
+        "question_pt": "Não é que uma lista vazia de ValidArgs rejeite a entrada?",
+        "answer_pt": "Não. No corpo selecionado de OnlyValidArgs, a validação de membro está dentro do guardiano da lista não vazia e o retorno subsequente é nil."
+      },
+      "complete_source_semantic_bilingual_pair_accepted": true,
+      "manual_source_review": "Nonempty membership guard and subsequent nil preserved. Negative-framed question/guardiano are awkward, but selected proposition and answer remain understandable; do not treat ordinary wording difference as a false code identifier."
+    },
+    {
+      "qid": "Q002",
+      "actual": {
+        "qid": "Q002",
+        "question_pt": "Construir ExactArgs valida uma lateração?",
+        "answer_pt": "Não. A fábrica retorna um validador; sua função retornada realiza a comparação de comprimento quando chamada."
+      },
+      "complete_source_semantic_bilingual_pair_accepted": false,
+      "manual_source_review": "Answer factory/returned-validator meaning preserved and fábrica is valid ordinary translation, but later slice becomes lateração in the question, losing the technical question meaning."
+    },
+    {
+      "qid": "Q003",
+      "actual": {
+        "qid": "Q003",
+        "question_pt": "O que o ValidateArgs usa quando Args é nulo?",
+        "answer_pt": "O método selecionado chama `ArbitraryArgs`, cujo corpo selecionado retorna nil. O chamado `Find` da rota `legacyArgs` é separado."
+      },
+      "complete_source_semantic_bilingual_pair_accepted": false,
+      "manual_source_review": "ArbitraryArgs/nil default retained, but Find-path legacyArgs-call becomes called Find of legacyArgs route, an ambiguous/reversed call/path relationship. Args nil is also paraphrased as nulo in question despite explicit literal instruction."
+    },
+    {
+      "qid": "Q004",
+      "actual": {
+        "qid": "Q004",
+        "question_pt": "O MatchAll continua após um validador retornar um erro?",
+        "answer_pt": "Não. Sua iteração retorna o primeiro erro antes das iterações posteriores."
+      },
+      "complete_source_semantic_bilingual_pair_accepted": true,
+      "manual_source_review": "Question and first-error-before-later-iterations behavior preserved; ordinary loop/iteration wording acceptable within selected source scope."
+    },
+    {
+      "qid": "Q005",
+      "actual": {
+        "qid": "Q005",
+        "question_pt": "É necessário que todas as validações de flag precedam as hook de pré-execução?",
+        "answer_pt": "Não. As validações de flag selecionadas e as grupos de flag seguem as blocos de hook, enquanto as validações de flag mais antigas têm seu próprio caminho de erro."
+      },
+      "complete_source_semantic_bilingual_pair_accepted": false,
+      "manual_source_review": "Selected required-flag qualifier lost; earlier flag parsing becomes older flag validations, losing parsing-vs-validation and execution-phase precision. Main after-hook polarity alone is insufficient."
+    }
+  ],
+  "complete_FAQ_pairs_accepted": 2,
+  "complete_FAQ_pairs_total": 5,
+  "protected_name_presence_applicable_pairs_correct": 4,
+  "protected_name_presence_applicable_pairs_total": 4,
+  "empty_token_list_Q005_not_scored_as_lexical_success": true,
+  "literal_markup_occurrences_each_language": {
+    "en": 64,
+    "pt-BR": 61
+  },
+  "literal_markup_multiset_equal": false,
+  "inline_backtick_instruction_not_fully_followed": true,
+  "ordinary_factory_translation_not_falsely_rejected": true,
+  "definite_critical_factual_contradiction_categories": 0,
+  "ambiguous_or_incomplete_contract_translation_groups": 3,
+  "not_general_atomic_precision": true,
+  "dimensions": [
+    {
+      "dimension": "factual accuracy",
+      "outcome": "REJECTED_CONTRACT_FAITHFULNESS",
+      "evidence": "Two pairs supported; three lose question/call-edge/phase meaning. No categorical runtime error invented to inflate critical count."
+    },
+    {
+      "dimension": "source provenance",
+      "outcome": "PASS_WITH_PARENT_SOURCE_LIMITS",
+      "evidence": "Parent provenance unchanged;5publicfiles freshly acquired,7nativeGo declarations and full execute quote reconstructed."
+    },
+    {
+      "dimension": "architectural understanding",
+      "outcome": "REJECTED_IN_FAQ",
+      "evidence": "Find/legacyArgs edge and parsing/required-group phase distinction degraded in changed text despite correct unchanged body."
+    },
+    {
+      "dimension": "relevant completeness",
+      "outcome": "REJECTED",
+      "evidence": "All5items present but3do not preserve complete source meaning; later slice/required flag/early parsing distinctions matter."
+    },
+    {
+      "dimension": "API and behavior contracts",
+      "outcome": "REJECTED",
+      "evidence": "Constructed factory vs later slice question and path/callee binding need faithful meaning, not merely method-name presence."
+    },
+    {
+      "dimension": "error/exception correctness",
+      "outcome": "INCOMPLETE_IN_FAQ",
+      "evidence": "Earlier parsing own-error phase not accurately retained in Q005; inherited other error text unchanged."
+    },
+    {
+      "dimension": "testing documentation",
+      "outcome": "PASS_WITH_PARENT_SOURCE_LIMITS",
+      "evidence": "Original written-test descriptions untouched; no upstream program/test execution added."
+    },
+    {
+      "dimension": "example/command validity",
+      "outcome": "PASS_WITH_PARENT_SOURCE_LIMITS",
+      "evidence": "Original Go example and commands/source limits unchanged; parent syntax checks apply, not runtime proof."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "outcome": "REJECTED",
+      "evidence": "2/5source-semantic FAQ pairs accepted; code name presence does not prove call direction/term/phase parity."
+    },
+    {
+      "dimension": "FAQ quality",
+      "outcome": "REJECTED",
+      "evidence": "Q002unintelligible technical term and Q003/Q005meaning loss; Q001awkward but not used as categorical factual failure."
+    },
+    {
+      "dimension": "preservation",
+      "outcome": "PASS",
+      "evidence": "WholeENbytes plusPTprefix/footer exact; allmodelquestion/answerstrings retained without manual repair."
+    },
+    {
+      "dimension": "uncertainty",
+      "outcome": "PASS_INHERITED_SCOPE_ONLY",
+      "evidence": "Parent source-only/training/publication/owner limits retained; does not rescue incorrect FAQ content."
+    }
+  ],
+  "complete_output_status": "REJECTED",
+  "full_chapter_composed": true,
+  "complete_hybrid_chapters_accepted": 0,
+  "complete_hybrid_chapters_total": 1,
+  "population": "Oneactuallycomposedheterogeneousneural-contributionhybridchapter, soadds1tocomplete-methoddenominator. Not fiveindependenttasks/fullmodel-authoredchapter.",
+  "files": [
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/cobra-faq-translation-hybrid-v1/en.md",
+      "sha256": "7a80c02bedc1aafdfab8ec73ef900b59e8f397787e757b324c61690759e6fcc6",
+      "bytes": 6450
+    },
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/cobra-faq-translation-hybrid-v1/pt-BR.md",
+      "sha256": "6b8388e24cfc751787376c62038466d0d204b229f9936132578d2359b3982672",
+      "bytes": 7265
+    }
+  ],
+  "generation_done_reason": "stop",
+  "generated_tokens": 324,
+  "prompt_tokens": 528,
+  "server_seconds": 48.058967106,
+  "wall_seconds": 48.30676674999995,
+  "review_process": "Samecampaignreviewerinaseparatesource/translationreviewpass; freshGit/nativeGo and independentbytepreservationchecks. Not independenthumanorautomaticgeneralsemanticverification.",
+  "model_text_repaired": false,
+  "retries": 0,
+  "source_or_example_program_executed": false,
+  "application_catalog_external_writes": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "publication_authorized": false
+}

@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-20T01:04:27.992180+00:00",
+  "chapter_id": "go-image-compression-flow",
+  "source_repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "interface-and-injection",
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "lines": [
+        32,
+        44
+      ],
+      "review": "Compressorinterfacebytes->Result,error; NewUseCasestoresdependencywithoutoperation."
+    },
+    {
+      "id": "ordered-execute",
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "lines": [
+        46,
+        66
+      ],
+      "review": "Emptyinputfirst,ctxerror,compressorerror,ctxerroragain,thenresultnil; no contextpassedCompress."
+    },
+    {
+      "id": "concrete-dispatch",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "lines": [
+        40,
+        66
+      ],
+      "review": "DetectFormaterrorzeroresultthen8formats; HEIFpassesContentType; unknownformunsupported; helperdetailsnotshown."
+    },
+    {
+      "id": "composition-root",
+      "path": "backend/internal/infrastructure/http/router.go",
+      "lines": [
+        19,
+        24
+      ],
+      "review": "NewRouterexplicitlyconstructsNewUseCase(NewCompressor()) andpassesit toPOSTcompresshandlerfactory; staticwiringnotobservedruntime."
+    },
+    {
+      "id": "http-caller",
+      "path": "backend/internal/infrastructure/http/handler/compress_image/handler.go",
+      "lines": [
+        24,
+        99
+      ],
+      "review": "Returnedhandlerreadsuploadedimagebytes, calls useCase.Execute(requestcontext,bytes), delegateserrorhandling; successsetsheaders/writesData."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "72ecc183197b88f0e1878093afc64d28c372501a5b49e6e807e4755b55643f0c",
+      "after_sha256": "f5075b82889e02ebe6e0c9e8f7e95fb62e82b6a03e7c293e937c8093dcff83dd",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -6,7 +6,7 @@\n \n The application declares a `Compressor` interface with one method taking image bytes and returning a result plus an error. Its `UseCase` struct stores a value of that interface in an unexported field. The constructor `NewUseCase` returns a value containing the supplied dependency. It does not choose a concrete encoder, call compression or inspect an input image during construction.\n \n-This boundary limits what a source-only explanation can connect. Another package defines a concrete type with a compatible method, but two matching method names do not establish the actual object injected at runtime. The supplied files show a possible structural relationship, not application wiring. A different implementation, test double or invalid dependency can be supplied through other code. This chapter therefore documents the application method and the concrete method separately.\n+This boundary limits what a source-only explanation can connect. Another package defines a concrete type with a compatible method, but two matching method names do not establish the actual object injected at runtime. The original supplied files showed a possible structural relationship without the composition root. The additional router source below now establishes one explicit construction path; an actually running injected object is still not observed. A different implementation, test double or invalid dependency can be supplied through other code. This chapter therefore documents the application method and the concrete method separately.\n \n ## Execute checks input before consulting the context\n \n@@ -29,3 +29,32 @@\n ## What the corrected chapter establishes\n \n Both neural arms used generic compression prose and omitted the declaration names required by the writer. Adding the concrete dispatch method did not recover the application's context ordering or prove its runtime binding. This correction preserves the early empty-input result, both context checks, zero-result error paths and final success result, then describes concrete format dispatch within its own evidence. The original unsuccessful outputs remain diagnostic artifacts. This is an authored documentation candidate, not an approved training example, an execution trace of the application or evidence of changed model weights.\n+\n+## Engineer FAQ and verified static composition\n+\n+<!-- reading-section: faq:concrete-compressor-composition -->\n+### Which source connects the concrete compressor to the application interface?\n+\n+The added router constructs `imagecompression.NewUseCase(compress.NewCompressor())` and supplies it to the compression handler factory for `POST /images/compress`. The returned handler later calls the supplied use case with the request context and uploaded image bytes. This verifies a written composition path, not an executed deployment or every possible constructor caller.\n+\n+<!-- reading-section: faq:cancellation-boundary -->\n+### Does cancellation interrupt the concrete Compress call halfway through?\n+\n+The interface call receives the input bytes without a context argument. The application checks the context before and after it. A later context error can discard the computed result, but this body does not demonstrate interruption or rollback of already performed codec work.\n+\n+<!-- reading-section: faq:error-result-handoff -->\n+### Does a compressor result returned with an error reach the successful response?\n+\n+The use case replaces that result with its zero Result on the error branch. The inspected HTTP handler separately delegates non-nil errors to its error helper and only writes the successful result data on its later success path. Exact error-helper mapping and actual network delivery remain outside this added evidence.\n+\n+```mermaid\n+flowchart LR\n+  R[\"NewRouter\"] --> C[\"compress.NewCompressor\"]\n+  C --> U[\"imagecompression.NewUseCase\"]\n+  U --> H[\"ProcessImage handler factory\"]\n+  H --> E[\"UseCase.Execute with request context and bytes\"]\n+  E --> K[\"Compressor.Compress with bytes\"]\n+  K --> D[\"DetectFormat then codec helper\"]\n+```\n+\n+The diagram shows source construction and call direction. Request parsing, context guards and error branches remain conditional as described above; no server, upload or codec was executed for this review.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "5ffa9808233ba7a489d960a8c92ca85a02c7ec5a2d3f7cc8677e9460a53d82f7",
+      "after_sha256": "d0ecf072f42438823974b494e4ee8423f757c71fe4736c56379defc9935c6308",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -6,7 +6,7 @@\n \n A aplicação declara uma interface `Compressor` com um método que recebe bytes de imagem e retorna um resultado acompanhado de um erro. Sua struct `UseCase` armazena um valor dessa interface em um campo não exportado. O construtor `NewUseCase` retorna um valor contendo a dependência fornecida. Não escolhe um codificador concreto, não chama a compressão e não examina uma imagem durante a construção.\n \n-Essa fronteira limita as conexões que uma explicação baseada apenas na fonte pode estabelecer. Outro pacote define um tipo concreto com um método compatível, mas dois nomes de método iguais não estabelecem o objeto efetivamente injetado em execução. Os arquivos fornecidos mostram uma relação estrutural possível, não a montagem da aplicação. Outra implementação, um substituto de teste ou uma dependência inválida podem ser fornecidos por outro código. Por isso, este capítulo documenta separadamente o método da aplicação e o método concreto.\n+Essa fronteira limita as conexões que uma explicação baseada apenas na fonte pode estabelecer. Outro pacote define um tipo concreto com um método compatível, mas dois nomes de método iguais não estabelecem o objeto efetivamente injetado em execução. Os arquivos fornecidos originalmente mostravam uma relação estrutural possível sem o ponto de composição. A fonte adicional do router abaixo agora estabelece um caminho explícito de construção; o objeto injetado efetivamente em execução continua sem observação. Outra implementação, um substituto de teste ou uma dependência inválida podem ser fornecidos por outro código. Por isso, este capítulo documenta separadamente o método da aplicação e o método concreto.\n \n ## Execute verifica a entrada antes de consultar o contexto\n \n@@ -29,3 +29,32 @@\n ## O que o capítulo corrigido estabelece\n \n Os dois braços neurais usaram uma explicação genérica de compressão e omitiram os nomes de declaração exigidos pelo gravador. Acrescentar o método de despacho concreto não recuperou a ordem das verificações de contexto nem provou seu vínculo em execução. Esta correção preserva o resultado antecipado de entrada vazia, as duas consultas ao contexto, os caminhos de erro com resultado zero e o resultado final de sucesso; depois descreve o despacho concreto dentro de sua própria evidência. As saídas originais sem sucesso continuam como artefatos diagnósticos. Este é um candidato de documentação autoral, não um exemplo de treinamento aprovado, um rastreamento de execução da aplicação ou evidência de pesos alterados no modelo.\n+\n+## FAQ de engenharia e composição estática verificada\n+\n+<!-- reading-section: faq:concrete-compressor-composition -->\n+### Qual fonte conecta o compressor concreto à interface da aplicação?\n+\n+O router acrescentado constrói `imagecompression.NewUseCase(compress.NewCompressor())` e o fornece à fábrica de handler de compressão para `POST /images/compress`. O handler retornado chama posteriormente o caso de uso recebido com contexto da requisição e bytes da imagem enviada. Isso verifica um caminho escrito de composição, não uma implantação executada ou todo possível chamador do construtor.\n+\n+<!-- reading-section: faq:cancellation-boundary -->\n+### O cancelamento interrompe a chamada concreta de Compress pela metade?\n+\n+A chamada da interface recebe os bytes de entrada sem argumento de contexto. A aplicação verifica o contexto antes e depois dela. Um erro posterior de contexto pode descartar o resultado calculado, mas esse corpo não demonstra interrupção ou rollback do trabalho de codec já realizado.\n+\n+<!-- reading-section: faq:error-result-handoff -->\n+### Um resultado do compressor retornado junto de erro alcança a resposta de sucesso?\n+\n+O caso de uso substitui esse resultado por seu Result zero no ramo de erro. O handler HTTP inspecionado delega separadamente erros diferentes de nil a seu helper de erro e só escreve os dados de resultado no caminho posterior de sucesso. Mapeamento exato desse helper e entrega real pela rede permanecem fora dessa evidência adicional.\n+\n+```mermaid\n+flowchart LR\n+  R[\"NewRouter\"] --> C[\"compress.NewCompressor\"]\n+  C --> U[\"imagecompression.NewUseCase\"]\n+  U --> H[\"Fabrica de handler ProcessImage\"]\n+  H --> E[\"UseCase.Execute com contexto e bytes da requisicao\"]\n+  E --> K[\"Compressor.Compress com bytes\"]\n+  K --> D[\"DetectFormat e depois helper de codec\"]\n+```\n+\n+O diagrama mostra construção e direção de chamadas na fonte. Análise da requisição, guardas de contexto e ramos de erro continuam condicionais conforme descritos acima; nenhum servidor, upload ou codec foi executado para esta revisão.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.302982+00:00",
+    "canonical_question_ids": [
+      "concrete-compressor-composition",
+      "cancellation-boundary",
+      "error-result-handoff"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/go-image-compression-flow",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-21T16:50:12.865685+00:00",
+  "extends": "semantic-verifier-V-resource-diagnostic-v1.json",
+  "reason": "Initial tail100selected only recent healthchecks, not the16:32fault. This bounded time window targets the actual failing request interval.",
+  "command": [
+    "/usr/local/bin/docker",
+    "logs",
+    "--since",
+    "2026-11-21T16:31:55Z",
+    "--until",
+    "2026-11-21T16:32:20Z",
+    "engineering-library-ollama-1"
+  ],
+  "exit_code": 0,
+  "raw_path": ".local-backups/acceptance-calibration-20261121/V-runner-error-time-window-v2.log",
+  "raw_sha256": "3257e3bb181d9a8eca2910696f6f4e21357b26ef8c9a49f2083afd90447b776e",
+  "raw_bytes": 2043,
+  "matching_diagnostic_lines": [
+    "[GIN] 2026/11/21 - 16:32:08 | 500 | 369.46ms |      172.18.0.4 | POST     \"/api/chat\"",
+    "time=2026-11-21T16:32:08.919Z level=ERROR source=llama_server.go:1790 msg=\"llama-server completion error\" error=\"Post \\\"http://127.0.0.1:45979/completion\\\": EOF\""
+  ],
+  "cgroup_observation_already_preserved": "memory.events oom_kill2; memory.peak7345463296bytes; no explicit cgroup memory.max; current roughly50MiB while idle. No per-request OOM timestamp asserted solely from counters.",
+  "no_restart_configuration_mutation_or_retry": true
+}

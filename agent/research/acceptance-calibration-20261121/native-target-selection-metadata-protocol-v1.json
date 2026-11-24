@@ -1,0 +1,175 @@
+{
+  "at": "2026-11-21T19:49:27.501685+00:00",
+  "before_observations": true,
+  "source": "agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/utils.py",
+  "source_sha256": "e1260940a0e974ed573ae59f348254b46628be8633347e10818f28b76d7809da",
+  "question": "Is num_layers an intersection restriction on all explicit full and relative selectors, and do unmatched/empty keys cause a refusal?",
+  "virtual_model_metadata": {
+    "layer_count": 28,
+    "per_layer_linear_module_names": [
+      "self_attn.q_proj",
+      "self_attn.k_proj",
+      "self_attn.v_proj",
+      "self_attn.o_proj",
+      "mlp.gate_proj",
+      "mlp.up_proj",
+      "mlp.down_proj"
+    ],
+    "full_name_prefix": "model.layers.{layer}.",
+    "role": "Inert name strings only, no modules/tensors/adapters.7linear names derived from pinnedLlama source; selected candidate declares28layers. Not actual post-conversion inventory."
+  },
+  "cases": [
+    {
+      "id": "relative-qv-last2",
+      "num_layers": 2,
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ],
+      "expected_selected_unique_modules": 4,
+      "expected_layer_ids": [
+        26,
+        27
+      ]
+    },
+    {
+      "id": "zero-layer-count",
+      "num_layers": 0,
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ],
+      "expected_selected_unique_modules": 56,
+      "expected_layer_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ]
+    },
+    {
+      "id": "full-name-outside-last2",
+      "num_layers": 2,
+      "keys": [
+        "model.layers.0.self_attn.q_proj"
+      ],
+      "expected_selected_unique_modules": 1,
+      "expected_layer_ids": [
+        0
+      ]
+    },
+    {
+      "id": "unmatched-key",
+      "num_layers": 2,
+      "keys": [
+        "self_attn.query_proj"
+      ],
+      "expected_selected_unique_modules": 0,
+      "expected_layer_ids": []
+    },
+    {
+      "id": "empty-keys",
+      "num_layers": 2,
+      "keys": [],
+      "expected_selected_unique_modules": 0,
+      "expected_layer_ids": []
+    },
+    {
+      "id": "default-keys-last2",
+      "num_layers": 2,
+      "keys": null,
+      "expected_selected_unique_modules": 14,
+      "expected_layer_ids": [
+        26,
+        27
+      ]
+    },
+    {
+      "id": "mixed-relative-and-full",
+      "num_layers": 2,
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj",
+        "model.layers.0.self_attn.q_proj"
+      ],
+      "expected_selected_unique_modules": 5,
+      "expected_layer_ids": [
+        0,
+        26,
+        27
+      ]
+    },
+    {
+      "id": "negative-layer-count",
+      "num_layers": -1,
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ],
+      "expected_selected_unique_modules": 56,
+      "expected_layer_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ]
+    }
+  ],
+  "source_projection": "Independently authored set/list/string traversal of two source loops: per-layer relative keys on layers[-max(num_layers,0):], then model-wide full named_modules keys. No conversion/from_base/import/evaluation of MLX source.",
+  "limits": [
+    "Full-name selection outside last layers is the helper source behavior, not necessarily an upstream defect; it disproves an assumed intersection policy.",
+    "No unknown/empty-match validation appears in these loops; later native wrapper/config validation is not executed or certified.",
+    "Model modules have no customto_lora behavior in this metadata projection; no doubleconversioncaseoractualtypes simulated.",
+    "Default-key7local-linears illustration is selectedLlamalayer metadata, not everyarchitecture/allmodel embeddings."
+  ],
+  "gold": 0,
+  "optimizer_updates": 0
+}

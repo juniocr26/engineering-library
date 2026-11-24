@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-22T00:11:35.622154+00:00",
+  "extends": "cpp-ast-dispatch-study-protocol-v1.json",
+  "new_hypothesis": "One same-translation-unit pair can share selected Base::value and MemberExpr metadata while explicit source qualification changes emitted call form. An inherited override may also omit virtual field in JSON, so field absence is not a nonvirtual proof.",
+  "source": "agent/research/final-intensive-20261121/cpp-qualified-dispatch-owned-v1/source.cpp",
+  "source_sha256": "e24bc73c60bfc0b17c6399c4cea6ca6e671e799779a0cb1b4e16a9422fa0cca6",
+  "source_role": "New owned development control derived from existing OpenCV/owned C++ discussion, not an independent evaluation case. No main or runtime execution.",
+  "compiler": "/usr/bin/clang++",
+  "ast_flags": [
+    "-std=c++17",
+    "-fsyntax-only",
+    "-Xclang",
+    "-ast-dump=json"
+  ],
+  "IR_flags": [
+    "-std=c++17",
+    "-O0",
+    "-S",
+    "-emit-llvm"
+  ],
+  "expected": [
+    {
+      "function": "unqualified",
+      "selected_declaration": "Base::value",
+      "expected_IR_form": "INDIRECT_VIRTUAL_CALL"
+    },
+    {
+      "function": "qualified",
+      "selected_declaration": "Base::value",
+      "expected_IR_form": "DIRECT_BASE_VALUE_CALL"
+    }
+  ],
+  "unknown_policy": "Compare real AST node fields and source quote, never infer no qualification/virtuality from absent field. IR observation is compiler representation for this exact owned input/target/options, not measured runtime behavior or general semantics.",
+  "emission_policy": "Textual LLVM IR only. No object, executable, link or target execution.",
+  "prior_dynamic_results_rerun": false,
+  "framework_installed": false,
+  "model_calls": 0,
+  "training_eligible": false
+}

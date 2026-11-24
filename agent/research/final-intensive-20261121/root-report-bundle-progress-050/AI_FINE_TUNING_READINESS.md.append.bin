@@ -1,0 +1,13 @@
+
+
+### Progresso intensivo 050 — alvo original Ruff revisado no nível estático autorizado
+
+O par original Ruff target-version foi lido por inteiro com três FAQs e sua resposta histórica. A fonte fixada 0222c19dd8e0c9a927f2e47bf3774a108431da25 fornece o método de FormatterSettings, os campos, o construtor e o chamador de opções, além da lista compilada, do iterador e da representação PythonVersion. Seis arquivos públicos foram preservados por Git, com licença e metadados de toolchain. Os cinco trechos do pacote original coincidem com esses bytes.
+
+O baseline recebeu o cabeçalho que retorna PythonVersion e a dica de propriedade FormatterSettings. Acertou a seleção por caminho e fallback, mas descreveu um projeto Rust nas duas línguas. A linguagem de implementação não é o domínio do resultado. A implementação adicional de is_match retorna Option, sai com None para lista vazia e usa next().copied() no caminho não vazio. O iterador percorre o vetor compilado, verifica basename antes da alternativa absoluta e tem ramos próprios de negação. Essa ordem não prova a precedência textual de arquivos de configuração. A extração do nome com expect pode causar panic no caminho não vazio; o erro Result do construtor pertence a outra função.
+
+As APIs foram conferidas na documentação oficial std 1.100.0, versão indicada também pelo arquivo de toolchain fixado. unwrap_or seleciona o valor Some ou o fallback, mas avalia seu argumento antecipadamente; o capítulo descreve seleção, sem prometer fallback preguiçoso. O tipo PythonVersion tem campos major/minor e Copy. Nada disso transforma o nome unresolved em erro ou prova que o fallback configurado seja a versão Python mais recente.
+
+Não foi usado compilador ou parser Rust, Cargo, rustup ou Ruff. O capítulo não contém exemplos executáveis nem alegações de execução; G5 foi aplicado no nível estático autorizado pelo contrato congelado, sem criar N/A ou mudar o critério. A disponibilidade foi delimitada aos caminhos efetivamente examinados, sem afirmar ausência de toda instalação Cargo. O consumidor verifica arquivos, cinco trechos, dois TOMLs, resposta, duas línguas, FAQs e links; isso não é validação de sintaxe, tipos ou macros Rust.
+
+G1 a G8 passaram no escopo declarado sem mudança dos documentos originais; G9 ainda aguarda a recuperação efetiva do checkpoint 035. As avaliações semânticas continuam do mesmo agente, não humanas independentes. Não houve execução do projeto, nova geração neural local, treinamento ou aprovação de publicação/Gold. A campanha permanece ativa antes das aproximadamente 12 horas.

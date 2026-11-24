@@ -1,0 +1,76 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 1300
+  },
+  "format": {
+    "type": "object",
+    "properties": {
+      "judgments": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "R1",
+                "R2",
+                "R3",
+                "R4"
+              ]
+            },
+            "decision": {
+              "type": "string",
+              "enum": [
+                "KEEP",
+                "SOURCE_CHANGE",
+                "UNSUPPORTED"
+              ]
+            },
+            "reason_en": {
+              "type": "string"
+            },
+            "reason_pt": {
+              "type": "string"
+            },
+            "replacement_en": {
+              "type": "string"
+            },
+            "replacement_pt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "decision",
+            "reason_en",
+            "reason_pt",
+            "replacement_en",
+            "replacement_pt"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "judgments"
+    ],
+    "additionalProperties": false
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Use only the supplied licensed public source excerpts. Preserve identifiers and uncertainty. Output the required JSON only."
+    },
+    {
+      "role": "user",
+      "content": "{\"task\": \"Classify the four prior-document statements against the selected before and after source. KEEP means supported in both selected versions. SOURCE_CHANGE means supported before and no longer correct after due to the shown revision. UNSUPPORTED means not established by the selected source even before the revision. For SOURCE_CHANGE provide a precise replacement in both languages; for the other decisions replacement fields must be empty strings. Give a concise reason in both languages, preserving conditions and code identifiers. Return one record per ID in order. Do not invent passing runtime tests.\", \"source\": {\"before\": {\"revision\": \"04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9\", \"path\": \"middleware/wrap_writer.go\", \"selected_lines\": [211, 226], \"source\": \"211: func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\\n212: \\tif f.basicWriter.tee != nil || f.basicWriter.discard {\\n213: \\t\\t// Route through basicWriter.Write so that the tee and discard semantics\\n214: \\t\\t// are honored (the fast ReaderFrom path below would bypass both, writing\\n215: \\t\\t// straight to the original ResponseWriter). basicWriter.Write already\\n216: \\t\\t// increments basicWriter.bytes, so we must NOT add n again here (that\\n217: \\t\\t// would double-count).\\n218: \\t\\tn, err := io.Copy(&f.basicWriter, r)\\n219: \\t\\treturn n, err\\n220: \\t}\\n221: \\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\\n222: \\tf.basicWriter.maybeWriteHeader()\\n223: \\tn, err := rf.ReadFrom(r)\\n224: \\tf.basicWriter.bytes += int(n)\\n225: \\treturn n, err\\n226: }\"}, \"after\": {\"revision\": \"9f8adb1aabaa8a91180a821111d3f8e668d1c0bf\", \"path\": \"middleware/wrap_writer.go\", \"selected_lines\": [211, 229], \"source\": \"211: func (f *httpFancyWriter) ReadFrom(r io.Reader) (int64, error) {\\n212: \\tif f.basicWriter.tee != nil || f.basicWriter.discard {\\n213: \\t\\t// Route through basicWriter.Write so that the tee and discard semantics\\n214: \\t\\t// are honored (the fast ReaderFrom path below would bypass both, writing\\n215: \\t\\t// straight to the original ResponseWriter). basicWriter.Write already\\n216: \\t\\t// increments basicWriter.bytes, so we must NOT add n again here (that\\n217: \\t\\t// would double-count).\\n218: \\t\\tn, err := io.Copy(&f.basicWriter, r)\\n219: \\t\\treturn n, err\\n220: \\t}\\n221: \\trf := f.basicWriter.ResponseWriter.(io.ReaderFrom)\\n222: \\tn, err := rf.ReadFrom(r)\\n223: \\tif n > 0 && !f.basicWriter.wroteHeader {\\n224: \\t\\tf.basicWriter.code = http.StatusOK\\n225: \\t\\tf.basicWriter.wroteHeader = true\\n226: \\t}\\n227: \\tf.basicWriter.bytes += int(n)\\n228: \\treturn n, err\\n229: }\"}}, \"statements\": [{\"id\": \"R1\", \"text\": \"In the direct ReaderFrom path, this method calls f.basicWriter.maybeWriteHeader() before rf.ReadFrom(r).\"}, {\"id\": \"R2\", \"text\": \"When tee is non-nil OR discard is true, the method calls io.Copy(&f.basicWriter, r) and returns the pair before the direct ReaderFrom path.\"}, {\"id\": \"R3\", \"text\": \"After the delegate returns normally in the direct path, this method adds int(n) to f.basicWriter.bytes and returns n, err.\"}, {\"id\": \"R4\", \"text\": \"Whenever this method returns positive n, err is guaranteed nil.\"}]}"
+    }
+  ]
+}

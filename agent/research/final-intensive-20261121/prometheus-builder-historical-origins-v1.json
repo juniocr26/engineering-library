@@ -1,0 +1,75 @@
+{
+  "at": "2026-11-22T06:05:05.160665+00:00",
+  "source_path": ".local-backups/continuation-20261119/helper-set-results.jsonl",
+  "source_sha256": "d30f411c27983752609a95a4081592a244ca39fb971a332f0971162155c7430f",
+  "records": [
+    {
+      "id": "set-only",
+      "writer_exit": 1,
+      "writer_log": "{\"project\":\"set-only\",\"status\":\"error\",\"error\":\"prose omits its selected declaration or method name\"}\n{\"projects\":1,\"failures\":1,\"version\":\"1.9.35\"}\n",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The implementation supports adding a new label to the Builder with the given name and value. If the label already exists, its value is updated. If the label is empty, it is removed. The method returns the updated Builder instance.",
+          "pt-br": "A implementa\u00e7\u00e3o suporta adicionar um novo r\u00f3tulo ao construtor com o nome e valor especificados. Se o r\u00f3tulo j\u00e1 existir, seu valor \u00e9 atualizado. Se o r\u00f3tulo estiver vazio, ele \u00e9 removido. A fun\u00e7\u00e3o retorna o construtor atualizado."
+        }
+      ],
+      "selected_evidence_ids": [
+        "S1"
+      ],
+      "selected_quotes": {
+        "S1": "func (b *Builder) Set(n, v string) *Builder {\n\tif v == \"\" {\n\t\t// Empty labels are the same as missing labels.\n\t\treturn b.Del(n)\n\t}\n\tfor i, a := range b.add {\n\t\tif a.Name == n {\n\t\t\tb.add[i].Value = v\n\t\t\treturn b\n\t\t}\n\t}\n\tb.add = append(b.add, Label{Name: n, Value: v})\n\n\treturn b\n}\n"
+      },
+      "artifacts": [
+        {
+          "path": "agent/research/final-intensive-20261121/prometheus-builder-historical-captures-v1/set-only/raw-response.json",
+          "sha256": "7effd3d9458684f9f3f07d96bdd38b88104bdaae2255db7e2c9d25af5f471409"
+        },
+        {
+          "path": "agent/research/final-intensive-20261121/prometheus-builder-historical-captures-v1/set-only/recorded-request.json",
+          "sha256": "96acb436ba4ad32785ecc1bd514fb2b26c529011796b1767ac7bfb379da60506"
+        },
+        {
+          "path": "agent/research/final-intensive-20261121/prometheus-builder-historical-captures-v1/set-only/historic-record.json",
+          "sha256": "91126a97cc658e33ced85e3ebd4a6c02f8a063d135f992f7417c22bf042bb15c"
+        }
+      ]
+    },
+    {
+      "id": "set-and-del",
+      "writer_exit": 0,
+      "writer_log": "{\"project\":\"set-and-del\",\"status\":\"written\",\"outputs\":[\"/tmp/el-cont-helper-set-20261119/library/.evaluations/set-and-del/en/guides/generated-source-summary.md\",\"/tmp/el-cont-helper-set-20261119/library/.evaluations/set-and-del/pt-br/guides/generated-source-summary.md\",\"/tmp/el-cont-helper-set-20261119/set-and-del/source/docs/en/guides/generated-source-summary.md\",\"/tmp/el-cont-helper-set-20261119/set-and-del/source/docs/pt-br/guides/generated-source-summary.md\",\"/tmp/el-cont-helper-set-20261119/library/.evaluations/set-and-del/en/index.md\",\"/tmp/el-cont-helper-set-20261119/library/.evaluations/set-and-del/pt-br/index.md\",\"/tmp/el-cont-helper-set-20261119/set-and-del/source/docs/en/index.md\",\"/tmp/el-cont-helper-set-20261119/set-and-del/source/docs/pt-br/index.md\"],\"inference\":true,\"review\":\"draft\",\"coverage\":{\"candidate_count\":1,\"omitted_count\":0,\"selection\":\"explicit project section; counts apply only to staged files, not whole repository coverage\",\"range_selection\":{},\"unit_selection\":{\"model/labels/labels_common.go\":[\"Builder.Set\",\"Builder.Del\"]},\"selected_context_bytes\":496,\"section_workflow_version\":\"1.0.1\"},\"research\":\"offline\"}\n{\"projects\":1,\"failures\":0,\"version\":\"1.9.35\"}\n",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The Set method adds or updates a label with the given name and value. If the label already exists, its value is updated. If the label does not exist, it is added. Empty labels are treated as missing labels.",
+          "pt-br": "O m\u00e9todo Set adiciona ou atualiza um r\u00f3tulo com o nome e valor especificados. Se o r\u00f3tulo j\u00e1 existir, seu valor \u00e9 atualizado. Se o r\u00f3tulo n\u00e3o existir, ele \u00e9 adicionado. R\u00f3tulos vazios s\u00e3o tratados como r\u00f3tulos ausentes."
+        }
+      ],
+      "selected_evidence_ids": [
+        "S1",
+        "S2"
+      ],
+      "selected_quotes": {
+        "S1": "func (b *Builder) Set(n, v string) *Builder {\n\tif v == \"\" {\n\t\t// Empty labels are the same as missing labels.\n\t\treturn b.Del(n)\n\t}\n\tfor i, a := range b.add {\n\t\tif a.Name == n {\n\t\t\tb.add[i].Value = v\n\t\t\treturn b\n\t\t}\n\t}\n\tb.add = append(b.add, Label{Name: n, Value: v})\n\n\treturn b\n}\n",
+        "S2": "func (b *Builder) Del(ns ...string) *Builder {\n\tfor _, n := range ns {\n\t\tfor i, a := range b.add {\n\t\t\tif a.Name == n {\n\t\t\t\tb.add = append(b.add[:i], b.add[i+1:]...)\n\t\t\t}\n\t\t}\n\t\tb.del = append(b.del, n)\n\t}\n\treturn b\n}\n"
+      },
+      "artifacts": [
+        {
+          "path": "agent/research/final-intensive-20261121/prometheus-builder-historical-captures-v1/set-and-del/raw-response.json",
+          "sha256": "791136f41bb9d013044ab8c7d104e8d28d9661d413e97ff2981d9d8ba368ef5f"
+        },
+        {
+          "path": "agent/research/final-intensive-20261121/prometheus-builder-historical-captures-v1/set-and-del/recorded-request.json",
+          "sha256": "e2ffbbcccaf23f44bec8930f67f2508dffac882d4ac833623bc2d782a5ab3acd"
+        },
+        {
+          "path": "agent/research/final-intensive-20261121/prometheus-builder-historical-captures-v1/set-and-del/historic-record.json",
+          "sha256": "9a91390264ab8c9a7a22ae74fc97f3d01fafa12b48b940d02c96540adb215f9c"
+        }
+      ]
+    }
+  ],
+  "new_model_calls": 0,
+  "historical_scores_unchanged": true
+}

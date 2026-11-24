@@ -1,0 +1,290 @@
+{
+  "at": "2026-11-20T20:14:07.502338+00:00",
+  "status": "FROZEN_BEFORE_SELECTED_PURE_FUNCTION_EXECUTION",
+  "task": "NON_EXECUTABLE_PILOT_ARGUMENT_ADMISSION_REVIEW",
+  "revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "source_path": "agent/research/documentation-intelligence-20261120/readiness-primary-sources/mlx-lm/mlx_lm/lora.py",
+  "source_sha256": "341dce80747705c9363728823d3f117e96f821fc3b35d35db2f47b3151d3adc5",
+  "hypothesis": "The exact reviewed pure build_parser function and source-defined None-only merge semantics may expose configuration/flag mismatches before any future training authorization. Parsing alone must not be confused with safe launch, semantic budget validation or YAML correctness.",
+  "cases": [
+    {
+      "id": "defaults-are-not-pilot",
+      "argv_tokens": [],
+      "predecoded_owned_config": {},
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "train": false,
+        "model": "Qwen/Qwen3-0.6b",
+        "data": "mlx-community/WikiSQL",
+        "iters": 1000,
+        "num_layers": 16,
+        "batch_size": 4,
+        "mask_prompt": false
+      }
+    },
+    {
+      "id": "proposal-fields-without-resolved-roots",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "framework_family": "MLX-LM",
+        "reviewed_source_revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+        "fine_tune_type": "lora",
+        "num_layers": 2,
+        "batch_size": 1,
+        "iters": 16,
+        "grad_accumulation_steps": 1,
+        "maximum_normal_written_optimizer_updates": 16,
+        "max_seq_length": 512,
+        "grad_checkpoint": true,
+        "learning_rate": 1e-05,
+        "optimizer": "adam",
+        "lora_parameters": {
+          "rank": 4,
+          "dropout": 0.0,
+          "scale": 8.0
+        },
+        "mask_prompt": true,
+        "seed": 42,
+        "steps_per_report": 1,
+        "steps_per_eval": 4,
+        "val_batches": 2,
+        "save_every": 4,
+        "resume_adapter_file": null,
+        "trust_remote_code": false,
+        "distributed_training": false,
+        "framework_defaults_not_adopted": [
+          "default model/data repositories",
+          "16 layers",
+          "1000 iterations",
+          "batch 4",
+          "sequence length2048",
+          "mask_prompt false"
+        ]
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "train": false,
+        "model": "Qwen/Qwen3-0.6b",
+        "data": "mlx-community/WikiSQL",
+        "iters": 16,
+        "num_layers": 2,
+        "mask_prompt": true,
+        "lora_parameters.rank": 4,
+        "trust_remote_code": false
+      }
+    },
+    {
+      "id": "config-mask-true",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "mask_prompt": true
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "mask_prompt": true
+      }
+    },
+    {
+      "id": "cli-mask-wins",
+      "argv_tokens": [
+        "--mask-prompt"
+      ],
+      "predecoded_owned_config": {
+        "mask_prompt": false
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "mask_prompt": true
+      }
+    },
+    {
+      "id": "config-trust-true-ignored",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "trust_remote_code": true
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "trust_remote_code": false
+      }
+    },
+    {
+      "id": "cli-trust-true-wins",
+      "argv_tokens": [
+        "--trust-remote-code"
+      ],
+      "predecoded_owned_config": {
+        "trust_remote_code": false
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "trust_remote_code": true
+      }
+    },
+    {
+      "id": "config-cache-threshold-ignored",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "clear_cache_threshold": 1073741824
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "clear_cache_threshold": 0
+      }
+    },
+    {
+      "id": "config-lora-parameters",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "lora_parameters": {
+          "rank": 4,
+          "dropout": 0.0,
+          "scale": 8.0
+        }
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "lora_parameters.rank": 4,
+        "lora_parameters.scale": 8.0
+      }
+    },
+    {
+      "id": "rank-is-not-cli-flag",
+      "argv_tokens": [
+        "--rank",
+        "4"
+      ],
+      "predecoded_owned_config": {},
+      "expected_status": "REFUSED_ARGUMENTS",
+      "expected_fields": {}
+    },
+    {
+      "id": "no-trust-inverse-flag",
+      "argv_tokens": [
+        "--no-trust-remote-code"
+      ],
+      "predecoded_owned_config": {},
+      "expected_status": "REFUSED_ARGUMENTS",
+      "expected_fields": {}
+    },
+    {
+      "id": "negative-iters-parses",
+      "argv_tokens": [
+        "--iters",
+        "-1"
+      ],
+      "predecoded_owned_config": {},
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "iters": -1
+      }
+    },
+    {
+      "id": "qlora-not-cli-choice",
+      "argv_tokens": [
+        "--fine-tune-type",
+        "qlora"
+      ],
+      "predecoded_owned_config": {},
+      "expected_status": "REFUSED_ARGUMENTS",
+      "expected_fields": {}
+    },
+    {
+      "id": "config-bypasses-choice-check",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "fine_tune_type": "qlora"
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "fine_tune_type": "qlora"
+      }
+    },
+    {
+      "id": "config-value-not-cast",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "iters": "16"
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "iters": "16"
+      }
+    },
+    {
+      "id": "documentary-launch-flag-not-framework-guard",
+      "argv_tokens": [],
+      "predecoded_owned_config": {
+        "launch_allowed": false,
+        "train": true
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "launch_allowed": false,
+        "train": true
+      }
+    },
+    {
+      "id": "cli-eval-and-accum-win",
+      "argv_tokens": [
+        "--steps-per-eval",
+        "4",
+        "--grad-accumulation-steps",
+        "1"
+      ],
+      "predecoded_owned_config": {
+        "steps_per_eval": 200,
+        "grad_accumulation_steps": 8
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "steps_per_eval": 4,
+        "grad_accumulation_steps": 1
+      }
+    },
+    {
+      "id": "cli-checkpoint-wins",
+      "argv_tokens": [
+        "--grad-checkpoint"
+      ],
+      "predecoded_owned_config": {
+        "grad_checkpoint": false
+      },
+      "expected_status": "PARSED_MERGED",
+      "expected_fields": {
+        "grad_checkpoint": true
+      }
+    },
+    {
+      "id": "unknown-size-converter-blocked",
+      "argv_tokens": [
+        "--clear-cache-threshold",
+        "1G"
+      ],
+      "predecoded_owned_config": {},
+      "expected_status": "OWN_UNSUPPORTED_CONVERTER",
+      "expected_fields": {}
+    }
+  ],
+  "execution_scope": {
+    "allowed_selected_source_function": "build_parser only,lines86-223,after strict AST shape/capability review",
+    "source_module_import_allowed": false,
+    "framework_or_numpy_or_yaml_import_allowed": false,
+    "trainer_or_run_or_main_allowed": false,
+    "optimizer_or_model_or_tokenizer_allowed": false,
+    "source_function_imports_excluded": true,
+    "globals": "Only trusted stdlib argparse,builtin scalar constructors and a refusing unknown-size-converter proxy. No os/path/network/model/training globals.",
+    "unknown_converter": "_parse_size source is not preserved. Flag use is blocked before dispatch; no size-unit semantics inferred.",
+    "config": "Owned predecoded JSON/Python objects; no YAML parser is loaded or YAML syntax semantics claimed.",
+    "merge": "Own explicit interpreter of reviewed None-only assignment rules;upstream main/run is never called.",
+    "training_launch_command_or_config_file_emitted": false
+  },
+  "owner_approved": false,
+  "training_gold": false,
+  "training_steps": 0,
+  "launch_allowed": false,
+  "model_calls": 0,
+  "packages_installed": false,
+  "weights_or_tokenizers_downloaded": false,
+  "limits": "This adds selected pure CLI-builder execution to the earlier static-only framework review phase. It does not import MLX-LM/MLX, load a model, validate all downstream configuration or establish training feasibility."
+}

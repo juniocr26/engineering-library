@@ -1,0 +1,101 @@
+{
+  "at": "2026-11-20T14:51:01.019062+00:00",
+  "framework_revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+  "source_path": "training-primary-sources-v1/mlx-lm--mlx_lm--tuner--trainer.py",
+  "scope": "Independent owned integer/index calculation of the written batching/mask/update formulas; no MLX, NumPy, tokenizer, model, optimizer or upstream source execution.",
+  "frozen_before_calculation": true,
+  "token_cases": [
+    {
+      "id": "short-unmasked",
+      "token_count": 5,
+      "prompt_offset": 0,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "short-assistant-only",
+      "token_count": 10,
+      "prompt_offset": 7,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "aligned-source-length",
+      "token_count": 32,
+      "prompt_offset": 0,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "exact-cap",
+      "token_count": 256,
+      "prompt_offset": 200,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "one-before-cap",
+      "token_count": 255,
+      "prompt_offset": 250,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "assistant-entirely-truncated",
+      "token_count": 280,
+      "prompt_offset": 270,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "assistant-begins-at-cap",
+      "token_count": 280,
+      "prompt_offset": 256,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "assistant-partially-truncated",
+      "token_count": 280,
+      "prompt_offset": 250,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    },
+    {
+      "id": "single-token-input",
+      "token_count": 1,
+      "prompt_offset": 0,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence."
+    }
+  ],
+  "schedule_cases": [
+    {
+      "iterations": 16,
+      "gradient_accumulation": 1,
+      "validation_every": 8
+    },
+    {
+      "iterations": 16,
+      "gradient_accumulation": 4,
+      "validation_every": 8
+    },
+    {
+      "iterations": 18,
+      "gradient_accumulation": 4,
+      "validation_every": 8
+    }
+  ],
+  "questions": [
+    "Does the written <= length mask include the first zero-padded target when padded width exceeds original sequence length?",
+    "Can all assistant tokens be truncated while the loss denominator becomes zero?",
+    "How many optimizer updates and unapplied remainder batches follow the written accumulation schedule?",
+    "Does the last in-loop validation describe the final saved adapter?"
+  ],
+  "upstream_bug_runtime_confirmed": false,
+  "training_steps": 0,
+  "neural_training": false,
+  "framework_installed": false,
+  "production_or_upstream_files_changed": false
+}

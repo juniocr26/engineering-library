@@ -1,0 +1,15 @@
+Internal Error ()
+citeturn11view0 [wordlim: 200] Source: open({"ref_id":"https://github.com/mattn/go-shellwords/releases/tag/v1.0.12","lineno":null}); 
+Failed to fetch https://github.com/mattn/go-shellwords/releases/tag/v1.0.12: Cache miss--------------------------------------------------------------------------------
+raw.githubusercontent.com (https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.12/util_posix.go)
+citeturn11view1 [wordlim: 200] Crawled: 4 months ago; Content type: text/plain; Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.12/util_posix.go","lineno":null}); Total lines: 1
+L0: // +build !windows package shellwords import ( "fmt" "os" "os/exec" "strings" ) func shellRun(line, dir string) (string, error) { var shell string if shell = os.Getenv("SHELL"); shell == "" { shell = "/bin/sh" } cmd := exec.Command(shell, "-c", line) if dir != "" { cmd.Dir = dir } b, err := cmd.Output() if err != nil { if eerr, ok := err.(*exec.ExitError); ok { b = eerr.Stderr } return "", fmt.Errorf("%s: %w", string(b), err) } return strings.TrimSpace(string(b)), nil }
+--------------------------------------------------------------------------------
+raw.githubusercontent.com (https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.12/util_windows.go)
+citeturn11view2 [wordlim: 200] Crawled: 4 months ago; Content type: text/plain; Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.12/util_windows.go","lineno":null}); Total lines: 1
+L0: // +build windows package shellwords import ( "fmt" "os" "os/exec" "strings" ) func shellRun(line, dir string) (string, error) { var shell string if shell = os.Getenv("COMSPEC"); shell == "" { shell = "cmd" } cmd := exec.Command(shell, "/c", line) if dir != "" { cmd.Dir = dir } b, err := cmd.Output() if err != nil { if eerr, ok := err.(*exec.ExitError); ok { b = eerr.Stderr } return "", fmt.Errorf("%s: %w", string(b), err) } return strings.TrimSpace(string(b)), nil }
+--------------------------------------------------------------------------------
+raw.githubusercontent.com (https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.12/go.mod)
+citeturn11view3 [wordlim: 200] Crawled: 4 months ago; Content type: text/plain; Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.12/go.mod","lineno":null}); Total lines: 1
+L0: module github.com/mattn/go-shellwords go 1.13
+

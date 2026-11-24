@@ -1,0 +1,255 @@
+{
+  "at": "2026-11-20T14:42:14.945425+00:00",
+  "phase": "candidate",
+  "correct": 12,
+  "n": 12,
+  "rows": [
+    {
+      "id": "original-owned-architecture",
+      "expected": "DERIVED",
+      "actual": "DERIVED",
+      "matches": true,
+      "claims": [
+        {
+          "id": "F1",
+          "kind": "written_call",
+          "caller": "BalanceService.summary",
+          "callee_expression": "self._port.read",
+          "arguments": [
+            "account_id"
+          ],
+          "evidence": [
+            "service.py:BalanceService.summary"
+          ]
+        },
+        {
+          "id": "F2",
+          "kind": "constructor_default_and_forwarded_keyword",
+          "owner": "BalanceAdapter",
+          "parameter": "timeout",
+          "default_expression": "2.0",
+          "callee_expression": "self._client.get",
+          "keyword": "timeout",
+          "enforced_deadline": "UNKNOWN",
+          "evidence": [
+            "adapter.py:BalanceAdapter.__init__",
+            "adapter.py:BalanceAdapter.read"
+          ]
+        },
+        {
+          "id": "F3",
+          "kind": "written_exception_translation",
+          "owner": "BalanceAdapter.read",
+          "caught_type_expression": "GatewayUnavailable",
+          "raises": [
+            {
+              "exception_expression": "BalanceUnavailable('gateway unavailable')",
+              "cause_expression": "error"
+            }
+          ],
+          "covers_mapper_call": false,
+          "evidence": [
+            "adapter.py:BalanceAdapter.read"
+          ]
+        },
+        {
+          "id": "F4",
+          "kind": "written_mapper_call_after_try",
+          "caller": "BalanceAdapter.read",
+          "callee_expression": "balance_from_payload",
+          "arguments": [
+            "account_id",
+            "payload"
+          ],
+          "evidence": [
+            "adapter.py:BalanceAdapter.read"
+          ]
+        },
+        {
+          "id": "F5",
+          "kind": "declared_protocol_only",
+          "interface": "JsonClient.get",
+          "concrete_transport": "UNKNOWN",
+          "internal_retries": "UNKNOWN",
+          "server_authorization": "UNKNOWN",
+          "evidence": [
+            "client.py:JsonClient.get"
+          ]
+        },
+        {
+          "id": "F6",
+          "kind": "no_written_exception_handler_in_selected_body",
+          "owners": [
+            "BalanceService.summary",
+            "balance_from_payload"
+          ],
+          "evidence": [
+            "service.py:BalanceService.summary",
+            "mapping.py:balance_from_payload"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-client-call-lazy-lambda",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "protected assignment must directly evaluate the selected client call"
+    },
+    {
+      "id": "try-client-call-dead-expression",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "protected assignment must directly evaluate the selected client call"
+    },
+    {
+      "id": "translation-raise-nested-definition",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "translation must be a direct sole handler raise"
+    },
+    {
+      "id": "translation-raise-dead-conditional",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "translation must be a direct sole handler raise"
+    },
+    {
+      "id": "translation-raise-after-return",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "translation must be a direct sole handler raise"
+    },
+    {
+      "id": "translation-raise-empty-loop",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "translation must be a direct sole handler raise"
+    },
+    {
+      "id": "catch-import-rebound",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "module statement outside closed import/declaration namespace"
+    },
+    {
+      "id": "raised-import-rebound",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "module statement outside closed import/declaration namespace"
+    },
+    {
+      "id": "mapper-import-rebound",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "module statement outside closed import/declaration namespace"
+    },
+    {
+      "id": "protocol-import-rebound",
+      "expected": "REFUSED",
+      "actual": "REFUSED",
+      "matches": true,
+      "reason": "module statement outside closed import/declaration namespace"
+    },
+    {
+      "id": "harmless-module-docstring",
+      "expected": "DERIVED",
+      "actual": "DERIVED",
+      "matches": true,
+      "claims": [
+        {
+          "id": "F1",
+          "kind": "written_call",
+          "caller": "BalanceService.summary",
+          "callee_expression": "self._port.read",
+          "arguments": [
+            "account_id"
+          ],
+          "evidence": [
+            "service.py:BalanceService.summary"
+          ]
+        },
+        {
+          "id": "F2",
+          "kind": "constructor_default_and_forwarded_keyword",
+          "owner": "BalanceAdapter",
+          "parameter": "timeout",
+          "default_expression": "2.0",
+          "callee_expression": "self._client.get",
+          "keyword": "timeout",
+          "enforced_deadline": "UNKNOWN",
+          "evidence": [
+            "adapter.py:BalanceAdapter.__init__",
+            "adapter.py:BalanceAdapter.read"
+          ]
+        },
+        {
+          "id": "F3",
+          "kind": "written_exception_translation",
+          "owner": "BalanceAdapter.read",
+          "caught_type_expression": "GatewayUnavailable",
+          "raises": [
+            {
+              "exception_expression": "BalanceUnavailable('gateway unavailable')",
+              "cause_expression": "error"
+            }
+          ],
+          "covers_mapper_call": false,
+          "evidence": [
+            "adapter.py:BalanceAdapter.read"
+          ]
+        },
+        {
+          "id": "F4",
+          "kind": "written_mapper_call_after_try",
+          "caller": "BalanceAdapter.read",
+          "callee_expression": "balance_from_payload",
+          "arguments": [
+            "account_id",
+            "payload"
+          ],
+          "evidence": [
+            "adapter.py:BalanceAdapter.read"
+          ]
+        },
+        {
+          "id": "F5",
+          "kind": "declared_protocol_only",
+          "interface": "JsonClient.get",
+          "concrete_transport": "UNKNOWN",
+          "internal_retries": "UNKNOWN",
+          "server_authorization": "UNKNOWN",
+          "evidence": [
+            "client.py:JsonClient.get"
+          ]
+        },
+        {
+          "id": "F6",
+          "kind": "no_written_exception_handler_in_selected_body",
+          "owners": [
+            "BalanceService.summary",
+            "balance_from_payload"
+          ],
+          "evidence": [
+            "service.py:BalanceService.summary",
+            "mapping.py:balance_from_payload"
+          ]
+        }
+      ]
+    }
+  ],
+  "source_files_written": 0,
+  "inspected_source_executed": false,
+  "model_calls": 0,
+  "compiler_sha256": "1093e36106868fd7274fab0cc8c90efd2a407fd19c342bdda1b260e7b84694ca",
+  "observer_sha256": "67fecb34873b6ebeae15f4c0a1ccbf8838d6c9b77deb2f28d83e3ecdd93d389b"
+}

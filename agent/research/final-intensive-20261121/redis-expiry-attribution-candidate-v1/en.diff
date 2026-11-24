@@ -1,0 +1,16 @@
+--- original/en.md
++++ isolated-correction/en.md
+@@ -16,11 +16,11 @@
+ 
+ ## Comment rationale and actual operations
+ 
+-The source comment discusses past expiration timestamps, loading an append-only file, replication context, and waiting for an explicit delete from the master. It provides rationale for the guard and state conditions. The function body itself does not insert a key, delete a key, propagate a command, set an expiry or wait for a network message. Turning that rationale into a promise that this function performs those operations was a critical error in the historical baseline. The corrected contract describes the predicate and leaves the surrounding database workflow outside the selected evidence.
++The source comment discusses past expiration timestamps, loading an append-only file, replication context, and waiting for an explicit delete from the master. It provides rationale for the guard and state conditions. The function body itself does not insert a key, delete a key, propagate a command, set an expiry or wait for a network message. The historical baseline repeated that rationale as a broad policy without preserving the exact guards; it did not explicitly claim that this predicate executes insertion, deletion or waiting. The corrected contract describes the predicate and leaves the surrounding database workflow outside the selected evidence.
+ 
+ ## Comparison and review status
+ 
+-The baseline broadly recognized an expiry check but omitted the current-client early return and blurred server roles. It also dropped the exact comparison and final state guard while presenting comment rationale as behavior. This correction restores those conditions without claiming that the local model learned them. Both language versions preserve the same technical expressions and boundaries. Exact source hashes, physical citation lines, original response, historical caller identity and review findings remain available in the accompanying artifacts; these integrity checks support review but do not substitute for owner approval.
++The baseline broadly recognized an expiry check but omitted the current-client early return and blurred server roles. It did not preserve the inclusive comparison or the exact conjunction and negated fields, although it mentioned loading and a master-role condition. Its policy wording repeated the comment rationale more broadly than the guarded source supports. This correction restores those conditions without claiming that the local model learned them. Both language versions preserve the same technical expressions and boundaries. Exact source hashes, physical citation lines, original response, historical caller identity and review findings remain available in the accompanying artifacts; these integrity checks support review but do not substitute for owner approval.
+ 
+ ## Engineer FAQ and actual caller responsibility
+ 

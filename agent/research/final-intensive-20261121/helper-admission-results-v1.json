@@ -1,0 +1,397 @@
+{
+  "at": "2026-11-21T23:03:46.427834+00:00",
+  "protocol_sha256": "af8168612ce09890cfe42849213b31743594f4d553b2b0be8f4603403b9c4e13",
+  "producer_sha256": "90e13576c3fb78bb4e83136bf6dbb45a953a7a88d700b0934071fab374135028",
+  "records": [
+    {
+      "id": "python-class-field",
+      "task": "fastapi",
+      "path": "fastapi/dependencies/models.py",
+      "language": "python",
+      "selector": "Dependant",
+      "claim_ids": [
+        "F01",
+        "F02"
+      ],
+      "expected": "REFUSED",
+      "expected_reason": "missing or ambiguous callable",
+      "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "source_bytes": 8631,
+      "actual": "REFUSED",
+      "error": {
+        "class": "RetrievalRefused",
+        "message": "select a complete callable, not a class container"
+      },
+      "extracted_intermediate_unit": null,
+      "admitted_quote_covers_reference_ids": [],
+      "uncovered_reference_ids": [
+        "F01",
+        "F02"
+      ],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": false,
+      "wall_seconds": 0.05967149999992216,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    },
+    {
+      "id": "python-whole-solver",
+      "task": "fastapi",
+      "path": "fastapi/dependencies/utils.py",
+      "language": "python",
+      "selector": "solve_dependencies",
+      "claim_ids": [
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09"
+      ],
+      "expected": "REFUSED",
+      "expected_reason": "complete decorated callable exceeds quote budget",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_bytes": 57721,
+      "actual": "REFUSED",
+      "error": {
+        "class": "RetrievalRefused",
+        "message": "complete decorated callable exceeds quote budget"
+      },
+      "extracted_intermediate_unit": null,
+      "admitted_quote_covers_reference_ids": [],
+      "uncovered_reference_ids": [
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09"
+      ],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": true,
+      "wall_seconds": 0.051453791999847454,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    },
+    {
+      "id": "go-function-type",
+      "task": "cobra",
+      "path": "args.go",
+      "language": "go",
+      "selector": "PositionalArgs",
+      "claim_ids": [
+        "C01"
+      ],
+      "expected": "REFUSED",
+      "expected_reason": "invalid Go callable declaration kind",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_bytes": 4477,
+      "actual": "REFUSED",
+      "error": {
+        "class": "RetrievalRefused",
+        "message": "invalid Go callable declaration kind"
+      },
+      "extracted_intermediate_unit": {
+        "selector": "PositionalArgs",
+        "declaration_kind": "type",
+        "first_line": 22,
+        "last_line": 22,
+        "quote": "type PositionalArgs func(cmd *Command, args []string) error",
+        "quote_sha256": "02b6f777c7493f1557068c9343d6d56fe5a4584697889532a992b10ee2c33be7",
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        },
+        "syntax_only": true,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "limitations": [
+          "Syntax-only Go declaration; module, build-tag, import, type and runtime binding resolution remain unverified."
+        ]
+      },
+      "admitted_quote_covers_reference_ids": [],
+      "uncovered_reference_ids": [
+        "C01"
+      ],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": true,
+      "wall_seconds": 0.06577070799994544,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    },
+    {
+      "id": "go-membership",
+      "task": "cobra",
+      "path": "args.go",
+      "language": "go",
+      "selector": "OnlyValidArgs",
+      "claim_ids": [
+        "C02",
+        "C03"
+      ],
+      "expected": "ADMITTED_LEXICAL_UNIT",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_bytes": 4477,
+      "actual": "ADMITTED_LEXICAL_UNIT",
+      "error": null,
+      "extracted_intermediate_unit": {
+        "selector": "OnlyValidArgs",
+        "declaration_kind": "function",
+        "first_line": 51,
+        "last_line": 66,
+        "quote": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil\n}",
+        "quote_sha256": "4b06644f452a9753072c9ad5052a13225e3a07e15dcaa1568716b021b56b300e",
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        },
+        "syntax_only": true,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "limitations": [
+          "Syntax-only Go declaration; module, build-tag, import, type and runtime binding resolution remain unverified."
+        ]
+      },
+      "admitted_quote_covers_reference_ids": [
+        "C02",
+        "C03"
+      ],
+      "uncovered_reference_ids": [],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": true,
+      "wall_seconds": 0.09810220800000025,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    },
+    {
+      "id": "go-exact-args",
+      "task": "cobra",
+      "path": "args.go",
+      "language": "go",
+      "selector": "ExactArgs",
+      "claim_ids": [
+        "C04",
+        "C05"
+      ],
+      "expected": "ADMITTED_LEXICAL_UNIT",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_bytes": 4477,
+      "actual": "ADMITTED_LEXICAL_UNIT",
+      "error": null,
+      "extracted_intermediate_unit": {
+        "selector": "ExactArgs",
+        "declaration_kind": "function",
+        "first_line": 107,
+        "last_line": 114,
+        "quote": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}\n}",
+        "quote_sha256": "e05373a9f2c501657009c7b7a76442937b4f9b51951feff248523f58b27c80d8",
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        },
+        "syntax_only": true,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "limitations": [
+          "Syntax-only Go declaration; module, build-tag, import, type and runtime binding resolution remain unverified."
+        ]
+      },
+      "admitted_quote_covers_reference_ids": [
+        "C04",
+        "C05"
+      ],
+      "uncovered_reference_ids": [],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": true,
+      "wall_seconds": 0.09866575000000921,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    },
+    {
+      "id": "go-composition",
+      "task": "cobra",
+      "path": "args.go",
+      "language": "go",
+      "selector": "MatchAll",
+      "claim_ids": [
+        "C06",
+        "C07"
+      ],
+      "expected": "ADMITTED_LEXICAL_UNIT",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_bytes": 4477,
+      "actual": "ADMITTED_LEXICAL_UNIT",
+      "error": null,
+      "extracted_intermediate_unit": {
+        "selector": "MatchAll",
+        "declaration_kind": "function",
+        "first_line": 127,
+        "last_line": 136,
+        "quote": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil\n\t}\n}",
+        "quote_sha256": "3b012f53b5d058dd9c05bfe4eeb10373954f0ab545ad39ec2ee33aef253a42fe",
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        },
+        "syntax_only": true,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "limitations": [
+          "Syntax-only Go declaration; module, build-tag, import, type and runtime binding resolution remain unverified."
+        ]
+      },
+      "admitted_quote_covers_reference_ids": [
+        "C06",
+        "C07"
+      ],
+      "uncovered_reference_ids": [],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": true,
+      "wall_seconds": 0.10075241599997753,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    },
+    {
+      "id": "go-deprecation-comment",
+      "task": "cobra",
+      "path": "args.go",
+      "language": "go",
+      "selector": "ExactValidArgs",
+      "claim_ids": [
+        "C08",
+        "C09"
+      ],
+      "expected": "ADMITTED_LEXICAL_UNIT",
+      "expected_uncovered_claims": [
+        "C09"
+      ],
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_bytes": 4477,
+      "actual": "ADMITTED_LEXICAL_UNIT",
+      "error": null,
+      "extracted_intermediate_unit": {
+        "selector": "ExactValidArgs",
+        "declaration_kind": "function",
+        "first_line": 142,
+        "last_line": 144,
+        "quote": "func ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}",
+        "quote_sha256": "266b35f96f79cbc7668cae77069df47a3874f397ffbaef8615e7b977201f7d1c",
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        },
+        "syntax_only": true,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "limitations": [
+          "Syntax-only Go declaration; module, build-tag, import, type and runtime binding resolution remain unverified."
+        ]
+      },
+      "admitted_quote_covers_reference_ids": [
+        "C08"
+      ],
+      "uncovered_reference_ids": [
+        "C09"
+      ],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": true,
+      "wall_seconds": 0.10428629199986972,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    },
+    {
+      "id": "typescript-source",
+      "task": "zod",
+      "path": "packages/zod/src/v4/core/parse.ts",
+      "language": "typescript",
+      "selector": "_safeParse",
+      "claim_ids": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z07",
+        "Z08",
+        "Z09",
+        "Z10"
+      ],
+      "expected": "REFUSED",
+      "expected_reason": "unsupported registered language",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_bytes": 12572,
+      "actual": "REFUSED",
+      "error": {
+        "class": "RetrievalRefused",
+        "message": "unsupported registered language"
+      },
+      "extracted_intermediate_unit": null,
+      "admitted_quote_covers_reference_ids": [],
+      "uncovered_reference_ids": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z07",
+        "Z08",
+        "Z09",
+        "Z10"
+      ],
+      "matches_frozen_status": true,
+      "matches_frozen_reason": true,
+      "wall_seconds": 1.1708000101862126e-05,
+      "source_program_executed": false,
+      "runtime_bindings_verified": false
+    }
+  ],
+  "admitted_requests": {
+    "numerator": 4,
+    "denominator": 8
+  },
+  "exact_required_evidence_span_coverage": {
+    "numerator": 7,
+    "denominator": 28
+  },
+  "covered_reference_ids": [
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08"
+  ],
+  "all_frozen_status_expectations_match": true,
+  "all_frozen_refusal_causes_match": false,
+  "population": "Eight owned API-phase requests covering28 existing K reference propositions in three development-exposed families.",
+  "baseline": "All28 facts source-reviewed using separate Git/static procedures; not previously asserted as helper-acquired.",
+  "method": "Actual existing extract and validate_unit on immutable source text, without helper journal, job wrapper or model.",
+  "confidence_limitations": "Not model accuracy, general helper success rate, retrieval semantic correctness or complete-document acceptance. Refusal may be an intended boundary. No source code executed; owned parser binary executed.",
+  "source_size_max": 65536,
+  "quote_size_max": 6144,
+  "native_parser_installed_used": true,
+  "permanent_tests_executed": false,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

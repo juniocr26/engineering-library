@@ -1,0 +1,207 @@
+{
+  "at": "2026-11-21T16:56:12.045648+00:00",
+  "before_new_outcomes": true,
+  "hypothesis": "V4binding census may miss dictionary-object mutations that do not rebind a Name and may misclassify comprehension-owned stores as module stores. Challenge both false positive admission and missed useful maintenance without changing V3/V4.",
+  "cases": [
+    {
+      "id": "registry-item-replaced",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-item-replaced/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-item-replaced/selected-planner-input.json",
+      "packet_sha256": "781e227f7ba980d18df24bc83f3879956c05418bb64cc7fae70e95deec8f0d76",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Definite item write replaces identity target; one Name Store is not a stable registry value.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 124,
+          "sha256": "6c8231e8aeee3f012757b58ef796b15af78dd01e0d42b7cafe4954c1a3536142"
+        }
+      ]
+    },
+    {
+      "id": "registry-item-deleted",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-item-deleted/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-item-deleted/selected-planner-input.json",
+      "packet_sha256": "87ffaff84e0b6bbc609e4362cdee31ba6cab1f5a152291986ecd966fd246622b",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Definite item deletion removes mapping without rebinding registry name.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 116,
+          "sha256": "0254abc3f134d32f619577e4f6948933c22d788bd9654ec352e34e0315d4e955"
+        }
+      ]
+    },
+    {
+      "id": "registry-alias-item-write",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-alias-item-write/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-alias-item-write/selected-planner-input.json",
+      "packet_sha256": "69a23d3377a6cc4f3defb31a6a718e48edcd45c717e224ef37cfb25279ae1bc1",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Direct alias mutates same literal dictionary; name binding census alone misses the target change.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 138,
+          "sha256": "87d9c1a85afcd3b2eaa3d045b8551e4aa0053fb12b9fd77970bb37f8f0be9e45"
+        }
+      ]
+    },
+    {
+      "id": "registry-inplace-union",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-inplace-union/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/registry-inplace-union/selected-planner-input.json",
+      "packet_sha256": "3aae0b2747f1bbbda0855220a6868268ce5977ecea070e8fe79f5ca7d7a7552f",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "AugAssign changes registry; existing census should catch its extra Store.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 127,
+          "sha256": "d63f8895f436efb9a426b45c6b6b6a3c8d47b337e2b947c369bdfebf9f7a95f1"
+        }
+      ]
+    },
+    {
+      "id": "comprehension-provider-shadow",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/comprehension-provider-shadow/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/comprehension-provider-shadow/selected-planner-input.json",
+      "packet_sha256": "34761e79aca932cf02835063f3997accaf24f9e0f0a302b42b1101b9fe75ed43",
+      "reference_action": "MODIFY",
+      "reference_reason": "Python3 comprehension induction variable belongs to comprehension scope and does not replace module provider.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 129,
+          "sha256": "9301c8b5d6cf4719f72be9e799c72c86aaf1482e7b42f77e69325039afac0eb6"
+        }
+      ]
+    },
+    {
+      "id": "generator-provider-shadow",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/generator-provider-shadow/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/generator-provider-shadow/selected-planner-input.json",
+      "packet_sha256": "be8dfc4d320abf32c7a96f94340bb3f901587fc36387623baec0e92125b79b9d",
+      "reference_action": "MODIFY",
+      "reference_reason": "Generator induction variable is not a module binding; provider and registry remain unique source declarations.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 129,
+          "sha256": "e393132bc45f0344fe2d39f3de4c4d6ae3e77b04cdcaea07bd6e93faad12702c"
+        }
+      ]
+    },
+    {
+      "id": "unrelated-item-write",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/unrelated-item-write/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/unrelated-item-write/selected-planner-input.json",
+      "packet_sha256": "b8a8e6fd95486d7212d9ceede8630cd0e4a9b3296e2ef94edc87a1762dcb4cc6",
+      "reference_action": "MODIFY",
+      "reference_reason": "Distinct newly created dictionary mutation does not alter source identity/provider.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 127,
+          "sha256": "7f0f0c69e078c5eb0f0e53aed864180be94d569e548e31245d8e0055f5fb004c"
+        }
+      ]
+    },
+    {
+      "id": "unrelated-comprehension-target",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/unrelated-comprehension-target/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-object-mutation-v1/unrelated-comprehension-target/selected-planner-input.json",
+      "packet_sha256": "7507cbe360293550159946bc2aaab73b7bd3534dc27a0d737edce7b620a8b474",
+      "reference_action": "MODIFY",
+      "reference_reason": "Distinct comprehension variable does not affect provider or registry.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 117,
+          "sha256": "26ec0ca8d3ff73f0201c806c9ede88c6a8eef4366bee85282bbe5b8ef2ddadd2"
+        }
+      ]
+    }
+  ],
+  "frozen_observers": [
+    {
+      "path": "run_scope_acquisition_v1.py",
+      "sha256": "abebf5dd88282069fd3287959212766fe2e1e60b5c1df7a9ba0cdbf44a1f74e2"
+    },
+    {
+      "path": "compare_scope_binding_owners_v2.py",
+      "sha256": "63f25b90f999de6d37966da2062f3ecc86fddd41a8069b0197cd28635195b89a"
+    },
+    {
+      "path": "observe_scope_continuity_utility_v3.py",
+      "sha256": "c5f79057cfd806785f4a91807a28cd71f6591b224f20212d7ff6728dc6262b0d"
+    },
+    {
+      "path": "observe_scope_binding_census_v4.py",
+      "sha256": "97977469d750155285a169cc40c7a5ba228e0c4a7878b8eb83c3295349cb5a7f"
+    }
+  ],
+  "scope": "New eight owned development controls; source-only citation maintenance. No runtime execution or generic Python semantic truth. References frozen before observing outputs.",
+  "model_calls": 0,
+  "permanent_tests_added": false,
+  "production_changes": false,
+  "optimizer_updates": 0,
+  "gold": 0
+}

@@ -1,0 +1,172 @@
+{
+  "id": "CONT-JAVASCRIPT-ORDERED-GUARDS",
+  "status": "VERIFIED_INTEGRATED_STANDALONE_PRODUCER_ONLY",
+  "at": "2026-11-19T15:32:14.052891+00:00",
+  "producer": "javascript-leading-guard-1.1.0",
+  "new_packet_profile": "ordered-synchronous-guard-chain-v1",
+  "cases": [
+    {
+      "repository": "fastify",
+      "revision": "825d7722e4932a39193729997c76535d0a963b6b",
+      "path": "lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "selector": "checkRequestExistence",
+      "start_line": 103,
+      "end_line": 107,
+      "guards": [
+        {
+          "condition": "name && hasKey(this[kRequest], name)",
+          "return_expression": "true"
+        },
+        {
+          "condition": "name && hasInstanceProperty(this[kRequest], name)",
+          "return_expression": "true"
+        }
+      ],
+      "final_return_expression": "checkExistence(this[kRequest].prototype, name)",
+      "source_executed": false,
+      "status": "CANDIDATE_SHAPE_NOT_SEMANTIC_ACCEPTANCE"
+    },
+    {
+      "repository": "fastify",
+      "revision": "825d7722e4932a39193729997c76535d0a963b6b",
+      "path": "lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "selector": "checkReplyExistence",
+      "start_line": 109,
+      "end_line": 113,
+      "guards": [
+        {
+          "condition": "name && hasKey(this[kReply], name)",
+          "return_expression": "true"
+        },
+        {
+          "condition": "name && hasInstanceProperty(this[kReply], name)",
+          "return_expression": "true"
+        }
+      ],
+      "final_return_expression": "checkExistence(this[kReply].prototype, name)",
+      "source_executed": false,
+      "status": "CANDIDATE_SHAPE_NOT_SEMANTIC_ACCEPTANCE"
+    },
+    {
+      "repository": "go-image-optimizer",
+      "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+      "path": "frontend/app/components/image-resize/resize-options.ts",
+      "source_sha256": "881252126b6b188cecb0d4c71cd9457edd01afc595e806f1a538d27cd767a33a",
+      "selector": "dimensionError",
+      "start_line": 43,
+      "end_line": 53,
+      "guards": [
+        {
+          "condition": "!target",
+          "return_expression": "\"Enter a positive whole number for each dimension.\""
+        },
+        {
+          "condition": "target.width * target.height > 32_000_000",
+          "return_expression": "\"The output must not exceed 32 million pixels.\""
+        },
+        {
+          "condition": "target.width * target.height * info.frameCount > 64_000_000",
+          "return_expression": "\"This animation exceeds the output frame pixel limit.\""
+        }
+      ],
+      "final_return_expression": "null",
+      "source_executed": false,
+      "status": "CANDIDATE_SHAPE_NOT_SEMANTIC_ACCEPTANCE"
+    }
+  ],
+  "before": "Existing leading-guard producer recorded only the first guard and explicitly left remaining statements unanalyzed.",
+  "after": "Exact two/three-guard shapes add a separately scoped optional child packet. Existing leading-guard IR and EN/PT paragraphs remain byte-identical in all three real cases.",
+  "controls": {
+    "existing_tests": 33,
+    "new_permanent_tests": 4,
+    "final_tests": 37,
+    "private_prototype_controls": 6,
+    "failures": 0,
+    "real_CLI_cases": 3,
+    "old_paragraph_and_IR_parity": true,
+    "actual_restored_CLI_cases": 6,
+    "restored_files_verified": 145,
+    "restored_tests_exit": 0
+  },
+  "actual_consumer": "Standalone producer CLI emits ordered_guard_chain with source hashes, physical lines, ordered conditions/return expressions and EN/PT paragraphs. Ordinary Ruby model/writer path does not automatically consume this child packet.",
+  "scope_limits": [
+    "No new production JavaScript writer/profile routing was added; that remains a separate implementation decision.",
+    "Two repository families; request/reply siblings are one Fastify family, all Go Image frontend/backend variants stay grouped. Not an unseen holdout.",
+    "Unsupported full chains omit the child packet and retain the prior bounded leading-guard behavior.",
+    "No imported helper, getter, parameter initialization, runtime receiver, type checking or successful completion proof.",
+    "Only source-body syntax; no model training or application execution."
+  ],
+  "runtime_restoration": {
+    "at": "2026-11-19T15:27:42.261568+00:00",
+    "archive_sha256": "44038bc0fc8cbdba8d76f548dc696b043d52f4050ae75504a89bb75daa60a3dc",
+    "content_files_verified": 145,
+    "node_version": "v24.22.0",
+    "producer_sha256": "9869a790fa9fd6e8e07d792433a93cc4c02b0ad0a29deff82bd5f7b909b23b24",
+    "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+    "rows": [
+      {
+        "entry": "normal-compatible-backend-loader",
+        "selector": "checkRequestExistence",
+        "exit": 0,
+        "exact_result_equal": true
+      },
+      {
+        "entry": "normal-compatible-backend-loader",
+        "selector": "checkReplyExistence",
+        "exit": 0,
+        "exact_result_equal": true
+      },
+      {
+        "entry": "normal-compatible-backend-loader",
+        "selector": "dimensionError",
+        "exit": 0,
+        "exact_result_equal": true
+      },
+      {
+        "entry": "bundled-loader-and-libraries",
+        "selector": "checkRequestExistence",
+        "exit": 0,
+        "exact_result_equal": true
+      },
+      {
+        "entry": "bundled-loader-and-libraries",
+        "selector": "checkReplyExistence",
+        "exit": 0,
+        "exact_result_equal": true
+      },
+      {
+        "entry": "bundled-loader-and-libraries",
+        "selector": "dimensionError",
+        "exit": 0,
+        "exact_result_equal": true
+      }
+    ],
+    "test_exit": 0,
+    "expected_current_control_count": 37,
+    "normal_entry_scope": "Restored Node and TypeScript use compatible existing backend loader/shared libraries.",
+    "explicit_entry_scope": "Actual CLI additionally passed with restored loader and archived library path.",
+    "source_program_executed": false,
+    "model_calls": 0,
+    "global_install": false,
+    "new_containers": 0,
+    "remote_recovery": false,
+    "unverified": [
+      "Windows",
+      "native macOS",
+      "native Linux AMD64",
+      "arbitrary Node subprocess applications"
+    ]
+  },
+  "failures_preserved": [
+    "Initial restoration used tarfile.extractall(filter=...), unavailable in existing Python3.11.2. Failed script/log/root retained. Version2 explicitly extracts only pinned paths/sizes/hashes and approved internal hardlink into a new root; no environment upgrade."
+  ],
+  "source_program_executed": false,
+  "model_calls_for_parser_checks": 0,
+  "publication": false,
+  "training_gold": false,
+  "new_Harness_MCP_plugin_or_router": false,
+  "private_evidence": "private-research://continuation-20261119/javascript-guard-chain-candidate/",
+  "producer_sha256": "9869a790fa9fd6e8e07d792433a93cc4c02b0ad0a29deff82bd5f7b909b23b24"
+}

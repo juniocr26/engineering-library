@@ -1,0 +1,40 @@
+{
+  "at": "2026-11-21T04:01:15.696106+00:00",
+  "selections": [
+    {
+      "id": "ownership-and-error-delegation",
+      "file": "agent/research/portfolio-vivabem-20261120/duckdb-capi-context-source-v1/e41515de6f7efb19b43293ab49cb967cd64ab9f9/src/include/duckdb/main/capi/capi_internal.hpp",
+      "source_sha256": "df36349f75c2f64fdd37c74dc3df8773565850d5f01748a62aac8f6996a184a2",
+      "lines": [
+        102,
+        151
+      ],
+      "quote": "//! Either a query handle or a stream opened from one. Only the streaming entry points care which;\n//! everything else reads the metadata and the error, which both carry\nstruct DuckDBResultData {\n\t//! The query handle, or null once a stream was opened from it\n\tunique_ptr<QueryResult> result;\n\t//! The stream opened from the handle (may be null)\n\tunique_ptr<QueryResultStream<>> stream;\n\t// Results can only use either the new API or the old API, not a mix of the two\n\t// They start off as \"none\" and switch to one or the other when an API method is used\n\tCAPIResultSetType result_set_type;\n\n\tbool IsStreaming() const {\n\t\treturn stream != nullptr;\n\t}\n\t//! The retained result. Only valid when the result is not streaming\n\tQueryResult &Retained() const {\n\t\tD_ASSERT(result);\n\t\treturn *result;\n\t}\n\tbool HasError() const {\n\t\treturn stream ? stream->HasError() : result->HasError();\n\t}\n\tconst string &GetError() const {\n\t\treturn stream ? stream->GetError() : result->GetError();\n\t}\n\tconst ExceptionType &GetErrorType() const {\n\t\treturn stream ? stream->GetErrorType() : result->GetErrorType();\n\t}\n\tidx_t ColumnCount() const {\n\t\treturn stream ? stream->ColumnCount() : result->ColumnCount();\n\t}\n\tconst vector<LogicalType> &GetTypes() const {\n\t\treturn stream ? stream->GetTypes() : result->GetTypes();\n\t}\n\tconst Identifier &ColumnName(idx_t index) const {\n\t\treturn stream ? stream->ColumnName(index) : result->ColumnName(index);\n\t}\n\tStatementType GetStatementType() const {\n\t\treturn stream ? stream->GetStatementType() : result->GetStatementType();\n\t}\n\tconst StatementProperties &GetStatementProperties() const {\n\t\treturn stream ? stream->GetStatementProperties() : result->GetStatementProperties();\n\t}\n\tClientProperties &GetClientProperties() {\n\t\treturn stream ? stream->GetClientProperties() : result->client_properties;\n\t}\n\tunique_ptr<DataChunk> Fetch() {\n\t\treturn stream ? stream->Fetch() : result->Fetch();\n\t}\n};",
+      "quote_sha256": "580734b306d88439a65d7fb99f33608365191fe03074b0fc1181f0b9cb7f985e"
+    },
+    {
+      "id": "written-null-getter-assertions",
+      "file": "agent/research/portfolio-vivabem-20261120/duckdb-capi-context-source-v1/e41515de6f7efb19b43293ab49cb967cd64ab9f9/test/api/capi/v1/test_capi.cpp",
+      "source_sha256": "367b177b161bda47d80244f4b4bfd0edca52744874fc6b50b8524cfb67287864",
+      "lines": [
+        122,
+        132
+      ],
+      "quote": "\t// several error conditions\n\tREQUIRE(duckdb_value_is_null(nullptr, 0, 0) == false);\n\tREQUIRE(duckdb_column_type(nullptr, 0) == DUCKDB_TYPE_INVALID);\n\tREQUIRE(duckdb_column_count(nullptr) == 0);\n\tREQUIRE(duckdb_row_count(nullptr) == 0);\n\tREQUIRE(duckdb_rows_changed(nullptr) == 0);\n\tREQUIRE(duckdb_result_error(nullptr) == nullptr);\n\tREQUIRE(duckdb_nullmask_data(nullptr, 0) == nullptr);\n\tREQUIRE(duckdb_column_data(nullptr, 0) == nullptr);\n\tREQUIRE(duckdb_result_error_type(nullptr) == DUCKDB_ERROR_INVALID);\n}",
+      "quote_sha256": "3ff69e46a6d99704a8861ce9121e79c77bd3e7bca452cc88ac020accee6aea50"
+    },
+    {
+      "id": "written-cleanup-and-error-source-context",
+      "file": "agent/research/portfolio-vivabem-20261120/duckdb-capi-context-source-v1/e41515de6f7efb19b43293ab49cb967cd64ab9f9/test/api/capi/v1/test_capi.cpp",
+      "source_sha256": "367b177b161bda47d80244f4b4bfd0edca52744874fc6b50b8524cfb67287864",
+      "lines": [
+        650,
+        718
+      ],
+      "quote": "\t\tcppcon.Query(\"INSERT INTO integers VALUES (42)\");\n\t}\n\n\t// now we can connect\n\tREQUIRE(duckdb_open_ext(dbdir.c_str(), &db, config, &error) == DuckDBSuccess);\n\n\t// test unrecognized configuration\n\tREQUIRE(duckdb_set_config(config, \"aaaa_invalidoption\", \"read_only\") == DuckDBSuccess);\n\tREQUIRE(((DBConfig *)config)->options.unrecognized_options[\"aaaa_invalidoption\"] == \"read_only\");\n\tREQUIRE(duckdb_open_ext(dbdir.c_str(), &db, config, &error) == DuckDBError);\n\tREQUIRE_THAT(error, Catch::Matchers::Contains(\"The following options were not recognized\"));\n\tduckdb_free(error);\n\n\t// we can destroy the config right after duckdb_open\n\tduckdb_destroy_config(&config);\n\t// we can spam this\n\tduckdb_destroy_config(&config);\n\tduckdb_destroy_config(&config);\n\n\tREQUIRE(duckdb_connect(db, nullptr) == DuckDBError);\n\tREQUIRE(duckdb_connect(nullptr, &con) == DuckDBError);\n\tREQUIRE(duckdb_connect(db, &con) == DuckDBSuccess);\n\n\t// we can query\n\tREQUIRE(duckdb_query(con, \"SELECT 42::INT\", &result) == DuckDBSuccess);\n\tREQUIRE(duckdb_value_int32(&result, 0, 0) == 42);\n\tduckdb_destroy_result(&result);\n\tREQUIRE(duckdb_query(con, \"SELECT i::INT FROM integers\", &result) == DuckDBSuccess);\n\tREQUIRE(duckdb_value_int32(&result, 0, 0) == 42);\n\tduckdb_destroy_result(&result);\n\n\t// but we cannot create new tables\n\tREQUIRE(duckdb_query(con, \"CREATE TABLE new_table(i INTEGER)\", nullptr) == DuckDBError);\n\n\tduckdb_disconnect(&con);\n\tduckdb_close(&db);\n\n\t// api abuse\n\tREQUIRE(duckdb_create_config(nullptr) == DuckDBError);\n\tREQUIRE(duckdb_get_config_flag(9999999, nullptr, nullptr) == DuckDBError);\n\tREQUIRE(duckdb_set_config(nullptr, nullptr, nullptr) == DuckDBError);\n\tREQUIRE(duckdb_create_config(nullptr) == DuckDBError);\n\tduckdb_destroy_config(nullptr);\n\tduckdb_destroy_config(nullptr);\n}\n\nTEST_CASE(\"Issue #2058: Cleanup after execution of invalid SQL statement causes segmentation fault\", \"[capi]\") {\n\tduckdb_database db;\n\tduckdb_connection con;\n\tduckdb_result result;\n\tduckdb_result result_count;\n\n\tREQUIRE(duckdb_open(NULL, &db) != DuckDBError);\n\tREQUIRE(duckdb_connect(db, &con) != DuckDBError);\n\n\tREQUIRE(duckdb_query(con, \"CREATE TABLE integers(i INTEGER, j INTEGER);\", NULL) != DuckDBError);\n\tREQUIRE((duckdb_query(con, \"SELECT count(*) FROM integers;\", &result_count) != DuckDBError));\n\n\tduckdb_destroy_result(&result_count);\n\n\tREQUIRE(duckdb_query(con, \"non valid SQL\", &result) == DuckDBError);\n\n\tduckdb_destroy_result(&result); // segmentation failure happens here\n\n\tduckdb_disconnect(&con);\n\tduckdb_close(&db);\n}\n\nTEST_CASE(\"Decimal -> Double casting issue\", \"[capi]\") {",
+      "quote_sha256": "a523f70c719da5c903882acc46b2816762e6aef8502971ad7a66419bd2796cd3"
+    }
+  ],
+  "written_tests_not_executed": true,
+  "no_private_DB_access": true
+}

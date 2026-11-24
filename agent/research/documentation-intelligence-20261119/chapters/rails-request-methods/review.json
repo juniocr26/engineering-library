@@ -1,0 +1,100 @@
+{
+  "at": "2026-11-20T00:56:31.456322+00:00",
+  "chapter_id": "rails-request-methods",
+  "source_repository": "rails",
+  "revision": "installed-actionpack-8.1.4-sha256-c0d20583a279b6c95aa011e0dab84125c498fe9b57b2745dffc9bf622f9c672c",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "ownership",
+      "path": "lib/action_dispatch/http/request.rb",
+      "lines": [
+        18,
+        24,
+        145,
+        153,
+        208,
+        232
+      ],
+      "review": "DistinctRequestmethods; request_method wrapscheck_method(super), method(*args) zeroargreadsenvkeyselsebare super."
+    },
+    {
+      "id": "truthiness",
+      "path": "lib/action_dispatch/http/request.rb",
+      "lines": [
+        151,
+        153,
+        217,
+        227
+      ],
+      "review": "||= cachestruthyonly; environmentfallback||usestruthinessnotkeypresence; emptyRubyStringtruthy."
+    },
+    {
+      "id": "symbol-getter",
+      "path": "lib/action_dispatch/http/request.rb",
+      "lines": [
+        208,
+        210,
+        230,
+        232
+      ],
+      "review": "request_method_symbol selectsrequest_method; method_symbol selectsmethod, no own ||=."
+    },
+    {
+      "id": "table",
+      "path": "lib/action_dispatch/http/request.rb",
+      "lines": [
+        118,
+        143
+      ],
+      "review": "HTTP_METHODS concatenation, tablelowercaseshyphen->underscore->symbol underoriginalkey; noimmutabilityguarantee."
+    },
+    {
+      "id": "validator",
+      "path": "lib/action_dispatch/http/request.rb",
+      "lines": [
+        502,
+        508
+      ],
+      "review": "Truthyunknownname raisesUnknownHttpMethod, normal finalexpressionname; falsybypasseslookup. Notreturnedsymbol."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "d78fd62fdc51986e13a09ea906765ea7eb14f8ddbe0823cafc18ee02b34f41b4",
+      "after_sha256": "000f4bd6535590158413e47ba67ebdfb5318f761c4c8a5de703e2369f841ca3c",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -32,3 +32,21 @@\n \n This distinction connects the getters and symbol wrappers without merging their responsibilities. The original partial baseline omitted these helper and table details, while its Portuguese response also substituted one getter for the other. The corrected EN/PT chapter records the separate bodies, truthiness guards, return expression and unresolved runtime boundaries. It remains an experimental reviewed candidate, with no production metadata integration, neural training or automatic gold approval.\n \n+## Engineer FAQ\n+\n+<!-- reading-section: faq:environment-key-ownership -->\n+### Are the original-method environment keys read directly by request_method?\n+\n+The explicit two-key lookup belongs to the zero-argument body of `method`. The separate `request_method` body delegates through super and validates that result. Similar names do not permit exchanging those bodies or their symbol getters.\n+\n+<!-- reading-section: faq:empty-string-truthiness -->\n+### Does an empty original-method String automatically fall back to REQUEST_METHOD?\n+\n+The written fallback tests Ruby truthiness. An empty String is truthy, so it does not automatically select the second operand. The validator may then reject an unrecognized truthy method name. Key presence, empty content and an accepted method are distinct checks.\n+\n+<!-- reading-section: faq:memoized-method-invalidation -->\n+### Is a previously cached method invalidated whenever the environment changes?\n+\n+These selected bodies contain separate memoized instance variables and no automatic invalidation path. A truthy cached value is reused by the written expression. Broader environment mutation, ancestor behavior and middleware override rules require their own source and runtime evidence.\n+\n+This source identity is installed actionpack 8.1.4 plus an exact checksum. The separately authorized backend offline suite uses framework dependencies, but that does not convert this source-inspection chapter into a live Rails request or server experiment.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "bc5f771b09a5d4b8f9b02f3c0a5de6c30727e886b9efa01f53508f5daca118b6",
+      "after_sha256": "c0881bc79f1dc114eae8a831b663e0178314e74d16bcbe13eccaf5cc58c9f4b3",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -32,3 +32,21 @@\n \n Essa distinção conecta getters e wrappers de símbolos sem juntar suas responsabilidades. O baseline parcial original omitiu esses detalhes de helper e tabela, e sua resposta em português também substituiu um getter pelo outro. O capítulo corrigido em EN/PT registra corpos separados, guardas de valor lógico, expressão de retorno e limites de execução não resolvidos. Continua sendo um candidato experimental revisado, sem integração de metadados em produção, treinamento neural ou aprovação automática como gold.\n \n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:environment-key-ownership -->\n+### As chaves de ambiente do método original são lidas diretamente por request_method?\n+\n+A busca explícita de duas chaves pertence ao corpo sem argumentos de `method`. O corpo separado de `request_method` delega por super e valida esse resultado. Nomes parecidos não permitem trocar esses corpos ou seus getters de símbolo.\n+\n+<!-- reading-section: faq:empty-string-truthiness -->\n+### Uma String vazia de método original automaticamente usa REQUEST_METHOD como alternativa?\n+\n+A alternativa escrita testa truthiness no Ruby. Uma String vazia é verdadeira nesse teste, portanto não seleciona automaticamente o segundo operando. O validador pode então rejeitar um nome de método verdadeiro, mas não reconhecido. Presença da chave, conteúdo vazio e método aceito são verificações distintas.\n+\n+<!-- reading-section: faq:memoized-method-invalidation -->\n+### Um método anteriormente memorizado é invalidado sempre que o ambiente muda?\n+\n+Esses corpos selecionados contêm variáveis de instância memorizadas separadas e nenhum caminho de invalidação automática. Um valor verdadeiro em cache é reutilizado pela expressão escrita. Mutação mais ampla do ambiente, comportamento dos ancestrais e regras de sobrescrita do middleware exigem sua própria fonte e evidência de execução.\n+\n+Essa identidade de fonte é actionpack 8.1.4 instalado junto de checksum exato. A suíte offline do backend autorizada separadamente usa dependências do framework, mas isso não transforma este capítulo de inspeção de fonte em experimento de requisição ou servidor Rails ativo.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.321679+00:00",
+    "canonical_question_ids": [
+      "environment-key-ownership",
+      "empty-string-truthiness",
+      "memoized-method-invalidation"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/rails-request-methods",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-21T05:43:11.009000+00:00",
+  "hypothesis": "H51: the observer V1 filters a symbol declarations list for one local FunctionDeclaration but may still label a symbol with an additional variable declaration as a local-function reference. Explicit ambiguity should remain unresolved under its narrow policy, even though all results already disclaim runtime target proof.",
+  "origin": "Review of owned observer implementation after H50, not new external evaluation outputs.",
+  "predeclared_controls": [
+    {
+      "id": "function-var-reassignment",
+      "expectation": "UNRESOLVED_AMBIGUOUS_SYMBOL"
+    },
+    {
+      "id": "function-var-uninitialized",
+      "expectation": "UNRESOLVED_AMBIGUOUS_SYMBOL"
+    },
+    {
+      "id": "duplicate-function-declarations",
+      "expectation": "UNRESOLVED_AMBIGUOUS_SYMBOL"
+    },
+    {
+      "id": "separate-inner-declaration",
+      "expectation": "LOCAL_FUNCTION_REFERENCE_SINGLE_DECLARATION"
+    },
+    {
+      "id": "named-function-expression",
+      "expectation": "UNRESOLVED_UNSUPPORTED_DECLARATION_KIND"
+    },
+    {
+      "id": "catch-parameter-shadow",
+      "expectation": "UNRESOLVED_PARAMETER_OR_VARIABLE"
+    },
+    {
+      "id": "block-local-function",
+      "expectation": "LOCAL_FUNCTION_REFERENCE_SINGLE_DECLARATION"
+    },
+    {
+      "id": "function-parameter-target",
+      "expectation": "UNRESOLVED_PARAMETER_OR_VARIABLE"
+    }
+  ],
+  "decision": "Run unchanged V1 first, preserve outcomes; only if ambiguity appears, propose isolated V2 stricter all-declarations guard. Recheck frozen original controls and development Fastify output for effects before changing any review status.",
+  "not_runtime_proof": true,
+  "upstream_execution": false,
+  "production_changes": false,
+  "training": false
+}

@@ -1,0 +1,117 @@
+{
+  "at": "2026-11-20T17:19:56.552798+00:00",
+  "source_files": {
+    "new-public-sources-v1/sindresorhus--p-limit/38a6773e552d24f4c9eb2d79d57b6cff017c587d/index.d.ts": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+    "new-public-sources-v1/sindresorhus--p-limit/38a6773e552d24f4c9eb2d79d57b6cff017c587d/index.js": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+    "new-public-sources-v1/sindresorhus--p-limit/38a6773e552d24f4c9eb2d79d57b6cff017c587d/license": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+    "new-public-sources-v1/sindresorhus--p-limit/38a6773e552d24f4c9eb2d79d57b6cff017c587d/package.json": "71b014415b5b254af73a26d5ffdb0757f919587de66b7984567aff2167c1d5d6",
+    "new-public-sources-v1/sindresorhus--yocto-queue/2e57f8c95e5e1f40379c6f85d18aee962662eb22/index.d.ts": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+    "new-public-sources-v1/sindresorhus--yocto-queue/2e57f8c95e5e1f40379c6f85d18aee962662eb22/index.js": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+    "new-public-sources-v1/sindresorhus--yocto-queue/2e57f8c95e5e1f40379c6f85d18aee962662eb22/license": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+    "new-public-sources-v1/sindresorhus--yocto-queue/2e57f8c95e5e1f40379c6f85d18aee962662eb22/package.json": "22a9628bb56b9f0ffc23d1dcfafeb04c01da4208ab20d782b4934db7ed0d9cc3"
+  },
+  "cases": [
+    {
+      "id": "invalid-zero",
+      "kind": "invalid-concurrency",
+      "input": 0,
+      "expected_error": "TypeError"
+    },
+    {
+      "id": "invalid-negative",
+      "kind": "invalid-concurrency",
+      "input": -1,
+      "expected_error": "TypeError"
+    },
+    {
+      "id": "invalid-fractional",
+      "kind": "invalid-concurrency",
+      "input": 1.5,
+      "expected_error": "TypeError"
+    },
+    {
+      "id": "invalid-string",
+      "kind": "invalid-concurrency",
+      "input": "2",
+      "expected_error": "TypeError"
+    },
+    {
+      "id": "invalid-null",
+      "kind": "invalid-concurrency",
+      "input": null,
+      "expected_error": "TypeError"
+    },
+    {
+      "id": "invalid-nan",
+      "kind": "invalid-concurrency",
+      "input": "OWNED_NAN_SENTINEL",
+      "expected_error": "TypeError"
+    },
+    {
+      "id": "infinity",
+      "kind": "infinity",
+      "expected": "factory returns function"
+    },
+    {
+      "id": "deferred-start",
+      "kind": "deferred-start",
+      "expected": "immediate active0/pending2; after one owned microtask active1/pending1; FIFO startAthenB; finalzero"
+    },
+    {
+      "id": "width-two",
+      "kind": "width-two",
+      "expected": "three gated tasks; active2/pending1; observed owned maximum2; third starts after first released"
+    },
+    {
+      "id": "throw-preserves-identity",
+      "kind": "throw-preserves-identity",
+      "expected": "first caller promise rejects with exact marker; next queued task fulfills"
+    },
+    {
+      "id": "clear-before-start",
+      "kind": "clear-before-start",
+      "expected": "queue cleared synchronously; neither callback runs; both caller promises unsettled after12ownedmicrotask checkpoints; later new task runs"
+    },
+    {
+      "id": "clear-while-active",
+      "kind": "clear-while-active",
+      "expected": "active task is not cancelled; pending callback doesnotrun; its caller promise remains unsettled after12ownedmicrotaskcheckpoints"
+    },
+    {
+      "id": "arguments-forwarded",
+      "kind": "arguments-forwarded",
+      "expected": "two exact arguments forwarded; caller observes returned value"
+    },
+    {
+      "id": "invalid-task",
+      "kind": "invalid-task",
+      "expected": "noncallable task returns rejecting promise, not a synchronous factory error"
+    },
+    {
+      "id": "queue-fifo-iteration",
+      "kind": "queue-fifo-iteration",
+      "expected": "iteration preserves queue; FIFO dequeue; empty undefined and undefined value distinguished by size"
+    },
+    {
+      "id": "queue-clear",
+      "kind": "queue-clear",
+      "expected": "clear resets size/head/tail behavior; later enqueue/dequeue works"
+    }
+  ],
+  "expected_cases_frozen_before_execution": true,
+  "explicit_source_execution_scope": "Exact complete reviewed index.js modules only, evaluated by Node vm.SourceTextModule. Fixed in-memory linker accepts only p-limit -> yocto-queue; queue has no imports. No source rewriting, disk module resolution or whole installed package loading.",
+  "context": "Fresh vm context, dynamic code generation strings/wasm disabled. No process, require, fs, HTTP, timers or application capabilities exposed. Owned Promise gates and bounded microtask checkpoints only.",
+  "execution_budget": "At most16frozen cases; max3owned tasks per case; external host subprocess timeout20seconds. Never await promises intentionally discarded by clearQueue. No sleeps or timer measurements.",
+  "limits": [
+    "vm execution is not a security guarantee for arbitrary code; exact reviewed source hashes are the admission boundary.",
+    "No installed dependency or package supported Node-version matrix assertion.",
+    "Unsettled-after12microtasks is a bounded observation, not universal liveness proof.",
+    "Concurrent task width is different from rate limiting or time-based throttling.",
+    "Direct dependency pair; baseline scan has6namehits; not pristine or certified neural holdout."
+  ],
+  "training_excluded": true,
+  "owner_approved": false,
+  "model_calls": 0,
+  "optimizer_steps": 0,
+  "new_packages_installed": false
+}

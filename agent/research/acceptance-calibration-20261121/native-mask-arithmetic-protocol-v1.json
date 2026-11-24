@@ -1,0 +1,128 @@
+{
+  "at": "2026-11-21T17:21:04.422798+00:00",
+  "before_owned_arithmetic_observations": true,
+  "framework_source_revision": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "source_receipt": "native-framework-source-freeze-v1.json",
+  "source_lines": {
+    "mlx_lm/tuner/trainer.py": [
+      [
+        88,
+        101
+      ],
+      [
+        150,
+        172
+      ]
+    ],
+    "mlx_lm/tuner/datasets.py": [
+      [
+        59,
+        79
+      ],
+      [
+        109,
+        129
+      ],
+      [
+        183,
+        200
+      ]
+    ]
+  },
+  "hypothesis": "The observed source pad length and inclusive target-end mask may supervise first zero-padding token for short padded sequences, while truncation can eliminate completion/EOS or all supervised tokens. Pure integer arithmetic can isolate this boundary without running or importing MLX.",
+  "owned_cases": [
+    {
+      "id": "short-padded-completion",
+      "prompt_offset": 4,
+      "sequence_length": 6,
+      "max_seq_length": 512,
+      "expected_supervised_positions": [
+        4,
+        5,
+        6
+      ],
+      "expected_pad_positions_supervised": [
+        6
+      ],
+      "expected_missing_real_completion_positions": []
+    },
+    {
+      "id": "exact-cap-no-padding",
+      "prompt_offset": 4,
+      "sequence_length": 6,
+      "max_seq_length": 6,
+      "expected_supervised_positions": [
+        4,
+        5
+      ],
+      "expected_pad_positions_supervised": [],
+      "expected_missing_real_completion_positions": []
+    },
+    {
+      "id": "truncated-completion",
+      "prompt_offset": 4,
+      "sequence_length": 6,
+      "max_seq_length": 5,
+      "expected_supervised_positions": [
+        4
+      ],
+      "expected_pad_positions_supervised": [],
+      "expected_missing_real_completion_positions": [
+        5
+      ]
+    },
+    {
+      "id": "prompt-longer-than-cap",
+      "prompt_offset": 10,
+      "sequence_length": 12,
+      "max_seq_length": 8,
+      "expected_supervised_positions": [],
+      "expected_pad_positions_supervised": [],
+      "expected_missing_real_completion_positions": [
+        10,
+        11
+      ]
+    },
+    {
+      "id": "unmasked-default-offset",
+      "prompt_offset": 0,
+      "sequence_length": 6,
+      "max_seq_length": 512,
+      "expected_supervised_positions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "expected_pad_positions_supervised": [
+        6
+      ],
+      "expected_missing_real_completion_positions": []
+    },
+    {
+      "id": "full-512-cap",
+      "prompt_offset": 510,
+      "sequence_length": 512,
+      "max_seq_length": 512,
+      "expected_supervised_positions": [
+        510,
+        511
+      ],
+      "expected_pad_positions_supervised": [],
+      "expected_missing_real_completion_positions": []
+    }
+  ],
+  "mirrored_equations": [
+    "batch_width=min(1+32*ceil(original_length/32),max_seq_length)",
+    "effective_length=min(original_length,max_seq_length)",
+    "target_global_positions=1..batch_width-1 after one causal shift",
+    "selected iff position>=prompt_offset and position<=effective_length"
+  ],
+  "classification": "Static source/arithmetic finding; not an actualMLXtensor/nativeGPU/tokenizer/training experiment, and not universalclaimaboutallrevisions/frameworks.",
+  "no_upstream_code_execution": true,
+  "no_actual_training_pairs_or_weights": true,
+  "optimizer_updates": 0,
+  "gold": 0
+}

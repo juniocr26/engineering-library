@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-20T15:12:35.922798+00:00",
+  "hypothesis": "The rejects-keyword typed claim is listed in validate_claim but has no recommendation branch, so solving the remap quote boundary alone cannot produce the expected action.",
+  "before": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+  "after": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+  "paired_claim": {
+    "en": {
+      "kind": "rejects-keyword",
+      "keyword": "trace"
+    },
+    "pt-br": {
+      "kind": "rejects-keyword",
+      "keyword": "trace"
+    }
+  },
+  "expected_action": "MODIFY",
+  "frozen_before_recommendation": true,
+  "scope": "Owned minimal code, no execution. Not a rerun or alteration of the original frozen public oracle."
+}

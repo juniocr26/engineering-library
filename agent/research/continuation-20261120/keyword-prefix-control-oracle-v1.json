@@ -1,0 +1,91 @@
+{
+  "at": "2026-11-20T15:13:44.895902+00:00",
+  "frozen_before_predictions": true,
+  "rows": [
+    {
+      "id": "recognized-direct-pop",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "RECOGNIZED"
+    },
+    {
+      "id": "unrecognized-before-remainder-guard",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "NOT_RECOGNIZED"
+    },
+    {
+      "id": "conditional-pop",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    if root:\n        trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "pop-after-remainder-guard",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    trace = kwargs.pop('trace', ())\n    return root\n",
+      "expected": "NOT_RECOGNIZED"
+    },
+    {
+      "id": "kwargs-rebound",
+      "source": "def remap(root, **kwargs):\n    kwargs = {}\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "kwargs-aliased",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    options = kwargs\n    trace = options.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "dynamic-pop-key",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop(root, ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "duplicate-pop-key",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    trace_again = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "nonliteral-pop-default",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', factory())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "ordinary-dict-parameter",
+      "source": "def remap(root, kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "guard-raises-different-message",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('different error: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "missing-remainder-guard",
+      "source": "def remap(root, **kwargs):\n    trace = kwargs.pop('trace', ())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "module-builtin-shadowed",
+      "source": "TypeError = RuntimeError\ndef remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "local-pattern-builtin-shadowed",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    match root:\n        case TypeError:\n            pass\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "decorated-callable",
+      "source": "@decorate\ndef remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "duplicate-callable",
+      "source": "def remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n\ndef remap(root, **kwargs):\n    flag = kwargs.pop('flag', True)\n    trace = kwargs.pop('trace', ())\n    if kwargs:\n        raise TypeError('unexpected keyword arguments: %r' % kwargs.keys())\n    return root\n",
+      "expected": "INCONCLUSIVE"
+    }
+  ],
+  "scope": "Written unconditional kwargs-pop/remainder-guard prefix only; full module AST/compilation checked, bounded complete statement citations replace no whole-unit limit. Not runtime behavior or a general keyword interpreter.",
+  "source_executed": false,
+  "publication_authorized": false,
+  "permanent_test_files_changed": false,
+  "model_calls": 0
+}

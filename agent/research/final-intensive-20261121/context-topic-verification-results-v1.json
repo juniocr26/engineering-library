@@ -1,0 +1,192 @@
+{
+  "at": "2026-11-21T23:13:30.383048+00:00",
+  "protocol_sha256": "3cdc6f62ad2f773eb0f825b2358666299cb3702a34af0a2b45ae2fa79a82ec7a",
+  "observer_sha256": "a629ffc8a81ac0602f995977c70a07bee28f0db15dd90af3102c63095285ec52",
+  "properties": {
+    "F-CACHE-ABSENT": true,
+    "F-NONERROR-GUARD": true,
+    "F-SERIALIZATION-ELSE": true,
+    "F-RECURSIVE-CACHE": true,
+    "F-REQUIRED-ARGS": true,
+    "C-DISPATCH": true,
+    "C-READFROM-OWNERSHIP": true,
+    "C-EXAMPLE": true
+  },
+  "all_frozen_source_checks_pass": true,
+  "fastapi_observations": {
+    "root_solver_keywords": {
+      "request": "request",
+      "dependant": "dependant",
+      "body": "body",
+      "dependency_overrides_provider": "dependency_overrides_provider",
+      "async_exit_stack": "async_exit_stack",
+      "embed_body_fields": "embed_body_fields"
+    },
+    "endpoint_keywords": {
+      "dependant": "dependant",
+      "values": "solved_result.values",
+      "is_coroutine": "is_coroutine"
+    },
+    "endpoint_guards": [
+      {
+        "condition": "not errors",
+        "branch": "then",
+        "line": 541
+      },
+      {
+        "condition": "is_sse_stream",
+        "branch": "else",
+        "line": 572
+      },
+      {
+        "condition": "is_json_stream",
+        "branch": "else",
+        "line": 703
+      },
+      {
+        "condition": "_is_async_gen_callable(dependant.call) or _is_gen_callable(dependant.call)",
+        "branch": "else",
+        "line": 739
+      }
+    ],
+    "serialization_keywords": {
+      "field": "response_field",
+      "response_content": "raw_response",
+      "include": "response_model_include",
+      "exclude": "response_model_exclude",
+      "by_alias": "response_model_by_alias",
+      "exclude_unset": "response_model_exclude_unset",
+      "exclude_defaults": "response_model_exclude_defaults",
+      "exclude_none": "response_model_exclude_none",
+      "is_coroutine": "is_coroutine",
+      "endpoint_ctx": "endpoint_ctx",
+      "dump_json": "use_dump_json"
+    },
+    "serialization_guards": [
+      {
+        "condition": "not errors",
+        "branch": "then",
+        "line": 541
+      },
+      {
+        "condition": "is_sse_stream",
+        "branch": "else",
+        "line": 572
+      },
+      {
+        "condition": "is_json_stream",
+        "branch": "else",
+        "line": 703
+      },
+      {
+        "condition": "_is_async_gen_callable(dependant.call) or _is_gen_callable(dependant.call)",
+        "branch": "else",
+        "line": 739
+      },
+      {
+        "condition": "isinstance(raw_response, Response)",
+        "branch": "else",
+        "line": 767
+      }
+    ],
+    "recursive_keywords": {
+      "request": "request",
+      "dependant": "use_sub_dependant",
+      "body": "body",
+      "background_tasks": "background_tasks",
+      "response": "response",
+      "dependency_overrides_provider": "dependency_overrides_provider",
+      "dependency_cache": "dependency_cache",
+      "async_exit_stack": "async_exit_stack",
+      "embed_body_fields": "embed_body_fields",
+      "_uses_scopes_cache": "_uses_scopes_cache"
+    },
+    "required_solver_keywords": [
+      "request",
+      "dependant",
+      "async_exit_stack",
+      "embed_body_fields"
+    ],
+    "example_keywords": {
+      "request": "request",
+      "dependant": "dependant",
+      "async_exit_stack": "stack",
+      "embed_body_fields": "embed_body_fields"
+    }
+  },
+  "native_producer_identity": {
+    "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+    "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+    "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+    "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+    "version": "1.6.1"
+  },
+  "manual_negative_controls": [
+    {
+      "id": "F-N1",
+      "claim": "The selected handler explicitly passes dependency_cache.",
+      "reference": "CONTRADICTED",
+      "observed": "CONTRADICTED",
+      "method": "Same-agent source adjudication using separately acquired source and AST/native unit evidence; not a generic prose classifier."
+    },
+    {
+      "id": "F-N2",
+      "claim": "The selected ordinary endpoint call runs under the errors-present branch.",
+      "reference": "CONTRADICTED",
+      "observed": "CONTRADICTED",
+      "method": "Same-agent source adjudication using separately acquired source and AST/native unit evidence; not a generic prose classifier."
+    },
+    {
+      "id": "F-N3",
+      "claim": "Every raw_response goes through the selected serialize_response call.",
+      "reference": "CONTRADICTED",
+      "observed": "CONTRADICTED",
+      "method": "Same-agent source adjudication using separately acquired source and AST/native unit evidence; not a generic prose classifier."
+    },
+    {
+      "id": "C-N1",
+      "claim": "The shown WrapResponseWriter interface explicitly declares ReadFrom.",
+      "reference": "CONTRADICTED",
+      "observed": "CONTRADICTED",
+      "method": "Same-agent source adjudication using separately acquired source and AST/native unit evidence; not a generic prose classifier."
+    },
+    {
+      "id": "C-N2",
+      "claim": "The direct ReadFrom counter update requires err == nil.",
+      "reference": "CONTRADICTED",
+      "observed": "CONTRADICTED",
+      "method": "Same-agent source adjudication using separately acquired source and AST/native unit evidence; not a generic prose classifier."
+    },
+    {
+      "id": "C-N3",
+      "claim": "The tee/discard fallback adds the io.Copy count to the base counter a second time.",
+      "reference": "CONTRADICTED",
+      "observed": "CONTRADICTED",
+      "method": "Same-agent source adjudication using separately acquired source and AST/native unit evidence; not a generic prose classifier."
+    }
+  ],
+  "manual_unknown_controls": [
+    {
+      "id": "F-U1",
+      "claim": "All server requests have exactly one globally isolated cache.",
+      "reference": "INSUFFICIENT",
+      "observed": "INSUFFICIENT",
+      "method": "Selected lexical source cannot establish the declared global/runtime guarantee."
+    },
+    {
+      "id": "C-U1",
+      "claim": "The selected wrapper fields prove successful delivery to every client.",
+      "reference": "INSUFFICIENT",
+      "observed": "INSUFFICIENT",
+      "method": "Selected lexical source cannot establish the declared global/runtime guarantee."
+    }
+  ],
+  "metric_boundary": "8 finite source-property checks;6 manually adjudicated negative claims and2 unknown claims. No generic semantic FAR, statistical independence, inference or owner approval.",
+  "source_programs_executed": false,
+  "owned_native_parser_executed": true,
+  "upstream_tests_executed": false,
+  "typecheck_or_import_resolution": false,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

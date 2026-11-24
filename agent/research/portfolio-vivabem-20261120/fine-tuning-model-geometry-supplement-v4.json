@@ -1,0 +1,129 @@
+{
+  "at": "2026-11-21T04:24:01.608114+00:00",
+  "extends": [
+    "fine-tuning-pilot-proposal-v1.json",
+    "fine-tuning-resource-readiness-supplement-v2.json",
+    "fine-tuning-task-design-supplement-v3.json"
+  ],
+  "status": "NO-GO",
+  "launch_allowed": false,
+  "training_authorized": false,
+  "optimizer_steps": 0,
+  "gold": 0,
+  "metadata_evidence": "agent/research/portfolio-vivabem-20261120/pilot-model-geometry-metadata-observation-v1.json",
+  "metadata_sha256": "60d9115ad9e9c05357c00e8719174f271e853e57546dcc9d7315b6f2ee3ef53f",
+  "deployed_model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "deployed_GGUF_only": true,
+  "verified_geometry": {
+    "general.architecture": "llama",
+    "general.parameter_count": 3212749888,
+    "general.file_type": 15,
+    "general.quantization_version": 2,
+    "llama.block_count": 28,
+    "llama.embedding_length": 3072,
+    "llama.feed_forward_length": 8192,
+    "llama.context_length": 131072,
+    "llama.attention.head_count": 24,
+    "llama.attention.head_count_kv": 8,
+    "llama.attention.key_length": 128,
+    "llama.attention.value_length": 128,
+    "llama.rope.dimension_count": 128,
+    "tokenizer.ggml.model": "gpt2",
+    "tokenizer.ggml.bos_token_id": 128000,
+    "tokenizer.ggml.eos_token_id": 128009
+  },
+  "conditional_rank4_projection_plan": {
+    "assumptions": "Onlyifseparatelyapprovedtrainablecheckpointmatchesgeometry and standard two-matrixQ/VLoRAwithoutbias/DoRAorotherextras; exactframeworkmodulepaths/tensorsnotverified here.",
+    "rank": 4,
+    "logical_transformer_block_indices_zero_based_proposed": [
+      26,
+      27
+    ],
+    "selected_layers": 2,
+    "q_input": 3072,
+    "q_output": 3072,
+    "v_input": 3072,
+    "v_output": 1024,
+    "q_adapter_parameters_each_layer": 24576,
+    "v_adapter_parameters_each_layer": 16384,
+    "total_adapter_parameters": 81920,
+    "exact_framework_target_names_verified": false
+  },
+  "raw_storage_scenarios": [
+    {
+      "scenario": "adapter_A_B_float16_only",
+      "raw_bytes": 163840,
+      "raw_MiB": 0.15625,
+      "raw_GiB": 0.000152587890625,
+      "not_measured_training_memory": true
+    },
+    {
+      "scenario": "adapter_A_B_float32_only",
+      "raw_bytes": 327680,
+      "raw_MiB": 0.3125,
+      "raw_GiB": 0.00030517578125,
+      "not_measured_training_memory": true
+    },
+    {
+      "scenario": "two_float32_Adam_moments_only",
+      "raw_bytes": 655360,
+      "raw_MiB": 0.625,
+      "raw_GiB": 0.0006103515625,
+      "not_measured_training_memory": true
+    },
+    {
+      "scenario": "optional_float32_master_copy_only",
+      "raw_bytes": 327680,
+      "raw_MiB": 0.3125,
+      "raw_GiB": 0.00030517578125,
+      "not_measured_training_memory": true
+    },
+    {
+      "scenario": "float16_adapter_and_grad_plus_two_float32_moments_and_float32_master",
+      "raw_bytes": 1310720,
+      "raw_MiB": 1.25,
+      "raw_GiB": 0.001220703125,
+      "not_measured_training_memory": true
+    },
+    {
+      "scenario": "all_base_parameters_float16_unquantized",
+      "raw_bytes": 6425499776,
+      "raw_MiB": 6127.8341064453125,
+      "raw_GiB": 5.9842129945755005,
+      "not_measured_training_memory": true
+    },
+    {
+      "scenario": "all_base_parameters_float32_unquantized",
+      "raw_bytes": 12850999552,
+      "raw_MiB": 12255.668212890625,
+      "raw_GiB": 11.968425989151001,
+      "not_measured_training_memory": true
+    }
+  ],
+  "storage_limits": "Scalar raw parameter/state arithmetic only. Excludes activation/autograd/workspace/allocator/Metal/copies/checkpoint/OS/Docker overhead; not measured peak, feasibility or free unifiedRAM. ExistingQ4_K_Mtagartifact2,019,393,189bytes is not RAM or a compatibletrainablecheckpoint.",
+  "tokenizer_limits": [
+    "GGUFgpt2label is tokenizer representation metadata, not proof of a compatibleHF/MLXtokenizer or chattemplate.",
+    "BOS128000/EOS128009 are local metadata only; padding_token_id/add_bos_token absent in response. Do not assume pad==eos or a loss mask/template convention.",
+    "Headercontext131072 is modelmetadata, not current controllednum_ctx8192or pilotsequence512.",
+    "Actualowner-approvedtarget tokenization/assistantmask/nontruncation still unverified; no model inference/tokenizationframework installed."
+  ],
+  "pilot_bounds_preserved": {
+    "updates_max": 16,
+    "batch": 1,
+    "gradient_accumulation": 1,
+    "sequence_length_max": 512,
+    "rank": 4,
+    "explicit_layers": 2,
+    "optimizer_minutes_max": 10,
+    "total_minutes_max": 30
+  },
+  "unmet_gates_unchanged": [
+    "Compatibletrainablebase/tokenizer/rightsandframeworkmodulemapping",
+    "Owner-approvedtraininggold0andverifiedindependentevaluation",
+    "Nativecompatibleframework/environmentabsent",
+    "Actualtrainingmemory/optimizerstate/checkpoint/rollbackfeasibility",
+    "Specificfutureexecution/resourcebudgetauthorization"
+  ],
+  "current_family_exclusion": "Use evaluation-role-registry-v7.json, allcurrentderivativestraining-ineligible; initialproposal six-family wording is historical, not current permission. Documentation review batches are not training datasets.",
+  "no_installs_downloads_weightscopies_optimizers_or_inference": true
+}

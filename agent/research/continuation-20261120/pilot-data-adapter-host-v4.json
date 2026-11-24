@@ -1,0 +1,478 @@
+{
+  "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "at": "2026-11-20T20:46:55.035007+00:00",
+  "status": "SELECTED_PURE_DATA_ADAPTER_BOUNDARIES_OBSERVED",
+  "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+  "git_blob": "92804bb9416064a30903fc79a16e5b9add3ef926",
+  "source_spans": [
+    {
+      "name": "TextDataset",
+      "first_line": 13,
+      "last_line": 38,
+      "quote": "class TextDataset:\n    \"\"\"\n    Light-weight wrapper to hold a dataset.\n    \"\"\"\n\n    def __init__(\n        self,\n        data: List[Dict[str, str]],\n        tokenizer: PreTrainedTokenizer,\n        text_key: str = \"text\",\n    ):\n        self._data = data\n        self.tokenizer = tokenizer\n        self.text_key = text_key\n\n    def process(self, d):\n        d = self.tokenizer.encode(d[self.text_key])\n        if d[-1] != self.tokenizer.eos_token_id:\n            d.append(self.tokenizer.eos_token_id)\n        return (d, 0)\n\n    def __getitem__(self, idx: int):\n        return self._data[idx]\n\n    def __len__(self):\n        return len(self._data)",
+      "quote_sha256": "86437c027cbe3241add79d6ffb3c4093e7bd0173da55c5ee9af1c99720d64144",
+      "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689"
+    },
+    {
+      "name": "ChatDataset",
+      "first_line": 41,
+      "last_line": 85,
+      "quote": "class ChatDataset:\n    \"\"\"\n    A dataset for chat data in the format of {\"messages\": [...]}\n    https://platform.openai.com/docs/guides/supervised-fine-tuning#formatting-your-data\n    \"\"\"\n\n    def __init__(\n        self,\n        data: List[Dict[str, str]],\n        tokenizer: PreTrainedTokenizer,\n        chat_key: str = \"messages\",\n        mask_prompt: bool = False,\n    ):\n        self._data = data\n        self.chat_key = chat_key\n        self.mask_prompt = mask_prompt\n        self.tokenizer = tokenizer\n\n    def process(self, d):\n        messages = d[self.chat_key]\n        tools = d.get(\"tools\", None)\n        tokens = self.tokenizer.apply_chat_template(\n            messages,\n            tools=tools,\n            return_dict=False,\n        )\n        if self.mask_prompt:\n            add_generation_prompt = messages[-1].get(\"role\") == \"assistant\"\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=add_generation_prompt,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n        else:\n            return (tokens, 0)\n\n    def __getitem__(self, idx: int):\n        return self._data[idx]\n\n    def __len__(self):\n        return len(self._data)",
+      "quote_sha256": "cfdb27721fb410568858a6be3eda7320e5f42c50f442ca066e069bdf74a7f86f",
+      "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689"
+    },
+    {
+      "name": "CompletionsDataset",
+      "first_line": 88,
+      "last_line": 135,
+      "quote": "class CompletionsDataset:\n    \"\"\"\n    A dataset for prompt-completion data in the format of {\"prompt\": ..., \"completion\": ...}\n    or using user-provided keys for prompt and completion values\n    https://platform.openai.com/docs/guides/fine-tuning/example-format\n    \"\"\"\n\n    def __init__(\n        self,\n        data: List[Dict[str, str]],\n        tokenizer: PreTrainedTokenizer,\n        prompt_key: str,\n        completion_key: str,\n        mask_prompt: bool,\n    ):\n        self._data = data\n        self.prompt_key = prompt_key\n        self.completion_key = completion_key\n        self.mask_prompt = mask_prompt\n        self.tokenizer = tokenizer\n\n    def process(self, d):\n        tools = d.get(\"tools\", None)\n        messages = [\n            {\"role\": \"user\", \"content\": d[self.prompt_key]},\n            {\"role\": \"assistant\", \"content\": d[self.completion_key]},\n        ]\n        tokens = self.tokenizer.apply_chat_template(\n            messages, tools=tools, return_dict=False\n        )\n        if self.mask_prompt:\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=True,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n\n        return (tokens, 0)\n\n    def __getitem__(self, idx: int):\n        return self._data[idx]\n\n    def __len__(self):\n        return len(self._data)",
+      "quote_sha256": "71f1cc9d479d97fd6902f3059d77eda39e615ace4eb3fa53c36c63feb1dcab74",
+      "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689"
+    },
+    {
+      "name": "ConcatenatedDataset",
+      "first_line": 138,
+      "last_line": 158,
+      "quote": "class ConcatenatedDataset:\n    def __init__(self, data: List[Any]):\n        self._data = data\n        self._len = sum(len(d) for d in self._data)\n\n    def __getitem__(self, idx: int):\n        # `data_idx` is read after the loop\n        for data_idx, data in enumerate(self._data):  # noqa: B007\n            j = idx - len(data)\n            if j < 0:\n                break\n            idx = j\n        datum = data[idx]\n        datum[\"_dataset\"] = data_idx\n        return datum\n\n    def process(self, d):\n        return self._data[d[\"_dataset\"]].process(d)\n\n    def __len__(self):\n        return self._len",
+      "quote_sha256": "cf1c173d0d58dc644c0e85216835cc9dca000f2332e65be8b613f0171b3e3736",
+      "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689"
+    },
+    {
+      "name": "CacheDataset",
+      "first_line": 161,
+      "last_line": 175,
+      "quote": "class CacheDataset:\n    def __init__(self, data: Any):\n        self._data = data\n        self._proc_data = [None] * len(data)\n\n    def itemlen(self, idx: int):\n        return len(self._data[idx])\n\n    def __getitem__(self, idx: int):\n        if self._proc_data[idx] is None:\n            self._proc_data[idx] = self._data.process(self._data[idx])\n        return self._proc_data[idx]\n\n    def __len__(self):\n        return len(self._data)",
+      "quote_sha256": "2a52891e5a10809349374890a3e422bd255013a1d91f7c3d9f2c04f5e3e16b9f",
+      "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689"
+    },
+    {
+      "name": "create_dataset",
+      "first_line": 178,
+      "last_line": 205,
+      "quote": "def create_dataset(\n    data,\n    tokenizer: PreTrainedTokenizer,\n    config,\n):\n    mask_prompt = getattr(config, \"mask_prompt\", False)\n    prompt_feature = getattr(config, \"prompt_feature\", \"prompt\")\n    text_feature = getattr(config, \"text_feature\", \"text\")\n    completion_feature = getattr(config, \"completion_feature\", \"completion\")\n    chat_feature = getattr(config, \"chat_feature\", \"messages\")\n    sample = data[0]\n    if prompt_feature in sample and completion_feature in sample:\n        return CompletionsDataset(\n            data, tokenizer, prompt_feature, completion_feature, mask_prompt\n        )\n    elif chat_feature in sample:\n        return ChatDataset(\n            data, tokenizer, chat_key=chat_feature, mask_prompt=mask_prompt\n        )\n    elif text_feature in sample:\n        if mask_prompt:\n            raise ValueError(\"Prompt masking not supported for text dataset.\")\n        return TextDataset(data, tokenizer, text_key=text_feature)\n    else:\n        raise ValueError(\n            \"Unsupported data format, check the supported formats here:\\n\"\n            \"https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/LORA.md#Data.\"\n        )",
+      "quote_sha256": "acca69d47ddc5df40591c280818589eb5e4f4e02653d0f8a38b3779c6b1ebcc3",
+      "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689"
+    }
+  ],
+  "rows": [
+    {
+      "id": "chat-unapproved-flags",
+      "observed": {
+        "adapter": "ChatDataset",
+        "processed": true,
+        "approval_fields_consulted": false,
+        "read_keys": [
+          "prompt",
+          "messages",
+          "messages",
+          "tools"
+        ],
+        "sink_calls": [
+          {
+            "method": "apply_chat_template",
+            "messages": [
+              {
+                "role": "user",
+                "content": "owned input"
+              },
+              {
+                "role": "assistant",
+                "content": "owned-short"
+              }
+            ],
+            "tools": null,
+            "return_dict": false,
+            "add_generation_prompt": false
+          }
+        ]
+      },
+      "expected_fields": {
+        "adapter": "ChatDataset",
+        "processed": true,
+        "approval_fields_consulted": false
+      },
+      "checks": {
+        "adapter": true,
+        "processed": true,
+        "approval_fields_consulted": true
+      },
+      "pass": true
+    },
+    {
+      "id": "completion-unapproved-flags",
+      "observed": {
+        "adapter": "CompletionsDataset",
+        "processed": true,
+        "approval_fields_consulted": false,
+        "read_keys": [
+          "prompt",
+          "completion",
+          "tools",
+          "prompt",
+          "completion"
+        ],
+        "sink_calls": [
+          {
+            "method": "apply_chat_template",
+            "messages": [
+              {
+                "role": "user",
+                "content": "owned input"
+              },
+              {
+                "role": "assistant",
+                "content": "owned-short"
+              }
+            ],
+            "tools": null,
+            "return_dict": false,
+            "add_generation_prompt": false
+          }
+        ]
+      },
+      "expected_fields": {
+        "adapter": "CompletionsDataset",
+        "processed": true
+      },
+      "checks": {
+        "adapter": true,
+        "processed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "text-unapproved-flags",
+      "observed": {
+        "adapter": "TextDataset",
+        "processed": true,
+        "approval_fields_consulted": false,
+        "read_keys": [
+          "prompt",
+          "messages",
+          "text",
+          "text"
+        ],
+        "sink_calls": [
+          {
+            "method": "encode",
+            "text": "owned-short"
+          }
+        ]
+      },
+      "expected_fields": {
+        "adapter": "TextDataset",
+        "processed": true
+      },
+      "checks": {
+        "adapter": true,
+        "processed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "text-mask-refusal",
+      "observed": {
+        "error_type": "ValueError"
+      },
+      "expected_fields": {
+        "error_type": "ValueError"
+      },
+      "checks": {
+        "error_type": true
+      },
+      "pass": true
+    },
+    {
+      "id": "empty-input-format-dispatch",
+      "observed": {
+        "error_type": "IndexError"
+      },
+      "expected_fields": {
+        "error_type": "IndexError"
+      },
+      "checks": {
+        "error_type": true
+      },
+      "pass": true
+    },
+    {
+      "id": "mixed-row-formats",
+      "observed": {
+        "adapter": "ChatDataset",
+        "second_row_error": "KeyError"
+      },
+      "expected_fields": {
+        "adapter": "ChatDataset",
+        "second_row_error": "KeyError"
+      },
+      "checks": {
+        "adapter": true,
+        "second_row_error": true
+      },
+      "pass": true
+    },
+    {
+      "id": "last-user-not-refused",
+      "observed": {
+        "processed": true,
+        "last_role": "user"
+      },
+      "expected_fields": {
+        "processed": true,
+        "last_role": "user"
+      },
+      "checks": {
+        "processed": true,
+        "last_role": true
+      },
+      "pass": true
+    },
+    {
+      "id": "empty-messages-with-mask",
+      "observed": {
+        "error_type": "IndexError"
+      },
+      "expected_fields": {
+        "error_type": "IndexError"
+      },
+      "checks": {
+        "error_type": true
+      },
+      "pass": true
+    },
+    {
+      "id": "cache-after-row-change",
+      "observed": {
+        "processing_calls": 1,
+        "same_cached_object": true,
+        "first_length": 3,
+        "second_length": 3,
+        "underlying_row_after": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned input"
+            },
+            {
+              "role": "assistant",
+              "content": "owned-long"
+            }
+          ]
+        }
+      },
+      "expected_fields": {
+        "processing_calls": 1,
+        "same_cached_object": true,
+        "first_length": 3,
+        "second_length": 3
+      },
+      "checks": {
+        "processing_calls": true,
+        "same_cached_object": true,
+        "first_length": true,
+        "second_length": true
+      },
+      "pass": true
+    },
+    {
+      "id": "cache-sort-proxy",
+      "observed": {
+        "itemlen_values": [
+          1,
+          4
+        ],
+        "processed_lengths": [
+          11,
+          3
+        ],
+        "source_sort_indices": [
+          0,
+          1
+        ],
+        "token_length_sort_indices": [
+          1,
+          0
+        ],
+        "processing_calls_before_items": 0
+      },
+      "expected_fields": {
+        "itemlen_values": [
+          1,
+          4
+        ],
+        "processed_lengths": [
+          11,
+          3
+        ],
+        "source_sort_indices": [
+          0,
+          1
+        ],
+        "token_length_sort_indices": [
+          1,
+          0
+        ]
+      },
+      "checks": {
+        "itemlen_values": true,
+        "processed_lengths": true,
+        "source_sort_indices": true,
+        "token_length_sort_indices": true
+      },
+      "pass": true
+    },
+    {
+      "id": "concatenated-boundary-index",
+      "observed": {
+        "declared_length": 5,
+        "index_len_returns": "B0"
+      },
+      "expected_fields": {
+        "declared_length": 5,
+        "index_len_returns": "B0"
+      },
+      "checks": {
+        "declared_length": true,
+        "index_len_returns": true
+      },
+      "pass": true
+    },
+    {
+      "id": "concatenated-sequence-iteration",
+      "observed": {
+        "declared_length": 5,
+        "iterated_length": 8,
+        "ids": [
+          "A0",
+          "A1",
+          "B0",
+          "B1",
+          "B2",
+          "B0",
+          "B1",
+          "B2"
+        ],
+        "stop_seen_within9": true
+      },
+      "expected_fields": {
+        "declared_length": 5,
+        "iterated_length": 8,
+        "ids": [
+          "A0",
+          "A1",
+          "B0",
+          "B1",
+          "B2",
+          "B0",
+          "B1",
+          "B2"
+        ]
+      },
+      "checks": {
+        "declared_length": true,
+        "iterated_length": true,
+        "ids": true
+      },
+      "pass": true
+    },
+    {
+      "id": "concatenated-shared-row-routing",
+      "observed": {
+        "same_row_object": true,
+        "initial_origin": "A",
+        "held_origin_after_other_access": "B"
+      },
+      "expected_fields": {
+        "same_row_object": true,
+        "initial_origin": "A",
+        "held_origin_after_other_access": "B"
+      },
+      "checks": {
+        "same_row_object": true,
+        "initial_origin": true,
+        "held_origin_after_other_access": true
+      },
+      "pass": true
+    },
+    {
+      "id": "concatenated-metadata-mutation",
+      "observed": {
+        "before_has_dataset_key": false,
+        "after_dataset_index": 0,
+        "returned_is_original": true
+      },
+      "expected_fields": {
+        "before_has_dataset_key": false,
+        "after_dataset_index": 0,
+        "returned_is_original": true
+      },
+      "checks": {
+        "before_has_dataset_key": true,
+        "after_dataset_index": true,
+        "returned_is_original": true
+      },
+      "pass": true
+    }
+  ],
+  "passes": 14,
+  "cases": 14,
+  "owned_unapproved_native_shape_inputs": {
+    "chat-unapproved-flags": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "owned input"
+        },
+        {
+          "role": "assistant",
+          "content": "owned-short"
+        }
+      ],
+      "owner_approved": false,
+      "training_gold": false,
+      "training_use_approved": false
+    },
+    "completion-unapproved-flags": {
+      "prompt": "owned input",
+      "completion": "owned-short",
+      "owner_approved": false,
+      "training_gold": false,
+      "training_use_approved": false
+    },
+    "text-unapproved-flags": {
+      "text": "owned-short",
+      "owner_approved": false,
+      "training_gold": false,
+      "training_use_approved": false
+    }
+  },
+  "trainer_sort_branch_source_only": {
+    "first_line": 113,
+    "last_line": 116,
+    "quote": "if isinstance(dataset, CacheDataset):\n        len_fn = lambda idx: dataset.itemlen(idx)\n    else:\n        len_fn = lambda idx: len(dataset[idx][0])",
+    "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+    "trainer_executed": false
+  },
+  "selected_pure_adapter_classes_and_create_function_executed": true,
+  "upstream_module_imported": false,
+  "real_tokenizer_or_template_loaded": false,
+  "owned_method_sink_only": true,
+  "MLX_Transformers_NumPy_YAML_imported": false,
+  "model_tensor_or_optimizer_created": false,
+  "training_steps": 0,
+  "neural_or_mask_quality_measured": false,
+  "frozen305_read_or_written_by_probe": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "launch_allowed": false,
+  "new_modules": [],
+  "limits": [
+    "14 correlated owned scenarios,not independent realtraining accuracy.",
+    "Metadata flags are informative in these adapters;this is not an upstream authorization-security defect.",
+    "Cache sorting uses exercised dictionary length;no NumPy/MLX batch/loss/training throughput was run.",
+    "Out-of-range concatenated indexing and alias routing are owned consumer observations;no claim all actual loader paths or training loops hit them.",
+    "Actual frozen305 schema is different from owned native-shaped probe rows;none was exported or passed to a trainer."
+  ],
+  "followup": "Owner/gold/privacy/rights/family/content admission must be enforced before converting records. Do not treat native dataset shape or supplied metadata flags as upstream approval enforcement. This is not proof the current305records are directly training-ready."
+}

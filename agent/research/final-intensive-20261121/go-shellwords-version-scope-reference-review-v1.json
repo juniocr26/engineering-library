@@ -1,0 +1,133 @@
+{
+  "at": "2026-11-22T02:15:35.997927+00:00",
+  "reference_preparation_only": true,
+  "source_representations": "v1.0.12 andv1.0.13browser-derivedsource, pinnedtaglinktargets retained butrawGitblobidentity unresolved",
+  "comparison": "go-shellwords-version-source-comparison-v3/result.json",
+  "signatures": [
+    {
+      "function": "isSpace",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    },
+    {
+      "function": "replaceEnv",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    },
+    {
+      "function": "NewParser",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    },
+    {
+      "function": "Parser.Parse",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    },
+    {
+      "function": "Parser.ParseWithEnvs",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    },
+    {
+      "function": "isEnv",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    },
+    {
+      "function": "Parse",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    },
+    {
+      "function": "ParseWithEnvs",
+      "declaration_equal": true,
+      "function_type_equal": true,
+      "receiver_type_equal": true
+    }
+  ],
+  "selected_scope_findings": [
+    {
+      "id": "SWV01",
+      "finding": "All8selectedcallabledeclarations/functiontypes/receivertypes unchanged in acquired representations;7completequotes identical;Parser.Parse body differs.",
+      "not_claimed": "WholeprojectAPI/dependencycompatibility or runtime."
+    },
+    {
+      "id": "SWV02",
+      "finding": "New escaped branch rewrites r t/n to tab/newline before appending and continuing. Final token result remains conditional on quoting/ParseEnv reparsing; no universal output guarantee.",
+      "before_lines": [
+        133,
+        140
+      ],
+      "after_lines": [
+        133,
+        145
+      ]
+    },
+    {
+      "id": "SWV03",
+      "finding": "New closing-parenthesis branches reject !dollarQuote instead of using an opening toggle; selected normal closure assigns false explicitly.",
+      "before_lines": [
+        192,
+        208
+      ],
+      "after_lines": [
+        197,
+        235
+      ]
+    },
+    {
+      "id": "SWV04",
+      "finding": "Enabled substitution calls shellRun and handles its error before checking len(buf)<len(backtick)+2. Do not claim every validation happens before command invocation.",
+      "after_lines": [
+        204,
+        218
+      ]
+    },
+    {
+      "id": "SWV05",
+      "finding": "Public wrappers unchanged directly call NewParser().Parse /ParseWithEnvs, so written new internal behavior remains reachable through those wrappers; no sourcecaller/runtime observation.",
+      "before_lines": [
+        302,
+        308
+      ],
+      "after_lines": [
+        331,
+        337
+      ]
+    },
+    {
+      "id": "SWV06",
+      "finding": "New-version supplied main+nonWindowshelper subset typechecks against frozenSDKprofile with no target execution; G1raworigin/fullpackagecontext remaininconclusive.",
+      "receipt": "go-shellwords-v1.0.13-frozen-type-intake-v1/result.json"
+    }
+  ],
+  "lifecycle": {
+    "historical_old_pin": "Do not rewrite a correctly scoped historical version merely because new source exists.",
+    "new_version_target": "ConditionalMODIFY for changedParsebehaviorandprovenance after sourceidentity/requirementsresolved.",
+    "whole_repository_NOOP": "UNSUPPORTED",
+    "REMOVE": "UNSUPPORTED",
+    "technical_status": "INCONCLUSIVE_NOT_COMPLETE_DOC_CANDIDATE"
+  },
+  "source_comment_security_label_not_security_certification": true,
+  "comparison_population": "Onecorrelatedversionpair,eightselectedcallables;not8independentdocumentationtasks",
+  "unknowns": [
+    "Full upstreamGitdiff/tree/dependencydelta",
+    "Rawsourcebytes/blobidentities",
+    "Newversiontests/completecallgraph",
+    "Targetruntime/platformbehavior"
+  ],
+  "producer_budget_and_alias_failures_preserved": true,
+  "existing_producer_modified": false,
+  "verifier_tuned_from_eval_source": false,
+  "model_calls": 0,
+  "training_eligible": false,
+  "gold": false
+}

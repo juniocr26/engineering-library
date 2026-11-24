@@ -1,0 +1,393 @@
+{
+  "at": "2026-11-21T13:55:49.485397+00:00",
+  "task": "zod",
+  "method": "A",
+  "raw_response_sha256": "5afab171d6cc8a4f59451c07c39c2aa3b6188b4778ba7bc9e36593506bcc4c50",
+  "content_sha256": "887521ec2416ecd53f9b7a4954da062f5750f680f4b1f1c0ca68eded655f9486",
+  "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+  "whole_output": "REJECTED",
+  "records": [
+    {
+      "claim_id": "NEW-A-zod-Z01",
+      "reference_id": "Z01",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        71,
+        72
+      ],
+      "exact_source_evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+      "expected_interpretation": {
+        "en": "The synchronous returned arrow creates ctx with async: false.",
+        "pt-BR": "A arrow síncrona retornada cria ctx com async: false."
+      },
+      "generated_interpretation": {
+        "en": "The synchronous returned arrow sets the async flag to false.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Selected proposition supported by pinned written source.",
+      "coverage_complete": true,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z02",
+      "reference_id": "Z02",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        73,
+        73
+      ],
+      "exact_source_evidence": "  const result = schema._zod.run({ value, issues: [] }, ctx);",
+      "expected_interpretation": {
+        "en": "The synchronous arrow calls schema._zod.run with { value, issues: [] } and ctx.",
+        "pt-BR": "A arrow síncrona chama schema._zod.run com { value, issues: [] } e ctx."
+      },
+      "generated_interpretation": {
+        "en": "The synchronous arrow calls the schema runner with the value and issues.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Weaker runner/value/issues statement is supported, but exact schema._zod.run call shape and ctx argument are not conveyed.",
+      "coverage_complete": false,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z03",
+      "reference_id": "Z03",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        74,
+        76
+      ],
+      "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+      "expected_interpretation": {
+        "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+        "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+      },
+      "generated_interpretation": {
+        "en": "The synchronous Promise guard throws a $ZodAsyncError.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Selected proposition supported by pinned written source.",
+      "coverage_complete": true,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z04",
+      "reference_id": "Z04",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return, truthy result.issues.length selects failure.",
+        "pt-BR": "No retorno normal, result.issues.length truthy seleciona failure."
+      },
+      "generated_interpretation": {
+        "en": "The normal failure branch is selected when the issues array is not empty.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Selected proposition supported by pinned written source.",
+      "coverage_complete": true,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z05",
+      "reference_id": "Z05",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has success: true.",
+        "pt-BR": "No retorno normal sem issues, o literal tem success: true."
+      },
+      "generated_interpretation": {
+        "en": "The success flag is written as `success: true` in the no-issues literal.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Selected proposition supported by pinned written source.",
+      "coverage_complete": true,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z06",
+      "reference_id": "Z06",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        87,
+        89
+      ],
+      "exact_source_evidence": "    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));",
+      "expected_interpretation": {
+        "en": "The error getter construction branch is guarded by !error.",
+        "pt-BR": "O ramo de construção no getter de error é condicionado por !error."
+      },
+      "generated_interpretation": {
+        "en": "The error getter is guarded by the `error` property being undefined.",
+        "pt-BR": null
+      },
+      "verdict": "CONTRADICTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Written guard is !error on closure-local error, not an undefined-only check on error property. Truthiness is material to the frozen getter/setter contract; no upstream runtime execution inferred.",
+      "coverage_complete": false,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z07",
+      "reference_id": "Z07",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        96,
+        97
+      ],
+      "exact_source_evidence": "    set error(e: errors.$ZodError) {\n      error = e;",
+      "expected_interpretation": {
+        "en": "The error setter assigns e to the local error.",
+        "pt-BR": "O setter de error atribui e à variável local error."
+      },
+      "generated_interpretation": {
+        "en": "The error setter assigns the `error` property to the local `error` variable.",
+        "pt-BR": null
+      },
+      "verdict": "INSUFFICIENT",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Setter source assigns incoming e to local error. Generated property-to-variable wording does not establish that dataflow. Treat as ambiguous/incomplete, not a categorical invented property-read runtime event.",
+      "coverage_complete": false,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z08",
+      "reference_id": "Z08",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        111,
+        114
+      ],
+      "exact_source_evidence": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;",
+      "expected_interpretation": {
+        "en": "The asynchronous arrow awaits result when result instanceof Promise.",
+        "pt-BR": "A arrow assíncrona aguarda result quando result instanceof Promise."
+      },
+      "generated_interpretation": {
+        "en": "The asynchronous arrow waits for the result to resolve when `result instanceof Promise`.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Selected proposition supported by pinned written source.",
+      "coverage_complete": true,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z09",
+      "reference_id": "Z09",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        80,
+        80
+      ],
+      "exact_source_evidence": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);",
+      "expected_interpretation": {
+        "en": "The core safeParse binding supplies errors.$ZodRealError to _safeParse.",
+        "pt-BR": "O vínculo safeParse do core fornece errors.$ZodRealError a _safeParse."
+      },
+      "generated_interpretation": {
+        "en": "The core _safeParse factory binding is supplied with the $ZodRealError class.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Selected proposition supported by pinned written source.",
+      "coverage_complete": true,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    },
+    {
+      "claim_id": "NEW-A-zod-Z10",
+      "reference_id": "Z10",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has data: result.value.",
+        "pt-BR": "No retorno normal sem issues, o literal tem data: result.value."
+      },
+      "generated_interpretation": {
+        "en": "The data property written in the no-issues literal is `data: result.value`.",
+        "pt-BR": null
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "MISSING_PT",
+      "reason": "Selected proposition supported by pinned written source.",
+      "coverage_complete": true,
+      "citation": "path:lines",
+      "citation_relevance": "PLACEHOLDER_NOT_RESOLVABLE_SOURCE_LOCATION",
+      "reviewer": "sameCodexcampaignagent; not independenthuman/owner"
+    }
+  ],
+  "selected_behavior_atomic_supported_precision": {
+    "numerator": 8,
+    "denominator": 10,
+    "ratio": 0.8
+  },
+  "selected_behavior_atomic_unsupported_rate": {
+    "numerator": 2,
+    "denominator": 10,
+    "ratio": 0.2
+  },
+  "english_required_fact_coverage": {
+    "numerator": 7,
+    "denominator": 10
+  },
+  "strict_bilingual_fact_coverage": {
+    "numerator": 0,
+    "denominator": 10
+  },
+  "justified_uncertainty_control": {
+    "id": "U-Z",
+    "generated": "This source does not establish that every asynchronous parse always fulfills without rejection.",
+    "reference": "INSUFFICIENT",
+    "observed_abstention": true,
+    "numerator": 1,
+    "denominator": 1,
+    "language_limit": "Englishonly"
+  },
+  "full_output_atomic_precision": null,
+  "reasons": [
+    "PTentirelymissing",
+    "criticaltruthinessguardmisinterpretation",
+    "setterrationaleambiguous",
+    "unresolvableplaceholdercitations",
+    "error_boundariesNoneisnotanexplanation",
+    "requiredexecution/exampleunverifieddisclaimersmissing"
+  ],
+  "do_not_overinterpret": "error_boundaries=None counted missing discussion, not an independently asserted universal no-error guarantee. Unqualified error-class name accepted when identity is clear from supplied core source; no false identifier-translation rejection.",
+  "dimensions": [
+    {
+      "dimension": "factual correctness",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "relevant completeness",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "architecture and dependencies",
+      "score": 1,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "API contracts",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "errors and exceptions",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "existing tests and actual execution status",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "examples and commands",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "FAQ correctness",
+      "score": 1,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "citation relevance",
+      "score": 0,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    },
+    {
+      "dimension": "explicit limitations",
+      "score": 1,
+      "reason": "Critical guard/bilingual/provenance/completeness failure; isolated correct facts/uncertainty do not admit entire note."
+    }
+  ],
+  "critical_unsupported_claims": 2,
+  "bilingual_equivalence": false,
+  "all_required_claims_covered": false,
+  "all_generated_claims_reviewed": false,
+  "full_claim_audit_limit": "Selected behavior claims fully reviewed; genericFAQroleprose excluded from atomic metric; complete rejection alreadydecisive.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

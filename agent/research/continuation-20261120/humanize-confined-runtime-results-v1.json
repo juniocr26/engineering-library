@@ -1,0 +1,1106 @@
+{
+  "at": "2026-11-20T19:19:56.423071+00:00",
+  "results": [
+    {
+      "tag": "v1.0.0",
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "rows": [
+        {
+          "id": "parse-decimal",
+          "input": "42 MB",
+          "observed": {
+            "error_class": "none",
+            "value": "42000000"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "42000000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-binary-case",
+          "input": "42 mib",
+          "observed": {
+            "error_class": "none",
+            "value": "44040192"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "44040192",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-fraction-scale",
+          "input": "1.5 KiB",
+          "observed": {
+            "error_class": "none",
+            "value": "1536"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "1536",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-fraction-truncate",
+          "input": "1.9 B",
+          "observed": {
+            "error_class": "none",
+            "value": "1"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "1",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-loose-commas",
+          "input": "1,2,3 KB",
+          "observed": {
+            "error_class": "none",
+            "value": "123000"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "123000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-leading-dot",
+          "input": ".5k",
+          "observed": {
+            "error_class": "none",
+            "value": "500"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "500",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-zero",
+          "input": "0",
+          "observed": {
+            "error_class": "none",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-e-unit",
+          "input": "1e",
+          "observed": {
+            "error_class": "none",
+            "value": "1000000000000000000"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "1000000000000000000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-float-precision",
+          "input": "9007199254740993",
+          "observed": {
+            "error_class": "none",
+            "value": "9007199254740992"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "9007199254740992",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\": invalid syntax",
+          "id": "parse-leading-space",
+          "input": " 1 KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\": invalid syntax",
+          "id": "parse-negative",
+          "input": "-1KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\": invalid syntax",
+          "id": "parse-positive-sign",
+          "input": "+1KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\\xd9\": invalid syntax",
+          "id": "parse-unicode-digit",
+          "input": "\u0661KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: e3",
+          "id": "parse-exponent",
+          "input": "1e3",
+          "observed": {
+            "error_class": "unit",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: qq",
+          "id": "parse-unknown",
+          "input": "1 QQ",
+          "observed": {
+            "error_class": "unit",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: rb",
+          "id": "parse-new-big-unit",
+          "input": "1 Rb",
+          "observed": {
+            "error_class": "unit",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "too large: 18446744073709551615",
+          "id": "parse-uint64-max",
+          "input": "18446744073709551615",
+          "observed": {
+            "error_class": "too-large",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "too-large"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-exact-large",
+          "input": "9007199254740993",
+          "observed": {
+            "error_class": "none",
+            "value": "9007199254740993"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "9007199254740993",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-fraction",
+          "input": "1.9 B",
+          "observed": {
+            "error_class": "none",
+            "value": "1"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "1",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-commas",
+          "input": "1,2,3 KB",
+          "observed": {
+            "error_class": "none",
+            "value": "123000"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "123000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: qb",
+          "id": "bigparse-quettabyte",
+          "input": "1 QB",
+          "observed": {
+            "error_class": "unit",
+            "value": ""
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: qib",
+          "id": "bigparse-quebibyte",
+          "input": "1 QiB",
+          "observed": {
+            "error_class": "unit",
+            "value": ""
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: rb",
+          "id": "bigparse-ronnabyte",
+          "input": "1 RB",
+          "observed": {
+            "error_class": "unit",
+            "value": ""
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: rib",
+          "id": "bigparse-robibyte",
+          "input": "1 RiB",
+          "observed": {
+            "error_class": "unit",
+            "value": ""
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-decimal",
+          "input": "82854982",
+          "observed": {
+            "text": "83 MB"
+          },
+          "operation": "Bytes",
+          "expected": {
+            "text": "83 MB"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-binary",
+          "input": "82854982",
+          "observed": {
+            "text": "79 MiB"
+          },
+          "operation": "IBytes",
+          "expected": {
+            "text": "79 MiB"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-small",
+          "input": "9",
+          "observed": {
+            "text": "9 B"
+          },
+          "operation": "Bytes",
+          "expected": {
+            "text": "9 B"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-boundary",
+          "input": "1000",
+          "observed": {
+            "text": "1.0 kB"
+          },
+          "operation": "Bytes",
+          "expected": {
+            "text": "1.0 kB"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-binary-boundary",
+          "input": "1024",
+          "observed": {
+            "text": "1.0 KiB"
+          },
+          "operation": "IBytes",
+          "expected": {
+            "text": "1.0 KiB"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigformat-quettabyte",
+          "input": "1000000000000000000000000000000",
+          "observed": {
+            "input_after": "1000000000000000000000000000000",
+            "text": "1000000 YB"
+          },
+          "operation": "BigBytes",
+          "expected": {
+            "text": "1000000 YB",
+            "input_after": "1000000000000000000000000000000"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigformat-quebibyte",
+          "input": "1267650600228229401496703205376",
+          "observed": {
+            "input_after": "1267650600228229401496703205376",
+            "text": "1048576 YiB"
+          },
+          "operation": "BigIBytes",
+          "expected": {
+            "text": "1048576 YiB",
+            "input_after": "1267650600228229401496703205376"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigcomma-positive",
+          "input": "1234567",
+          "observed": {
+            "input_after": "1",
+            "text": "1,234,567"
+          },
+          "operation": "BigComma",
+          "expected": {
+            "text": "1,234,567",
+            "input_after": "1"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigcomma-negative",
+          "input": "-1234567",
+          "observed": {
+            "input_after": "1",
+            "text": "-1,234,567"
+          },
+          "operation": "BigComma",
+          "expected": {
+            "text": "-1,234,567",
+            "input_after": "1"
+          },
+          "pass": true
+        },
+        {
+          "id": "si-quetta",
+          "input": "1e30",
+          "observed": {
+            "prefix": "",
+            "value": "1"
+          },
+          "operation": "ComputeSI",
+          "expected": {
+            "value": "1",
+            "prefix": ""
+          },
+          "pass": true
+        },
+        {
+          "id": "si-quecto",
+          "input": "1e-30",
+          "observed": {
+            "prefix": "",
+            "value": "1.0000000000000002"
+          },
+          "operation": "ComputeSI",
+          "expected": {
+            "value": "1",
+            "prefix": ""
+          },
+          "pass": false
+        },
+        {
+          "id": "parse-si-quetta",
+          "input": "1 QB",
+          "observed": {
+            "error_class": "none",
+            "unit": "QB",
+            "value": "1"
+          },
+          "operation": "ParseSI",
+          "expected": {
+            "value": "1",
+            "unit": "QB",
+            "error_class": "none"
+          },
+          "pass": true
+        }
+      ],
+      "passes": 35,
+      "cases": 36,
+      "copied_sources_unchanged": true,
+      "binary_sha256": "94f4a761e32601d3c11ddaf877d063a01634f0492ac567058c340ead79962e67"
+    },
+    {
+      "tag": "v1.0.1",
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "rows": [
+        {
+          "id": "parse-decimal",
+          "input": "42 MB",
+          "observed": {
+            "error_class": "none",
+            "value": "42000000"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "42000000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-binary-case",
+          "input": "42 mib",
+          "observed": {
+            "error_class": "none",
+            "value": "44040192"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "44040192",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-fraction-scale",
+          "input": "1.5 KiB",
+          "observed": {
+            "error_class": "none",
+            "value": "1536"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "1536",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-fraction-truncate",
+          "input": "1.9 B",
+          "observed": {
+            "error_class": "none",
+            "value": "1"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "1",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-loose-commas",
+          "input": "1,2,3 KB",
+          "observed": {
+            "error_class": "none",
+            "value": "123000"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "123000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-leading-dot",
+          "input": ".5k",
+          "observed": {
+            "error_class": "none",
+            "value": "500"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "500",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-zero",
+          "input": "0",
+          "observed": {
+            "error_class": "none",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-e-unit",
+          "input": "1e",
+          "observed": {
+            "error_class": "none",
+            "value": "1000000000000000000"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "1000000000000000000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "parse-float-precision",
+          "input": "9007199254740993",
+          "observed": {
+            "error_class": "none",
+            "value": "9007199254740992"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "9007199254740992",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\": invalid syntax",
+          "id": "parse-leading-space",
+          "input": " 1 KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\": invalid syntax",
+          "id": "parse-negative",
+          "input": "-1KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\": invalid syntax",
+          "id": "parse-positive-sign",
+          "input": "+1KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "strconv.ParseFloat: parsing \"\\xd9\": invalid syntax",
+          "id": "parse-unicode-digit",
+          "input": "\u0661KB",
+          "observed": {
+            "error_class": "number",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "number"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: e3",
+          "id": "parse-exponent",
+          "input": "1e3",
+          "observed": {
+            "error_class": "unit",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: qq",
+          "id": "parse-unknown",
+          "input": "1 QQ",
+          "observed": {
+            "error_class": "unit",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "unhandled size name: rb",
+          "id": "parse-new-big-unit",
+          "input": "1 Rb",
+          "observed": {
+            "error_class": "unit",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "unit"
+          },
+          "pass": true
+        },
+        {
+          "error": "too large: 18446744073709551615",
+          "id": "parse-uint64-max",
+          "input": "18446744073709551615",
+          "observed": {
+            "error_class": "too-large",
+            "value": "0"
+          },
+          "operation": "ParseBytes",
+          "expected": {
+            "value": "0",
+            "error_class": "too-large"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-exact-large",
+          "input": "9007199254740993",
+          "observed": {
+            "error_class": "none",
+            "value": "9007199254740993"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "9007199254740993",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-fraction",
+          "input": "1.9 B",
+          "observed": {
+            "error_class": "none",
+            "value": "1"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "1",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-commas",
+          "input": "1,2,3 KB",
+          "observed": {
+            "error_class": "none",
+            "value": "123000"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "123000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-quettabyte",
+          "input": "1 QB",
+          "observed": {
+            "error_class": "none",
+            "value": "1000000000000000000000000000000"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "1000000000000000000000000000000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-quebibyte",
+          "input": "1 QiB",
+          "observed": {
+            "error_class": "none",
+            "value": "1267650600228229401496703205376"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "1267650600228229401496703205376",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-ronnabyte",
+          "input": "1 RB",
+          "observed": {
+            "error_class": "none",
+            "value": "1000000000000000000000000000"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "1000000000000000000000000000",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigparse-robibyte",
+          "input": "1 RiB",
+          "observed": {
+            "error_class": "none",
+            "value": "1237940039285380274899124224"
+          },
+          "operation": "ParseBigBytes",
+          "expected": {
+            "value": "1237940039285380274899124224",
+            "error_class": "none"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-decimal",
+          "input": "82854982",
+          "observed": {
+            "text": "83 MB"
+          },
+          "operation": "Bytes",
+          "expected": {
+            "text": "83 MB"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-binary",
+          "input": "82854982",
+          "observed": {
+            "text": "79 MiB"
+          },
+          "operation": "IBytes",
+          "expected": {
+            "text": "79 MiB"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-small",
+          "input": "9",
+          "observed": {
+            "text": "9 B"
+          },
+          "operation": "Bytes",
+          "expected": {
+            "text": "9 B"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-boundary",
+          "input": "1000",
+          "observed": {
+            "text": "1.0 kB"
+          },
+          "operation": "Bytes",
+          "expected": {
+            "text": "1.0 kB"
+          },
+          "pass": true
+        },
+        {
+          "id": "format-binary-boundary",
+          "input": "1024",
+          "observed": {
+            "text": "1.0 KiB"
+          },
+          "operation": "IBytes",
+          "expected": {
+            "text": "1.0 KiB"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigformat-quettabyte",
+          "input": "1000000000000000000000000000000",
+          "observed": {
+            "input_after": "1000000000000000000000000000000",
+            "text": "1.0 QB"
+          },
+          "operation": "BigBytes",
+          "expected": {
+            "text": "1.0 QB",
+            "input_after": "1000000000000000000000000000000"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigformat-quebibyte",
+          "input": "1267650600228229401496703205376",
+          "observed": {
+            "input_after": "1267650600228229401496703205376",
+            "text": "1.0 QiB"
+          },
+          "operation": "BigIBytes",
+          "expected": {
+            "text": "1.0 QiB",
+            "input_after": "1267650600228229401496703205376"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigcomma-positive",
+          "input": "1234567",
+          "observed": {
+            "input_after": "1",
+            "text": "1,234,567"
+          },
+          "operation": "BigComma",
+          "expected": {
+            "text": "1,234,567",
+            "input_after": "1"
+          },
+          "pass": true
+        },
+        {
+          "id": "bigcomma-negative",
+          "input": "-1234567",
+          "observed": {
+            "input_after": "1",
+            "text": "-1,234,567"
+          },
+          "operation": "BigComma",
+          "expected": {
+            "text": "-1,234,567",
+            "input_after": "1"
+          },
+          "pass": true
+        },
+        {
+          "id": "si-quetta",
+          "input": "1e30",
+          "observed": {
+            "prefix": "Q",
+            "value": "1"
+          },
+          "operation": "ComputeSI",
+          "expected": {
+            "value": "1",
+            "prefix": "Q"
+          },
+          "pass": true
+        },
+        {
+          "id": "si-quecto",
+          "input": "1e-30",
+          "observed": {
+            "prefix": "q",
+            "value": "1.0000000000000002"
+          },
+          "operation": "ComputeSI",
+          "expected": {
+            "value": "1",
+            "prefix": "q"
+          },
+          "pass": false
+        },
+        {
+          "id": "parse-si-quetta",
+          "input": "1 QB",
+          "observed": {
+            "error_class": "none",
+            "unit": "B",
+            "value": "1e+30"
+          },
+          "operation": "ParseSI",
+          "expected": {
+            "value": "1e+30",
+            "unit": "B",
+            "error_class": "none"
+          },
+          "pass": true
+        }
+      ],
+      "passes": 35,
+      "cases": 36,
+      "copied_sources_unchanged": true,
+      "binary_sha256": "66110ccfdf8db16398acc0333d0b4593feb24d1a620f4e54629ada322c210b47"
+    }
+  ],
+  "commands": [
+    {
+      "label": "v1.0.0-build",
+      "command": [
+        "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+        "build",
+        "-p",
+        "1",
+        "-trimpath",
+        "-buildvcs=false",
+        "-o",
+        "/tmp/el-humanize-confined-runtime-20261120-v1/artifacts/humanize-v1.0.0",
+        "/sources/engineering-library/agent/research/continuation-20261120/humanize-runtime-driver-v1/main.go"
+      ],
+      "exit_code": 0,
+      "seconds": 1.0841240839945385
+    },
+    {
+      "label": "v1.0.0-observe",
+      "command": [
+        "/tmp/el-humanize-confined-runtime-20261120-v1/artifacts/humanize-v1.0.0",
+        "/sources/engineering-library/agent/research/continuation-20261120/humanize-confined-runtime-protocol-v1.json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0028708330064546317
+    },
+    {
+      "label": "v1.0.1-build",
+      "command": [
+        "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+        "build",
+        "-p",
+        "1",
+        "-trimpath",
+        "-buildvcs=false",
+        "-o",
+        "/tmp/el-humanize-confined-runtime-20261120-v1/artifacts/humanize-v1.0.1",
+        "/sources/engineering-library/agent/research/continuation-20261120/humanize-runtime-driver-v1/main.go"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6587326250009937
+    },
+    {
+      "label": "v1.0.1-observe",
+      "command": [
+        "/tmp/el-humanize-confined-runtime-20261120-v1/artifacts/humanize-v1.0.1",
+        "/sources/engineering-library/agent/research/continuation-20261120/humanize-confined-runtime-protocol-v1.json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0023668750072829425
+    }
+  ],
+  "source_package_initializers_executed": true,
+  "source_functions_executed": true,
+  "upstream_tests_executed": false,
+  "source_edited": false,
+  "downloads": false,
+  "context": {
+    "go": "1.27.4",
+    "os": "linux",
+    "arch": "arm64",
+    "cgo": false
+  },
+  "distinct_frozen_cases": 36,
+  "revisions": 2,
+  "not_independent_lifecycle_accuracy": true,
+  "training_excluded": true,
+  "owner_approved": false,
+  "model_calls": 0
+}

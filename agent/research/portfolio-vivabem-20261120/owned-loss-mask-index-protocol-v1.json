@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-21T09:09:09.162138+00:00",
+  "hypothesis": "Under selected batching/loss source formulas, inclusive upper length can admit a zero-filled padding target; truncation can leave no real supervised target or only part of it. Mask count >0 alone is not a complete-target proof.",
+  "before_owned_projection_outcomes": true,
+  "source_cards": "public-framework-mask-state-source-cards-v1.json",
+  "scope": "PureownedPythoninteger/indexprojection;notexecutingcopiedframeworkfunctions,MLX/model/tokenizer/runtimeortraining. Synthetic token counts/offsets only,notrealapprovedtargets.",
+  "frozen_cases": [
+    {
+      "id": "unmasked-short",
+      "original_length": 8,
+      "offset": 0,
+      "max_sequence": 512,
+      "expected_source_positions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_real_target_positions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "masked-short",
+      "original_length": 8,
+      "offset": 4,
+      "max_sequence": 512,
+      "expected_source_positions": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_real_target_positions": [
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "exact-cap-control",
+      "original_length": 512,
+      "offset": 500,
+      "max_sequence": 512,
+      "expected_source_positions": [
+        500,
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511
+      ],
+      "expected_real_target_positions": [
+        500,
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511
+      ]
+    },
+    {
+      "id": "entire-target-truncated",
+      "original_length": 520,
+      "offset": 512,
+      "max_sequence": 512,
+      "expected_source_positions": [],
+      "expected_real_target_positions": []
+    },
+    {
+      "id": "partial-target-truncated",
+      "original_length": 520,
+      "offset": 510,
+      "max_sequence": 512,
+      "expected_source_positions": [
+        510,
+        511
+      ],
+      "expected_real_target_positions": [
+        510,
+        511
+      ]
+    },
+    {
+      "id": "padding-only-count-positive",
+      "original_length": 8,
+      "offset": 8,
+      "max_sequence": 512,
+      "expected_source_positions": [
+        8
+      ],
+      "expected_real_target_positions": []
+    }
+  ],
+  "oracle_definition": "Rawtokensindices0..N-1;causaltargetindicesstart1;promptprefixindices<offset excluded. Realvalidcompletiontargetpositionsmustbe<retained_length;positions>=retained_length arepadding. Wholeoriginaltargetnontruncation assessedseparately.",
+  "do_not_claim": [
+    "ActualMLXlossNaN/trainingcrashobserved",
+    "Generalframeworkbug/failure-ratefromthesehandpickedcases",
+    "Actualfuturetokenizer/template/prefixalignmentverified"
+  ],
+  "owner_approved": false,
+  "training_eligible": false
+}

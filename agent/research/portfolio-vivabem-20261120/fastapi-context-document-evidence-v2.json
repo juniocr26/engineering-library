@@ -1,0 +1,159 @@
+{
+  "at": "2026-11-21T02:13:05.333808+00:00",
+  "candidate": "fastapi-request-context-candidate-v2",
+  "inline_spans_identical": true,
+  "inline_span_count": 56,
+  "code_blocks_identical": true,
+  "owned_fragment_compiles_without_execution": true,
+  "required_keyword_shape_matches": true,
+  "written_test": {
+    "path": "tests/test_dependency_cache.py",
+    "function": "test_sub_counter",
+    "lines": [
+      64,
+      71
+    ],
+    "get_calls": 2,
+    "expected_asserted_pairs": [
+      {
+        "counter": 1,
+        "subcounter": 1
+      },
+      {
+        "counter": 2,
+        "subcounter": 2
+      }
+    ],
+    "executed": false
+  },
+  "retained_exact_quotes": [
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        1322,
+        1347
+      ],
+      "quote": "    def get_route_handler(self) -> Callable[[Request], Coroutine[Any, Any, Response]]:\n        route = cast(_APIRouteLike, self)\n        # TODO: Replace or deprecate this no-scope hook so included-route\n        # effective context can be passed explicitly instead of via ContextVar.\n        effective_context = _effective_route_context_var.get()\n        if effective_context is not None and effective_context.original_route is self:\n            route = cast(_APIRouteLike, effective_context)\n        return get_request_handler(\n            dependant=route.dependant,\n            body_field=route.body_field,\n            status_code=route.status_code,\n            response_class=route.response_class,\n            response_field=route.response_field,\n            response_model_include=route.response_model_include,\n            response_model_exclude=route.response_model_exclude,\n            response_model_by_alias=route.response_model_by_alias,\n            response_model_exclude_unset=route.response_model_exclude_unset,\n            response_model_exclude_defaults=route.response_model_exclude_defaults,\n            response_model_exclude_none=route.response_model_exclude_none,\n            dependency_overrides_provider=route.dependency_overrides_provider,\n            embed_body_fields=route._embed_body_fields,\n            strict_content_type=route.strict_content_type,\n            form_limits=self.form_limits,\n            stream_item_field=route.stream_item_field,\n            is_json_stream=route.is_json_stream,\n        )",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        528,
+        535
+      ],
+      "quote": "            solved_result = await solve_dependencies(\n                request=request,\n                dependant=dependant,\n                body=body,\n                dependency_overrides_provider=dependency_overrides_provider,\n                async_exit_stack=async_exit_stack,\n                embed_body_fields=embed_body_fields,\n            )",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        541,
+        541
+      ],
+      "quote": "        if not errors:",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        572,
+        572
+      ],
+      "quote": "            if is_sse_stream:",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        703,
+        703
+      ],
+      "quote": "            elif is_json_stream:",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        739,
+        739
+      ],
+      "quote": "            elif _is_async_gen_callable(dependant.call) or _is_gen_callable(",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        762,
+        796
+      ],
+      "quote": "                raw_response = await run_endpoint_function(\n                    dependant=dependant,\n                    values=solved_result.values,\n                    is_coroutine=is_coroutine,\n                )\n                if isinstance(raw_response, Response):\n                    if raw_response.background is None:\n                        raw_response.background = solved_result.background_tasks\n                    response = raw_response\n                else:\n                    response_args = _build_response_args(\n                        status_code=status_code, solved_result=solved_result\n                    )\n                    # Use the fast path (dump_json) when no custom response\n                    # class was set and a response field with a TypeAdapter\n                    # exists. Serializes directly to JSON bytes via Pydantic's\n                    # Rust core, skipping the intermediate Python dict +\n                    # json.dumps() step.\n                    use_dump_json = response_field is not None and isinstance(\n                        response_class, DefaultPlaceholder\n                    )\n                    with _operation(name=\"serialization\", function=dependant.call):\n                        content = await serialize_response(\n                            field=response_field,\n                            response_content=raw_response,\n                            include=response_model_include,\n                            exclude=response_model_exclude,\n                            by_alias=response_model_by_alias,\n                            exclude_unset=response_model_exclude_unset,\n                            exclude_defaults=response_model_exclude_defaults,\n                            exclude_none=response_model_exclude_none,\n                            is_coroutine=is_coroutine,\n                            endpoint_ctx=endpoint_ctx,\n                            dump_json=use_dump_json,\n                        )",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        372,
+        385
+      ],
+      "quote": "async def run_endpoint_function(\n    *, dependant: Dependant, values: dict[str, Any], is_coroutine: bool\n) -> Any:\n    # Only called by get_request_handler. Has been split into its own function to\n    # facilitate profiling endpoints, since inner functions are harder to profile.\n    assert dependant.call is not None, \"dependant.call must be a function\"\n\n    if is_coroutine:\n        with _operation(name=\"endpoint\", function=dependant.call):\n            return await dependant.call(**values)\n    else:\n        return await run_in_threadpool(\n            _run_sync_endpoint, function=dependant.call, arguments=values\n        )",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        808,
+        815
+      ],
+      "quote": "        if errors:\n            validation_error = RequestValidationError(\n                errors,\n                body=None if body is Undefined else body,\n                endpoint_ctx=endpoint_ctx,\n            )\n            _validation_failed(validation_error)\n            raise validation_error",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/routing.py",
+      "lines": [
+        329,
+        369
+      ],
+      "quote": "async def serialize_response(\n    *,\n    field: ModelField | None = None,\n    response_content: Any,\n    include: IncEx | None = None,\n    exclude: IncEx | None = None,\n    by_alias: bool = True,\n    exclude_unset: bool = False,\n    exclude_defaults: bool = False,\n    exclude_none: bool = False,\n    is_coroutine: bool = True,\n    endpoint_ctx: EndpointContext | None = None,\n    dump_json: bool = False,\n) -> Any:\n    if field:\n        if is_coroutine:\n            value, errors = field.validate(response_content, {}, loc=(\"response\",))\n        else:\n            value, errors = await run_in_threadpool(\n                field.validate, response_content, {}, loc=(\"response\",)\n            )\n        if errors:\n            ctx = endpoint_ctx or EndpointContext()\n            raise ResponseValidationError(\n                errors=errors,\n                body=response_content,\n                endpoint_ctx=ctx,\n            )\n        serializer = field.serialize_json if dump_json else field.serialize\n        return serializer(\n            value,\n            include=include,\n            exclude=exclude,\n            by_alias=by_alias,\n            exclude_unset=exclude_unset,\n            exclude_defaults=exclude_defaults,\n            exclude_none=exclude_none,\n        )\n\n    else:\n        return jsonable_encoder(response_content)",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491"
+    },
+    {
+      "path": "fastapi/dependencies/utils.py",
+      "lines": [
+        671,
+        701
+      ],
+      "quote": "async def solve_dependencies(\n    *,\n    request: Request | WebSocket,\n    dependant: Dependant,\n    body: Any = Undefined,\n    background_tasks: StarletteBackgroundTasks | None = None,\n    response: Response | None = None,\n    dependency_overrides_provider: Any | None = None,\n    dependency_cache: dict[DependencyCacheKey, Any] | None = None,\n    # TODO: remove this parameter later, no longer used, not removing it yet as some\n    # people might be monkey patching this function (although that's not supported)\n    async_exit_stack: AsyncExitStack,\n    embed_body_fields: bool,\n    _uses_scopes_cache: _UsesScopesCache | None = None,\n) -> SolvedDependency:\n    request_astack = request.scope.get(\"fastapi_inner_astack\")\n    assert isinstance(request_astack, AsyncExitStack), (\n        \"fastapi_inner_astack not found in request scope\"\n    )\n    function_astack = request.scope.get(\"fastapi_function_astack\")\n    assert isinstance(function_astack, AsyncExitStack), (\n        \"fastapi_function_astack not found in request scope\"\n    )\n    values: dict[str, Any] = {}\n    errors: list[Any] = []\n    if response is None:\n        response = Response()\n        del response.headers[\"content-length\"]\n        response.status_code = None  # type: ignore\n    if dependency_cache is None:\n        dependency_cache = {}",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5"
+    },
+    {
+      "path": "fastapi/dependencies/utils.py",
+      "lines": [
+        704,
+        737
+      ],
+      "quote": "    for sub_dependant in dependant.dependencies:\n        sub_dependant.call = cast(Callable[..., Any], sub_dependant.call)\n        call = sub_dependant.call\n        use_sub_dependant = sub_dependant\n        if (\n            dependency_overrides_provider\n            and dependency_overrides_provider.dependency_overrides\n        ):\n            original_call = sub_dependant.call\n            call = getattr(\n                dependency_overrides_provider, \"dependency_overrides\", {}\n            ).get(original_call, original_call)\n            use_path: str = sub_dependant.path  # type: ignore\n            use_sub_dependant = get_dependant(\n                path=use_path,\n                call=call,\n                name=sub_dependant.name,\n                parent_oauth_scopes=_get_oauth_scopes(dependant=sub_dependant),\n                scope=sub_dependant.scope,\n                concurrency=sub_dependant.concurrency,\n            )\n\n        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5"
+    },
+    {
+      "path": "fastapi/dependencies/utils.py",
+      "lines": [
+        823,
+        829
+      ],
+      "quote": "    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5"
+    },
+    {
+      "path": "tests/test_dependency_cache.py",
+      "lines": [
+        64,
+        71
+      ],
+      "quote": "def test_sub_counter():\n    counter_holder[\"counter\"] = 0\n    response = client.get(\"/sub-counter/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 1, \"subcounter\": 1}\n    response = client.get(\"/sub-counter/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 2, \"subcounter\": 2}",
+      "source_sha256": "480df7b33fa74cc709dbd67d65ffcdb69565a04de01186f0750776fcde533601"
+    }
+  ],
+  "source_executed": false,
+  "scope": "Selected Git/source evidence and owned fragment grammar only; no imports, type/module checks, external tests or application execution."
+}

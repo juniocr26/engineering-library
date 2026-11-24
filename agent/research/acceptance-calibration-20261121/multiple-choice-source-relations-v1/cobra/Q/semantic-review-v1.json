@@ -1,0 +1,458 @@
+{
+  "at": "2026-11-21T18:49:38.409968+00:00",
+  "task": "cobra",
+  "method": "Q",
+  "content_sha256": "0d9cdac7da89802cdacceae78b02b2bb21692504a4e61fb37df8735b38150c61",
+  "all_original_choices_reviewed": true,
+  "rows": [
+    {
+      "id": "C01",
+      "original_generated_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+      "expected_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+      "verdict": "SUPPORTED",
+      "correct_required_slot": true,
+      "selected_option_index": 3,
+      "expected_option_index": 3,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C01",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "type PositionalArgs func(cmd *Command, args []string) error",
+        "source_lines": [
+          22,
+          22
+        ],
+        "expected_interpretation": {
+          "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+          "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": false,
+      "question_and_alternatives": {
+        "question": "What declaration kind, parameters and result are written for PositionalArgs?",
+        "allowed_relations": [
+          "func PositionalArgs(cmd *Command, args []string) error",
+          "UNKNOWN",
+          "type PositionalArgs func(args []string) bool",
+          "type PositionalArgs func(cmd *Command, args []string) error"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C02",
+      "original_generated_relation": "len(cmd.ValidArgs) > 0",
+      "expected_relation": "len(cmd.ValidArgs) > 0",
+      "verdict": "SUPPORTED",
+      "correct_required_slot": true,
+      "selected_option_index": 1,
+      "expected_option_index": 1,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C02",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+        "source_lines": [
+          51,
+          65
+        ],
+        "expected_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": false,
+      "question_and_alternatives": {
+        "question": "Actual OnlyValidArgs guard enclosing membership validation?",
+        "allowed_relations": [
+          "cmd.HasSubCommands() && len(args) > 0",
+          "len(cmd.ValidArgs) > 0",
+          "UNKNOWN",
+          "len(args) > 0"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C03",
+      "original_generated_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+      "expected_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+      "verdict": "SUPPORTED",
+      "correct_required_slot": true,
+      "selected_option_index": 0,
+      "expected_option_index": 0,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C03",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}",
+        "source_lines": [
+          55,
+          58
+        ],
+        "expected_interpretation": {
+          "en": "Allowlist entries are projected to the portion before the first tab.",
+          "pt-BR": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": false,
+      "question_and_alternatives": {
+        "question": "Expression projecting an allowlist entry to its prefix before a tab?",
+        "allowed_relations": [
+          "strings.SplitN(v, \"\\t\", 2)[0]",
+          "strings.SplitN(v, \"\\t\", 2)[1]",
+          "UNKNOWN",
+          "strings.SplitN(v, \" \", 2)[0]"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C04",
+      "original_generated_relation": "VALIDATOR_FUNCTION",
+      "expected_relation": "VALIDATOR_FUNCTION",
+      "verdict": "SUPPORTED",
+      "correct_required_slot": true,
+      "selected_option_index": 2,
+      "expected_option_index": 2,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C04",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}",
+        "source_lines": [
+          107,
+          113
+        ],
+        "expected_interpretation": {
+          "en": "ExactArgs(n) returns a validator function.",
+          "pt-BR": "ExactArgs(n) retorna uma função validadora."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": false,
+      "question_and_alternatives": {
+        "question": "What does the outer ExactArgs(n) return?",
+        "allowed_relations": [
+          "VALIDATION_ERROR_IMMEDIATELY",
+          "UNKNOWN",
+          "VALIDATOR_FUNCTION",
+          "BOOLEAN"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C05",
+      "original_generated_relation": "len(args) != n",
+      "expected_relation": "len(args) != n",
+      "verdict": "SUPPORTED",
+      "correct_required_slot": true,
+      "selected_option_index": 0,
+      "expected_option_index": 0,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C05",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil",
+        "source_lines": [
+          108,
+          112
+        ],
+        "expected_interpretation": {
+          "en": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+          "pt-BR": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": false,
+      "question_and_alternatives": {
+        "question": "Returned ExactArgs validator rejects under which count condition?",
+        "allowed_relations": [
+          "len(args) != n",
+          "len(args) == n",
+          "len(args) < n",
+          "UNKNOWN"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C06",
+      "original_generated_relation": "SUPPLIED_SLICE_ORDER",
+      "expected_relation": "SUPPLIED_SLICE_ORDER",
+      "verdict": "SUPPORTED",
+      "correct_required_slot": true,
+      "selected_option_index": 2,
+      "expected_option_index": 2,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C06",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil",
+        "source_lines": [
+          127,
+          134
+        ],
+        "expected_interpretation": {
+          "en": "MatchAll invokes its validators in the order of the supplied slice.",
+          "pt-BR": "MatchAll chama seus validadores na ordem do slice fornecido."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": false,
+      "question_and_alternatives": {
+        "question": "MatchAll callback invocation order under ordinary loop completion?",
+        "allowed_relations": [
+          "UNKNOWN",
+          "REVERSE_SLICE_ORDER",
+          "SUPPLIED_SLICE_ORDER",
+          "PARALLEL"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C07",
+      "original_generated_relation": "CONTINUE_ALL_AND_RETURN_NIL",
+      "expected_relation": "RETURN_ERROR_IMMEDIATELY",
+      "verdict": "CONTRADICTED",
+      "correct_required_slot": false,
+      "selected_option_index": 0,
+      "expected_option_index": 1,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C07",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err",
+        "source_lines": [
+          129,
+          131
+        ],
+        "expected_interpretation": {
+          "en": "MatchAll returns immediately at the first non-nil validator error.",
+          "pt-BR": "MatchAll retorna imediatamente no primeiro erro não nil de um validador."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": true,
+      "question_and_alternatives": {
+        "question": "MatchAll behavior at first non-nil validator error?",
+        "allowed_relations": [
+          "CONTINUE_ALL_AND_RETURN_NIL",
+          "RETURN_ERROR_IMMEDIATELY",
+          "UNKNOWN",
+          "COLLECT_ALL_ERRORS"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C08",
+      "original_generated_relation": "MatchAll(OnlyValidArgs, ExactArgs(n))",
+      "expected_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+      "verdict": "CONTRADICTED",
+      "correct_required_slot": false,
+      "selected_option_index": 0,
+      "expected_option_index": 2,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C08",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}",
+        "source_lines": [
+          142,
+          144
+        ],
+        "expected_interpretation": {
+          "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+          "pt-BR": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": true,
+      "question_and_alternatives": {
+        "question": "Written ExactValidArgs delegation?",
+        "allowed_relations": [
+          "MatchAll(OnlyValidArgs, ExactArgs(n))",
+          "OnlyValidArgs(cmd, args)",
+          "MatchAll(ExactArgs(n), OnlyValidArgs)",
+          "UNKNOWN"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "C09",
+      "original_generated_relation": "ACTIVE_RECOMMENDED_REPLACEMENT_FOR_MATCHALL",
+      "expected_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+      "verdict": "CONTRADICTED",
+      "correct_required_slot": false,
+      "selected_option_index": 0,
+      "expected_option_index": 1,
+      "options_count": 4,
+      "reference": {
+        "claim_id": "C09",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+        "source_lines": [
+          141,
+          141
+        ],
+        "expected_interpretation": {
+          "en": "The selected source comment marks ExactValidArgs deprecated.",
+          "pt-BR": "O comentário selecionado da fonte marca ExactValidArgs como deprecated."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": true,
+      "question_and_alternatives": {
+        "question": "Selected comment status for ExactValidArgs?",
+        "allowed_relations": [
+          "ACTIVE_RECOMMENDED_REPLACEMENT_FOR_MATCHALL",
+          "DEPRECATED_USE_MATCHALL_COMPOSITION",
+          "REMOVED_FROM_SOURCE",
+          "UNKNOWN"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    },
+    {
+      "id": "U-C",
+      "original_generated_relation": "NOT_ESTABLISHED",
+      "expected_relation": "NOT_ESTABLISHED",
+      "verdict": "CORRECT_SCOPE_ABSTENTION",
+      "correct_required_slot": true,
+      "selected_option_index": 2,
+      "expected_option_index": 2,
+      "options_count": 3,
+      "reference": {
+        "claim_id": "U-C",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": null,
+        "source_file_sha256": null,
+        "exact_source_evidence": "Selected source cards do not establish the requested universal or cross-request runtime contract. No project-wide negative proof claimed.",
+        "source_lines": null,
+        "expected_interpretation": {
+          "en": "Not established by the selected source; abstain from the universal runtime claim.",
+          "pt-BR": "Não; a seleção não estabelece ausência de panic em callbacks arbitrários."
+        },
+        "reference_verdict": "INSUFFICIENT",
+        "critical": true,
+        "reviewer": "Codex same campaign agent",
+        "provenance": "Frozen scope-limitation control, not observed runtime counterexample.",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "critical_failure": false,
+      "question_and_alternatives": {
+        "question": "Do these selected source cards establish arbitrary callbacks can never panic?",
+        "allowed_relations": [
+          "NO_CALLBACK_CAN_PANIC",
+          "AT_LEAST_ONE_CALLBACK_PANICS",
+          "NOT_ESTABLISHED"
+        ]
+      },
+      "source_review": "Exact frozen source relation/value/owner compared, not a generic neural prose verifier. Known alternative is explicitly supplied in the request, and UNKNOWN is an abstention rather than an invented opposite fact."
+    }
+  ],
+  "required_source_relation_choices_correct": 6,
+  "required_source_relation_choices_total": 9,
+  "decidable_unknown_abstentions": 0,
+  "opposite_source_relation_choices": 3,
+  "scope_unknown_choice_correct": true,
+  "choice_precision_is_not_bilingual_prose_precision": true,
+  "complete_bounded_selector_reference_note_accepted": false,
+  "source_gate_blocked_materialization": true,
+  "bilingual_prose_generated_by_model": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0,
+  "reviewer": "Same campaign agent, static source and frozen reference; no independent human certification"
+}

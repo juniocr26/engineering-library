@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-21T02:52:07.171137+00:00",
+  "extends": "fine-tuning-pilot-proposal-v1.json",
+  "status": "NO-GO",
+  "launch_allowed": false,
+  "training_authorized": false,
+  "optimizer_steps": 0,
+  "new_resource_evidence": "host-pilot-resource-observation-v2.json",
+  "verified_host": {
+    "architecture": "arm64",
+    "cpu": "Apple M1 Pro",
+    "physical_cores": 10,
+    "logical_cores": 10,
+    "total_ram_bytes": 17179869184,
+    "total_ram_GiB": 16.0
+  },
+  "memory_gate": "PARTIAL_CAPACITY_ONLY_NO_TRAINING_PEAK",
+  "frameworks_present": false,
+  "resource_layers": "Host16GiB differs from observed Ollama Docker limit7.75GiB and research512MiB. Proposed native Apple-Silicon training environment is not established by Docker inference counters.",
+  "remaining_blockers_unchanged": [
+    "Owner-approved training gold remains zero.",
+    "Compatible trainable base checkpoint/tokenizer and rights not verified.",
+    "Native framework compatibility/environment not installed or executed.",
+    "No measured model/optimizer/activation training peak or available unified-memory budget.",
+    "Independent owner-approved pilot evaluation split, model targets and execution approval pending."
+  ],
+  "pilot_bounds_unchanged": "Original16update proposal, batch1/accumulation1/sequence512/rank4/two explicitly selected layers, max10optimizer and30total minutes remain preparation-only; do not install, download or train.",
+  "no_fine_tuning_truth_verifier_claim": true
+}

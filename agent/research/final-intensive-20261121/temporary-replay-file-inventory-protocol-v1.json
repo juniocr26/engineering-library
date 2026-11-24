@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-22T06:00:54.976937+00:00",
+  "hypothesis": "Main repository inventory omits owned temporary restore/replay outputs; explicit stream inventory improves resumable provenance without copying bytes or treating failed archives as recovery",
+  "input": "checkpoint-*.json receipt restored_root values only; failed031 has no recovered root and must remain failure",
+  "required": [
+    "Discover only roots explicitly declared by successful checkpoint receipts; no generic /tmp traversal",
+    "Reject unexpected root outside /private/tmp/el-final-*; no symlink following",
+    "Record every current regular file path,size,sha256 and purpose: restored manifest input versus finite consumer/replay output",
+    "Classify hash match/difference for archived inputs, missing declared files, extra replay outputs separately; preserve discrepancies rather than modify",
+    "Summary and JSONL stream additive under isolated research, excludes its own future checkpoint; no cleanup or mutation of temporary roots"
+  ],
+  "not_proof": [
+    "No full machine/OS/crash/remote/runtime/model recovery",
+    "Current byte observation differs from historic receipt time and may see legitimate postnote reconstructed reports"
+  ],
+  "training_or_production_change": false
+}

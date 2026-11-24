@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-20T17:13:13.277560+00:00",
+  "candidate_sha256": "3d30a39d0cc3832e93095d9b4e6e966e56d077e8e0ccee35558d7f9e0f086c47",
+  "expected_prior_steps": 4,
+  "expected_prior_quote_bytes": 1603,
+  "rows": [
+    {
+      "id": "four-step-history-exhausted",
+      "total_steps": 4,
+      "total_quote_bytes": 24576,
+      "mutation": "none",
+      "expected_status": "EXHAUSTED"
+    },
+    {
+      "id": "one-step-left",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "none",
+      "expected_status": "AVAILABLE"
+    },
+    {
+      "id": "exact-byte-budget-exhausted",
+      "total_steps": 5,
+      "total_quote_bytes": 1603,
+      "mutation": "none",
+      "expected_status": "EXHAUSTED"
+    },
+    {
+      "id": "history-exceeds-step-budget",
+      "total_steps": 3,
+      "total_quote_bytes": 24576,
+      "mutation": "none",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "history-exceeds-byte-budget",
+      "total_steps": 5,
+      "total_quote_bytes": 1602,
+      "mutation": "none",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "unknown-journal-file",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "extra",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "missing-result",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "missing-result",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "missing-receipt",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "missing-receipt",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "tampered-result",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "tamper-result",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "tampered-receipt",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "tamper-receipt",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "one-request-omitted",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "omit-id",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "duplicate-request-id",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "duplicate-id",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "bool-total-not-integer",
+      "total_steps": true,
+      "total_quote_bytes": 24576,
+      "mutation": "none",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "registry-revision-drift",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "registry-revision",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "symlink-result",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "symlink-result",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "incomplete-orphan-request",
+      "total_steps": 5,
+      "total_quote_bytes": 24576,
+      "mutation": "orphan-request",
+      "expected_status": "REFUSED"
+    }
+  ],
+  "oracle_frozen_before_candidate_run": true,
+  "development_exposed_jmespath_journal": true,
+  "source_executed": false,
+  "model_calls": 0,
+  "permanent_tests_changed": false,
+  "operator_exclusive_journal_required": true,
+  "cross_process_reservation_claimed": false
+}

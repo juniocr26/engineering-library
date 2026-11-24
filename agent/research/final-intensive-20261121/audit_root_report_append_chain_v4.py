@@ -1,0 +1,71 @@
+"""Audit report history as byte prefixes and receipt edges; never rewrite reports."""
+from pathlib import Path
+import argparse,datetime,hashlib,json,tarfile
+parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[3]);args=parser.parse_args();ROOT=args.root.resolve();P=ROOT/'agent/research/final-intensive-20261121';sha=lambda b:hashlib.sha256(b).hexdigest();names=['AI_TRAINING_CAMPAIGN_REPORT.md','AI_TRAINING_FILE_INVENTORY.md','AI_FINE_TUNING_READINESS.md','AI_TRAINING_RESUME.md']
+protocol={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'hypothesis':'Recovered roots, every preserved campaign preimage and checkpoint report copy are byte prefixes of current canonical reports; append receipts bind available before/after prefix states.','reports':names,'scope':'Local byte lineage and append-only preservation. Does not prove semantic correctness, approved publication, remote/crash backup or immutable human signatures.','extends':'root-report-chain-audit-results-v3.json; v4 refreshesnewrootprogress040/checkpoint029 while retaining actual canonical write-ahead bundles and durable successful attempt hashes','missing_policy':'Unresolved receipt states remain INCONCLUSIVE, never infer bytes merely from matching metadata labels.','corpus_refinement':'Canonical recovered files, named root-preimages directories, actual-root report-bundle preimages and checkpoint report entries. Synthetic owned control report copies remain excluded by declared provenance, never treated as actual report history.'}
+with (P/'root-report-chain-audit-protocol-v4.json').open('x') as f:json.dump(protocol,f,indent=2);f.write('\n')
+current={name:(ROOT/name).read_bytes() for name in names};nodes={name:{} for name in names};failures=[]
+def add(name,raw,location):
+ ident=sha(raw);entry=nodes[name].setdefault(ident,{'sha256':ident,'bytes':len(raw),'locations':[],'prefix_of_current':current[name].startswith(raw)});entry['locations'].append(location)
+ if not entry['prefix_of_current']:failures.append({'report':name,'location':location,'type':'PRESERVED_STATE_NOT_PREFIX'})
+for name in names:
+ add(name,current[name],str(ROOT/name))
+ for f in sorted(P.rglob('*')):
+  if not f.is_file() or f.is_symlink():continue
+  rel=f.relative_to(P)
+  recovered=len(rel.parts)==1 and f.name==name+'.recovered.bin'
+  legacy=rel.parts[0].startswith('root-preimages-') and f.name in [name,name+'.bin']
+  bundle=rel.parts[0].startswith('root-report-bundle-progress-') and f.name==name+'.before.bin'
+  if bundle:
+   assert json.loads((P/rel.parts[0]/'plan.json').read_text())['original_root']==str(ROOT)
+  if recovered or legacy or bundle:add(name,f.read_bytes(),str(f.relative_to(ROOT)))
+backup=ROOT/'.local-backups/final-intensive-20261121'
+for archive in sorted(backup.glob('checkpoint-*/research-reports-and-selected-dependencies.tar.gz')):
+ with tarfile.open(archive,'r:gz') as tar:
+  for name in names:
+   member=tar.getmember(name);assert member.isfile();add(name,tar.extractfile(member).read(),str(archive.relative_to(ROOT))+'::'+name)
+receipts=[]
+for f in sorted(P.glob('root-report-*.json')):
+ if f.name.startswith(('root-report-append-cut-','root-report-append-receipt-','root-report-checkpoint-')):
+  d=json.loads(f.read_text())
+  if isinstance(d.get('reports'),list):receipts.append((f,d))
+# Later write-ahead bundles use an outcome envelope rather than the legacy reports list.
+# Bind exact before+payload bytes and successful durable attempt hashes; do not omit these edges.
+for folder in sorted(P.glob('root-report-bundle-progress-*')):
+ plan_path=folder/'plan.json';plan=json.loads(plan_path.read_text())
+ assert plan['original_root']==str(ROOT)
+ successful=[]
+ for attempt in sorted(folder.glob('attempt-*.json')):
+  outcome=json.loads(attempt.read_text())
+  if outcome['status']=='APPLIED_OR_ALREADY_APPLIED':
+   assert outcome['plan_sha256']==sha(plan_path.read_bytes())
+   assert {r['path'] for r in outcome['reports']}==set(names)
+   successful.append(outcome)
+ if not successful:
+  failures.append({'location':str(folder.relative_to(ROOT)),'type':'NO_SUCCESSFUL_CANONICAL_BUNDLE_ATTEMPT'});continue
+ for edge in plan['reports']:
+  name=edge['path'];before=(folder/(name+'.before.bin')).read_bytes();payload=(folder/(name+'.append.bin')).read_bytes();after=before+payload
+  assert sha(before)==edge['before_sha256'] and sha(payload)==edge['payload_sha256'] and sha(after)==edge['after_sha256']
+  assert all(next(r for r in attempt['reports'] if r['path']==name)['final_sha256']==edge['after_sha256'] for attempt in successful)
+  add(name,after,str(plan_path.relative_to(ROOT))+'::bound-before-plus-payload')
+ receipts.append((plan_path,plan))
+# Independently rebuild note edges from actual archived prefixes when their preimage is available.
+for f,d in receipts:
+ note=d.get('note_utf8')
+ if note is not None:
+  assert sha(note.encode())==d['note_sha256']
+  for edge in d['reports']:
+   name=edge['path'];before=nodes[name].get(edge['before_sha256'])
+   if before:
+    raw=current[name][:before['bytes']]+note.encode();assert sha(raw)==edge['after_sha256'];add(name,raw,str(f.relative_to(ROOT))+'::derived-postnote')
+rows=[]
+for f,d in receipts:
+ for edge in d['reports']:
+  name=edge['path'];before=nodes[name].get(edge['before_sha256']);after=nodes[name].get(edge['after_sha256']);resolved=before is not None and after is not None
+  row={'receipt':str(f.relative_to(ROOT)),'report':name,'before_sha256':edge['before_sha256'],'after_sha256':edge['after_sha256'],'before_available':before is not None,'after_available':after is not None,'status':'INCONCLUSIVE_MISSING_PREFIX_STATE'}
+  if resolved:
+   assert before['bytes']<=after['bytes'];assert sha(current[name][:before['bytes']])==edge['before_sha256'];assert sha(current[name][:after['bytes']])==edge['after_sha256'];row.update(status='VERIFIED_APPEND_EDGE',appended_bytes=after['bytes']-before['bytes'])
+  rows.append(row)
+result={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'protocol_sha256':sha((P/'root-report-chain-audit-protocol-v4.json').read_bytes()),'report_states':{n:sorted(v.values(),key=lambda x:x['bytes']) for n,v in nodes.items()},'current_report_hashes':{n:sha(raw) for n,raw in current.items()},'receipt_edges':rows,'receipt_edge_count':len(rows),'resolved_append_edges':sum(r['status']=='VERIFIED_APPEND_EDGE' for r in rows),'unresolved_edges':[r for r in rows if r['status']!='VERIFIED_APPEND_EDGE'],'preserved_nonprefix_failures':failures,'all_preserved_states_prefix':not failures,'all_receipt_edges_resolved':all(r['status']=='VERIFIED_APPEND_EDGE' for r in rows),'semantic_acceptance_inferred':False,'new_model_calls':0,'reports_modified':False}
+with (P/'root-report-chain-audit-results-v4.json').open('x') as f:json.dump(result,f,indent=2);f.write('\n')
+print(json.dumps({k:v for k,v in result.items() if k not in ['report_states','receipt_edges','current_report_hashes']}))

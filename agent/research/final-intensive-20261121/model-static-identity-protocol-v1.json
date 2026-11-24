@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-21T23:32:50.307056+00:00",
+  "hypothesis": "Existing local manifest and every declared blob have self-consistent byte identities, without assuming running server identity or training readiness.",
+  "manifest": "ollama/models/manifests/registry.ollama.ai/library/llama3.2/3b",
+  "manifest_sha256": "a52a4a87c5affc63e344f4974f75bcc5b478b40e641df57d0f40941dfc406c94",
+  "procedure": "Read existing manifest; recursively validate config/layers digest and exact size using streaming SHA256; parse only small JSON config/params/manifests and initial GGUF magic/version/tensor/metadata counts. Do not copy or alter weights.",
+  "negative_controls": "No fabricated corruption of model files; missing or mismatched blob fails local identity status.",
+  "exclusions": [
+    "No model load/inference",
+    "No tokenizer validation",
+    "No trainable-base claim",
+    "No remote origin attestation",
+    "No license/owner training approval",
+    "No runtime server identity proof"
+  ]
+}

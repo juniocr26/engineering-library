@@ -1,0 +1,232 @@
+{
+  "at": "2026-11-22T03:15:26.821234+00:00",
+  "binary_sha256": "f0f6f254119fea0b6a87632d6b089bb59d177cc753987e41265247a8e3025a9a",
+  "cases": [
+    {
+      "id": "valid-alias-interface",
+      "packages": [
+        {
+          "package_path": "research.example/api",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package api\ntype Result = int\ntype Worker interface { Work() Result }\n",
+              "sha256": "954c3c837d8af64815cd98e27629bfc47162678f2921216e03a2d2dd056741c2"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\n",
+              "sha256": "e789e31d65e1a91cb1ba9442d1c281f7f830cce6e3b485f7871605f709d9d0c8"
+            }
+          ]
+        }
+      ],
+      "expected": "TYPECHECKED_FROZEN_SOURCE_GRAPH"
+    },
+    {
+      "id": "interface-not-runtime-concrete",
+      "packages": [
+        {
+          "package_path": "research.example/api",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package api\ntype Result = int\ntype Worker interface { Work() Result }\n",
+              "sha256": "954c3c837d8af64815cd98e27629bfc47162678f2921216e03a2d2dd056741c2"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\nvar Method = api.Worker.Work\n",
+              "sha256": "b80695291e7555e7925c15f3b60767a20ff25b9f1185540a9c9a780d82746104"
+            }
+          ]
+        }
+      ],
+      "expected": "TYPECHECKED_FROZEN_SOURCE_GRAPH"
+    },
+    {
+      "id": "missing-dependency",
+      "packages": [
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\n",
+              "sha256": "e789e31d65e1a91cb1ba9442d1c281f7f830cce6e3b485f7871605f709d9d0c8"
+            }
+          ]
+        }
+      ],
+      "expected": "INCONCLUSIVE_TYPE_OR_IMPORT_ERRORS"
+    },
+    {
+      "id": "dependency-type-error",
+      "packages": [
+        {
+          "package_path": "research.example/api",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package api\ntype Result = int\ntype Worker interface { Work() Result }\nconst Broken int=\"bad\"\n",
+              "sha256": "4f982ed96d5e601ef9f19f585175dcec75998a10769ebeca727f6fc5ba7dfa9f"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\n",
+              "sha256": "e789e31d65e1a91cb1ba9442d1c281f7f830cce6e3b485f7871605f709d9d0c8"
+            }
+          ]
+        }
+      ],
+      "expected": "INCONCLUSIVE_TYPE_OR_IMPORT_ERRORS"
+    },
+    {
+      "id": "source-cycle",
+      "packages": [
+        {
+          "package_path": "research.example/api",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package api\nimport \"research.example/client\"\ntype Result = int\ntype Worker interface {Work() Result}\nvar _ client.Concrete\n",
+              "sha256": "245d73f0f3d14671713de0c3928725e4f75b9bbf4235bb717c91b73bca42607c"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\n",
+              "sha256": "e789e31d65e1a91cb1ba9442d1c281f7f830cce6e3b485f7871605f709d9d0c8"
+            }
+          ]
+        }
+      ],
+      "expected": "INCONCLUSIVE_TYPE_OR_IMPORT_ERRORS"
+    },
+    {
+      "id": "standard-shadow",
+      "packages": [
+        {
+          "package_path": "context",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package context\nconst Local=1\n",
+              "sha256": "a0f4ce3ba9e39fc505fb695607ac972417bbb3de6a9500aed88079e540a27275"
+            }
+          ]
+        }
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "unreferenced-type-error",
+      "packages": [
+        {
+          "package_path": "research.example/api",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package api\ntype Result = int\ntype Worker interface { Work() Result }\n",
+              "sha256": "954c3c837d8af64815cd98e27629bfc47162678f2921216e03a2d2dd056741c2"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\n",
+              "sha256": "e789e31d65e1a91cb1ba9442d1c281f7f830cce6e3b485f7871605f709d9d0c8"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/unused",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package unused\nconst Broken int=\"bad\"\n",
+              "sha256": "e42eb2f5ed55e294a6842cafcb3fd2f10194475cb08ec4d054b34b75fabe9a6c"
+            }
+          ]
+        }
+      ],
+      "expected": "INCONCLUSIVE_TYPE_OR_IMPORT_ERRORS"
+    },
+    {
+      "id": "source-hash-mismatch",
+      "packages": [
+        {
+          "package_path": "research.example/api",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package api\ntype Result = int\ntype Worker interface { Work() Result }\n",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\n",
+              "sha256": "e789e31d65e1a91cb1ba9442d1c281f7f830cce6e3b485f7871605f709d9d0c8"
+            }
+          ]
+        }
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "duplicate-json-key",
+      "packages": [
+        {
+          "package_path": "research.example/api",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package api\ntype Result = int\ntype Worker interface { Work() Result }\n",
+              "sha256": "954c3c837d8af64815cd98e27629bfc47162678f2921216e03a2d2dd056741c2"
+            }
+          ]
+        },
+        {
+          "package_path": "research.example/client",
+          "files": [
+            {
+              "path": "owned.go",
+              "source": "package client\nimport \"research.example/api\"\ntype Concrete struct{}\nfunc(Concrete) Work() api.Result {return 1}\nvar _ api.Worker = Concrete{}\nfunc Dispatch(w api.Worker) api.Result{return w.Work()}\n",
+              "sha256": "e789e31d65e1a91cb1ba9442d1c281f7f830cce6e3b485f7871605f709d9d0c8"
+            }
+          ]
+        }
+      ],
+      "expected": "REFUSED"
+    }
+  ],
+  "role": "Owned development controls, not independent language/model benchmark",
+  "standard_manifest_sha256": "2e4aa526ced5697cc3bcfc164fdd2fa7cfdaf75ce25df46da9a7babd872303b6"
+}

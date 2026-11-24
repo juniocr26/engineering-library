@@ -1,0 +1,101 @@
+{
+  "repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "license": {
+    "id": "MIT",
+    "path": "LICENSE",
+    "sha256": "52b5e2ea72b69e0293b77ab8ca3805404a2b921ea3deb5d433072f144c086446",
+    "retained_private": "private-research://continuation-20261119/sources/go-image-optimizer/LICENSE"
+  },
+  "source_executed": false,
+  "runtime_bindings_verified": false,
+  "sources": [
+    {
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "source_sha256": "2a1bd63b4f617faf4294cdbaeee74935599e9e78032b06df72957419a5f99b1a",
+      "units": [
+        {
+          "selector": "NewUseCase",
+          "declaration_kind": "function",
+          "symbol": "imagecompression.NewUseCase",
+          "start_line": 40,
+          "end_line": 44,
+          "quote": "func NewUseCase(compressor Compressor) UseCase {\n\treturn UseCase{\n\t\tcompressor: compressor,\n\t}\n}",
+          "declaration": "func NewUseCase(compressor Compressor) UseCase",
+          "function_type": "func(compressor Compressor) UseCase"
+        },
+        {
+          "selector": "UseCase.Execute",
+          "declaration_kind": "method",
+          "symbol": "imagecompression.UseCase.Execute",
+          "start_line": 46,
+          "end_line": 65,
+          "quote": "func (u UseCase) Execute(ctx context.Context, input []byte) (Result, error) {\n\tif len(input) == 0 {\n\t\treturn Result{}, ErrEmptyImage\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tresult, err := u.compressor.Compress(input)\n\tif err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\treturn result, nil\n}",
+          "declaration": "func (u UseCase) Execute(ctx context.Context, input []byte) (Result, error)",
+          "function_type": "func(ctx context.Context, input []byte) (Result, error)",
+          "receiver_type": "UseCase"
+        }
+      ],
+      "producer": {
+        "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+        "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+        "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.5.0"
+      },
+      "bounded_selector_batches": [
+        [
+          "NewUseCase",
+          "UseCase.Execute"
+        ]
+      ]
+    },
+    {
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "units": [
+        {
+          "selector": "Compressor.Compress",
+          "declaration_kind": "method",
+          "symbol": "compress.Compressor.Compress",
+          "start_line": 40,
+          "end_line": 66,
+          "quote": "func (c Compressor) Compress(input []byte) (imagecompression.Result, error) {\n\tdetected, err := imaging.DetectFormat(input)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tswitch detected.Format {\n\tcase imagecompression.FormatJPEG:\n\t\treturn c.compressJPEG(input)\n\tcase imagecompression.FormatPNG:\n\t\treturn c.compressPNG(input)\n\tcase imagecompression.FormatWebP:\n\t\treturn c.compressWebP(input)\n\tcase imagecompression.FormatAVIF:\n\t\treturn c.compressAVIF(input)\n\tcase imagecompression.FormatHEIF:\n\t\treturn c.compressHEIF(input, detected.ContentType)\n\tcase imagecompression.FormatGIF:\n\t\treturn c.compressGIF(input)\n\tcase imagecompression.FormatBMP:\n\t\treturn c.compressBMP(input)\n\tcase imagecompression.FormatTIFF:\n\t\treturn c.compressTIFF(input)\n\tdefault:\n\t\treturn imagecompression.Result{}, imagecompression.ErrUnsupportedFormat\n\t}\n}",
+          "declaration": "func (c Compressor) Compress(input []byte) (imagecompression.Result, error)",
+          "function_type": "func(input []byte) (imagecompression.Result, error)",
+          "receiver_type": "Compressor"
+        }
+      ],
+      "producer": {
+        "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+        "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+        "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.5.0"
+      },
+      "bounded_selector_batches": [
+        [
+          "Compressor.Compress"
+        ]
+      ]
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "source_sha256": "2a1bd63b4f617faf4294cdbaeee74935599e9e78032b06df72957419a5f99b1a",
+      "quote": "package imagecompression\n\nimport (\n\t\"context\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imageprocessing\"\n)\n\ntype Format = imageprocessing.Format\ntype Result = imageprocessing.Result\n\nconst (\n\tFormatJPEG = imageprocessing.FormatJPEG\n\tFormatPNG  = imageprocessing.FormatPNG\n\tFormatWebP = imageprocessing.FormatWebP\n\tFormatAVIF = imageprocessing.FormatAVIF\n\tFormatHEIF = imageprocessing.FormatHEIF\n\tFormatGIF  = imageprocessing.FormatGIF\n\tFormatBMP  = imageprocessing.FormatBMP\n\tFormatTIFF = imageprocessing.FormatTIFF\n)\n\nvar (\n\tErrEmptyImage         = imageprocessing.ErrEmptyImage\n\tErrUnsupportedFormat  = imageprocessing.ErrUnsupportedFormat\n\tErrInvalidImage       = imageprocessing.ErrInvalidImage\n\tErrImageTooLarge      = imageprocessing.ErrImageTooLarge\n\tErrAnimationTooLarge  = imageprocessing.ErrAnimationTooLarge\n\tErrUnsupportedVariant = imageprocessing.ErrUnsupportedVariant\n\tErrCodecUnavailable   = imageprocessing.ErrCodecUnavailable\n)\n\ntype Compressor interface {\n\tCompress(input []byte) (Result, error)\n}\n\ntype UseCase struct {\n\tcompressor Compressor\n}\n\nfunc NewUseCase(compressor Compressor) UseCase {\n\treturn UseCase{\n\t\tcompressor: compressor,\n\t}\n}\n\nfunc (u UseCase) Execute(ctx context.Context, input []byte) (Result, error) {\n\tif len(input) == 0 {\n\t\treturn Result{}, ErrEmptyImage\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tresult, err := u.compressor.Compress(input)\n\tif err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\treturn result, nil\n}\n",
+      "start_line": 1,
+      "end_line": 65,
+      "role": "Expanded correction evidence; not claimed supplied in baseline"
+    },
+    {
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "quote": "package compress\n\nimport (\n\t\"image\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imagecompression\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/infrastructure/imaging\"\n)\n\nconst (\n\t// DefaultJPEGQuality keeps JPEG output visually close to the source while\n\t// still allowing meaningful size reduction for many camera/exported images.\n\tDefaultJPEGQuality = 82\n\n\tDefaultWebPQuality = 82\n\tDefaultAVIFQuality = 60\n\tDefaultHEIFQuality = 60\n)\n\ntype Compressor struct {\n\tJPEGQuality            int\n\tWebPQuality            int\n\tAVIFQuality            int\n\tHEIFQuality            int\n\tMaxDecodedPixels       int\n\tMaxAnimatedFramePixels int\n}\n\nfunc NewCompressor() Compressor {\n\treturn Compressor{\n\t\tJPEGQuality:            DefaultJPEGQuality,\n\t\tWebPQuality:            DefaultWebPQuality,\n\t\tAVIFQuality:            DefaultAVIFQuality,\n\t\tHEIFQuality:            DefaultHEIFQuality,\n\t\tMaxDecodedPixels:       imaging.DefaultMaxDecodedPixels,\n\t\tMaxAnimatedFramePixels: imaging.DefaultMaxAnimatedFramePixels,\n\t}\n}\n\nfunc (c Compressor) Compress(input []byte) (imagecompression.Result, error) {\n\tdetected, err := imaging.DetectFormat(input)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tswitch detected.Format {\n\tcase imagecompression.FormatJPEG:\n\t\treturn c.compressJPEG(input)\n\tcase imagecompression.FormatPNG:\n\t\treturn c.compressPNG(input)\n\tcase imagecompression.FormatWebP:\n\t\treturn c.compressWebP(input)\n\tcase imagecompression.FormatAVIF:\n\t\treturn c.compressAVIF(input)\n\tcase imagecompression.FormatHEIF:\n\t\treturn c.compressHEIF(input, detected.ContentType)\n\tcase imagecompression.FormatGIF:\n\t\treturn c.compressGIF(input)\n\tcase imagecompression.FormatBMP:\n\t\treturn c.compressBMP(input)\n\tcase imagecompression.FormatTIFF:\n\t\treturn c.compressTIFF(input)\n\tdefault:\n\t\treturn imagecompression.Result{}, imagecompression.ErrUnsupportedFormat\n\t}\n}\n\nfunc staticResult(data []byte, format imagecompression.Format, contentType string, img image.Image) imagecompression.Result {\n\tbounds := img.Bounds()\n\n\treturn imagecompression.Result{\n\t\tData:        data,\n\t\tFormat:      format,\n\t\tContentType: contentType,\n\t\tWidth:       bounds.Dx(),\n\t\tHeight:      bounds.Dy(),\n\t\tAnimated:    false,\n\t\tFrameCount:  1,\n\t}\n}\n\nfunc (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}\n\nfunc (c Compressor) webpQuality() int {\n\treturn clampQuality(c.WebPQuality, DefaultWebPQuality)\n}\n\nfunc (c Compressor) avifQuality() int {\n\treturn clampQuality(c.AVIFQuality, DefaultAVIFQuality)\n}\n\nfunc (c Compressor) heifQuality() int {\n\treturn clampQuality(c.HEIFQuality, DefaultHEIFQuality)\n}\n\nfunc (c Compressor) maxDecodedPixels() int {\n\tif c.MaxDecodedPixels <= 0 {\n\t\treturn imaging.DefaultMaxDecodedPixels\n\t}\n\n\treturn c.MaxDecodedPixels\n}\n\nfunc (c Compressor) maxAnimatedFramePixels() int {\n\tif c.MaxAnimatedFramePixels <= 0 {\n\t\treturn imaging.DefaultMaxAnimatedFramePixels\n\t}\n\n\treturn c.MaxAnimatedFramePixels\n}\n\nfunc clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}\n",
+      "start_line": 1,
+      "end_line": 128,
+      "role": "Expanded correction evidence; not claimed supplied in baseline"
+    }
+  ]
+}

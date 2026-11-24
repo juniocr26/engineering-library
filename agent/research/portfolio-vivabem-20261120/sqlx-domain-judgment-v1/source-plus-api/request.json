@@ -1,0 +1,20 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": "json",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Evaluate six claims using only the supplied evidence cards. Labels must be exactly SUPPORTED, CONTRADICTED, or INCONCLUSIVE. Missing evidence is not contradiction. Do not use prior knowledge to fill a missing producer-domain card. Assess guard Boolean decisions separately from complete function/query/runtime behavior. Return one JSON object with records: six objects containing id,label,rationale_en,rationale_pt_br,citations (list of supplied card IDs). Give one concise substantive rationale in each language, preserve code identifiers, do not add claims or prose outside JSON."
+    },
+    {
+      "role": "user",
+      "content": "{\"cards\": [{\"id\": \"S1\", \"revision\": \"3ab43dbec9270483ab1935a7650dbe9cb68f0d5e\", \"path\": \"named.go\", \"lines\": [245, 253], \"source\": \"func fixBound(bound string, loop int) string {\\n\\tloc := valuesReg.FindStringIndex(bound)\\n\\t// defensive guard when \\\"VALUES (...)\\\" not found\\n\\tif len(loc) < 1 {\\n\\t\\treturn bound\\n\\t}\\n\\n\\topeningBracketIndex := loc[1] - 1\\n\\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\"}, {\"id\": \"S2\", \"revision\": \"f107302e9b2571ebc44d84b934fa9100a7719540\", \"path\": \"named.go\", \"lines\": [245, 253], \"source\": \"func fixBound(bound string, loop int) string {\\n\\tloc := valuesReg.FindStringIndex(bound)\\n\\t// defensive guard when \\\"VALUES (...)\\\" not found\\n\\tif len(loc) < 2 {\\n\\t\\treturn bound\\n\\t}\\n\\n\\topeningBracketIndex := loc[1] - 1\\n\\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\"}, {\"id\": \"M1\", \"evidence\": \"The SQLX source was not executed. Only a stateless native syntax parser was used; no SQLX test, DB query, or whole-SQLX-program runtime observation is included. Contract-specific conclusions require a producer-domain card: if it is absent, use INCONCLUSIVE rather than prior knowledge.\"}, {\"id\": \"A1\", \"source\": \"https://pkg.go.dev/regexp#Regexp.FindStringIndex\", \"evidence\": \"For this analytical task use the documented regexp.(*Regexp).FindStringIndex return-shape contract: no match gives nil (length0); a match supplies accessible start/end offsets (length>=2). Length1 is outside this declared domain. This is a conditional API-contract premise, not historical-runtime execution.\"}], \"claims\": [{\"id\": \"C1\", \"claim\": \"Under the selected producer API contract, changing the first guard from <1 to <2 changes its Boolean decision for at least one allowed result length.\"}, {\"id\": \"C2\", \"claim\": \"Under that same producer API contract, all allowed result lengths choose the same first-guard Boolean decision in the old and new code.\"}, {\"id\": \"C3\", \"claim\": \"For the counterfactual length len(loc)==1, the old and new first-guard Boolean conditions are different, regardless of whether the producer can return that length.\"}, {\"id\": \"C4\", \"claim\": \"This evidence packet includes executed SQLX program observations proving whole-program runtime equivalence.\"}, {\"id\": \"C5\", \"claim\": \"The selected new source guard uses len(loc) < 2.\"}, {\"id\": \"C6\", \"claim\": \"This evidence packet includes successful execution of the SQLX test suite.\"}]}"
+    }
+  ],
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 1200
+  }
+}

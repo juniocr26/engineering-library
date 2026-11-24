@@ -1,0 +1,243 @@
+{
+  "family": "source-repository:sqlx",
+  "source_atoms": [
+    {
+      "id": "SX01",
+      "proposition": "asSliceForIn returns false for nil input.",
+      "source_path": "bind.go",
+      "lines": [
+        117,
+        120
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX02",
+      "proposition": "Classifier applies reflectx.Deref to the type; Deref removes one pointer layer, not actual Value indirection.",
+      "source_path": "bind.go",
+      "lines": [
+        122,
+        127
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX03",
+      "proposition": "Only slice kinds qualify and exact reflect.TypeOf([]byte{}) is excluded.",
+      "source_path": "bind.go",
+      "lines": [
+        125,
+        136
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX04",
+      "proposition": "Preparation invokes applicable driver.Valuer.Value before slice classification and returns its error.",
+      "source_path": "bind.go",
+      "lines": [
+        163,
+        172
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX05",
+      "proposition": "More than32args select dynamically allocated metadata sized len(args), not a rejection.",
+      "source_path": "bind.go",
+      "lines": [
+        154,
+        161
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX06",
+      "proposition": "Classified empty slice returns an error.",
+      "source_path": "bind.go",
+      "lines": [
+        172,
+        181
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX07",
+      "proposition": "No-slice branch returns originalquery/args/nil before rewrite count checks.",
+      "source_path": "bind.go",
+      "lines": [
+        188,
+        192
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX08",
+      "proposition": "Valuer-derived arg is local/meta value; preparation does not replace args[i].",
+      "source_path": "bind.go",
+      "lines": [
+        163,
+        185
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX09",
+      "proposition": "Placeholder loop scans bytes with strings.IndexByte; selected complete function has no SQL quote/comment state.",
+      "source_path": "bind.go",
+      "lines": [
+        199,
+        243
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX10",
+      "proposition": "Expansion path checks excess/fewer placeholders and appends reflect slice elements.",
+      "source_path": "bind.go",
+      "lines": [
+        201,
+        243
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX11",
+      "proposition": "bindMapArgs map lookup tests presence flag and appends present values includingnil.",
+      "source_path": "named.go",
+      "lines": [
+        197,
+        207
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX12",
+      "proposition": "Missing name returns accumulated prefix together witherror.",
+      "source_path": "named.go",
+      "lines": [
+        200,
+        205
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX13",
+      "proposition": "No names performs no lookup and returns allocatedemptyarglist/nil, even withnilmap.",
+      "source_path": "named.go",
+      "lines": [
+        197,
+        207
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX14",
+      "proposition": "Selected maploop reads/appends withoutdelete/consumption/deepcopy; duplicatepresentnames can repeatpositions.",
+      "source_path": "named.go",
+      "lines": [
+        200,
+        207
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX15",
+      "proposition": "bindAnyArgs routes successfullyconvertedmap tobindMapArgs.",
+      "source_path": "named.go",
+      "lines": [
+        163,
+        167
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SX16",
+      "proposition": "InspectedbindStructreturns emptyquery/emptyslice on bindAnyArgserror.",
+      "source_path": "named.go",
+      "lines": [
+        213,
+        224
+      ],
+      "verdict": "SUPPORTED"
+    }
+  ],
+  "pair_notes": {
+    "byte-scan-not-sql-parser": {
+      "source_atom_ids": [
+        "SX03",
+        "SX09",
+        "SX10"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "No selected SQLquote/comment state; exactbyteslicetype exclusionnotgeneralizedtonamedslices. DownstreamDBexecutionnotperformed."
+    },
+    "metadata-array-not-argument-cap": {
+      "source_atom_ids": [
+        "SX05"
+      ],
+      "verdict": "SUPPORTED_SOURCE_BEHAVIOR_PROCEDURAL_PROVENANCE_INSUFFICIENT",
+      "technical_source_verdict": "SUPPORTED",
+      "procedural_verdict": "INSUFFICIENT",
+      "parity": "PASS",
+      "note": "Dynamicmetadataallocationnotpublic32argcapissupported. Exacthistoricalbaselineattributionnotboundtoitsrawresponsewithinthisaudit; keepthatclauseprovenancependingratherthanclaimingfalsehistory.",
+      "unverified_original_clause": "the stack-buffer size is not the public limit claimed by the historical baseline.",
+      "future_review_or_edit_proposal": "Link exact historical response/context identity supporting attributed32-argclaim, or authorize anewcandidateversion retainingsource-supportedallocationfactandremovingunverifiedattribution. Originalunchanged."
+    },
+    "valuer-before-no-slice-fast-path": {
+      "source_atom_ids": [
+        "SX04",
+        "SX07",
+        "SX08"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Alreadyexecutedpreparationqualifiedbynormalcompletion. Returnsoriginalargsnotalltransformedlocalvalues; callbacksideeffectsarenotdeclaredabsent."
+    },
+    "partial-result-versus-caller-error": {
+      "source_atom_ids": [
+        "SX12",
+        "SX15",
+        "SX16"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "SpecificbindStructcallerdiscardsarglistonerror; notallhigher-levelAPIsorallreflectioninputs certified."
+    },
+    "present-nil-map-value": {
+      "source_atom_ids": [
+        "SX11",
+        "SX12",
+        "SX13"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Typedhelpermaplookupdistinguisheskeypresencefromnilvalue; nilmap+emptynameshassourcelocalnormalemptyresult. NotguaranteeofconvertMapStringInterfaceonarbitrarynilinterface."
+    },
+    "repeated-map-name-preservation": {
+      "source_atom_ids": [
+        "SX11",
+        "SX14"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Read-onlymaploopcanappendduplicatevalues; reference-valueddeepcopy notproved. Extra paragraph accuratelydeniessource/databaseexecutionandselectedhelperDBconfigurationrequirement."
+    }
+  },
+  "all_actual_EN_PT_answers_read_in_full": true,
+  "source_context_review": "CompleteIn/classifier/appendReflectSlice,selectedmapbindingandcaller/convertMap helpers,actualone-layerDerefbodyread. No SQLx app/test/database execution.",
+  "source_only_technical_pairs_supported": 6,
+  "all_claims_including_procedural_research_pass": {
+    "numerator": 5,
+    "denominator": 6,
+    "pending_provenance": 1
+  },
+  "full_universal_atomic_precision": null,
+  "reviewer": "Samecampaignagent, source-only, not independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "model_calls": 0,
+  "optimizer_updates": 0
+}

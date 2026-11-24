@@ -1,0 +1,11 @@
+
+
+## Consolidação 077 — auditoria final em preparação
+
+Corte UTC: 2026-11-22T10:19:37.659922+00:00. A campanha segue ativa até o encerramento temporal e a recuperação final; este corte não é declaração de término.
+
+A decisão corrente está em `fine-tuning-current-nine-gates-assessment-v4.json`: **9 NO_GO; 0 PASS**. O pacote `first-lora-owner-authorization-package-v2.json` está preparado para revisão, é não executável e conserva os parâmetros históricos sem validá-los. Nenhum framework, peso novo, adaptador ou otimizador foi instalado/iniciado.
+
+Os 14 arquivos MLX-LM fixados permitem revisão estática de máscaras, truncamento e persistência, sem comprovar execução. Tokenizar prefixo separadamente não comprova alinhamento real com o exemplo completo. Contar tokens de padding como alvo pode invalidar o sinal. Estado adapter-only não é recuperação de optimizer/RNG/cursor. A geometria de 81.920 coeficientes Q/V nas duas últimas camadas e 1.310.720 bytes para coeficientes/gradientes/dois momentos FP32 exclui pesos, ativações, temporários e framework; não é pico de memória medido.
+
+O futuro piloto só pode ser executado após aprovação separada e todos os gates: até 16 updates, batch 1, seq 512, rank 4, Q/V das camadas 26/27, LR 1e-5, seed 0; limite histórico de 600 s de optimizer e 1.800 s para todas as etapas. Não reduzir o contrato documental para caber no limite.

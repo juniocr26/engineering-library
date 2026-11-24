@@ -1,0 +1,257 @@
+{
+  "family": "source-repository:starlette",
+  "source_atoms": [
+    {
+      "id": "ST01",
+      "proposition": "Non-HTTPscope delegatesandreturnsbeforetheHTTPtry/catch.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        149,
+        165
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST02",
+      "proposition": "HTTPresponse-startflagbeginsFalse.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        154,
+        154
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST03",
+      "proposition": "_sendsetsstartflagbeforeawaitingoriginalsender.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        156,
+        161
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST04",
+      "proposition": "SelectedcatchisexceptException, notallBaseException.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        163,
+        165
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST05",
+      "proposition": "Truthydebugbranchprecedeshandlerselection andawaitsdebug_responseviathreadpoolhelper.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        167,
+        178
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST06",
+      "proposition": "Customhandlerselectionusesis_async_callabletoselectdirectawaitversusthreadpoolhelper.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        173,
+        178
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST07",
+      "proposition": "Constructederrorresponseiscalledonlyifnotresponse_started.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        180,
+        181
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST08",
+      "proposition": "Caughtoriginalexc is raisedafterprioroperations; nofinallyforcesarrivalatthatline.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        163,
+        186
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST09",
+      "proposition": "Selectedconstructoracceptsapp/optionalhandler/debugflag.",
+      "source_path": "starlette/middleware/errors.py",
+      "lines": [
+        139,
+        147
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST10",
+      "proposition": "BackgroundTaskinitializationstorescallable/args/kwargsandclassifiesit.",
+      "source_path": "starlette/background.py",
+      "lines": [
+        12,
+        17
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST11",
+      "proposition": "Taskcallawaitsoneexpressionineitherbranchwithoutreturningcallbackvalue.",
+      "source_path": "starlette/background.py",
+      "lines": [
+        19,
+        23
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST12",
+      "proposition": "run_in_threadpoolpartial-bindsargumentsandreturnsawaitedrun_syncresult.",
+      "source_path": "starlette/concurrency.py",
+      "lines": [
+        32,
+        34
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST13",
+      "proposition": "is_async_callableunwrapspartials andchecksimportediscoroutinefunctiononobj orcallableobj.__call__, notfuture returnvalues.",
+      "source_path": "starlette/_utils.py",
+      "lines": [
+        61,
+        65
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST14",
+      "proposition": "Predicateimportselectedbysyspythonversioncondition.",
+      "source_path": "starlette/_utils.py",
+      "lines": [
+        16,
+        22
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST15",
+      "proposition": "add_taskconstructsBackgroundTaskandappendsit; selectedmethoddoesnotdirectlycalltaskbodyorscheduleparallelwork.",
+      "source_path": "starlette/background.py",
+      "lines": [
+        30,
+        32
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST16",
+      "proposition": "Collectioncallawaitseachreachedtaskinsequencethroughforloop.",
+      "source_path": "starlette/background.py",
+      "lines": [
+        34,
+        36
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST17",
+      "proposition": "_nexttranslatescaughtStopIterationtoown_StopIteration.",
+      "source_path": "starlette/concurrency.py",
+      "lines": [
+        37,
+        48
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "ST18",
+      "proposition": "Asynciteratorwrapperbreaksontranslatedexhaustionclassandhasnofinallycleanupblock.",
+      "source_path": "starlette/concurrency.py",
+      "lines": [
+        51,
+        59
+      ],
+      "verdict": "SUPPORTED"
+    }
+  ],
+  "pair_notes": {
+    "debug-handler-precedence": {
+      "source_atom_ids": [
+        "ST05",
+        "ST06"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Explicittruthinessandnormalhelpercompletionpreserved; customhandlernotselectedbythatdebugpath, notallpossibleindirectcallbacksdenied."
+    },
+    "original-exception-rethrow": {
+      "source_atom_ids": [
+        "ST01",
+        "ST08",
+        "ST09"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Qualifiesoriginalraisebypriornormalcompletion, handler/responsefailuresmaypreempt; nonHTTPoutsidecatch. Constructorandunverifieddeployment/persistence/retry/authlimitschecked."
+    },
+    "response-start-not-delivery-proof": {
+      "source_atom_ids": [
+        "ST02",
+        "ST03",
+        "ST07"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Flagchangesbeforeawaitsend,sosourceflagnotacknowledgmentofdelivery. Noactualnetwork/ASGIrequest."
+    },
+    "async-callable-classifier-limit": {
+      "source_atom_ids": [
+        "ST13",
+        "ST14",
+        "ST17",
+        "ST18"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Predicatebindingandimplementationlimitsretained. Exhaustiontranslation/loopterminationnotuniversaliteratorcleanupguarantee."
+    },
+    "await-expression-versus-return-value": {
+      "source_atom_ids": [
+        "ST11",
+        "ST12"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "NormalfallthroughNone isPythonfunction/coroutine-returnlanguageinterpretation; callerawaitsdontforwardhelpervalue automatically. Importedhelperruntime/Starletteexecutionnotclaimed.",
+      "primary_language_reference": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions"
+    },
+    "task-registration-versus-execution": {
+      "source_atom_ids": [
+        "ST10",
+        "ST15",
+        "ST16"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Positivewrittenregistration/serial-awaitoperations, notanyglobalabsenceofeffectsfromarbitrarycallabledescriptors/importedpredicates. Response/process/queue schedulingnotestablished."
+    }
+  },
+  "all_actual_EN_PT_answers_read_in_full": true,
+  "source_context_review": "Selectedmiddleware__call__/constructor,taskclasses/concurrencyhelpers andactualis_async_callablebody/versionimportsread. No actualStarlette/AnyIOapplication/tests/runtimeexecuted.",
+  "source_only_pair_review_pass": true,
+  "full_universal_atomic_precision": null,
+  "reviewer": "Samecampaignagent staticpublicsource/languagerules, not independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "model_calls": 0,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-21T15:31:50.822526+00:00",
+  "observations": [
+    {
+      "observation": "limits",
+      "command": [
+        "/usr/local/bin/docker",
+        "inspect",
+        "--format",
+        "{{json .HostConfig.Memory}} {{json .HostConfig.MemorySwap}} {{json .HostConfig.NanoCpus}} {{json .RestartCount}}",
+        "engineering-library-ollama-1"
+      ],
+      "exit_code": 0,
+      "stdout": "0 0 0 0\n",
+      "stderr": ""
+    },
+    {
+      "observation": "usage",
+      "command": [
+        "/usr/local/bin/docker",
+        "stats",
+        "--no-stream",
+        "--format",
+        "{{.Name}} {{.MemUsage}} {{.MemPerc}} {{.CPUPerc}}",
+        "engineering-library-ollama-1",
+        "engineering-library-backend-1",
+        "engineering-library-frontend-1",
+        "engineering-library-postgres-1"
+      ],
+      "exit_code": 0,
+      "stdout": "engineering-library-ollama-1 3.352GiB / 7.75GiB 43.25% 401.33%\nengineering-library-backend-1 92.45MiB / 7.75GiB 1.16% 0.15%\nengineering-library-frontend-1 534.7MiB / 7.75GiB 6.74% 0.88%\nengineering-library-postgres-1 36.82MiB / 7.75GiB 0.46% 0.00%\n",
+      "stderr": ""
+    }
+  ],
+  "scope": "Read-only running resource snapshot; instantaneous usage is not measured peak or proof of native trainable-base feasibility. OOMKilled observed true in previous receipt, cause of individual requests not uniquely attributed.",
+  "unstarted_neural_conditions": "H/Zod already in-flight; J and V/R not started; reassess after terminal H state. No retry/restart/limit changes.",
+  "gold": 0,
+  "optimizer_updates": 0
+}

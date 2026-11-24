@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-21T18:23:18.967405+00:00",
+  "topic": "opencv-shape-contract",
+  "family": "opencv",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/opencv-shape-contract/en.candidate.txt",
+      "sha256": "788a8b894c8fa95d9275d2367a6fbf35a842fd5444ca50e6e5f9f33e9b950ffc",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/opencv-shape-contract/pt-br.candidate.txt",
+      "sha256": "776be7ed81b8b6ed7d01bea5be2145ac7dc6696819661eaafe63d6d8d9b31e40",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Channels appended and counters incremented before paired reverse walk; no separate equality-only channel rule.",
+    "Reject requires differing entries neither equal1; equal/unit pairs continue and later mismatches may reject.",
+    "Loop stops when either index negative; example[2,3]vs[3]channels4 leaves leading2unvisited under selectedinput assumptions.",
+    "Caller scalar-like fallback and first-operand preference show helperfalse is not universal immediate operation error; no fullbroadcast/arrayexecution/performance promise.",
+    "Actual original baseline describes trailing spatial walk and one-rule but omits appended channels/count/exhaustion; PT uses transmissão insteadtechnical broadcasting."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/opencv/5d0660acfed08650cafec4876b4792a369a20601/modules/core/src/arithm.cpp",
+      "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+      "source_path": "modules/core/src/arithm.cpp",
+      "source_lines": [
+        613,
+        623
+      ],
+      "exact_source_evidence": "static bool shapesBroadcastCompat(InputArray a, int acn, InputArray b, int bcn)\n{\n    int asz[MatShape::MAX_DIMS + 1], bsz[MatShape::MAX_DIMS + 1];\n    int ad = a.sizend(asz), bd = b.sizend(bsz);\n    asz[ad++] = acn;\n    bsz[bd++] = bcn;\n    for (int i1 = ad - 1, i2 = bd - 1; i1 >= 0 && i2 >= 0; i1--, i2--)\n        if (asz[i1] != bsz[i2] && asz[i1] != 1 && bsz[i2] != 1)\n            return false;\n    return true;\n}",
+      "reviewed_interpretation": "Complete trailing/channel helper.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/opencv/5d0660acfed08650cafec4876b4792a369a20601/modules/core/src/arithm.cpp",
+      "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+      "source_path": "modules/core/src/arithm.cpp",
+      "source_lines": [
+        665,
+        688
+      ],
+      "exact_source_evidence": "        s1 = s2 = false;    // two scalars: treat both as tiny array operands (element-wise + broadcast),\n                            // matching arithm_op (Scalar+Scalar -> 4x1, number+number -> 1x1, ...)\n    // A 4x1 CV_64F Mat/UMat pseudo-scalar (see isScalarArg) is hijacked only against a REAL array:\n    // when the partner is itself a tiny scalar-shaped array (e.g. compare(Mat 4x1, Mat 1x1) -\n    // issue #8999), both are honest data and ride the broadcast. A genuine MATX Scalar never demotes.\n    else if (s1 && src1.kind() != _InputArray::MATX && isScalarLikeMat(src2, cn1))\n        s1 = false;\n    else if (s2 && src2.kind() != _InputArray::MATX && isScalarLikeMat(src1, cn2))\n        s2 = false;\n\n    // Compat fallback: Java/Python/user code passes scalars as real little Mats (the classic 4x1\n    // CV_64F column, a 1xcn/cnx1 vector - see isScalarLikeMat). Those normally ride broadcasting\n    // now, so hijack one as a per-channel scalar ONLY when the shapes do NOT broadcast - just the\n    // calls that would otherwise throw get the 4.x scalar semantics, every valid broadcast keeps\n    // its numpy meaning. Cheap: two geometry probes, and the O(ndims) shape walk runs only when a\n    // probe hits (never for ordinary same-size or MATX-scalar calls).\n    if (!s1 && !s2)\n    {\n        bool like1 = isScalarLikeMat(src1, cn2), like2 = isScalarLikeMat(src2, cn1);\n        if ((like1 || like2) && !shapesBroadcastCompat(src1, cn1, src2, cn2))\n        {\n            s1 = like1;             // src1 preferred when both qualify, like the old checkScalar order\n            s2 = like2 && !like1;\n        }",
+      "reviewed_interpretation": "Scalar classification and fallback flags.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "opencv-shape-contract",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/opencv-shape-contract/raw-response.json",
+      "sha256": "73487513ccb7a0f03ef53fcdbb65d4b7bf21b8d46d94fb4e0449c58839011de2",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/opencv-shape-contract/origin.json",
+      "origin_sha256": "41a26f212850ed2f1afe3a36ef85f9d26d2e590213a1804278d0dccdc4428716"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

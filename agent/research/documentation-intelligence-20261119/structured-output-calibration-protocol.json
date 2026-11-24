@@ -1,0 +1,99 @@
+{
+  "frozen_at": "2026-11-20T02:59:06.919925+00:00",
+  "hypothesis": "Determine whether the observed all-false predicate collapse is a universal Boolean-format limitation, and whether explicitly grounding the schema in the prompt changes simple structured output.",
+  "basis": {
+    "observed": "All eight source-predicate responses set evidence_sufficient false even when prose noticed real changes.",
+    "primary_guidance": "https://docs.ollama.com/capabilities/structured-outputs",
+    "paraphrase": "The official guide suggests providing a schema through format and also including its string form in the prompt."
+  },
+  "runtime_version": "0.40.16",
+  "model": "llama3.2:3b",
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "same": {
+        "type": "boolean"
+      },
+      "different": {
+        "type": "boolean"
+      },
+      "flag": {
+        "type": "boolean"
+      },
+      "total": {
+        "type": "integer"
+      },
+      "marker": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "same",
+      "different",
+      "flag",
+      "total",
+      "marker"
+    ],
+    "additionalProperties": false
+  },
+  "prompt": "Read the supplied synthetic data and return ONLY the requested JSON object. same is whether left equals right; different is whether left differs from right; flag copies the input Boolean exactly; total adds the two integers; marker copies the exact input string. Do not add explanations, fields or external knowledge.",
+  "cases": [
+    {
+      "id": "balanced-positive",
+      "data": {
+        "left": 7,
+        "right": 7,
+        "flag": true,
+        "marker": "SYNTHETIC_ALPHA"
+      },
+      "expected": {
+        "same": true,
+        "different": false,
+        "flag": true,
+        "total": 14,
+        "marker": "SYNTHETIC_ALPHA"
+      }
+    },
+    {
+      "id": "balanced-negative",
+      "data": {
+        "left": 7,
+        "right": 9,
+        "flag": false,
+        "marker": "SYNTHETIC_BETA"
+      },
+      "expected": {
+        "same": false,
+        "different": true,
+        "flag": false,
+        "total": 16,
+        "marker": "SYNTHETIC_BETA"
+      }
+    }
+  ],
+  "arms": [
+    "schema-only",
+    "schema-and-prompt",
+    "json-and-prompt"
+  ],
+  "arm_order": "Forward for positive case, reverse for negative case.",
+  "max_calls": 6,
+  "retries": 0,
+  "timeout_seconds": 180,
+  "options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 256,
+    "num_thread": 4
+  },
+  "interpretation_limits": [
+    "A literal/arithmetic calibration is not source-comprehension or bilingual-document accuracy.",
+    "Passing a true-valued Boolean disproves a universal cannot-emit-true claim, not semantic reliability.",
+    "Any observed prompt effect is development diagnosis, not neural learning or independent holdout.",
+    "No production prompt, routing or model is changed."
+  ],
+  "training_gold": false,
+  "owner_approved": false
+}

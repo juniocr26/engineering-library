@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-20T12:53:32.757208+00:00",
+  "framework_repository": "ml-explore/mlx-lm",
+  "revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "units": [
+    {
+      "source_file": "mlx-lm--mlx_lm--lora.py",
+      "source_sha256": "341dce80747705c9363728823d3f117e96f821fc3b35d35db2f47b3151d3adc5",
+      "revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+      "selector": "train_model",
+      "first_line": 226,
+      "last_line": 319,
+      "whole_function_quote_sha256": "eefa2215d65506763c99aac645382f27cb03c533b66df2b54bf19bd4f141e87f",
+      "calls": [
+        {
+          "written_callee": "opt_class",
+          "line": 309,
+          "last_line": 309,
+          "quote": "    opt = opt_class(learning_rate=lr, **optimizer_config)\n",
+          "quote_sha256": "e822cecbc79b3a4de437d636c95bd41cab2e52ae93eae734db9826289a4545ba",
+          "args": [],
+          "keywords": [
+            {
+              "learning_rate": "lr"
+            },
+            {
+              "null": "optimizer_config"
+            }
+          ]
+        },
+        {
+          "written_callee": "train",
+          "line": 312,
+          "last_line": 319,
+          "quote": "    train(\n        model=model,\n        args=training_args,\n        optimizer=opt,\n        train_dataset=CacheDataset(train_set),\n        val_dataset=CacheDataset(valid_set),\n        training_callback=training_callback,\n    )\n",
+          "quote_sha256": "62cf046164c0aa10580c3ea7a8c614955eb9418e21252a5b556e69005b35ad47",
+          "args": [],
+          "keywords": [
+            {
+              "model": "model"
+            },
+            {
+              "args": "training_args"
+            },
+            {
+              "optimizer": "opt"
+            },
+            {
+              "train_dataset": "CacheDataset(train_set)"
+            },
+            {
+              "val_dataset": "CacheDataset(valid_set)"
+            },
+            {
+              "training_callback": "training_callback"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "mlx-lm--mlx_lm--tuner--trainer.py",
+      "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+      "selector": "train",
+      "first_line": 221,
+      "last_line": 380,
+      "whole_function_quote_sha256": "7e3082c746372475cdb9dd65ac5ac2d65f63f232a93cea86cffbb913a7631d6c",
+      "calls": [
+        {
+          "written_callee": "mx.save_safetensors",
+          "line": 380,
+          "last_line": 380,
+          "quote": "        mx.save_safetensors(str(args.adapter_file), adapter_weights)\n",
+          "quote_sha256": "88148d481587b6f1c67bdbbcf9521c48fd529a1433d438f30d91532dd74a080f",
+          "args": [
+            "str(args.adapter_file)",
+            "adapter_weights"
+          ],
+          "keywords": []
+        },
+        {
+          "written_callee": "mx.save_safetensors",
+          "line": 370,
+          "last_line": 370,
+          "quote": "                mx.save_safetensors(str(args.adapter_file), adapter_weights)\n",
+          "quote_sha256": "55cbd50decc6fbf3cfe207dbcd7165ba1af5254e9759d1807db2a35f2cbe3f98",
+          "args": [
+            "str(args.adapter_file)",
+            "adapter_weights"
+          ],
+          "keywords": []
+        },
+        {
+          "written_callee": "mx.save_safetensors",
+          "line": 374,
+          "last_line": 374,
+          "quote": "                mx.save_safetensors(str(checkpoint), adapter_weights)\n",
+          "quote_sha256": "13d2ae32a3f69b236ae5c2ff5a395c2e8322f869ff942676361034941e22a32e",
+          "args": [
+            "str(checkpoint)",
+            "adapter_weights"
+          ],
+          "keywords": []
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "resume-adapter-not-full-state",
+      "status": "STATIC_SOURCE_REVIEWED",
+      "finding": "train_model loads adapter weights when supplied and later constructs a new optimizer from configured learning rate. The reviewed default resume path does not load optimizer moments, data iteration position or RNG state from an adapter file.",
+      "limit": "No execution or comprehensive proof about custom callbacks/external orchestration. Do not call adapter-weight resume an exact continuation of optimizer training."
+    },
+    {
+      "id": "periodic-adapter-saves",
+      "status": "STATIC_SOURCE_REVIEWED",
+      "finding": "trainer train saves flattened trainable model parameters to adapter_file and a numbered adapter checkpoint on save intervals, then final adapter_file on completion.",
+      "limit": "Source writes do not establish atomic/fsynced crash durability. A future pilot needs independent immutable copies, hashes and restoration validation before readiness."
+    }
+  ],
+  "training_steps": 0,
+  "source_executed": false,
+  "gates_fully_satisfied": false,
+  "official_source_url": "https://github.com/ml-explore/mlx-lm/tree/2d4df8d94a80c0f9f8794e54fafee08728b04fc6"
+}

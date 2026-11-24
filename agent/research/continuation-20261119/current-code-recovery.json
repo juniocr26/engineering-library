@@ -1,0 +1,82 @@
+{
+  "at": "2026-11-19T17:04:48.132496+00:00",
+  "status": "VERIFIED_CURRENT_CODE_RESTORATION_WITH_RUNTIME_ENTRY_LIMITATION",
+  "source_cut": "2026-11-19T17:01:04.199697+00:00",
+  "caller": "1.9.40",
+  "project_workflow": "1.0.8",
+  "python_source_fact_profile": "python-async-dispatch-return-and-iteration-v4",
+  "snapshot_files": 1507,
+  "source_manifest": ".local-backups/continuation-20261119/independent-current-code-20261119T170104199697Z.json",
+  "all_source_hashes_and_modes_verified_before_checks": true,
+  "all_recorded_source_hashes_equal_after_checks_and_followup": true,
+  "knowledge_files": 201,
+  "checks": {
+    "Ruby": {
+      "tests": 262,
+      "assertions": 1787,
+      "failures": 0,
+      "errors": 0,
+      "scope": "Independent copied owner code/tests; existing backend bundled gems reused"
+    },
+    "Python": {
+      "tests": 46,
+      "failures": 0,
+      "scope": "Copied producer and controls, Linux Python3.11.2"
+    },
+    "packaged_Go": {
+      "tests": 34,
+      "failures": 0,
+      "scope": "Copied launcher and LinuxARM64 packaged binary/integrity controls"
+    },
+    "JavaScript_guard_explicit_loader": {
+      "tests": 37,
+      "pass": 37,
+      "fail": 0
+    },
+    "JavaScript_range_explicit_loader_first_attempt": {
+      "tests": 23,
+      "pass": 21,
+      "fail": 2,
+      "preserved_failure": true
+    },
+    "JavaScript_range_normal_entry_followup": {
+      "tests": 23,
+      "pass": 23,
+      "fail": 0,
+      "scope": "Same restored Node/TypeScript; compatible existing backend ELF loader/libraries"
+    }
+  },
+  "failure_explanation": "Direct archived-loader invocation makes process.execPath point to the loader. Two range tests spawn process.execPath with a JS file, causing invalid ELF header/exit127. Normal Node entry reports Node as execPath and passes all23. Source and tests were not changed to hide the failure.",
+  "node_entry_observations": {
+    "explicit_loader": {
+      "execPath": "/tmp/el-cont-js-runtime-restoration-v2/lib/ld-linux-aarch64.so.1",
+      "argv0": "/tmp/el-cont-js-runtime-restoration-v2/usr/local/bin/node",
+      "node": "v24.22.0"
+    },
+    "normal_entry": {
+      "execPath": "/tmp/el-cont-js-runtime-restoration-v2/usr/local/bin/node",
+      "argv0": "/tmp/el-cont-js-runtime-restoration-v2/usr/local/bin/node",
+      "node": "v24.22.0"
+    },
+    "recording": "Observed tool outputs from direct node -p invocations after failed range CLI controls; no process property override."
+  },
+  "model_requests_this_verification": 0,
+  "separate_model_restore": "independent-recovery.json records earlier actual restored-model OK. inference; approved deployment identity/weights unchanged since that cut, no duplicate current inference claimed",
+  "training_runs": 0,
+  "remote_recovery": false,
+  "new_containers": 0,
+  "dependencies_downloaded": false,
+  "original_store_moved_or_deleted": false,
+  "limits": [
+    "Existing LinuxARM64 container and bundled gems reused; not an OS image rebuild",
+    "Explicit archived-loader entry does not support arbitrary process.execPath subprocess applications",
+    "No native Windows/macOS/AMD64 execution claim",
+    "This precisely dated snapshot excludes later report/document additions; code versions and hashes are pinned"
+  ],
+  "artifacts": {
+    "snapshot_manifest_sha256": "7b9db03959dca8f14d769827d9e949a38037349de979fc8424d915683100813d",
+    "first_receipt_sha256": "6e925de6737259ff0ae1ee36750fb12ed658c0147a584f3cb1c8be461e4ed7d1",
+    "normal_entry_range_log_sha256": "9f9e079145b4864224b54b347d7e11132b0ed36456b941d5e291ee143cb080f5",
+    "after_followup_sha256": "cce3dbceb6ed6aa193f7360d8d0e2539b351e16974abad3e4af2f21b8a1f0aa4"
+  }
+}

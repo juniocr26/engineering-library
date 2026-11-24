@@ -1,0 +1,90 @@
+{
+  "status": "PARTIAL_REVIEW_THREE_COMPLETED_CASES",
+  "reviews": [
+    {
+      "id": "chi-timeout",
+      "queue_task": "FACT-003",
+      "status": "REJECTED_RETURN_ROLE_AND_PARTIAL_CONTRACT",
+      "critical": [
+        "Timeout returns a middleware factory func(next http.Handler) http.Handler; neural answer describes a returned handler directly",
+        "Gateway Timeout response described without deferred timing/ctx.Err guard or response-writer limitations"
+      ],
+      "correct": [
+        "Uses a timeout-derived context and time.Duration input",
+        "Wrapper eventually invokes supplied handler"
+      ],
+      "omitted": [
+        "cancel before ctx.Err check",
+        "comparison with context.DeadlineExceeded",
+        "r.WithContext(ctx) and synchronous next.ServeHTTP",
+        "no forced timeout termination demonstrated"
+      ],
+      "bilingual": "Equivalent high-level prose repeats omissions in both languages.",
+      "at": "2026-11-19T12:54:32.133707+00:00",
+      "writer_exit": 0,
+      "wall_seconds": 201.917905925,
+      "response_sha256": "9760e8caf86499e853c270a5ad78fbde2887ae265367f1853613fab726975548",
+      "reviewer": "Codex source review; not owner approval",
+      "publication": false,
+      "training_gold": false
+    },
+    {
+      "id": "chi-recoverer",
+      "queue_task": "FACT-020",
+      "status": "REJECTED_CRITICAL_FACTUAL_REGRESSION",
+      "critical": [
+        "Fact2 says deferred panic handling happens before next handler invocation; source registers defer then invokes next",
+        "Fact4 invents logEntry use for other pipeline events",
+        "Several facts invent a local panic variable; actual recovered variable is rvr",
+        "GetLogEntry retrieves an entry; logging call is logEntry.Panic, not established logging by getter"
+      ],
+      "correct": [
+        "ErrAbortHandler exceptional path re-panics original recovered value",
+        "Fallback PrintPrettyStack call when logEntry nil",
+        "Conditional500 status path and debug.Stack call identified at high level",
+        "Returned wrapper recognized"
+      ],
+      "omitted": [
+        "rvr nonnil condition and exact equality/Connection guard need precise roles"
+      ],
+      "bilingual": "Critical order error repeated in EN/PT; PT also contains degraded forms such as paniciar. All five facts reviewed, including repetitions.",
+      "at": "2026-11-19T12:54:32.134101+00:00",
+      "writer_exit": 0,
+      "wall_seconds": 793.825908945,
+      "response_sha256": "03b1fb739b87f49d1ba8aa7cc2c9e345700268fb2e4b5ff8d20f3fe81ecbb608",
+      "reviewer": "Codex source review; not owner approval",
+      "publication": false,
+      "training_gold": false
+    },
+    {
+      "id": "sqlx-bind-map",
+      "queue_task": "FACT-013",
+      "status": "INCONCLUSIVE_PARTIAL_CONTRACT",
+      "critical": [],
+      "correct": [
+        "Input roles list of names versus map values",
+        "Iteration follows provided names and appends corresponding values",
+        "Missing name yields an error; all present returns arglist,nil"
+      ],
+      "omitted": [
+        "Missing-key return includes accumulated arglist prefix",
+        "Existing key with nil value is not missing",
+        "Duplicate names append repeatedly",
+        "Empty input produces allocated empty slice,nil; no query/database activity"
+      ],
+      "bilingual": "High-level statements equivalent; omitted cases shared.",
+      "at": "2026-11-19T12:54:32.134112+00:00",
+      "writer_exit": 0,
+      "wall_seconds": 224.97100539400003,
+      "response_sha256": "cfc226f242d1649de90834e1b6c2c4e69df31e6ee2a8175e98996acdda277d7f",
+      "reviewer": "Codex source review; not owner approval",
+      "publication": false,
+      "training_gold": false
+    }
+  ],
+  "remaining": [
+    "sdk-retry-function",
+    "sdk-retry-with-constants"
+  ],
+  "full_source_criteria": "private-research://continuation-20261119/contract-wave1-protocol.json"
+}

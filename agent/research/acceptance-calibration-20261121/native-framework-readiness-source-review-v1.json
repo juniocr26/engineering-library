@@ -1,0 +1,246 @@
+{
+  "at": "2026-11-21T17:23:30.363456+00:00",
+  "source_revision": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "source_freezes": [
+    "native-framework-source-freeze-v1.json",
+    "native-framework-source-supplement-v2.json"
+  ],
+  "findings": [
+    {
+      "id": "native-base-loader",
+      "source_path": "mlx_lm/utils.py",
+      "source_sha256": "8671f8883cfb45b73530ac2279c2177a9b6466a8422881baae945d4c204b7db4",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/utils.py",
+      "source_lines": [
+        [
+          458,
+          469
+        ],
+        [
+          701,
+          714
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Selecteddefaultloaderreadsconfigandmodel*.safetensors,thenloads tokenizer. CurrentOllamaGGUFdigestdoesnotprovide this nativebase/tokenizer bundle orsame-basebaseline.",
+      "required_future_evidence_or_approval": "Requireseparatelyauthorizedexactbase/tokenizershard/config/templatehashesandnativebaseline; no weightdownloadnow."
+    },
+    {
+      "id": "masking-default-and-boundary",
+      "source_path": "mlx_lm/tuner/datasets.py",
+      "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py",
+      "source_lines": [
+        [
+          59,
+          79
+        ],
+        [
+          109,
+          129
+        ],
+        [
+          183,
+          200
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Maskpromptdefaultfalse. Chat/completionoffsetuseslengthofseparatetemplateprefix; source doesnotcompare actualprefixIDs. TextformatwithmaskpromptTrueisrefused.",
+      "required_future_evidence_or_approval": "Futureapprovedpairsneedrealnativechattemplate/tokenizerprefix/EOS/control-tokenverification; no plaintextshortcut or copiedOllamapromptcounts."
+    },
+    {
+      "id": "inclusive-mask-padding-boundary",
+      "source_path": "mlx_lm/tuner/trainer.py",
+      "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py",
+      "source_lines": [
+        [
+          88,
+          101
+        ],
+        [
+          150,
+          172
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Onecausalshiftusespositions1..batchwidth-1; maskend<=effective_length withpaddingto1+multipleof32includesfirstzero-paddingtargetforshortsequencesunderownedscalararithmetic. Fullcapcasedoesnot.",
+      "required_future_evidence_or_approval": "Nativeframework/tokenizerproofandapprovedremediationrequired; toy6casesnot Gate5pass. Preserveexactrevision/findings; no frameworkpatchorissueposting."
+    },
+    {
+      "id": "truncation-is-warning",
+      "source_path": "mlx_lm/tuner/trainer.py",
+      "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py",
+      "source_lines": [
+        [
+          150,
+          172
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Overlengthsourceiswarnedandtruncated, not rejected; preservedoriginalpromptoffsetcanexceedtruncatedlengthandproducezero selectedtargets.",
+      "required_future_evidence_or_approval": "Preflightmustrefusetruncatedcompletion/EOS/all-maskedexamples; avoidsilentlyclippingverifieddocumentation."
+    },
+    {
+      "id": "explicit-QV-selection",
+      "source_path": "mlx_lm/tuner/utils.py",
+      "source_sha256": "e1260940a0e974ed573ae59f348254b46628be8633347e10818f28b76d7809da",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/utils.py",
+      "source_lines": [
+        [
+          101,
+          126
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "OmittingkeyscollectsalladmissibleLinear/Quantized/Embedding/etcpaths. Layerselectionuses[-max(num_layers,0):], sozeroalsoselectsallinthissource. Asecondglobalnamedmodulepassalsoexists.",
+      "required_future_evidence_or_approval": "ExplicitapprovedQ/Vkeysandlayerindicesmustbeverifiedagainstactualmodelandcompletepostconversiontrainableparameterinventory; no num_layers0shortcut/default16."
+    },
+    {
+      "id": "rank-scale-semantics",
+      "source_path": "mlx_lm/tuner/lora.py",
+      "source_sha256": "b9bfcad99c2934cad484f73a21ec9b912756751531efd7aa4c0fa3fd4357f407",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/lora.py",
+      "source_lines": [
+        [
+          67,
+          98
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "RanksizecontrolsA/Bshapes; forwardmultiplieslowrankproductbyself.scale. Otherframeworkalpha/rconventionsarenotimplicitlyequivalent.",
+      "required_future_evidence_or_approval": "Rank4ceilingretained; scale/dropout/learningrate/precisetargetsremainunvalidatedandrequirepreflightselection, not defaultacceptance."
+    },
+    {
+      "id": "optimizer-step-count",
+      "source_path": "mlx_lm/tuner/trainer.py",
+      "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py",
+      "source_lines": [
+        [
+          241,
+          261
+        ],
+        [
+          274,
+          326
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Iterationrange1..itersinvokesoptimizerupdatewhenit%accumulation==0. Withaccumulation1andcompleted16iterations,16updatecallsareplanned. These are sourcecalls, not elapsedtimeassurance.",
+      "required_future_evidence_or_approval": "Enforce16maxupdatesand600optimizer/1800entirecyclesecondswithindependentmonotonicbudget; no suchfuturelaunchimplemented."
+    },
+    {
+      "id": "validation-order-and-cost",
+      "source_path": "mlx_lm/tuner/trainer.py",
+      "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py",
+      "source_lines": [
+        [
+          284,
+          326
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Withnonemptyvalidation,setevaluationoccursbeforestepatiteration1,periodic,andlastiteration. Foriters16,lastin-loopvalidationisbeforeupdate16,notfinaladapterevaluation.",
+      "required_future_evidence_or_approval": "Budgetbaseline,prestepvalidation,finalheld-tasksemanticcomparison,scoringandrecoveryseparately; steps_per_evalalonecannotdisableinitial/lastvalidation."
+    },
+    {
+      "id": "adapter-recovery-not-optimizer-replay",
+      "source_path": "mlx_lm/tuner/trainer.py",
+      "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py",
+      "source_lines": [
+        [
+          245,
+          245
+        ],
+        [
+          367,
+          380
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Compile-stateincludesmodel/optimizer/RNGinmemory,butselectedsaveblockswritetrainableadapterweights. Thisisnotserializedoptimizer/RNG/exactstepcontinuation.",
+      "required_future_evidence_or_approval": "Futurecheckpointmanifestmustseparateadapterinference-restorationfromexactoptimizerreplay; actualnativeadapterrestorestillunperformed."
+    },
+    {
+      "id": "resume-and-adapter-completeness",
+      "source_path": "mlx_lm/lora.py",
+      "source_sha256": "341dce80747705c9363728823d3f117e96f821fc3b35d35db2f47b3151d3adc5",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/lora.py",
+      "source_lines": [
+        [
+          257,
+          264
+        ],
+        [
+          270,
+          288
+        ],
+        [
+          291,
+          309
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Resumeadapterloadsweightsbeforecreatingfreshoptimizer. Configissavedseparately. Selectedadapterloaderchecksprovidednames/shapesandloadsstrictFalse; completenessisnotestablishedbypresenceofsomevalidweights.",
+      "required_future_evidence_or_approval": "Verifyexactexpectedadapterkeyset/shapes/baseidentity/confighashandrestoredfixedtaskoutputs; no actualadaptercreated."
+    },
+    {
+      "id": "wired-memory-helper",
+      "source_path": "mlx_lm/utils.py",
+      "source_sha256": "8671f8883cfb45b73530ac2279c2177a9b6466a8422881baae945d4c204b7db4",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/utils.py",
+      "source_lines": [
+        [
+          84,
+          93
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Helperreadshardwareworking-setrecommendationandcalls mx.set_wired_limit whenavailable; traincallshelperattrainer231.",
+      "required_future_evidence_or_approval": "Futurenativepreflightmustrecordandboundeffectivewired/peakmemoryunderownerhardwarebudget; not assumeDockerOOMfiguresornativeframeworkhelpervalidatefeasibility."
+    },
+    {
+      "id": "package-constraints-not-host-validation",
+      "source_path": "pyproject.toml",
+      "source_sha256": "47290fe3648245016e3b6a96aee6826a646508ed0e7c11feffedb22ad8d1e2b7",
+      "source_url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/pyproject.toml",
+      "source_lines": [
+        [
+          12,
+          28
+        ],
+        [
+          40,
+          47
+        ]
+      ],
+      "classification": "CONFIRMED_SELECTED_SOURCE_RELATION_OR_EXPLICIT_STATIC_INFERENCE_NOT_NATIVE_EXECUTION",
+      "observation": "Pinnedsource declaresPython>=3.11, Darwinmlx>=0.32.3andtransformers>=5.7.0. ListedPythonclassifiers3.11-3.13donotprove3.14incompatibilityorworkingwheelavailability.",
+      "required_future_evidence_or_approval": "Needseparatelyauthorizedactualenvironmentresolution/import/Metal/base/tokenizermeasurement; currentframeworksabsentandnoinstallperformed."
+    }
+  ],
+  "owned_arithmetic": "native-mask-arithmetic-results-v1.json",
+  "all_nine_fine_tuning_gates_remain": "NO_GO",
+  "not_a_selected_installed_or_approved_framework": true,
+  "not_model_compatibility_or_memory_benchmark": true,
+  "proposed_pilot_ceilings_unchanged": {
+    "optimizer_updates": 16,
+    "batch_size": 1,
+    "gradient_accumulation": 1,
+    "sequence_length": 512,
+    "lora_rank": 4,
+    "targets": "ExplicitQ/Vnamesandlayerspendingactualbaseverification",
+    "optimizer_seconds": 600,
+    "total_cycle_seconds": 1800
+  },
+  "no_training_launch_command_or_dataset_export": true,
+  "no_framework_import_install_or_execution": true,
+  "weights_downloads": 0,
+  "adapters_created": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

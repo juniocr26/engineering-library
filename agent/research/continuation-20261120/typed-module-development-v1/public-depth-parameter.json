@@ -1,0 +1,274 @@
+{
+  "id": "public-depth-parameter",
+  "original_reference_action": "MODIFY",
+  "typed_input_action": "MODIFY",
+  "matches_original_action": true,
+  "reason": "Compare the positively established written signature only; runtime call/annotation/default execution remains unverified.",
+  "new_input_information": "Operator explicitly maps natural-language claim to a typed written-source predicate. No claim of arbitrary prose entailment or independent post-fix holdout.",
+  "result": {
+    "version": "0.0.1-research",
+    "action": "MODIFY",
+    "source_executed": false,
+    "runtime_bindings_verified": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "publication_authorized": false,
+    "writes": 0,
+    "model_calls": 0,
+    "scope": "EXPLICIT_OPERATOR_MAPPED_WRITTEN_SOURCE_CLAIM_NOT_ARBITRARY_PROSE",
+    "automatic_candidate_applier_supported": false,
+    "evidence": {
+      "previous": {
+        "version": "0.0.2-research",
+        "status": "WRITTEN_CALLABLE_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "model_calls": 0,
+        "writes": 0,
+        "source_card": {
+          "path": "boltons/fileutils.py",
+          "revision": "992a58c1036fcf4d52cbf3313b6217b7c07b11d9",
+          "sha256": "6fc6db8a372b2548c0203cf505fe1fb098f15e600f4361ccbcdc8be8b6263887"
+        },
+        "selector": "iter_find_files",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "directory",
+            "patterns",
+            "ignored",
+            "include_dirs"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "directory": {
+              "kind": "required"
+            },
+            "patterns": {
+              "kind": "required"
+            },
+            "ignored": {
+              "kind": "literal",
+              "type": "NoneType",
+              "value": null
+            },
+            "include_dirs": {
+              "kind": "literal",
+              "type": "bool",
+              "value": false
+            }
+          },
+          "annotations": {
+            "directory": null,
+            "patterns": null,
+            "ignored": null,
+            "include_dirs": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "direct_return": {
+          "kind": "outside-direct-return-profile"
+        },
+        "returned_local_class": null,
+        "direct_nested_functions": {},
+        "direct_statement_calls": [],
+        "module_written_binding_names": [
+          "AtomicSaver",
+          "DWORD",
+          "DummyFile",
+          "Error",
+          "FULL_PERMS",
+          "FilePerms",
+          "LPVOID",
+          "RW_PERMS",
+          "_BIN_OPENFLAGS",
+          "_ReplaceFile",
+          "_SINGLE_FULL_PERM",
+          "_TEXT_OPENFLAGS",
+          "__all__",
+          "_atomic_rename",
+          "atomic_rename",
+          "atomic_save",
+          "c_wchar_p",
+          "copy2",
+          "copy_tree",
+          "copystat",
+          "copytree",
+          "ctypes",
+          "errno",
+          "fcntl",
+          "fnmatch",
+          "iter_find_files",
+          "mkdir_p",
+          "os",
+          "path_to_unicode",
+          "re",
+          "replace",
+          "set_cloexec",
+          "stat",
+          "sys"
+        ],
+        "evidence": {
+          "selector": "iter_find_files",
+          "declaration_kind": "function",
+          "first_line": 489,
+          "last_line": 542,
+          "quote": "def iter_find_files(directory, patterns, ignored=None, include_dirs=False):\n    \"\"\"Returns a generator that yields file paths under a *directory*,\n    matching *patterns* using `glob`_ syntax (e.g., ``*.txt``). Also\n    supports *ignored* patterns.\n\n    Args:\n        directory (str): Path that serves as the root of the\n            search. Yielded paths will include this as a prefix.\n        patterns (str or list): A single pattern or list of\n            glob-formatted patterns to find under *directory*.\n        ignored (str or list): A single pattern or list of\n            glob-formatted patterns to ignore.\n        include_dirs (bool): Whether to include directories that match\n           patterns, as well. Defaults to ``False``.\n\n    For example, finding Python files in the current directory:\n\n    >>> _CUR_DIR = os.path.dirname(os.path.abspath(__file__))\n    >>> filenames = sorted(iter_find_files(_CUR_DIR, '*.py'))\n    >>> os.path.basename(filenames[-1])\n    'urlutils.py'\n\n    Or, Python files while ignoring emacs lockfiles:\n\n    >>> filenames = iter_find_files(_CUR_DIR, '*.py', ignored='.#*')\n\n    .. _glob: https://en.wikipedia.org/wiki/Glob_%28programming%29\n\n    \"\"\"\n    if isinstance(patterns, str):\n        patterns = [patterns]\n    pats_re = re.compile('|'.join([fnmatch.translate(p) for p in patterns]))\n\n    if not ignored:\n        ignored = []\n    elif isinstance(ignored, str):\n        ignored = [ignored]\n    ign_re = re.compile('|'.join([fnmatch.translate(p) for p in ignored]))\n    for root, dirs, files in os.walk(directory):\n        if include_dirs:\n            for basename in dirs:\n                if pats_re.match(basename):\n                    if ignored and ign_re.match(basename):\n                        continue\n                    filename = os.path.join(root, basename)\n                    yield filename\n\n        for basename in files:\n            if pats_re.match(basename):\n                if ignored and ign_re.match(basename):\n                    continue\n                filename = os.path.join(root, basename)\n                yield filename\n    return\n",
+          "quote_sha256": "c3e0b7016d0102a470119a23ab173066b6b1d09583f8e453385ee5a6dc095ba2",
+          "quote_byte_start": 17629,
+          "quote_byte_end": 19731,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "limitations": [
+          "Written signature, return and local-class declarations only; imports/defaults/annotations are not executed.",
+          "Operator-supplied full source and revision, not authenticated origin or current filesystem proof.",
+          "No arbitrary prose entailment, runtime values, inherited methods or helper binding guarantee.",
+          "Missing declarations never authorize REMOVE. Whole-unit quotation bounds are preserved."
+        ]
+      },
+      "current": {
+        "version": "0.0.2-research",
+        "status": "WRITTEN_CALLABLE_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "model_calls": 0,
+        "writes": 0,
+        "source_card": {
+          "path": "boltons/fileutils.py",
+          "revision": "c23dbdadb6fecdf505eb4231559561913b84c13f",
+          "sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc"
+        },
+        "selector": "iter_find_files",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "directory",
+            "patterns",
+            "ignored",
+            "include_dirs",
+            "max_depth"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "directory": {
+              "kind": "required"
+            },
+            "patterns": {
+              "kind": "required"
+            },
+            "ignored": {
+              "kind": "literal",
+              "type": "NoneType",
+              "value": null
+            },
+            "include_dirs": {
+              "kind": "literal",
+              "type": "bool",
+              "value": false
+            },
+            "max_depth": {
+              "kind": "literal",
+              "type": "NoneType",
+              "value": null
+            }
+          },
+          "annotations": {
+            "directory": null,
+            "patterns": null,
+            "ignored": null,
+            "include_dirs": null,
+            "max_depth": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "direct_return": {
+          "kind": "outside-direct-return-profile"
+        },
+        "returned_local_class": null,
+        "direct_nested_functions": {},
+        "direct_statement_calls": [],
+        "module_written_binding_names": [
+          "AtomicSaver",
+          "DWORD",
+          "DummyFile",
+          "Error",
+          "FULL_PERMS",
+          "FilePerms",
+          "LPVOID",
+          "RW_PERMS",
+          "_BIN_OPENFLAGS",
+          "_ReplaceFile",
+          "_SINGLE_FULL_PERM",
+          "_TEXT_OPENFLAGS",
+          "__all__",
+          "_atomic_rename",
+          "atomic_rename",
+          "atomic_save",
+          "c_wchar_p",
+          "copy2",
+          "copy_tree",
+          "copystat",
+          "copytree",
+          "ctypes",
+          "errno",
+          "fcntl",
+          "fnmatch",
+          "iter_find_files",
+          "mkdir_p",
+          "os",
+          "path_to_unicode",
+          "re",
+          "replace",
+          "rotate_file",
+          "set_cloexec",
+          "stat",
+          "sys"
+        ],
+        "evidence": {
+          "selector": "iter_find_files",
+          "declaration_kind": "function",
+          "first_line": 492,
+          "last_line": 551,
+          "quote": "def iter_find_files(directory, patterns, ignored=None, include_dirs=False, max_depth=None):\n    \"\"\"Returns a generator that yields file paths under a *directory*,\n    matching *patterns* using `glob`_ syntax (e.g., ``*.txt``). Also\n    supports *ignored* patterns.\n\n    Args:\n        directory (str): Path that serves as the root of the\n            search. Yielded paths will include this as a prefix.\n        patterns (str or list): A single pattern or list of\n            glob-formatted patterns to find under *directory*.\n        ignored (str or list): A single pattern or list of\n            glob-formatted patterns to ignore.\n        include_dirs (bool): Whether to include directories that match\n           patterns, as well. Defaults to ``False``.\n        max_depth (int): traverse up to this level of subdirectory.\n           I.e., 0 for the specified *directory* only, 1 for *directory* \n           and one level of subdirectory.\n\n    For example, finding Python files in the current directory:\n\n    >>> _CUR_DIR = os.path.dirname(os.path.abspath(__file__))\n    >>> filenames = sorted(iter_find_files(_CUR_DIR, '*.py'))\n    >>> os.path.basename(filenames[-1])\n    'urlutils.py'\n\n    Or, Python files while ignoring emacs lockfiles:\n\n    >>> filenames = iter_find_files(_CUR_DIR, '*.py', ignored='.#*')\n\n    .. _glob: https://en.wikipedia.org/wiki/Glob_%28programming%29\n\n    \"\"\"\n    if isinstance(patterns, str):\n        patterns = [patterns]\n    pats_re = re.compile('|'.join([fnmatch.translate(p) for p in patterns]))\n\n    if not ignored:\n        ignored = []\n    elif isinstance(ignored, str):\n        ignored = [ignored]\n    ign_re = re.compile('|'.join([fnmatch.translate(p) for p in ignored]))\n    start_depth = len(directory.split(os.path.sep))\n    for root, dirs, files in os.walk(directory):\n        if max_depth is not None and (len(root.split(os.path.sep)) - start_depth) > max_depth:\n            continue\n        if include_dirs:\n            for basename in dirs:\n                if pats_re.match(basename):\n                    if ignored and ign_re.match(basename):\n                        continue\n                    filename = os.path.join(root, basename)\n                    yield filename\n\n        for basename in files:\n            if pats_re.match(basename):\n                if ignored and ign_re.match(basename):\n                    continue\n                filename = os.path.join(root, basename)\n                yield filename\n    return\n",
+          "quote_sha256": "61186c725dd52fe8443906b312c52c3eda144dd6b75f477b71100d21f7214ff9",
+          "quote_byte_start": 17784,
+          "quote_byte_end": 20254,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "limitations": [
+          "Written signature, return and local-class declarations only; imports/defaults/annotations are not executed.",
+          "Operator-supplied full source and revision, not authenticated origin or current filesystem proof.",
+          "No arbitrary prose entailment, runtime values, inherited methods or helper binding guarantee.",
+          "Missing declarations never authorize REMOVE. Whole-unit quotation bounds are preserved."
+        ]
+      }
+    },
+    "reason": "Compare the positively established written signature only; runtime call/annotation/default execution remains unverified."
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-21T09:41:39.487486+00:00",
+  "hypothesis": "H79",
+  "protocol": "prometheus-sample-accounting-context-protocol-v1.json",
+  "status": "SOURCE_SUPPORTED_FOR_SELECTED_INPUT_ACCOUNTING_PATHS",
+  "new_source_copies": 3,
+  "reused_engine_source": 1,
+  "exact_source_cards": 13,
+  "findings": [
+    {
+      "claim": "Feature-enabled execEvalStmt creates shared queryBudget and restores final total series/sample counts from it in a defer, including abort paths. Child runSubquery/step-invariant evaluators receive the same budget pointer.",
+      "cards": [
+        "S01",
+        "S04",
+        "S08"
+      ]
+    },
+    {
+      "claim": "Selected float consumption charges1; selected histogram consumption charges HPoint.size(). That method computes (histogram.Size()+8)/16, relative to float-point units rather than one unit per histogram object.",
+      "cards": [
+        "S03",
+        "S09",
+        "S10",
+        "S11"
+      ]
+    },
+    {
+      "claim": "consumeSamples accumulates with saturating addition and enforces positive maxSamplesRead with strict >. consumeMatrixSamples refuses nil budget or negative step.",
+      "cards": [
+        "S02"
+      ]
+    },
+    {
+      "claim": "For matrix materialized from subquery, caller passes readStep=-1, and outer result does not increment the selected underlying-read charge again. Child source consumption already entered shared budget.",
+      "cards": [
+        "S02",
+        "S05",
+        "S06",
+        "S07"
+      ]
+    },
+    {
+      "claim": "Budget-enabled evalSubquery sets consumer.Range=0 before per-step read merge; helper consumingStep then attributes child steps without requiring them to lie within an outer range window. This preserves selected child work in gaps, with fixed-at special case attributed once.",
+      "cards": [
+        "S05",
+        "S13"
+      ]
+    },
+    {
+      "claim": "Step-invariant child is evaluated once; selected samplesRead merge increments at outer step0, while total-sample statistics may repeat at each outer step. These counters are not interchangeable.",
+      "cards": [
+        "S08",
+        "S12"
+      ]
+    }
+  ],
+  "documentation_disposition": "Preserve engine-input-unit wording and selected child-work/reuse distinction. Avoid physical storage I/O, bytes transferred, each raw decoded point exactly once globally, result count or all-query-branches claims.",
+  "remaining_limits": [
+    "No actual query, iterator, histogram values or storage reads measured; no upstream tests executed.",
+    "Histogram.Size internals not expanded; only selected HPoint relative-size formula established.",
+    "Full evaluator branch correctness, overflow behavior across all stat merges and all nested special-function cases not exhaustively verified.",
+    "Code comments saying storage I/O do not override the actual selected evaluator counter semantics.",
+    "This completes a bounded D6 subtopic, not full acceptance of all three large documentation pages."
+  ],
+  "no_new_neural_complete_chapter_or_lifecycle_population": true,
+  "owner_approved": false,
+  "gold": false,
+  "training_eligible": false,
+  "production_or_external_changes": 0
+}

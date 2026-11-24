@@ -1,0 +1,62 @@
+{
+  "repository": "chi",
+  "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+  "syntax_only": true,
+  "source_executed": false,
+  "sources": [
+    {
+      "path": "middleware/timeout.go",
+      "source_sha256": "3e83d007ec300b4ea605d97a336351e562ecd84b32c2b26206791d11ce7501c0",
+      "unit": {
+        "selector": "Timeout",
+        "declaration_kind": "function",
+        "symbol": "middleware.Timeout",
+        "start_line": 32,
+        "end_line": 48,
+        "quote": "func Timeout(timeout time.Duration) func(next http.Handler) http.Handler {\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx, cancel := context.WithTimeout(r.Context(), timeout)\n\t\t\tdefer func() {\n\t\t\t\tcancel()\n\t\t\t\tif ctx.Err() == context.DeadlineExceeded {\n\t\t\t\t\tw.WriteHeader(http.StatusGatewayTimeout)\n\t\t\t\t}\n\t\t\t}()\n\n\t\t\tr = r.WithContext(ctx)\n\t\t\tnext.ServeHTTP(w, r)\n\t\t}\n\t\treturn http.HandlerFunc(fn)\n\t}\n}",
+        "declaration": "func Timeout(timeout time.Duration) func(next http.Handler) http.Handler",
+        "function_type": "func(timeout time.Duration) func(next http.Handler) http.Handler",
+        "factory": {
+          "callback_body_statements": 2,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(timeout time.Duration) func(next http.Handler) http.Handler",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(next http.Handler) http.Handler"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(next http.Handler) http.Handler"
+        }
+      },
+      "producer": {
+        "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+        "binary_sha256": "5769fe5e8d97dfc18ba861d4d88b9c87642ac6b9d757f91d5542f3e1f54e4124",
+        "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.4.0"
+      }
+    },
+    {
+      "path": "middleware/recoverer.go",
+      "source_sha256": "efc38c7b32bfb29ebbe16b199832d1eff13179a34a025c07b53c733c11a2154c",
+      "unit": {
+        "selector": "Recoverer",
+        "declaration_kind": "function",
+        "symbol": "middleware.Recoverer",
+        "start_line": 22,
+        "end_line": 49,
+        "quote": "func Recoverer(next http.Handler) http.Handler {\n\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\tdefer func() {\n\t\t\tif rvr := recover(); rvr != nil {\n\t\t\t\tif rvr == http.ErrAbortHandler {\n\t\t\t\t\t// we don't recover http.ErrAbortHandler so the response\n\t\t\t\t\t// to the client is aborted, this should not be logged\n\t\t\t\t\tpanic(rvr)\n\t\t\t\t}\n\n\t\t\t\tlogEntry := GetLogEntry(r)\n\t\t\t\tif logEntry != nil {\n\t\t\t\t\tlogEntry.Panic(rvr, debug.Stack())\n\t\t\t\t} else {\n\t\t\t\t\tPrintPrettyStack(rvr)\n\t\t\t\t}\n\n\t\t\t\tif r.Header.Get(\"Connection\") != \"Upgrade\" {\n\t\t\t\t\tw.WriteHeader(http.StatusInternalServerError)\n\t\t\t\t}\n\t\t\t}\n\t\t}()\n\n\t\tnext.ServeHTTP(w, r)\n\t}\n\n\treturn http.HandlerFunc(fn)\n}",
+        "declaration": "func Recoverer(next http.Handler) http.Handler",
+        "function_type": "func(next http.Handler) http.Handler"
+      },
+      "producer": {
+        "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+        "binary_sha256": "5769fe5e8d97dfc18ba861d4d88b9c87642ac6b9d757f91d5542f3e1f54e4124",
+        "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.4.0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": "continuity-global-rebind",
+  "cohort": "new-continuity-challenge-8",
+  "reference": "INCONCLUSIVE",
+  "reference_reason": "Function global declaration can rebind the claimed module provider; outside closed admission.",
+  "baseline_action": "REMOVE",
+  "v2_action": "INCONCLUSIVE",
+  "v3_action": "INCONCLUSIVE",
+  "v3_evidence": {
+    "runtime_semantics_admitted": false,
+    "source_only_citation_maintenance": true,
+    "independent_scope_flags_not_generator_booleans": true,
+    "matched_markers": [
+      {
+        "module": "impl",
+        "path": "impl.py",
+        "line": 1,
+        "name": "limit_value"
+      }
+    ],
+    "resolved_providers": [],
+    "refusal_reasons": [
+      "GLOBAL_OR_NONLOCAL_REBINDING"
+    ]
+  },
+  "v2_evidence": {
+    "root": "agent/research/acceptance-calibration-20261121/scope-acquisition-v3/continuity-global-rebind/current",
+    "independently_enumerated_files": [
+      {
+        "path": "api.py",
+        "kind": "file",
+        "bytes": 100,
+        "inode": 128981650,
+        "mtime_ns": 1795276586939494130,
+        "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+      },
+      {
+        "path": "impl.py",
+        "kind": "file",
+        "bytes": 141,
+        "inode": 128981651,
+        "mtime_ns": 1795276586939575297,
+        "sha256": "af034873086649e51f3bb727e08f3ab602fd7887ed7f83c02a1558d12706032b"
+      }
+    ],
+    "retirement_records": [
+      {
+        "path": "api.py",
+        "line": 1,
+        "reason": "Removed selected declaration in bounded owned snapshot"
+      }
+    ],
+    "refusal_reasons": [
+      "POTENTIAL_CONTINUING_BINDING:impl.py:6",
+      "POTENTIAL_CONTINUING_DECLARATION:impl.py:2"
+    ],
+    "closed_snapshot_remove_admissible": false,
+    "source_executed": false,
+    "not_generic_semantic_or_runtime_proof": true,
+    "generator_scope_flags_used_as_proof": false,
+    "binding_owner_observations": [
+      {
+        "path": "impl.py",
+        "line": 2,
+        "node_kind": "FunctionDef",
+        "binding_owner": "MODULE",
+        "potential_old_module_contract_binding": true
+      },
+      {
+        "path": "impl.py",
+        "line": 6,
+        "node_kind": "Name",
+        "binding_owner": "GLOBAL_DECLARED_IN_FUNCTION:mutate",
+        "potential_old_module_contract_binding": true
+      }
+    ],
+    "prototype": "V2_OWNER_QUALIFIED_FINITE_PROFILE",
+    "not_generic_python_binding_or_feature_semantics": true
+  },
+  "origin": "New frozen challenge; first actual baseline/V2 observation.",
+  "documents_modified": false,
+  "v4_action": "INCONCLUSIVE",
+  "v4_binding_census": {
+    "applied_to_v3_modify_only": true,
+    "checks": [],
+    "refusal_reasons": []
+  },
+  "v5_action": "INCONCLUSIVE",
+  "v5_profile": {
+    "checks": [],
+    "refusal_reasons": [],
+    "registry_escape_refusal_is_not_proof_of_mutation": true
+  }
+}

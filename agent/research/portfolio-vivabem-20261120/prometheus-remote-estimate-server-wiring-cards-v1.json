@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-21T09:38:38.702745+00:00",
+  "cards": [
+    {
+      "path": "cmd/prometheus/main.go",
+      "evidence_path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/cmd/prometheus/main.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "c965e55b64ab8102cc0e4642e5f07a05d1c1ffed4503efa1df53a92013ac4548",
+      "first_line": 945,
+      "last_line": 960,
+      "quote": "\n\tfeatures.Set(features.Prometheus, \"agent_mode\", agentMode)\n\tfeatures.Set(features.Prometheus, \"server_mode\", !agentMode)\n\tfeatures.Set(features.Prometheus, \"auto_reload_config\", cfg.enableAutoReload)\n\tfeatures.Enable(features.Prometheus, labels.ImplementationName)\n\ttemplate.RegisterFeatures(features.DefaultRegistry)\n\n\tvar (\n\t\tlocalStorage  = &readyStorage{stats: tsdb.NewDBStats()}\n\t\tscraper       = &readyScrapeManager{}\n\t\tremoteStorage = remote.NewStorage(logger.With(\"component\", \"remote\"), prometheus.DefaultRegisterer, localStorage.StartTime, localStoragePath, time.Duration(cfg.RemoteFlushDeadline), scraper, cfg.scrape.EnableTypeAndUnitLabels)\n\t\tfanoutStorage = storage.NewFanout(logger, localStorage, remoteStorage)\n\t)\n\n\tvar (\n\t\tctxWeb, cancelWeb = context.WithCancel(context.Background())\n",
+      "quote_sha256": "fce49e8bea6aaea9a4f356f37600edde20743d69a6835e6be2323b304a480980"
+    },
+    {
+      "path": "cmd/prometheus/main.go",
+      "evidence_path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/cmd/prometheus/main.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "c965e55b64ab8102cc0e4642e5f07a05d1c1ffed4503efa1df53a92013ac4548",
+      "first_line": 1073,
+      "last_line": 1084,
+      "quote": "\n\tcfg.web.Context = ctxWeb\n\tcfg.web.TSDBRetentionDuration = cfg.tsdb.RetentionDuration\n\tcfg.web.TSDBMaxBytes = cfg.tsdb.MaxBytes\n\tcfg.web.TSDBMaxPercentage = cfg.tsdb.MaxPercentage\n\tcfg.web.TSDBDir = localStoragePath\n\tcfg.web.LocalStorage = localStorage\n\tcfg.web.Storage = fanoutStorage\n\tcfg.web.ExemplarStorage = localStorage\n\tcfg.web.QueryEngine = queryEngine\n\tcfg.web.ScrapeManager = scrapeManager\n\tcfg.web.RuleManager = ruleManager\n",
+      "quote_sha256": "22eb24c10882e553582b94004a39878b3d9802ebaf7a8f9b9288559261909435"
+    }
+  ],
+  "reused_H76source_body": true
+}

@@ -1,0 +1,121 @@
+{
+  "at": "2026-11-20T15:06:03.046931+00:00",
+  "status": "REJECTED_FACTUAL_AND_BILINGUAL_CHAPTER",
+  "protocol_sha256": "44fd2d91a0d1d072e042b0be57d215978165bb9718ada0fa962338beb8e1de21",
+  "response_sha256": "133002a95727189ee89bc40a61197685eda0935b13360c34ab413e3ef52ec68f",
+  "transport_completed": true,
+  "truncated": false,
+  "model_seconds": 825.092440835,
+  "generated_tokens": 1330,
+  "prompt_tokens": 4961,
+  "schema_and_unique_languages_valid": true,
+  "accepted_complete_bilingual_chapter_pairs": 0,
+  "requested_complete_bilingual_chapter_pairs": 1,
+  "rubric": [
+    {
+      "criterion": "complete-two-language-structure",
+      "status": "PASS",
+      "finding": "Two unique languages, valid bounded JSON and requested headings/table/twoFAQ structures are present. Structural completeness does not imply factual acceptance."
+    },
+    {
+      "criterion": "old-current-export-change",
+      "status": "FAIL",
+      "finding": "Neither chapter explains the earlier default list export versus current named totalist export, despite T8-T10 and explicit task instructions."
+    },
+    {
+      "criterion": "source-versus-package-artifacts",
+      "status": "FAIL",
+      "finding": "Generated distribution targets, export-map/package-source distinction and unauthenticated artifact status are omitted. Source ID T1 is not included in the model source list."
+    },
+    {
+      "criterion": "async-sync-return-contract",
+      "status": "FAIL",
+      "finding": "Inputs/Outputs describes a promise return without a synchronous-mode exception; it omits the supplied Promise<void>/void declaration distinction. The default async example calls totalist without await and immediately logs."
+    },
+    {
+      "criterion": "callback-branch-and-unknowns",
+      "status": "PARTIAL",
+      "finding": "The generic traversal purpose is present; explicit directory-versus-callback branching and symlink/cycle/order/concurrency limits are not established. No positive cycle/order guarantee is attributed to the model."
+    },
+    {
+      "criterion": "node-requirements-disagreement",
+      "status": "PARTIAL",
+      "finding": "The table copies README async>=8.x and sync>=6.x, but omits the manifest>=6 disagreement and source-versus-tested compatibility distinction."
+    },
+    {
+      "criterion": "bilingual-identifier-and-meaning",
+      "status": "FAIL",
+      "finding": "The example changes local identifier styles to estilos, contrary to the exact-identifier instruction. Portuguese changes traversal to permissao in outputs/limitations, altering the meaning."
+    },
+    {
+      "criterion": "examples-and-commands",
+      "status": "FAIL",
+      "finding": "npm run tsc is absent from the pinned package scripts. A copied README output comment is reproduced as example output despite no execution, and the async import is used without await before logging. Both snippets parse, which does not verify these semantics."
+    },
+    {
+      "criterion": "faq-relevance-and-citations",
+      "status": "PARTIAL",
+      "finding": "The two generic FAQ answers do address their purpose/architecture questions. They omit revision-specific changes and have no question-specific evidence attribution; a flat source-ID list is not claim alignment."
+    },
+    {
+      "criterion": "unsupported-factual-assertions",
+      "status": "FAIL",
+      "finding": "Both chapters reverse promisify into promises-to-callbacks, contrary to the observed Node utility behavior and official API. Relying on fs to handle errors internally is unsupported by the selected no-catch source. No owner/training/deployment approval was invented."
+    }
+  ],
+  "rubric_counts": {
+    "PASS": 1,
+    "FAIL": 6,
+    "PARTIAL": 3
+  },
+  "generated_snippet_static_syntax": [
+    {
+      "language": "en",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "snippet_sha256": "2a536222c022182b8d999871c1f43e83c9644d88c5b182bc400ab1c4e642bf77",
+      "executed": false
+    },
+    {
+      "language": "pt-br",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "snippet_sha256": "9c217cb77c2292e65888fa1d5c8a60a686ecbc1e7beba7f770ef7163f7d1b113",
+      "executed": false
+    }
+  ],
+  "owned_node_utility_observation": {
+    "node": "v24.22.0",
+    "inputStyle": "owned error-first callback",
+    "returnsPromise": true,
+    "observedValue": 7,
+    "ownedCallbackCalled": true,
+    "totalistImported": false,
+    "filesystemAccessed": false
+  },
+  "owned_node_observation_script_sha256": "8ee90899d812fae998112721b91a039eb07847b56ef5b9ef8eaba12644f6d791",
+  "official_api_reference": "https://nodejs.org/download/release/v22.8.0/docs/api/util.html#utilpromisifyoriginal",
+  "official_api_interpretation": "Callback-style function to Promise-returning function, not the inverse; this stable API direction was also observed in the existing Node24 runtime using owned code only.",
+  "deterministic_comparator": {
+    "ledger": "totalist-chapter-ledger-v2.json",
+    "physical_code_checks": 47,
+    "supplemental_receipt": "totalist-chapter-supplemental-verification-v2.json",
+    "verified_scope": "Source-reviewed fixed chapter with explicit limits, not automatic full-prose semantic certification or general benchmark accuracy.",
+    "comparison_limit": "Same preserved source files; deterministic candidate authored/reviewed by Codex, is longer and has six FAQs versus two. No equal authoring-effort claim, independent human grading or causal neural improvement estimate."
+  },
+  "source_family": "lukeed/totalist",
+  "development_exposed": true,
+  "certified_neural_holdout": false,
+  "totalist_source_imported_or_executed": false,
+  "generated_example_executed": false,
+  "model_command_executed": false,
+  "new_neural_model_calls_during_review": 0,
+  "automatic_retry": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "evaluation_only": true,
+  "manual_review_author": "Codex; no independent human certification"
+}

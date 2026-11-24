@@ -1,0 +1,104 @@
+{
+  "at": "2026-11-22T09:02:05.853144+00:00",
+  "protocol_sha256": "31011f65d2eab8af77c920efd723a19453bc212c17cb3423359e82f3da5ea6ce",
+  "verifier_sha256": "df73fd160b7a6288166f60c516f93d9ed01e13a3f555134250b7db7fad51e63a",
+  "cases": [
+    {
+      "id": "intact-positive",
+      "expected_refusal": null,
+      "actual_refusal": null,
+      "result": {
+        "commit": "48476de6e4450294b7769ab7af90805100bb21b5",
+        "path": "backend/internal/infrastructure/imaging/limits.go",
+        "blob_oid": "3dd52cb03eb1cbc00d20e98ac9339be3efea51e5",
+        "blob_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+        "path_steps": [
+          {
+            "tree_oid": "378b06e288675d6647e44734e78cd59c67fe03ca",
+            "name": "backend",
+            "mode": "40000",
+            "entry_oid": "51b6d8543f997b0bb64ad75aa0ddf8f3e6dadc47"
+          },
+          {
+            "tree_oid": "51b6d8543f997b0bb64ad75aa0ddf8f3e6dadc47",
+            "name": "internal",
+            "mode": "40000",
+            "entry_oid": "1de6c722b315f965ee86ff8f99c99b1b4418aa5a"
+          },
+          {
+            "tree_oid": "1de6c722b315f965ee86ff8f99c99b1b4418aa5a",
+            "name": "infrastructure",
+            "mode": "40000",
+            "entry_oid": "cb7b2d400a9d75b023862b5d6128dcd536edb9f0"
+          },
+          {
+            "tree_oid": "cb7b2d400a9d75b023862b5d6128dcd536edb9f0",
+            "name": "imaging",
+            "mode": "40000",
+            "entry_oid": "43af69bb20e10560c65207086c3f6738f9e83b64"
+          },
+          {
+            "tree_oid": "43af69bb20e10560c65207086c3f6738f9e83b64",
+            "name": "limits.go",
+            "mode": "100644",
+            "entry_oid": "3dd52cb03eb1cbc00d20e98ac9339be3efea51e5"
+          }
+        ],
+        "verdict": "POSITIVE_SOURCE_MEMBERSHIP_ONLY",
+        "global_scope_complete": false,
+        "REMOVE_allowed": false
+      },
+      "matched": true
+    },
+    {
+      "id": "corrupted-blob",
+      "expected_refusal": "OBJECT_HASH_MISMATCH",
+      "actual_refusal": "OBJECT_HASH_MISMATCH",
+      "result": null,
+      "matched": true
+    },
+    {
+      "id": "missing-root-tree",
+      "expected_refusal": "MISSING_OBJECT",
+      "actual_refusal": "MISSING_OBJECT",
+      "result": null,
+      "matched": true
+    },
+    {
+      "id": "missing-blob",
+      "expected_refusal": "MISSING_OBJECT",
+      "actual_refusal": "MISSING_OBJECT",
+      "result": null,
+      "matched": true
+    },
+    {
+      "id": "wrong-path",
+      "expected_refusal": "PATH_NOT_MEMBER",
+      "actual_refusal": "PATH_NOT_MEMBER",
+      "result": null,
+      "matched": true
+    },
+    {
+      "id": "wrong-source-SHA256",
+      "expected_refusal": "EXPECTED_SOURCE_HASH_MISMATCH",
+      "actual_refusal": "EXPECTED_SOURCE_HASH_MISMATCH",
+      "result": null,
+      "matched": true
+    },
+    {
+      "id": "parent-path",
+      "expected_refusal": "UNSAFE_SELECTED_PATH",
+      "actual_refusal": "UNSAFE_SELECTED_PATH",
+      "result": null,
+      "matched": true
+    }
+  ],
+  "matched_controls": 7,
+  "intact_positive_membership_proofs": 1,
+  "negative_perturbations_refused": 6,
+  "git_commands_run_by_verifier": 0,
+  "target_source_execution": false,
+  "model_calls": 0,
+  "production_changes": 0,
+  "global_scope_or_REMOVE_approval_inferred": false
+}

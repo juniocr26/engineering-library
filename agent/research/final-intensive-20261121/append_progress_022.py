@@ -1,0 +1,17 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Final intensive progress 022 — bilingual screening boundaries
+
+The frozen development-only bilingual guard study contains eleven owned controls derived from three previously source-reviewed propositions, not eleven new atomic facts or independent model tasks. Three intact pairs remained SCREEN_CLEAR; four selected negation/condition/identifier mutations flagged; two wrong action/subject pairs remained SCREEN_CLEAR; one of two valid paraphrases flagged. This confirms a useful warning boundary and both semantic blindness and literal false refusal. SCREEN_CLEAR is never G2/G6/G8 PASS. No production integration or permanent tests were changed. Exact protocol, observations and interpretation are retained in `bilingual-guard-study-protocol-v1.json`, `bilingual-guard-study-results-v1.json` and `bilingual-guard-semantic-boundary-review-v1.json` under the current research directory.
+
+The updated population audit v2 records13 related bilingual chapter-version pairs:12 technical acceptances and1 original SQLX citation gap, plus the helper maintenance pair separately. These are manual descriptive counts, not neural acceptance rates. Checkpoint019 restored2671 files with hashes/modes, replayed20 finite consumer groups, and reconstructed all four root reports exactly from its archived prefix and receipt-sidecar procedure. Its closure predates this bilingual study and the latest requirement audit.
+
+Go Shellwords immutable source fetches remained unavailable. A kr/text alternative preflight also failed exact raw-code acquisition and was not frozen or certified independent; existing module cache paths were absent. No formatting reconstruction or weakened source identity was used to manufacture acceptance. The approximately12-hour campaign remains active, with zero new local model calls, optimizer updates, owner Gold or publication approvals.
+'''
+j=p/'root-report-bundle-progress-022';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v22.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

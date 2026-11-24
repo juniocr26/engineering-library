@@ -1,0 +1,104 @@
+{
+  "at": "2026-11-22T01:13:14.130571+00:00",
+  "source_path": "ollama/models/blobs/sha256-dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+  "source_digest_previously_stream_verified": "dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff",
+  "source_current_size": 2019377376,
+  "current_full_weight_rehash": false,
+  "gguf_version": 3,
+  "tensor_count_declared_not_read": 255,
+  "metadata_count": 30,
+  "metadata_prefix_bytes": 7822528,
+  "metadata_prefix_sha256": "954c7ee3cbd32c488945bd94bc2599da14233c6e4df0367c1c10e0994565e9e8",
+  "metadata": {
+    "general.architecture": "llama",
+    "general.type": "model",
+    "general.name": "Llama 3.2 3B Instruct",
+    "general.finetune": "Instruct",
+    "general.basename": "Llama-3.2",
+    "general.size_label": "3B",
+    "general.tags": {
+      "array_count": 6,
+      "normalized_json_sha256": "b0b0200731b8e7da15d4c4c73a8907f1414041bcb9fbed0fee82d2c0c4ea3c0e",
+      "full_array_exported": false
+    },
+    "general.languages": {
+      "array_count": 8,
+      "normalized_json_sha256": "713a02e6e8d331011f1eac29794b95ea753e8ef4a00ec88a2e8c7592541d91a7",
+      "full_array_exported": false
+    },
+    "llama.block_count": 28,
+    "llama.context_length": 131072,
+    "llama.embedding_length": 3072,
+    "llama.feed_forward_length": 8192,
+    "llama.attention.head_count": 24,
+    "llama.attention.head_count_kv": 8,
+    "llama.rope.freq_base": 500000.0,
+    "llama.attention.layer_norm_rms_epsilon": 9.999999747378752e-06,
+    "llama.attention.key_length": 128,
+    "llama.attention.value_length": 128,
+    "general.file_type": 15,
+    "llama.vocab_size": 128256,
+    "llama.rope.dimension_count": 128,
+    "tokenizer.ggml.model": "gpt2",
+    "tokenizer.ggml.pre": "llama-bpe",
+    "tokenizer.ggml.tokens": {
+      "array_count": 128256,
+      "normalized_json_sha256": "0f3cab236f171e01df820c63ad1ec87c92d2b8ef32f918617db43a94c6374e87",
+      "full_array_exported": false
+    },
+    "tokenizer.ggml.token_type": {
+      "array_count": 128256,
+      "normalized_json_sha256": "d70a88809fd7da6f1f028622685cd64268a7a922c5d343c96f25b66327358978",
+      "full_array_exported": false
+    },
+    "tokenizer.ggml.merges": {
+      "array_count": 280147,
+      "normalized_json_sha256": "7e044c6780c3b2034a38f6bce8e7b2b2e8378132358d26d056200f00c22258f6",
+      "full_array_exported": false
+    },
+    "tokenizer.ggml.bos_token_id": 128000,
+    "tokenizer.ggml.eos_token_id": 128009,
+    "tokenizer.chat_template": "{{- bos_token }}\n{%- if custom_tools is defined %}\n    {%- set tools = custom_tools %}\n{%- endif %}\n{%- if not tools_in_user_message is defined %}\n    {%- set tools_in_user_message = true %}\n{%- endif %}\n{%- if not date_string is defined %}\n    {%- if strftime_now is defined %}\n        {%- set date_string = strftime_now(\"%d %b %Y\") %}\n    {%- else %}\n        {%- set date_string = \"26 Jul 2024\" %}\n    {%- endif %}\n{%- endif %}\n{%- if not tools is defined %}\n    {%- set tools = none %}\n{%- endif %}\n\n{#- This block extracts the system message, so we can slot it into the right place. #}\n{%- if messages[0]['role'] == 'system' %}\n    {%- set system_message = messages[0]['content']|trim %}\n    {%- set messages = messages[1:] %}\n{%- else %}\n    {%- set system_message = \"\" %}\n{%- endif %}\n\n{#- System message #}\n{{- \"<|start_header_id|>system<|end_header_id|>\\n\\n\" }}\n{%- if tools is not none %}\n    {{- \"Environment: ipython\\n\" }}\n{%- endif %}\n{{- \"Cutting Knowledge Date: December 2023\\n\" }}\n{{- \"Today Date: \" + date_string + \"\\n\\n\" }}\n{%- if tools is not none and not tools_in_user_message %}\n    {{- \"You have access to the following functions. To call a function, please respond with JSON for a function call.\" }}\n    {{- 'Respond in the format {\"name\": function name, \"parameters\": dictionary of argument name and its value}.' }}\n    {{- \"Do not use variables.\\n\\n\" }}\n    {%- for t in tools %}\n        {{- t | tojson(indent=4) }}\n        {{- \"\\n\\n\" }}\n    {%- endfor %}\n{%- endif %}\n{{- system_message }}\n{{- \"<|eot_id|>\" }}\n\n{#- Custom tools are passed in a user message with some extra guidance #}\n{%- if tools_in_user_message and not tools is none %}\n    {#- Extract the first user message so we can plug it in here #}\n    {%- if messages | length != 0 %}\n        {%- set first_user_message = messages[0]['content']|trim %}\n        {%- set messages = messages[1:] %}\n    {%- else %}\n        {{- raise_exception(\"Cannot put tools in the first user message when there's no first user message!\") }}\n{%- endif %}\n    {{- '<|start_header_id|>user<|end_header_id|>\\n\\n' -}}\n    {{- \"Given the following functions, please respond with a JSON for a function call \" }}\n    {{- \"with its proper arguments that best answers the given prompt.\\n\\n\" }}\n    {{- 'Respond in the format {\"name\": function name, \"parameters\": dictionary of argument name and its value}.' }}\n    {{- \"Do not use variables.\\n\\n\" }}\n    {%- for t in tools %}\n        {{- t | tojson(indent=4) }}\n        {{- \"\\n\\n\" }}\n    {%- endfor %}\n    {{- first_user_message + \"<|eot_id|>\"}}\n{%- endif %}\n\n{%- for message in messages %}\n    {%- if not (message.role == 'ipython' or message.role == 'tool' or 'tool_calls' in message) %}\n        {{- '<|start_header_id|>' + message['role'] + '<|end_header_id|>\\n\\n'+ message['content'] | trim + '<|eot_id|>' }}\n    {%- elif 'tool_calls' in message %}\n        {%- if not message.tool_calls|length == 1 %}\n            {{- raise_exception(\"This model only supports single tool-calls at once!\") }}\n        {%- endif %}\n        {%- set tool_call = message.tool_calls[0].function %}\n        {{- '<|start_header_id|>assistant<|end_header_id|>\\n\\n' -}}\n        {{- '{\"name\": \"' + tool_call.name + '\", ' }}\n        {{- '\"parameters\": ' }}\n        {{- tool_call.arguments | tojson }}\n        {{- \"}\" }}\n        {{- \"<|eot_id|>\" }}\n    {%- elif message.role == \"tool\" or message.role == \"ipython\" %}\n        {{- \"<|start_header_id|>ipython<|end_header_id|>\\n\\n\" }}\n        {%- if message.content is mapping or message.content is iterable %}\n            {{- message.content | tojson }}\n        {%- else %}\n            {{- message.content }}\n        {%- endif %}\n        {{- \"<|eot_id|>\" }}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|start_header_id|>assistant<|end_header_id|>\\n\\n' }}\n{%- endif %}\n",
+    "general.quantization_version": 2
+  },
+  "special_token_text": {
+    "tokenizer.ggml.bos_token_id": {
+      "id": 128000,
+      "vocabulary_text": "<|begin_of_text|>"
+    },
+    "tokenizer.ggml.eos_token_id": {
+      "id": 128009,
+      "vocabulary_text": "<|eot_id|>"
+    }
+  },
+  "selected_marker_ids": {
+    "<|begin_of_text|>": [
+      128000
+    ],
+    "<|end_of_text|>": [
+      128001
+    ],
+    "<|start_header_id|>": [
+      128006
+    ],
+    "<|end_header_id|>": [
+      128007
+    ],
+    "<|eot_id|>": [
+      128009
+    ],
+    "<|eom_id|>": [
+      128008
+    ],
+    "<|finetune_right_pad_id|>": [
+      128004
+    ],
+    "<|python_tag|>": [
+      128010
+    ]
+  },
+  "scope": "Static metadata correspondence only; no tokenizer execution, tensor read, chat rendering, token budget measurement or served runtime identity. GGUF vocab metadata does not establish trainable base/tokenizer parity.",
+  "new_model_calls": 0,
+  "optimizer_updates": 0,
+  "weights_modified": false
+}

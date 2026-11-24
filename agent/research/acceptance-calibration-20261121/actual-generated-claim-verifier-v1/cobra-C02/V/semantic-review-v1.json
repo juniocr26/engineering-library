@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-21T17:41:43.343564+00:00",
+  "case": "cobra-C02",
+  "method": "V",
+  "frozen_reference": {
+    "id": "cobra-C02",
+    "task": "cobra",
+    "fact_id": "C02",
+    "original_pair": {
+      "en": "OnlyValidArgs performs membership checks when the Command has subcommands and there are arguments provided.",
+      "pt-BR": "A função OnlyValidArgs realiza verificações de pertencimento quando o Command tem subcomandos e há argumentos fornecidos."
+    },
+    "expected_verdict": "CONTRADICTED",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/cobra/L/semantic-review-v2.json",
+    "source_review_sha256": "a800c8fe570a6a88a120b8a60330cfe9d7e1a95d0d06848ce0b683ff6902513a",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e",
+    "source_role": "implementation",
+    "evidence": "The OnlyValidArgs function checks if the length of cmd.ValidArgs is greater than 0, but it does not perform membership checks when the Command has subcommands and there are arguments provided.",
+    "reason": "The source code for OnlyValidArgs does not explicitly state that it performs membership checks when the Command has subcommands and there are arguments provided. The legacyArgs function has a comment that states \"root commands with subcommands will do subcommand validity checking\", but it does not explicitly state that it performs membership checks on the arguments."
+  },
+  "content_sha256": "b08e304c8bdb2f0cf819dadfefcbd60e2c381fe83bacb699a26539f534ddd6fc",
+  "primary_raw_label_agreement": false,
+  "rationale_support_for_requested_claim": "INSUFFICIENT",
+  "source_relationship_review": "FindsactualValidArgs-lengthguardbutabstainsratherthanrecognizingwrongclaimguard borrowedfromlegacyArgs. Somequotedsourceparaphrasecorrect; reasondoesnotestablishitsIclassificationofconcretefalselyqualifiedguard. No sourceprovenrationaleadmission. Captureswrongsourceassociationmechanismwithoutrewritingtheclaim.",
+  "end_to_end_label_and_rationale_supported": false,
+  "admission_effect": "INSUFFICIENTstillblocksacceptanceofnegativeclaim; labeltaxonomyerrorseparatefromfalseSUPPORTED. SupportedF01isutilityfailure.",
+  "grading_basis": "semantic-verifier-rationale-review-rubric-v1.json; no rawlabel/referencechanges",
+  "reviewer": "Samecampaignagent, exposedsource, not independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,482 @@
+{
+  "at": "2026-11-20T15:20:58.934103+00:00",
+  "exit_code": 0,
+  "wall_seconds": 0.22431395799503662,
+  "platform": "Linux-6.12.76-linuxkit-aarch64-with-glibc2.36",
+  "python": "3.11.2 (main, Oct  7 2026, 12:35:07) [GCC 12.2.0]",
+  "source_revision": "c23dbdadb6fecdf505eb4231559561913b84c13f",
+  "source_sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc",
+  "quote_sha256": "61186c725dd52fe8443906b312c52c3eda144dd6b75f477b71100d21f7214ff9",
+  "owned_root": "/tmp/el-find-depth-confined-20261120-linux-v1",
+  "correct": 7,
+  "n": 7,
+  "rows": [
+    {
+      "id": "unbounded-yields-all",
+      "matches": true,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt"
+      ],
+      "observed_yields_in_native_order": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt"
+      ],
+      "walk_events": [
+        {
+          "root": "tree",
+          "dirs_before_consumer": [
+            "deep"
+          ],
+          "files": [
+            "root.txt",
+            "root.skip"
+          ],
+          "dirs_after_consumer": [
+            "deep"
+          ]
+        },
+        {
+          "root": "tree/deep",
+          "dirs_before_consumer": [
+            "nested"
+          ],
+          "files": [
+            "deep.txt"
+          ],
+          "dirs_after_consumer": [
+            "nested"
+          ]
+        },
+        {
+          "root": "tree/deep/nested",
+          "dirs_before_consumer": [],
+          "files": [
+            "leaf.txt"
+          ],
+          "dirs_after_consumer": []
+        }
+      ],
+      "all_three_roots_visited": true,
+      "native_dirs_not_pruned_by_consumer": true,
+      "owned_file_hashes_before": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "owned_file_hashes_after": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "public_function_executed": true,
+      "whole_module_imported": false,
+      "source_file_modified": false
+    },
+    {
+      "id": "depth0-yields-root-only",
+      "matches": true,
+      "expected_yields": [
+        "tree/root.txt"
+      ],
+      "observed_yields_in_native_order": [
+        "tree/root.txt"
+      ],
+      "walk_events": [
+        {
+          "root": "tree",
+          "dirs_before_consumer": [
+            "deep"
+          ],
+          "files": [
+            "root.txt",
+            "root.skip"
+          ],
+          "dirs_after_consumer": [
+            "deep"
+          ]
+        },
+        {
+          "root": "tree/deep",
+          "dirs_before_consumer": [
+            "nested"
+          ],
+          "files": [
+            "deep.txt"
+          ],
+          "dirs_after_consumer": [
+            "nested"
+          ]
+        },
+        {
+          "root": "tree/deep/nested",
+          "dirs_before_consumer": [],
+          "files": [
+            "leaf.txt"
+          ],
+          "dirs_after_consumer": []
+        }
+      ],
+      "all_three_roots_visited": true,
+      "native_dirs_not_pruned_by_consumer": true,
+      "owned_file_hashes_before": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "owned_file_hashes_after": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "public_function_executed": true,
+      "whole_module_imported": false,
+      "source_file_modified": false
+    },
+    {
+      "id": "depth1-yields-two-levels",
+      "matches": true,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt"
+      ],
+      "observed_yields_in_native_order": [
+        "tree/root.txt",
+        "tree/deep/deep.txt"
+      ],
+      "walk_events": [
+        {
+          "root": "tree",
+          "dirs_before_consumer": [
+            "deep"
+          ],
+          "files": [
+            "root.txt",
+            "root.skip"
+          ],
+          "dirs_after_consumer": [
+            "deep"
+          ]
+        },
+        {
+          "root": "tree/deep",
+          "dirs_before_consumer": [
+            "nested"
+          ],
+          "files": [
+            "deep.txt"
+          ],
+          "dirs_after_consumer": [
+            "nested"
+          ]
+        },
+        {
+          "root": "tree/deep/nested",
+          "dirs_before_consumer": [],
+          "files": [
+            "leaf.txt"
+          ],
+          "dirs_after_consumer": []
+        }
+      ],
+      "all_three_roots_visited": true,
+      "native_dirs_not_pruned_by_consumer": true,
+      "owned_file_hashes_before": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "owned_file_hashes_after": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "public_function_executed": true,
+      "whole_module_imported": false,
+      "source_file_modified": false
+    },
+    {
+      "id": "depth2-yields-all",
+      "matches": true,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt"
+      ],
+      "observed_yields_in_native_order": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt"
+      ],
+      "walk_events": [
+        {
+          "root": "tree",
+          "dirs_before_consumer": [
+            "deep"
+          ],
+          "files": [
+            "root.txt",
+            "root.skip"
+          ],
+          "dirs_after_consumer": [
+            "deep"
+          ]
+        },
+        {
+          "root": "tree/deep",
+          "dirs_before_consumer": [
+            "nested"
+          ],
+          "files": [
+            "deep.txt"
+          ],
+          "dirs_after_consumer": [
+            "nested"
+          ]
+        },
+        {
+          "root": "tree/deep/nested",
+          "dirs_before_consumer": [],
+          "files": [
+            "leaf.txt"
+          ],
+          "dirs_after_consumer": []
+        }
+      ],
+      "all_three_roots_visited": true,
+      "native_dirs_not_pruned_by_consumer": true,
+      "owned_file_hashes_before": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "owned_file_hashes_after": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "public_function_executed": true,
+      "whole_module_imported": false,
+      "source_file_modified": false
+    },
+    {
+      "id": "negative-depth-yields-none",
+      "matches": true,
+      "expected_yields": [],
+      "observed_yields_in_native_order": [],
+      "walk_events": [
+        {
+          "root": "tree",
+          "dirs_before_consumer": [
+            "deep"
+          ],
+          "files": [
+            "root.txt",
+            "root.skip"
+          ],
+          "dirs_after_consumer": [
+            "deep"
+          ]
+        },
+        {
+          "root": "tree/deep",
+          "dirs_before_consumer": [
+            "nested"
+          ],
+          "files": [
+            "deep.txt"
+          ],
+          "dirs_after_consumer": [
+            "nested"
+          ]
+        },
+        {
+          "root": "tree/deep/nested",
+          "dirs_before_consumer": [],
+          "files": [
+            "leaf.txt"
+          ],
+          "dirs_after_consumer": []
+        }
+      ],
+      "all_three_roots_visited": true,
+      "native_dirs_not_pruned_by_consumer": true,
+      "owned_file_hashes_before": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "owned_file_hashes_after": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "public_function_executed": true,
+      "whole_module_imported": false,
+      "source_file_modified": false
+    },
+    {
+      "id": "ignored-directory-name-does-not-prune",
+      "matches": true,
+      "expected_yields": [
+        "tree/root.txt",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt",
+        "tree/root.skip",
+        "tree/deep/nested"
+      ],
+      "observed_yields_in_native_order": [
+        "tree/root.txt",
+        "tree/root.skip",
+        "tree/deep/nested",
+        "tree/deep/deep.txt",
+        "tree/deep/nested/leaf.txt"
+      ],
+      "walk_events": [
+        {
+          "root": "tree",
+          "dirs_before_consumer": [
+            "deep"
+          ],
+          "files": [
+            "root.txt",
+            "root.skip"
+          ],
+          "dirs_after_consumer": [
+            "deep"
+          ]
+        },
+        {
+          "root": "tree/deep",
+          "dirs_before_consumer": [
+            "nested"
+          ],
+          "files": [
+            "deep.txt"
+          ],
+          "dirs_after_consumer": [
+            "nested"
+          ]
+        },
+        {
+          "root": "tree/deep/nested",
+          "dirs_before_consumer": [],
+          "files": [
+            "leaf.txt"
+          ],
+          "dirs_after_consumer": []
+        }
+      ],
+      "all_three_roots_visited": true,
+      "native_dirs_not_pruned_by_consumer": true,
+      "owned_file_hashes_before": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "owned_file_hashes_after": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "public_function_executed": true,
+      "whole_module_imported": false,
+      "source_file_modified": false
+    },
+    {
+      "id": "depth0-can-yield-child-directory",
+      "matches": true,
+      "expected_yields": [
+        "tree/deep",
+        "tree/root.txt",
+        "tree/root.skip"
+      ],
+      "observed_yields_in_native_order": [
+        "tree/deep",
+        "tree/root.txt",
+        "tree/root.skip"
+      ],
+      "walk_events": [
+        {
+          "root": "tree",
+          "dirs_before_consumer": [
+            "deep"
+          ],
+          "files": [
+            "root.txt",
+            "root.skip"
+          ],
+          "dirs_after_consumer": [
+            "deep"
+          ]
+        },
+        {
+          "root": "tree/deep",
+          "dirs_before_consumer": [
+            "nested"
+          ],
+          "files": [
+            "deep.txt"
+          ],
+          "dirs_after_consumer": [
+            "nested"
+          ]
+        },
+        {
+          "root": "tree/deep/nested",
+          "dirs_before_consumer": [],
+          "files": [
+            "leaf.txt"
+          ],
+          "dirs_after_consumer": []
+        }
+      ],
+      "all_three_roots_visited": true,
+      "native_dirs_not_pruned_by_consumer": true,
+      "owned_file_hashes_before": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "owned_file_hashes_after": {
+        "tree/root.txt": "2afe337852395fb29060f01c2dc96333c2d41ba647aa82332137b05976c8aa8b",
+        "tree/root.skip": "3127a91ee681a6b4d9e526e9204845927d153f6a548cf05692f26d0a421f6c38",
+        "tree/deep/deep.txt": "e5afa567a5b17054d83c8958a7fc5626bb3039079d46c467f242657ddf418314",
+        "tree/deep/nested/leaf.txt": "d26385459d498ba65b5c229bf76c2a120a1d060695970675980ffa2c9d3e2e9f"
+      },
+      "public_function_executed": true,
+      "whole_module_imported": false,
+      "source_file_modified": false
+    }
+  ],
+  "selected_public_generator_executed": true,
+  "whole_public_module_imported": false,
+  "only_owned_temporary_tree_traversed": true,
+  "source_or_user_files_written": false,
+  "model_calls": 0,
+  "neural_training": false,
+  "windows_verified": false,
+  "limits": [
+    "Historical25.0.0 cut, not current/latest-release behavior.",
+    "Fully consumed generator on one tiny controlled tree; no race, permission, symlink, arbitrary-path or performance guarantee.",
+    "Same cases may be repeated on actual Linux; that adds environment evidence, not independent test cases.",
+    "No upstream patch or active documentation publication."
+  ],
+  "existing_cases_repeated_on_second_os": 7,
+  "new_distinct_cases": 0
+}

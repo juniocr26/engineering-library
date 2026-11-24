@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-20T12:59:13.317673+00:00",
+  "hypothesis": "Class-member observer reports a current on-disk hash but does not bind it to the code loaded at initialization; a changed producer can be mislabeled as the producer of old loaded logic.",
+  "controlled_observation": "Patch read_bytes only for the producer path to simulate changed disk bytes after module load; do not alter preserved source artifacts. Old observer should incorrectly report positive facts with changed producer hash; corrected observer should refuse.",
+  "source": "class Cache:\n    SIZE=4\n",
+  "selector": "Cache.SIZE",
+  "expected_correct_status": "INCONCLUSIVE",
+  "scope": "Owned trusted-process drift control, no source-family independence claim."
+}

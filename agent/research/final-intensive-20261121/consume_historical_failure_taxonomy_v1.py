@@ -1,0 +1,21 @@
+import argparse,json,hashlib,collections
+from pathlib import Path
+ap=argparse.ArgumentParser();ap.add_argument('--root',required=True,type=Path);ROOT=ap.parse_args().root.resolve();P=ROOT/'agent/research/final-intensive-20261121';sha=lambda b:hashlib.sha256(b).hexdigest();pre=json.loads((P/'neural-failure-taxonomy-row-preflight-v1.json').read_bytes());binding=json.loads((P/'historical-diagnostic-row-binding-results-v1.json').read_bytes());taxonomy=json.loads((P/'historical-neural-failure-taxonomy-v2.json').read_bytes());assert sha((P/'neural-failure-taxonomy-row-preflight-v1.json').read_bytes())==binding['preflight_sha256']==taxonomy['preflight_sha256'];assert sha((P/'historical-diagnostic-row-binding-results-v1.json').read_bytes())==taxonomy['raw_binding_receipt_sha256']
+quality_path=ROOT/'agent/research/acceptance-calibration-20261121/dataset-quality-audit-v1.json';assert sha(quality_path.read_bytes())==pre['baseline_metadata_sha256'];metadata={(r['file'],r['line']):r for r in json.loads(quality_path.read_bytes())['records_metadata']}
+for e in json.loads((P/'remaining-chapters-recovery-dependencies-v44.json').read_bytes())['dependencies']:assert sha((ROOT/e['path']).read_bytes())==e['sha256']
+counts=collections.Counter();actions=collections.Counter();cal=0;dates=[]
+for e in pre['allowed_rows']:
+ m=metadata[(e['file'],e['line'])];assert m['private_excluded'] is False and m['raw_record_sha256']==e['row_sha256'];raw=(ROOT/e['file']).read_bytes().splitlines()[e['line']-1];assert sha(raw)==e['row_sha256'];r=json.loads(raw);assert r['source_family']=='source-repository:codex-owned-synthetic-contracts' and all(r[k] is False for k in ['owner_approved','training_gold','training_use_approved','automatic_trainer_consumer','automatic_inference_consumer'])
+ refs={k:v for k,v in r.items() if isinstance(v,dict) and 'path' in v and 'sha256' in v}
+ for ref in refs.values():assert sha((ROOT/ref['path']).read_bytes())==ref['sha256']
+ response=json.loads((ROOT/r['response_ref']['path']).read_bytes());content=response['message']['content'];parsed=json.loads(content);assert response['done_reason']=='stop' and response['eval_count']==r['generated_tokens'];dates.append(response['created_at'])
+ if 'observed_model_content' in r:assert content==r['observed_model_content']
+ else:assert parsed==r['observed_model_output'] or (isinstance(parsed,dict) and parsed.get('claims')==r['observed_model_output'])
+ if e['id'].startswith('diagnostic:lifecycle-baseline:'):counts[r['source_review']['status']]+=1;actions[r['observed_model_output']['action']]+=1
+ if e['id'].startswith('calibration:'):
+  request=json.loads((ROOT/r['request_ref']['path']).read_bytes());data,_=json.JSONDecoder().raw_decode(request['messages'][-1]['content'].split('INPUT DATA:\n',1)[1]);expected={'same':data['left']==data['right'],'different':data['left']!=data['right'],'flag':data['flag'],'total':data['left']+data['right'],'marker':data['marker']};cal+=parsed==expected
+assert len(pre['allowed_rows'])==56 and sum(counts.values())==24 and dict(counts)==taxonomy['subset_accounting']['inline_status_population_24'] and actions=={'MODIFY':24} and cal==taxonomy['literal_calibration_exact_matches']==3
+assert len(taxonomy['mechanisms'])==14 and len(taxonomy['causal_stages'])==8 and taxonomy['subset_accounting']['other_schema_without_inline_source_review_status']==32 and taxonomy['subset_accounting']['all56are_rejected_failed_model_outputs'] is False
+assert min(dates)==taxonomy['historical_API_reported_response_timestamp_range']['earliest'] and max(dates)==taxonomy['historical_API_reported_response_timestamp_range']['latest']
+sections=json.loads((P/'request-section-coverage-prefinal-v2.json').read_bytes());assert len(sections['request_sections'])==22 and len(sections['section22_research_success_criteria_exact'])==10 and sections['campaign_complete'] is False
+print(json.dumps({'status':'PASS_56_NONPRIVATE_HISTORICAL_DIAGNOSTIC_AND_TAXONOMY_RECOVERY','rows_bound_to_rawresponses':56,'all_raw_JSON_parsed_and_done_reason_stop':True,'inline_review_status_population':24,'other_schema_rows':32,'mechanisms':14,'causal_stages':8,'literal_toy_calibration_matches':3,'literal_toy_calibration_cases':6,'not_full_chapter_acceptance_or_general_failure_rate':True,'private_rows_decoded':0,'current_model_calls':0,'new_training_or_Gold_approval':False}))

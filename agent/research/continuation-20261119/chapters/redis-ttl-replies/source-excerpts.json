@@ -1,0 +1,14 @@
+{
+  "repository": "redis",
+  "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+  "path": "src/expire.c",
+  "source_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+  "source_program_executed": false,
+  "excerpts": [
+    {
+      "first_line": 882,
+      "last_line": 924,
+      "quote": "void ttlGenericCommand(client *c, int output_ms, int output_abs) {\n    long long expire, ttl = -1;\n\n    /* If the key does not exist at all, return -2 */\n    kvobj *kv = lookupKeyReadWithFlags(c->db,c->argv[1],LOOKUP_NOTOUCH);\n    if (kv == NULL) {\n        addReplyLongLong(c,-2);\n        return;\n    }\n\n    /* The key exists. Return -1 if it has no expire, or the actual\n     * TTL value otherwise. */\n    expire = kvobjGetExpire(kv);\n    if (expire != -1) {\n        ttl = output_abs ? expire : expire-commandTimeSnapshot();\n        if (ttl < 0) ttl = 0;\n    }\n    if (ttl == -1) {\n        addReplyLongLong(c,-1);\n    } else {\n        addReplyLongLong(c,output_ms ? ttl : ((ttl+500)/1000));\n    }\n}\n\n/* TTL key */\nvoid ttlCommand(client *c) {\n    ttlGenericCommand(c, 0, 0);\n}\n\n/* PTTL key */\nvoid pttlCommand(client *c) {\n    ttlGenericCommand(c, 1, 0);\n}\n\n/* EXPIRETIME key */\nvoid expiretimeCommand(client *c) {\n    ttlGenericCommand(c, 0, 1);\n}\n\n/* PEXPIRETIME key */\nvoid pexpiretimeCommand(client *c) {\n    ttlGenericCommand(c, 1, 1);\n}\n"
+    }
+  ]
+}

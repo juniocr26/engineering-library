@@ -1,0 +1,202 @@
+# Evidence record: python-entry-import-proof-evaluation.json
+
+This is a dated raw research artifact. Findings and rejected model outputs retain their recorded status. Reading the record does not approve publication or training.
+
+SHA-256: `e2de873c95a737dfb38ab86b35ffff5f5b88a99d3deb0978c5217f52a6a77c60`. Original bytes: `7942`.
+
+Original path: `agent/research/documentation-intelligence-20261119/python-entry-import-proof-evaluation.json`.
+
+<!-- reading-section:reference:e2de873c95a737dfb38a:consumers -->
+## Referenced by
+
+- [Documentation agent: source, identity and ownership contracts](../chapters/documentation-agent-contracts.md)
+
+<!-- reading-section:reference:e2de873c95a737dfb38a:artifact -->
+## Original artifact
+
+The fenced contents reproduce the exact UTF-8 artifact; a display-only terminal newline is added if the original lacks one.
+
+<!-- artifact-body:e2de873c95a737dfb38ab86b35ffff5f5b88a99d3deb0978c5217f52a6a77c60:start -->
+````json
+{
+  "at": "2026-11-20T04:42:43.780278+00:00",
+  "status": "PASSED_CLOSED_PROFILE_DEVELOPMENT_EVALUATION",
+  "observer_version": "0.1.1",
+  "observer_sha256": "a3602c38a2941c057aad7ba6ebd74f1c203e194f25217cb0fb93e7145d73eeb2",
+  "cases": 14,
+  "reference_matches": 14,
+  "closed_integer_results": 8,
+  "safe_inconclusive_results": 6,
+  "cross_file_cases_newly_resolved_against_root_only_profile": [
+    "one-helper",
+    "helper-only-change",
+    "helper-format-only",
+    "three-module-alias",
+    "private-helper",
+    "entry-imported-alias"
+  ],
+  "key_checks": {
+    "helper_only_root_bytes_unchanged": true,
+    "helper_only_evidence_key_changed": true,
+    "helper_only_contract_key_changed": true,
+    "format_only_evidence_key_changed": true,
+    "format_only_contract_key_preserved": true
+  },
+  "original_source_files_unchanged": 23,
+  "rows": [
+    {
+      "id": "direct",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": 2,
+      "baseline_status": "OBSERVED_ROOT_ONLY",
+      "source_files": 1,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/direct/result.json",
+      "result_sha256": "7f549a908f00b600308f6c5342de50166b58a1d6d4a4895c67d91c936ce07bd6"
+    },
+    {
+      "id": "one-helper",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": 2,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 2,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/one-helper/result.json",
+      "result_sha256": "c35cea8d30beab4a14daf96942872ac492bac82ce840b138f7a30688b8ace601"
+    },
+    {
+      "id": "helper-only-change",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": 9,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 2,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/helper-only-change/result.json",
+      "result_sha256": "4c451e601f126ed9f0c809070b7eeb627c8eddf6d733a68536cf10bbb61153f2"
+    },
+    {
+      "id": "helper-format-only",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": 2,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 2,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/helper-format-only/result.json",
+      "result_sha256": "869c73edce18a49dcd5bac387fa7dddc3d64be37f06b54038aee7e2e0c080d15"
+    },
+    {
+      "id": "three-module-alias",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": -7,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 3,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/three-module-alias/result.json",
+      "result_sha256": "2df3a11d43d59e7b6246402880772d401e9b56cd48bd7b4f51d376928b0b16b1"
+    },
+    {
+      "id": "missing-helper",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "value": null,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 1,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/missing-helper/result.json",
+      "result_sha256": "2ad8522e6f761e1219d279030919e82f1801b119d02b3b7aacb7bef9511eedc3"
+    },
+    {
+      "id": "duplicate-binding",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "value": null,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 2,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/duplicate-binding/result.json",
+      "result_sha256": "14414b076f7acaadac561958068393be864ceb017a9e84ff57f9b9de4b866a54"
+    },
+    {
+      "id": "module-cycle",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "value": null,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 2,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/module-cycle/result.json",
+      "result_sha256": "dbee0af656745913b19aa386aab53ce4fabff80c6f93d595abae83fcffe50141"
+    },
+    {
+      "id": "dynamic-guard",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "value": null,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 1,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/dynamic-guard/result.json",
+      "result_sha256": "037181526f0d57517e3709d179b4985430845a2b63c69637726113c34b82eb94"
+    },
+    {
+      "id": "external-dependency",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "value": null,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 1,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/external-dependency/result.json",
+      "result_sha256": "01f3878faf2419a4674bc80a8a106645e9c46cc7fec38ed73078722259701b5d"
+    },
+    {
+      "id": "source-instruction-data",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": 2,
+      "baseline_status": "OBSERVED_ROOT_ONLY",
+      "source_files": 1,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/source-instruction-data/result.json",
+      "result_sha256": "1404004b16fb6c22947c2f722c3d5e9bd1ab8b8685c1652609bbe4d02c621a11"
+    },
+    {
+      "id": "top-level-effect",
+      "expected": "INCONCLUSIVE",
+      "actual": "INCONCLUSIVE",
+      "value": null,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 1,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/top-level-effect/result.json",
+      "result_sha256": "01f3878faf2419a4674bc80a8a106645e9c46cc7fec38ed73078722259701b5d"
+    },
+    {
+      "id": "private-helper",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": 11,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 2,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/private-helper/result.json",
+      "result_sha256": "3bb207d99823436b2301dcbc20a05221ea35cab415368e82f75de38f816cbc96"
+    },
+    {
+      "id": "entry-imported-alias",
+      "expected": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "actual": "STATIC_INTEGER_RETURN_UNDER_CLOSED_PROFILE",
+      "value": 7,
+      "baseline_status": "INCONCLUSIVE",
+      "source_files": 2,
+      "result_path": ".local-backups/documentation-intelligence-20261119/python-closed-dependencies-v3/entry-imported-alias/result.json",
+      "result_sha256": "dcea4a42745e60937bc1c2bbce852ddd2cb4854bb871ed118c52228d4c0dbbb7"
+    }
+  ],
+  "source_executed": false,
+  "runtime_bindings_verified": false,
+  "model_calls": 0,
+  "training_runs": 0,
+  "owner_approved": false,
+  "limits": [
+    "All examples are synthetic development controls from one coarse owned-source family, not independent holdout.",
+    "Root-only baseline and optional cross-file profile have different declared input completeness; this is not a controlled model-quality comparison.",
+    "No ordinary caller, documentation publication or lifecycle removal is changed.",
+    "An integer fact contract_key is not a source identity or authorization token.",
+    "The observer rejects general packages and real adapters with arguments, classes, side effects or dynamic behavior."
+  ]
+}
+````
+<!-- artifact-body:e2de873c95a737dfb38ab86b35ffff5f5b88a99d3deb0978c5217f52a6a77c60:end -->

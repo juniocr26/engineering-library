@@ -1,0 +1,588 @@
+{
+  "at": "2026-11-20T14:51:41.735061+00:00",
+  "framework_revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "source_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+  "source_ast_checks": {
+    "loss_steps": {
+      "verified": true,
+      "expressions": [
+        "mx.arange(1, targets.shape[1] + 1)"
+      ]
+    },
+    "loss_mask": {
+      "verified": true,
+      "expressions": [
+        "mx.logical_and(steps >= lengths[:, 0:1], steps <= lengths[:, 1:])"
+      ]
+    },
+    "original_lengths": {
+      "verified": true,
+      "expressions": [
+        "[len(x) for x in batch]"
+      ]
+    },
+    "padded_width": {
+      "verified": true,
+      "expressions": [
+        "1 + pad_to * ((max(lengths) + pad_to - 1) // pad_to)",
+        "min(max_length_in_batch, max_seq_length)"
+      ]
+    },
+    "truncated_length": {
+      "verified": true,
+      "expressions": [
+        "min(lengths[j], max_seq_length)"
+      ]
+    },
+    "reported_length": {
+      "verified": true,
+      "expressions": [
+        "truncated_length"
+      ]
+    },
+    "validation_before_step": {
+      "verified": true,
+      "validation_statement_index": 1,
+      "step_statement_index": 2,
+      "update_condition": "it % grad_accum_steps == 0"
+    }
+  },
+  "token_cases": [
+    {
+      "id": "short-unmasked",
+      "token_count": 5,
+      "prompt_offset": 0,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 33,
+      "retained_sequence_tokens": 5,
+      "written_supervised_target_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "legal_original_target_indices": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "padding_indices_selected_by_written_formula": [
+        5
+      ],
+      "written_ntoks": 5,
+      "legal_ntoks": 4,
+      "zero_denominator_on_written_formula": false,
+      "assistant_original_target_count": 4,
+      "assistant_targets_truncated": 0,
+      "formula_matches_original_target_domain": false,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "short-assistant-only",
+      "token_count": 10,
+      "prompt_offset": 7,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 33,
+      "retained_sequence_tokens": 10,
+      "written_supervised_target_indices": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "legal_original_target_indices": [
+        7,
+        8,
+        9
+      ],
+      "padding_indices_selected_by_written_formula": [
+        10
+      ],
+      "written_ntoks": 4,
+      "legal_ntoks": 3,
+      "zero_denominator_on_written_formula": false,
+      "assistant_original_target_count": 3,
+      "assistant_targets_truncated": 0,
+      "formula_matches_original_target_domain": false,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "aligned-source-length",
+      "token_count": 32,
+      "prompt_offset": 0,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 33,
+      "retained_sequence_tokens": 32,
+      "written_supervised_target_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "legal_original_target_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "padding_indices_selected_by_written_formula": [
+        32
+      ],
+      "written_ntoks": 32,
+      "legal_ntoks": 31,
+      "zero_denominator_on_written_formula": false,
+      "assistant_original_target_count": 31,
+      "assistant_targets_truncated": 0,
+      "formula_matches_original_target_domain": false,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "exact-cap",
+      "token_count": 256,
+      "prompt_offset": 200,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 256,
+      "retained_sequence_tokens": 256,
+      "written_supervised_target_indices": [
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255
+      ],
+      "legal_original_target_indices": [
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255
+      ],
+      "padding_indices_selected_by_written_formula": [],
+      "written_ntoks": 56,
+      "legal_ntoks": 56,
+      "zero_denominator_on_written_formula": false,
+      "assistant_original_target_count": 56,
+      "assistant_targets_truncated": 0,
+      "formula_matches_original_target_domain": true,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "one-before-cap",
+      "token_count": 255,
+      "prompt_offset": 250,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 256,
+      "retained_sequence_tokens": 255,
+      "written_supervised_target_indices": [
+        250,
+        251,
+        252,
+        253,
+        254,
+        255
+      ],
+      "legal_original_target_indices": [
+        250,
+        251,
+        252,
+        253,
+        254
+      ],
+      "padding_indices_selected_by_written_formula": [
+        255
+      ],
+      "written_ntoks": 6,
+      "legal_ntoks": 5,
+      "zero_denominator_on_written_formula": false,
+      "assistant_original_target_count": 5,
+      "assistant_targets_truncated": 0,
+      "formula_matches_original_target_domain": false,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "assistant-entirely-truncated",
+      "token_count": 280,
+      "prompt_offset": 270,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 256,
+      "retained_sequence_tokens": 256,
+      "written_supervised_target_indices": [],
+      "legal_original_target_indices": [],
+      "padding_indices_selected_by_written_formula": [],
+      "written_ntoks": 0,
+      "legal_ntoks": 0,
+      "zero_denominator_on_written_formula": true,
+      "assistant_original_target_count": 10,
+      "assistant_targets_truncated": 10,
+      "formula_matches_original_target_domain": true,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "assistant-begins-at-cap",
+      "token_count": 280,
+      "prompt_offset": 256,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 256,
+      "retained_sequence_tokens": 256,
+      "written_supervised_target_indices": [],
+      "legal_original_target_indices": [],
+      "padding_indices_selected_by_written_formula": [],
+      "written_ntoks": 0,
+      "legal_ntoks": 0,
+      "zero_denominator_on_written_formula": true,
+      "assistant_original_target_count": 24,
+      "assistant_targets_truncated": 24,
+      "formula_matches_original_target_domain": true,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "assistant-partially-truncated",
+      "token_count": 280,
+      "prompt_offset": 250,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 256,
+      "retained_sequence_tokens": 256,
+      "written_supervised_target_indices": [
+        250,
+        251,
+        252,
+        253,
+        254,
+        255
+      ],
+      "legal_original_target_indices": [
+        250,
+        251,
+        252,
+        253,
+        254,
+        255
+      ],
+      "padding_indices_selected_by_written_formula": [],
+      "written_ntoks": 6,
+      "legal_ntoks": 6,
+      "zero_denominator_on_written_formula": false,
+      "assistant_original_target_count": 30,
+      "assistant_targets_truncated": 24,
+      "formula_matches_original_target_domain": true,
+      "runtime_framework_observation": false
+    },
+    {
+      "id": "single-token-input",
+      "token_count": 1,
+      "prompt_offset": 0,
+      "max_seq_length": 256,
+      "expected_legal_target_indices": "Indices i with 1 <= i < min(token_count,max_seq_length) and i >= prompt_offset. Padding is not part of the original sequence.",
+      "padded_batch_width": 33,
+      "retained_sequence_tokens": 1,
+      "written_supervised_target_indices": [
+        1
+      ],
+      "legal_original_target_indices": [],
+      "padding_indices_selected_by_written_formula": [
+        1
+      ],
+      "written_ntoks": 1,
+      "legal_ntoks": 0,
+      "zero_denominator_on_written_formula": false,
+      "assistant_original_target_count": 0,
+      "assistant_targets_truncated": 0,
+      "formula_matches_original_target_domain": false,
+      "runtime_framework_observation": false
+    }
+  ],
+  "schedule_cases": [
+    {
+      "iterations": 16,
+      "gradient_accumulation": 1,
+      "validation_every": 8,
+      "written_update_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "update_count": 16,
+      "unapplied_accumulation_remainder_batches": 0,
+      "validations": [
+        {
+          "iteration": 1,
+          "updates_already_completed": 0,
+          "current_iteration_will_update": true
+        },
+        {
+          "iteration": 8,
+          "updates_already_completed": 7,
+          "current_iteration_will_update": true
+        },
+        {
+          "iteration": 16,
+          "updates_already_completed": 15,
+          "current_iteration_will_update": true
+        }
+      ],
+      "last_validation_matches_final_update_count": false,
+      "note": "Counts follow written loop/guard only. No execution or callback behavior is simulated; final weights do not encode partial accumulated gradients."
+    },
+    {
+      "iterations": 16,
+      "gradient_accumulation": 4,
+      "validation_every": 8,
+      "written_update_iterations": [
+        4,
+        8,
+        12,
+        16
+      ],
+      "update_count": 4,
+      "unapplied_accumulation_remainder_batches": 0,
+      "validations": [
+        {
+          "iteration": 1,
+          "updates_already_completed": 0,
+          "current_iteration_will_update": false
+        },
+        {
+          "iteration": 8,
+          "updates_already_completed": 1,
+          "current_iteration_will_update": true
+        },
+        {
+          "iteration": 16,
+          "updates_already_completed": 3,
+          "current_iteration_will_update": true
+        }
+      ],
+      "last_validation_matches_final_update_count": false,
+      "note": "Counts follow written loop/guard only. No execution or callback behavior is simulated; final weights do not encode partial accumulated gradients."
+    },
+    {
+      "iterations": 18,
+      "gradient_accumulation": 4,
+      "validation_every": 8,
+      "written_update_iterations": [
+        4,
+        8,
+        12,
+        16
+      ],
+      "update_count": 4,
+      "unapplied_accumulation_remainder_batches": 2,
+      "validations": [
+        {
+          "iteration": 1,
+          "updates_already_completed": 0,
+          "current_iteration_will_update": false
+        },
+        {
+          "iteration": 8,
+          "updates_already_completed": 1,
+          "current_iteration_will_update": true
+        },
+        {
+          "iteration": 16,
+          "updates_already_completed": 3,
+          "current_iteration_will_update": true
+        },
+        {
+          "iteration": 18,
+          "updates_already_completed": 4,
+          "current_iteration_will_update": false
+        }
+      ],
+      "last_validation_matches_final_update_count": true,
+      "note": "Counts follow written loop/guard only. No execution or callback behavior is simulated; final weights do not encode partial accumulated gradients."
+    }
+  ],
+  "findings": {
+    "padding_target_cases": 5,
+    "zero_supervised_target_cases": 2,
+    "scope": "The pinned written formula includes a padded target at index n when batch width exceeds n. This is a static arithmetic counterexample, not a runtime-verified upstream defect or a claim about all MLX versions.",
+    "future_gate": "Do not accept this pinned trainer for a pilot until actual tokenizer/mask/batch behavior is validated and padding/zero-target conditions are resolved in a separately authorized environment."
+  },
+  "source_executed": false,
+  "mlx_or_numpy_imported": false,
+  "model_or_optimizer_run": false,
+  "training_steps": 0,
+  "upstream_modified": false,
+  "automatic_upstream_issue_filed": false
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-GENERATION-ATTEMPT-PRESERVATION",
+  "at": "2026-11-19T02:13:08.541725+00:00",
+  "status": "INTEGRATED",
+  "runtime_consumer": "Command.process -> preserve_attempt_artifact and audit; inherited by SectionCommand and SourceFactCommand",
+  "problem": "Three actual rejected project sections emitted no full-source audit snapshot and retained empty run directories. With ordinary console audit off, valuable rejected inference evidence was not independently retained.",
+  "intervention": "Create a fresh0700run directory, save write-once0600generation-input.json and generation-result.json before inference/validation respectively, and append fsynced0600generation-events.ndjson independently of console audit. Emit full-source snapshot before inference. Clear per-attempt context on every exit.",
+  "before_after": {
+    "actual_failed_cases_before_full_source_audit": 0,
+    "actual_failed_cases_before_retained_run_files": 0,
+    "stored_actual_response_replays_after_preserved": 3,
+    "response_replay_new_model_calls": 0,
+    "rejected_documents_written": 0,
+    "console_payloads_newly_exposed": 0,
+    "prepared_requests_unchanged": 20,
+    "ruby_runs": 186,
+    "ruby_assertions": 1107,
+    "ruby_failures": 0,
+    "new_permanent_tests": 9,
+    "initial8tests_before_failures": 6
+  },
+  "privacy_and_recovery": [
+    "Private state already ignored by Git and Docker; no new environment variable, source-repository write or public catalog output.",
+    "Files are created with0600andrun directories0700; tested LinuxARM64POSIXpermissions. Windows filesystem mode enforcement unverified.",
+    "Inputs/results write once; an existing run-name collision fails before inference rather than overwriting prior evidence.",
+    "Transport events retain original UTF8body or invalid-UTF8base64/checksum before rejection.",
+    "Input persistence failure stops before inference; partial files after an external interruption must be validated, not assumed complete.",
+    "No-op, human-edit and pending-recovery boundaries remain before attempt creation.",
+    "Retained data is unapproved research evidence, not training gold or neural learning; no automatic purge."
+  ],
+  "limits": [
+    "Per-run retention applies to normal process/run workflows; direct ad hoc infer calls without an attempt context still need their explicit research harness.",
+    "This preserves supplied source and model drafts; it does not make those drafts factually correct.",
+    "Caller checksum explicitly identifies on-disk implementation at attempt start, not in-memory bytecode."
+  ],
+  "evidence": [
+    {
+      "artifact": "private-research://adaptive-20261118/attempt-preservation-protocol.json",
+      "sha256": "8d14d29507f2f4bb2967e3b82b1b95d68c60726320ea137d73fc3538549e52dd"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/attempt-preservation-baseline.json",
+      "sha256": "d2de2e9cd036e279af6945bd4be7ff483730a044151d7efd1a2b4dbcc622ba3d"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/attempt-preservation-tests-before.log",
+      "sha256": "fbdfcf85e66033e3a8ea37b001acfb70e65e9824b9242d4fc646c7ca115a7879"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/attempt-preservation-tests-after.log",
+      "sha256": "e4b69f2f1e91ca871cc2c459e5ed9e01a1dbf0a21f7f52c7a3aa7226824b0695"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/attempt-preservation-all-tests.log",
+      "sha256": "49b2164e5563ca77fc02df6289794d3c2aaae2d3e22725688e2751561271d457"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/attempt-preservation-real-response-replay.jsonl",
+      "sha256": "3477ffff249c917727a397b906c0d9910620ceb57a1e39f8116b53546a0461af"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/attempt-preservation-request-parity.jsonl",
+      "sha256": "bdb1943a0a8ec13bc05fcce395dd3949a961f0c02dcc688a34111a37b891c21f"
+    }
+  ]
+}

@@ -1,0 +1,503 @@
+{
+  "at": "2026-11-20T13:28:47.846103+00:00",
+  "revision": "ccb5701a505df08114edca6b19efaf9d3f01fc8d",
+  "claims": [
+    {
+      "id": "purpose",
+      "section": "purpose",
+      "en": "This chapter follows the pinned `Point` implementation through its embedded state, coordinate helpers and generated clone path. It separates written copying, direct slice assignment and error propagation instead of treating every accessor or constructor as equivalent.",
+      "pt-br": "Este capítulo acompanha a implementação fixada de `Point` pelo estado incorporado, pelos auxiliares de coordenadas e pelo caminho de clonagem gerado. Distingue cópia escrita, atribuição direta de fatia e propagação de erros, sem tratar todo acessor ou construtor como equivalente.",
+      "evidence_ids": [
+        "Point",
+        "NewPointFlat",
+        "geom0.Coords",
+        "Point.Clone"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "architecture",
+      "section": "architecture",
+      "en": "`Point` embeds `geom0`. The latter declares `layout`, `stride`, `flatCoords` and `srid`. The selected constructors and methods read or write that shared representation; a complete package/type check was not performed.",
+      "pt-br": "`Point` incorpora `geom0`. Essa estrutura declara `layout`, `stride`, `flatCoords` e `srid`. Os construtores e métodos selecionados leem ou escrevem essa representação compartilhada; não foi realizada uma verificação completa de pacote e tipos.",
+      "evidence_ids": [
+        "Point",
+        "geom0",
+        "NewPointFlat",
+        "Point.SetSRID"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "constructor",
+      "section": "responsibilities",
+      "en": "`NewPointFlat(l, flatCoords)` writes `g.layout = l`, `g.stride = l.Stride()` and `g.flatCoords = flatCoords`, then returns `g`. Its selected body contains direct assignment of the supplied slice and no copying call. This differs from the separate clone-helper path.",
+      "pt-br": "`NewPointFlat(l, flatCoords)` escreve `g.layout = l`, `g.stride = l.Stride()` e `g.flatCoords = flatCoords`, e então retorna `g`. O corpo selecionado contém atribuição direta da fatia recebida, sem chamada de cópia. Isso difere do caminho separado dos auxiliares de clonagem.",
+      "evidence_ids": [
+        "NewPointFlat",
+        "Point.Clone",
+        "deriveClonePoint"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "new-and-empty",
+      "section": "responsibilities",
+      "en": "`NewPoint` passes `make([]float64, l.Stride())` to `NewPointFlat`. `NewPointEmpty` passes `nil` to that constructor. These are different written constructor inputs; no sample allocation or empty-point operation was executed here.",
+      "pt-br": "`NewPoint` passa `make([]float64, l.Stride())` para `NewPointFlat`. `NewPointEmpty` passa `nil` para esse construtor. São entradas distintas nos construtores escritos; nenhuma alocação de exemplo ou operação com ponto vazio foi executada aqui.",
+      "evidence_ids": [
+        "NewPoint",
+        "NewPointEmpty",
+        "NewPointFlat"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "generated-dependency",
+      "section": "dependencies",
+      "en": "`Point.Clone` returns `deriveClonePoint(g)`. The generated source then contains a `nil` check, `new(Point)` and `deriveDeepCopy_6(dst, src)`. That helper calls `deriveDeepCopy_11` for the embedded `geom0`. The generator directive names `derived.gen.go`; the generator was not run and its executable/version was not verified.",
+      "pt-br": "`Point.Clone` retorna `deriveClonePoint(g)`. O código gerado contém então uma verificação de `nil`, `new(Point)` e `deriveDeepCopy_6(dst, src)`. Esse auxiliar chama `deriveDeepCopy_11` para a estrutura incorporada `geom0`. A diretiva do gerador nomeia `derived.gen.go`; o gerador não foi executado e seu executável e sua versão não foram verificados.",
+      "evidence_ids": [
+        "Point.Clone",
+        "deriveClonePoint",
+        "deriveDeepCopy_6",
+        "package-and-generation"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "copy-path",
+      "section": "dependencies",
+      "en": "`deriveDeepCopy_11` assigns `layout`, `stride` and `srid`, distinguishes `nil` coordinate slices, and contains resizing/allocation branches followed by `copy(dst.flatCoords, src.flatCoords)`. This is concrete helper evidence beyond a clone comment; it is not a measured concurrent-safety or full-package binding guarantee.",
+      "pt-br": "`deriveDeepCopy_11` atribui `layout`, `stride` e `srid`, distingue fatias de coordenadas `nil` e contém ramificações de redimensionamento e alocação seguidas de `copy(dst.flatCoords, src.flatCoords)`. Isso fornece evidência concreta do auxiliar além de um comentário de clonagem; não é uma garantia medida de segurança concorrente ou de vínculo completo do pacote.",
+      "evidence_ids": [
+        "deriveDeepCopy_11",
+        "deriveDeepCopy_6"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "configuration",
+      "section": "configuration",
+      "en": "The module declaration is `github.com/twpayne/go-geom` and the recorded Go directive is `go 1.26.3`. `Layout.Stride` writes returns 0, 2, 3, 3 and 4 for `NoLayout`, `XY`, `XYZ`, `XYM` and `XYZM`, respectively; the default returns `int(l)`. These source values do not validate arbitrary caller-provided layouts.",
+      "pt-br": "A declaração do módulo é `github.com/twpayne/go-geom` e a diretiva Go registrada é `go 1.26.3`. `Layout.Stride` escreve retornos 0, 2, 3, 3 e 4 para `NoLayout`, `XY`, `XYZ`, `XYM` e `XYZM`, respectivamente; o caso padrão retorna `int(l)`. Esses valores no código não validam layouts arbitrários recebidos do chamador.",
+      "evidence_ids": [
+        "module-toolchain",
+        "Layout.Stride",
+        "layout-constants"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "coordinate-views",
+      "section": "inputs_outputs",
+      "en": "`geom0.FlatCoords` directly returns `g.flatCoords`. `geom0.Coords` instead calls `inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)`; that helper checks its offset/stride/end relation and then contains `make`, `copy` and a return of the new local slice. The two written paths should not be documented as the same copying contract.",
+      "pt-br": "`geom0.FlatCoords` retorna diretamente `g.flatCoords`. Já `geom0.Coords` chama `inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)`; esse auxiliar verifica a relação entre deslocamento, passo e limite, e então contém `make`, `copy` e o retorno da nova fatia local. Os dois caminhos escritos não devem ser documentados como o mesmo contrato de cópia.",
+      "evidence_ids": [
+        "geom0.FlatCoords",
+        "geom0.Coords",
+        "inflate0"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "setcoords-error",
+      "section": "error_handling",
+      "en": "`Point.SetCoords` calls `g.setCoords(coords)` and returns `nil, err` on error or `g, nil` otherwise. The delegated `geom0.setCoords` first assigns both `g.flatCoords` and `err` from `deflate0(nil, coords0, g.stride)`. On its written length-mismatch branch, `deflate0` returns `nil` with `ErrStrideMismatch`. Thus the shown error route includes assignment of that returned value to the field; the selected code does not encode rollback to the previous slice.",
+      "pt-br": "`Point.SetCoords` chama `g.setCoords(coords)` e retorna `nil, err` no erro ou `g, nil` no outro caso. O método delegado `geom0.setCoords` primeiro atribui tanto `g.flatCoords` quanto `err` a partir de `deflate0(nil, coords0, g.stride)`. Na ramificação escrita de incompatibilidade de comprimento, `deflate0` retorna `nil` com `ErrStrideMismatch`. Assim, o caminho de erro mostrado inclui a atribuição desse valor retornado ao campo; o código selecionado não codifica rollback para a fatia anterior.",
+      "evidence_ids": [
+        "Point.SetCoords",
+        "geom0.setCoords",
+        "deflate0",
+        "ErrStrideMismatch"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "panic-paths",
+      "section": "error_handling",
+      "en": "`Point.MustSetCoords` passes the `SetCoords` result to `Must`; that helper contains `panic(err)` when its error argument is not `nil`. Separately, `inflate0` contains `panic(\"geom: stride mismatch\")` when its offset/stride/end relation fails. These are different local panic routes, not proof that every geometry error becomes the same exception or return value.",
+      "pt-br": "`Point.MustSetCoords` passa o resultado de `SetCoords` para `Must`; esse auxiliar contém `panic(err)` quando seu argumento de erro não é `nil`. Separadamente, `inflate0` contém `panic(\"geom: stride mismatch\")` quando falha a relação entre deslocamento, passo e limite. São caminhos locais distintos de panic, sem constituir prova de que todo erro de geometria vira a mesma exceção ou valor retornado.",
+      "evidence_ids": [
+        "Point.MustSetCoords",
+        "Must",
+        "inflate0"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "srid",
+      "section": "responsibilities",
+      "en": "`Point.SetSRID` writes `g.srid = srid` and returns `g`. The selected setter contains no validation branch; it does not establish the validity of an SRID or a coordinate reference system.",
+      "pt-br": "`Point.SetSRID` escreve `g.srid = srid` e retorna `g`. O setter selecionado não contém ramificação de validação; ele não estabelece a validade de um SRID ou de um sistema de referência de coordenadas.",
+      "evidence_ids": [
+        "Point.SetSRID"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    },
+    {
+      "id": "limits",
+      "section": "limitations",
+      "en": "The source pack includes complete selected declarations and separate explicit metadata ranges. It does not establish full build selection, dependency resolution, runtime identity, race freedom, thread safety, generator reproducibility or Windows execution. Illustrative examples and commands below were not compiled or executed; no output or successful module installation is claimed.",
+      "pt-br": "O conjunto de código inclui declarações selecionadas completas e intervalos explícitos separados de metadados. Não estabelece seleção completa de build, resolução de dependências, identidade em execução, ausência de condições de corrida, segurança entre threads, reprodutibilidade do gerador ou execução no Windows. Os exemplos e comandos ilustrativos abaixo não foram compilados nem executados; nenhuma saída ou instalação bem-sucedida do módulo é afirmada.",
+      "evidence_ids": [
+        "package-and-generation",
+        "module-toolchain",
+        "deriveClonePoint",
+        "deriveDeepCopy_11"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_CANDIDATE_NOT_OWNER_GOLD",
+      "scope": "Written source and explicitly qualified control-flow consequences;no executed module or general runtime guarantee."
+    }
+  ],
+  "faq": [
+    {
+      "id": "input-copy",
+      "en_q": "Does the selected flat constructor copy its input?",
+      "pt-br_q": "O construtor selecionado de coordenadas planas copia sua entrada?",
+      "claim_id": "constructor",
+      "en_a": "`NewPointFlat(l, flatCoords)` writes `g.layout = l`, `g.stride = l.Stride()` and `g.flatCoords = flatCoords`, then returns `g`. Its selected body contains direct assignment of the supplied slice and no copying call. This differs from the separate clone-helper path.",
+      "pt-br_a": "`NewPointFlat(l, flatCoords)` escreve `g.layout = l`, `g.stride = l.Stride()` e `g.flatCoords = flatCoords`, e então retorna `g`. O corpo selecionado contém atribuição direta da fatia recebida, sem chamada de cópia. Isso difere do caminho separado dos auxiliares de clonagem.",
+      "evidence_ids": [
+        "NewPointFlat",
+        "Point.Clone",
+        "deriveClonePoint"
+      ]
+    },
+    {
+      "id": "accessor-copy",
+      "en_q": "Do both coordinate accessors show the same copying path?",
+      "pt-br_q": "Os dois acessores de coordenadas mostram o mesmo caminho de cópia?",
+      "claim_id": "coordinate-views",
+      "en_a": "`geom0.FlatCoords` directly returns `g.flatCoords`. `geom0.Coords` instead calls `inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)`; that helper checks its offset/stride/end relation and then contains `make`, `copy` and a return of the new local slice. The two written paths should not be documented as the same copying contract.",
+      "pt-br_a": "`geom0.FlatCoords` retorna diretamente `g.flatCoords`. Já `geom0.Coords` chama `inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)`; esse auxiliar verifica a relação entre deslocamento, passo e limite, e então contém `make`, `copy` e o retorno da nova fatia local. Os dois caminhos escritos não devem ser documentados como o mesmo contrato de cópia.",
+      "evidence_ids": [
+        "geom0.FlatCoords",
+        "geom0.Coords",
+        "inflate0"
+      ]
+    },
+    {
+      "id": "error-rollback",
+      "en_q": "Does the shown coordinate error route preserve the previous slice by rollback?",
+      "pt-br_q": "O caminho de erro de coordenadas mostrado preserva a fatia anterior por rollback?",
+      "claim_id": "setcoords-error",
+      "en_a": "`Point.SetCoords` calls `g.setCoords(coords)` and returns `nil, err` on error or `g, nil` otherwise. The delegated `geom0.setCoords` first assigns both `g.flatCoords` and `err` from `deflate0(nil, coords0, g.stride)`. On its written length-mismatch branch, `deflate0` returns `nil` with `ErrStrideMismatch`. Thus the shown error route includes assignment of that returned value to the field; the selected code does not encode rollback to the previous slice.",
+      "pt-br_a": "`Point.SetCoords` chama `g.setCoords(coords)` e retorna `nil, err` no erro ou `g, nil` no outro caso. O método delegado `geom0.setCoords` primeiro atribui tanto `g.flatCoords` quanto `err` a partir de `deflate0(nil, coords0, g.stride)`. Na ramificação escrita de incompatibilidade de comprimento, `deflate0` retorna `nil` com `ErrStrideMismatch`. Assim, o caminho de erro mostrado inclui a atribuição desse valor retornado ao campo; o código selecionado não codifica rollback para a fatia anterior.",
+      "evidence_ids": [
+        "Point.SetCoords",
+        "geom0.setCoords",
+        "deflate0",
+        "ErrStrideMismatch"
+      ]
+    },
+    {
+      "id": "clone-evidence",
+      "en_q": "What evidence supports the clone path beyond its comment?",
+      "pt-br_q": "Que evidência sustenta o caminho de clonagem além de seu comentário?",
+      "claim_id": "copy-path",
+      "en_a": "`deriveDeepCopy_11` assigns `layout`, `stride` and `srid`, distinguishes `nil` coordinate slices, and contains resizing/allocation branches followed by `copy(dst.flatCoords, src.flatCoords)`. This is concrete helper evidence beyond a clone comment; it is not a measured concurrent-safety or full-package binding guarantee.",
+      "pt-br_a": "`deriveDeepCopy_11` atribui `layout`, `stride` e `srid`, distingue fatias de coordenadas `nil` e contém ramificações de redimensionamento e alocação seguidas de `copy(dst.flatCoords, src.flatCoords)`. Isso fornece evidência concreta do auxiliar além de um comentário de clonagem; não é uma garantia medida de segurança concorrente ou de vínculo completo do pacote.",
+      "evidence_ids": [
+        "deriveDeepCopy_11",
+        "deriveDeepCopy_6"
+      ]
+    },
+    {
+      "id": "panic-owner",
+      "en_q": "Where do the selected panic routes appear?",
+      "pt-br_q": "Onde aparecem os caminhos de panic selecionados?",
+      "claim_id": "panic-paths",
+      "en_a": "`Point.MustSetCoords` passes the `SetCoords` result to `Must`; that helper contains `panic(err)` when its error argument is not `nil`. Separately, `inflate0` contains `panic(\"geom: stride mismatch\")` when its offset/stride/end relation fails. These are different local panic routes, not proof that every geometry error becomes the same exception or return value.",
+      "pt-br_a": "`Point.MustSetCoords` passa o resultado de `SetCoords` para `Must`; esse auxiliar contém `panic(err)` quando seu argumento de erro não é `nil`. Separadamente, `inflate0` contém `panic(\"geom: stride mismatch\")` quando falha a relação entre deslocamento, passo e limite. São caminhos locais distintos de panic, sem constituir prova de que todo erro de geometria vira a mesma exceção ou valor retornado.",
+      "evidence_ids": [
+        "Point.MustSetCoords",
+        "Must",
+        "inflate0"
+      ]
+    },
+    {
+      "id": "empty-input",
+      "en_q": "What does the empty constructor pass to the flat constructor?",
+      "pt-br_q": "O que o construtor vazio passa para o construtor de coordenadas planas?",
+      "claim_id": "new-and-empty",
+      "en_a": "`NewPoint` passes `make([]float64, l.Stride())` to `NewPointFlat`. `NewPointEmpty` passes `nil` to that constructor. These are different written constructor inputs; no sample allocation or empty-point operation was executed here.",
+      "pt-br_a": "`NewPoint` passa `make([]float64, l.Stride())` para `NewPointFlat`. `NewPointEmpty` passa `nil` para esse construtor. São entradas distintas nos construtores escritos; nenhuma alocação de exemplo ou operação com ponto vazio foi executada aqui.",
+      "evidence_ids": [
+        "NewPoint",
+        "NewPointEmpty",
+        "NewPointFlat"
+      ]
+    },
+    {
+      "id": "srid-validation",
+      "en_q": "Does the selected SRID setter validate the identifier?",
+      "pt-br_q": "O setter de SRID selecionado valida o identificador?",
+      "claim_id": "srid",
+      "en_a": "`Point.SetSRID` writes `g.srid = srid` and returns `g`. The selected setter contains no validation branch; it does not establish the validity of an SRID or a coordinate reference system.",
+      "pt-br_a": "`Point.SetSRID` escreve `g.srid = srid` e retorna `g`. O setter selecionado não contém ramificação de validação; ele não estabelece a validade de um SRID ou de um sistema de referência de coordenadas.",
+      "evidence_ids": [
+        "Point.SetSRID"
+      ]
+    }
+  ],
+  "units": {
+    "Point": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 15,
+      "last_line": 17,
+      "quote": "type Point struct {\n\tgeom0\n}",
+      "quote_sha256": "268ab7ada4c7cde087a541e69ad14254cbf19e0b06a6678ed2d083ce63b9ecbb",
+      "complete_callable_or_type": true
+    },
+    "NewPoint": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 20,
+      "last_line": 22,
+      "quote": "func NewPoint(l Layout) *Point {\n\treturn NewPointFlat(l, make([]float64, l.Stride()))\n}",
+      "quote_sha256": "46ff3f4ddaf9d9fbe055b29f54903caf1dcc367875d7b5713287c0d428d7a3cd",
+      "complete_callable_or_type": true
+    },
+    "NewPointEmpty": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 25,
+      "last_line": 27,
+      "quote": "func NewPointEmpty(l Layout) *Point {\n\treturn NewPointFlat(l, nil)\n}",
+      "quote_sha256": "24128e2bfa108843e36315f98b5eccf3428bc925856b70ccc55be16173ccb239",
+      "complete_callable_or_type": true
+    },
+    "NewPointFlat": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 30,
+      "last_line": 36,
+      "quote": "func NewPointFlat(l Layout, flatCoords []float64) *Point {\n\tg := new(Point)\n\tg.layout = l\n\tg.stride = l.Stride()\n\tg.flatCoords = flatCoords\n\treturn g\n}",
+      "quote_sha256": "e5b13834f3e833ba0a322ef39341678e3543fba4fc2a62ee47df949e6994f0b1",
+      "complete_callable_or_type": true
+    },
+    "Point.SetCoords": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 76,
+      "last_line": 81,
+      "quote": "func (g *Point) SetCoords(coords Coord) (*Point, error) {\n\tif err := g.setCoords(coords); err != nil {\n\t\treturn nil, err\n\t}\n\treturn g, nil\n}",
+      "quote_sha256": "e621a215d6ba0eacc2b3fd393e50841b804495c8d18a79b5df33718cc2ec8420",
+      "complete_callable_or_type": true
+    },
+    "Point.MustSetCoords": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 70,
+      "last_line": 73,
+      "quote": "func (g *Point) MustSetCoords(coords Coord) *Point {\n\tMust(g.SetCoords(coords))\n\treturn g\n}",
+      "quote_sha256": "6f686dca4d2bfbfa8411bd73b20f7d6239df25e61fae345b5cb4a7c6b12df266",
+      "complete_callable_or_type": true
+    },
+    "Point.Clone": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 60,
+      "last_line": 62,
+      "quote": "func (g *Point) Clone() *Point {\n\treturn deriveClonePoint(g)\n}",
+      "quote_sha256": "0623ef3dca382369a25bbac471251312f054431a8f6c8e83e6d2467f3f5c47d1",
+      "complete_callable_or_type": true
+    },
+    "Point.SetSRID": {
+      "source_path": "point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "first_line": 84,
+      "last_line": 87,
+      "quote": "func (g *Point) SetSRID(srid int) *Point {\n\tg.srid = srid\n\treturn g\n}",
+      "quote_sha256": "b0f9a99d062b795f01d570cd536f811da2a57803f53294b08824c9c79d9d952a",
+      "complete_callable_or_type": true
+    },
+    "geom0": {
+      "source_path": "flat.go",
+      "source_sha256": "605e0fd2ddc0da880eee9a383e245d31f9a0db870ce0a3681c654ff5909524ab",
+      "first_line": 5,
+      "last_line": 10,
+      "quote": "type geom0 struct {\n\tlayout     Layout\n\tstride     int\n\tflatCoords []float64\n\tsrid       int\n}",
+      "quote_sha256": "b9f4dae1abe06a005dd6b9af408d6a95733f7ddd3b911faea3d0cf8ed2d5929c",
+      "complete_callable_or_type": true
+    },
+    "geom0.FlatCoords": {
+      "source_path": "flat.go",
+      "source_sha256": "605e0fd2ddc0da880eee9a383e245d31f9a0db870ce0a3681c654ff5909524ab",
+      "first_line": 53,
+      "last_line": 55,
+      "quote": "func (g *geom0) FlatCoords() []float64 {\n\treturn g.flatCoords\n}",
+      "quote_sha256": "95b3387727ff0784a11eb060ba512bcd342bb92402bf9eeb26a2ff62cb9c8a65",
+      "complete_callable_or_type": true
+    },
+    "geom0.Coords": {
+      "source_path": "flat.go",
+      "source_sha256": "605e0fd2ddc0da880eee9a383e245d31f9a0db870ce0a3681c654ff5909524ab",
+      "first_line": 32,
+      "last_line": 34,
+      "quote": "func (g *geom0) Coords() Coord {\n\treturn inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)\n}",
+      "quote_sha256": "ad410f34d37b22d5655a08011a83e83c9b11bb9c8132fed8097ba9aa6ffedba4",
+      "complete_callable_or_type": true
+    },
+    "geom0.setCoords": {
+      "source_path": "flat.go",
+      "source_sha256": "605e0fd2ddc0da880eee9a383e245d31f9a0db870ce0a3681c654ff5909524ab",
+      "first_line": 81,
+      "last_line": 85,
+      "quote": "func (g *geom0) setCoords(coords0 []float64) error {\n\tvar err error\n\tg.flatCoords, err = deflate0(nil, coords0, g.stride)\n\treturn err\n}",
+      "quote_sha256": "309b9df77c3876a672a7a7629c7a930a38ae438145f8927ff7ababf390917eb7",
+      "complete_callable_or_type": true
+    },
+    "deflate0": {
+      "source_path": "flat.go",
+      "source_sha256": "605e0fd2ddc0da880eee9a383e245d31f9a0db870ce0a3681c654ff5909524ab",
+      "first_line": 284,
+      "last_line": 290,
+      "quote": "func deflate0(flatCoords []float64, c Coord, stride int) ([]float64, error) {\n\tif len(c) != stride {\n\t\treturn nil, ErrStrideMismatch{Got: len(c), Want: stride}\n\t}\n\tflatCoords = append(flatCoords, c...)\n\treturn flatCoords, nil\n}",
+      "quote_sha256": "00dcd50cc3ae13fb9bad40d2e9d9452ef7828062a9113586d0fde0bbb4eb8fc5",
+      "complete_callable_or_type": true
+    },
+    "inflate0": {
+      "source_path": "flat.go",
+      "source_sha256": "605e0fd2ddc0da880eee9a383e245d31f9a0db870ce0a3681c654ff5909524ab",
+      "first_line": 332,
+      "last_line": 339,
+      "quote": "func inflate0(flatCoords []float64, offset, end, stride int) Coord {\n\tif offset+stride != end {\n\t\tpanic(\"geom: stride mismatch\")\n\t}\n\tc := make([]float64, stride)\n\tcopy(c, flatCoords[offset:end])\n\treturn c\n}",
+      "quote_sha256": "1195cbff912f891e565d6a8ee7f5a17a58a4d451417e073708f385d287f841c9",
+      "complete_callable_or_type": true
+    },
+    "Layout": {
+      "source_path": "geom.go",
+      "source_sha256": "15ee065994b2c90f5a493b0ce6694dfc06178ec443f10561aaa452ab64e4f172",
+      "first_line": 19,
+      "last_line": 19,
+      "quote": "type Layout int",
+      "quote_sha256": "ab4ebbea2604f91af1d3900e1bd3d94cd2aa3f9bdb4d8479213ffaa816f46b07",
+      "complete_callable_or_type": true
+    },
+    "Layout.Stride": {
+      "source_path": "geom.go",
+      "source_sha256": "15ee065994b2c90f5a493b0ce6694dfc06178ec443f10561aaa452ab64e4f172",
+      "first_line": 147,
+      "last_line": 162,
+      "quote": "func (l Layout) Stride() int {\n\tswitch l {\n\tcase NoLayout:\n\t\treturn 0\n\tcase XY:\n\t\treturn 2\n\tcase XYZ:\n\t\treturn 3\n\tcase XYM:\n\t\treturn 3\n\tcase XYZM:\n\t\treturn 4\n\tdefault:\n\t\treturn int(l)\n\t}\n}",
+      "quote_sha256": "d608e8c9915a472edd102f8050cabdeb809ec0eb9b960bd182dcae1827b82710",
+      "complete_callable_or_type": true
+    },
+    "Must": {
+      "source_path": "geom.go",
+      "source_sha256": "15ee065994b2c90f5a493b0ce6694dfc06178ec443f10561aaa452ab64e4f172",
+      "first_line": 232,
+      "last_line": 237,
+      "quote": "func Must(g T, err error) T {\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treturn g\n}",
+      "quote_sha256": "285b7e745f1d15e696cdacf62ecb7e31a64b503abeaabeacdab6bb25a7f72fc7",
+      "complete_callable_or_type": true
+    },
+    "ErrStrideMismatch": {
+      "source_path": "geom.go",
+      "source_sha256": "15ee065994b2c90f5a493b0ce6694dfc06178ec443f10561aaa452ab64e4f172",
+      "first_line": 47,
+      "last_line": 50,
+      "quote": "type ErrStrideMismatch struct {\n\tGot  int\n\tWant int\n}",
+      "quote_sha256": "2628e3cd80743838e01af8d5c45b0d1ed0b958ec21e85f473cab317eee1768ce",
+      "complete_callable_or_type": true
+    },
+    "deriveClonePoint": {
+      "source_path": "derived.gen.go",
+      "source_sha256": "7bec045db89fc50174d1a99b941f13e79bdc049160cda71ac9b46c84933f13eb",
+      "first_line": 76,
+      "last_line": 83,
+      "quote": "func deriveClonePoint(src *Point) *Point {\n\tif src == nil {\n\t\treturn nil\n\t}\n\tdst := new(Point)\n\tderiveDeepCopy_6(dst, src)\n\treturn dst\n}",
+      "quote_sha256": "47fb833c6dccf700c9f69e6eb202737cb8ff063c2f23590856ad036b25452f56",
+      "complete_callable_or_type": true
+    },
+    "deriveDeepCopy_6": {
+      "source_path": "derived.gen.go",
+      "source_sha256": "7bec045db89fc50174d1a99b941f13e79bdc049160cda71ac9b46c84933f13eb",
+      "first_line": 187,
+      "last_line": 193,
+      "quote": "func deriveDeepCopy_6(dst, src *Point) {\n\t{\n\t\tfield := new(geom0)\n\t\tderiveDeepCopy_11(field, &src.geom0)\n\t\tdst.geom0 = *field\n\t}\n}",
+      "quote_sha256": "f36c9b72b7b592ae875aa472f0739c7f51b15eae825e7c703755c06d68ae0086",
+      "complete_callable_or_type": true
+    },
+    "deriveDeepCopy_11": {
+      "source_path": "derived.gen.go",
+      "source_sha256": "7bec045db89fc50174d1a99b941f13e79bdc049160cda71ac9b46c84933f13eb",
+      "first_line": 268,
+      "last_line": 290,
+      "quote": "func deriveDeepCopy_11(dst, src *geom0) {\n\tdst.layout = src.layout\n\tdst.stride = src.stride\n\tif src.flatCoords == nil {\n\t\tdst.flatCoords = nil\n\t} else {\n\t\tif dst.flatCoords != nil {\n\t\t\tif len(src.flatCoords) > len(dst.flatCoords) {\n\t\t\t\tif cap(dst.flatCoords) >= len(src.flatCoords) {\n\t\t\t\t\tdst.flatCoords = dst.flatCoords[:len(src.flatCoords)]\n\t\t\t\t} else {\n\t\t\t\t\tdst.flatCoords = make([]float64, len(src.flatCoords))\n\t\t\t\t}\n\t\t\t} else if len(src.flatCoords) < len(dst.flatCoords) {\n\t\t\t\tdst.flatCoords = dst.flatCoords[:len(src.flatCoords)]\n\t\t\t}\n\t\t} else {\n\t\t\tdst.flatCoords = make([]float64, len(src.flatCoords))\n\t\t}\n\t\tcopy(dst.flatCoords, src.flatCoords)\n\t}\n\tdst.srid = src.srid\n}",
+      "quote_sha256": "ccb36ae87eb4a0f96cc0b13c34962c9d5c45504123d88c5c56161a29fab0b473",
+      "complete_callable_or_type": true
+    },
+    "package-and-generation": {
+      "id": "package-and-generation",
+      "source_path": "geom.go",
+      "source_sha256": "15ee065994b2c90f5a493b0ce6694dfc06178ec443f10561aaa452ab64e4f172",
+      "first_line": 1,
+      "last_line": 6,
+      "quote": "// Package geom implements efficient geometry types for geospatial\n// applications.\npackage geom\n\n//go:generate bin/goderive . > derived.gen.go\n//go:generate bin/gofumpt -w derived.gen.go\n",
+      "quote_sha256": "8dc151ae10df7a1564ef68f2806415449287a05a9628304c34774df236a8e48b",
+      "complete_unit": false,
+      "scope": "Explicit physical range;not a whole callable unit or proof of complete package context.",
+      "complete_callable_or_type": false
+    },
+    "layout-constants": {
+      "id": "layout-constants",
+      "source_path": "geom.go",
+      "source_sha256": "15ee065994b2c90f5a493b0ce6694dfc06178ec443f10561aaa452ab64e4f172",
+      "first_line": 21,
+      "last_line": 32,
+      "quote": "const (\n\t// NoLayout is an unknown layout.\n\tNoLayout Layout = iota\n\t// XY is a 2D layout (X and Y).\n\tXY\n\t// XYZ is 3D layout (X, Y, and Z).\n\tXYZ\n\t// XYM is a 2D layout with an M value.\n\tXYM\n\t// XYZM is a 3D layout with an M value.\n\tXYZM\n)\n",
+      "quote_sha256": "f99188acdf826f6af4a7749cdd32d8047f5775b7f453ba3dae2a228771739900",
+      "complete_unit": false,
+      "scope": "Explicit physical range;not a whole callable unit or proof of complete package context.",
+      "complete_callable_or_type": false
+    },
+    "module-toolchain": {
+      "id": "module-toolchain",
+      "source_path": "go.mod",
+      "source_sha256": "60b5865afe951339ceb60b79abe8a764710c2d61b1b034f20df3c8b998b94c7f",
+      "first_line": 1,
+      "last_line": 3,
+      "quote": "module github.com/twpayne/go-geom\n\ngo 1.26.3\n",
+      "quote_sha256": "2bd1492f69b2eb32e63a3ffd45fb71d122b5ebcdd0849166015a99461f20bdda",
+      "complete_unit": false,
+      "scope": "Explicit physical range;not a whole callable unit or proof of complete package context.",
+      "complete_callable_or_type": false
+    }
+  },
+  "files": {
+    "go-geom-chapter-candidates-v1/en.md": {
+      "sha256": "117ad080d288f5b53839571006d11be6e22f5f7fe66bcf66b296012429b63960",
+      "bytes": 14853
+    },
+    "go-geom-chapter-candidates-v1/pt-br.md": {
+      "sha256": "dcc88cf2a386660bb636df3d3e6c4c907a051444ea6fba5316684b221c0be373",
+      "bytes": 15677
+    }
+  },
+  "source_pack_sha256": "310dcef8600ed9eaf07719c78e040f973486684f14fc88347343ccf6abd24f53",
+  "range_pack_sha256": "183d916b137535cbeea6c65081ee65d404f659f3dd6b5eb6beed6bdabb67e968",
+  "whole_source_units": 21,
+  "extra_explicit_ranges": 3,
+  "source_quote_bytes": 3263,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_exclusion": true,
+  "model_calls": 0,
+  "faq_overlap": "Seven answers reuse chapter claims;not seven independent targets.",
+  "runtime_or_type_verification": false
+}

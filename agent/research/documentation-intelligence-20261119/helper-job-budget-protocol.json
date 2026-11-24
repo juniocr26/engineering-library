@@ -1,0 +1,44 @@
+{
+  "frozen_at": "2026-11-20T03:26:57.896962+00:00",
+  "status": "FROZEN_DEVELOPMENT_PROTOCOL_BEFORE_IMPLEMENTATION",
+  "hypothesis": "A separate opt-in durable job ledger can prevent helper step and quote-reservation budgets from resetting across process/tool-instance restarts, while retaining unknown-completion reservations without replay.",
+  "existing_gap": "HelperRetrieval0.1.2 budgets are per instance. A future wrapper that constructs a new instance per request would reset them.",
+  "scope": "Local POSIX research coordinator only; no production route, server, plugin, remote inference cancellation or multi-user authorization.",
+  "rules": [
+    "Operator-frozen registry identity, job ID, maximum steps, conservative quote allowance and absolute UTC deadline.",
+    "One exclusive append-only reservation per request; an interrupted reservation permanently consumes its allowance for this job.",
+    "Completed duplicates return references without quoted source and without dispatching the helper again.",
+    "Different payload under the same request ID refuses.",
+    "Nonblocking process lock, pinned root and strict bounded file schema; tamper or incomplete records fail closed.",
+    "Completion audit failure or unknown helper outcome must suppress newly retrieved quotations.",
+    "A late result may be retained but must not be injected after the job deadline.",
+    "No claim of durable global model-token accounting: this ledger bounds helper calls and quote bytes only."
+  ],
+  "bounds": {
+    "maximum_steps": 16,
+    "quote_reserved_per_step": 6144,
+    "maximum_quote_reservations": 98304,
+    "request_bytes": 4096,
+    "result_bytes": 16384
+  },
+  "cases": [
+    "Restart budget exhaustion",
+    "Same-ID duplicate across two processes",
+    "Payload conflict",
+    "Interrupted reservation",
+    "Corrupt/legacy/unknown record",
+    "Concurrent reservations",
+    "Concurrent duplicate",
+    "Root replacement or symlink",
+    "FIFO lock",
+    "Clock rollback and expired deadline",
+    "Late completion",
+    "Completion fsync failure",
+    "Registry mismatch",
+    "No source mutation and no ordinary routing changes"
+  ],
+  "acceptance": "No helper dispatch beyond the frozen global allowances, no duplicate/unknown replay, no quote exposure without a completed audit record.",
+  "split": "Synthetic development regression controls, not independent holdout.",
+  "owner_approved": false,
+  "training_runs": 0
+}

@@ -1,0 +1,178 @@
+{
+  "at": "2026-11-21T20:59:00.359100+00:00",
+  "post_output_descriptive_audit": true,
+  "evidence": [
+    {
+      "path": "relation-option-order-results-v2.json",
+      "sha256": "0f54bb9c68f3f7c3e88121b8e7cd7bf8739271d788ef31f951fff1814a541207"
+    },
+    {
+      "path": "source-only-fact-render-v1/cobra/L/semantic-review-v2.json",
+      "sha256": "a800c8fe570a6a88a120b8a60330cfe9d7e1a95d0d06848ce0b683ff6902513a"
+    },
+    {
+      "path": "source-question-repair-v1/cobra/M/semantic-review-v1.json",
+      "sha256": "1a51b16084d7f904cb343422a77bc8d348fff72776be21a63b5ba37d2d7e8788"
+    }
+  ],
+  "option_order_transitions": [
+    {
+      "condition": "USER_REVERSED",
+      "wrong_to_right": [
+        "F01",
+        "F04",
+        "F05"
+      ],
+      "right_to_wrong": [
+        "F06"
+      ],
+      "changed_but_still_wrong": [
+        "F03",
+        "F07"
+      ],
+      "unchanged_correct": [
+        "F08",
+        "F09"
+      ],
+      "literal_changed_count": 6,
+      "score_before": 3,
+      "score_after": 5,
+      "whole_notes_before_after": [
+        0,
+        0
+      ]
+    },
+    {
+      "condition": "SCHEMA_REVERSED",
+      "wrong_to_right": [],
+      "right_to_wrong": [],
+      "changed_but_still_wrong": [],
+      "unchanged_correct": [
+        "F06",
+        "F08",
+        "F09"
+      ],
+      "literal_changed_count": 0,
+      "score_before": 3,
+      "score_after": 3,
+      "whole_notes_before_after": [
+        0,
+        0
+      ]
+    },
+    {
+      "condition": "BOTH_REVERSED",
+      "wrong_to_right": [
+        "F01",
+        "F04",
+        "F05"
+      ],
+      "right_to_wrong": [
+        "F06"
+      ],
+      "changed_but_still_wrong": [
+        "F03",
+        "F07"
+      ],
+      "unchanged_correct": [
+        "F08",
+        "F09"
+      ],
+      "literal_changed_count": 6,
+      "score_before": 3,
+      "score_after": 5,
+      "whole_notes_before_after": [
+        0,
+        0
+      ]
+    }
+  ],
+  "question_repair_pair_transitions": [
+    {
+      "relation_slot": "C01",
+      "L_pair_verdict": "CONTRADICTED",
+      "M_pair_verdict": "SUPPORTED",
+      "changed": true,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C02",
+      "L_pair_verdict": "CONTRADICTED",
+      "M_pair_verdict": "CONTRADICTED",
+      "changed": false,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C03",
+      "L_pair_verdict": "SUPPORTED",
+      "M_pair_verdict": "SUPPORTED",
+      "changed": false,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C04",
+      "L_pair_verdict": "CONTRADICTED",
+      "M_pair_verdict": "SUPPORTED",
+      "changed": true,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C05",
+      "L_pair_verdict": "SUPPORTED",
+      "M_pair_verdict": "CONTRADICTED",
+      "changed": true,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C06",
+      "L_pair_verdict": "SUPPORTED",
+      "M_pair_verdict": "SUPPORTED",
+      "changed": false,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C07",
+      "L_pair_verdict": "SUPPORTED",
+      "M_pair_verdict": "SUPPORTED",
+      "changed": false,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C08",
+      "L_pair_verdict": "SUPPORTED",
+      "M_pair_verdict": "SUPPORTED",
+      "changed": false,
+      "not_independent_atomic_unit": true
+    },
+    {
+      "relation_slot": "C09",
+      "L_pair_verdict": "SUPPORTED",
+      "M_pair_verdict": "SUPPORTED",
+      "changed": false,
+      "not_independent_atomic_unit": true
+    }
+  ],
+  "question_repair_required_coverage": {
+    "L_correct_ids": [
+      "C06",
+      "C07",
+      "C08",
+      "C09"
+    ],
+    "M_correct_ids": [
+      "C01",
+      "C04",
+      "C06",
+      "C07",
+      "C08",
+      "C09"
+    ],
+    "L_complete_note": false,
+    "M_complete_note": false
+  },
+  "interpretation": "Userorderreversalimproves3relations(F01/F04/F05),regresses1(F06),changes2wrongchoiceswithoutcorrectingthem(F03/F07): sixchanged,net+2. Schemaonlychangesnone. QuestionrepairfixesC01andC04pairclassbutregressesC05fromtruepartialless-thanstatementtofalseequal-countrejection. Pairlabelnet+1andfullreferencecoverage+2havedifferentunits; no whole-noteimprovement.",
+  "no_causal_generalization": "Onefixedseedresponsepercondition, exposedfamilies, no independent trials/significance/internalmechanism or weightgain. Originalreferences/outcomesunaltered.",
+  "model_calls": 0,
+  "gold": 0,
+  "optimizer_updates": 0
+}

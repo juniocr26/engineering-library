@@ -1,0 +1,23 @@
+{
+  "repository": "starlette",
+  "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+  "source_executed": false,
+  "files": [
+    {
+      "path": "starlette/background.py",
+      "first_line": 1,
+      "last_line": 36,
+      "sha256": "0fe5e952915181406765e035b4783330e82e6dee8809564594e03830bd2ad53f",
+      "quote": "from __future__ import annotations\n\nfrom collections.abc import Callable, Sequence\nfrom typing import Any, ParamSpec\n\nfrom starlette._utils import is_async_callable\nfrom starlette.concurrency import run_in_threadpool\n\nP = ParamSpec(\"P\")\n\n\nclass BackgroundTask:\n    def __init__(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        self.func = func\n        self.args = args\n        self.kwargs = kwargs\n        self.is_async = is_async_callable(func)\n\n    async def __call__(self) -> None:\n        if self.is_async:\n            await self.func(*self.args, **self.kwargs)\n        else:\n            await run_in_threadpool(self.func, *self.args, **self.kwargs)\n\n\nclass BackgroundTasks(BackgroundTask):\n    def __init__(self, tasks: Sequence[BackgroundTask] | None = None):\n        self.tasks = list(tasks) if tasks else []\n\n    def add_task(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        task = BackgroundTask(func, *args, **kwargs)\n        self.tasks.append(task)\n\n    async def __call__(self) -> None:\n        for task in self.tasks:\n            await task()\n",
+      "source_revision_bytes_equal": true
+    },
+    {
+      "path": "starlette/concurrency.py",
+      "first_line": 1,
+      "last_line": 59,
+      "sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83",
+      "quote": "from __future__ import annotations\n\nimport functools\nimport warnings\nfrom collections.abc import AsyncIterator, Callable, Coroutine, Iterable, Iterator\nfrom typing import ParamSpec, TypeVar\n\nimport anyio.to_thread\n\nfrom starlette.exceptions import StarletteDeprecationWarning\n\nP = ParamSpec(\"P\")\nT = TypeVar(\"T\")\n\n\nasync def run_until_first_complete(*args: tuple[Callable, dict]) -> None:  # type: ignore[type-arg]\n    warnings.warn(\n        \"run_until_first_complete is deprecated and will be removed in a future version.\",\n        StarletteDeprecationWarning,\n    )\n\n    async with anyio.create_task_group() as task_group:\n\n        async def run(func: Callable[[], Coroutine]) -> None:  # type: ignore[type-arg]\n            await func()\n            task_group.cancel_scope.cancel()\n\n        for func, kwargs in args:\n            task_group.start_soon(run, functools.partial(func, **kwargs))\n\n\nasync def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:\n    func = functools.partial(func, *args, **kwargs)\n    return await anyio.to_thread.run_sync(func)\n\n\nclass _StopIteration(Exception):\n    pass\n\n\ndef _next(iterator: Iterator[T]) -> T:\n    # We can't raise `StopIteration` from within the threadpool iterator\n    # and catch it outside that context, so we coerce them into a different\n    # exception type.\n    try:\n        return next(iterator)\n    except StopIteration:\n        raise _StopIteration\n\n\nasync def iterate_in_threadpool(\n    iterator: Iterable[T],\n) -> AsyncIterator[T]:\n    as_iterator = iter(iterator)\n    while True:\n        try:\n            yield await anyio.to_thread.run_sync(_next, as_iterator)\n        except _StopIteration:\n            break\n",
+      "source_revision_bytes_equal": true
+    }
+  ]
+}

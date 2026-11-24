@@ -1,0 +1,17 @@
+{
+  "repository": "redis",
+  "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+  "source_hashes": {
+    "src/expire.c": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d"
+  },
+  "source_program_executed": false,
+  "sources": [
+    {
+      "path": "src/expire.c",
+      "source_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "first_line": 668,
+      "last_line": 677,
+      "quote": "int checkAlreadyExpired(long long when) {\n    /* EXPIRE with negative TTL, or EXPIREAT with a timestamp into the past\n     * should never be executed as a DEL when load the AOF or in the context\n     * of a slave instance.\n     *\n     * Instead we add the already expired key to the database with expire time\n     * (possibly in the past) and wait for an explicit DEL from the master. */\n    if (server.current_client && server.current_client->flags & CLIENT_MASTER) return 0;\n    return (when <= commandTimeSnapshot() && !server.loading && !server.masterhost);\n}\n"
+    }
+  ]
+}

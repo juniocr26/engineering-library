@@ -1,0 +1,109 @@
+{
+  "at": "2026-11-21T19:45:26.207737+00:00",
+  "design": "POST_OUTPUT_GRANULARITY_AUDIT_NOT_PROSPECTIVE_BENCHMARK",
+  "selection_before_new_property_labels_written": true,
+  "outputs_already_read_earlier": true,
+  "purpose": "Disentangle supported partial meaning, contradiction, required-reference completeness and composite slots. Do not relabel original reference slots or convert28requiredquestions into28independentatoms.",
+  "records": [
+    {
+      "task": "cobra",
+      "method": "M",
+      "folder": "source-question-repair-v1/cobra/M",
+      "fact_id": "C01",
+      "content_sha256": "7855cb79f1ec2db08d53a8cb7a78cb27645e33c1ba8a028f3f1649e401a0255e",
+      "actual_generated_pair": {
+        "en": "PositionalArgs is a function type that defines a declaration for a function that takes a pointer to a Command and a slice of string arguments, and returns an error.",
+        "pt-BR": "O tipo PositionalArgs \u00e9 um tipo de declara\u00e7\u00e3o que define uma declara\u00e7\u00e3o de fun\u00e7\u00e3o que recebe um ponteiro para um Command e uma slice de string como argumentos, e retorna um erro."
+      },
+      "independently_identifiable_assertion_properties": [
+        "defined function type role",
+        "first parameter pointer to Command",
+        "second parameter slice of string",
+        "declared error result"
+      ]
+    },
+    {
+      "task": "cobra",
+      "method": "L",
+      "folder": "source-only-fact-render-v1/cobra/L",
+      "fact_id": "C04",
+      "content_sha256": "c778292af4099b4efaaaf8fbf882b0883644da7662b4f81a3158d418839b875d",
+      "actual_generated_pair": {
+        "en": "ExactArgs(n) returns a callback that rejects arguments of length n.",
+        "pt-BR": "A fun\u00e7\u00e3o ExactArgs(n) retorna uma fun\u00e7\u00e3o de callback que rejeita argumentos de comprimento n."
+      },
+      "independently_identifiable_assertion_properties": [
+        "outer factory returns callback",
+        "returned callback rejects arguments of length n"
+      ]
+    },
+    {
+      "task": "cobra",
+      "method": "M",
+      "folder": "source-question-repair-v1/cobra/M",
+      "fact_id": "C04",
+      "content_sha256": "7855cb79f1ec2db08d53a8cb7a78cb27645e33c1ba8a028f3f1649e401a0255e",
+      "actual_generated_pair": {
+        "en": "ExactArgs(n) returns a function that checks if the number of arguments is equal to n.",
+        "pt-BR": "A fun\u00e7\u00e3o ExactArgs(n) retorna uma fun\u00e7\u00e3o que verifica se o n\u00famero de argumentos \u00e9 igual a n."
+      },
+      "independently_identifiable_assertion_properties": [
+        "outer factory returns function",
+        "returned function checks whether count matches n"
+      ]
+    },
+    {
+      "task": "cobra",
+      "method": "L",
+      "folder": "source-only-fact-render-v1/cobra/L",
+      "fact_id": "C05",
+      "content_sha256": "c778292af4099b4efaaaf8fbf882b0883644da7662b4f81a3158d418839b875d",
+      "actual_generated_pair": {
+        "en": "ExactArgs(n) rejects arguments of length less than n.",
+        "pt-BR": "A fun\u00e7\u00e3o ExactArgs(n) rejeita argumentos de comprimento menos que n."
+      },
+      "independently_identifiable_assertion_properties": [
+        "returned validator rejects count less than n; no only/exhaustive claim"
+      ]
+    },
+    {
+      "task": "cobra",
+      "method": "M",
+      "folder": "source-question-repair-v1/cobra/M",
+      "fact_id": "C05",
+      "content_sha256": "7855cb79f1ec2db08d53a8cb7a78cb27645e33c1ba8a028f3f1649e401a0255e",
+      "actual_generated_pair": {
+        "en": "The returned ExactArgs callback rejects a length condition of exactly n.",
+        "pt-BR": "A fun\u00e7\u00e3o de callback ExactArgs rejeita uma condi\u00e7\u00e3o de comprimento de exatamente n."
+      },
+      "independently_identifiable_assertion_properties": [
+        "returned validator rejects exactly n"
+      ]
+    },
+    {
+      "task": "fastapi",
+      "method": "L",
+      "folder": "source-only-fact-render-v1/fastapi/L",
+      "fact_id": "F05",
+      "content_sha256": "bfea1623c286b4c5b601c22cd4498ba7205d638e90f1142948787964f1b45857",
+      "actual_generated_pair": {
+        "en": "The dependency_cache must be a dictionary and the sub_dependant_cache_key must be a string when reading from the cache.",
+        "pt-BR": "O dependency_cache deve ser uma dictionary e o sub_dependant_cache_key deve ser uma string quando lendo do cache."
+      },
+      "independently_identifiable_assertion_properties": [
+        "runtime dictionary requirement at cache read",
+        "runtime string-key requirement at cache read"
+      ]
+    }
+  ],
+  "selected_generated_pairs": 6,
+  "selected_single_property_units": 12,
+  "reference": "atomic-reference-ledger-v2.json",
+  "reference_sha256": "9b4c8c577d2b8599a6f7aa4f0a9157586b54ca28448a38e78af824b705e2d226",
+  "excluded_dependency_example": "L/C01callsPositionalArgsafunction. Its signature tokens can match source while declaration-role claim is wrong; do not award separate independent semantic successes to dependent parameter components under that wrong entity role. Original pair remainsCONTRADICTED.",
+  "metrics_policy": "Report per-selected-pair property support/contradiction/insufficiency, not pooled method accuracy. Missing source properties are coverage gaps, not invented generated false assertions. EN/PT same-meaning repetitions count once; preserve both original strings.",
+  "not_new_training_targets_or_original_rescoring": true,
+  "reviewer": "Samecampaignagent, notindependentowner/human",
+  "gold": 0,
+  "optimizer_updates": 0
+}

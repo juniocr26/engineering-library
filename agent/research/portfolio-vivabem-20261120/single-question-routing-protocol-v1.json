@@ -1,0 +1,51 @@
+{
+  "at": "2026-11-21T02:50:20.613211+00:00",
+  "hypothesis": "H23: separating five questions into individual inference calls reduces cross-record question/answer assignment drift compared with the frozen batch request, while keeping all seven reviewed bank answers and the original answer labels.",
+  "requests": [
+    {
+      "method": "single-Q001",
+      "qid": "Q001",
+      "request": "agent/research/portfolio-vivabem-20261120/single-question-routing-v1/Q001/request.json",
+      "sha256": "015931d2fd257ea7a017c913cdc63d332fd6a15a1c52ed48a507e4b863482ede"
+    },
+    {
+      "method": "single-Q002",
+      "qid": "Q002",
+      "request": "agent/research/portfolio-vivabem-20261120/single-question-routing-v1/Q002/request.json",
+      "sha256": "10d9d77680714b9338704f0022a69066610ff44e108ce1e25602e7ffa7a84368"
+    },
+    {
+      "method": "single-Q003",
+      "qid": "Q003",
+      "request": "agent/research/portfolio-vivabem-20261120/single-question-routing-v1/Q003/request.json",
+      "sha256": "75c7ac66eeb650d1db2a34a8064d050f88549975a1f6abc3d8a6e3f6e9edf963"
+    },
+    {
+      "method": "single-Q004",
+      "qid": "Q004",
+      "request": "agent/research/portfolio-vivabem-20261120/single-question-routing-v1/Q004/request.json",
+      "sha256": "1211928c7a4e5cab8a5332bdba2efa09261b2d71a97767c210e6775bb4c7ae23"
+    },
+    {
+      "method": "single-Q005",
+      "qid": "Q005",
+      "request": "agent/research/portfolio-vivabem-20261120/single-question-routing-v1/Q005/request.json",
+      "sha256": "c742196a8f2357e947dafcd11c01307ba140f79ba1f3af9b105ae73542763bdd"
+    }
+  ],
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "reference_batch": "answerbank-comparison-v1/answerbank-select",
+  "source_bank_parent": "answerbank-comparison-protocol-v1.json",
+  "oracle_parent": "answerbank-comparison-oracle-v1.json",
+  "controlled": "Same system message, seven bank entries/order/content, original labels, question wording, model/temp/context. One question per request, one-record schema and instruction, generated-token cap240each(total1200).",
+  "acceptance": "Aggregate all five terminal records in Q001..Q005 order. All5correct mappings required before any new chapter composition; independent full chapter/source/ENPT review still required. No per-question partial success promoted to accepted chapter.",
+  "limits": [
+    "Five correlated development calls from same source family; not independent accuracy samples or certified holdout.",
+    "Prompt work is repeated, so latency/token cost is not assumed lower than batch.",
+    "Method changes isolate task segmentation including necessary schema/instruction changes, not a proof of internal model root cause."
+  ],
+  "no_retries": true,
+  "no_training": true,
+  "owner_approved": false,
+  "training_gold": false
+}

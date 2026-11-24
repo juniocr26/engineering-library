@@ -1,0 +1,129 @@
+{
+  "at": "2026-11-21T18:19:46.025467+00:00",
+  "topic": "go-image-compression-flow",
+  "family": "go-image-optimizer",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-compression-flow/en.candidate.txt",
+      "sha256": "f5075b82889e02ebe6e0c9e8f7e95fb62e82b6a03e7c293e937c8093dcff83dd",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-compression-flow/pt-br.candidate.txt",
+      "sha256": "d0ecf072f42438823974b494e4ee8423f757c71fe4736c56379defc9935c6308",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Interface dependency injected by constructor; empty input precedes first context lookup.",
+    "Both context failures/compressor failure zero the result; Compress(input) receives no context; no interruption/rollback proof.",
+    "Concrete dispatch eight formats, HEIF content type, detector-error/default paths accurate.",
+    "Additional router/HTTP handler establish source composition and request-context invocation with success-only output path, not runtime binding/delivery.",
+    "Original caller text explicitly mentions both context checks, although final success explanation and zero-result handoff are incomplete."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/application/imagecompression/usecase.go",
+      "source_sha256": "2a1bd63b4f617faf4294cdbaeee74935599e9e78032b06df72957419a5f99b1a",
+      "source_path": "backend/internal/application/imagecompression/usecase.go",
+      "source_lines": [
+        32,
+        64
+      ],
+      "exact_source_evidence": "type Compressor interface {\n\tCompress(input []byte) (Result, error)\n}\n\ntype UseCase struct {\n\tcompressor Compressor\n}\n\nfunc NewUseCase(compressor Compressor) UseCase {\n\treturn UseCase{\n\t\tcompressor: compressor,\n\t}\n}\n\nfunc (u UseCase) Execute(ctx context.Context, input []byte) (Result, error) {\n\tif len(input) == 0 {\n\t\treturn Result{}, ErrEmptyImage\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tresult, err := u.compressor.Compress(input)\n\tif err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\treturn result, nil",
+      "reviewed_interpretation": "Interface, constructor and both context checks.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "source_path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_lines": [
+        40,
+        65
+      ],
+      "exact_source_evidence": "func (c Compressor) Compress(input []byte) (imagecompression.Result, error) {\n\tdetected, err := imaging.DetectFormat(input)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tswitch detected.Format {\n\tcase imagecompression.FormatJPEG:\n\t\treturn c.compressJPEG(input)\n\tcase imagecompression.FormatPNG:\n\t\treturn c.compressPNG(input)\n\tcase imagecompression.FormatWebP:\n\t\treturn c.compressWebP(input)\n\tcase imagecompression.FormatAVIF:\n\t\treturn c.compressAVIF(input)\n\tcase imagecompression.FormatHEIF:\n\t\treturn c.compressHEIF(input, detected.ContentType)\n\tcase imagecompression.FormatGIF:\n\t\treturn c.compressGIF(input)\n\tcase imagecompression.FormatBMP:\n\t\treturn c.compressBMP(input)\n\tcase imagecompression.FormatTIFF:\n\t\treturn c.compressTIFF(input)\n\tdefault:\n\t\treturn imagecompression.Result{}, imagecompression.ErrUnsupportedFormat\n\t}",
+      "reviewed_interpretation": "Detection, format dispatch and default.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/http/router.go",
+      "source_sha256": "c5beb8243c91065f6c7ca36aeb41fb48160aa4d0aaccd6ae4101b7e1368d0121",
+      "source_path": "backend/internal/infrastructure/http/router.go",
+      "source_lines": [
+        19,
+        24
+      ],
+      "exact_source_evidence": "func NewRouter(logger *slog.Logger) http.Handler {\n\tmux := http.NewServeMux()\n\tcompressImage := imagecompression.NewUseCase(compress.NewCompressor())\n\n\tmux.HandleFunc(\"GET /health\", handler.Health(logger))\n\tmux.HandleFunc(\"POST /images/compress\", compressimage.ProcessImage(logger, compressImage))",
+      "reviewed_interpretation": "Concrete construction and POST route.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/http/handler/compress_image/handler.go",
+      "source_sha256": "0068467083cd8150bde7e0c10aa1a88bd184f78e2cc79ee16f548acf518d1fb0",
+      "source_path": "backend/internal/infrastructure/http/handler/compress_image/handler.go",
+      "source_lines": [
+        82,
+        98
+      ],
+      "exact_source_evidence": "\t\tresult, err := useCase.Execute(r.Context(), imageBytes)\n\t\tif err != nil {\n\t\t\twriteCompressionError(w, logger, err)\n\t\t\treturn\n\t\t}\n\n\t\tw.Header().Set(\"Content-Type\", result.ContentType)\n\t\tw.Header().Set(\"Content-Length\", strconv.Itoa(len(result.Data)))\n\t\tw.Header().Set(\"Content-Disposition\", mime.FormatMediaType(\"attachment\", map[string]string{\n\t\t\t\"filename\": compressedFilename(fileHeader.Filename, result.Format, result.ContentType),\n\t\t}))\n\t\tw.WriteHeader(http.StatusOK)\n\n\t\tif _, err := w.Write(result.Data); err != nil {\n\t\t\tlogger.Warn(\"failed to write image response\", \"error\", err)\n\t\t}\n\t}",
+      "reviewed_interpretation": "Use case call, error branch and success write.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "gio-compression-flow-caller",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-compression-flow-caller/raw-response.json",
+      "sha256": "cf468ba5f37dd9644233f7b2fdb0b9f0146f170731b0ede6f7b51fdc90589f8c",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    },
+    {
+      "id": "gio-compression-flow-helpers",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-compression-flow-helpers/raw-response.json",
+      "sha256": "a430ef20c1d7b120180983a7951f4eee6e0c4409922ba335833fe7ef05032614",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [
+    {
+      "kind": "INCORRECT_PRIOR_OUTPUT_ATTRIBUTION",
+      "verdict": "CONTRADICTED",
+      "critical": true,
+      "original_en": "The model drafts omitted these distinctions and the second check.",
+      "original_pt": "Os rascunhos do modelo omitiram essas diferenças e a segunda consulta.",
+      "reason": "Original caller-only baseline explicitly says checks again for an error in the context / verifica novamente se há um erro no contexto. Helper-enriched baseline omits context checks. Do not falsely label the first output as omitting a check it mentions. Historical original rejection remains unchanged.",
+      "proposed_en": "The caller-only draft mentioned both context checks but did not preserve the exact zero-result/error branches. The helper-enriched draft omitted the context checks.",
+      "proposed_pt": "O rascunho com somente o chamador mencionou as duas consultas ao contexto, mas não preservou os ramos exatos de resultado zero e erro. O rascunho com auxiliares omitiu as consultas ao contexto.",
+      "applied": false
+    }
+  ],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 0,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "REVISE_CURRENT_PROSE_FINDINGS",
+  "complete_document_accepted": false,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,1323 @@
+{
+  "at": "2026-11-20T19:27:42.266454+00:00",
+  "repository": "dustin/go-humanize",
+  "claims": [
+    {
+      "id": "purpose",
+      "section": "Purpose / Propósito",
+      "en": "The pinned `humanize` package converts sizes to display strings and parses size strings. Fixed-width byte APIs, arbitrary-precision byte APIs and SI magnitude/unit parsing have distinct contracts. Similar names do not imply identical accepted units or precision.",
+      "pt-br": "O pacote `humanize` fixado converte tamanhos em textos de exibição e interpreta textos de tamanho. APIs de bytes de largura fixa, APIs de precisão arbitrária e interpretação de magnitude e unidade SI possuem contratos distintos. Nomes semelhantes não implicam unidades aceitas ou precisão idênticas.",
+      "evidence_ids": [
+        "v1.0.1:Bytes",
+        "v1.0.1:ParseBytes",
+        "v1.0.1:ParseBigBytes",
+        "v1.0.1:ParseSI"
+      ],
+      "runtime_case_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "architecture",
+      "section": "Architecture / Arquitetura",
+      "en": "`Bytes` and `IBytes` delegate to `humanateBytes`, using bases 1000 and 1024. `BigBytes` and `BigIBytes` delegate to `humanateBigBytes`, which copies its input before passing that copy to the mutating `oomm` helper. `ParseSI` follows a separate regular-expression and prefix-table path.",
+      "pt-br": "`Bytes` e `IBytes` delegam a `humanateBytes`, usando bases 1000 e 1024. `BigBytes` e `BigIBytes` delegam a `humanateBigBytes`, que copia sua entrada antes de passar essa cópia ao auxiliar mutável `oomm`. `ParseSI` segue um caminho separado de expressão regular e tabela de prefixos.",
+      "evidence_ids": [
+        "v1.0.1:Bytes",
+        "v1.0.1:IBytes",
+        "v1.0.1:humanateBytes",
+        "v1.0.1:BigBytes",
+        "v1.0.1:BigIBytes",
+        "v1.0.1:humanateBigBytes",
+        "v1.0.1:oomm",
+        "v1.0.1:ParseSI"
+      ],
+      "runtime_case_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "dependencies",
+      "section": "Dependencies and configuration / Dependências e configuração",
+      "en": "The selected root package imports only Go standard-library packages. The current module file declares `github.com/dustin/go-humanize` and `go 1.16`; the earlier selected tree has no root module file. This does not establish a tested minimum Go version. Observations used existing Go1.27.4 on Linux/ARM64, with CGO and package downloads disabled.",
+      "pt-br": "O pacote raiz selecionado importa apenas pacotes da biblioteca padrão Go. O arquivo de módulo atual declara `github.com/dustin/go-humanize` e `go 1.16`; a árvore anterior selecionada não possui arquivo de módulo na raiz. Isso não estabelece uma versão mínima de Go testada. As observações usaram o Go1.27.4 existente em Linux/ARM64, com CGO e downloads de pacotes desativados.",
+      "evidence_ids": [
+        "v1.0.1:ParseBytes",
+        "v1.0.1:ParseBigBytes"
+      ],
+      "runtime_case_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "formatting",
+      "section": "Inputs and outputs / Entradas e saídas",
+      "en": "Observed `Bytes(82854982)` returned `83 MB`; `IBytes(82854982)` returned `79 MiB`. The decimal and binary boundaries 1000 and 1024 returned `1.0 kB` and `1.0 KiB`. These are rounded display representations, not lossless serialization contracts.",
+      "pt-br": "O valor observado de `Bytes(82854982)` foi `83 MB`; `IBytes(82854982)` retornou `79 MiB`. Os limites decimal e binário 1000 e 1024 retornaram `1.0 kB` e `1.0 KiB`. São representações arredondadas para exibição, não contratos de serialização sem perdas.",
+      "evidence_ids": [
+        "v1.0.1:Bytes",
+        "v1.0.1:IBytes",
+        "v1.0.1:humanateBytes"
+      ],
+      "runtime_case_ids": [
+        "format-decimal",
+        "format-binary",
+        "format-boundary",
+        "format-binary-boundary"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "parse-input",
+      "section": "Inputs and outputs / Entradas e saídas",
+      "en": "`ParseBytes` scans an initial digit/dot/comma prefix, removes its commas, calls `strconv.ParseFloat`, and lowercases and trims only the remaining unit text. Observations accepted `1,2,3 KB` as 123000, `1.5 KiB` as 1536 and `1.9 B` as 1. This is not strict grouping validation or a guarantee that every Unicode digit can be parsed.",
+      "pt-br": "`ParseBytes` percorre um prefixo inicial de dígitos, pontos e vírgulas, remove suas vírgulas, chama `strconv.ParseFloat` e converte para minúsculas e apara apenas o texto de unidade restante. As observações aceitaram `1,2,3 KB` como 123000, `1.5 KiB` como 1536 e `1.9 B` como 1. Isso não é validação estrita de agrupamento nem garantia de interpretação de todo dígito Unicode.",
+      "evidence_ids": [
+        "v1.0.1:ParseBytes"
+      ],
+      "runtime_case_ids": [
+        "parse-loose-commas",
+        "parse-fraction-scale",
+        "parse-fraction-truncate",
+        "parse-unicode-digit"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "errors",
+      "section": "Errors / Erros",
+      "en": "The observed leading-space input ` 1 KB` and signed input `-1KB` failed numeric parsing. `1 QQ` failed unit lookup. `1e3` did not become exponent notation: the scanned number was followed by an unsupported unit. However, `1e` used the supported unit alias and produced 1000000000000000000.",
+      "pt-br": "A entrada observada com espaço inicial ` 1 KB` e a entrada com sinal `-1KB` falharam na interpretação numérica. `1 QQ` falhou na busca da unidade. `1e3` não virou notação exponencial: o número percorrido foi seguido de uma unidade não aceita. Porém, `1e` usou o alias de unidade aceito e produziu 1000000000000000000.",
+      "evidence_ids": [
+        "v1.0.1:ParseBytes"
+      ],
+      "runtime_case_ids": [
+        "parse-leading-space",
+        "parse-negative",
+        "parse-unknown",
+        "parse-exponent",
+        "parse-e-unit"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "precision",
+      "section": "Precision / Precisão",
+      "en": "`ParseBytes` uses `float64`: the observed input `9007199254740993` returned `9007199254740992`, and `18446744073709551615` was rejected as too large. `ParseBigBytes` preserved the former integer exactly through its rational-number path. The arbitrary-precision API still truncated observed `1.9 B` to 1; arbitrary precision does not imply a fractional-byte result.",
+      "pt-br": "`ParseBytes` usa `float64`: a entrada observada `9007199254740993` retornou `9007199254740992`, e `18446744073709551615` foi rejeitada por ser grande demais. `ParseBigBytes` preservou exatamente o primeiro inteiro por seu caminho de número racional. A API de precisão arbitrária ainda truncou o valor observado `1.9 B` para 1; precisão arbitrária não implica resultado de bytes fracionários.",
+      "evidence_ids": [
+        "v1.0.1:ParseBytes",
+        "v1.0.1:ParseBigBytes"
+      ],
+      "runtime_case_ids": [
+        "parse-float-precision",
+        "parse-uint64-max",
+        "bigparse-exact-large",
+        "bigparse-fraction"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "units",
+      "section": "Revision changes / Mudanças entre revisões",
+      "en": "Between the pinned revisions, `ParseBigBytes` gained `RB`, `QB`, `RiB` and `QiB` aliases and their suffix-free forms. Observations accepted `1 QB` as 10^30 and `1 QiB` as 2^100 in the current cut; the earlier cut rejected them. This does not extend `ParseBytes`, which rejected `1 Rb` in both cuts. The two copies of the fixed-width parser source file are byte-identical.",
+      "pt-br": "Entre as revisões fixadas, `ParseBigBytes` ganhou aliases `RB`, `QB`, `RiB` e `QiB` e suas formas sem sufixo. As observações aceitaram `1 QB` como 10^30 e `1 QiB` como 2^100 no recorte atual; o anterior os rejeitou. Isso não amplia `ParseBytes`, que rejeitou `1 Rb` nos dois recortes. As duas cópias do arquivo de código do parser de largura fixa são idênticas em bytes.",
+      "evidence_ids": [
+        "v1.0.0:ParseBigBytes",
+        "v1.0.1:ParseBigBytes",
+        "v1.0.1:ParseBytes"
+      ],
+      "runtime_case_ids": [
+        "bigparse-quettabyte",
+        "bigparse-quebibyte",
+        "parse-new-big-unit"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "large-display",
+      "section": "Revision changes / Mudanças entre revisões",
+      "en": "For 10^30 bytes, observed `BigBytes` changed from `1000000 YB` to `1.0 QB`. For 2^100 bytes, `BigIBytes` changed from `1048576 YiB` to `1.0 QiB`. Both formatting paths preserved the supplied integer in these observations.",
+      "pt-br": "Para 10^30 bytes, o valor observado de `BigBytes` mudou de `1000000 YB` para `1.0 QB`. Para 2^100 bytes, `BigIBytes` mudou de `1048576 YiB` para `1.0 QiB`. Os dois caminhos de formatação preservaram o inteiro recebido nestas observações.",
+      "evidence_ids": [
+        "v1.0.0:BigBytes",
+        "v1.0.1:BigBytes",
+        "v1.0.0:BigIBytes",
+        "v1.0.1:BigIBytes",
+        "v1.0.1:humanateBigBytes",
+        "v1.0.1:oomm"
+      ],
+      "runtime_case_ids": [
+        "bigformat-quettabyte",
+        "bigformat-quebibyte"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "mutation",
+      "section": "State and ownership / Estado e posse",
+      "en": "`BigComma` has a different ownership contract: its loop divides the caller-supplied `big.Int` itself. Observed inputs 1234567 and -1234567 produced the expected signed grouped strings, but both input objects ended as 1. Pass an explicit copy when preservation is required; do not infer non-mutation from `BigBytes`.",
+      "pt-br": "`BigComma` possui outro contrato de posse: seu laço divide o próprio `big.Int` recebido do chamador. As entradas observadas 1234567 e -1234567 produziram os textos agrupados com sinal esperados, mas ambos os objetos de entrada terminaram como 1. Passe uma cópia explícita quando a preservação for necessária; não deduza ausência de mutação a partir de `BigBytes`.",
+      "evidence_ids": [
+        "v1.0.1:BigComma",
+        "v1.0.1:oom",
+        "v1.0.1:humanateBigBytes"
+      ],
+      "runtime_case_ids": [
+        "bigcomma-positive",
+        "bigcomma-negative"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "si",
+      "section": "SI parsing / Interpretação SI",
+      "en": "Observed `ParseSI(\"1 QB\")` changed from magnitude 1 with unit `QB` to magnitude 1e30 with unit `B`, because the prefix table acquired `Q`. Byte parsing and SI parsing therefore require separate statements about unknown suffixes. These observations do not verify every SI prefix, unit spelling or release.",
+      "pt-br": "O valor observado de `ParseSI(\"1 QB\")` mudou de magnitude 1 com unidade `QB` para magnitude 1e30 com unidade `B`, pois a tabela de prefixos ganhou `Q`. Portanto, a interpretação de bytes e a interpretação SI exigem afirmações separadas sobre sufixos desconhecidos. Estas observações não verificam todo prefixo SI, escrita de unidade ou lançamento.",
+      "evidence_ids": [
+        "v1.0.0:ParseSI",
+        "v1.0.1:ParseSI",
+        "v1.0.1:init",
+        "v1.0.1:revfmap"
+      ],
+      "runtime_case_ids": [
+        "parse-si-quetta"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "float-review",
+      "section": "Limitations / Limitações",
+      "en": "The 36 frozen cases ran once per revision. Exactly 35 predictions matched in each cut: `ComputeSI(1e-30)` rendered `1.0000000000000002` rather than the owned exact prediction `1`. The prefix changed from empty to `q` as predicted. The unmatched expectation is preserved as an owned prediction error, without an upstream-defect or broad numerical-accuracy claim.",
+      "pt-br": "Os 36 casos congelados foram executados uma vez por revisão. Exatamente 35 previsões coincidiram em cada recorte: `ComputeSI(1e-30)` exibiu `1.0000000000000002`, em vez da previsão própria exata `1`. O prefixo mudou de vazio para `q`, como previsto. A expectativa divergente está preservada como erro de previsão próprio, sem alegação de defeito no projeto externo ou de precisão numérica ampla.",
+      "evidence_ids": [
+        "v1.0.0:ComputeSI",
+        "v1.0.1:ComputeSI",
+        "v1.0.1:logn"
+      ],
+      "runtime_case_ids": [
+        "si-quecto"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "scope",
+      "section": "Limitations / Limitações",
+      "en": "The experiments compiled the complete selected non-test root package and executed its reviewed initializers and finite synthetic calls. They did not install packages, run upstream tests, contact application services or test Windows/macOS runtime behavior, concurrency, mutable-global tampering or arbitrary inputs. The module directive and license are source metadata, not compatibility or training-approval certificates.",
+      "pt-br": "Os experimentos compilaram o pacote raiz selecionado completo sem testes e executaram seus inicializadores revisados e chamadas sintéticas finitas. Não instalaram pacotes, executaram testes externos, contataram serviços de aplicação nem testaram execução em Windows/macOS, concorrência, adulteração de globais mutáveis ou entradas arbitrárias. A diretiva de módulo e a licença são metadados do código, não certificados de compatibilidade ou aprovação de treinamento.",
+      "evidence_ids": [
+        "v1.0.1:init",
+        "v1.0.1:ParseBytes",
+        "v1.0.1:ParseBigBytes",
+        "v1.0.1:BigComma"
+      ],
+      "runtime_case_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    }
+  ],
+  "faq": [
+    {
+      "id": "units",
+      "en_q": "Do the new units also work in ParseBytes?",
+      "pt-br_q": "As novas unidades também funcionam em ParseBytes?",
+      "en_a": "Between the pinned revisions, `ParseBigBytes` gained `RB`, `QB`, `RiB` and `QiB` aliases and their suffix-free forms. Observations accepted `1 QB` as 10^30 and `1 QiB` as 2^100 in the current cut; the earlier cut rejected them. This does not extend `ParseBytes`, which rejected `1 Rb` in both cuts. The two copies of the fixed-width parser source file are byte-identical.",
+      "pt-br_a": "Entre as revisões fixadas, `ParseBigBytes` ganhou aliases `RB`, `QB`, `RiB` e `QiB` e suas formas sem sufixo. As observações aceitaram `1 QB` como 10^30 e `1 QiB` como 2^100 no recorte atual; o anterior os rejeitou. Isso não amplia `ParseBytes`, que rejeitou `1 Rb` nos dois recortes. As duas cópias do arquivo de código do parser de largura fixa são idênticas em bytes.",
+      "claim_id": "units",
+      "evidence_ids": [
+        "v1.0.0:ParseBigBytes",
+        "v1.0.1:ParseBigBytes",
+        "v1.0.1:ParseBytes"
+      ],
+      "runtime_case_ids": [
+        "bigparse-quettabyte",
+        "bigparse-quebibyte",
+        "parse-new-big-unit"
+      ]
+    },
+    {
+      "id": "precision",
+      "en_q": "Which parser preserved the integer above 2^53?",
+      "pt-br_q": "Qual parser preservou o inteiro acima de 2^53?",
+      "en_a": "`ParseBytes` uses `float64`: the observed input `9007199254740993` returned `9007199254740992`, and `18446744073709551615` was rejected as too large. `ParseBigBytes` preserved the former integer exactly through its rational-number path. The arbitrary-precision API still truncated observed `1.9 B` to 1; arbitrary precision does not imply a fractional-byte result.",
+      "pt-br_a": "`ParseBytes` usa `float64`: a entrada observada `9007199254740993` retornou `9007199254740992`, e `18446744073709551615` foi rejeitada por ser grande demais. `ParseBigBytes` preservou exatamente o primeiro inteiro por seu caminho de número racional. A API de precisão arbitrária ainda truncou o valor observado `1.9 B` para 1; precisão arbitrária não implica resultado de bytes fracionários.",
+      "claim_id": "precision",
+      "evidence_ids": [
+        "v1.0.1:ParseBytes",
+        "v1.0.1:ParseBigBytes"
+      ],
+      "runtime_case_ids": [
+        "parse-float-precision",
+        "parse-uint64-max",
+        "bigparse-exact-large",
+        "bigparse-fraction"
+      ]
+    },
+    {
+      "id": "commas",
+      "en_q": "Does accepting commas prove strict thousands grouping?",
+      "pt-br_q": "Aceitar vírgulas comprova agrupamento estrito de milhares?",
+      "en_a": "`ParseBytes` scans an initial digit/dot/comma prefix, removes its commas, calls `strconv.ParseFloat`, and lowercases and trims only the remaining unit text. Observations accepted `1,2,3 KB` as 123000, `1.5 KiB` as 1536 and `1.9 B` as 1. This is not strict grouping validation or a guarantee that every Unicode digit can be parsed.",
+      "pt-br_a": "`ParseBytes` percorre um prefixo inicial de dígitos, pontos e vírgulas, remove suas vírgulas, chama `strconv.ParseFloat` e converte para minúsculas e apara apenas o texto de unidade restante. As observações aceitaram `1,2,3 KB` como 123000, `1.5 KiB` como 1536 e `1.9 B` como 1. Isso não é validação estrita de agrupamento nem garantia de interpretação de todo dígito Unicode.",
+      "claim_id": "parse-input",
+      "evidence_ids": [
+        "v1.0.1:ParseBytes"
+      ],
+      "runtime_case_ids": [
+        "parse-loose-commas",
+        "parse-fraction-scale",
+        "parse-fraction-truncate",
+        "parse-unicode-digit"
+      ]
+    },
+    {
+      "id": "mutation",
+      "en_q": "Can the caller reuse a BigComma input unchanged?",
+      "pt-br_q": "O chamador pode reutilizar sem alterações uma entrada de BigComma?",
+      "en_a": "`BigComma` has a different ownership contract: its loop divides the caller-supplied `big.Int` itself. Observed inputs 1234567 and -1234567 produced the expected signed grouped strings, but both input objects ended as 1. Pass an explicit copy when preservation is required; do not infer non-mutation from `BigBytes`.",
+      "pt-br_a": "`BigComma` possui outro contrato de posse: seu laço divide o próprio `big.Int` recebido do chamador. As entradas observadas 1234567 e -1234567 produziram os textos agrupados com sinal esperados, mas ambos os objetos de entrada terminaram como 1. Passe uma cópia explícita quando a preservação for necessária; não deduza ausência de mutação a partir de `BigBytes`.",
+      "claim_id": "mutation",
+      "evidence_ids": [
+        "v1.0.1:BigComma",
+        "v1.0.1:oom",
+        "v1.0.1:humanateBigBytes"
+      ],
+      "runtime_case_ids": [
+        "bigcomma-positive",
+        "bigcomma-negative"
+      ]
+    },
+    {
+      "id": "si",
+      "en_q": "Why document SI parsing separately?",
+      "pt-br_q": "Por que documentar a interpretação SI separadamente?",
+      "en_a": "Observed `ParseSI(\"1 QB\")` changed from magnitude 1 with unit `QB` to magnitude 1e30 with unit `B`, because the prefix table acquired `Q`. Byte parsing and SI parsing therefore require separate statements about unknown suffixes. These observations do not verify every SI prefix, unit spelling or release.",
+      "pt-br_a": "O valor observado de `ParseSI(\"1 QB\")` mudou de magnitude 1 com unidade `QB` para magnitude 1e30 com unidade `B`, pois a tabela de prefixos ganhou `Q`. Portanto, a interpretação de bytes e a interpretação SI exigem afirmações separadas sobre sufixos desconhecidos. Estas observações não verificam todo prefixo SI, escrita de unidade ou lançamento.",
+      "claim_id": "si",
+      "evidence_ids": [
+        "v1.0.0:ParseSI",
+        "v1.0.1:ParseSI",
+        "v1.0.1:init",
+        "v1.0.1:revfmap"
+      ],
+      "runtime_case_ids": [
+        "parse-si-quetta"
+      ]
+    },
+    {
+      "id": "float",
+      "en_q": "Did every exact numerical prediction match?",
+      "pt-br_q": "Todas as previsões numéricas exatas coincidiram?",
+      "en_a": "The 36 frozen cases ran once per revision. Exactly 35 predictions matched in each cut: `ComputeSI(1e-30)` rendered `1.0000000000000002` rather than the owned exact prediction `1`. The prefix changed from empty to `q` as predicted. The unmatched expectation is preserved as an owned prediction error, without an upstream-defect or broad numerical-accuracy claim.",
+      "pt-br_a": "Os 36 casos congelados foram executados uma vez por revisão. Exatamente 35 previsões coincidiram em cada recorte: `ComputeSI(1e-30)` exibiu `1.0000000000000002`, em vez da previsão própria exata `1`. O prefixo mudou de vazio para `q`, como previsto. A expectativa divergente está preservada como erro de previsão próprio, sem alegação de defeito no projeto externo ou de precisão numérica ampla.",
+      "claim_id": "float-review",
+      "evidence_ids": [
+        "v1.0.0:ComputeSI",
+        "v1.0.1:ComputeSI",
+        "v1.0.1:logn"
+      ],
+      "runtime_case_ids": [
+        "si-quecto"
+      ]
+    }
+  ],
+  "units": {
+    "v1.0.0:oomm": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "big.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/big.go",
+      "source_sha256": "26c2e7a009a1579f126853cbfb6c9ffc7cda00b4f5ca3faea4705c384cff5edf",
+      "first_line": 8,
+      "last_line": 19,
+      "quote": "func oomm(n, b *big.Int, maxmag int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t\tif mag == maxmag && maxmag >= 0 {\n\t\t\tbreak\n\t\t}\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+      "quote_sha256": "28333e68df494fc6c99093413ebb9e188e6de62465d6a166f10ec8fd874b2761",
+      "unit": {
+        "selector": "oomm",
+        "declaration_kind": "function",
+        "symbol": "humanize.oomm",
+        "start_line": 8,
+        "end_line": 19,
+        "quote": "func oomm(n, b *big.Int, maxmag int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t\tif mag == maxmag && maxmag >= 0 {\n\t\t\tbreak\n\t\t}\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+        "declaration": "func oomm(n, b *big.Int, maxmag int) (float64, int)",
+        "function_type": "func(n, b *big.Int, maxmag int) (float64, int)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:oom": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "big.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/big.go",
+      "source_sha256": "26c2e7a009a1579f126853cbfb6c9ffc7cda00b4f5ca3faea4705c384cff5edf",
+      "first_line": 23,
+      "last_line": 31,
+      "quote": "func oom(n, b *big.Int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+      "quote_sha256": "2705cf2c4f895109cc6ba66a05ed66b0d6350b3d49ba301afc0b433d884a17ed",
+      "unit": {
+        "selector": "oom",
+        "declaration_kind": "function",
+        "symbol": "humanize.oom",
+        "start_line": 23,
+        "end_line": 31,
+        "quote": "func oom(n, b *big.Int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+        "declaration": "func oom(n, b *big.Int) (float64, int)",
+        "function_type": "func(n, b *big.Int) (float64, int)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:BigBytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bigbytes.go",
+      "source_sha256": "0628800f4b07d9b08c7e005c54027c0fa89b129c4a83180674860196c92ae615",
+      "first_line": 117,
+      "last_line": 120,
+      "quote": "func BigBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\", \"ZB\", \"YB\"}\n\treturn humanateBigBytes(s, bigSIExp, sizes)\n}",
+      "quote_sha256": "50c87d674d48e0243a1b27f41e3ba4c30f735870b2c53374f93cd3c79d8ed86b",
+      "unit": {
+        "selector": "BigBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.BigBytes",
+        "start_line": 117,
+        "end_line": 120,
+        "quote": "func BigBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\", \"ZB\", \"YB\"}\n\treturn humanateBigBytes(s, bigSIExp, sizes)\n}",
+        "declaration": "func BigBytes(s *big.Int) string",
+        "function_type": "func(s *big.Int) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:BigIBytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bigbytes.go",
+      "source_sha256": "0628800f4b07d9b08c7e005c54027c0fa89b129c4a83180674860196c92ae615",
+      "first_line": 127,
+      "last_line": 130,
+      "quote": "func BigIBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\", \"ZiB\", \"YiB\"}\n\treturn humanateBigBytes(s, bigIECExp, sizes)\n}",
+      "quote_sha256": "93dd198dc14fcb0afd06734c10b4b3cd5c91aa71223704b594854a0843ca8662",
+      "unit": {
+        "selector": "BigIBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.BigIBytes",
+        "start_line": 127,
+        "end_line": 130,
+        "quote": "func BigIBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\", \"ZiB\", \"YiB\"}\n\treturn humanateBigBytes(s, bigIECExp, sizes)\n}",
+        "declaration": "func BigIBytes(s *big.Int) string",
+        "function_type": "func(s *big.Int) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:ParseBigBytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bigbytes.go",
+      "source_sha256": "0628800f4b07d9b08c7e005c54027c0fa89b129c4a83180674860196c92ae615",
+      "first_line": 139,
+      "last_line": 173,
+      "quote": "func ParseBigBytes(s string) (*big.Int, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tval := &big.Rat{}\n\t_, err := fmt.Sscanf(num, \"%f\", val)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bigBytesSizeTable[extra]; ok {\n\t\tmv := (&big.Rat{}).SetInt(m)\n\t\tval.Mul(val, mv)\n\t\trv := &big.Int{}\n\t\trv.Div(val.Num(), val.Denom())\n\t\treturn rv, nil\n\t}\n\n\treturn nil, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+      "quote_sha256": "19042abaab7e0aee7495b63c0ccca6009a7c14767742fdfb2842f49bcf556ce8",
+      "unit": {
+        "selector": "ParseBigBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.ParseBigBytes",
+        "start_line": 139,
+        "end_line": 173,
+        "quote": "func ParseBigBytes(s string) (*big.Int, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tval := &big.Rat{}\n\t_, err := fmt.Sscanf(num, \"%f\", val)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bigBytesSizeTable[extra]; ok {\n\t\tmv := (&big.Rat{}).SetInt(m)\n\t\tval.Mul(val, mv)\n\t\trv := &big.Int{}\n\t\trv.Div(val.Num(), val.Denom())\n\t\treturn rv, nil\n\t}\n\n\treturn nil, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+        "declaration": "func ParseBigBytes(s string) (*big.Int, error)",
+        "function_type": "func(s string) (*big.Int, error)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:humanateBigBytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bigbytes.go",
+      "source_sha256": "0628800f4b07d9b08c7e005c54027c0fa89b129c4a83180674860196c92ae615",
+      "first_line": 96,
+      "last_line": 110,
+      "quote": "func humanateBigBytes(s, base *big.Int, sizes []string) string {\n\tif s.Cmp(ten) < 0 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\tc := (&big.Int{}).Set(s)\n\tval, mag := oomm(c, base, len(sizes)-1)\n\tsuffix := sizes[mag]\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n\n}",
+      "quote_sha256": "dd199b993cd894483027906b523040879ea61d0291a3f339257f0b9b4d0ca113",
+      "unit": {
+        "selector": "humanateBigBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.humanateBigBytes",
+        "start_line": 96,
+        "end_line": 110,
+        "quote": "func humanateBigBytes(s, base *big.Int, sizes []string) string {\n\tif s.Cmp(ten) < 0 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\tc := (&big.Int{}).Set(s)\n\tval, mag := oomm(c, base, len(sizes)-1)\n\tsuffix := sizes[mag]\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n\n}",
+        "declaration": "func humanateBigBytes(s, base *big.Int, sizes []string) string",
+        "function_type": "func(s, base *big.Int, sizes []string) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:Bytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 88,
+      "last_line": 91,
+      "quote": "func Bytes(s uint64) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\"}\n\treturn humanateBytes(s, 1000, sizes)\n}",
+      "quote_sha256": "136cbc7b35bc78b689dd440229f951d4435d0c0ffb74ac4112f73dcbf9988c68",
+      "unit": {
+        "selector": "Bytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.Bytes",
+        "start_line": 88,
+        "end_line": 91,
+        "quote": "func Bytes(s uint64) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\"}\n\treturn humanateBytes(s, 1000, sizes)\n}",
+        "declaration": "func Bytes(s uint64) string",
+        "function_type": "func(s uint64) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:IBytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 98,
+      "last_line": 101,
+      "quote": "func IBytes(s uint64) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\"}\n\treturn humanateBytes(s, 1024, sizes)\n}",
+      "quote_sha256": "0a4d2160fed6f4406ce2c111d87a31d83bcc31a78164e908ce7e99b1717669a2",
+      "unit": {
+        "selector": "IBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.IBytes",
+        "start_line": 98,
+        "end_line": 101,
+        "quote": "func IBytes(s uint64) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\"}\n\treturn humanateBytes(s, 1024, sizes)\n}",
+        "declaration": "func IBytes(s uint64) string",
+        "function_type": "func(s uint64) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:ParseBytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 110,
+      "last_line": 143,
+      "quote": "func ParseBytes(s string) (uint64, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tf, err := strconv.ParseFloat(num, 64)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bytesSizeTable[extra]; ok {\n\t\tf *= float64(m)\n\t\tif f >= math.MaxUint64 {\n\t\t\treturn 0, fmt.Errorf(\"too large: %v\", s)\n\t\t}\n\t\treturn uint64(f), nil\n\t}\n\n\treturn 0, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+      "quote_sha256": "caf73d506ae4275bf1f4f4a418b759f5735a07599a90ef4d6fd34b62c7f9c4a0",
+      "unit": {
+        "selector": "ParseBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.ParseBytes",
+        "start_line": 110,
+        "end_line": 143,
+        "quote": "func ParseBytes(s string) (uint64, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tf, err := strconv.ParseFloat(num, 64)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bytesSizeTable[extra]; ok {\n\t\tf *= float64(m)\n\t\tif f >= math.MaxUint64 {\n\t\t\treturn 0, fmt.Errorf(\"too large: %v\", s)\n\t\t}\n\t\treturn uint64(f), nil\n\t}\n\n\treturn 0, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+        "declaration": "func ParseBytes(s string) (uint64, error)",
+        "function_type": "func(s string) (uint64, error)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:humanateBytes": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 68,
+      "last_line": 81,
+      "quote": "func humanateBytes(s uint64, base float64, sizes []string) string {\n\tif s < 10 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\te := math.Floor(logn(float64(s), base))\n\tsuffix := sizes[int(e)]\n\tval := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n}",
+      "quote_sha256": "36437ff25fd833e9a4a28d4e59677f33ef435b5aa558a8ed7b406f0362efc0f8",
+      "unit": {
+        "selector": "humanateBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.humanateBytes",
+        "start_line": 68,
+        "end_line": 81,
+        "quote": "func humanateBytes(s uint64, base float64, sizes []string) string {\n\tif s < 10 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\te := math.Floor(logn(float64(s), base))\n\tsuffix := sizes[int(e)]\n\tval := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n}",
+        "declaration": "func humanateBytes(s uint64, base float64, sizes []string) string",
+        "function_type": "func(s uint64, base float64, sizes []string) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:logn": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 64,
+      "last_line": 66,
+      "quote": "func logn(n, b float64) float64 {\n\treturn math.Log(n) / math.Log(b)\n}",
+      "quote_sha256": "13718cf55abb645828263f96c18ed1156b104c9e07cc6beef0ccb1f4a7a63b9c",
+      "unit": {
+        "selector": "logn",
+        "declaration_kind": "function",
+        "symbol": "humanize.logn",
+        "start_line": 64,
+        "end_line": 66,
+        "quote": "func logn(n, b float64) float64 {\n\treturn math.Log(n) / math.Log(b)\n}",
+        "declaration": "func logn(n, b float64) float64",
+        "function_type": "func(n, b float64) float64",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.BinaryExpr"
+          ],
+          "expressions": [
+            "math.Log(n) / math.Log(b)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:BigComma": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "comma.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/comma.go",
+      "source_sha256": "067d9654d89f6d55df0e10cdb907a1c5eaca786ae7d4225126ce6e68836bf3bf",
+      "first_line": 89,
+      "last_line": 116,
+      "quote": "func BigComma(b *big.Int) string {\n\tsign := \"\"\n\tif b.Sign() < 0 {\n\t\tsign = \"-\"\n\t\tb.Abs(b)\n\t}\n\n\tathousand := big.NewInt(1000)\n\tc := (&big.Int{}).Set(b)\n\t_, m := oom(c, athousand)\n\tparts := make([]string, m+1)\n\tj := len(parts) - 1\n\n\tmod := &big.Int{}\n\tfor b.Cmp(athousand) >= 0 {\n\t\tb.DivMod(b, athousand, mod)\n\t\tparts[j] = strconv.FormatInt(mod.Int64(), 10)\n\t\tswitch len(parts[j]) {\n\t\tcase 2:\n\t\t\tparts[j] = \"0\" + parts[j]\n\t\tcase 1:\n\t\t\tparts[j] = \"00\" + parts[j]\n\t\t}\n\t\tj--\n\t}\n\tparts[j] = strconv.Itoa(int(b.Int64()))\n\treturn sign + strings.Join(parts[j:], \",\")\n}",
+      "quote_sha256": "812993ad481c494f2e8173929cad61b1018c7e086f34e24b754d2391ed46febb",
+      "unit": {
+        "selector": "BigComma",
+        "declaration_kind": "function",
+        "symbol": "humanize.BigComma",
+        "start_line": 89,
+        "end_line": 116,
+        "quote": "func BigComma(b *big.Int) string {\n\tsign := \"\"\n\tif b.Sign() < 0 {\n\t\tsign = \"-\"\n\t\tb.Abs(b)\n\t}\n\n\tathousand := big.NewInt(1000)\n\tc := (&big.Int{}).Set(b)\n\t_, m := oom(c, athousand)\n\tparts := make([]string, m+1)\n\tj := len(parts) - 1\n\n\tmod := &big.Int{}\n\tfor b.Cmp(athousand) >= 0 {\n\t\tb.DivMod(b, athousand, mod)\n\t\tparts[j] = strconv.FormatInt(mod.Int64(), 10)\n\t\tswitch len(parts[j]) {\n\t\tcase 2:\n\t\t\tparts[j] = \"0\" + parts[j]\n\t\tcase 1:\n\t\t\tparts[j] = \"00\" + parts[j]\n\t\t}\n\t\tj--\n\t}\n\tparts[j] = strconv.Itoa(int(b.Int64()))\n\treturn sign + strings.Join(parts[j:], \",\")\n}",
+        "declaration": "func BigComma(b *big.Int) string",
+        "function_type": "func(b *big.Int) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:ComputeSI": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/si.go",
+      "source_sha256": "f682e76b01dfcb82957423e891761b1d91b8ca03081b8b07f33be03eda7a3a3b",
+      "first_line": 60,
+      "last_line": 81,
+      "quote": "func ComputeSI(input float64) (float64, string) {\n\tif input == 0 {\n\t\treturn 0, \"\"\n\t}\n\tmag := math.Abs(input)\n\texponent := math.Floor(logn(mag, 10))\n\texponent = math.Floor(exponent/3) * 3\n\n\tvalue := mag / math.Pow(10, exponent)\n\n\t// Handle special case where value is exactly 1000.0\n\t// Should return 1 M instead of 1000 k\n\tif value == 1000.0 {\n\t\texponent += 3\n\t\tvalue = mag / math.Pow(10, exponent)\n\t}\n\n\tvalue = math.Copysign(value, input)\n\n\tprefix := siPrefixTable[exponent]\n\treturn value, prefix\n}",
+      "quote_sha256": "16811e863a84abc62c7c7a8155fa2589ae0c0d72078e67ab3bf0ecdadde672e3",
+      "unit": {
+        "selector": "ComputeSI",
+        "declaration_kind": "function",
+        "symbol": "humanize.ComputeSI",
+        "start_line": 60,
+        "end_line": 81,
+        "quote": "func ComputeSI(input float64) (float64, string) {\n\tif input == 0 {\n\t\treturn 0, \"\"\n\t}\n\tmag := math.Abs(input)\n\texponent := math.Floor(logn(mag, 10))\n\texponent = math.Floor(exponent/3) * 3\n\n\tvalue := mag / math.Pow(10, exponent)\n\n\t// Handle special case where value is exactly 1000.0\n\t// Should return 1 M instead of 1000 k\n\tif value == 1000.0 {\n\t\texponent += 3\n\t\tvalue = mag / math.Pow(10, exponent)\n\t}\n\n\tvalue = math.Copysign(value, input)\n\n\tprefix := siPrefixTable[exponent]\n\treturn value, prefix\n}",
+        "declaration": "func ComputeSI(input float64) (float64, string)",
+        "function_type": "func(input float64) (float64, string)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:ParseSI": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/si.go",
+      "source_sha256": "f682e76b01dfcb82957423e891761b1d91b8ca03081b8b07f33be03eda7a3a3b",
+      "first_line": 113,
+      "last_line": 123,
+      "quote": "func ParseSI(input string) (float64, string, error) {\n\tfound := riParseRegex.FindStringSubmatch(input)\n\tif len(found) != 4 {\n\t\treturn 0, \"\", errInvalid\n\t}\n\tmag := revSIPrefixTable[found[2]]\n\tunit := found[3]\n\n\tbase, err := strconv.ParseFloat(found[1], 64)\n\treturn base * mag, unit, err\n}",
+      "quote_sha256": "f0779f451c3db42a2a2c74b27f0d1bad8b8f774c59f8725692323358d868d672",
+      "unit": {
+        "selector": "ParseSI",
+        "declaration_kind": "function",
+        "symbol": "humanize.ParseSI",
+        "start_line": 113,
+        "end_line": 123,
+        "quote": "func ParseSI(input string) (float64, string, error) {\n\tfound := riParseRegex.FindStringSubmatch(input)\n\tif len(found) != 4 {\n\t\treturn 0, \"\", errInvalid\n\t}\n\tmag := revSIPrefixTable[found[2]]\n\tunit := found[3]\n\n\tbase, err := strconv.ParseFloat(found[1], 64)\n\treturn base * mag, unit, err\n}",
+        "declaration": "func ParseSI(input string) (float64, string, error)",
+        "function_type": "func(input string) (float64, string, error)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:revfmap": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/si.go",
+      "source_sha256": "f682e76b01dfcb82957423e891761b1d91b8ca03081b8b07f33be03eda7a3a3b",
+      "first_line": 33,
+      "last_line": 39,
+      "quote": "func revfmap(in map[float64]string) map[string]float64 {\n\trv := map[string]float64{}\n\tfor k, v := range in {\n\t\trv[v] = math.Pow(10, k)\n\t}\n\treturn rv\n}",
+      "quote_sha256": "5bb7e266e5b34f417fe1c2d309b68866fcda1a8c6f78c7069a74232d882c7cdc",
+      "unit": {
+        "selector": "revfmap",
+        "declaration_kind": "function",
+        "symbol": "humanize.revfmap",
+        "start_line": 33,
+        "end_line": 39,
+        "quote": "func revfmap(in map[float64]string) map[string]float64 {\n\trv := map[string]float64{}\n\tfor k, v := range in {\n\t\trv[v] = math.Pow(10, k)\n\t}\n\treturn rv\n}",
+        "declaration": "func revfmap(in map[float64]string) map[string]float64",
+        "function_type": "func(in map[float64]string) map[string]float64"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.0:init": {
+      "revision": "9f541cc9db5d55bce703bd99987c9d5cb8eea45e",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9f541cc9db5d55bce703bd99987c9d5cb8eea45e/si.go",
+      "source_sha256": "f682e76b01dfcb82957423e891761b1d91b8ca03081b8b07f33be03eda7a3a3b",
+      "first_line": 43,
+      "last_line": 51,
+      "quote": "func init() {\n\tri := `^([\\-0-9.]+)\\s?([`\n\tfor _, v := range siPrefixTable {\n\t\tri += v\n\t}\n\tri += `]?)(.*)`\n\n\triParseRegex = regexp.MustCompile(ri)\n}",
+      "quote_sha256": "bc9f3d441709670c190d095060725cb240d92c697b89313ad76a2c1650f7475f",
+      "unit": {
+        "selector": "init",
+        "declaration_kind": "function",
+        "symbol": "humanize.init",
+        "start_line": 43,
+        "end_line": 51,
+        "quote": "func init() {\n\tri := `^([\\-0-9.]+)\\s?([`\n\tfor _, v := range siPrefixTable {\n\t\tri += v\n\t}\n\tri += `]?)(.*)`\n\n\triParseRegex = regexp.MustCompile(ri)\n}",
+        "declaration": "func init()",
+        "function_type": "func()"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:oomm": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "big.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/big.go",
+      "source_sha256": "26c2e7a009a1579f126853cbfb6c9ffc7cda00b4f5ca3faea4705c384cff5edf",
+      "first_line": 8,
+      "last_line": 19,
+      "quote": "func oomm(n, b *big.Int, maxmag int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t\tif mag == maxmag && maxmag >= 0 {\n\t\t\tbreak\n\t\t}\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+      "quote_sha256": "28333e68df494fc6c99093413ebb9e188e6de62465d6a166f10ec8fd874b2761",
+      "unit": {
+        "selector": "oomm",
+        "declaration_kind": "function",
+        "symbol": "humanize.oomm",
+        "start_line": 8,
+        "end_line": 19,
+        "quote": "func oomm(n, b *big.Int, maxmag int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t\tif mag == maxmag && maxmag >= 0 {\n\t\t\tbreak\n\t\t}\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+        "declaration": "func oomm(n, b *big.Int, maxmag int) (float64, int)",
+        "function_type": "func(n, b *big.Int, maxmag int) (float64, int)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:oom": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "big.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/big.go",
+      "source_sha256": "26c2e7a009a1579f126853cbfb6c9ffc7cda00b4f5ca3faea4705c384cff5edf",
+      "first_line": 23,
+      "last_line": 31,
+      "quote": "func oom(n, b *big.Int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+      "quote_sha256": "2705cf2c4f895109cc6ba66a05ed66b0d6350b3d49ba301afc0b433d884a17ed",
+      "unit": {
+        "selector": "oom",
+        "declaration_kind": "function",
+        "symbol": "humanize.oom",
+        "start_line": 23,
+        "end_line": 31,
+        "quote": "func oom(n, b *big.Int) (float64, int) {\n\tmag := 0\n\tm := &big.Int{}\n\tfor n.Cmp(b) >= 0 {\n\t\tn.DivMod(n, b, m)\n\t\tmag++\n\t}\n\treturn float64(n.Int64()) + (float64(m.Int64()) / float64(b.Int64())), mag\n}",
+        "declaration": "func oom(n, b *big.Int) (float64, int)",
+        "function_type": "func(n, b *big.Int) (float64, int)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:BigBytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bigbytes.go",
+      "source_sha256": "9318dd523505253f686747635394232cabe2968984df14b2f49d91926ea80c70",
+      "first_line": 133,
+      "last_line": 136,
+      "quote": "func BigBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\", \"ZB\", \"YB\", \"RB\", \"QB\"}\n\treturn humanateBigBytes(s, bigSIExp, sizes)\n}",
+      "quote_sha256": "1cc7883f76a4eed64db729b507dda785c4407705536aa6d301d70ea09c52387d",
+      "unit": {
+        "selector": "BigBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.BigBytes",
+        "start_line": 133,
+        "end_line": 136,
+        "quote": "func BigBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\", \"ZB\", \"YB\", \"RB\", \"QB\"}\n\treturn humanateBigBytes(s, bigSIExp, sizes)\n}",
+        "declaration": "func BigBytes(s *big.Int) string",
+        "function_type": "func(s *big.Int) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:BigIBytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bigbytes.go",
+      "source_sha256": "9318dd523505253f686747635394232cabe2968984df14b2f49d91926ea80c70",
+      "first_line": 143,
+      "last_line": 146,
+      "quote": "func BigIBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\", \"ZiB\", \"YiB\", \"RiB\", \"QiB\"}\n\treturn humanateBigBytes(s, bigIECExp, sizes)\n}",
+      "quote_sha256": "053e44f6bb61c375b2d3b4eaddbeb0950c279d34bdf57d5263ef4bd9ff7c327b",
+      "unit": {
+        "selector": "BigIBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.BigIBytes",
+        "start_line": 143,
+        "end_line": 146,
+        "quote": "func BigIBytes(s *big.Int) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\", \"ZiB\", \"YiB\", \"RiB\", \"QiB\"}\n\treturn humanateBigBytes(s, bigIECExp, sizes)\n}",
+        "declaration": "func BigIBytes(s *big.Int) string",
+        "function_type": "func(s *big.Int) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:ParseBigBytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bigbytes.go",
+      "source_sha256": "9318dd523505253f686747635394232cabe2968984df14b2f49d91926ea80c70",
+      "first_line": 155,
+      "last_line": 189,
+      "quote": "func ParseBigBytes(s string) (*big.Int, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tval := &big.Rat{}\n\t_, err := fmt.Sscanf(num, \"%f\", val)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bigBytesSizeTable[extra]; ok {\n\t\tmv := (&big.Rat{}).SetInt(m)\n\t\tval.Mul(val, mv)\n\t\trv := &big.Int{}\n\t\trv.Div(val.Num(), val.Denom())\n\t\treturn rv, nil\n\t}\n\n\treturn nil, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+      "quote_sha256": "19042abaab7e0aee7495b63c0ccca6009a7c14767742fdfb2842f49bcf556ce8",
+      "unit": {
+        "selector": "ParseBigBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.ParseBigBytes",
+        "start_line": 155,
+        "end_line": 189,
+        "quote": "func ParseBigBytes(s string) (*big.Int, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tval := &big.Rat{}\n\t_, err := fmt.Sscanf(num, \"%f\", val)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bigBytesSizeTable[extra]; ok {\n\t\tmv := (&big.Rat{}).SetInt(m)\n\t\tval.Mul(val, mv)\n\t\trv := &big.Int{}\n\t\trv.Div(val.Num(), val.Denom())\n\t\treturn rv, nil\n\t}\n\n\treturn nil, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+        "declaration": "func ParseBigBytes(s string) (*big.Int, error)",
+        "function_type": "func(s string) (*big.Int, error)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:humanateBigBytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bigbytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bigbytes.go",
+      "source_sha256": "9318dd523505253f686747635394232cabe2968984df14b2f49d91926ea80c70",
+      "first_line": 112,
+      "last_line": 126,
+      "quote": "func humanateBigBytes(s, base *big.Int, sizes []string) string {\n\tif s.Cmp(ten) < 0 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\tc := (&big.Int{}).Set(s)\n\tval, mag := oomm(c, base, len(sizes)-1)\n\tsuffix := sizes[mag]\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n\n}",
+      "quote_sha256": "dd199b993cd894483027906b523040879ea61d0291a3f339257f0b9b4d0ca113",
+      "unit": {
+        "selector": "humanateBigBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.humanateBigBytes",
+        "start_line": 112,
+        "end_line": 126,
+        "quote": "func humanateBigBytes(s, base *big.Int, sizes []string) string {\n\tif s.Cmp(ten) < 0 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\tc := (&big.Int{}).Set(s)\n\tval, mag := oomm(c, base, len(sizes)-1)\n\tsuffix := sizes[mag]\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n\n}",
+        "declaration": "func humanateBigBytes(s, base *big.Int, sizes []string) string",
+        "function_type": "func(s, base *big.Int, sizes []string) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:Bytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 88,
+      "last_line": 91,
+      "quote": "func Bytes(s uint64) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\"}\n\treturn humanateBytes(s, 1000, sizes)\n}",
+      "quote_sha256": "136cbc7b35bc78b689dd440229f951d4435d0c0ffb74ac4112f73dcbf9988c68",
+      "unit": {
+        "selector": "Bytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.Bytes",
+        "start_line": 88,
+        "end_line": 91,
+        "quote": "func Bytes(s uint64) string {\n\tsizes := []string{\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\", \"EB\"}\n\treturn humanateBytes(s, 1000, sizes)\n}",
+        "declaration": "func Bytes(s uint64) string",
+        "function_type": "func(s uint64) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:IBytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 98,
+      "last_line": 101,
+      "quote": "func IBytes(s uint64) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\"}\n\treturn humanateBytes(s, 1024, sizes)\n}",
+      "quote_sha256": "0a4d2160fed6f4406ce2c111d87a31d83bcc31a78164e908ce7e99b1717669a2",
+      "unit": {
+        "selector": "IBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.IBytes",
+        "start_line": 98,
+        "end_line": 101,
+        "quote": "func IBytes(s uint64) string {\n\tsizes := []string{\"B\", \"KiB\", \"MiB\", \"GiB\", \"TiB\", \"PiB\", \"EiB\"}\n\treturn humanateBytes(s, 1024, sizes)\n}",
+        "declaration": "func IBytes(s uint64) string",
+        "function_type": "func(s uint64) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:ParseBytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 110,
+      "last_line": 143,
+      "quote": "func ParseBytes(s string) (uint64, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tf, err := strconv.ParseFloat(num, 64)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bytesSizeTable[extra]; ok {\n\t\tf *= float64(m)\n\t\tif f >= math.MaxUint64 {\n\t\t\treturn 0, fmt.Errorf(\"too large: %v\", s)\n\t\t}\n\t\treturn uint64(f), nil\n\t}\n\n\treturn 0, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+      "quote_sha256": "caf73d506ae4275bf1f4f4a418b759f5735a07599a90ef4d6fd34b62c7f9c4a0",
+      "unit": {
+        "selector": "ParseBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.ParseBytes",
+        "start_line": 110,
+        "end_line": 143,
+        "quote": "func ParseBytes(s string) (uint64, error) {\n\tlastDigit := 0\n\thasComma := false\n\tfor _, r := range s {\n\t\tif !(unicode.IsDigit(r) || r == '.' || r == ',') {\n\t\t\tbreak\n\t\t}\n\t\tif r == ',' {\n\t\t\thasComma = true\n\t\t}\n\t\tlastDigit++\n\t}\n\n\tnum := s[:lastDigit]\n\tif hasComma {\n\t\tnum = strings.Replace(num, \",\", \"\", -1)\n\t}\n\n\tf, err := strconv.ParseFloat(num, 64)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\n\textra := strings.ToLower(strings.TrimSpace(s[lastDigit:]))\n\tif m, ok := bytesSizeTable[extra]; ok {\n\t\tf *= float64(m)\n\t\tif f >= math.MaxUint64 {\n\t\t\treturn 0, fmt.Errorf(\"too large: %v\", s)\n\t\t}\n\t\treturn uint64(f), nil\n\t}\n\n\treturn 0, fmt.Errorf(\"unhandled size name: %v\", extra)\n}",
+        "declaration": "func ParseBytes(s string) (uint64, error)",
+        "function_type": "func(s string) (uint64, error)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:humanateBytes": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 68,
+      "last_line": 81,
+      "quote": "func humanateBytes(s uint64, base float64, sizes []string) string {\n\tif s < 10 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\te := math.Floor(logn(float64(s), base))\n\tsuffix := sizes[int(e)]\n\tval := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n}",
+      "quote_sha256": "36437ff25fd833e9a4a28d4e59677f33ef435b5aa558a8ed7b406f0362efc0f8",
+      "unit": {
+        "selector": "humanateBytes",
+        "declaration_kind": "function",
+        "symbol": "humanize.humanateBytes",
+        "start_line": 68,
+        "end_line": 81,
+        "quote": "func humanateBytes(s uint64, base float64, sizes []string) string {\n\tif s < 10 {\n\t\treturn fmt.Sprintf(\"%d B\", s)\n\t}\n\te := math.Floor(logn(float64(s), base))\n\tsuffix := sizes[int(e)]\n\tval := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10\n\tf := \"%.0f %s\"\n\tif val < 10 {\n\t\tf = \"%.1f %s\"\n\t}\n\n\treturn fmt.Sprintf(f, val, suffix)\n}",
+        "declaration": "func humanateBytes(s uint64, base float64, sizes []string) string",
+        "function_type": "func(s uint64, base float64, sizes []string) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:logn": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "bytes.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/bytes.go",
+      "source_sha256": "9fb2391c3896a42cd4091279701f6274c19f3c3f15145503477229a67835d5da",
+      "first_line": 64,
+      "last_line": 66,
+      "quote": "func logn(n, b float64) float64 {\n\treturn math.Log(n) / math.Log(b)\n}",
+      "quote_sha256": "13718cf55abb645828263f96c18ed1156b104c9e07cc6beef0ccb1f4a7a63b9c",
+      "unit": {
+        "selector": "logn",
+        "declaration_kind": "function",
+        "symbol": "humanize.logn",
+        "start_line": 64,
+        "end_line": 66,
+        "quote": "func logn(n, b float64) float64 {\n\treturn math.Log(n) / math.Log(b)\n}",
+        "declaration": "func logn(n, b float64) float64",
+        "function_type": "func(n, b float64) float64",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.BinaryExpr"
+          ],
+          "expressions": [
+            "math.Log(n) / math.Log(b)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:BigComma": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "comma.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/comma.go",
+      "source_sha256": "067d9654d89f6d55df0e10cdb907a1c5eaca786ae7d4225126ce6e68836bf3bf",
+      "first_line": 89,
+      "last_line": 116,
+      "quote": "func BigComma(b *big.Int) string {\n\tsign := \"\"\n\tif b.Sign() < 0 {\n\t\tsign = \"-\"\n\t\tb.Abs(b)\n\t}\n\n\tathousand := big.NewInt(1000)\n\tc := (&big.Int{}).Set(b)\n\t_, m := oom(c, athousand)\n\tparts := make([]string, m+1)\n\tj := len(parts) - 1\n\n\tmod := &big.Int{}\n\tfor b.Cmp(athousand) >= 0 {\n\t\tb.DivMod(b, athousand, mod)\n\t\tparts[j] = strconv.FormatInt(mod.Int64(), 10)\n\t\tswitch len(parts[j]) {\n\t\tcase 2:\n\t\t\tparts[j] = \"0\" + parts[j]\n\t\tcase 1:\n\t\t\tparts[j] = \"00\" + parts[j]\n\t\t}\n\t\tj--\n\t}\n\tparts[j] = strconv.Itoa(int(b.Int64()))\n\treturn sign + strings.Join(parts[j:], \",\")\n}",
+      "quote_sha256": "812993ad481c494f2e8173929cad61b1018c7e086f34e24b754d2391ed46febb",
+      "unit": {
+        "selector": "BigComma",
+        "declaration_kind": "function",
+        "symbol": "humanize.BigComma",
+        "start_line": 89,
+        "end_line": 116,
+        "quote": "func BigComma(b *big.Int) string {\n\tsign := \"\"\n\tif b.Sign() < 0 {\n\t\tsign = \"-\"\n\t\tb.Abs(b)\n\t}\n\n\tathousand := big.NewInt(1000)\n\tc := (&big.Int{}).Set(b)\n\t_, m := oom(c, athousand)\n\tparts := make([]string, m+1)\n\tj := len(parts) - 1\n\n\tmod := &big.Int{}\n\tfor b.Cmp(athousand) >= 0 {\n\t\tb.DivMod(b, athousand, mod)\n\t\tparts[j] = strconv.FormatInt(mod.Int64(), 10)\n\t\tswitch len(parts[j]) {\n\t\tcase 2:\n\t\t\tparts[j] = \"0\" + parts[j]\n\t\tcase 1:\n\t\t\tparts[j] = \"00\" + parts[j]\n\t\t}\n\t\tj--\n\t}\n\tparts[j] = strconv.Itoa(int(b.Int64()))\n\treturn sign + strings.Join(parts[j:], \",\")\n}",
+        "declaration": "func BigComma(b *big.Int) string",
+        "function_type": "func(b *big.Int) string"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:ComputeSI": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/si.go",
+      "source_sha256": "7159cff48cad974637868726cf45ff255b4a9c522a7b2eafcad3dfd537ba058e",
+      "first_line": 64,
+      "last_line": 85,
+      "quote": "func ComputeSI(input float64) (float64, string) {\n\tif input == 0 {\n\t\treturn 0, \"\"\n\t}\n\tmag := math.Abs(input)\n\texponent := math.Floor(logn(mag, 10))\n\texponent = math.Floor(exponent/3) * 3\n\n\tvalue := mag / math.Pow(10, exponent)\n\n\t// Handle special case where value is exactly 1000.0\n\t// Should return 1 M instead of 1000 k\n\tif value == 1000.0 {\n\t\texponent += 3\n\t\tvalue = mag / math.Pow(10, exponent)\n\t}\n\n\tvalue = math.Copysign(value, input)\n\n\tprefix := siPrefixTable[exponent]\n\treturn value, prefix\n}",
+      "quote_sha256": "16811e863a84abc62c7c7a8155fa2589ae0c0d72078e67ab3bf0ecdadde672e3",
+      "unit": {
+        "selector": "ComputeSI",
+        "declaration_kind": "function",
+        "symbol": "humanize.ComputeSI",
+        "start_line": 64,
+        "end_line": 85,
+        "quote": "func ComputeSI(input float64) (float64, string) {\n\tif input == 0 {\n\t\treturn 0, \"\"\n\t}\n\tmag := math.Abs(input)\n\texponent := math.Floor(logn(mag, 10))\n\texponent = math.Floor(exponent/3) * 3\n\n\tvalue := mag / math.Pow(10, exponent)\n\n\t// Handle special case where value is exactly 1000.0\n\t// Should return 1 M instead of 1000 k\n\tif value == 1000.0 {\n\t\texponent += 3\n\t\tvalue = mag / math.Pow(10, exponent)\n\t}\n\n\tvalue = math.Copysign(value, input)\n\n\tprefix := siPrefixTable[exponent]\n\treturn value, prefix\n}",
+        "declaration": "func ComputeSI(input float64) (float64, string)",
+        "function_type": "func(input float64) (float64, string)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:ParseSI": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/si.go",
+      "source_sha256": "7159cff48cad974637868726cf45ff255b4a9c522a7b2eafcad3dfd537ba058e",
+      "first_line": 117,
+      "last_line": 127,
+      "quote": "func ParseSI(input string) (float64, string, error) {\n\tfound := riParseRegex.FindStringSubmatch(input)\n\tif len(found) != 4 {\n\t\treturn 0, \"\", errInvalid\n\t}\n\tmag := revSIPrefixTable[found[2]]\n\tunit := found[3]\n\n\tbase, err := strconv.ParseFloat(found[1], 64)\n\treturn base * mag, unit, err\n}",
+      "quote_sha256": "f0779f451c3db42a2a2c74b27f0d1bad8b8f774c59f8725692323358d868d672",
+      "unit": {
+        "selector": "ParseSI",
+        "declaration_kind": "function",
+        "symbol": "humanize.ParseSI",
+        "start_line": 117,
+        "end_line": 127,
+        "quote": "func ParseSI(input string) (float64, string, error) {\n\tfound := riParseRegex.FindStringSubmatch(input)\n\tif len(found) != 4 {\n\t\treturn 0, \"\", errInvalid\n\t}\n\tmag := revSIPrefixTable[found[2]]\n\tunit := found[3]\n\n\tbase, err := strconv.ParseFloat(found[1], 64)\n\treturn base * mag, unit, err\n}",
+        "declaration": "func ParseSI(input string) (float64, string, error)",
+        "function_type": "func(input string) (float64, string, error)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:revfmap": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/si.go",
+      "source_sha256": "7159cff48cad974637868726cf45ff255b4a9c522a7b2eafcad3dfd537ba058e",
+      "first_line": 37,
+      "last_line": 43,
+      "quote": "func revfmap(in map[float64]string) map[string]float64 {\n\trv := map[string]float64{}\n\tfor k, v := range in {\n\t\trv[v] = math.Pow(10, k)\n\t}\n\treturn rv\n}",
+      "quote_sha256": "5bb7e266e5b34f417fe1c2d309b68866fcda1a8c6f78c7069a74232d882c7cdc",
+      "unit": {
+        "selector": "revfmap",
+        "declaration_kind": "function",
+        "symbol": "humanize.revfmap",
+        "start_line": 37,
+        "end_line": 43,
+        "quote": "func revfmap(in map[float64]string) map[string]float64 {\n\trv := map[string]float64{}\n\tfor k, v := range in {\n\t\trv[v] = math.Pow(10, k)\n\t}\n\treturn rv\n}",
+        "declaration": "func revfmap(in map[float64]string) map[string]float64",
+        "function_type": "func(in map[float64]string) map[string]float64"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v1.0.1:init": {
+      "revision": "9ec74ab2f7a7161664182fd4e5e292fccffbc75f",
+      "source_path": "si.go",
+      "source_snapshot": "new-public-sources-v1/dustin--go-humanize/9ec74ab2f7a7161664182fd4e5e292fccffbc75f/si.go",
+      "source_sha256": "7159cff48cad974637868726cf45ff255b4a9c522a7b2eafcad3dfd537ba058e",
+      "first_line": 47,
+      "last_line": 55,
+      "quote": "func init() {\n\tri := `^([\\-0-9.]+)\\s?([`\n\tfor _, v := range siPrefixTable {\n\t\tri += v\n\t}\n\tri += `]?)(.*)`\n\n\triParseRegex = regexp.MustCompile(ri)\n}",
+      "quote_sha256": "bc9f3d441709670c190d095060725cb240d92c697b89313ad76a2c1650f7475f",
+      "unit": {
+        "selector": "init",
+        "declaration_kind": "function",
+        "symbol": "humanize.init",
+        "start_line": 47,
+        "end_line": 55,
+        "quote": "func init() {\n\tri := `^([\\-0-9.]+)\\s?([`\n\tfor _, v := range siPrefixTable {\n\t\tri += v\n\t}\n\tri += `]?)(.*)`\n\n\triParseRegex = regexp.MustCompile(ri)\n}",
+        "declaration": "func init()",
+        "function_type": "func()"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "physical_quote_verified": true,
+      "complete_callable": true,
+      "runtime_guarantee_from_syntax": false
+    }
+  },
+  "files": {
+    "humanize-chapter-candidates-v1/en.md": {
+      "sha256": "ef98687116e5b4671f7429f5bcddec77eb61d37aa716259deb1e52540377a63f",
+      "bytes": 15624
+    },
+    "humanize-chapter-candidates-v1/pt-br.md": {
+      "sha256": "474323757968258a030ff20906284c0530b6f21b1e06fc0fbfc25556cf608166",
+      "bytes": 16509
+    }
+  },
+  "source_pack_sha256": "0e5938e71be4747a613ab04d483798ad97d937dabfc5ce5999ba8f483a640f66",
+  "runtime_results_sha256": "321828d7d14330c09ea8a700d023e111df94731b8b3b1815b650ad91cc366a78",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_excluded": true,
+  "publication_authorized": false,
+  "example_executed": false,
+  "command_executed": false,
+  "source_initializers_and_selected_calls_executed": true,
+  "faq_overlap": "All six FAQ answers reuse chapter claims; not six independent targets.",
+  "comparison_frozen_before_model_response": true
+}

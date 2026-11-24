@@ -1,0 +1,25 @@
+{
+  "at": "2026-11-20T13:19:28.271425+00:00",
+  "command": [
+    "docker",
+    "exec",
+    "-e",
+    "RAILS_ENV=test",
+    "-e",
+    "DATABASE_URL=sqlite3::memory:",
+    "-w",
+    "/app/backend",
+    "engineering-library-backend-1",
+    "bundle",
+    "exec",
+    "ruby",
+    "-Itest",
+    "-e",
+    "Dir[\"test/offline/*_offline.rb\"].sort.each { |path| require_relative path }"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 23.040050249997876,
+  "permanent_test_files_modified": false,
+  "new_test_count": 0,
+  "source_application_executed": "Existing offline Engineering Library checks only;no external application or Rails initialization."
+}

@@ -1,0 +1,7 @@
+{
+  "source": "package middleware\n\nimport (\n\t\"net/http\"\n)\n\n// RequestSize is a middleware that will limit request sizes to a specified\n// number of bytes. It uses MaxBytesReader to do so.\nfunc RequestSize(bytes int64) func(http.Handler) http.Handler {\n\tf := func(h http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tr.Body = http.MaxBytesReader(w, r.Body, bytes)\n\t\t\th.ServeHTTP(w, r)\n\t\t}\n\t\treturn http.HandlerFunc(fn)\n\t}\n\treturn f\n}\n",
+  "path": "selected.go",
+  "selectors": [
+    "RequestSize"
+  ]
+}

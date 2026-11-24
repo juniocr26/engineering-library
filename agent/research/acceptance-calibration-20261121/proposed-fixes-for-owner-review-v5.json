@@ -1,0 +1,334 @@
+{
+  "at": "2026-11-21T20:56:51.108718+00:00",
+  "extends": "proposed-fixes-for-owner-review-v4.json",
+  "prior_sha256": "fc45ada91e2d5e090d7e8461995a501fb1ce3351348a69e798a0f47eef1bb2e9",
+  "proposals": [
+    {
+      "id": "P-SEMANTIC-ADMISSION",
+      "status": "PROPOSED_NOT_APPLIED",
+      "problem": "Structural source-citation admission can accept unsupported guard/runtime prose. Existing code explicitly identifies a conservative citation guard; do not misrepresent it as a full semantic verifier.",
+      "retained_experiment": "agent/research/portfolio-vivabem-20261120/caller-renderer-semantic-boundary-review-v1.json",
+      "proposed_behavior": "Keep STRUCTURALLY_VALID separate from SOURCE_REVIEWED/complete bilingual acceptance. A renderer result alone must never certify factual correctness, owner approval or Gold. Require per-claim source-context/rationale and complete-note review evidence at the admission boundary. Unsupported/unreviewed critical claims block ready-state promotion.",
+      "proposed_files": [
+        "backend/lib/documentation/command.rb",
+        "agent/tools/documentation_candidates.py"
+      ],
+      "permanent_validation_files_requires_approval": [
+        "backend/test/offline/documentation_command_offline.rb",
+        "agent/test/documentation_candidates_test.py"
+      ],
+      "expected_regressions": [
+        "Existing valid citation controls remain structurally admissible.",
+        "Same-function citation with reversed condition remains semantically rejected even when lexical symbols match.",
+        "Source-reviewed candidate and OWNER_APPROVED remain distinct.",
+        "Missing PT text or true-but-wrong-FAQ answer cannot pass complete-note gate."
+      ],
+      "risks": [
+        "A regex semantic gate can create false rejection of valid paraphrase and does not establish general source truth.",
+        "Existing downstream consumers may equate rendered draft with readiness; inspect state consumers before any change."
+      ],
+      "authorization_required": "Separate explicit owner authorization for production and permanent test changes. Current campaign only preserves proposal.",
+      "production_evidence_unchanged": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "086c11b2d10972111cfcfb23c49b70e67f4d30f1d5de39f768c46b23748cdb2b"
+        },
+        {
+          "path": "agent/tools/documentation_candidates.py",
+          "sha256": "18299e80481ed2ed3ea7bd96c30d9aaa089c4798c51a1a6ad2b110d8f43f6e3f"
+        }
+      ],
+      "actual_existing_validation_paths": [
+        {
+          "path": "backend/test/offline/documentation_command_offline.rb",
+          "exists": true
+        },
+        {
+          "path": "agent/test/documentation_candidates_test.py",
+          "exists": true
+        }
+      ],
+      "current_source_consumer_review": {
+        "backend/lib/documentation/command.rb": {
+          "render_calls": [
+            513,
+            528
+          ],
+          "candidate_staging": [
+            546,
+            554
+          ],
+          "application_journal": [
+            570,
+            571
+          ],
+          "structural_gate_note": [
+            1240,
+            1242
+          ],
+          "interpretation": "Command already labels explanations unverified and protects ownership/recovery, but normal process can stage/apply after structuralguards. Do not claim existing candidatehelpers auto-ownerapprove: they explicitly returnownerfalse/Goldfalse."
+        },
+        "agent/tools/documentation_maintenance.py": {
+          "lines": [
+            276,
+            287
+          ],
+          "states": [
+            "INCONCLUSIVE_PRESERVE_ORIGINALS",
+            "VALIDATED_DRY_RUN",
+            "ISOLATED_CANDIDATE_PREPARED_PENDING_REVIEW"
+          ],
+          "interpretation": "Syntheticmaintenancealreadyseparatescandidatepreparationfromapproval; gate integration must preserve existing application/ownership semantics."
+        }
+      },
+      "new_evidence": [
+        "generation-K-results-v1.json",
+        "generation-L-results-v1.json",
+        "semantic-verifier-original-partial-results-v1.json",
+        "semantic-verifier-resource-results-v2.json",
+        "typed-python-source-relation-results-v1.json"
+      ],
+      "proposed_behavior_refinement": "First make trust/status evidence explicit at existing command process validation\u2192staging boundary, while retaining draft/recovery semantics and existingfalse owner/Goldfields. A source-hash/content-bound research review is separate from publication authorization. TypedASTrelations can prove declared limited syntax only; do not use generic LLMlabel/regex/citationvalidity as wholeproseproof. Human/ownerapproval must come from separately authorized trusted workflow, never a modelauthoredboolean.",
+      "expected_new_regressions": [
+        "Type declaration is not mislabelled callable function because a task question says function.",
+        "Valid source guard with opposite generatedassignment/condition fails semanticresearchadmission.",
+        "Correctpartialconditionlen<n remainsfactuallysupported but failsreferencecompleteness!=n; do not falselyscoreascontradiction.",
+        "Review and exactEN/PTcandidate/source hashes bind; modifiedsource/languagebytesinvalidate review.",
+        "ASTscope/defaultproofdoesnotcertifyfreeFAQ/runtimeglobalclaims; noownerorGoldpromotion."
+      ],
+      "latest_evidence": [
+        "actual-generated-claim-verifier-results-v1.json",
+        "semantic-verifier-label-only-results-v2.json",
+        "multiple-choice-source-relations-results-v1.json",
+        "relation-option-order-results-v2.json",
+        "cross-language-typed-relations-results-v1.json",
+        "typed-relations-source-perturbation-results-v1.json",
+        "typed-source-deterministic-note-results-v1.json",
+        "line-addressed-source-copy-results-v1.json"
+      ],
+      "latest_refinement": "Generic and role-aware neural verdicts still falsely accept source-negative claims, with abstention/utility costs. Verifier labels cannot confer semantic readiness. Finite typed AST evidence covers only admitted syntax relations; exact manually authored bilingual template mapping and complete-note review remain distinct. Source-card class-header omission and leading Cobra question were research input-curation errors, not demonstrated production parser defects. Explicit line-addressed copying0/9exact is not semantic or complete-output success.",
+      "expected_latest_regressions": [
+        "Valid citation/JSON/ID/numbered source address cannot mark generated guard/assignment correct.",
+        "Owner/header/role/source/candidate hashes must bind review evidence; reject unrelated declaration under same quoted file.",
+        "Review-rationale and exactverdict-only schemas have distinct metrics; absent rationale validity remains null.",
+        "Typed-source template notes have neural_contribution false; no old neural denominator promotion."
+      ]
+    },
+    {
+      "id": "P-CACHED-GO-FAULT",
+      "status": "PROPOSED_NOT_APPLIED",
+      "problem": "Cached validate_cached -> validate_unit invokes extractor outside fresh-extraction SubprocessError catch; outer catch omits SubprocessError. Retained injected TimeoutExpired escapes.",
+      "retained_experiment": "agent/research/portfolio-vivabem-20261120/helper-cached-timeout-baseline-verification-v1.json",
+      "proposed_behavior": "Account for cached revalidation subprocess faults with explicit non-success status and preserve immutable cached result/receipt; release lock and never silently retry or re-inject stale quote. Choose refusal/delivery durability semantics at the existing helper/job seam before changing exception handler. A caught exception is not retrieval success.",
+      "proposed_files": [
+        "agent/tools/documentation_retrieval.py",
+        "agent/tools/documentation_job_budget.py"
+      ],
+      "permanent_validation_files_requires_approval": [
+        "agent/test/documentation_retrieval_test.py",
+        "agent/test/documentation_job_budget_test.py"
+      ],
+      "expected_regressions": [
+        "Cached TimeoutExpired and CalledProcessError return an accounted non-success result instead of escaping.",
+        "Cached source/result/receipt bytes remain unchanged.",
+        "No additional quote injection, budget reservation or retry for duplicate request.",
+        "Job terminal receipt distinguishes REFUSED/INCONCLUSIVE from UNKNOWN_COMPLETION; optional helper failure must not imply NO-OP or REMOVE."
+      ],
+      "risks": [
+        "Widening an exception catch alone may hide journal corruption or falsely imply durable completion.",
+        "Returned refusal versus durable job receipt policy needs explicit integration decision.",
+        "Sharedworkspaceprimitivehasmultipleconsumers; atomicpublicationmustnotoverwriteimmutableartifacts orhideorphanevidence.",
+        "Actualprocessstopisnotpowerloss/diskflush/nativeadapterrestoreproof."
+      ],
+      "authorization_required": "Separate owner authorization for exact code/tests; no live helper patch here.",
+      "production_evidence_unchanged": [
+        {
+          "path": "agent/tools/documentation_retrieval.py",
+          "sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d"
+        },
+        {
+          "path": "agent/tools/documentation_job_budget.py",
+          "sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7"
+        }
+      ],
+      "actual_existing_validation_paths": [
+        {
+          "path": "agent/test/documentation_retrieval_test.py",
+          "exists": true
+        },
+        {
+          "path": "agent/test/documentation_job_budget_test.py",
+          "exists": true
+        }
+      ],
+      "new_evidence": [
+        "cached-helper-job-seam-results-v1.json",
+        "cached-helper-job-seam-recovery-v2.json"
+      ],
+      "proposed_behavior_refinement": "The owned wrapper experiment favors explicitaccountednon-success plus fsynced immutable deliverypayload before existingjob.complete, preservingoldFOUNDreceipt and duplicatebudget. Decide whetherthatdeliveryjournal fits currentretrievalorjobseam beforecoding. Do not transform unexpectedRuntimeError, corruptcache, failedwriteorlatecompletion into successfulretrieval/durablejobcompletion.",
+      "actual_experiment_limit": "20ownedobservations/20journalreopens;3cachedSubprocessErrorcasesbaselineUNKNOWN\u2192accountednonsuccess,0retrievalsuccess. Existingcachedbytesunchanged andlocksreleased. Not a production/nativeadapterfix.",
+      "process_interruption_evidence": {
+        "path": "job-process-interruption-results-v1.json",
+        "sha256": "d2781f591dd1b88367003d439d1b80559b3ec6a17ac07bb5307d4677a98e75d8",
+        "observations": "8actualchildprocessabruptstops+2non-destructivecompletedjournalforks,10/10frozenexpectations; nopowerlossproof/helperdispatch/training"
+      },
+      "recovery_limit": "Current directO_EXCLwrite_newpublishesnamebeforeallbytes/fsync. Abruptexitcanleavepartialconfig/reservation/completion; existingreopensafelyREFUSED. ValidpayloadbeforecompletionremainsUNKNOWN_COMPLETION. CompletedjournalalonereportsDUPLICATE_COMPLETEDwhenbodymissing/tamperedinforks; separatebodygate refuses. Earlier20reopensdonotprovecrash-safedeliverability.",
+      "additional_proposed_files_if_atomic_publication_selected": [
+        {
+          "path": "agent/tools/documentation_workspace.py",
+          "sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "function": "write_new",
+          "source_lines": [
+            132,
+            151
+          ],
+          "reason": "Assesssharedorprotocol-specificatomicno-overwritepublicationbeforeresumabilityclaim; nochangeimplemented."
+        }
+      ],
+      "actual_additional_permanent_validation_paths_requires_approval": [
+        {
+          "path": "agent/test/documentation_job_budget_test.py",
+          "sha256": "52b651eda6cb1d4cee58fe5bb7210e77822fca4ec669cfb0998d3b86158ac2f2",
+          "existing_write_new_injection_lines": [
+            146,
+            150
+          ]
+        },
+        {
+          "path": "agent/test/documentation_retrieval_test.py",
+          "sha256": "4fecd6a492428a0365548684e15b15d48589ce97eba285b3feae783faf9e69ea",
+          "existing_write_new_injection_lines": [
+            309,
+            315
+          ]
+        },
+        {
+          "path": "agent/test/documentation_maintenance_test.py",
+          "sha256": "d9314b2e40efbb5ee21f8a7d6fe9b10a8e6d628e76262c311d92682799d544ad",
+          "existing_write_new_injection_lines": [
+            190,
+            197,
+            384,
+            391
+          ]
+        }
+      ],
+      "proposal_choice_not_implemented": "Selectandowner-approveatomicno-overwritepublication/orphanevidencepolicyorexplicitfail-closedreconciliation. Neverreplaceexistingimmutableartifacts,deleteunknownpartialhistoryorauto-completeinvalidjournal. Journalintegrity,bodydeliverability,completionaccountingandsemantictruthremainseparate.",
+      "expected_process_regressions": [
+        "Stopsduringconfig/reservation/completionmustnotacceptpartialJSON; preservebytesandremainingbudget/noautomaticreplay.",
+        "AftervalidbodybeforecompletionisUNKNOWN_COMPLETION; noautomaticredispatch/completionwithouttrustedreconciliation.",
+        "Aftercommittedcompletionbeforecallerreturnreopensduplicateonceandrequiresbodyhashbefore delivery.",
+        "Missing/tamperedbodywithvalidcompletioncannotproduceDELIVERED/FOUNDsuccess.",
+        "Ifsharedwriteprimitiveischanged,preserveexclusive/nooverwrite/descriptor/nofollow/boundsandexistingmaintenance/retrieval/candidateconsumers; exacttestchangesrequireseparateapproval."
+      ],
+      "new_isolated_publication_evidence": {
+        "path": "atomic-publication-process-results-v1.json",
+        "sha256": "b3bd7e8d885d7a0282cb1e345612dcaa8e73104fb41cb39924d2b74c3e8d79bc",
+        "cases": 15,
+        "child_processes": 17,
+        "actual_current_workspace_baseline": "Empty/partialfinalnameunderbefore/midwriteexit. Unchangedcurrentwrite_newalreadyloopsovershortwritesandfsyncsfile/parent; donotmisreportmissinglooporfsync.",
+        "owned_alternative": "Samefilesystemstaging+filefsync+no-overwritehardlink+parentfsync; finalabsentuntilpublish, completeafterlink, existingfiles/symlinksrefused. Oneof2differentconcurrentpublisherswins,bothstagesretained.",
+        "not_production_fix": true,
+        "remaining_decisions": [
+          "Ownerapprovedorphanreconciliationandimmutablepublicationnames; nodroppingpartialhistoryorreplayinghelperautomatically.",
+          "Hardlinkcapability/same-filesystemchecksandplatformfallbackmustbeexplicit; no Windows/SMB/cross-device/hostilepathreplacementvalidationnow.",
+          "Fullmulti-filejobtransaction/unknowncompletion/body-integritypolicyisstillseparate; single-fileatomicpublishdoesnotresolveit.",
+          "Preserveexactsourcecontract/write_newmetadataattributesandexistingtests; no production/permanenttestchangesinthiscampaign."
+        ]
+      }
+    },
+    {
+      "id": "P-INDEPENDENT-REMOVE-SCOPE",
+      "status": "PROPOSED_NOT_APPLIED",
+      "problem": "REMOVE accepts operator-declared complete_scope plus aliases_checked/relocations_checked, but these booleans do not independently establish project scope. Retained adversarial relocation case yields REMOVE.",
+      "retained_experiment": "agent/research/portfolio-vivabem-20261120/declared-scope-retirement-canary-review-v1.json",
+      "proposed_behavior": "Acquire scope via read-only pinned source manifest independently of prediction packet; bind source inventory/hashes, alias/relocation/delegation scan limits, affected documentation and positive retirement record. Partial, dynamic or unsupported acquisition returns INCONCLUSIVE. Positive continuity evidence blocks REMOVE. Never promote a model-authored proof boolean to source truth.",
+      "proposed_files": [
+        "agent/tools/documentation_lifecycle.py",
+        "agent/tools/documentation_maintenance.py"
+      ],
+      "new_collector_structure": "Not selected or created in production; owner must approve implementation location after review of existing acquisition seam.",
+      "permanent_validation_files_requires_approval": [
+        "agent/test/documentation_lifecycle_test.py",
+        "agent/test/documentation_maintenance_test.py"
+      ],
+      "expected_regressions": [
+        "Moved declaration with false completeness remains non-REMOVE.",
+        "Missing declaration in one selected file yields INCONCLUSIVE absent independent scope.",
+        "Aliases/import delegates and unavailable revisions remain distinct from retirement.",
+        "An independently acquired positive retirement fixture can still propose REMOVE within declared finite lexical scope, pending human application."
+      ],
+      "risks": [
+        "Whole file enumeration is not complete semantic reachability, especially dynamic imports/reflection/build conditions.",
+        "A blanket REMOVE ban would evade measuring legitimate retirement and weaken utility; measure both false removal and justified abstention."
+      ],
+      "authorization_required": "Separate approval for collector/production/permanent tests; no source deletion or catalog change authorized.",
+      "production_evidence_unchanged": [
+        {
+          "path": "agent/tools/documentation_lifecycle.py",
+          "sha256": "fe6ef693fdbfe0f793960cc10430cb012ff44a00a10efdcfa0d6c803902ed2ee"
+        },
+        {
+          "path": "agent/tools/documentation_maintenance.py",
+          "sha256": "23ace94042542517b2a01e03e43cb0e6dfcb90ebb19814a0e8804ae69753f6ed"
+        }
+      ],
+      "actual_existing_validation_paths": [
+        {
+          "path": "agent/test/documentation_lifecycle_test.py",
+          "exists": true
+        },
+        {
+          "path": "agent/test/documentation_maintenance_test.py",
+          "exists": true
+        }
+      ],
+      "new_evidence": [
+        "scope-binding-census-results-v4.json",
+        "scope-object-mutation-results-v1.json",
+        "scope-registry-profile-results-v5.json"
+      ],
+      "proposed_behavior_refinement": "Do not ship V4orV5as a genericPythonidentityresolver: V4admits3/4badobjectmutations andmisses2/4validcomprehensioncases; V5fixesthose8butconservativelyrejectslocalregistryshadow/readonlyalias/distinctkeycases. Define a finitecollectorcontractandunsupportedformswithownerreviewbeforeimplementation. KeepREMOVEsourceacquisitionindependentandpartialcontextINCONCLUSIVE; sourcecitationMODIFYdoesnotprovefeature/runtimebehavior.",
+      "expected_new_regressions": [
+        "Registryitemreplace/delete/aliasmutationcannotbeadmittedbasedonlyononeNameStore.",
+        "Comprehensioninductiontargetdoesnotrebindmodule; NamedExprhasseparatecontaining-scopebehavior.",
+        "Unrelatedlocalregistry andreadonlyalias remain explicitutilitycontrols ratherthanhiddenabstentions.",
+        "Sourceacquisitionbudgets/symlinkrefusal/positivelegitretirement retained;noactivecatalogapply."
+      ],
+      "latest_evidence": [
+        "scope-function-namespace-results-v1.json",
+        "scope-namespace-filter-results-v6.json",
+        "scope-retirement-authority-results-v1.json",
+        "scope-retirement-filter-baselines-v1.json",
+        "scope-retirement-filter-results-v7.json"
+      ],
+      "latest_refinement": "Neither V5 nor V6 is safe for generic admission. V5 falseMODIFY4/4+4/4 namespace negatives; V6 conservative attribute filter loses legitimate changes. More critically, V2throughV6 accept6/6and4/4 new falseREMOVE retirement authority/lifetime cases: nested/class/conditional markers, overwrite/delete and namespace mutation. V7 filters those but rejects3/4 legitimate fresh retirements and cannot recover earlier unnecessary abstentions. Independent file acquisition alone is insufficient: bind authoritative module owner, positive record identity/reason, current binding/event/access/alias/lifetime evidence and supported language profile, with source-only/runtime/application authority limits. No generic resolver or production patch approved.",
+      "expected_latest_regressions": [
+        "Function-local/class-local/constant-false retirement marker cannot satisfy current module positive retirement evidence.",
+        "Earlier literal followed by reassignment, deletion, destructuring or named declaration cannot prove surviving retirement record.",
+        "Module namespace writes/deletes through function.__globals__ block both REMOVE and MODIFY claims within finite profile.",
+        "Plain legitimate owned retirement remains measured; annotation-only/read-only/unrelated class cases expose conservative false abstentions.",
+        "Source-only positive registry text does not confer real catalog/owner deletion authority."
+      ]
+    }
+  ],
+  "authorization_required": "Separate explicit ownerauthorization for anyproduction/permanenttest/UI/internaldocchanges. Currentcampaignonlyresearchproposal; do notaskownerunattended.",
+  "new_permanent_files_created": 0,
+  "production_changes": 0,
+  "optimizer_updates": 0,
+  "gold": 0,
+  "classification": "RESTRICTED_INTERNAL_LOCAL_ONLY; proprietary own-repo sourceevidence remains local; no externalmodel/publicationtransfer",
+  "proposal_validation_at": "2026-11-21T19:23:52.532290+00:00",
+  "candidate_text_clarifications": "public-chapter-body-proposed-clarifications-v1.json and owner-review-package-v3.json: exact EN/PT proposals remain unapplied; no original candidate/status mutation.",
+  "preproposal_path_correction": {
+    "assumed_missing_path": "agent/test/documentation_workspace_test.py",
+    "assertion_stopped_before_proposal_file_write": true,
+    "actual_existing_validation_paths": [
+      "agent/test/documentation_job_budget_test.py",
+      "agent/test/documentation_retrieval_test.py",
+      "agent/test/documentation_maintenance_test.py"
+    ],
+    "no_missing_permanent_test_created": true
+  },
+  "latest_fine_tuning_proposal": "pilot-supervision-approval-contract-v2.json:allnineNO_GO,nativefieldsnull,no launchcommand/pairs/adapter."
+}

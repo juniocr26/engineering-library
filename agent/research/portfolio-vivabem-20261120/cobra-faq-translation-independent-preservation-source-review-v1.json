@@ -1,0 +1,367 @@
+{
+  "at": "2026-11-21T05:22:13.839405+00:00",
+  "protocol": "cobra-faq-translation-protocol-v1.json",
+  "composer_hash_unchanged_since_freeze": true,
+  "raw_response_and_content_receipts_match": true,
+  "english_entire_parent_bytes_preserved": true,
+  "portuguese_nonFAQ_prefix_bytes_preserved": true,
+  "portuguese_footer_bytes_preserved": true,
+  "every_model_question_answer_retained_unmodified": true,
+  "lexical_presence_checks": [
+    {
+      "qid": "Q001",
+      "required_names": [
+        "ValidArgs",
+        "OnlyValidArgs",
+        "nil"
+      ],
+      "missing": [],
+      "all_required_names_present": true,
+      "not_semantic_equivalence_proof": true
+    },
+    {
+      "qid": "Q002",
+      "required_names": [
+        "ExactArgs"
+      ],
+      "missing": [],
+      "all_required_names_present": true,
+      "not_semantic_equivalence_proof": true
+    },
+    {
+      "qid": "Q003",
+      "required_names": [
+        "ValidateArgs",
+        "Args",
+        "nil",
+        "ArbitraryArgs",
+        "Find",
+        "legacyArgs"
+      ],
+      "missing": [],
+      "all_required_names_present": true,
+      "not_semantic_equivalence_proof": true
+    },
+    {
+      "qid": "Q004",
+      "required_names": [
+        "MatchAll"
+      ],
+      "missing": [],
+      "all_required_names_present": true,
+      "not_semantic_equivalence_proof": true
+    },
+    {
+      "qid": "Q005",
+      "required_names": [],
+      "missing": [],
+      "all_required_names_present": true,
+      "not_semantic_equivalence_proof": true
+    }
+  ],
+  "fresh_public_sources": [
+    {
+      "path": "args.go",
+      "sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7"
+    },
+    {
+      "path": "command.go",
+      "sha256": "f79613721ad04c9b438dfb30fe0ac3deca85c487658b0aa04a1ae6e4395bfd90"
+    },
+    {
+      "path": "cobra.go",
+      "sha256": "aae7502e789e42469bcb2fc110af87fd02451d3b509c5b0bed782ada17338c5f"
+    },
+    {
+      "path": "completions.go",
+      "sha256": "b28a4f6c509acde7367323e835cfb4f4939fe656dd3214320d76f53e91743c89"
+    },
+    {
+      "path": "LICENSE.txt",
+      "sha256": "5e3400b93bbb099e83e52bab885e7441750673c21f97988ca3f1240639b63283"
+    }
+  ],
+  "canonical_license_notice_verified": {
+    "path": "LICENSE.txt",
+    "sha256": "5e3400b93bbb099e83e52bab885e7441750673c21f97988ca3f1240639b63283",
+    "identified_text": "Apache-2.0 license text"
+  },
+  "independent_native_Go_declarations": [
+    {
+      "path": "args.go",
+      "selectors": [
+        "OnlyValidArgs",
+        "ExactArgs",
+        "ArbitraryArgs",
+        "MatchAll"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "args.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "OnlyValidArgs",
+            "declaration_kind": "function",
+            "symbol": "cobra.OnlyValidArgs",
+            "start_line": 51,
+            "end_line": 66,
+            "quote": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil\n}",
+            "declaration": "func OnlyValidArgs(cmd *Command, args []string) error",
+            "function_type": "func(cmd *Command, args []string) error"
+          },
+          {
+            "selector": "ExactArgs",
+            "declaration_kind": "function",
+            "symbol": "cobra.ExactArgs",
+            "start_line": 107,
+            "end_line": 114,
+            "quote": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}\n}",
+            "declaration": "func ExactArgs(n int) PositionalArgs",
+            "function_type": "func(n int) PositionalArgs",
+            "factory": {
+              "callback_body_statements": 2,
+              "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+              "outer_function_type": "func(n int) PositionalArgs",
+              "profile": "returned-function-literal-signature-v1",
+              "returned_literal_type": "func(cmd *Command, args []string) error"
+            },
+            "return_contract": {
+              "callback_body_analyzed": false,
+              "kind": "sole-return-function-literal",
+              "literal_signature": "func(cmd *Command, args []string) error"
+            }
+          },
+          {
+            "selector": "ArbitraryArgs",
+            "declaration_kind": "function",
+            "symbol": "cobra.ArbitraryArgs",
+            "start_line": 82,
+            "end_line": 84,
+            "quote": "func ArbitraryArgs(cmd *Command, args []string) error {\n\treturn nil\n}",
+            "declaration": "func ArbitraryArgs(cmd *Command, args []string) error",
+            "function_type": "func(cmd *Command, args []string) error",
+            "return_contract": {
+              "AST_expression_kinds": [
+                "*ast.Ident"
+              ],
+              "expressions": [
+                "nil"
+              ],
+              "kind": "sole-return-expressions",
+              "runtime_completion_verified": false
+            }
+          },
+          {
+            "selector": "MatchAll",
+            "declaration_kind": "function",
+            "symbol": "cobra.MatchAll",
+            "start_line": 127,
+            "end_line": 136,
+            "quote": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil\n\t}\n}",
+            "declaration": "func MatchAll(pargs ...PositionalArgs) PositionalArgs",
+            "function_type": "func(pargs ...PositionalArgs) PositionalArgs",
+            "factory": {
+              "callback_body_statements": 2,
+              "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+              "outer_function_type": "func(pargs ...PositionalArgs) PositionalArgs",
+              "profile": "returned-function-literal-signature-v1",
+              "returned_literal_type": "func(cmd *Command, args []string) error"
+            },
+            "return_contract": {
+              "callback_body_analyzed": false,
+              "kind": "sole-return-function-literal",
+              "literal_signature": "func(cmd *Command, args []string) error"
+            }
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "args.go",
+      "selectors": [
+        "legacyArgs"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "args.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "syntax_only": true,
+        "units": [
+          {
+            "if_return_chain_contract": {
+              "fallthrough_return_contract": {
+                "AST_expression_kinds": [
+                  "*ast.Ident"
+                ],
+                "expressions": [
+                  "nil"
+                ],
+                "kind": "sole-return-expressions",
+                "runtime_completion_verified": false
+              },
+              "guards": [
+                {
+                  "condition": "!cmd.HasSubCommands()",
+                  "else_absent": true,
+                  "initializer_absent": true,
+                  "line": 30,
+                  "true_return_contract": {
+                    "AST_expression_kinds": [
+                      "*ast.Ident"
+                    ],
+                    "expressions": [
+                      "nil"
+                    ],
+                    "kind": "sole-return-expressions",
+                    "runtime_completion_verified": false
+                  }
+                },
+                {
+                  "condition": "!cmd.HasParent() && len(args) > 0",
+                  "else_absent": true,
+                  "initializer_absent": true,
+                  "line": 35,
+                  "true_return_contract": {
+                    "AST_expression_kinds": [
+                      "*ast.CallExpr"
+                    ],
+                    "expressions": [
+                      "fmt.Errorf(\"unknown command %q for %q%s\", args[0], cmd.CommandPath(), cmd.findSuggestions(args[0]))"
+                    ],
+                    "kind": "sole-return-expressions",
+                    "runtime_completion_verified": false
+                  }
+                }
+              ],
+              "kind": "if-return-chain-fallthrough-expressions",
+              "runtime_completion_verified": false,
+              "source_statement_order": [
+                "if-return",
+                "if-return",
+                "return"
+              ],
+              "types_resolved": false
+            },
+            "selector": "legacyArgs",
+            "declaration_kind": "function",
+            "symbol": "cobra.legacyArgs",
+            "start_line": 28,
+            "end_line": 39,
+            "quote": "func legacyArgs(cmd *Command, args []string) error {\n\t// no subcommand, always take args\n\tif !cmd.HasSubCommands() {\n\t\treturn nil\n\t}\n\n\t// root command with subcommands, do subcommand checking.\n\tif !cmd.HasParent() && len(args) > 0 {\n\t\treturn fmt.Errorf(\"unknown command %q for %q%s\", args[0], cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t}\n\treturn nil\n}",
+            "declaration": "func legacyArgs(cmd *Command, args []string) error",
+            "function_type": "func(cmd *Command, args []string) error"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "command.go",
+      "selectors": [
+        "Command.ValidateArgs",
+        "Command.Find"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "command.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "f79613721ad04c9b438dfb30fe0ac3deca85c487658b0aa04a1ae6e4395bfd90",
+        "syntax_only": true,
+        "units": [
+          {
+            "if_return_contract": {
+              "condition": "c.Args == nil",
+              "else_absent": true,
+              "fallthrough_return_contract": {
+                "AST_expression_kinds": [
+                  "*ast.CallExpr"
+                ],
+                "expressions": [
+                  "c.Args(c, args)"
+                ],
+                "kind": "sole-return-expressions",
+                "runtime_completion_verified": false
+              },
+              "initializer_absent": true,
+              "kind": "if-return-fallthrough-expressions",
+              "runtime_completion_verified": false,
+              "source_statement_order": [
+                "if-return",
+                "return"
+              ],
+              "true_return_contract": {
+                "AST_expression_kinds": [
+                  "*ast.CallExpr"
+                ],
+                "expressions": [
+                  "ArbitraryArgs(c, args)"
+                ],
+                "kind": "sole-return-expressions",
+                "runtime_completion_verified": false
+              }
+            },
+            "selector": "Command.ValidateArgs",
+            "declaration_kind": "method",
+            "symbol": "cobra.Command.ValidateArgs",
+            "start_line": 1172,
+            "end_line": 1177,
+            "quote": "func (c *Command) ValidateArgs(args []string) error {\n\tif c.Args == nil {\n\t\treturn ArbitraryArgs(c, args)\n\t}\n\treturn c.Args(c, args)\n}",
+            "declaration": "func (c *Command) ValidateArgs(args []string) error",
+            "function_type": "func(args []string) error",
+            "receiver_type": "*Command"
+          },
+          {
+            "selector": "Command.Find",
+            "declaration_kind": "method",
+            "symbol": "cobra.Command.Find",
+            "start_line": 757,
+            "end_line": 779,
+            "quote": "func (c *Command) Find(args []string) (*Command, []string, error) {\n\tvar innerfind func(*Command, []string) (*Command, []string)\n\n\tinnerfind = func(c *Command, innerArgs []string) (*Command, []string) {\n\t\targsWOflags := stripFlags(innerArgs, c)\n\t\tif len(argsWOflags) == 0 {\n\t\t\treturn c, innerArgs\n\t\t}\n\t\tnextSubCmd := argsWOflags[0]\n\n\t\tcmd := c.findNext(nextSubCmd)\n\t\tif cmd != nil {\n\t\t\treturn innerfind(cmd, c.argsMinusFirstX(innerArgs, nextSubCmd))\n\t\t}\n\t\treturn c, innerArgs\n\t}\n\n\tcommandFound, a := innerfind(c, args)\n\tif commandFound.Args == nil {\n\t\treturn commandFound, a, legacyArgs(commandFound, stripFlags(a, commandFound))\n\t}\n\treturn commandFound, a, nil\n}",
+            "declaration": "func (c *Command) Find(args []string) (*Command, []string, error)",
+            "function_type": "func(args []string) (*Command, []string, error)",
+            "receiver_type": "*Command"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    }
+  ],
+  "existing_execute_native_quote_matches_fresh_source": true,
+  "source_or_example_program_executed": false,
+  "manual_semantic_review_still_required": true,
+  "source_acquisition_correction": "cobra-faq-translation-source-acquisition-correction-v1.json",
+  "owner_approved": false,
+  "training_gold": false
+}

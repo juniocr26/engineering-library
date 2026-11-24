@@ -1,0 +1,116 @@
+{
+  "at": "2026-11-20T01:37:19.762853+00:00",
+  "chapter_id": "sdk-dynamic-retry-policy",
+  "source_repository": "sdk-go",
+  "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "constants",
+      "path": "internal/internal_retry.go",
+      "lines": [
+        12,
+        16
+      ],
+      "review": "200ms,60s,coefficient2; nearby20mscomment disagrees."
+    },
+    {
+      "id": "deadline",
+      "path": "internal/internal_retry.go",
+      "lines": [
+        22,
+        30
+      ],
+      "review": "Initialize default; only nonnilctx plus ok andstrictfuture substitutes timeout; no min60scap."
+    },
+    {
+      "id": "maximum-expression",
+      "path": "internal/internal_retry.go",
+      "lines": [
+        31,
+        32
+      ],
+      "review": "Exact max(timeout/10,initial200ms); optional complete-census Go build-filtered experiment now supports lexical predeclared binding under Darwin/arm64 and Linux/arm64, conditional on valid compilation. No type/runtime proof."
+    },
+    {
+      "id": "handoff",
+      "path": "internal/internal_retry.go",
+      "lines": [
+        34,
+        38
+      ],
+      "review": "Constructpolicy,setcoefficient,setmaximum,setexpiration,returnpolicy; no retryloop/sleep."
+    },
+    {
+      "id": "setters",
+      "path": "internal/common/backoff/retrypolicy.go",
+      "lines": [
+        90,
+        102
+      ],
+      "review": "Direct assignments to fields, no local validation/clamping or operationexecution."
+    },
+    {
+      "id": "consumer-limit",
+      "path": "internal/common/backoff/retrypolicy.go",
+      "lines": [
+        110,
+        148
+      ],
+      "review": "Separate delay calculation checks attempt/expiration, computes and clamps duration, then jitter. Does not itself run service callback or sleep."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "c35ff2a85a2c4cb928866652427438b39533b91128b4532b179b0fd6798544a2",
+      "after_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -26,7 +26,7 @@\n \n The next assignments set `initialInterval` from the initial-interval constant and `maximumInterval` from `max(timeout/10, retryServiceOperationInitialInterval)`. The second operand is the same declared initial-interval constant. It is not a literal twenty milliseconds. Under Go's predeclared `max` binding, that expression chooses the larger operand: the initial interval acts as a floor on this computed configuration value, rather than a cap on `timeout/10`. With the ordinary duration interpretation, the default sixty seconds yields six seconds for this expression.\n \n-The word `max` is still an identifier whose binding matters. A private lexical census passed its owned shadowing controls but refused an actual binding conclusion when unfiltered imported time sources included an ignored generator package. This chapter preserves the exact expression and explicitly qualifies the builtin interpretation; it does not claim that the production syntax parser resolved package scopes or build constraints. No permissive name rule was added to force a conclusion.\n+The word `max` is still an identifier whose binding matters. The earlier unfiltered census refused a binding conclusion because imported time sources included an ignored generator package. A later optional `go/build` experiment inspected all 157 immediate Go files in the SDK package and complete censuses for the three imported packages. Under explicit Darwin/arm64 and Linux/arm64 profiles, 78 ordinary SDK files are active; official build selection excludes the generator, while actual declared import names and package/local declarations leave the bare name lexically unshadowed. The [binding receipt](../../go-build-binding-evaluation.json) and [source census](../../go-build-binding-source-census.json) preserve the proof. This supports the predeclared interpretation under those supplied complete censuses and a valid package build. It does not prove type checking or runtime behavior, and the production syntax parser and default agent routing remain unchanged.\n \n ## The setter sequence stores configuration\n \n@@ -34,3 +34,21 @@\n \n The outer coefficient argument comes from the constant 2, the maximum-interval argument is the computed expression and the expiration argument is `timeout`. Other constructor defaults are not a basis for invented numeric limits or attempt counts here. The source handoff explains what is configured while leaving later delay calculation, retry eligibility, cancellation and actual service activity to their own inspected consumers. The corrected EN/PT chapter remains pending owner approval and is not approved training gold.\n \n+## Engineer FAQ\n+\n+<!-- reading-section: faq:initial-interval-comment-mismatch -->\n+### Is the configured initial interval 20 or 200 milliseconds?\n+\n+The constant used by the body is 200 milliseconds. The nearby 20-millisecond comment disagrees with that declaration. The correction follows the written constant and preserves the discrepancy as review evidence.\n+\n+<!-- reading-section: faq:future-deadline-not-sixty-second-cap -->\n+### Does a future deadline always shorten the sixty-second default?\n+\n+Only a strictly future deadline replaces the default, and the shown assignment uses its remaining duration directly. It does not take the minimum with sixty seconds. Missing or nonfuture deadlines leave the default path unchanged, subject to normal completion of the supplied methods.\n+\n+<!-- reading-section: faq:policy-configuration-not-retry-schedule -->\n+### Does creating the policy perform a retry or guarantee a sleep duration?\n+\n+The constructor function configures and returns a policy. The supplied `ComputeNextDelay` consumer separately checks attempts and expiration, computes and clamps an interval and applies jitter. Actual operation invocation, sleeping and cancellation belong to further consumers. Neither the stored maximum nor the default calculation alone is an observed service retry schedule.\n+\n+The optional build-filtered evidence now supports the maximum expression's lexical binding under two explicit profiles, conditional on complete source and valid compilation. It does not turn policy configuration into an observed retry schedule, a full module/type proof or owner approval.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "ac21835a74a347a4bc603c8d1f577c5d5328689352f1693255613a8a281392a8",
+      "after_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -26,7 +26,7 @@\n \n As atribuições seguintes definem `initialInterval` a partir da constante de intervalo inicial e `maximumInterval` a partir de `max(timeout/10, retryServiceOperationInitialInterval)`. O segundo operando é a mesma constante declarada de intervalo inicial. Não é um literal de vinte milissegundos. Sob o vínculo de `max` como função predeclarada do Go, a expressão escolhe o maior operando: o intervalo inicial funciona como piso desse valor calculado de configuração, em vez de teto para `timeout/10`. Na interpretação comum de duração, o padrão de sessenta segundos produz seis segundos nessa expressão.\n \n-A palavra `max` continua sendo um identificador cujo vínculo importa. Um censo léxico privado passou nos controles próprios de sombreamento, mas recusou concluir sobre o vínculo real quando fontes importadas de time sem filtragem incluíram um pacote gerador ignorado. Este capítulo preserva a expressão exata e qualifica explicitamente a interpretação predeclarada; não afirma que o parser sintático de produção resolveu escopos de pacote ou condições de build. Nenhuma regra permissiva de nomes foi adicionada para forçar uma conclusão.\n+A palavra `max` continua sendo um identificador cujo vínculo importa. O censo anterior sem filtragem recusou uma conclusão sobre o vínculo porque fontes importadas de time incluíam um pacote gerador ignorado. Um experimento opcional posterior com `go/build` inspecionou todos os 157 arquivos Go imediatos do pacote do SDK e censos completos dos três pacotes importados. Sob perfis explícitos Darwin/arm64 e Linux/arm64, 78 arquivos comuns do SDK estão ativos; a seleção oficial de build exclui o gerador, enquanto os nomes declarados reais dos imports e as declarações do pacote e locais deixam o nome simples sem sombreamento léxico. O [recibo de vínculo](../../go-build-binding-evaluation.json) e o [censo de fontes](../../go-build-binding-source-census.json) preservam a prova. Isso sustenta a interpretação predeclarada sob esses censos completos fornecidos e um build válido do pacote. Não prova verificação de tipos nem comportamento em execução, e o parser sintático de produção e o roteamento padrão do agente permanecem sem alteração.\n \n ## A sequência de setters armazena configuração\n \n@@ -34,3 +34,21 @@\n \n O argumento externo de coeficiente vem da constante 2, o argumento de intervalo máximo é a expressão calculada e o argumento de expiração é `timeout`. Outros padrões do construtor não fundamentam limites numéricos ou contagens de tentativas inventados aqui. A passagem de dados na fonte explica o que é configurado e deixa cálculo posterior de atraso, elegibilidade de nova tentativa, cancelamento e atividade efetiva do serviço para seus próprios consumidores inspecionados. O capítulo corrigido em EN/PT permanece pendente de aprovação do proprietário e não é treinamento gold aprovado.\n \n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:initial-interval-comment-mismatch -->\n+### O intervalo inicial configurado é 20 ou 200 milissegundos?\n+\n+A constante usada pelo corpo é de 200 milissegundos. O comentário próximo de 20 milissegundos diverge dessa declaração. A correção segue a constante escrita e preserva a divergência como evidência de revisão.\n+\n+<!-- reading-section: faq:future-deadline-not-sixty-second-cap -->\n+### Um deadline futuro sempre encurta o padrão de sessenta segundos?\n+\n+Somente um deadline estritamente futuro substitui o padrão, e a atribuição mostrada usa diretamente sua duração restante. Não calcula o mínimo com sessenta segundos. Deadlines ausentes ou não futuros preservam o caminho padrão, sujeito à conclusão normal dos métodos fornecidos.\n+\n+<!-- reading-section: faq:policy-configuration-not-retry-schedule -->\n+### Criar a política realiza uma nova tentativa ou garante uma duração de espera?\n+\n+A função construtora configura e retorna uma política. O consumidor fornecido `ComputeNextDelay` verifica separadamente tentativas e expiração, calcula e limita um intervalo e aplica jitter. Invocação real da operação, espera e cancelamento pertencem a outros consumidores. Nem o máximo armazenado nem o cálculo padrão isolado é um cronograma observado de novas tentativas do serviço.\n+\n+A evidência opcional com filtragem de build agora sustenta o vínculo léxico da expressão de máximo sob dois perfis explícitos, condicionado a fontes completas e compilação válida. Não transforma configuração de política em cronograma observado de tentativas, prova completa de módulo e tipos ou aprovação do proprietário.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "citation_refinement": "Use complete actual setter and ComputeNextDelay ranges; prior new candidate retained privately.",
+  "binding_supplement": {
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-go-build-binding/sdk-dynamic-retry-policy",
+    "evidence": "../../go-build-binding-evaluation.json",
+    "result": "LEXICALLY_UNSHADOWED_UNDER_PROFILE",
+    "profiles": [
+      "darwin/arm64",
+      "linux/arm64"
+    ],
+    "conditional_on_complete_census_and_valid_package_build": true,
+    "type_checked": false,
+    "runtime_verified": false,
+    "owner_approved": false,
+    "bilingual_review": "Both replacement paragraphs manually compared; same profiles, file counts, conditions, evidence and limitations; inline code parity checked."
+  },
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.331486+00:00",
+    "canonical_question_ids": [
+      "initial-interval-comment-mismatch",
+      "future-deadline-not-sixty-second-cap",
+      "policy-configuration-not-retry-schedule"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/sdk-dynamic-retry-policy",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

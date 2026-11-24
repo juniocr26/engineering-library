@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-21T09:40:12.855852+00:00",
+  "cards": [
+    {
+      "id": "T01",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 397,
+      "last_line": 434,
+      "quote": "func (q *query) executionContext(ctx context.Context) (context.Context, context.CancelFunc) {\n\tif q.deadline.IsZero() {\n\t\treturn context.WithTimeout(ctx, q.ng.timeout)\n\t}\n\tcause := context.DeadlineExceeded\n\tif q.maxQueryDuration > 0 {\n\t\tcause = errQueryCostDuration\n\t}\n\treturn context.WithDeadlineCause(ctx, q.deadline, cause)\n}\n\nfunc (q *query) constructionError(ctx context.Context, err error) error {\n\tif !q.deadline.IsZero() {\n\t\tif contextError := contextDone(ctx, env); contextError != nil {\n\t\t\treturn contextError\n\t\t}\n\t}\n\treturn err\n}\n\n// contextDone returns an error if the context was canceled or timed out.\nfunc contextDone(ctx context.Context, env string) error {\n\tif err := ctx.Err(); err != nil {\n\t\treturn contextErr(err, env)\n\t}\n\treturn nil\n}\n\nfunc contextErr(err error, env string) error {\n\tswitch {\n\tcase errors.Is(err, context.Canceled):\n\t\treturn ErrQueryCanceled(env)\n\tcase errors.Is(err, context.DeadlineExceeded):\n\t\treturn ErrQueryTimeout(env)\n\tdefault:\n\t\treturn err\n\t}\n}\n",
+      "quote_sha256": "07c517b3435f95af0b612eeb8e9064f8153b9d90a9df6a6752ecc41b1c77b4ac"
+    },
+    {
+      "id": "T02",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1615,
+      "last_line": 1643,
+      "quote": "func (ev *evaluator) checkAndExpandSeriesSet(ctx context.Context, expr parser.Expr) (annotations.Annotations, error) {\n\tswitch e := expr.(type) {\n\tcase *parser.MatrixSelector:\n\t\treturn ev.checkAndExpandSeriesSet(ctx, e.VectorSelector)\n\tcase *parser.VectorSelector:\n\t\tif e.Series != nil {\n\t\t\treturn nil, nil\n\t\t}\n\t\t// This span is created only when a selector is read from storage. The\n\t\t// result is cached in e.Series. At most one span is produced per storage\n\t\t// selector per query. The span is not produced per step or per series.\n\t\tctx, span := otel.Tracer(\"\").Start(ctx, \"promqlExpandSeries\", trace.WithAttributes(attribute.String(\"selector\", e.String())))\n\t\tdefer span.End()\n\t\tseries, ws, err := ev.expandSeriesSet(ctx, e.UnexpandedSeriesSet)\n\t\tif e.SkipHistogramBuckets {\n\t\t\tfor i := range series {\n\t\t\t\tseries[i] = newHistogramStatsSeries(series[i])\n\t\t\t}\n\t\t}\n\t\te.Series = series\n\t\tspan.SetAttributes(attribute.Int(\"num_series\", len(series)))\n\t\tif err != nil {\n\t\t\tspan.RecordError(err)\n\t\t\tspan.SetStatus(codes.Error, err.Error())\n\t\t}\n\t\treturn ws, err\n\t}\n\treturn nil, nil\n}\n",
+      "quote_sha256": "e75edee36b2bdd2db5093b1d17374ba67c7f1dde9fab8f484ad3af0459b92a2a"
+    },
+    {
+      "id": "T03",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1683,
+      "last_line": 1704,
+      "quote": "// Expand a series set while charging each series to the shared query budget.\n// Stop on cancellation or budget exhaustion before materializing the whole set.\nfunc (ev *evaluator) expandSeriesSet(ctx context.Context, it storage.SeriesSet) (res []storage.Series, ws annotations.Annotations, err error) {\n\tfor it.Next() {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn nil, nil, ctx.Err()\n\t\tdefault:\n\t\t}\n\t\tres = append(res, it.At())\n\t\tev.samplesStats.IncrementSeries(1)\n\t\tev.consumeSeries()\n\t}\n\treturn res, it.Warnings(), it.Err()\n}\n\ntype errWithWarnings struct {\n\terr      error\n\twarnings annotations.Annotations\n}\n\nfunc (e errWithWarnings) Error() string { return e.err.Error() }\n",
+      "quote_sha256": "b54aa898f16398a542d41fc31a9a1b915ac4601c1e1810f57d284acda8aa9885"
+    },
+    {
+      "id": "T04",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1729,
+      "last_line": 1772,
+      "quote": "// errorf causes a panic with the input formatted into an error.\nfunc (ev *evaluator) errorf(format string, args ...any) {\n\tev.error(fmt.Errorf(format, args...))\n}\n\n// error causes a panic with the given error.\nfunc (*evaluator) error(err error) {\n\tpanic(err)\n}\n\n// recover is the handler that turns panics into returns from the top level of evaluation.\nfunc (ev *evaluator) recover(expr parser.Expr, ws *annotations.Annotations, errp *error) {\n\te := recover()\n\tif e == nil {\n\t\treturn\n\t}\n\n\tswitch err := e.(type) {\n\tcase runtime.Error:\n\t\t// Print the stack trace but do not inhibit the running application.\n\t\tbuf := make([]byte, 64<<10)\n\t\tbuf = buf[:runtime.Stack(buf, false)]\n\n\t\tev.logger.Error(\"runtime panic during query evaluation\", \"expr\", expr.String(), \"err\", e, \"stacktrace\", string(buf))\n\t\t*errp = fmt.Errorf(\"unexpected error: %w\", err)\n\tcase errWithWarnings:\n\t\t*errp = err.err\n\t\tws.Merge(err.warnings)\n\tcase error:\n\t\t*errp = err\n\tdefault:\n\t\t*errp = fmt.Errorf(\"%v\", err)\n\t}\n}\n\nfunc (ev *evaluator) Eval(ctx context.Context, expr parser.Expr) (v parser.Value, ws annotations.Annotations, err error) {\n\tdefer ev.recover(expr, &ws, &err)\n\n\tv, ws = ev.eval(ctx, expr)\n\tif ev.enableDelayedNameRemoval {\n\t\tv = ev.cleanupMetricLabels(v)\n\t}\n\treturn v, ws, nil\n}\n",
+      "quote_sha256": "981fe0e8523dda14cfa3353ef6639bfa2415b6800020352140455097bcf71fd7"
+    },
+    {
+      "id": "T05",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 2811,
+      "last_line": 2815,
+      "quote": "\t\tws, err := ev.checkAndExpandSeriesSet(ctx, sel)\n\t\twarnings.Merge(ws)\n\t\tif err != nil {\n\t\t\tev.error(errWithWarnings{fmt.Errorf(\"expanding series: %w\", err), warnings})\n\t\t}\n",
+      "quote_sha256": "4bfd591d6e81625b742de48dd728d9110c4d7ad5427826beef57c3a0198c3d29"
+    },
+    {
+      "id": "T06",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1298,
+      "last_line": 1306,
+      "quote": "\t\tquery.sampleStats.InitStepTracking(start, start, 1)\n\n\t\tval, warnings, err := evaluator.Eval(ctxInnerEval, s.Expr)\n\n\t\tevalSpanTimer.Finish()\n\n\t\tif err != nil {\n\t\t\treturn nil, warnings, err\n\t\t}\n",
+      "quote_sha256": "6366ee39a7be9471e6d9f53e575df5393f4cb932518a737326d6894eef3a1e0b"
+    },
+    {
+      "id": "T07",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1153,
+      "last_line": 1162,
+      "quote": "\tswitch s := q.Statement().(type) {\n\tcase *parser.EvalStmt:\n\t\tv, ws, err = ng.execEvalStmt(ctx, q, s)\n\t\tif ng.enableQueryCost && err == nil {\n\t\t\t// Include conversion, sorting, and reader closure before reporting success.\n\t\t\tif err = contextDone(ctx, \"expression evaluation\"); err != nil {\n\t\t\t\treturn nil, ws, err\n\t\t\t}\n\t\t}\n\t\treturn v, ws, err\n",
+      "quote_sha256": "8fa71197a20b293c85580461e062223c8a90f61a3bc9ff5c15e4b87b0fae8241"
+    },
+    {
+      "id": "T08",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1170,
+      "last_line": 1189,
+      "quote": "// Observe only the guardrail responsible for a rejection. Caller deadlines and\n// the startup timeout are not query-cost duration rejections.\nfunc (ng *Engine) observeQueryRejection(ctx context.Context, err error) {\n\tif !ng.enableQueryCost || err == nil {\n\t\treturn\n\t}\n\tvar (\n\t\ttooManySeries  ErrTooManySeries\n\t\ttooManySamples ErrTooManySamplesRead\n\t\tqueryTimeout   ErrQueryTimeout\n\t)\n\tswitch {\n\tcase errors.As(err, &tooManySeries):\n\t\tng.metrics.queryRejectedTotal.WithLabelValues(\"max_series\").Inc()\n\tcase errors.As(err, &tooManySamples):\n\t\tng.metrics.queryRejectedTotal.WithLabelValues(\"max_samples_read\").Inc()\n\tcase errors.As(err, &queryTimeout) && errors.Is(context.Cause(ctx), errQueryCostDuration):\n\t\tng.metrics.queryRejectedTotal.WithLabelValues(\"max_duration\").Inc()\n\t}\n}\n",
+      "quote_sha256": "ff3069b506b81f8edea9c5f998bc2a96a09fea98499364e31781442fed1cb08e"
+    },
+    {
+      "id": "T09",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-remote-estimate-source-v1/web/api/v1/api.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "d48474cc505b02bdea99639856fde5e143ed0faf05f362c54ea084e7b26e45f9",
+      "first_line": 940,
+      "last_line": 951,
+      "quote": "func queryConstructionError(err error) *apiError {\n\tif _, ok := errors.AsType[promql.ErrLimitAboveCeiling](err); ok {\n\t\treturn &apiError{errorBadData, err}\n\t}\n\tif _, ok := errors.AsType[promql.ErrQueryTimeout](err); ok {\n\t\treturn returnAPIError(err)\n\t}\n\tif _, ok := errors.AsType[promql.ErrQueryCanceled](err); ok {\n\t\treturn returnAPIError(err)\n\t}\n\treturn &apiError{errorBadData, fmt.Errorf(\"invalid parameter %q: %w\", \"query\", err)}\n}\n",
+      "quote_sha256": "5d484f28fabee44ac1a7306854dc726882eeeaf29d5326a819763456e51f7da5"
+    },
+    {
+      "id": "T10",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-remote-estimate-source-v1/web/api/v1/api.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "d48474cc505b02bdea99639856fde5e143ed0faf05f362c54ea084e7b26e45f9",
+      "first_line": 1371,
+      "last_line": 1399,
+      "quote": "func returnAPIError(err error) *apiError {\n\tif err == nil {\n\t\treturn nil\n\t}\n\n\tvar eqc promql.ErrQueryCanceled\n\tvar eqt promql.ErrQueryTimeout\n\tvar es promql.ErrStorage\n\tvar etms promql.ErrTooManySeries\n\tvar etmss promql.ErrTooManySamplesRead\n\tswitch {\n\tcase errors.As(err, &eqc):\n\t\treturn &apiError{errorCanceled, err}\n\tcase errors.As(err, &eqt):\n\t\treturn &apiError{errorTimeout, err}\n\tcase errors.As(err, &etms):\n\t\treturn &apiError{errorCostLimit, err}\n\tcase errors.As(err, &etmss):\n\t\treturn &apiError{errorCostLimit, err}\n\tcase errors.As(err, &es):\n\t\treturn &apiError{errorInternal, err}\n\t}\n\n\tif errors.Is(err, context.Canceled) {\n\t\treturn &apiError{errorCanceled, err}\n\t}\n\n\treturn &apiError{errorExec, err}\n}\n",
+      "quote_sha256": "5306eb2e6aa5f02b5d8131deffa70ec2844e9065db25843bc7fd5580dce76d13"
+    },
+    {
+      "id": "T11",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-remote-estimate-source-v1/web/api/v1/api.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "d48474cc505b02bdea99639856fde5e143ed0faf05f362c54ea084e7b26e45f9",
+      "first_line": 1265,
+      "last_line": 1297,
+      "quote": "\t// The query's duration limit starts while it is built.\n\tlimitStart := time.Now()\n\tqry, err := api.QueryEngine.NewRangeQuery(ctx, api.Queryable, opts, r.FormValue(\"query\"), start, end, step)\n\tif err != nil {\n\t\tspan.RecordError(err)\n\t\tspan.SetStatus(codes.Error, err.Error())\n\t\treturn apiFuncResult{nil, queryConstructionError(err), nil, nil}\n\t}\n\t// From now on, we must only return with a finalizer in the result (to\n\t// be called by the caller) or call qry.Close ourselves (which is\n\t// required in the case of a panic).\n\tdefer func() {\n\t\tif result.finalizer == nil {\n\t\t\tqry.Close()\n\t\t}\n\t}()\n\n\t// Estimate after building, so that the estimation counts against the\n\t// query's duration limit, and before executing, so that no finished result\n\t// is held in memory while the estimation waits for a query slot.\n\tvar pendingCost pendingCostComparison\n\tif costOn {\n\t\tpendingCost = api.estimateForComparison(ctx, limitStart, r.FormValue(\"query\"), start, end, step, opts)\n\t}\n\n\tctx = httputil.ContextFromRequest(ctx, r)\n\n\tres := qry.Exec(ctx)\n\tif res.Err != nil {\n\t\tspan.RecordError(res.Err)\n\t\tspan.SetStatus(codes.Error, res.Err.Error())\n\t\treturn apiFuncResult{nil, returnAPIError(res.Err), res.Warnings, qry.Close}\n\t}\n",
+      "quote_sha256": "33743edd42dce0f2919868d780ce85cd26d140ba4bec7079e300e9d395751600"
+    },
+    {
+      "id": "T12",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-remote-estimate-source-v1/web/api/v1/api.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "d48474cc505b02bdea99639856fde5e143ed0faf05f362c54ea084e7b26e45f9",
+      "first_line": 2845,
+      "last_line": 2898,
+      "quote": "func (api *API) respondError(w http.ResponseWriter, apiErr *apiError, data any) {\n\tjson := jsoniter.ConfigCompatibleWithStandardLibrary\n\tb, err := json.Marshal(&Response{\n\t\tStatus:    statusError,\n\t\tErrorType: apiErr.typ.str,\n\t\tError:     apiErr.err.Error(),\n\t\tData:      data,\n\t})\n\tif err != nil {\n\t\tapi.logger.Error(\"error marshaling json response\", \"err\", err)\n\t\thttp.Error(w, err.Error(), http.StatusInternalServerError)\n\t\treturn\n\t}\n\n\tvar code int\n\tif api.overrideErrorCode != nil {\n\t\tif newCode, override := api.overrideErrorCode(apiErr.typ.num, apiErr.err); override {\n\t\t\tcode = newCode\n\t\t} else {\n\t\t\tcode = getDefaultErrorCode(apiErr.typ)\n\t\t}\n\t} else {\n\t\tcode = getDefaultErrorCode(apiErr.typ)\n\t}\n\n\tw.Header().Set(\"Content-Type\", \"application/json\")\n\tw.WriteHeader(code)\n\tif n, err := w.Write(b); err != nil {\n\t\tapi.logger.Error(\"error writing response\", \"bytesWritten\", n, \"err\", err)\n\t}\n}\n\nfunc getDefaultErrorCode(errType errorType) int {\n\tswitch errType {\n\tcase errorBadData:\n\t\treturn http.StatusBadRequest\n\tcase errorExec:\n\t\treturn http.StatusUnprocessableEntity\n\tcase errorCostLimit:\n\t\treturn http.StatusUnprocessableEntity\n\tcase errorCanceled:\n\t\treturn statusClientClosedConnection\n\tcase errorTimeout:\n\t\treturn http.StatusServiceUnavailable\n\tcase errorInternal:\n\t\treturn http.StatusInternalServerError\n\tcase errorNotFound:\n\t\treturn http.StatusNotFound\n\tcase errorNotAcceptable:\n\t\treturn http.StatusNotAcceptable\n\tdefault:\n\t\treturn http.StatusInternalServerError\n\t}\n}\n",
+      "quote_sha256": "affc7e96a0537035ee89a277b38ab033859e42410c48be753d1d20873ffc68ba"
+    }
+  ],
+  "reused_already_frozen_public_source": true,
+  "source_executed": false
+}

@@ -1,0 +1,1338 @@
+{
+  "at": "2026-11-21T15:19:32.572347+00:00",
+  "purpose": "Concise owner-review metadata plus exact paragraph trace; no human-facing report created under agent",
+  "chapters": [
+    {
+      "task": "fastapi",
+      "scope": "Dependant defaults and selected solve_dependencies cache initialization, recursion, reuse/write guards and assertions",
+      "original_review": "agent/research/portfolio-vivabem-20261120/python-cache-complete-document-review-v2.json",
+      "historical_status": "READY_FOR_OWNER_REVIEW",
+      "documents": [
+        {
+          "language": "en",
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "all_noncode_nonheading_paragraphs": [
+            {
+              "line": 3,
+              "exact_text": "Isolated source-verified research candidate; owner review, publication and training approval are pending.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 7,
+              "exact_text": "Pinned source: fastapi/fastapi @ 05e6df7e906c3decba377c37548019973f40bf15. This chapter follows six rule groups: one selected Dependant declaration group and five cache-flow/assertion groups in solve_dependencies. It connects the model declaration, solver loop, recursive passage, reuse guard and later write guard. It does not document all FastAPI architecture, an installed release or observed service behavior.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 13,
+              "exact_text": "The written Dependant class declares use_cache: bool = True and a scope field whose declared value is None. This records the selected class statements; it is not observation of a live dependency object.",
+              "source_atom_ids": [
+                "OWNER-F01",
+                "OWNER-F02"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 15,
+              "exact_text": "Evidence: `fastapi/dependencies/models.py:53-53`, `fastapi/dependencies/models.py:55-55`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 19,
+              "exact_text": "At the initialization branch, dependency_cache is None guards assignment of an empty dictionary to dependency_cache. The selected function has no other direct assignment to that local name. This does not establish process-wide or cross-request cache lifetime.",
+              "source_atom_ids": [
+                "OWNER-F03",
+                "OWNER-F10"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 21,
+              "exact_text": "Evidence: `fastapi/dependencies/utils.py:700-701`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 25,
+              "exact_text": "Inside the selected loop over dependant.dependencies, the written awaited solve_dependencies call passes dependency_cache=dependency_cache. This connects the local cache variable to subdependency solving in the written data flow; dynamic bindings and actual completion remain unverified.",
+              "source_atom_ids": [
+                "OWNER-F04",
+                "OWNER-F18",
+                "OWNER-F19"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 27,
+              "exact_text": "Evidence: `fastapi/dependencies/utils.py:726-737`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 31,
+              "exact_text": "The selected reuse branch requires sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache. Its body assigns solved = dependency_cache[sub_dependant_cache_key]. The conjunction is a read/reuse condition; it is not a guarantee that every dependency executes exactly once.",
+              "source_atom_ids": [
+                "OWNER-F05",
+                "OWNER-F11"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 33,
+              "exact_text": "Evidence: `fastapi/dependencies/utils.py:746-746`, `fastapi/dependencies/utils.py:747-747`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 37,
+              "exact_text": "When control reaches the later write guard and the key is absent, the written body assigns dependency_cache[sub_dependant_cache_key] = solved. This guard does not mention use_cache. Therefore the selected source does not implement use_cache=False as a general ban on cache writes. Earlier errors, exceptions or control flow can prevent reaching this guard.",
+              "source_atom_ids": [
+                "OWNER-F06",
+                "OWNER-F07",
+                "OWNER-F12"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 39,
+              "exact_text": "Evidence: `fastapi/dependencies/utils.py:774-775`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 43,
+              "exact_text": "The selected function contains two written assertions using isinstance with AsyncExitStack: one for request_astack and one for function_astack. These statements do not prove that assertions are enabled in a deployed interpreter, that request composition satisfies them, or that dependency callbacks cannot raise other exceptions.",
+              "source_atom_ids": [
+                "OWNER-F08",
+                "OWNER-F09",
+                "OWNER-F13"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 45,
+              "exact_text": "Evidence: `fastapi/dependencies/utils.py:687-689`, `fastapi/dependencies/utils.py:691-693`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 49,
+              "exact_text": "Synthetic dependency-declaration fragment, not a running service. It follows the written use_cache=False call pattern in tests/test_dependency_cache.py:30-35. Its Python syntax was parsed; imports, dependency resolution, type compatibility and execution were not tested. No route is registered here.",
+              "source_atom_ids": [
+                "OWNER-F14"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 61,
+              "exact_text": "The pinned tests/test_dependency_cache.py contains written assertions for repeated requests, nested dependencies and disabled reuse. These external project tests were not executed. Assertions in a file are not passing results or production acceptance. No installer/startup/test command is certified by this chapter.",
+              "source_atom_ids": [
+                "OWNER-F15",
+                "OWNER-F16",
+                "OWNER-F17"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 67,
+              "exact_text": "The selected read condition uses use_cache, but the later write guard does not. If execution reaches that guard with an absent key, the written assignment stores solved. This is a source-level distinction, not an observation that every invocation succeeds. [PF04, PF05]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 71,
+              "exact_text": "No global lifetime is established by this profile. It observes initialization when the local value is None and passage of the same local name to the written recursive call. Caller composition, external aliases and actual reuse across requests require separate evidence. [PF02, PF03]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 75,
+              "exact_text": "No. The rules describe selected cache data flow and guards. They do not establish callback completion, concurrent invocation counts, effective cache-key equivalence or live override behavior. Written test assertions are separate from executed results. [PF03, PF04, PF05]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 79,
+              "exact_text": "No. They are two specific written assertions. This profile does not establish interpreter assertion settings, caller correctness, callback exception translation, cleanup completion or every possible error path. [PF06]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 83,
+              "exact_text": "This closed profile does not reconstruct cache-key construction, override resolution, effective generator scopes, concurrency limits or complete cleanup behavior. In particular, it does not say keys are merely function names. Those contracts need their own evidence. Source syntax, fixed text and exact quotations do not prove arbitrary prose truth or runtime integration.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 85,
+              "exact_text": "The frozen inventory recorded a shallow clone with no local parent revision. No historical MODIFY decision is inferred from this one revision. Missing symbols in partial source never authorize REMOVE. Existing project documentation remains unchanged. MIT license notices are retained in the pinned source evidence. This candidate and its source family remain outside training; source verification is not owner-approved gold.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            }
+          ]
+        },
+        {
+          "language": "pt-BR",
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "all_noncode_nonheading_paragraphs": [
+            {
+              "line": 3,
+              "exact_text": "Candidato isolado de pesquisa com verificação de fonte; revisão do proprietário e aprovações de publicação e treino estão pendentes.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 7,
+              "exact_text": "Fonte fixada: fastapi/fastapi @ 05e6df7e906c3decba377c37548019973f40bf15. Este capítulo acompanha seis grupos de regras: um grupo de declarações selecionadas de Dependant e cinco grupos de fluxo de cache/asserções em solve_dependencies. Ele conecta a declaração do modelo, o laço do solver, a passagem recursiva, a condição de reutilização e a condição posterior de escrita. Ele não documenta toda a arquitetura do FastAPI, uma release instalada ou comportamento observado de serviço.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 13,
+              "exact_text": "A classe escrita Dependant declara use_cache: bool = True e um campo scope cujo valor declarado é None. Isso registra as instruções da classe selecionada; não é observação de um objeto de dependência em execução.",
+              "source_atom_ids": [
+                "OWNER-F01",
+                "OWNER-F02"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 15,
+              "exact_text": "Evidência: `fastapi/dependencies/models.py:53-53`, `fastapi/dependencies/models.py:55-55`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 19,
+              "exact_text": "No ramo de inicialização, dependency_cache is None condiciona a atribuição de um dicionário vazio a dependency_cache. A função selecionada não possui outra atribuição direta a esse nome local. Isso não estabelece duração do cache no processo inteiro ou entre requisições.",
+              "source_atom_ids": [
+                "OWNER-F03",
+                "OWNER-F10"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 21,
+              "exact_text": "Evidência: `fastapi/dependencies/utils.py:700-701`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 25,
+              "exact_text": "Dentro do laço selecionado sobre dependant.dependencies, a chamada escrita e aguardada de solve_dependencies passa dependency_cache=dependency_cache. Isso conecta a variável local de cache à resolução de subdependências no fluxo de dados escrito; vínculos dinâmicos e conclusão efetiva permanecem não verificados.",
+              "source_atom_ids": [
+                "OWNER-F04",
+                "OWNER-F18",
+                "OWNER-F19"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 27,
+              "exact_text": "Evidência: `fastapi/dependencies/utils.py:726-737`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 31,
+              "exact_text": "O ramo selecionado de reutilização exige sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache. Seu corpo atribui solved = dependency_cache[sub_dependant_cache_key]. A conjunção é uma condição de leitura/reutilização; não é garantia de que cada dependência execute exatamente uma vez.",
+              "source_atom_ids": [
+                "OWNER-F05",
+                "OWNER-F11"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 33,
+              "exact_text": "Evidência: `fastapi/dependencies/utils.py:746-746`, `fastapi/dependencies/utils.py:747-747`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 37,
+              "exact_text": "Quando o controle alcança a condição posterior de escrita e a chave está ausente, o corpo escrito atribui dependency_cache[sub_dependant_cache_key] = solved. Essa condição não menciona use_cache. Portanto, a fonte selecionada não implementa use_cache=False como proibição geral de escritas no cache. Erros, exceções ou fluxo de controle anteriores podem impedir que essa condição seja alcançada.",
+              "source_atom_ids": [
+                "OWNER-F06",
+                "OWNER-F07",
+                "OWNER-F12"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 39,
+              "exact_text": "Evidência: `fastapi/dependencies/utils.py:774-775`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 43,
+              "exact_text": "A função selecionada contém duas asserções escritas que usam isinstance com AsyncExitStack: uma para request_astack e outra para function_astack. Essas instruções não comprovam que as asserções estejam habilitadas no interpretador implantado, que a composição da requisição as satisfaça ou que callbacks de dependências não possam lançar outras exceções.",
+              "source_atom_ids": [
+                "OWNER-F08",
+                "OWNER-F09",
+                "OWNER-F13"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 45,
+              "exact_text": "Evidência: `fastapi/dependencies/utils.py:687-689`, `fastapi/dependencies/utils.py:691-693`.",
+              "source_atom_ids": [],
+              "classification": "CITATION_LOCATOR",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 49,
+              "exact_text": "Fragmento sintético de declaração de dependência, não um serviço em execução. Ele segue o padrão escrito de chamada com use_cache=False em tests/test_dependency_cache.py:30-35. Sua sintaxe Python foi analisada; imports, resolução de dependências, compatibilidade de tipos e execução não foram testados. Nenhuma rota está registrada aqui.",
+              "source_atom_ids": [
+                "OWNER-F14"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 61,
+              "exact_text": "O arquivo fixado tests/test_dependency_cache.py contém asserções escritas sobre requisições repetidas, dependências aninhadas e reutilização desabilitada. Esses testes do projeto externo não foram executados. Asserções em um arquivo não são resultados aprovados nem aceite de produção. Nenhum comando de instalação, inicialização ou teste é certificado por este capítulo.",
+              "source_atom_ids": [
+                "OWNER-F15",
+                "OWNER-F16",
+                "OWNER-F17"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 67,
+              "exact_text": "A condição selecionada de leitura usa use_cache, mas a condição posterior de escrita não. Se a execução alcançar essa condição com uma chave ausente, a atribuição escrita armazena solved. Essa é uma distinção da fonte, não observação de que toda invocação tenha sucesso. [PF04, PF05]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 71,
+              "exact_text": "Nenhuma duração global foi estabelecida por este perfil. Ele observa a inicialização quando o valor local é None e a passagem do mesmo nome local à chamada recursiva escrita. Composição do chamador, aliases externos e reutilização efetiva entre requisições exigem evidências separadas. [PF02, PF03]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 75,
+              "exact_text": "Não. As regras descrevem fluxo de dados e condições selecionados do cache. Elas não estabelecem conclusão de callbacks, contagens de invocações concorrentes, equivalência efetiva de chaves de cache ou comportamento real de overrides. Asserções de testes escritos são diferentes de resultados executados. [PF03, PF04, PF05]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 79,
+              "exact_text": "Não. Elas são duas asserções escritas específicas. Este perfil não estabelece as configurações de asserções do interpretador, correção do chamador, tradução de exceções de callbacks, conclusão de cleanup ou todos os caminhos possíveis de erro. [PF06]",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 83,
+              "exact_text": "Este perfil fechado não reconstrói a construção de chaves de cache, a resolução de overrides, os escopos efetivos de generators, os limites de concorrência ou o comportamento completo de cleanup. Em particular, ele não afirma que as chaves sejam apenas nomes de funções. Esses contratos precisam de evidências próprias. Sintaxe de fonte, texto fixo e citações exatas não comprovam a verdade de prosa arbitrária ou integração em runtime.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 85,
+              "exact_text": "O inventário congelado registrou um clone raso sem revisão pai local. Nenhuma decisão histórica MODIFY é inferida desta única revisão. Símbolos ausentes em fonte parcial nunca autorizam REMOVE. A documentação existente do projeto permanece sem alterações. Os avisos da licença MIT estão preservados na evidência fixada de fonte. Este candidato e sua família de fonte permanecem fora de treino; verificação de fonte não é gold aprovado pelo proprietário.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            }
+          ]
+        }
+      ],
+      "selected_unique_source_atoms": 19,
+      "dimensions": {
+        "factual correctness": {
+          "score": 1,
+          "basis": "116 selected source propositions across the three topics are supported; source and procedural paragraphs read, but exhaustive independent proposition inventory/review has not been completed."
+        },
+        "relevant completeness": {
+          "score": 1,
+          "basis": "Selected topic groups and required sections present. No exhaustive full-prose atomization; historical READY_FOR_OWNER_REVIEW is preserved separately."
+        },
+        "architecture and dependencies": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "API contracts": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "errors and exceptions": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "existing tests and actual execution status": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "examples and commands": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "EN/PT-BR equivalence": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "FAQ correctness": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "citation relevance": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "explicit limitations": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        }
+      },
+      "protocol2_whole_document_status": "INCONCLUSIVE_REVIEW_INCOMPLETE",
+      "critical_source_contradiction_found_in_selected_claims": false,
+      "mechanical_verification": "Exact source/document hashes, physical quote spans, declaration/AST syntax and identical bilingual code fragments. These do not independently verify arbitrary prose semantics.",
+      "semantic_review_needed": "Complete exhaustive proposition coverage and independent reviewer/owner assessment, especially negative/runtime/API/ordering claims; verify qualifications in both languages.",
+      "approval_needed": [
+        "Owner technical acceptance of exact document hashes",
+        "Independent semantic review with recorded disagreements",
+        "Rights/confidentiality/training-use approval for exact source and derivative text",
+        "Separate explicit publication/catalog integration authorization if desired"
+      ],
+      "rights_status": "Source notices retained (FastAPI/Zod MIT; Cobra Apache-2.0); eventual training use NOT CLEARED by this campaign.",
+      "owner_approved": false,
+      "training_gold": false,
+      "training_excluded": true,
+      "operationally_integrated": false
+    },
+    {
+      "task": "zod",
+      "scope": "Core sync/async safe-parse branches, lazy failure getter/setter and factory bindings",
+      "original_review": "agent/research/portfolio-vivabem-20261120/zod-safe-parse-complete-document-review-v2.json",
+      "historical_status": "READY_FOR_OWNER_REVIEW",
+      "documents": [
+        {
+          "language": "en",
+          "path": "agent/research/portfolio-vivabem-20261120/zod-safe-parse-candidate-v2/en.md",
+          "sha256": "0d40db3e7aaad54f8299b670775d5c47b11291686bf6587a3fb625ddda937bbe",
+          "all_noncode_nonheading_paragraphs": [
+            {
+              "line": 3,
+              "exact_text": "This chapter covers six selected source groups in `colinhacks/zod` at `2a343ed2a4ffbea73fb83862ee1e317662292481`: synchronous setup and the explicit Promise-guard throw, the result choice, the failure getter, the failure setter, the asynchronous counterpart, and the core factory bindings. It describes the written implementation in `packages/zod/src/v4/core/parse.ts`, not the entire Zod API or observed runtime behavior. The frozen repository has an MIT license; that does not supply owner approval for training or publication of this candidate.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 7,
+              "exact_text": "`_safeParse` takes `_Err` and returns an arrow accepting `schema`, `value` and `_ctx`. That arrow creates a context with `async: false`, overriding that property when it copies a supplied context. It calls `schema._zod.run({ value, issues: [] }, ctx)`. If the returned result satisfies the written `result instanceof Promise` guard, the function throws `new core.$ZodAsyncError()`. Thus “safe” does not mean that this synchronous implementation contains no throws. Evidence: `packages/zod/src/v4/core/parse.ts:71–76`.",
+              "source_atom_ids": [
+                "OWNER-Z01",
+                "OWNER-Z02",
+                "OWNER-Z03",
+                "OWNER-Z11",
+                "OWNER-Z12"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 9,
+              "exact_text": "If control reaches the following return, `result.issues.length` chooses `failure(_Err, result.issues, ctx)`. Otherwise the returned literal has `success: true` and `data: result.value`. These are the selected return branches, not a guarantee that every schema callback, property access or dependency completes normally. Evidence: `packages/zod/src/v4/core/parse.ts:78–79`.",
+              "source_atom_ids": [
+                "OWNER-Z04",
+                "OWNER-Z05",
+                "OWNER-Z10",
+                "OWNER-Z13"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 11,
+              "exact_text": "The core `safeParse` constant calls `_safeParse(errors.$ZodRealError)`. Its asynchronous counterpart calls `_safeParseAsync(errors.$ZodRealError)`. These are bindings in this core module; this chapter does not establish every package import or instance-method path. Evidence: `packages/zod/src/v4/core/parse.ts:80,119`.",
+              "source_atom_ids": [
+                "OWNER-Z09",
+                "OWNER-Z34"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 15,
+              "exact_text": "`failure` declares an initially uninitialized local `error` and returns an object with `success: false`, an `error` getter and an `error` setter. In the getter, `if (!error)` guards construction through `new Err(...)`, with issues mapped through `util.finalizeIssue(iss, ctx, core.config())`. After that construction completes, the branch assigns `undefined as any` to both `issues` and `ctx`; the getter then returns `error`. Evidence: `packages/zod/src/v4/core/parse.ts:83–95`.",
+              "source_atom_ids": [
+                "OWNER-Z06",
+                "OWNER-Z14",
+                "OWNER-Z15",
+                "OWNER-Z16",
+                "OWNER-Z17",
+                "OWNER-Z18",
+                "OWNER-Z19",
+                "OWNER-Z20",
+                "OWNER-Z21",
+                "OWNER-Z22"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 17,
+              "exact_text": "The setter first assigns its parameter `e` to the local `error`, then clears `issues` and `ctx`. A truthy replacement supplied before the getter runs therefore prevents that getter's construction branch from running on the later read, assuming the shown operations complete and no intervening reassignment. The actual guard is truthiness, not a separate “has been read” flag. The TypeScript parameter annotation is not a runtime validation guard. Evidence: `packages/zod/src/v4/core/parse.ts:96–101` and `:87–94`.",
+              "source_atom_ids": [
+                "OWNER-Z07",
+                "OWNER-Z23",
+                "OWNER-Z24",
+                "OWNER-Z25",
+                "OWNER-Z26"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 19,
+              "exact_text": "Do not turn this into an unconditional “the first read always constructs an error” contract. A setter can precede a read. Construction or finalization can also throw before the subsequent capture-clearing assignments. The selected code does not certify memory reclamation, performance measurements, arbitrary caller behavior or universal exception safety. The campaign did not reproduce the benchmark figures mentioned in the source comment.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 23,
+              "exact_text": "`_safeParseAsync` returns an `async` arrow. It creates a context with `async: true`, calls the same written `schema._zod.run` shape, and awaits `result` if `result instanceof Promise`. It then uses the corresponding `result.issues.length` failure/success choice. Unlike the selected synchronous arrow, it does not contain that explicit Promise-guard throw. This does not prove that the returned Promise always fulfills or that dependencies cannot reject or throw. Evidence: `packages/zod/src/v4/core/parse.ts:111–117`.",
+              "source_atom_ids": [
+                "OWNER-Z08",
+                "OWNER-Z27",
+                "OWNER-Z28",
+                "OWNER-Z29",
+                "OWNER-Z30",
+                "OWNER-Z31",
+                "OWNER-Z32",
+                "OWNER-Z33"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 27,
+              "exact_text": "This illustrative fragment assumes that `safeParse`, `schema` and `input` have already been supplied. It shows result branching and an explicit read of the failure accessor; it is not a complete import or schema-construction example.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 40,
+              "exact_text": "Only TypeScript syntax is checked for this fragment. The core factory's selected returned arrow has the two required arguments shown here and an optional context according to its declared type. Module resolution, typechecking, dependencies and runtime behavior are not verified. Reading `result.error` is a distinct operation from merely testing `result.success`.",
+              "source_atom_ids": [
+                "OWNER-Z35"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 44,
+              "exact_text": "The frozen `packages/zod/src/v4/classic/tests/async-parsing.test.ts:8–19` contains a string test that awaits `safeParseAsync` for good and bad inputs, checks the two `success` values and conditionally inspects data or an error instance. The number test at `:23–34` writes analogous assertions. These are instance-method tests in a different module layer. They were not executed and do not independently prove the complete linkage to the selected core factories, the setter path or the synchronous Promise guard.",
+              "source_atom_ids": [
+                "OWNER-Z36",
+                "OWNER-Z37",
+                "OWNER-Z38",
+                "OWNER-Z39",
+                "OWNER-Z40",
+                "OWNER-Z41",
+                "OWNER-Z42",
+                "OWNER-Z43",
+                "OWNER-Z44",
+                "OWNER-Z45",
+                "OWNER-Z46"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 48,
+              "exact_text": "**Does safe parsing never throw?** That universal claim is unsupported. The selected synchronous arrow explicitly throws `core.$ZodAsyncError` under its Promise guard; other operations are not wrapped in a blanket exception handler here.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 50,
+              "exact_text": "**Does checking failure necessarily construct the error?** The selected `failure` literal has a false success flag and a separate getter. Merely branching on that flag is not the written getter body. The getter constructs only while `!error` holds, and construction must complete before the shown clearing assignments.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 52,
+              "exact_text": "**Can a replacement affect the later error read?** Yes, the written setter assigns the supplied value and clears its captures. A truthy replacement can make the getter return that value without constructing through `Err`; this is a source-level condition, not a guarantee about every untyped caller.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 54,
+              "exact_text": "**Does the async variant guarantee success?** No. Its selected Promise guard awaits rather than executing the synchronous explicit throw, and its normal return still distinguishes issues from success. Rejections, schema contracts and arbitrary callback behavior are not certified by this static review.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 58,
+              "exact_text": "Exact source hashes, lexical owners, physical quotes and six registered fact groups are recorded in the isolated research evidence. The existing TypeScript parser reads source as text; it does not import or execute Zod. A separate reviewer reacquires public Git objects and queries their AST. Synthetic admission controls are development checks, not independent evaluation cases or a general semantic verifier. This chapter requires a completed review before source acceptance; owner approval, training gold, operational catalog integration and publication remain false.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            }
+          ]
+        },
+        {
+          "language": "pt-BR",
+          "path": "agent/research/portfolio-vivabem-20261120/zod-safe-parse-candidate-v2/pt-BR.md",
+          "sha256": "065364f678164d05944cea1a6daf79e9983cda9f02fd0048d534a15466fa73d1",
+          "all_noncode_nonheading_paragraphs": [
+            {
+              "line": 3,
+              "exact_text": "Este capítulo cobre seis grupos selecionados do código de `colinhacks/zod` em `2a343ed2a4ffbea73fb83862ee1e317662292481`: preparação síncrona e lançamento explícito sob a condição de Promise, escolha do resultado, getter da falha, setter da falha, equivalente assíncrono e vínculos das factories do core. Descreve a implementação escrita em `packages/zod/src/v4/core/parse.ts`, não toda a API do Zod ou comportamento observado em runtime. O repositório fixado tem licença MIT; isso não fornece aprovação do proprietário para treinamento ou publicação deste candidato.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 7,
+              "exact_text": "`_safeParse` recebe `_Err` e retorna uma arrow que aceita `schema`, `value` e `_ctx`. Essa arrow cria um contexto com `async: false`, sobrescrevendo essa propriedade ao copiar um contexto fornecido. Chama `schema._zod.run({ value, issues: [] }, ctx)`. Se o resultado retornado satisfaz a condição escrita `result instanceof Promise`, a função lança `new core.$ZodAsyncError()`. Portanto, “safe” não significa que essa implementação síncrona não contém lançamentos. Evidência: `packages/zod/src/v4/core/parse.ts:71–76`.",
+              "source_atom_ids": [
+                "OWNER-Z01",
+                "OWNER-Z02",
+                "OWNER-Z03",
+                "OWNER-Z11",
+                "OWNER-Z12"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 9,
+              "exact_text": "Se o controle alcança o retorno seguinte, `result.issues.length` escolhe `failure(_Err, result.issues, ctx)`. Caso contrário, o literal retornado tem `success: true` e `data: result.value`. Esses são os ramos de retorno selecionados, não uma garantia de que todo callback de schema, acesso a propriedade ou dependência termine normalmente. Evidência: `packages/zod/src/v4/core/parse.ts:78–79`.",
+              "source_atom_ids": [
+                "OWNER-Z04",
+                "OWNER-Z05",
+                "OWNER-Z10",
+                "OWNER-Z13"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 11,
+              "exact_text": "A constante `safeParse` do core chama `_safeParse(errors.$ZodRealError)`. Seu equivalente assíncrono chama `_safeParseAsync(errors.$ZodRealError)`. Esses são vínculos neste módulo do core; o capítulo não estabelece todo caminho de importação do pacote ou de métodos de instância. Evidência: `packages/zod/src/v4/core/parse.ts:80,119`.",
+              "source_atom_ids": [
+                "OWNER-Z09",
+                "OWNER-Z34"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 15,
+              "exact_text": "`failure` declara a variável local `error` inicialmente sem inicializador e retorna um objeto com `success: false`, um getter de `error` e um setter de `error`. No getter, `if (!error)` condiciona a construção por `new Err(...)`, com as issues mapeadas por `util.finalizeIssue(iss, ctx, core.config())`. Depois que essa construção termina, o ramo atribui `undefined as any` tanto a `issues` quanto a `ctx`; em seguida, o getter retorna `error`. Evidência: `packages/zod/src/v4/core/parse.ts:83–95`.",
+              "source_atom_ids": [
+                "OWNER-Z06",
+                "OWNER-Z14",
+                "OWNER-Z15",
+                "OWNER-Z16",
+                "OWNER-Z17",
+                "OWNER-Z18",
+                "OWNER-Z19",
+                "OWNER-Z20",
+                "OWNER-Z21",
+                "OWNER-Z22"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 17,
+              "exact_text": "O setter primeiro atribui seu parâmetro `e` à variável local `error` e depois limpa `issues` e `ctx`. Assim, uma substituição truthy fornecida antes de o getter executar impede que seu ramo de construção execute na leitura posterior, supondo que as operações mostradas terminem e não haja reatribuição intermediária. A condição efetiva é truthiness, não um indicador separado de “já foi lido”. A anotação TypeScript do parâmetro não é uma condição de validação em runtime. Evidência: `packages/zod/src/v4/core/parse.ts:96–101` e `:87–94`.",
+              "source_atom_ids": [
+                "OWNER-Z07",
+                "OWNER-Z23",
+                "OWNER-Z24",
+                "OWNER-Z25",
+                "OWNER-Z26"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 19,
+              "exact_text": "Não transforme isso em um contrato incondicional de que “a primeira leitura sempre constrói um erro”. Um setter pode preceder a leitura. A construção ou a finalização também pode lançar antes das atribuições seguintes que limpam as capturas. O código selecionado não certifica liberação de memória, medições de desempenho, comportamento arbitrário do chamador ou segurança universal contra exceções. A campanha não reproduziu os números de benchmark mencionados no comentário do código.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 23,
+              "exact_text": "`_safeParseAsync` retorna uma arrow `async`. Cria um contexto com `async: true`, chama a mesma forma escrita de `schema._zod.run` e aguarda `result` se `result instanceof Promise`. Depois usa a escolha correspondente entre falha e sucesso por `result.issues.length`. Diferentemente da arrow síncrona selecionada, não contém aquele lançamento explícito condicionado à Promise. Isso não prova que a Promise retornada sempre seja resolvida com sucesso ou que dependências não possam rejeitar ou lançar. Evidência: `packages/zod/src/v4/core/parse.ts:111–117`.",
+              "source_atom_ids": [
+                "OWNER-Z08",
+                "OWNER-Z27",
+                "OWNER-Z28",
+                "OWNER-Z29",
+                "OWNER-Z30",
+                "OWNER-Z31",
+                "OWNER-Z32",
+                "OWNER-Z33"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 27,
+              "exact_text": "Este fragmento ilustrativo pressupõe que `safeParse`, `schema` e `input` já foram fornecidos. Mostra a escolha pelo resultado e uma leitura explícita do accessor da falha; não é um exemplo completo de importação ou construção de schema.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 40,
+              "exact_text": "Somente a sintaxe TypeScript é verificada para esse fragmento. A arrow retornada pela factory selecionada do core tem os dois argumentos obrigatórios mostrados aqui e um contexto opcional segundo seu tipo declarado. Resolução de módulos, verificação de tipos, dependências e comportamento em runtime não são verificados. Ler `result.error` é uma operação distinta de apenas testar `result.success`.",
+              "source_atom_ids": [
+                "OWNER-Z35"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 44,
+              "exact_text": "O arquivo fixado `packages/zod/src/v4/classic/tests/async-parsing.test.ts:8–19` contém um teste de string que aguarda `safeParseAsync` para entradas válidas e inválidas, verifica os dois valores de `success` e inspeciona condicionalmente os dados ou uma instância de erro. O teste de número em `:23–34` escreve assertions análogas. São testes de métodos de instância em outra camada de módulo. Não foram executados e não provam de modo independente todo o vínculo com as factories selecionadas do core, o caminho do setter ou a condição síncrona de Promise.",
+              "source_atom_ids": [
+                "OWNER-Z36",
+                "OWNER-Z37",
+                "OWNER-Z38",
+                "OWNER-Z39",
+                "OWNER-Z40",
+                "OWNER-Z41",
+                "OWNER-Z42",
+                "OWNER-Z43",
+                "OWNER-Z44",
+                "OWNER-Z45",
+                "OWNER-Z46"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 48,
+              "exact_text": "**Safe parsing nunca lança?** Essa afirmação universal não tem suporte. A arrow síncrona selecionada lança explicitamente `core.$ZodAsyncError` sob sua condição de Promise; outras operações não estão envolvidas por um tratador geral de exceções aqui.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 50,
+              "exact_text": "**Verificar a falha necessariamente constrói o erro?** O literal selecionado de `failure` possui um indicador de sucesso falso e um getter separado. Apenas escolher um ramo por esse indicador não é executar o corpo escrito do getter. O getter constrói somente enquanto `!error` é satisfeito, e a construção precisa terminar antes das atribuições mostradas de limpeza.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 52,
+              "exact_text": "**Uma substituição pode afetar a leitura posterior do erro?** Sim, o setter escrito atribui o valor fornecido e limpa suas capturas. Uma substituição truthy pode fazer o getter retornar esse valor sem construir por `Err`; essa é uma condição descrita no código, não uma garantia sobre todo chamador sem tipos.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 54,
+              "exact_text": "**A variante assíncrona garante sucesso?** Não. Sua condição selecionada de Promise aguarda em vez de executar o lançamento explícito síncrono, e seu retorno normal ainda distingue issues de sucesso. Rejeições, contratos de schema e comportamento arbitrário de callbacks não são certificados por esta revisão estática.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 58,
+              "exact_text": "Hashes exatos do código, escopos léxicos, citações físicas e seis grupos registrados de fatos estão nas evidências isoladas de pesquisa. O parser TypeScript existente lê o código como texto; não importa nem executa o Zod. Um revisor separado obtém novamente objetos públicos do Git e consulta seu AST. Controles sintéticos de admissão são verificações de desenvolvimento, não casos independentes de avaliação ou um verificador semântico geral. Este capítulo exige revisão concluída antes da aceitação baseada no código; aprovação do proprietário, gold de treinamento, integração operacional ao catálogo e publicação permanecem falsos.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            }
+          ]
+        }
+      ],
+      "selected_unique_source_atoms": 46,
+      "dimensions": {
+        "factual correctness": {
+          "score": 1,
+          "basis": "116 selected source propositions across the three topics are supported; source and procedural paragraphs read, but exhaustive independent proposition inventory/review has not been completed."
+        },
+        "relevant completeness": {
+          "score": 1,
+          "basis": "Selected topic groups and required sections present. No exhaustive full-prose atomization; historical READY_FOR_OWNER_REVIEW is preserved separately."
+        },
+        "architecture and dependencies": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "API contracts": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "errors and exceptions": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "existing tests and actual execution status": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "examples and commands": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "EN/PT-BR equivalence": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "FAQ correctness": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "citation relevance": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "explicit limitations": {
+          "score": 1,
+          "basis": "Separate reviewer wording in the evidence paragraph can imply independent review. Reacquisition and AST query paths were separate, but the semantic reviewer was the same campaign agent."
+        }
+      },
+      "protocol2_whole_document_status": "INCONCLUSIVE_REVIEW_INCOMPLETE",
+      "critical_source_contradiction_found_in_selected_claims": false,
+      "mechanical_verification": "Exact source/document hashes, physical quote spans, declaration/AST syntax and identical bilingual code fragments. These do not independently verify arbitrary prose semantics.",
+      "semantic_review_needed": "Complete exhaustive proposition coverage and independent reviewer/owner assessment, especially negative/runtime/API/ordering claims; verify qualifications in both languages.",
+      "approval_needed": [
+        "Owner technical acceptance of exact document hashes",
+        "Independent semantic review with recorded disagreements",
+        "Rights/confidentiality/training-use approval for exact source and derivative text",
+        "Separate explicit publication/catalog integration authorization if desired"
+      ],
+      "rights_status": "Source notices retained (FastAPI/Zod MIT; Cobra Apache-2.0); eventual training use NOT CLEARED by this campaign.",
+      "owner_approved": false,
+      "training_gold": false,
+      "training_excluded": true,
+      "operationally_integrated": false
+    },
+    {
+      "task": "cobra",
+      "scope": "Positional validator factories, distinct ValidateArgs/Find paths and selected execution-hook order",
+      "original_review": "agent/research/portfolio-vivabem-20261120/cobra-validation-context-complete-review-v2.json",
+      "historical_status": "READY_FOR_OWNER_REVIEW",
+      "documents": [
+        {
+          "language": "en",
+          "path": "agent/research/portfolio-vivabem-20261120/cobra-validation-context-candidate-v2/en.md",
+          "sha256": "7a80c02bedc1aafdfab8ec73ef900b59e8f397787e757b324c61690759e6fcc6",
+          "all_noncode_nonheading_paragraphs": [
+            {
+              "line": 3,
+              "exact_text": "This isolated chapter covers selected written contracts in `spf13/cobra` at `adbc8813901bba65827259daa8e22ff94ec1f30e`. It connects validator factories, command selection and the ordinary execution path. Exact public source and Apache-2.0 notices are preserved. Source review, native Go syntax parsing and owner approval are different things; no Cobra code or tests were executed.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 7,
+              "exact_text": "`PositionalArgs` is the function type taking a command pointer and a string slice and returning an error (`args.go:22`). `OnlyValidArgs` runs its membership checks under the written guard `len(cmd.ValidArgs) > 0`. It keeps the portion of each allowlist entry before the first tab, then checks the supplied arguments. Outside that guarded block it returns `nil`; an empty allowlist does not by itself produce a validation error. The helper `stringInSlice` compares strings using equality. Evidence: `args.go:51–66`, `cobra.go:225–232`.",
+              "source_atom_ids": [
+                "OWNER-C01",
+                "OWNER-C02",
+                "OWNER-C03",
+                "OWNER-C10",
+                "OWNER-C11"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 9,
+              "exact_text": "`ExactArgs(n)` returns a `PositionalArgs` function. That returned function checks `len(args) != n` when invoked; calling the factory is not itself validation of a later argument slice. The corresponding minimum and maximum validators reject lengths below or above their bounds, and the range validator rejects values outside its two endpoints. Evidence: `args.go:87–124`.",
+              "source_atom_ids": [
+                "OWNER-C04",
+                "OWNER-C05",
+                "OWNER-C12",
+                "OWNER-C13",
+                "OWNER-C14",
+                "OWNER-C15"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 11,
+              "exact_text": "`MatchAll` returns another validator. Its loop invokes the supplied validators in order and returns immediately on the first non-`nil` error; it does not collect every error. `ExactValidArgs(n)` delegates to `MatchAll(ExactArgs(n), OnlyValidArgs)` and is marked deprecated in the selected source comment. `NoDuplicateArgs` writes a seen set and returns at its first repeated-argument branch. These are selected source contracts, not guarantees about arbitrary callbacks or invalid command pointers. Evidence: `args.go:69–79,127–144`.",
+              "source_atom_ids": [
+                "OWNER-C06",
+                "OWNER-C07",
+                "OWNER-C08",
+                "OWNER-C09",
+                "OWNER-C16",
+                "OWNER-C17",
+                "OWNER-C47"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 15,
+              "exact_text": "`Command.ValidateArgs` returns `ArbitraryArgs(c, args)` when `c.Args == nil`; otherwise it calls `c.Args(c, args)`. The selected `ArbitraryArgs` body returns `nil`. It would be incorrect to describe `legacyArgs` as the default branch of this method. Evidence: `command.go:1172–1177`, `args.go:82–84`.",
+              "source_atom_ids": [
+                "OWNER-C18",
+                "OWNER-C19",
+                "OWNER-C20"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 17,
+              "exact_text": "Separately, after its inner command lookup, `Command.Find` calls `legacyArgs(commandFound, stripFlags(a, commandFound))` when `commandFound.Args == nil`. The selected `legacyArgs` returns early when the command has no subcommands. Otherwise, its written error branch requires both `!cmd.HasParent()` and `len(args) > 0`. The two queried helpers return `c.parent != nil` and `len(c.commands) > 0`, respectively. This does not establish every caller or flag-stripping behavior. Evidence: `command.go:757–779,1601–1603,1677–1679`, `args.go:28–39`.",
+              "source_atom_ids": [
+                "OWNER-C21",
+                "OWNER-C22",
+                "OWNER-C23",
+                "OWNER-C24",
+                "OWNER-C25",
+                "OWNER-C26",
+                "OWNER-C27"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 21,
+              "exact_text": "In the selected `Command.execute` path, flag parsing occurs before the positional argument check; parsing errors can return earlier. The method later calls its lowercase `preRun` initializer helper and defers `postRun`. That initializer helper iterates `initializers`; it is distinct from the `PreRun` and `PersistentPreRun` hook fields. Evidence: `command.go:919–922,955–970,1047–1051`.",
+              "source_atom_ids": [
+                "OWNER-C28",
+                "OWNER-C29",
+                "OWNER-C30",
+                "OWNER-C31",
+                "OWNER-C32",
+                "OWNER-C48"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 23,
+              "exact_text": "An error returned by `ValidateArgs` exits before the subsequent persistent pre-run and pre-run hook blocks. When control continues, required-flag and flag-group validation occur after those hook blocks and before the `RunE`/`Run` branch. Earlier returns and hook errors still matter. This is not a claim that every kind of flag handling waits until after hooks or that all hooks necessarily execute. Evidence: `command.go:968–1019`.",
+              "source_atom_ids": [
+                "OWNER-C33",
+                "OWNER-C34",
+                "OWNER-C35",
+                "OWNER-C36",
+                "OWNER-C37",
+                "OWNER-C38",
+                "OWNER-C49",
+                "OWNER-C50"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 27,
+              "exact_text": "The following owned fragment creates and invokes a validator directly. It does not execute a command, register hooks or demonstrate the complete CLI path.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 36,
+              "exact_text": "The fragment parses after wrapping it in an owned function with the Cobra import. The module declaration identifies `github.com/spf13/cobra`. Imports were not resolved, and the fragment was not typechecked or executed. No installer, startup or execution command is proposed here.",
+              "source_atom_ids": [
+                "OWNER-C51"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 40,
+              "exact_text": "`TestOnlyValidArgs` and `TestOnlyValidArgs_WithInvalidArgs` contain success and invalid-argument helper calls around `executeCommand` (`args_test.go:155–165`). They are written test evidence, not passing observations in this campaign.",
+              "source_atom_ids": [
+                "OWNER-C39",
+                "OWNER-C40"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 42,
+              "exact_text": "`TestMatchAll` composes `ExactArgs(3)` with a validator checking two-byte argument lengths. Its table includes a success case, a wrong-count case and a wrong-byte-length case, then checks whether errors match the expected failure flag (`args_test.go:477–523`). This illustrates intended composition coverage; it does not prove every branch, arbitrary callback behavior or the example's runtime result.",
+              "source_atom_ids": [
+                "OWNER-C41",
+                "OWNER-C42",
+                "OWNER-C43",
+                "OWNER-C44",
+                "OWNER-C45",
+                "OWNER-C46"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 46,
+              "exact_text": "**Does an empty ValidArgs list itself reject input?** No. In the selected `OnlyValidArgs` body, membership validation is inside the nonempty-list guard and the subsequent return is `nil`.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 48,
+              "exact_text": "**Does constructing ExactArgs validate a later slice?** No. The factory returns a validator; its returned function performs the length comparison when called.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 50,
+              "exact_text": "**What does ValidateArgs use when Args is nil?** The selected method calls `ArbitraryArgs`, whose selected body returns `nil`. The `Find` path's `legacyArgs` call is separate.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 52,
+              "exact_text": "**Does MatchAll continue after a validator returns an error?** No. Its loop returns that first error before later loop iterations.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 54,
+              "exact_text": "**Must all flag validation precede pre-run hooks?** No. The selected required-flag and flag-group checks follow those hook blocks, while earlier flag parsing has its own error path.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 58,
+              "exact_text": "The initial inventory recorded a shallow clone without its local HEAD parent. No missing revision was fetched and no historical change is invented here. Missing symbols in a selected scope do not authorize removal. Go declaration parsing establishes syntax, lexical identity and physical quotes; the selected contracts were reviewed separately. It is not a typecheck, runtime binding proof, complete project analysis or general semantic verifier. This chapter is a research candidate, excluded from training and active publication; owner approval and training gold remain false.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            }
+          ]
+        },
+        {
+          "language": "pt-BR",
+          "path": "agent/research/portfolio-vivabem-20261120/cobra-validation-context-candidate-v2/pt-BR.md",
+          "sha256": "3d24eeaa8186522bcc891ecaa043653d01c0a1f2c6085c1d4d65de8680a26a72",
+          "all_noncode_nonheading_paragraphs": [
+            {
+              "line": 3,
+              "exact_text": "Este capítulo isolado cobre contratos escritos selecionados de `spf13/cobra` em `adbc8813901bba65827259daa8e22ff94ec1f30e`. Conecta factories de validadores, seleção de comando e o caminho ordinário de execução. O código público exato e os avisos Apache-2.0 estão preservados. Revisão do código, análise nativa de sintaxe Go e aprovação do proprietário são coisas diferentes; nenhum código ou teste do Cobra foi executado.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 7,
+              "exact_text": "`PositionalArgs` é o tipo de função que recebe um ponteiro de comando e um slice de strings e retorna um erro (`args.go:22`). `OnlyValidArgs` executa suas verificações de pertencimento sob a condição escrita `len(cmd.ValidArgs) > 0`. Mantém a parte de cada entrada da lista permitida anterior à primeira tabulação e depois verifica os argumentos fornecidos. Fora desse bloco condicionado, retorna `nil`; uma lista permitida vazia não produz, por si só, um erro de validação. O helper `stringInSlice` compara strings por igualdade. Evidência: `args.go:51–66`, `cobra.go:225–232`.",
+              "source_atom_ids": [
+                "OWNER-C01",
+                "OWNER-C02",
+                "OWNER-C03",
+                "OWNER-C10",
+                "OWNER-C11"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 9,
+              "exact_text": "`ExactArgs(n)` retorna uma função `PositionalArgs`. Essa função retornada verifica `len(args) != n` quando é invocada; chamar a factory não é validar um slice de argumentos posterior. Os validadores correspondentes de mínimo e máximo rejeitam comprimentos abaixo ou acima de seus limites, e o validador de intervalo rejeita valores fora de seus dois extremos. Evidência: `args.go:87–124`.",
+              "source_atom_ids": [
+                "OWNER-C04",
+                "OWNER-C05",
+                "OWNER-C12",
+                "OWNER-C13",
+                "OWNER-C14",
+                "OWNER-C15"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 11,
+              "exact_text": "`MatchAll` retorna outro validador. Seu laço invoca os validadores fornecidos em ordem e retorna imediatamente no primeiro erro diferente de `nil`; não coleta todos os erros. `ExactValidArgs(n)` delega a `MatchAll(ExactArgs(n), OnlyValidArgs)` e está marcado como obsoleto no comentário do código selecionado. `NoDuplicateArgs` mantém um conjunto de itens vistos e retorna no primeiro ramo de argumento repetido. Esses são contratos selecionados do código, não garantias sobre callbacks arbitrários ou ponteiros de comando inválidos. Evidência: `args.go:69–79,127–144`.",
+              "source_atom_ids": [
+                "OWNER-C06",
+                "OWNER-C07",
+                "OWNER-C08",
+                "OWNER-C09",
+                "OWNER-C16",
+                "OWNER-C17",
+                "OWNER-C47"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 15,
+              "exact_text": "`Command.ValidateArgs` retorna `ArbitraryArgs(c, args)` quando `c.Args == nil`; caso contrário, chama `c.Args(c, args)`. O corpo selecionado de `ArbitraryArgs` retorna `nil`. Seria incorreto descrever `legacyArgs` como o ramo padrão desse método. Evidência: `command.go:1172–1177`, `args.go:82–84`.",
+              "source_atom_ids": [
+                "OWNER-C18",
+                "OWNER-C19",
+                "OWNER-C20"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 17,
+              "exact_text": "Separadamente, depois de sua busca interna de comando, `Command.Find` chama `legacyArgs(commandFound, stripFlags(a, commandFound))` quando `commandFound.Args == nil`. O `legacyArgs` selecionado retorna antecipadamente quando o comando não tem subcomandos. Caso contrário, seu ramo escrito de erro exige tanto `!cmd.HasParent()` quanto `len(args) > 0`. Os dois helpers consultados retornam, respectivamente, `c.parent != nil` e `len(c.commands) > 0`. Isso não estabelece todo chamador ou comportamento de remoção de flags. Evidência: `command.go:757–779,1601–1603,1677–1679`, `args.go:28–39`.",
+              "source_atom_ids": [
+                "OWNER-C21",
+                "OWNER-C22",
+                "OWNER-C23",
+                "OWNER-C24",
+                "OWNER-C25",
+                "OWNER-C26",
+                "OWNER-C27"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 21,
+              "exact_text": "No caminho selecionado de `Command.execute`, a análise das flags ocorre antes da verificação dos argumentos posicionais; erros nessa análise podem retornar antes. O método depois chama seu helper inicializador `preRun`, em minúsculas, e agenda `postRun` com defer. Esse helper inicializador percorre `initializers`; é distinto dos campos de hook `PreRun` e `PersistentPreRun`. Evidência: `command.go:919–922,955–970,1047–1051`.",
+              "source_atom_ids": [
+                "OWNER-C28",
+                "OWNER-C29",
+                "OWNER-C30",
+                "OWNER-C31",
+                "OWNER-C32",
+                "OWNER-C48"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 23,
+              "exact_text": "Um erro retornado por `ValidateArgs` encerra o caminho antes dos blocos seguintes de hooks persistentes de pré-execução e de pré-execução. Quando o controle continua, a validação de flags obrigatórias e de grupos de flags ocorre depois desses blocos de hooks e antes do ramo `RunE`/`Run`. Retornos anteriores e erros dos hooks ainda importam. Isso não afirma que todo tipo de tratamento de flags aguarde até depois dos hooks ou que todos os hooks necessariamente executem. Evidência: `command.go:968–1019`.",
+              "source_atom_ids": [
+                "OWNER-C33",
+                "OWNER-C34",
+                "OWNER-C35",
+                "OWNER-C36",
+                "OWNER-C37",
+                "OWNER-C38",
+                "OWNER-C49",
+                "OWNER-C50"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 27,
+              "exact_text": "O fragmento próprio abaixo cria e invoca um validador diretamente. Não executa um comando, não registra hooks e não demonstra o caminho completo da CLI.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 36,
+              "exact_text": "O fragmento é analisado sintaticamente depois de ser envolvido por uma função própria com a importação do Cobra. A declaração do módulo identifica `github.com/spf13/cobra`. As importações não foram resolvidas, e o fragmento não passou por verificação de tipos nem foi executado. Nenhum comando de instalação, inicialização ou execução é proposto aqui.",
+              "source_atom_ids": [
+                "OWNER-C51"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 40,
+              "exact_text": "`TestOnlyValidArgs` e `TestOnlyValidArgs_WithInvalidArgs` contêm chamadas a helpers de sucesso e de argumento inválido em torno de `executeCommand` (`args_test.go:155–165`). São evidências escritas de testes, não observações de aprovação nesta campanha.",
+              "source_atom_ids": [
+                "OWNER-C39",
+                "OWNER-C40"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 42,
+              "exact_text": "`TestMatchAll` compõe `ExactArgs(3)` com um validador que verifica comprimentos de dois bytes por argumento. Sua tabela inclui um caso de sucesso, um caso de contagem incorreta e um caso de comprimento em bytes incorreto; depois verifica se os erros correspondem ao indicador esperado de falha (`args_test.go:477–523`). Isso ilustra a cobertura pretendida da composição; não prova todo ramo, comportamento de callbacks arbitrários ou o resultado do exemplo em runtime.",
+              "source_atom_ids": [
+                "OWNER-C41",
+                "OWNER-C42",
+                "OWNER-C43",
+                "OWNER-C44",
+                "OWNER-C45",
+                "OWNER-C46"
+              ],
+              "classification": "SOURCE_CLAIMS_WITH_ATOM_LEDGER",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 46,
+              "exact_text": "**Uma lista ValidArgs vazia, por si só, rejeita entradas?** Não. No corpo selecionado de `OnlyValidArgs`, a validação de pertencimento fica dentro da condição de lista não vazia, e o retorno seguinte é `nil`.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 48,
+              "exact_text": "**Construir ExactArgs valida um slice posterior?** Não. A factory retorna um validador; sua função retornada faz a comparação de comprimento quando é chamada.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 50,
+              "exact_text": "**O que ValidateArgs usa quando Args é nil?** O método selecionado chama `ArbitraryArgs`, cujo corpo selecionado retorna `nil`. A chamada de `legacyArgs` no caminho de `Find` é separada.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 52,
+              "exact_text": "**MatchAll continua depois que um validador retorna um erro?** Não. Seu laço retorna esse primeiro erro antes das iterações posteriores.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 54,
+              "exact_text": "**Toda validação de flags precisa preceder os hooks de pré-execução?** Não. As verificações selecionadas de flags obrigatórias e grupos de flags vêm depois desses blocos de hooks, enquanto a análise anterior das flags possui seu próprio caminho de erro.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            },
+            {
+              "line": 58,
+              "exact_text": "O inventário inicial registrou um clone shallow sem seu pai local de HEAD. Nenhuma revisão ausente foi buscada, e nenhuma alteração histórica é inventada aqui. Símbolos ausentes de um escopo selecionado não autorizam remoção. A análise das declarações Go estabelece sintaxe, identidade léxica e citações físicas; os contratos selecionados foram revisados separadamente. Isso não é verificação de tipos, prova de vínculos em runtime, análise completa do projeto ou verificador semântico geral. Este capítulo é um candidato de pesquisa, excluído de treinamento e publicação ativa; aprovação do proprietário e gold de treinamento permanecem falsos.",
+              "source_atom_ids": [],
+              "classification": "REPETITION_OR_SCOPE_PROVENANCE_REVIEW",
+              "manual_disposition": "Read in full; repetition, epistemic limitations and procedural statements do not add independent source-fact successes."
+            }
+          ]
+        }
+      ],
+      "selected_unique_source_atoms": 51,
+      "dimensions": {
+        "factual correctness": {
+          "score": 1,
+          "basis": "116 selected source propositions across the three topics are supported; source and procedural paragraphs read, but exhaustive independent proposition inventory/review has not been completed."
+        },
+        "relevant completeness": {
+          "score": 1,
+          "basis": "Selected topic groups and required sections present. No exhaustive full-prose atomization; historical READY_FOR_OWNER_REVIEW is preserved separately."
+        },
+        "architecture and dependencies": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "API contracts": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "errors and exceptions": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "existing tests and actual execution status": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "examples and commands": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "EN/PT-BR equivalence": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "FAQ correctness": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "citation relevance": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        },
+        "explicit limitations": {
+          "score": 2,
+          "basis": "Bounded source-only topic reviewed against the pinned source, retained claim ledger, actual EN/PT text, and syntax-only receipts. No upstream tests/runtime integration certified."
+        }
+      },
+      "protocol2_whole_document_status": "INCONCLUSIVE_REVIEW_INCOMPLETE",
+      "critical_source_contradiction_found_in_selected_claims": false,
+      "mechanical_verification": "Exact source/document hashes, physical quote spans, declaration/AST syntax and identical bilingual code fragments. These do not independently verify arbitrary prose semantics.",
+      "semantic_review_needed": "Complete exhaustive proposition coverage and independent reviewer/owner assessment, especially negative/runtime/API/ordering claims; verify qualifications in both languages.",
+      "approval_needed": [
+        "Owner technical acceptance of exact document hashes",
+        "Independent semantic review with recorded disagreements",
+        "Rights/confidentiality/training-use approval for exact source and derivative text",
+        "Separate explicit publication/catalog integration authorization if desired"
+      ],
+      "rights_status": "Source notices retained (FastAPI/Zod MIT; Cobra Apache-2.0); eventual training use NOT CLEARED by this campaign.",
+      "owner_approved": false,
+      "training_gold": false,
+      "training_excluded": true,
+      "operationally_integrated": false
+    }
+  ],
+  "three_faq_pairs": "owner-selected-atomic-review-v1.json#faq_review",
+  "faq_source_review": "Three selected EN/PT FAQ pairs supported with their original scope; no owner/rights/Gold approval. Full FAQ texts/source refs in linked retained evidence.",
+  "same_agent_review_not_independent_human": true,
+  "not_full_atomic_precision": true,
+  "no_historical_status_overwrite": true,
+  "proposed_zod_wording_unapplied": {
+    "location": "Evidence and limits final paragraph, EN/PT",
+    "en": "A separate source-acquisition and AST-query path was used by the same campaign agent; this is not independent human review.",
+    "pt-BR": "O mesmo agente da campanha usou um caminho separado de aquisição de fonte e consulta ao AST; isso não constitui revisão humana independente.",
+    "authorization": "Proposal only; existing chapter files unchanged."
+  },
+  "no_owner_question_during_campaign": true
+}

@@ -1,0 +1,33 @@
+{
+  "repository": "chi",
+  "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+  "path": "middleware/throttle.go",
+  "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+  "source_program_executed": false,
+  "baseline_selected_units": [
+    "ThrottleWithOpts",
+    "throttler.setRetryAfterHeaderIfNeeded"
+  ],
+  "manual_source_expansion_for_correction": [
+    "error string constants",
+    "ThrottleOpts fields",
+    "throttler fields"
+  ],
+  "ranges": [
+    {
+      "first_line": 9,
+      "last_line": 29,
+      "quote": "const (\n\terrCapacityExceeded = \"Server capacity exceeded.\"\n\terrTimedOut         = \"Timed out while waiting for a pending request to complete.\"\n\terrContextCanceled  = \"Context was canceled.\"\n)\n\nvar (\n\tdefaultBacklogTimeout = time.Second * 60\n)\n\n// ThrottleOpts represents a set of throttling options.\ntype ThrottleOpts struct {\n\t// RetryAfterFn, if set, enables the Retry-After header on rejected requests.\n\t// The result is rounded up to whole seconds and clamped at 0, because the\n\t// header carries a non-negative integer (RFC 9110 section 10.2.3).\n\tRetryAfterFn   func(ctxDone bool) time.Duration\n\tLimit          int\n\tBacklogLimit   int\n\tBacklogTimeout time.Duration\n\tStatusCode     int\n}\n"
+    },
+    {
+      "first_line": 47,
+      "last_line": 134,
+      "quote": "func ThrottleWithOpts(opts ThrottleOpts) func(http.Handler) http.Handler {\n\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n\n\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n\n\tstatusCode := opts.StatusCode\n\tif statusCode == 0 {\n\t\tstatusCode = http.StatusTooManyRequests\n\t}\n\n\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n\n\t// Filling tokens.\n\tfor i := 0; i < opts.Limit+opts.BacklogLimit; i++ {\n\t\tif i < opts.Limit {\n\t\t\tt.tokens <- token{}\n\t\t}\n\t\tt.backlogTokens <- token{}\n\t}\n\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx := r.Context()\n\n\t\t\tselect {\n\n\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\treturn\n\n\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n\n\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n\t\t\t\tdefault:\n\t\t\t\t\t// No immediate token available, need to wait with timer\n\t\t\t\t}\n\n\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n\t\t\t\tselect {\n\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n\n\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n\t\t\t\treturn\n\t\t\t}\n\t\t}\n\n\t\treturn http.HandlerFunc(fn)\n\t}\n}\n"
+    },
+    {
+      "first_line": 139,
+      "last_line": 163,
+      "quote": "// throttler limits number of currently processed requests at a time.\ntype throttler struct {\n\ttokens         chan token\n\tbacklogTokens  chan token\n\tretryAfterFn   func(ctxDone bool) time.Duration\n\tbacklogTimeout time.Duration\n\tstatusCode     int\n}\n\n// setRetryAfterHeaderIfNeeded sets Retry-After HTTP header if corresponding retryAfterFn option of throttler is initialized.\nfunc (t throttler) setRetryAfterHeaderIfNeeded(w http.ResponseWriter, ctxDone bool) {\n\tif t.retryAfterFn == nil {\n\t\treturn\n\t}\n\t// delay-seconds is non-negative, and rounding up avoids asking clients to\n\t// retry before the duration returned by RetryAfterFn has elapsed.\n\tdelay := t.retryAfterFn(ctxDone)\n\tseconds := delay / time.Second\n\tif delay < 0 {\n\t\tseconds = 0\n\t} else if delay%time.Second != 0 {\n\t\tseconds++\n\t}\n\tw.Header().Set(\"Retry-After\", strconv.FormatInt(int64(seconds), 10))\n}\n"
+    }
+  ]
+}

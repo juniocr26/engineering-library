@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-21T18:19:46.017926+00:00",
+  "topic": "go-image-animation",
+  "family": "go-image-optimizer",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-animation/en.candidate.txt",
+      "sha256": "ae0706c96c4748068640cb9ee36259171e72a6eac083739e9fc73b0ac893c3ba",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-animation/pt-br.candidate.txt",
+      "sha256": "90a14fd6d8a44aedde52258d8c29312409a2fd6bc01a82ca07ca1aea397cec7e",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Separate static32M and aggregate64M declarations/arguments; ordered helper error, frame-count <=0 and strict integer division.",
+    "Positivity on division path comes from exact helper and frame guards; does not prove decoder validity or imported identities.",
+    "Diagram preserves branch order and return identities; pixel work is not bytes/memory measurement.",
+    "Caller baseline PT nenhuma condition inversion confirmed. Helper response has Spanish ancho/alto and strict PT budget description; helper positivity sentence itself says zero or negative."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/imaging/limits.go",
+      "source_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        9,
+        48
+      ],
+      "exact_source_evidence": "const (\n\t// DefaultMaxDecodedPixels limits decoded image memory growth. A 32 MP RGBA\n\t// image needs roughly 128 MiB before encoder overhead.\n\tDefaultMaxDecodedPixels = 32_000_000\n\n\t// DefaultMaxAnimatedFramePixels caps canvas-sized animation work. The limit\n\t// is width * height * frame count, not bytes, so codecs can share it.\n\tDefaultMaxAnimatedFramePixels = 64_000_000\n)\n\nfunc ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n\nfunc ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n\nfunc ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil",
+      "reviewed_interpretation": "Constants and complete static/animated guard sequence.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "gio-animated-limits-caller",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-animated-limits-caller/raw-response.json",
+      "sha256": "671084d19f13765b44d710be8925cc4bbeaeb86c38dfe7687a2d0450bbd0307b",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    },
+    {
+      "id": "gio-animated-limits-helpers",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-animated-limits-helpers/raw-response.json",
+      "sha256": "442983528de2203badb1bde5a5a5ac7c8741da5ed2b1c2f360af28c6a325cec8",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [
+    {
+      "kind": "BASELINE_BOUNDARY_ASSOCIATION_AMBIGUITY",
+      "verdict": "INSUFFICIENT",
+      "critical": false,
+      "original_en": "used a strict “less than” description where the source rejects nonpositive values",
+      "original_pt": "usou “menor que” onde a fonte rejeita valores não positivos",
+      "reason": "Actual PT first fact uses menor que for width versus budget quotient; its helper positivity sentence explicitly includes zero or negative. Existing wording associates that strict comparison with nonpositive rejection instead of the quota/equality boundary.",
+      "proposed_en": "The helper response used a strict Portuguese less-than comparison for the budget quotient, omitted the exact aggregate expression and included Spanish terminology. Its separate positivity sentence did include zero and negative dimensions.",
+      "proposed_pt": "A resposta com auxiliar usou uma comparação estrita de menor que para o quociente do orçamento, omitiu a expressão agregada exata e incluiu terminologia espanhola. Sua frase separada sobre positividade incluía dimensões zero e negativas.",
+      "applied": false
+    }
+  ],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 1,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "REVISE_CURRENT_PROSE_FINDINGS",
+  "complete_document_accepted": false,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

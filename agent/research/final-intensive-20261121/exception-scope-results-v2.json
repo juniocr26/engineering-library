@@ -1,0 +1,710 @@
+{
+  "at": "2026-11-21T22:55:44.719351+00:00",
+  "protocol_sha256": "0a0991838b708b3ccf390983da6cd4e32f39bc79eb39715d61269a89f7309777",
+  "observer_sha256": "8ab7fd86e9064b9e06ee48bf92534f5841c9f9f5a3925dcf63293bac8cc723ed",
+  "records": [
+    {
+      "id": "original",
+      "helper": "exception-scope-controls-v2/original/helper.py",
+      "helper_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+      "job": "exception-scope-controls-v2/original/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [
+          {
+            "line": 407,
+            "call": "validate_cached(cached, request, request_bytes, registry_sha256, raw, identity)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "subprocess.SubprocessError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "Exception"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "benign-comment",
+      "helper": "exception-scope-controls-v2/benign-comment/helper.py",
+      "helper_sha256": "c151cda94c47758cf7bf65e42b03bcca07c7f546cc38dd1b26dd5af4ce0ae826",
+      "job": "exception-scope-controls-v2/benign-comment/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [
+          {
+            "line": 407,
+            "call": "validate_cached(cached, request, request_bytes, registry_sha256, raw, identity)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "subprocess.SubprocessError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "Exception"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "outer-adds-subprocess",
+      "helper": "exception-scope-controls-v2/outer-adds-subprocess/helper.py",
+      "helper_sha256": "68f397656f169011af051ef0da070d61e54100e9fa1426f3d028613847bc5b17",
+      "job": "exception-scope-controls-v2/outer-adds-subprocess/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": true,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": true,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [
+          {
+            "line": 407,
+            "call": "validate_cached(cached, request, request_bytes, registry_sha256, raw, identity)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError",
+                  "subprocess.SubprocessError"
+                ]
+              }
+            ]
+          }
+        ],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "subprocess.SubprocessError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError",
+                  "subprocess.SubprocessError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "Exception"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-removes-subprocess",
+      "helper": "exception-scope-controls-v2/fresh-removes-subprocess/helper.py",
+      "helper_sha256": "bf82991eb218b519daf825f53601579064932fd0732eb9abf51ad4f7e1129257",
+      "job": "exception-scope-controls-v2/fresh-removes-subprocess/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": false,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": false,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [
+          {
+            "line": 407,
+            "call": "validate_cached(cached, request, request_bytes, registry_sha256, raw, identity)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "Exception"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "job-only-runtimeerror",
+      "helper": "exception-scope-controls-v2/job-only-runtimeerror/helper.py",
+      "helper_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+      "job": "exception-scope-controls-v2/job-only-runtimeerror/job.py",
+      "job_sha256": "fc6f891aef88ac771ac2d770e904cb45ae0c907cefeb546a449e7c590518984c",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": false,
+        "cached_call_count": 1
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": false,
+        "cached_call_count": 1
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [
+          {
+            "line": 407,
+            "call": "validate_cached(cached, request, request_bytes, registry_sha256, raw, identity)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "subprocess.SubprocessError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "RuntimeError"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "remove-cached-validation",
+      "helper": "exception-scope-controls-v2/remove-cached-validation/helper.py",
+      "helper_sha256": "5574e721e136f060b142a430fa091d6d9816f43a24a88dee61ee63d0cf9f26e2",
+      "job": "exception-scope-controls-v2/remove-cached-validation/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": null,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 0
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": null,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 0
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "subprocess.SubprocessError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "Exception"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "unrelated-nested-function",
+      "helper": "exception-scope-controls-v2/unrelated-nested-function/helper.py",
+      "helper_sha256": "4bfcd08c386ff68fd4cb090c66945cb8f405b0a722fb01d96ba941b0240ea288",
+      "job": "exception-scope-controls-v2/unrelated-nested-function/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [
+          {
+            "line": 407,
+            "call": "validate_cached(cached, request, request_bytes, registry_sha256, raw, identity)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "subprocess.SubprocessError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "Exception"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "unrelated-string-decoy",
+      "helper": "exception-scope-controls-v2/unrelated-string-decoy/helper.py",
+      "helper_sha256": "d8738bc991fea624637bb7288fc7c03fde3dae145e7d68d5cbab9e03db73fcac",
+      "job": "exception-scope-controls-v2/unrelated-string-decoy/job.py",
+      "job_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "expected": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "actual": {
+        "cached_outer_explicit_subprocess_catch": false,
+        "fresh_explicit_subprocess_catch": true,
+        "job_explicit_exception_catch": true,
+        "cached_call_count": 1
+      },
+      "matches_frozen_expectation": true,
+      "evidence": {
+        "cached_calls": [
+          {
+            "line": 407,
+            "call": "validate_cached(cached, request, request_bytes, registry_sha256, raw, identity)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "fresh_calls": [
+          {
+            "line": 428,
+            "call": "validate_unit(unit, raw, request['qualified_symbol'], allowed['language'])",
+            "protecting_try_bodies": [
+              {
+                "try_line": 425,
+                "handlers": [
+                  "RetrievalRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "subprocess.SubprocessError",
+                  "RecursionError"
+                ]
+              },
+              {
+                "try_line": 354,
+                "handlers": [
+                  "RetrievalRefused",
+                  "WorkspaceRefused",
+                  "ValueError",
+                  "OSError",
+                  "UnicodeError",
+                  "KeyError",
+                  "TypeError",
+                  "RecursionError"
+                ]
+              }
+            ]
+          }
+        ],
+        "wrapper_calls": [
+          {
+            "line": 307,
+            "call": "self.helper.request(request)",
+            "protecting_try_bodies": [
+              {
+                "try_line": 306,
+                "handlers": [
+                  "Exception"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "matched_profiles": {
+    "numerator": 8,
+    "denominator": 8
+  },
+  "source_executed": false,
+  "model_calls": 0,
+  "scope": "Literal lexical-handler ownership only. No semantic-admission metric, exception-class graph, dynamic binding, runtime or generic proof.",
+  "all_originals_unchanged": true,
+  "optimizer_updates": 0,
+  "gold": 0
+}

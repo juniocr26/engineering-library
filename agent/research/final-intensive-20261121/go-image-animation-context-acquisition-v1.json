@@ -1,0 +1,182 @@
+{
+  "at": "2026-11-22T02:58:16.475140+00:00",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "grep",
+        "-n",
+        "-e",
+        "ValidateAnimatedDimensions",
+        "-e",
+        "DefaultMaxAnimatedFramePixels",
+        "48476de6e4450294b7769ab7af90805100bb21b5",
+        "--",
+        "*.go"
+      ],
+      "exit_code": 0,
+      "stdout": "48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/avif.go:37:\t\tif err := imaging.ValidateAnimatedDimensions(width, height, frameCount, c.maxAnimatedFramePixels()); err != nil {\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/compressor.go:36:\t\tMaxAnimatedFramePixels: imaging.DefaultMaxAnimatedFramePixels,\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/compressor.go:108:\t\treturn imaging.DefaultMaxAnimatedFramePixels\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/gif.go:31:\t\tif err := imaging.ValidateAnimatedDimensions(cfg.Width, cfg.Height, len(img.Image), c.maxAnimatedFramePixels()); err != nil {\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/webp.go:49:\tif err := imaging.ValidateAnimatedDimensions(width, height, frameCount, c.maxAnimatedFramePixels()); err != nil {\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/limits.go:14:\t// DefaultMaxAnimatedFramePixels caps canvas-sized animation work. The limit\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/limits.go:16:\tDefaultMaxAnimatedFramePixels = 64_000_000\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/limits.go:35:func ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/resize/animation.go:24:\tif err := imaging.ValidateAnimatedDimensions(f.Width, f.Height, max(1, f.FrameCount), imageresize.MaxFramePixels); err != nil {\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/resize/animation.go:38:\tif err := imaging.ValidateAnimatedDimensions(f.Width, f.Height, len(anim.Frames), imageresize.MaxFramePixels); err != nil {\n48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/resize/animation.go:201:\t\t\tif err := imaging.ValidateAnimatedDimensions(width, height, count, imageresize.MaxFramePixels); err != nil {\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:LICENSE"
+      ],
+      "exit_code": 0,
+      "stdout": "MIT License\n\nCopyright (c) 2026 J\u00fanio C\u00e9sar Rosa\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:backend/go.mod"
+      ],
+      "exit_code": 0,
+      "stdout": "module github.com/juniorosa/go-image-optimizer/backend\n\ngo 1.27\n\nrequire (\n\tgithub.com/FlavioCFOliveira/GoMetadata v1.3.0\n\tgithub.com/deepteams/webp v1.2.7\n\tgithub.com/gen2brain/avif v0.6.0\n\tgithub.com/strukturag/libheif v1.23.4\n\tgolang.org/x/image v0.46.0\n)\n\nrequire (\n\tgithub.com/ebitengine/purego v0.10.1 // indirect\n\tgithub.com/tetratelabs/wazero v1.12.0 // indirect\n\tgolang.org/x/sys v0.48.0 // indirect\n\tgolang.org/x/text v0.42.0 // indirect\n)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/avif.go"
+      ],
+      "exit_code": 0,
+      "stdout": "package compress\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\n\t\"github.com/gen2brain/avif\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imagecompression\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/infrastructure/imaging\"\n)\n\nfunc (c Compressor) compressAVIF(input []byte) (imagecompression.Result, error) {\n\tcfg, err := avif.DecodeConfig(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tif err := imaging.ValidateDimensions(cfg, c.maxDecodedPixels()); err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tanim, err := avif.DecodeAll(bytes.NewReader(input), avif.Options{AutoRotate: true})\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\tif len(anim.Image) == 0 {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tframeCount := len(anim.Image)\n\tfirstBounds := anim.Image[0].Bounds()\n\twidth := firstBounds.Dx()\n\theight := firstBounds.Dy()\n\n\tif frameCount > 1 {\n\t\tif err := imaging.ValidateAnimatedDimensions(width, height, frameCount, c.maxAnimatedFramePixels()); err != nil {\n\t\t\treturn imagecompression.Result{}, err\n\t\t}\n\t}\n\n\toptions := avif.Options{\n\t\tQuality:      c.avifQuality(),\n\t\tQualityAlpha: 100,\n\t\tSpeed:        6,\n\t}\n\n\tvar output bytes.Buffer\n\tif frameCount > 1 {\n\t\tif err := avif.EncodeAll(&output, anim, options); err != nil {\n\t\t\treturn imagecompression.Result{}, fmt.Errorf(\"encode avif animation: %w\", err)\n\t\t}\n\t} else if err := avif.Encode(&output, anim.Image[0], options); err != nil {\n\t\treturn imagecompression.Result{}, fmt.Errorf(\"encode avif: %w\", err)\n\t}\n\n\treturn imagecompression.Result{\n\t\tData:        output.Bytes(),\n\t\tFormat:      imagecompression.FormatAVIF,\n\t\tContentType: \"image/avif\",\n\t\tWidth:       width,\n\t\tHeight:      height,\n\t\tAnimated:    frameCount > 1,\n\t\tFrameCount:  frameCount,\n\t}, nil\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/compressor.go"
+      ],
+      "exit_code": 0,
+      "stdout": "package compress\n\nimport (\n\t\"image\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imagecompression\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/infrastructure/imaging\"\n)\n\nconst (\n\t// DefaultJPEGQuality keeps JPEG output visually close to the source while\n\t// still allowing meaningful size reduction for many camera/exported images.\n\tDefaultJPEGQuality = 82\n\n\tDefaultWebPQuality = 82\n\tDefaultAVIFQuality = 60\n\tDefaultHEIFQuality = 60\n)\n\ntype Compressor struct {\n\tJPEGQuality            int\n\tWebPQuality            int\n\tAVIFQuality            int\n\tHEIFQuality            int\n\tMaxDecodedPixels       int\n\tMaxAnimatedFramePixels int\n}\n\nfunc NewCompressor() Compressor {\n\treturn Compressor{\n\t\tJPEGQuality:            DefaultJPEGQuality,\n\t\tWebPQuality:            DefaultWebPQuality,\n\t\tAVIFQuality:            DefaultAVIFQuality,\n\t\tHEIFQuality:            DefaultHEIFQuality,\n\t\tMaxDecodedPixels:       imaging.DefaultMaxDecodedPixels,\n\t\tMaxAnimatedFramePixels: imaging.DefaultMaxAnimatedFramePixels,\n\t}\n}\n\nfunc (c Compressor) Compress(input []byte) (imagecompression.Result, error) {\n\tdetected, err := imaging.DetectFormat(input)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tswitch detected.Format {\n\tcase imagecompression.FormatJPEG:\n\t\treturn c.compressJPEG(input)\n\tcase imagecompression.FormatPNG:\n\t\treturn c.compressPNG(input)\n\tcase imagecompression.FormatWebP:\n\t\treturn c.compressWebP(input)\n\tcase imagecompression.FormatAVIF:\n\t\treturn c.compressAVIF(input)\n\tcase imagecompression.FormatHEIF:\n\t\treturn c.compressHEIF(input, detected.ContentType)\n\tcase imagecompression.FormatGIF:\n\t\treturn c.compressGIF(input)\n\tcase imagecompression.FormatBMP:\n\t\treturn c.compressBMP(input)\n\tcase imagecompression.FormatTIFF:\n\t\treturn c.compressTIFF(input)\n\tdefault:\n\t\treturn imagecompression.Result{}, imagecompression.ErrUnsupportedFormat\n\t}\n}\n\nfunc staticResult(data []byte, format imagecompression.Format, contentType string, img image.Image) imagecompression.Result {\n\tbounds := img.Bounds()\n\n\treturn imagecompression.Result{\n\t\tData:        data,\n\t\tFormat:      format,\n\t\tContentType: contentType,\n\t\tWidth:       bounds.Dx(),\n\t\tHeight:      bounds.Dy(),\n\t\tAnimated:    false,\n\t\tFrameCount:  1,\n\t}\n}\n\nfunc (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}\n\nfunc (c Compressor) webpQuality() int {\n\treturn clampQuality(c.WebPQuality, DefaultWebPQuality)\n}\n\nfunc (c Compressor) avifQuality() int {\n\treturn clampQuality(c.AVIFQuality, DefaultAVIFQuality)\n}\n\nfunc (c Compressor) heifQuality() int {\n\treturn clampQuality(c.HEIFQuality, DefaultHEIFQuality)\n}\n\nfunc (c Compressor) maxDecodedPixels() int {\n\tif c.MaxDecodedPixels <= 0 {\n\t\treturn imaging.DefaultMaxDecodedPixels\n\t}\n\n\treturn c.MaxDecodedPixels\n}\n\nfunc (c Compressor) maxAnimatedFramePixels() int {\n\tif c.MaxAnimatedFramePixels <= 0 {\n\t\treturn imaging.DefaultMaxAnimatedFramePixels\n\t}\n\n\treturn c.MaxAnimatedFramePixels\n}\n\nfunc clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/gif.go"
+      ],
+      "exit_code": 0,
+      "stdout": "package compress\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"image/gif\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imagecompression\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/infrastructure/imaging\"\n)\n\nfunc (c Compressor) compressGIF(input []byte) (imagecompression.Result, error) {\n\tcfg, err := gif.DecodeConfig(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tif err := imaging.ValidateDimensions(cfg, c.maxDecodedPixels()); err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\timg, err := gif.DecodeAll(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\tif len(img.Image) == 0 {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tif len(img.Image) > 1 {\n\t\tif err := imaging.ValidateAnimatedDimensions(cfg.Width, cfg.Height, len(img.Image), c.maxAnimatedFramePixels()); err != nil {\n\t\t\treturn imagecompression.Result{}, err\n\t\t}\n\t}\n\n\tvar output bytes.Buffer\n\tif err := gif.EncodeAll(&output, img); err != nil {\n\t\treturn imagecompression.Result{}, fmt.Errorf(\"encode gif: %w\", err)\n\t}\n\n\treturn imagecompression.Result{\n\t\tData:        output.Bytes(),\n\t\tFormat:      imagecompression.FormatGIF,\n\t\tContentType: \"image/gif\",\n\t\tWidth:       cfg.Width,\n\t\tHeight:      cfg.Height,\n\t\tAnimated:    len(img.Image) > 1,\n\t\tFrameCount:  len(img.Image),\n\t}, nil\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/compress/webp.go"
+      ],
+      "exit_code": 0,
+      "stdout": "package compress\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\n\t\"github.com/deepteams/webp\"\n\t\"github.com/deepteams/webp/animation\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imagecompression\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/infrastructure/imaging\"\n)\n\nfunc (c Compressor) compressWebP(input []byte) (imagecompression.Result, error) {\n\tfeatures, err := webp.GetFeatures(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tframeCount := max(1, features.FrameCount)\n\tif err := imaging.ValidateImageSize(features.Width, features.Height, c.maxDecodedPixels()); err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tif features.HasAnimation || frameCount > 1 {\n\t\treturn c.compressAnimatedWebP(input, features.Width, features.Height, frameCount, features.LoopCount, features.Format == \"lossless\")\n\t}\n\n\timg, err := webp.Decode(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tvar output bytes.Buffer\n\tif err := webp.Encode(&output, img, &webp.EncoderOptions{\n\t\tLossless:     features.Format == \"lossless\",\n\t\tQuality:      float32(c.webpQuality()),\n\t\tMethod:       4,\n\t\tExact:        true,\n\t\tAlphaQuality: 100,\n\t}); err != nil {\n\t\treturn imagecompression.Result{}, fmt.Errorf(\"encode webp: %w\", err)\n\t}\n\n\treturn staticResult(output.Bytes(), imagecompression.FormatWebP, \"image/webp\", img), nil\n}\n\nfunc (c Compressor) compressAnimatedWebP(input []byte, width, height, frameCount, loopCount int, lossless bool) (imagecompression.Result, error) {\n\tif err := imaging.ValidateAnimatedDimensions(width, height, frameCount, c.maxAnimatedFramePixels()); err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tanim, err := animation.Decode(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\tif len(anim.Frames) == 0 {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\tif err := anim.DecodeFrames(); err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tdecoder, err := animation.NewAnimDecoder(anim)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t}\n\n\tvar output bytes.Buffer\n\tencoder := animation.NewEncoder(&output, width, height, &animation.EncodeOptions{\n\t\tLoopCount:       loopCount,\n\t\tBackgroundColor: anim.BackgroundColor,\n\t\tQuality:         c.webpQuality(),\n\t\tLossless:        lossless,\n\t})\n\tif len(anim.ICC) > 0 {\n\t\tencoder.SetICCProfile(anim.ICC)\n\t}\n\tif len(anim.EXIF) > 0 {\n\t\tencoder.SetEXIF(anim.EXIF)\n\t}\n\tif len(anim.XMP) > 0 {\n\t\tencoder.SetXMP(anim.XMP)\n\t}\n\n\tfor decoder.HasNext() {\n\t\tframe, duration, err := decoder.NextFrame()\n\t\tif err != nil {\n\t\t\treturn imagecompression.Result{}, imagecompression.ErrInvalidImage\n\t\t}\n\n\t\tif err := encoder.AddFrame(frame, duration); err != nil {\n\t\t\treturn imagecompression.Result{}, fmt.Errorf(\"encode webp frame: %w\", err)\n\t\t}\n\t}\n\n\tif err := encoder.Close(); err != nil {\n\t\treturn imagecompression.Result{}, fmt.Errorf(\"encode webp animation: %w\", err)\n\t}\n\n\treturn imagecompression.Result{\n\t\tData:        output.Bytes(),\n\t\tFormat:      imagecompression.FormatWebP,\n\t\tContentType: \"image/webp\",\n\t\tWidth:       width,\n\t\tHeight:      height,\n\t\tAnimated:    true,\n\t\tFrameCount:  frameCount,\n\t}, nil\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/limits.go"
+      ],
+      "exit_code": 0,
+      "stdout": "package imaging\n\nimport (\n\t\"image\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imageprocessing\"\n)\n\nconst (\n\t// DefaultMaxDecodedPixels limits decoded image memory growth. A 32 MP RGBA\n\t// image needs roughly 128 MiB before encoder overhead.\n\tDefaultMaxDecodedPixels = 32_000_000\n\n\t// DefaultMaxAnimatedFramePixels caps canvas-sized animation work. The limit\n\t// is width * height * frame count, not bytes, so codecs can share it.\n\tDefaultMaxAnimatedFramePixels = 64_000_000\n)\n\nfunc ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n\nfunc ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n\nfunc ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--no-optional-locks",
+        "-C",
+        "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/go-image-optimizer",
+        "show",
+        "48476de6e4450294b7769ab7af90805100bb21b5:backend/internal/infrastructure/imaging/resize/animation.go"
+      ],
+      "exit_code": 0,
+      "stdout": "package resize\n\nimport (\n\t\"bytes\"\n\t\"context\"\n\t\"image\"\n\t\"image/color\"\n\t\"image/color/palette\"\n\t\"image/draw\"\n\t\"image/gif\"\n\n\t\"github.com/deepteams/webp\"\n\t\"github.com/deepteams/webp/animation\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imageprocessing\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imageresize\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/infrastructure/imaging\"\n)\n\nfunc decodeWebP(input []byte, detected imaging.DetectedFormat) (imageresize.Source, error) {\n\tf, err := webp.GetFeatures(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn nil, imageprocessing.ErrInvalidImage\n\t}\n\tif err := imaging.ValidateAnimatedDimensions(f.Width, f.Height, max(1, f.FrameCount), imageresize.MaxFramePixels); err != nil {\n\t\treturn nil, err\n\t}\n\tif !f.HasAnimation && f.FrameCount <= 1 {\n\t\timg, err := webp.Decode(bytes.NewReader(input))\n\t\tif err != nil {\n\t\t\treturn nil, imageprocessing.ErrInvalidImage\n\t\t}\n\t\treturn staticSource(img, detected, f.Format == \"lossless\"), nil\n\t}\n\tanim, err := animation.Decode(bytes.NewReader(input))\n\tif err != nil || len(anim.Frames) == 0 {\n\t\treturn nil, imageprocessing.ErrInvalidImage\n\t}\n\tif err := imaging.ValidateAnimatedDimensions(f.Width, f.Height, len(anim.Frames), imageresize.MaxFramePixels); err != nil {\n\t\treturn nil, err\n\t}\n\tif err := anim.DecodeFrames(); err != nil {\n\t\treturn nil, imageprocessing.ErrInvalidImage\n\t}\n\treturn source{\n\t\tinfo: imageresize.Info{Width: f.Width, Height: f.Height, FrameCount: len(anim.Frames), Format: detected.Format, ContentType: detected.ContentType},\n\t\tencode: func(ctx context.Context, w, h int) ([]byte, error) {\n\t\t\tdecoder, err := animation.NewAnimDecoder(anim)\n\t\t\tif err != nil {\n\t\t\t\treturn nil, imageprocessing.ErrInvalidImage\n\t\t\t}\n\t\t\tvar output bytes.Buffer\n\t\t\tencoder := animation.NewEncoder(&output, w, h, &animation.EncodeOptions{LoopCount: f.LoopCount, BackgroundColor: anim.BackgroundColor, Quality: 82, Lossless: f.Format == \"lossless\"})\n\t\t\tif len(anim.ICC) > 0 {\n\t\t\t\tencoder.SetICCProfile(anim.ICC)\n\t\t\t}\n\t\t\tfor decoder.HasNext() {\n\t\t\t\tif err := ctx.Err(); err != nil {\n\t\t\t\t\treturn nil, err\n\t\t\t\t}\n\t\t\t\tframe, duration, err := decoder.NextFrame()\n\t\t\t\tif err != nil {\n\t\t\t\t\treturn nil, imageprocessing.ErrInvalidImage\n\t\t\t\t}\n\t\t\t\tif err := encoder.AddFrame(scaleImage(frame, w, h), duration); err != nil {\n\t\t\t\t\treturn nil, err\n\t\t\t\t}\n\t\t\t}\n\t\t\tif err := encoder.Close(); err != nil {\n\t\t\t\treturn nil, err\n\t\t\t}\n\t\t\treturn output.Bytes(), nil\n\t\t},\n\t}, nil\n}\n\nfunc decodeGIF(input []byte, detected imaging.DetectedFormat) (imageresize.Source, error) {\n\tcfg, err := gif.DecodeConfig(bytes.NewReader(input))\n\tif err != nil {\n\t\treturn nil, imageprocessing.ErrInvalidImage\n\t}\n\tif err := imaging.ValidateDimensions(cfg, imageresize.MaxPixels); err != nil {\n\t\treturn nil, err\n\t}\n\t// Count image descriptors before DecodeAll allocates frame buffers.\n\tframes, err := gifFrameCount(input, cfg.Width, cfg.Height)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\tanim, err := gif.DecodeAll(bytes.NewReader(input))\n\tif err != nil || len(anim.Image) != frames {\n\t\treturn nil, imageprocessing.ErrInvalidImage\n\t}\n\tinfo := imageresize.Info{Width: cfg.Width, Height: cfg.Height, FrameCount: frames, Format: detected.Format, ContentType: detected.ContentType}\n\tvar pixels image.Image\n\tif frames == 1 {\n\t\tcanvas := image.NewRGBA(image.Rect(0, 0, cfg.Width, cfg.Height))\n\t\tdraw.Draw(canvas, anim.Image[0].Bounds(), anim.Image[0], anim.Image[0].Bounds().Min, draw.Src)\n\t\tpixels = canvas\n\t}\n\treturn source{pixels: pixels, info: info, encode: func(ctx context.Context, w, h int) ([]byte, error) {\n\t\tbounds := image.Rect(0, 0, cfg.Width, cfg.Height)\n\t\tcanvas := image.NewRGBA(bounds)\n\t\t// A transparent source starts with a transparent canvas. Otherwise use\n\t\t// the logical screen background from the source global color table.\n\t\tbackground := color.Color(color.Transparent)\n\t\ttransparent := false\n\t\tfor _, c := range anim.Image[0].Palette {\n\t\t\t_, _, _, a := c.RGBA()\n\t\t\ttransparent = transparent || a == 0\n\t\t}\n\t\tif !transparent {\n\t\t\tif global, ok := anim.Config.ColorModel.(color.Palette); ok && int(anim.BackgroundIndex) < len(global) {\n\t\t\t\tbackground = global[anim.BackgroundIndex]\n\t\t\t}\n\t\t}\n\t\tdraw.Draw(canvas, bounds, image.NewUniform(background), image.Point{}, draw.Src)\n\t\toutputPalette := append(color.Palette{color.Transparent}, palette.WebSafe...)\n\t\tresized := &gif.GIF{LoopCount: anim.LoopCount, Delay: anim.Delay, Config: image.Config{Width: w, Height: h, ColorModel: outputPalette}, BackgroundIndex: 0}\n\t\tfor i, frame := range anim.Image {\n\t\t\tif err := ctx.Err(); err != nil {\n\t\t\t\treturn nil, err\n\t\t\t}\n\t\t\tdisposal := byte(0)\n\t\t\tif i < len(anim.Disposal) {\n\t\t\t\tdisposal = anim.Disposal[i]\n\t\t\t}\n\t\t\tvar previous *image.RGBA\n\t\t\tif disposal == gif.DisposalPrevious {\n\t\t\t\tprevious = image.NewRGBA(bounds)\n\t\t\t\tcopy(previous.Pix, canvas.Pix)\n\t\t\t}\n\t\t\tdraw.Draw(canvas, frame.Bounds(), frame, frame.Bounds().Min, draw.Over)\n\t\t\tscaled := scaleImage(canvas, w, h)\n\t\t\tquantized := image.NewPaletted(scaled.Bounds(), outputPalette)\n\t\t\tdraw.FloydSteinberg.Draw(quantized, quantized.Bounds(), scaled, image.Point{})\n\t\t\t// GIF has binary transparency. Quantize color separately, then\n\t\t\t// restore the transparent pixels so opaque dark pixels stay opaque.\n\t\t\tfor y := 0; y < h; y++ {\n\t\t\t\tfor x := 0; x < w; x++ {\n\t\t\t\t\tif scaled.RGBAAt(x, y).A < 128 {\n\t\t\t\t\t\tquantized.SetColorIndex(x, y, 0)\n\t\t\t\t\t} else if quantized.ColorIndexAt(x, y) == 0 {\n\t\t\t\t\t\tquantized.SetColorIndex(x, y, uint8(outputPalette[1:].Index(scaled.At(x, y))+1))\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t\tresized.Image = append(resized.Image, quantized)\n\t\t\tresized.Disposal = append(resized.Disposal, gif.DisposalBackground)\n\t\t\tswitch disposal {\n\t\t\tcase gif.DisposalBackground:\n\t\t\t\tfill := background\n\t\t\t\tfor _, c := range frame.Palette {\n\t\t\t\t\t_, _, _, a := c.RGBA()\n\t\t\t\t\tif a == 0 {\n\t\t\t\t\t\tfill = color.Transparent\n\t\t\t\t\t\tbreak\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tdraw.Draw(canvas, frame.Bounds(), image.NewUniform(fill), image.Point{}, draw.Src)\n\t\t\tcase gif.DisposalPrevious:\n\t\t\t\tcanvas = previous\n\t\t\t}\n\t\t}\n\t\tvar output bytes.Buffer\n\t\terr := gif.EncodeAll(&output, resized)\n\t\treturn output.Bytes(), err\n\t}}, nil\n}\n\nfunc gifFrameCount(input []byte, width, height int) (int, error) {\n\tif len(input) < 13 {\n\t\treturn 0, imageprocessing.ErrInvalidImage\n\t}\n\tp := 13\n\tif input[10]&0x80 != 0 {\n\t\tp += 3 << ((input[10] & 7) + 1)\n\t}\n\tcount := 0\n\tfor p < len(input) {\n\t\tblock := input[p]\n\t\tp++\n\t\tswitch block {\n\t\tcase 0x3b:\n\t\t\tif count == 0 {\n\t\t\t\treturn 0, imageprocessing.ErrInvalidImage\n\t\t\t}\n\t\t\treturn count, nil\n\t\tcase 0x21:\n\t\t\tp++ // extension label; followed by data sub-blocks\n\t\tcase 0x2c:\n\t\t\tif p+9 > len(input) {\n\t\t\t\treturn 0, imageprocessing.ErrInvalidImage\n\t\t\t}\n\t\t\tpacked := input[p+8]\n\t\t\tp += 9\n\t\t\tif packed&0x80 != 0 {\n\t\t\t\tp += 3 << ((packed & 7) + 1)\n\t\t\t}\n\t\t\tp++ // LZW minimum code size\n\t\t\tcount++\n\t\t\tif err := imaging.ValidateAnimatedDimensions(width, height, count, imageresize.MaxFramePixels); err != nil {\n\t\t\t\treturn 0, err\n\t\t\t}\n\t\tdefault:\n\t\t\treturn 0, imageprocessing.ErrInvalidImage\n\t\t}\n\t\tfor {\n\t\t\tif p >= len(input) {\n\t\t\t\treturn 0, imageprocessing.ErrInvalidImage\n\t\t\t}\n\t\t\tsize := int(input[p])\n\t\t\tp++\n\t\t\tif size == 0 {\n\t\t\t\tbreak\n\t\t\t}\n\t\t\tp += size\n\t\t}\n\t}\n\treturn 0, imageprocessing.ErrInvalidImage\n}\n",
+      "stderr": ""
+    }
+  ],
+  "records": [
+    {
+      "source_path": "LICENSE",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/LICENSE",
+      "sha256": "52b5e2ea72b69e0293b77ab8ca3805404a2b921ea3deb5d433072f144c086446",
+      "bytes": 1075
+    },
+    {
+      "source_path": "backend/go.mod",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/go.mod",
+      "sha256": "e2996db5089ac9446598c91422fe3b2cfa702d25fd1c5f3dfb522344c9dff4d9",
+      "bytes": 450
+    },
+    {
+      "source_path": "backend/internal/infrastructure/imaging/compress/avif.go",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/internal/infrastructure/imaging/compress/avif.go",
+      "sha256": "e316c77143447107eae69470620317c13367b2768c215aadedaed30661a80a6b",
+      "bytes": 1887
+    },
+    {
+      "source_path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "bytes": 3131
+    },
+    {
+      "source_path": "backend/internal/infrastructure/imaging/compress/gif.go",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/internal/infrastructure/imaging/compress/gif.go",
+      "sha256": "bae96dbde536298cee2ed0f367986c1f14d22f84d19b70b057bd57451055715e",
+      "bytes": 1437
+    },
+    {
+      "source_path": "backend/internal/infrastructure/imaging/compress/webp.go",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/internal/infrastructure/imaging/compress/webp.go",
+      "sha256": "8b8500a64ded929104aa36762929f5dfa081a48b60f0b6a55d17dcd76bd4b11c",
+      "bytes": 3360
+    },
+    {
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/internal/infrastructure/imaging/limits.go",
+      "sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+      "bytes": 1218
+    },
+    {
+      "source_path": "backend/internal/infrastructure/imaging/resize/animation.go",
+      "saved_path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/internal/infrastructure/imaging/resize/animation.go",
+      "sha256": "7c02fe5c4f911439b029c62e8e833fbc843099766582f7c37726a0f246b1234a",
+      "bytes": 7233
+    }
+  ],
+  "scope": "Lexical same-revision Go callers/declarations and tests; not dynamic exhaustive caller graph or runtime execution",
+  "external_files_changed": false
+}

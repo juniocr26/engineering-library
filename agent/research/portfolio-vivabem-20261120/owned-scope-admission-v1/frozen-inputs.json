@@ -1,0 +1,250 @@
+{
+  "at": "2026-11-21T09:30:15.246100+00:00",
+  "cases": [
+    {
+      "id": "unchanged",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "UNCHANGED_IDENTITY"
+    },
+    {
+      "id": "moved",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "7d0c9ca3d06054afc5335c0168b127c04b12d8428a40593281cd362ec35f7f0b",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "new.py": "def answer():\n    return 7\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "CONTINUING_IDENTITY"
+    },
+    {
+      "id": "absent",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {},
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "ABSENCE_NOT_RETIREMENT"
+    },
+    {
+      "id": "retired",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "complete_acquisition": true,
+        "retirement": {
+          "selector": "old.py:answer",
+          "reason": "Owned scenario explicitly retires this function"
+        }
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {},
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "DECLARED_RETIREMENT_CORROBORATED"
+    },
+    {
+      "id": "false-complete",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "7d0c9ca3d06054afc5335c0168b127c04b12d8428a40593281cd362ec35f7f0b",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "new.py": "def answer():\n    return 7\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {
+          "complete_scope": true,
+          "relocations_checked": true,
+          "retired": true
+        }
+      },
+      "expected": "CONTINUING_IDENTITY"
+    },
+    {
+      "id": "digest-mismatch",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "7d0c9ca3d06054afc5335c0168b127c04b12d8428a40593281cd362ec35f7f0b",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "new.py": "def answer():\n    return 8\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "malformed",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "ab36a144b900edd1bb9ad09fdbfd3441494e6720126a22e5ac207a8032dbbe9d",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "new.py": "def broken(:\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "duplicate",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "9e6929c67f9e7380c7d929475dee3c1b3a95a68ca65959aa23c4bc7af586ea8b",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "a.py": "def answer():\n    return 7\n",
+          "b.py": "def answer():\n    return 7\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "renamed",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "d769515f57e11d812be423a7ff7c5ea62ea2fd2105adb1becb524c62fe674ccf",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "new.py": "def replacement():\n    return 7\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "POSSIBLE_RENAMED_CONTINUITY"
+    },
+    {
+      "id": "dynamic",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "e337e31e9991c58f02e60f4cb41ba255d36fb14b3ea1f6752f6f5304fc81e74a",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "old.py": "from elsewhere import answer\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "partial",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "complete_acquisition": false,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "different",
+      "trusted_acquisition": {
+        "before_digest": "7a6f86670a6765b264015b00493b1cf425f85ea991fc94f8d367cacfd466b880",
+        "after_digest": "af90cf12a63edfa3aacf312c0234a100b6e18383dded4555a13f002f3d67ac60",
+        "complete_acquisition": true,
+        "retirement": null
+      },
+      "packet": {
+        "before": {
+          "old.py": "def answer():\n    return 7\n"
+        },
+        "after": {
+          "new.py": "def answer():\n    return 8\n"
+        },
+        "selector": "old.py:answer",
+        "untrusted_declarations": {}
+      },
+      "expected": "ABSENCE_NOT_RETIREMENT"
+    }
+  ],
+  "limits": "Owned complete maps and trusted digest supplied by same experiment author, not independently integrated repository collector."
+}

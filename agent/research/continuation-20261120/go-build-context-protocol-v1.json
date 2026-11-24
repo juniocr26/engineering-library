@@ -1,0 +1,219 @@
+{
+  "at": "2026-11-20T13:05:43.401175+00:00",
+  "hypothesis": "Explicit Go build context can explain prior mixed package clauses caused by ignore-tagged generator without ad-hoc deleting conflicts. MatchFile is only file-condition matching, not complete Go package selection or type binding.",
+  "prior_failure": "agent/research/continuation-20261119/go-predeclared-binding-study.json; no blind repeat of previous census.",
+  "context": {
+    "goos": "linux",
+    "goarch": "arm64",
+    "compiler": "gc",
+    "cgo_enabled": false,
+    "build_tags": [],
+    "tool_tags": [
+      "arm64.v8.0"
+    ],
+    "release_tags": [
+      "go1.1",
+      "go1.2",
+      "go1.3",
+      "go1.4",
+      "go1.5",
+      "go1.6",
+      "go1.7",
+      "go1.8",
+      "go1.9",
+      "go1.10",
+      "go1.11",
+      "go1.12",
+      "go1.13",
+      "go1.14",
+      "go1.15",
+      "go1.16",
+      "go1.17",
+      "go1.18",
+      "go1.19",
+      "go1.20",
+      "go1.21",
+      "go1.22",
+      "go1.23",
+      "go1.24",
+      "go1.25",
+      "go1.26",
+      "go1.27"
+    ]
+  },
+  "controls": [
+    {
+      "id": "plain",
+      "files": [
+        {
+          "path": "plain.go",
+          "source": "package sample\n"
+        }
+      ],
+      "expected_selected": [
+        "plain.go"
+      ]
+    },
+    {
+      "id": "os-suffix",
+      "files": [
+        {
+          "path": "value_linux.go",
+          "source": "package sample\n"
+        },
+        {
+          "path": "value_windows.go",
+          "source": "package sample\n"
+        }
+      ],
+      "expected_selected": [
+        "value_linux.go"
+      ]
+    },
+    {
+      "id": "arch-suffix",
+      "files": [
+        {
+          "path": "value_arm64.go",
+          "source": "package sample\n"
+        },
+        {
+          "path": "value_amd64.go",
+          "source": "package sample\n"
+        }
+      ],
+      "expected_selected": [
+        "value_arm64.go"
+      ]
+    },
+    {
+      "id": "combined-suffix",
+      "files": [
+        {
+          "path": "value_linux_arm64.go",
+          "source": "package sample\n"
+        },
+        {
+          "path": "value_linux_amd64.go",
+          "source": "package sample\n"
+        }
+      ],
+      "expected_selected": [
+        "value_linux_arm64.go"
+      ]
+    },
+    {
+      "id": "ignore-generator",
+      "files": [
+        {
+          "path": "gen.go",
+          "source": "//go:build ignore\n\npackage main\n"
+        },
+        {
+          "path": "lib.go",
+          "source": "package sample\n"
+        }
+      ],
+      "expected_selected": [
+        "lib.go"
+      ]
+    },
+    {
+      "id": "explicit-tag-off",
+      "files": [
+        {
+          "path": "feature.go",
+          "source": "//go:build custom\n\npackage sample\n"
+        }
+      ],
+      "expected_selected": []
+    },
+    {
+      "id": "release-tag",
+      "files": [
+        {
+          "path": "new.go",
+          "source": "//go:build go1.28\n\npackage sample\n"
+        },
+        {
+          "path": "old.go",
+          "source": "//go:build go1.27\n\npackage sample\n"
+        }
+      ],
+      "expected_selected": [
+        "old.go"
+      ]
+    },
+    {
+      "id": "legacy-tag",
+      "files": [
+        {
+          "path": "legacy.go",
+          "source": "// +build windows\n\npackage sample\n"
+        }
+      ],
+      "expected_selected": []
+    },
+    {
+      "id": "hidden-file",
+      "files": [
+        {
+          "path": "_generated.go",
+          "source": "package main\n"
+        },
+        {
+          "path": ".hidden.go",
+          "source": "package main\n"
+        },
+        {
+          "path": "lib.go",
+          "source": "package sample\n"
+        }
+      ],
+      "expected_selected": [
+        "lib.go"
+      ]
+    },
+    {
+      "id": "malformed-constraint",
+      "files": [
+        {
+          "path": "bad.go",
+          "source": "//go:build linux &&\n\npackage sample\n"
+        }
+      ],
+      "expected_selected": null
+    },
+    {
+      "id": "duplicate-name",
+      "files": [
+        {
+          "path": "a.go",
+          "source": "package sample\n"
+        }
+      ],
+      "expected_selected": "DUPLICATE_PATH"
+    },
+    {
+      "id": "cgo-unknown-package-selection",
+      "files": [
+        {
+          "path": "cgo.go",
+          "source": "package sample\nimport \"C\"\n"
+        }
+      ],
+      "expected_selected": [
+        "cgo.go"
+      ]
+    }
+  ],
+  "limits": {
+    "files": 256,
+    "total_source_bytes": 8388608,
+    "single_source_bytes": 262144
+  },
+  "cgo_note": "MatchFile does not fully classify importC/CgoFiles. A matched importC file must be explicitly flagged unresolved; do not feed it into a claimed full-package proof.",
+  "source_execution_allowed": false,
+  "module_loading_allowed": false,
+  "training_gold": false
+}

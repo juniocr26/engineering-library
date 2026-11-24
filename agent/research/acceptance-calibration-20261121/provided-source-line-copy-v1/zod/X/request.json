@@ -1,0 +1,51 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "lines": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Z03": {
+            "type": "string"
+          },
+          "Z06": {
+            "type": "string"
+          },
+          "Z07": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "Z03",
+          "Z06",
+          "Z07"
+        ]
+      }
+    },
+    "required": [
+      "lines"
+    ]
+  },
+  "keep_alive": 0,
+  "options": {
+    "temperature": 0,
+    "seed": 11621,
+    "num_ctx": 8192,
+    "num_predict": 500,
+    "num_thread": 4
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Copy the supplied exact_line_bank string values into the required JSON lines object without any change. Preserve leading spaces, tabs and every code character. Do not trim, translate, summarize, add line numbers, add newline terminators or interpret code. These are explicitly provided correct copy targets, not a source retrieval or semantic reasoning task. Return JSON only."
+    },
+    {
+      "role": "user",
+      "content": "Return the same exact strings for each ID. The correct answers are intentionally supplied for this copy/serialization control.\n\n{\"task\": \"zod\", \"exact_line_bank\": {\"Z03\": \"    throw new core.$ZodAsyncError();\", \"Z06\": \"      if (!error) {\", \"Z07\": \"      error = e;\"}}"
+    }
+  ]
+}

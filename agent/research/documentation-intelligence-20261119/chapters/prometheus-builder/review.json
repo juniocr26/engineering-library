@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-20T00:26:46.767274+00:00",
+  "chapter_id": "prometheus-builder",
+  "source_repository": "prometheus",
+  "revision": "b2a602494b65bda38316eabaef7e0d834a6814dd",
+  "full_file_sha256": "dfd42ba66fe546c3912a3d81caac2d9eb7bee7dc7b98b0932837d94aa86a5870",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "empty-value",
+      "first_line": 188,
+      "last_line": 192,
+      "review": "v==empty string delegates and returns Del result, later statements skipped."
+    },
+    {
+      "id": "replace-add",
+      "first_line": 193,
+      "last_line": 202,
+      "review": "Search pending additions, replace first match and return receiver; else append then return receiver."
+    },
+    {
+      "id": "delete-bookkeeping",
+      "first_line": 164,
+      "last_line": 174,
+      "review": "Remove matching pending entry via written slice expression; append each requested name to del independent of match; no dedup."
+    },
+    {
+      "id": "lookup-consumer",
+      "first_line": 204,
+      "last_line": 215,
+      "review": "Get checks add first, del second, base getter last."
+    },
+    {
+      "id": "range-consumer",
+      "first_line": 218,
+      "last_line": 232,
+      "review": "Copies add/del before traversal; filters visited base labels, then visits copied additions."
+    }
+  ],
+  "bilingual_review": "Full original texts and additions compared semantically; inline technical span sequence equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "66517682718e07abefc5ccd81e423b4f2fc850c3e4185880609132a05a80c5e0",
+      "after_sha256": "a297be26b0e00355d7dcd4f71798c4a197dcf955c9e1db5c0bf1790284a83c15",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -35,3 +35,22 @@\n ## Source references and review\n \n The exact selected excerpts, physical lines, source hash and producer identity are in `source-excerpts.json`. Upstream source is [labels_common.go at the frozen revision](https://github.com/prometheus/prometheus/blob/b2a602494b65bda38316eabaef7e0d834a6814dd/model/labels/labels_common.go). The source is under the Apache License 2.0; its original license is preserved privately with the snapshot. The source program was not executed for this review. EN/PT-BR code identifiers and conditions are checked separately from the neural responses, and neither language is approved for publication automatically.\n+\n+## Engineer FAQ and a verified consumer\n+\n+<!-- reading-section: faq:deferred-deletion-bookkeeping -->\n+### Does an empty value immediately rewrite the base labels?\n+\n+`Builder.Set` delegates to `Builder.Del`. Those selected methods adjust pending additions and deletion bookkeeping; neither assigns the base collection. An empty value is not evidence of a database delete or immediate replacement of the base representation.\n+\n+<!-- reading-section: faq:addition-precedence -->\n+### Why can a later Set take precedence without clearing the deletion slice?\n+\n+The additional source reviewed here is `Builder.Get`. It searches pending additions first and returns a matching value. Only after that search does it check the deletion slice and otherwise delegate to the base getter. This is a verified written lookup order, not a claim that Set removes deletion markers.\n+\n+<!-- reading-section: faq:deletion-no-synchronization-proof -->\n+### Does Del guarantee uniqueness or synchronization?\n+\n+Its selected body appends each requested name without a deduplication guard. No lock is shown in these methods. Receiver validity, package build variants and concurrent use require separate evidence.\n+\n+The additional `Builder.Range` body snapshots additions and deletions before its callbacks, filters visited base labels against those snapshots, then visits pending additions. Its final labels representation and the base traversal implementation remain separate contracts. These extra methods were reviewed for this candidate, not supplied to the historical neural answer.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "9127def1682eb8c87f49592a3981d824657d21ad13d51939928c6cd1efad3a6f",
+      "after_sha256": "a51f1587a28ebdb704a6994695710733d4de0f1c3da5b9aa6df2c5e4ee443fe2",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -35,3 +35,22 @@\n ## Referências e revisão\n \n Os trechos exatos selecionados, linhas físicas, hash da fonte e identidade do produtor estão em `source-excerpts.json`. A fonte upstream é [labels_common.go na revisão congelada](https://github.com/prometheus/prometheus/blob/b2a602494b65bda38316eabaef7e0d834a6814dd/model/labels/labels_common.go). O código está sob a Apache License 2.0; a licença original foi preservada privadamente com o snapshot. O programa fonte não foi executado para esta revisão. Identificadores e condições de código em EN/PT-BR são verificados separadamente das respostas neurais, e nenhuma língua recebe aprovação automática para publicação.\n+\n+## FAQ de engenharia e um consumidor verificado\n+\n+<!-- reading-section: faq:deferred-deletion-bookkeeping -->\n+### Um valor vazio reescreve imediatamente os labels base?\n+\n+`Builder.Set` delega para `Builder.Del`. Esses métodos selecionados ajustam adições pendentes e o registro de exclusões; nenhum atribui a coleção base. Um valor vazio não evidencia delete em banco ou substituição imediata da representação base.\n+\n+<!-- reading-section: faq:addition-precedence -->\n+### Por que um Set posterior pode ter precedência sem limpar a slice de exclusões?\n+\n+A fonte adicional revisada aqui é `Builder.Get`. Ela pesquisa primeiro as adições pendentes e retorna um valor correspondente. Só depois dessa pesquisa verifica a slice de exclusões e, caso contrário, delega ao getter da base. Essa é uma ordem de consulta escrita e verificada, não a afirmação de que Set remove marcas de exclusão.\n+\n+<!-- reading-section: faq:deletion-no-synchronization-proof -->\n+### Del garante unicidade ou sincronização?\n+\n+Seu corpo selecionado acrescenta cada nome solicitado sem uma guarda de deduplicação. Nenhum lock é mostrado nesses métodos. Validade do receptor, variantes de build do pacote e uso concorrente exigem evidências separadas.\n+\n+O corpo adicional de `Builder.Range` copia adições e exclusões antes de seus callbacks, filtra os labels base visitados contra essas cópias e então visita as adições pendentes. A representação final dos labels e a implementação do percurso da base continuam contratos separados. Esses métodos extras foram revisados para este candidato, não fornecidos à resposta neural histórica.\n"
+    }
+  ],
+  "faq_added": 3,
+  "source_context_expanded": [
+    "Builder.Get",
+    "Builder.Range"
+  ],
+  "examples_or_commands_added": 0,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "Source-reviewed syntax/conditional behavior; actual base implementation and build variants not resolved.",
+    "No owner approval or neural learning claim. Historical inference remains historical."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.317212+00:00",
+    "canonical_question_ids": [
+      "deferred-deletion-bookkeeping",
+      "addition-precedence",
+      "deletion-no-synchronization-proof"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/prometheus-builder",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

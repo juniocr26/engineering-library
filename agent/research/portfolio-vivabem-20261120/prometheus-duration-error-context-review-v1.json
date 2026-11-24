@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-21T09:40:12.855852+00:00",
+  "hypothesis": "H78",
+  "protocol": "prometheus-duration-error-context-protocol-v1.json",
+  "status": "SOURCE_SCOPED_ERROR_CLASSIFICATION_TRACE",
+  "source_files_reused": 2,
+  "source_cards": 12,
+  "matrix_kind": "Manual branch-derived input classification, not runtime tests or observed HTTP responses",
+  "classification_matrix": [
+    {
+      "input": "typed ErrQueryTimeout or wrapper recognized by errors.As",
+      "construction": "timeout",
+      "execution": "timeout",
+      "default_HTTP": 503
+    },
+    {
+      "input": "typed ErrQueryCanceled or recognized wrapper",
+      "construction": "canceled",
+      "execution": "canceled",
+      "default_HTTP": "statusClientClosedConnection (constant value not inspected in this trace)"
+    },
+    {
+      "input": "raw context.DeadlineExceeded or fmt.Errorf wrapper preserving it, no typed timeout",
+      "construction": "bad_data (queryConstructionError default)",
+      "execution": "execution",
+      "default_HTTP": {
+        "construction": 400,
+        "execution": 422
+      }
+    },
+    {
+      "input": "raw context.Canceled or errors.Is wrapper, no typed canceled",
+      "construction": "bad_data (selected construction default)",
+      "execution": "canceled",
+      "default_HTTP": {
+        "construction": 400,
+        "execution": "statusClientClosedConnection"
+      }
+    },
+    {
+      "input": "typed ErrTooManySeries or ErrTooManySamplesRead recognized by errors.As",
+      "construction": "bad_data unless other selected recognized typed branch",
+      "execution": "cost_limit",
+      "default_HTTP": {
+        "construction": 400,
+        "execution": 422
+      }
+    },
+    {
+      "input": "ErrStorage recognized by errors.As, no higher-precedence typed match",
+      "construction": "bad_data (selected default)",
+      "execution": "internal",
+      "default_HTTP": {
+        "construction": 400,
+        "execution": 500
+      }
+    }
+  ],
+  "findings": [
+    "contextDone/contextErr translates raw context errors only where explicitly invoked; not a global invariant over all errors.",
+    "expandSeriesSet may return ctx.Err or iterator error directly. checkAndExpandSeriesSet returns that error; selected evaluator caller wraps with expanding series and errWithWarnings. Recovery extracts wrapped error rather than converting it into ErrQueryTimeout.",
+    "Instant evaluation error is returned immediately and skips the success-only final context check. This explains a source-supported route to execution classification for raw expansion deadline errors.",
+    "queryConstructionError recognizes specific typed limit/timeout/canceled errors, otherwise bad query parameter; raw deadline/canceled alone is not identical to typed construction timeout/cancel.",
+    "observeQueryRejection increments max_duration only if error.As ErrQueryTimeout AND context.Cause matches errQueryCostDuration. Raw wrapped deadline execution error does not satisfy the selected typed check.",
+    "respondError uses optional overrideErrorCode and JSON marshaling/writing can fail. Default code mapping is conditional, not every deployed response guarantee."
+  ],
+  "existing_documentation_disposition": "The selected docs distinction usual timeout503 versus possible expanding-series execution422 is supported by the inspected paths. Preserve qualifiers usually/can. Do not generalize all duration errors, raw contexts or custom engines to503; do not invent exact measured timing.",
+  "limits": [
+    "No original Go code compiled/executed, no actual HTTP request, server, local/remote storage or database used.",
+    "Matrix inputs are hypothetical category preconditions, not new owned runtime or neural/lifecycle accuracy cases.",
+    "Uninspected iterator/transport wrappers can yield different recognized types; precedence and override callback matter.",
+    "Other API endpoints and all errors/statuses in the repository remain outside scope."
+  ],
+  "production_or_external_changes": 0,
+  "neural_calls": 0,
+  "owner_approved": false,
+  "gold": false,
+  "training_eligible": false
+}

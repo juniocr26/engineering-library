@@ -1,0 +1,106 @@
+{
+  "at": "2026-11-21T18:25:58.254643+00:00",
+  "topic": "prometheus-builder",
+  "family": "prometheus",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/prometheus-builder/en.candidate.txt",
+      "sha256": "a297be26b0e00355d7dcd4f71798c4a197dcf955c9e1db5c0bf1790284a83c15",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/prometheus-builder/pt-br.candidate.txt",
+      "sha256": "a51f1587a28ebdb704a6994695710733d4de0f1c3da5b9aa6df2c5e4ee443fe2",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Set empty value delegates/returns Del; nonempty scans pendingadd and returns receiver after replace/append.",
+    "Del appends deletion marker regardless of matchingaddition, no dedup guard; no base assignment/concurrency guarantee.",
+    "Get checks add before del before base; Range snapshotsadd/del and filtersbase thenvisitsadd, no selectedbuildvariant inference.",
+    "Actual set-only baseline return fact present; set-and-del model onlyS1/nohelper/no return; sourcecontextbeforeprediction verified inoriginalrequests, no Get/Range suppliedhistorically."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/prometheus/b2a602494b65bda38316eabaef7e0d834a6814dd/model/labels/labels_common.go",
+      "source_sha256": "dfd42ba66fe546c3912a3d81caac2d9eb7bee7dc7b98b0932837d94aa86a5870",
+      "source_path": "model/labels/labels_common.go",
+      "source_lines": [
+        164,
+        174
+      ],
+      "exact_source_evidence": "func (b *Builder) Del(ns ...string) *Builder {\n\tfor _, n := range ns {\n\t\tfor i, a := range b.add {\n\t\t\tif a.Name == n {\n\t\t\t\tb.add = append(b.add[:i], b.add[i+1:]...)\n\t\t\t}\n\t\t}\n\t\tb.del = append(b.del, n)\n\t}\n\treturn b\n}",
+      "reviewed_interpretation": "Deletion loops, pendingaddsplice, unconditional marker append and receiverreturn.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/prometheus/b2a602494b65bda38316eabaef7e0d834a6814dd/model/labels/labels_common.go",
+      "source_sha256": "dfd42ba66fe546c3912a3d81caac2d9eb7bee7dc7b98b0932837d94aa86a5870",
+      "source_path": "model/labels/labels_common.go",
+      "source_lines": [
+        188,
+        215
+      ],
+      "exact_source_evidence": "func (b *Builder) Set(n, v string) *Builder {\n\tif v == \"\" {\n\t\t// Empty labels are the same as missing labels.\n\t\treturn b.Del(n)\n\t}\n\tfor i, a := range b.add {\n\t\tif a.Name == n {\n\t\t\tb.add[i].Value = v\n\t\t\treturn b\n\t\t}\n\t}\n\tb.add = append(b.add, Label{Name: n, Value: v})\n\n\treturn b\n}\n\nfunc (b *Builder) Get(n string) string {\n\t// Del() removes entries from .add but Set() does not remove from .del, so check .add first.\n\tfor _, a := range b.add {\n\t\tif a.Name == n {\n\t\t\treturn a.Value\n\t\t}\n\t}\n\tif slices.Contains(b.del, n) {\n\t\treturn \"\"\n\t}\n\treturn b.base.Get(n)\n}",
+      "reviewed_interpretation": "Set paths and Get precedence.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/prometheus/b2a602494b65bda38316eabaef7e0d834a6814dd/model/labels/labels_common.go",
+      "source_sha256": "dfd42ba66fe546c3912a3d81caac2d9eb7bee7dc7b98b0932837d94aa86a5870",
+      "source_path": "model/labels/labels_common.go",
+      "source_lines": [
+        218,
+        241
+      ],
+      "exact_source_evidence": "func (b *Builder) Range(f func(l Label)) {\n\t// Stack-based arrays to avoid heap allocation in most cases.\n\tvar addStack [128]Label\n\tvar delStack [128]string\n\t// Take a copy of add and del, so they are unaffected by calls to Set() or Del().\n\torigAdd, origDel := append(addStack[:0], b.add...), append(delStack[:0], b.del...)\n\tb.base.Range(func(l Label) {\n\t\tif !slices.Contains(origDel, l.Name) && !contains(origAdd, l.Name) {\n\t\t\tf(l)\n\t\t}\n\t})\n\tfor _, a := range origAdd {\n\t\tf(a)\n\t}\n}\n\nfunc contains(s []Label, n string) bool {\n\tfor _, a := range s {\n\t\tif a.Name == n {\n\t\t\treturn true\n\t\t}\n\t}\n\treturn false\n}",
+      "reviewed_interpretation": "Range snapshots/filter/callback order and containshelper.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "set-only",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/set-only/raw-response.json",
+      "sha256": "7effd3d9458684f9f3f07d96bdd38b88104bdaae2255db7e2c9d25af5f471409",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/set-only/origin.json",
+      "origin_sha256": "c9099fadf18a20528a00be09d022d6b8be6a047f2fe38a2625d457afe95f88e4"
+    },
+    {
+      "id": "set-and-del",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/set-and-del/raw-response.json",
+      "sha256": "791136f41bb9d013044ab8c7d104e8d28d9661d413e97ff2981d9d8ba368ef5f",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/set-and-del/origin.json",
+      "origin_sha256": "fbb00850fb9169bbc5c1ac0758cab5c959f8fa45644e2cac33daa21c6a3ee69b"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

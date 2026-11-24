@@ -1,0 +1,458 @@
+{
+  "at": "2026-11-20T12:36:36.389077+00:00",
+  "producer_file": "javascript_module_observer_v2.cjs",
+  "producer_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e",
+  "command": [
+    "docker",
+    "exec",
+    "-i",
+    "-e",
+    "NODE_PATH=/app/frontend/node_modules",
+    "-w",
+    "/app/frontend",
+    "engineering-library-frontend-1",
+    "node",
+    "-e",
+    "const fs=require(\"node:fs\");\nconst observer=require(process.argv[1]);\nconst marker=\"/tmp/el-js-observer-owned-no-execution-marker-20261120\";\nif(fs.existsSync(marker))throw new Error(\"pre-existing marker;preserve and do not claim non-execution\");\nconst cases=JSON.parse(fs.readFileSync(0,\"utf8\"));\nconst rows=[];\nfor(const c of cases){\n let r;\n try{r=observer.observe(observer.strictJson(Buffer.from(c.raw_request,\"utf8\")))}\n catch(error){r={status:\"INCONCLUSIVE\",reason:String(error.message)}}\n const alias=!c.require_alias_wire_citation||!!r.export_evidence;\n const noExecution=!fs.existsSync(marker);\n rows.push({id:c.id,expected:c.expected_status,observed:r.status,\n   matches:r.status===c.expected_status&&alias&&noExecution,\n   alias_wire_citation_checked:!!c.require_alias_wire_citation,\n   alias_wire_present:alias,source_execution_marker_absent:noExecution,result:r});\n}\nprocess.stdout.write(JSON.stringify({node_version:process.version,rows}));\n",
+    "/sources/engineering-library/agent/research/continuation-20261120/javascript_module_observer_v2.cjs"
+  ],
+  "node_version": "v24.22.0",
+  "cases": [
+    {
+      "id": "named-export",
+      "expected": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "observed": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+        "selector": "value",
+        "source_path": "owned.js",
+        "source_sha256": "380b2e860d308248aa52da4e5bbd2af985c1739d5763e58edc74649463cfaff4",
+        "source_bytes": 41,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "producer": {
+          "version": "0.0.2-research",
+          "code_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e",
+          "parser_version": "5.9.3",
+          "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+          "node_version": "v24.22.0"
+        },
+        "static_node_check": true,
+        "limitations": [
+          "Written local ESM export/signature only; package type, build output, imports and actual calls are unverified.",
+          "Missing local callable is never retirement evidence. Supplied source is not loaded or executed."
+        ],
+        "local_selector": "value",
+        "signature": {
+          "parameters": [
+            {
+              "name": "x",
+              "rest": false,
+              "default_expression": "1",
+              "default_expression_evaluated": false
+            }
+          ],
+          "async": false,
+          "generator": false
+        },
+        "evidence": {
+          "first_line": 1,
+          "last_line": 1,
+          "quote": "export function value(x=1) { return x; }\n",
+          "quote_sha256": "380b2e860d308248aa52da4e5bbd2af985c1739d5763e58edc74649463cfaff4",
+          "complete_unit": true,
+          "quote_byte_start": 0,
+          "quote_byte_end": 41
+        },
+        "export_evidence": {
+          "kind": "direct-export-in-callable-unit",
+          "source_sha256": "380b2e860d308248aa52da4e5bbd2af985c1739d5763e58edc74649463cfaff4",
+          "evidence_ref": "evidence"
+        }
+      }
+    },
+    {
+      "id": "arrow-export",
+      "expected": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "observed": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+        "selector": "value",
+        "source_path": "owned.js",
+        "source_sha256": "d9af5587a5d8771955a7533595fca4b74257b8070a3589330a14d514cd6a535b",
+        "source_bytes": 33,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "producer": {
+          "version": "0.0.2-research",
+          "code_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e",
+          "parser_version": "5.9.3",
+          "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+          "node_version": "v24.22.0"
+        },
+        "static_node_check": true,
+        "limitations": [
+          "Written local ESM export/signature only; package type, build output, imports and actual calls are unverified.",
+          "Missing local callable is never retirement evidence. Supplied source is not loaded or executed."
+        ],
+        "local_selector": "value",
+        "signature": {
+          "parameters": [
+            {
+              "name": "x",
+              "rest": false,
+              "default_expression": "1",
+              "default_expression_evaluated": false
+            }
+          ],
+          "async": false,
+          "generator": false
+        },
+        "evidence": {
+          "first_line": 1,
+          "last_line": 1,
+          "quote": "export const value = (x=1) => x;\n",
+          "quote_sha256": "d9af5587a5d8771955a7533595fca4b74257b8070a3589330a14d514cd6a535b",
+          "complete_unit": true,
+          "quote_byte_start": 0,
+          "quote_byte_end": 33
+        },
+        "export_evidence": {
+          "kind": "direct-export-in-callable-unit",
+          "source_sha256": "d9af5587a5d8771955a7533595fca4b74257b8070a3589330a14d514cd6a535b",
+          "evidence_ref": "evidence"
+        }
+      }
+    },
+    {
+      "id": "explicit-export-alias",
+      "expected": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "observed": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "matches": true,
+      "alias_wire_citation_checked": true,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+        "selector": "external",
+        "source_path": "owned.js",
+        "source_sha256": "2a2e86de27884169ccf3aaedd16238a65af3b6d380a2b3296f20ccb91957eb77",
+        "source_bytes": 68,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "producer": {
+          "version": "0.0.2-research",
+          "code_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e",
+          "parser_version": "5.9.3",
+          "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+          "node_version": "v24.22.0"
+        },
+        "static_node_check": true,
+        "limitations": [
+          "Written local ESM export/signature only; package type, build output, imports and actual calls are unverified.",
+          "Missing local callable is never retirement evidence. Supplied source is not loaded or executed."
+        ],
+        "local_selector": "internal",
+        "signature": {
+          "parameters": [
+            {
+              "name": "x",
+              "rest": false,
+              "default_expression": null,
+              "default_expression_evaluated": false
+            }
+          ],
+          "async": false,
+          "generator": false
+        },
+        "evidence": {
+          "first_line": 1,
+          "last_line": 1,
+          "quote": "function internal(x) { return x; }\n",
+          "quote_sha256": "432a71182a0b7f4779a9bc930301e942becfc465f0dc7727205dc1f54a19627e",
+          "complete_unit": true,
+          "quote_byte_start": 0,
+          "quote_byte_end": 35
+        },
+        "export_evidence": {
+          "kind": "complete-written-export-alias",
+          "source_sha256": "2a2e86de27884169ccf3aaedd16238a65af3b6d380a2b3296f20ccb91957eb77",
+          "first_line": 2,
+          "last_line": 2,
+          "quote": "export { internal as external };\n",
+          "quote_sha256": "ecd63a816b941bdabdb67c994046d9c50c84886e6ffa8c2e311cd4daf867f501",
+          "quote_byte_start": 35,
+          "quote_byte_end": 68,
+          "complete_callable": false
+        }
+      }
+    },
+    {
+      "id": "wildcard-absence",
+      "expected": "INCONCLUSIVE",
+      "observed": "INCONCLUSIVE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "INCONCLUSIVE",
+        "reason": "wildcard or unresolved export prevents absence claim"
+      }
+    },
+    {
+      "id": "commonjs-mode",
+      "expected": "INCONCLUSIVE",
+      "observed": "INCONCLUSIVE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "INCONCLUSIVE",
+        "reason": "module export mode or dynamic namespace unresolved"
+      }
+    },
+    {
+      "id": "reassigned-export",
+      "expected": "INCONCLUSIVE",
+      "observed": "INCONCLUSIVE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "INCONCLUSIVE",
+        "reason": "unique local export/callable binding not established"
+      }
+    },
+    {
+      "id": "destructured-parameter",
+      "expected": "INCONCLUSIVE",
+      "observed": "INCONCLUSIVE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "INCONCLUSIVE",
+        "reason": "parameter shape outside profile"
+      }
+    },
+    {
+      "id": "duplicate-parameter",
+      "expected": "INCONCLUSIVE",
+      "observed": "INCONCLUSIVE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "INCONCLUSIVE",
+        "reason": "Node static syntax check refused source"
+      }
+    },
+    {
+      "id": "async-rest",
+      "expected": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "observed": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+        "selector": "value",
+        "source_path": "owned.js",
+        "source_sha256": "2bc5fa41f1127ab86e9a1e58e43a8d371f34d415d867531edd4a82adcc24cf18",
+        "source_bytes": 54,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "producer": {
+          "version": "0.0.2-research",
+          "code_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e",
+          "parser_version": "5.9.3",
+          "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+          "node_version": "v24.22.0"
+        },
+        "static_node_check": true,
+        "limitations": [
+          "Written local ESM export/signature only; package type, build output, imports and actual calls are unverified.",
+          "Missing local callable is never retirement evidence. Supplied source is not loaded or executed."
+        ],
+        "local_selector": "value",
+        "signature": {
+          "parameters": [
+            {
+              "name": "args",
+              "rest": true,
+              "default_expression": null,
+              "default_expression_evaluated": false
+            }
+          ],
+          "async": true,
+          "generator": false
+        },
+        "evidence": {
+          "first_line": 1,
+          "last_line": 1,
+          "quote": "export async function value(...args) { return args; }\n",
+          "quote_sha256": "2bc5fa41f1127ab86e9a1e58e43a8d371f34d415d867531edd4a82adcc24cf18",
+          "complete_unit": true,
+          "quote_byte_start": 0,
+          "quote_byte_end": 54
+        },
+        "export_evidence": {
+          "kind": "direct-export-in-callable-unit",
+          "source_sha256": "2bc5fa41f1127ab86e9a1e58e43a8d371f34d415d867531edd4a82adcc24cf18",
+          "evidence_ref": "evidence"
+        }
+      }
+    },
+    {
+      "id": "no-source-execution",
+      "expected": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "observed": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "WRITTEN_EXPORTED_CALLABLE_FACTS",
+        "selector": "value",
+        "source_path": "owned.js",
+        "source_sha256": "33d7f8b9b7640eb50ec0a6c9b0630d3af0f22990ed90a5572f4b56e263443598",
+        "source_bytes": 154,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "producer": {
+          "version": "0.0.2-research",
+          "code_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e",
+          "parser_version": "5.9.3",
+          "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+          "node_version": "v24.22.0"
+        },
+        "static_node_check": true,
+        "limitations": [
+          "Written local ESM export/signature only; package type, build output, imports and actual calls are unverified.",
+          "Missing local callable is never retirement evidence. Supplied source is not loaded or executed."
+        ],
+        "local_selector": "value",
+        "signature": {
+          "parameters": [
+            {
+              "name": "x",
+              "rest": false,
+              "default_expression": null,
+              "default_expression_evaluated": false
+            }
+          ],
+          "async": false,
+          "generator": false
+        },
+        "evidence": {
+          "first_line": 3,
+          "last_line": 3,
+          "quote": "export function value(x) { return x; }\n",
+          "quote_sha256": "fe994de79e951e073605bd826a07196161c2cc41370156a80c0b40a716233612",
+          "complete_unit": true,
+          "quote_byte_start": 115,
+          "quote_byte_end": 154
+        },
+        "export_evidence": {
+          "kind": "direct-export-in-callable-unit",
+          "source_sha256": "33d7f8b9b7640eb50ec0a6c9b0630d3af0f22990ed90a5572f4b56e263443598",
+          "evidence_ref": "evidence"
+        }
+      }
+    },
+    {
+      "id": "duplicate-json-source",
+      "expected": "INCONCLUSIVE",
+      "observed": "INCONCLUSIVE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "INCONCLUSIVE",
+        "reason": "duplicate JSON field"
+      }
+    },
+    {
+      "id": "escaped-duplicate-json-source",
+      "expected": "INCONCLUSIVE",
+      "observed": "INCONCLUSIVE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "INCONCLUSIVE",
+        "reason": "duplicate JSON field"
+      }
+    },
+    {
+      "id": "empty-explicit-export",
+      "expected": "NO_WRITTEN_EXPORTED_CALLABLE",
+      "observed": "NO_WRITTEN_EXPORTED_CALLABLE",
+      "matches": true,
+      "alias_wire_citation_checked": false,
+      "alias_wire_present": true,
+      "source_execution_marker_absent": true,
+      "result": {
+        "status": "NO_WRITTEN_EXPORTED_CALLABLE",
+        "selector": "value",
+        "source_path": "owned.js",
+        "source_sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+        "source_bytes": 11,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "producer": {
+          "version": "0.0.2-research",
+          "code_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e",
+          "parser_version": "5.9.3",
+          "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+          "node_version": "v24.22.0"
+        },
+        "static_node_check": true,
+        "limitations": [
+          "Written local ESM export/signature only; package type, build output, imports and actual calls are unverified.",
+          "Missing local callable is never retirement evidence. Supplied source is not loaded or executed."
+        ]
+      }
+    }
+  ],
+  "correct": 13,
+  "n": 13,
+  "classification": "OWNED_RESEARCH_CONTROLS_NOT_PUBLIC_HOLDOUT_OR_PERMANENT_SUITE",
+  "new_infrastructure": false,
+  "installed_packages": false,
+  "model_calls": 0
+}

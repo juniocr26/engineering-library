@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-20T12:07:15.755956+00:00",
+  "cases": [
+    {
+      "id": "local-return-class-rebound",
+      "source": "def make():\n    class Value:\n        def __copy__(self):\n            return self\n    Value = Other\n    return Value()\n",
+      "selector": "make",
+      "expected_returned_class_established": false
+    },
+    {
+      "id": "class-method-rebound",
+      "source": "def make():\n    class Value:\n        def __copy__(self):\n            return self\n        __copy__ = None\n    return Value()\n",
+      "selector": "make",
+      "expected_returned_class_established": false
+    },
+    {
+      "id": "class-global-binding",
+      "source": "class Container:\n    global value\n    value=1\n",
+      "selector": "value",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "generic-type-parameters",
+      "source": "def value[T](x: T) -> T:\n    return x\n",
+      "selector": "value",
+      "expected_status": "INCONCLUSIVE"
+    }
+  ],
+  "scope": "Additional fixed ownership counterexamples frozen before candidate V2."
+}

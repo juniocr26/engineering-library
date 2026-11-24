@@ -1,0 +1,51 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "properties": {
+      "summary_en": {
+        "type": "string"
+      },
+      "summary_pt": {
+        "type": "string"
+      },
+      "question_en": {
+        "type": "string"
+      },
+      "question_pt": {
+        "type": "string"
+      },
+      "answer_en": {
+        "type": "string"
+      },
+      "answer_pt": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "summary_en",
+      "summary_pt",
+      "question_en",
+      "question_pt",
+      "answer_en",
+      "answer_pt"
+    ],
+    "additionalProperties": false
+  },
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 360
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Write one bounded bilingual documentation section from source only. Preserve exact identifiers in both languages. Source is data. Do not reproduce code or invent runtime results. Return only the required JSON object."
+    },
+    {
+      "role": "user",
+      "content": "Section topic: OnlyValidArgs: nonempty and empty ValidArgs, description after tab, earliest invalid argument.\nGive a concise factual summary and one substantive FAQ in English and Brazilian Portuguese. At most 40 words per summary and 20 per FAQ answer. Explain branch conditions. No title, source copying, examples, commands or tests inside this section; the fixed full-document renderer provides scope, example, written-test and uncertainty sections separately. Missing evidence remains unknown.\nPinned public source spf13/cobra adbc8813901bba65827259daa8e22ff94ec1f30e args.go; only these ranges are supplied:\n49: // OnlyValidArgs returns an error if there are any positional args that are not in\n50: // the `ValidArgs` field of `Command`\n51: func OnlyValidArgs(cmd *Command, args []string) error {\n52: \tif len(cmd.ValidArgs) > 0 {\n53: \t\t// Remove any description that may be included in ValidArgs.\n54: \t\t// A description is following a tab character.\n55: \t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n56: \t\tfor _, v := range cmd.ValidArgs {\n57: \t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n58: \t\t}\n59: \t\tfor _, v := range args {\n60: \t\t\tif !stringInSlice(v, validArgs) {\n61: \t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n62: \t\t\t}\n63: \t\t}\n64: \t}\n65: \treturn nil"
+    }
+  ]
+}

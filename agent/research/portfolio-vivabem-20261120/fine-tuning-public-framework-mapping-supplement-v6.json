@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-21T08:58:12.633273+00:00",
+  "extends": [
+    "fine-tuning-pilot-proposal-v1.json",
+    "fine-tuning-model-geometry-supplement-v4.json",
+    "fine-tuning-raw-token-proxy-supplement-v5.json"
+  ],
+  "framework_source_review": "public-framework-lora-mapping-review-v1.json",
+  "framework_commit": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "status": "NO-GO",
+  "launch_allowed": false,
+  "training_authorized": false,
+  "optimizer_steps": 0,
+  "configuration_sketch_NOT_EXECUTABLE": {
+    "train": false,
+    "model": null,
+    "data": null,
+    "fine_tune_type": "lora",
+    "num_layers": 2,
+    "lora_parameters": {
+      "rank": 4,
+      "dropout": 0.0,
+      "scale": 1.0,
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ]
+    },
+    "batch_size": 1,
+    "grad_accumulation_steps": 1,
+    "iters": 16,
+    "max_seq_length": 512,
+    "learning_rate": 1e-05,
+    "seed": 0,
+    "save_every": 4,
+    "mask_prompt": "UNVERIFIED_REQUIRED_PREFLIGHT_NOT_VALID_CLI_VALUE"
+  },
+  "new_constants": "Scale1.0/learningrate1e-5/seed0/saveevery4 are explicit unvalidated pilot design choices,not measured superiority or launch permission. Mask/template/model/data placeholders deliberately prevent treating this as runnable configuration.",
+  "mandatory_actual_inventory_before_update": {
+    "target_modules": 4,
+    "adapter_matrices": 8,
+    "adapter_elements": 81920,
+    "frozen_base_parameters": "Everybaseparameter must remain frozen; noextra global targets.",
+    "module_indices_if28layercompatiblebase": [
+      26,
+      27
+    ],
+    "on_mismatch": "Stop;noimplicitwidening/targetdefaultorbudgetincrease."
+  },
+  "budget_preserved": {
+    "updates_max": 16,
+    "batch": 1,
+    "gradient_accumulation": 1,
+    "sequence_max": 512,
+    "rank": 4,
+    "selected_layers": 2,
+    "optimizer_minutes_max": 10,
+    "total_minutes_max": 30
+  },
+  "unmet_prerequisites": [
+    "Owner-approvedrights-clearedGoldtargets0 and matched independent evaluation",
+    "Compatiblepinnedtrainablebase/tokenizer/template/assistantmask/fullsequencefit",
+    "Installedverifiedframework/runtime and actualtrainableinventory/resourcepeak",
+    "Trainablecheckpoint/optimizer/RNG/data-cursor persistence/exactresume androllback",
+    "Specific future installation/download/run/resourceauthorization;currentcampaignforbidstraining"
+  ],
+  "future_fallbacks": "Noapprovedmodel/data/framework/memory/mask/state meansNO-GO;donotfall backtoCLIdefaultQwen/WikiSQL/alltargets/globalkeysortrainingoncurrenteval/privatecorpus.",
+  "not_a_training_execution_prompt": true
+}

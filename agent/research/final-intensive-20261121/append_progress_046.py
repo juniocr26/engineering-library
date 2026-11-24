@@ -1,0 +1,19 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Progresso intensivo 046 — revisão integral do alvo Rails, com recuperação pendente
+
+O par original Rails request-methods foi revisto inteiro, com três FAQs, a fonte pública completa de 546 linhas e duas respostas históricas. A identidade é actionpack 8.1.4 instalado junto do checksum de request.rb, não um commit Git. A licença MIT e o gemspec foram preservados como dados; não houve require, eval ou execução desses arquivos. O Ripper de Ruby 2.6.10 analisou o arquivo inteiro sem diagnósticos. A árvore já registrada confirmou os cinco métodos dentro do escopo lexical ActionDispatch::Request, sem alegação de binding ou ancestrais em execução. Essa análise não valida a compatibilidade de execução do framework, que exige Ruby >= 3.2.
+
+Os quatro trechos enviados originalmente ao modelo eram parciais. O braço com dica manteve os mesmos textos e acrescentou os nomes e posições corretos. Ainda assim, sua resposta atribuiu a request_method a busca de duas chaves que pertence ao ramo sem argumentos de method. No baseline, a segunda explicação em português também trocou o getter usado na busca de símbolo. A revisão mantém essas falhas históricas distintas dos corpos corretos e não declara um vencedor geral entre métodos de preparação.
+
+Os getters usam memoização por truthiness, as duas buscas de símbolo preservam chamadas diferentes e check_method termina com o nome recebido, não com o símbolo usado na validação. O fallback usa o valor retornado, não presença explícita da chave; String vazia é truthy. O arquivo completo também contém um setter de request_method fora dos quatro getters selecionados. Por isso, a ausência de invalidação descrita no capítulo permanece delimitada a esses corpos, sem virar uma afirmação falsa sobre todo o arquivo ou mudanças arbitrárias de ambiente.
+
+Onze grupos compostos de fonte e onze contestações foram adjudicados pelo mesmo agente. As duas línguas preservam identificadores, condições, negações e intenções das FAQs; os dois links de evidência resolvem bytes exatos. G1 a G8 passaram no escopo congelado, sem mudança do texto original. G9 ainda depende da recuperação efetiva do checkpoint 033. O consumidor local verificou fonte, árvore sintática, propriedade lexical, respostas, trechos e documentos, sem executar métodos Rails ou testes da aplicação. A campanha continua ativa, sem geração neural local, treinamento, publicação ou Gold.
+'''
+j=p/'root-report-bundle-progress-046';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v46.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

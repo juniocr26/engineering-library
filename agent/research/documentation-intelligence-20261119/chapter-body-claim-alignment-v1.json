@@ -1,0 +1,1700 @@
+{
+  "at": "2026-11-20T07:08:29.441089+00:00",
+  "schema": "manual-priority-chapter-body-claim-alignment-v1",
+  "status": "THREE_PRIORITY_BILINGUAL_BODIES_PHYSICALLY_SOURCE_MAPPED_WITH_LIMITS",
+  "chapter_pairs": 3,
+  "prose_claim_groups": 36,
+  "document_language_spans": 72,
+  "unique_source_spans": 34,
+  "coverage": [
+    {
+      "chapter": "starlette-server-error-flow",
+      "pre_FAQ_prose_paragraphs": 12,
+      "mapped_prose_paragraphs": 12,
+      "language_spans": 24,
+      "not_claimed": "No independenthuman approval, automatic entailment, completeatomicclaim segmentation or remaining22chapterbody coverage."
+    },
+    {
+      "chapter": "sdk-dynamic-retry-policy",
+      "pre_FAQ_prose_paragraphs": 12,
+      "mapped_prose_paragraphs": 12,
+      "language_spans": 24,
+      "not_claimed": "No independenthuman approval, automatic entailment, completeatomicclaim segmentation or remaining22chapterbody coverage."
+    },
+    {
+      "chapter": "owned-adapter",
+      "pre_FAQ_prose_paragraphs": 12,
+      "mapped_prose_paragraphs": 12,
+      "language_spans": 24,
+      "not_claimed": "No independenthuman approval, automatic entailment, completeatomicclaim segmentation or remaining22chapterbody coverage."
+    }
+  ],
+  "source_spans": [
+    {
+      "id": "source-span-001",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 149,
+      "last_line": 186,
+      "quote": "    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:\n        if scope[\"type\"] != \"http\":\n            await self.app(scope, receive, send)\n            return\n\n        response_started = False\n\n        async def _send(message: Message) -> None:\n            nonlocal response_started, send\n\n            if message[\"type\"] == \"http.response.start\":\n                response_started = True\n            await send(message)\n\n        try:\n            await self.app(scope, receive, _send)\n        except Exception as exc:\n            request = Request(scope)\n            if self.debug:\n                # In debug mode, return traceback responses.\n                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n\n            if not response_started:\n                await response(scope, receive, send)\n\n            # We always continue to raise the exception.\n            # This allows servers to log the error, or allows test clients\n            # to optionally raise the error within the test case.\n            raise exc\n",
+      "quote_sha256": "a7d082263a5c5b23402d007a737a41794167b63e20ab0346e600189b6a592e19"
+    },
+    {
+      "id": "source-span-002",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 149,
+      "last_line": 152,
+      "quote": "    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:\n        if scope[\"type\"] != \"http\":\n            await self.app(scope, receive, send)\n            return\n",
+      "quote_sha256": "cb999b43c5a0c6bd6dcf4e340c519d0c5c79ab06c78b784ac5c82201655cc67f"
+    },
+    {
+      "id": "source-span-003",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 149,
+      "last_line": 168,
+      "quote": "    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:\n        if scope[\"type\"] != \"http\":\n            await self.app(scope, receive, send)\n            return\n\n        response_started = False\n\n        async def _send(message: Message) -> None:\n            nonlocal response_started, send\n\n            if message[\"type\"] == \"http.response.start\":\n                response_started = True\n            await send(message)\n\n        try:\n            await self.app(scope, receive, _send)\n        except Exception as exc:\n            request = Request(scope)\n            if self.debug:\n                # In debug mode, return traceback responses.\n",
+      "quote_sha256": "53212fd761d4e389f847deab4293120af0d97b7c3c4d4ae75b462fc155b4b09f"
+    },
+    {
+      "id": "source-span-004",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 154,
+      "last_line": 162,
+      "quote": "        response_started = False\n\n        async def _send(message: Message) -> None:\n            nonlocal response_started, send\n\n            if message[\"type\"] == \"http.response.start\":\n                response_started = True\n            await send(message)\n\n",
+      "quote_sha256": "1ded12850ee21bb379d33e5807edf61b4cba24b47a6c1cd62a3143700a977289"
+    },
+    {
+      "id": "source-span-005",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 183,
+      "last_line": 186,
+      "quote": "            # We always continue to raise the exception.\n            # This allows servers to log the error, or allows test clients\n            # to optionally raise the error within the test case.\n            raise exc\n",
+      "quote_sha256": "47bc2b659ba17fe335eae97e061ff8d73e206ff64b5c9fe7c5df906498129776"
+    },
+    {
+      "id": "source-span-006",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 169,
+      "last_line": 177,
+      "quote": "                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n",
+      "quote_sha256": "c67f1d461469be8f48595b78d2902e04a1538bd3c69f9b2d2fb05800e895d32a"
+    },
+    {
+      "id": "source-span-007",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 139,
+      "last_line": 147,
+      "quote": "    def __init__(\n        self,\n        app: ASGIApp,\n        handler: ExceptionHandler | None = None,\n        debug: bool = False,\n    ) -> None:\n        self.app = app\n        self.handler = handler\n        self.debug = debug\n",
+      "quote_sha256": "4c00e0c907fab5db42b801b330bd854547ef3710216ed8721b300a0688cbb424"
+    },
+    {
+      "id": "source-span-008",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 174,
+      "last_line": 181,
+      "quote": "                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n\n            if not response_started:\n                await response(scope, receive, send)\n",
+      "quote_sha256": "9d736792b82fdf4f45e4b95beee55712ca61a8319b03085a4c50ba462cdfbb16"
+    },
+    {
+      "id": "source-span-009",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/concurrency.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/concurrency.py",
+      "full_file_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83",
+      "first_line": 32,
+      "last_line": 34,
+      "quote": "async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:\n    func = functools.partial(func, *args, **kwargs)\n    return await anyio.to_thread.run_sync(func)\n",
+      "quote_sha256": "d6ae32f8faf0bafe2369d4009f7e3726f921da3364396d74dd868a28216a66cc"
+    },
+    {
+      "id": "source-span-010",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/_utils.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/_utils.py",
+      "full_file_sha256": "413355d540af9e719cefaa92c1ed70af338e263c375cb336644309b1d242a6f4",
+      "first_line": 61,
+      "last_line": 65,
+      "quote": "def is_async_callable(obj: Any) -> Any:\n    while isinstance(obj, functools.partial):\n        obj = obj.func\n\n    return iscoroutinefunction(obj) or (callable(obj) and iscoroutinefunction(obj.__call__))\n",
+      "quote_sha256": "6af4ce5d8c6a16cf5d3235805fb50bec894796d05abc526a3f804d221f31764f"
+    },
+    {
+      "id": "source-span-011",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 249,
+      "last_line": 259,
+      "quote": "    def debug_response(self, request: Request, exc: Exception) -> Response:\n        accept = request.headers.get(\"accept\", \"\")\n\n        if \"text/html\" in accept:\n            content = self.generate_html(exc)\n            return HTMLResponse(content, status_code=500)\n        content = self.generate_plain_text(exc)\n        return PlainTextResponse(content, status_code=500)\n\n    def error_response(self, request: Request, exc: Exception) -> Response:\n        return PlainTextResponse(\"Internal Server Error\", status_code=500)\n",
+      "quote_sha256": "dbd7f62fd03ebaf5fe90715dd8afe57a31cc60861e7eb6db0cbb427a03ce27a3"
+    },
+    {
+      "id": "source-span-012",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 169,
+      "last_line": 184,
+      "quote": "                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n\n            if not response_started:\n                await response(scope, receive, send)\n\n            # We always continue to raise the exception.\n            # This allows servers to log the error, or allows test clients\n",
+      "quote_sha256": "48edb5a95ba54a49d7775eb43923c8a7d8bfd5291f1ded194f29b7669b8c975d"
+    },
+    {
+      "id": "source-span-013",
+      "repository": "starlette",
+      "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+      "source_path": "starlette/middleware/errors.py",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/starlette/starlette/middleware/errors.py",
+      "full_file_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "first_line": 169,
+      "last_line": 186,
+      "quote": "                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n\n            if not response_started:\n                await response(scope, receive, send)\n\n            # We always continue to raise the exception.\n            # This allows servers to log the error, or allows test clients\n            # to optionally raise the error within the test case.\n            raise exc\n",
+      "quote_sha256": "1131302dea8ac5ebf7d84fd87c51daf1e1761aba3d3d649b231b2cf2d26924d1"
+    },
+    {
+      "id": "source-span-014",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 1,
+      "last_line": 38,
+      "quote": "package internal\n\n// All code in this file is private to the package.\n\nimport (\n\t\"context\"\n\t\"time\"\n\n\t\"go.temporal.io/sdk/internal/common/backoff\"\n)\n\nconst (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n)\n\n// Creates a retry policy which allows appropriate retries for the deadline passed in as context.\n// It uses the context deadline to set MaxInterval as 1/10th of context timeout\n// MaxInterval = Max(context_timeout/10, 20ms)\n// defaults to ExpirationInterval of 60 seconds, or uses context deadline as expiration interval\nfunc createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n}\n",
+      "quote_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e"
+    },
+    {
+      "id": "source-span-015",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 30,
+      "last_line": 31,
+      "quote": "\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n",
+      "quote_sha256": "73c114c8804c01d54e4ad7d633da599c3c32c8e60cc31304e70312466bcb27d0"
+    },
+    {
+      "id": "source-span-016",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 22,
+      "last_line": 38,
+      "quote": "func createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n}\n",
+      "quote_sha256": "3da6c04ee8a7f675ac9e53ce368793d6a5ac5d4b0e0625e7e2263c27389374c0"
+    },
+    {
+      "id": "source-span-017",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/common/backoff/retrypolicy.go",
+      "full_file_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+      "first_line": 58,
+      "last_line": 67,
+      "quote": "func NewExponentialRetryPolicy(initialInterval time.Duration) *ExponentialRetryPolicy {\n\tp := &ExponentialRetryPolicy{\n\t\tinitialInterval:    initialInterval,\n\t\tbackoffCoefficient: retry.DefaultBackoffCoefficient,\n\t\tmaximumInterval:    retry.DefaultMaximumInterval,\n\t\texpirationInterval: retry.DefaultExpirationInterval,\n\t\tmaximumAttempts:    retry.DefaultMaximumAttempts,\n\t}\n\n\treturn p\n",
+      "quote_sha256": "60ab0c48f052b2cb2da7ef5fd1d29406c81d7044eae8ccd1580396f32cbd0525"
+    },
+    {
+      "id": "source-span-018",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/common/backoff/retrypolicy.go",
+      "full_file_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+      "first_line": 90,
+      "last_line": 102,
+      "quote": "func (p *ExponentialRetryPolicy) SetBackoffCoefficient(backoffCoefficient float64) {\n\tp.backoffCoefficient = backoffCoefficient\n}\n\n// SetMaximumInterval sets the maximum interval for each retry\nfunc (p *ExponentialRetryPolicy) SetMaximumInterval(maximumInterval time.Duration) {\n\tp.maximumInterval = maximumInterval\n}\n\n// SetExpirationInterval sets the absolute expiration interval for all retries\nfunc (p *ExponentialRetryPolicy) SetExpirationInterval(expirationInterval time.Duration) {\n\tp.expirationInterval = expirationInterval\n}\n",
+      "quote_sha256": "9862499c5bd68b455ac5a35d6f9322fb1778492b18899f721750e7d40cb5d3ae"
+    },
+    {
+      "id": "source-span-019",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 11,
+      "last_line": 20,
+      "quote": "\nconst (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n)\n\n// Creates a retry policy which allows appropriate retries for the deadline passed in as context.\n// It uses the context deadline to set MaxInterval as 1/10th of context timeout\n// MaxInterval = Max(context_timeout/10, 20ms)\n",
+      "quote_sha256": "ead69f348ba1d0149616bb99b2107f893019aa38d4ac306de5783ce15b5c49d1"
+    },
+    {
+      "id": "source-span-020",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 22,
+      "last_line": 29,
+      "quote": "func createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n",
+      "quote_sha256": "168ddbd06f9851a99489ddf9c9cbe67e7df922d4332de0b615c90138faff49af"
+    },
+    {
+      "id": "source-span-021",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 23,
+      "last_line": 29,
+      "quote": "\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n",
+      "quote_sha256": "4e09f53642ab8a5f3fad2d40a0d3c1caa1a74f7b6c6ece9a6b879b6bd95ede18"
+    },
+    {
+      "id": "source-span-022",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 33,
+      "last_line": 37,
+      "quote": "\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n",
+      "quote_sha256": "d5ff8f09100c88cd1d2499878f6e20d74110117c1b7e6c65a322ce01acd4927d"
+    },
+    {
+      "id": "source-span-023",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 11,
+      "last_line": 15,
+      "quote": "\nconst (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n",
+      "quote_sha256": "59de67ed91f97871ebf8555e297fe00a3e0ccf542efcc67ffeaab39d47c09e31"
+    },
+    {
+      "id": "source-span-024",
+      "repository": "sdk-go",
+      "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+      "source_path": "internal/internal_retry.go",
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/sdk-go/internal/internal_retry.go",
+      "full_file_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "first_line": 30,
+      "last_line": 37,
+      "quote": "\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n",
+      "quote_sha256": "3993f8bb3aa0966db7ad86ff68ab8963e74f0fb30020c48ab68f732b915441e8"
+    },
+    {
+      "id": "source-span-025",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/domain.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/domain.py",
+      "full_file_sha256": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+      "first_line": 1,
+      "last_line": 15,
+      "quote": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+      "quote_sha256": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164"
+    },
+    {
+      "id": "source-span-026",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/client.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/client.py",
+      "full_file_sha256": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+      "first_line": 1,
+      "last_line": 8,
+      "quote": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+      "quote_sha256": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa"
+    },
+    {
+      "id": "source-span-027",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/adapter.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/adapter.py",
+      "full_file_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+      "first_line": 1,
+      "last_line": 22,
+      "quote": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n    def __init__(self, client: JsonClient, token: str, timeout: float = 2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n            )\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable(\"gateway unavailable\") from error\n        return balance_from_payload(account_id, payload)\n",
+      "quote_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389"
+    },
+    {
+      "id": "source-span-028",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/service.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/service.py",
+      "full_file_sha256": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523",
+      "first_line": 1,
+      "last_line": 9,
+      "quote": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n",
+      "quote_sha256": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+    },
+    {
+      "id": "source-span-029",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "examples/balance_summary.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/examples/balance_summary.py",
+      "full_file_sha256": "d26104e8f2a188241c514ee573d4f0ede899e81a7204d90e71988e72aeadca5b",
+      "first_line": 1,
+      "last_line": 13,
+      "quote": "\"\"\"Executable documentation example using only the preserved synthetic fake.\"\"\"\nimport json\nfrom pathlib import Path\nimport sys\n\nsys.path.insert(0, str(Path(__file__).resolve().parents[1] / \"source\"))\nfrom adapter import BalanceAdapter\nfrom service import BalanceService\nfrom test_adapter import FakeClient\n\nclient = FakeClient({\"available_minor\": 7, \"currency\": \"TST\"})\nservice = BalanceService(BalanceAdapter(client, \"SYNTHETIC-NOT-A-CREDENTIAL\"))\nprint(json.dumps(service.summary(\"fixture-account\"), sort_keys=True))\n",
+      "quote_sha256": "d26104e8f2a188241c514ee573d4f0ede899e81a7204d90e71988e72aeadca5b"
+    },
+    {
+      "id": "source-span-030",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/mapping.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/mapping.py",
+      "full_file_sha256": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+      "first_line": 1,
+      "last_line": 11,
+      "quote": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+      "quote_sha256": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b"
+    },
+    {
+      "id": "source-span-031",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/adapter.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/adapter.py",
+      "full_file_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+      "first_line": 11,
+      "last_line": 22,
+      "quote": "    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n            )\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable(\"gateway unavailable\") from error\n        return balance_from_payload(account_id, payload)\n",
+      "quote_sha256": "ff28a6c5b813bdfc58eecb4509872b3017b53d786ca166b53c11af3b9992f719"
+    },
+    {
+      "id": "source-span-032",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/mapping.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/mapping.py",
+      "full_file_sha256": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+      "first_line": 4,
+      "last_line": 11,
+      "quote": "def balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+      "quote_sha256": "f8c7c0a583159341cdd574e6eedc4c48efe7a8673e60f94ccfed53627f2e80a3"
+    },
+    {
+      "id": "source-span-033",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/test_adapter.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/test_adapter.py",
+      "full_file_sha256": "5d74e3294b1c67e7b14466d81d33b90610b0adddecd2ab62755da8da4ea4ce41",
+      "first_line": 7,
+      "last_line": 16,
+      "quote": "class FakeClient:\n    def __init__(self, payload=None, error=None):\n        self.payload = {\"available_minor\": 7, \"currency\": \"TST\"} if payload is None else payload\n        self.error = error\n        self.calls = []\n    def get(self, path, *, headers, timeout):\n        self.calls.append((path, headers, timeout))\n        if self.error:\n            raise self.error\n        return self.payload\n",
+      "quote_sha256": "aa3a4c0fd93306ac3c68d03e36ddee2884563f7a8218ddc22a525c9f5df1bfee"
+    },
+    {
+      "id": "source-span-034",
+      "repository": "engineering-library-synthetic-owned-adapter",
+      "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+      "source_path": "source/test_adapter.py",
+      "frozen_source": "agent/research/documentation-intelligence-20261119/owned-adapter/source/test_adapter.py",
+      "full_file_sha256": "5d74e3294b1c67e7b14466d81d33b90610b0adddecd2ab62755da8da4ea4ce41",
+      "first_line": 1,
+      "last_line": 53,
+      "quote": "import unittest\nfrom adapter import BalanceAdapter\nfrom client import GatewayUnavailable\nfrom domain import BalanceUnavailable\nfrom service import BalanceService\n\nclass FakeClient:\n    def __init__(self, payload=None, error=None):\n        self.payload = {\"available_minor\": 7, \"currency\": \"TST\"} if payload is None else payload\n        self.error = error\n        self.calls = []\n    def get(self, path, *, headers, timeout):\n        self.calls.append((path, headers, timeout))\n        if self.error:\n            raise self.error\n        return self.payload\n\nclass AdapterTest(unittest.TestCase):\n    def test_service_consumes_adapter_and_exact_request_mapping(self):\n        client = FakeClient()\n        result = BalanceService(BalanceAdapter(client, \"SYNTHETIC-NOT-A-CREDENTIAL\")).summary(\"fixture-account\")\n        self.assertEqual({\"account\": \"fixture-account\", \"available_minor\": 7, \"currency\": \"TST\"}, result)\n        self.assertEqual([(\"/sandbox/accounts/fixture-account/balance\", {\"Authorization\": \"Bearer SYNTHETIC-NOT-A-CREDENTIAL\"}, 2.0)], client.calls)\n    def test_gateway_error_translates_once_with_cause(self):\n        original = GatewayUnavailable(\"fixture failure\")\n        client = FakeClient(error=original)\n        with self.assertRaises(BalanceUnavailable) as raised:\n            BalanceAdapter(client, \"SYNTHETIC\").read(\"fixture-account\")\n        self.assertIs(original, raised.exception.__cause__)\n        self.assertEqual(1, len(client.calls))\n    def test_mapping_rejects_boolean_amount(self):\n        client = FakeClient({\"available_minor\": True, \"currency\": \"TST\"})\n        with self.assertRaisesRegex(ValueError, \"integer\"):\n            BalanceAdapter(client, \"SYNTHETIC\").read(\"fixture-account\")\n    def test_unhandled_missing_payload_key_propagates(self):\n        with self.assertRaises(KeyError):\n            BalanceAdapter(FakeClient({}), \"SYNTHETIC\").read(\"fixture-account\")\n    def test_unrelated_client_error_is_not_relabelled(self):\n        with self.assertRaisesRegex(TimeoutError, \"fixture timeout\"):\n            BalanceAdapter(FakeClient(error=TimeoutError(\"fixture timeout\")), \"SYNTHETIC\").read(\"fixture-account\")\n    def test_invalid_account_does_not_call_client(self):\n        client = FakeClient()\n        for account in (\"\", \"a/b\"):\n            with self.assertRaises(ValueError):\n                BalanceAdapter(client, \"SYNTHETIC\").read(account)\n        self.assertEqual([], client.calls)\n    def test_timeout_override_is_only_forwarded(self):\n        client = FakeClient()\n        BalanceAdapter(client, \"SYNTHETIC\", timeout=0.25).read(\"fixture-account\")\n        self.assertEqual(0.25, client.calls[0][2])\n    def test_currency_validation_is_length_not_iso_or_uppercase(self):\n        client = FakeClient({\"available_minor\": 7, \"currency\": \"abc\"})\n        self.assertEqual(\"abc\", BalanceAdapter(client, \"SYNTHETIC\").read(\"fixture-account\").currency)\n",
+      "quote_sha256": "5d74e3294b1c67e7b14466d81d33b90610b0adddecd2ab62755da8da4ea4ce41"
+    }
+  ],
+  "records": [
+    {
+      "id": "starlette-server-error-flow:body-paragraph:01",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "EDITORIAL_STATUS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 3,
+          "last_line": 3,
+          "quote": "Codex-authored source-reviewed correction; pending owner approval.\n",
+          "quote_sha256": "b228e9125c040b09060fc695faf978969e2cbf8507b76f91dfef847051b261c5"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 3,
+          "last_line": 3,
+          "quote": "Correção escrita pelo Codex e revisada contra a fonte; pendente de aprovação do proprietário.\n",
+          "quote_sha256": "79dd1ac6dba9cd11a1dde489954bf81fe383ca7b1efb08120266463012474717"
+        }
+      },
+      "source_span_ids": [],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Authored correction and pending owner approval are campaign metadata.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:02",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "PROVENANCE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 5,
+          "last_line": 5,
+          "quote": "Starlette revision 271c277da0ff64e2048a4d46ecc812b9d61db5f6; actual preserved baseline: starlette-server-error-contract. [Exact source excerpts](source-excerpts.json).\n",
+          "quote_sha256": "8156eb44a372b71da0755fc9378e2f577a6912feeae4588b505998e18ea7b8e2"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 5,
+          "last_line": 5,
+          "quote": "Starlette revision 271c277da0ff64e2048a4d46ecc812b9d61db5f6; actual preserved baseline: starlette-server-error-contract. [Exact source excerpts](source-excerpts.json).\n",
+          "quote_sha256": "8156eb44a372b71da0755fc9378e2f577a6912feeae4588b505998e18ea7b8e2"
+        }
+      },
+      "source_span_ids": [
+        "source-span-001"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/chapter-source-reverification.json",
+          "sha256": "9d681d56040514e18f4a122544c9db4c500eae20aa4f2eebd4183634f2c9fdbd",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Frozen revision and original baseline identity are traceability, not current deployed runtime.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:03",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 9,
+          "last_line": 9,
+          "quote": "The actual local-agent baseline claimed that this middleware is only called for HTTP. The selected method shows a different boundary: when `scope[\"type\"] != \"http\"`, it awaits `self.app(scope, receive, send)` and returns. The middleware can therefore be invoked for another scope type and delegate it. That application call is outside the later HTTP try block and uses the original send callable.\n",
+          "quote_sha256": "017975c1c89cb1389a2371be304c7aedcde8b5cc77235f0369c851c281ee5e1d"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 9,
+          "last_line": 9,
+          "quote": "O baseline real do agente local afirmou que esse middleware só é chamado para HTTP. O método selecionado mostra outra fronteira: quando `scope[\"type\"] != \"http\"`, aguarda `self.app(scope, receive, send)` e retorna. Portanto, o middleware pode ser invocado para outro tipo de escopo e delegá-lo. Essa chamada à aplicação fica fora do bloco try HTTP posterior e usa o callable send original.\n",
+          "quote_sha256": "cc07c4d6dd2ea1afc554ca78c1d99a77f5c340ed00c441c2f25ffdc7163d4849"
+        }
+      },
+      "source_span_ids": [
+        "source-span-002"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Non-HTTP app delegation is outside the later HTTP try; this does not observe deployment protocol traffic.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:04",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 11,
+          "last_line": 11,
+          "quote": "For HTTP, the method creates a local `response_started` flag, initially false, and defines a wrapped sender. It then awaits `self.app(scope, receive, _send)` inside the try. These are distinct paths, rather than one universal call using the wrapper. If the HTTP application completes normally, the method has no written response-object return; its declared result is None. A protocol gate must not be confused with an assertion that the object can never receive a non-HTTP scope.\n",
+          "quote_sha256": "f0a20f0abee21c60622fe5c752b6b3b5b61574b1320b60cebdf5740b57550945"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 11,
+          "last_line": 11,
+          "quote": "Para HTTP, o método cria uma flag local `response_started`, inicialmente falsa, e define um emissor envolvente. Então aguarda `self.app(scope, receive, _send)` dentro do try. Esses são caminhos distintos, em vez de uma chamada universal usando o wrapper. Se a aplicação HTTP conclui normalmente, o método não tem retorno escrito de objeto de resposta; seu resultado declarado é None. Uma guarda de protocolo não deve ser confundida com a afirmação de que o objeto nunca pode receber um escopo não HTTP.\n",
+          "quote_sha256": "7cbab5540931c31a25403376b3fcf065669c35aeec6e56650c1883d334da00a8"
+        }
+      },
+      "source_span_ids": [
+        "source-span-003"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "HTTP wrapper and try path differ from non-HTTP; None annotation and absence of explicit object return do not validate arbitrary app behavior.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:05",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 15,
+          "last_line": 15,
+          "quote": "The wrapper checks `message[\"type\"] == \"http.response.start\"`. When that comparison succeeds, it sets `response_started` to true before awaiting the original `send(message)`. The flag is captured with nonlocal for this invocation. It is not a count of bytes delivered, a confirmation from a client or a verified network response status.\n",
+          "quote_sha256": "4b44051b6ae77d4cb8dd0cd88d220010240e25668e3f0824c56f4416b45dd42c"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 15,
+          "last_line": 15,
+          "quote": "O wrapper verifica `message[\"type\"] == \"http.response.start\"`. Quando essa comparação tem sucesso, define `response_started` como verdadeira antes de aguardar o `send(message)` original. A flag é capturada com nonlocal para essa invocação. Não é uma contagem de bytes entregues, uma confirmação de cliente ou um status de resposta de rede verificado.\n",
+          "quote_sha256": "c3c45ced692b1e293a5f67a9dd891237e1a31960d6aeafdd86af07da49e6a432"
+        }
+      },
+      "source_span_ids": [
+        "source-span-004"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Local flag changes before awaited send; no wire-delivery acknowledgment is inferred.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:06",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 17,
+          "last_line": 17,
+          "quote": "That ordering matters when the original sender itself fails: the local marker has already been set before that awaited call completes. The selected body does not validate every ASGI message sequence or establish that a start message reached the network. It uses this local marker later to decide whether to invoke the generated error response. The baseline noticed a start flag at a high level, but its Portuguese text changed the source identifier. This correction keeps `response_started` unchanged in both languages.\n",
+          "quote_sha256": "3bb00e373cf8fb26b8b6ad62a50de1cef6bfe317bacf3cf74ae76ec707c38f5f"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 17,
+          "last_line": 17,
+          "quote": "Essa ordem importa quando o próprio emissor original falha: o marcador local já foi definido antes de essa chamada aguardada concluir. O corpo selecionado não valida toda sequência de mensagens ASGI nem estabelece que uma mensagem de início chegou à rede. Usa esse marcador local depois para decidir se invoca a resposta de erro gerada. O baseline percebeu uma flag de início em alto nível, mas seu texto em português alterou o identificador da fonte. Esta correção mantém `response_started` inalterado nos dois idiomas.\n",
+          "quote_sha256": "4435ffeb709645d885e16c649a01421d3ecf3a5273ee383e82a039f3732737ec"
+        }
+      },
+      "source_span_ids": [
+        "source-span-004",
+        "source-span-005"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Possible send failure after local flag assignment is a source-order implication, conditional on reaching the calls.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:07",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 21,
+          "last_line": 21,
+          "quote": "The HTTP error branch is `except Exception as exc`. It constructs `Request(scope)`, then selects a response. A truthy `self.debug` takes precedence and awaits `run_in_threadpool(self.debug_response, request, exc)`. Otherwise, `self.handler is None` selects the synchronous default `error_response` call. A configured custom handler reaches the separate `is_async_callable` predicate.\n",
+          "quote_sha256": "eec651c2ea42db9d4f59c8623332f3a04da27433590bf066a7794ddf161eeb37"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 21,
+          "last_line": 21,
+          "quote": "O ramo de erro HTTP é `except Exception as exc`. Ele constrói `Request(scope)` e então seleciona uma resposta. Um `self.debug` verdadeiro no teste de truthiness tem precedência e aguarda `run_in_threadpool(self.debug_response, request, exc)`. Caso contrário, `self.handler is None` seleciona a chamada síncrona padrão a `error_response`. Um handler customizado configurado alcança o predicado separado `is_async_callable`.\n",
+          "quote_sha256": "ea68eba67c913d78a90021901f3a41fa35ad17a2ccebdc25b37f5e1ef3f1f352"
+        }
+      },
+      "source_span_ids": [
+        "source-span-006"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Exception selection and truthy-debug precedence; no claim custom handler runs in every branch.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:08",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 23,
+          "last_line": 23,
+          "quote": "When that predicate succeeds, the custom handler is awaited directly with request and exc. Otherwise it is passed to `run_in_threadpool` with those arguments. This does not mean the method invokes both forms or always invokes a configured custom handler in debug mode. The constructor excerpt stores app, handler and debug, with handler defaulting to None and debug to false; these annotations and assignments are not runtime validation of every possible configured object.\n",
+          "quote_sha256": "d3c89d7df2b1ea514cc628f17140b7003e9e16fe218fc89b0de6af214877a0e9"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 23,
+          "last_line": 23,
+          "quote": "Quando esse predicado tem sucesso, o handler customizado é aguardado diretamente com request e exc. Caso contrário, é passado a `run_in_threadpool` com esses argumentos. Isso não significa que o método invoque as duas formas ou sempre invoque um handler customizado configurado no modo debug. O trecho do construtor armazena app, handler e debug, com handler tendo None como padrão e debug falso; essas anotações e atribuições não são validação em execução de todo objeto configurado possível.\n",
+          "quote_sha256": "f50a285e936fe400aa44868a7e5ea789d11bd6c13b87995dbf8ee8e0314a2282"
+        }
+      },
+      "source_span_ids": [
+        "source-span-007",
+        "source-span-008"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Sync/async custom paths are exclusive under the written predicate; annotations are not universal runtime validation.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:09",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 27,
+          "last_line": 27,
+          "quote": "The manually expanded `run_in_threadpool` body binds the callable and arguments with `functools.partial`, then returns the awaited result of `anyio.to_thread.run_sync(func)`. The source shows result propagation through that helper. It does not provide a runtime observation of a particular worker thread, cancellation policy or application completion.\n",
+          "quote_sha256": "b88ede8a762e374776dfd4bd57b28b209236622b15cb4478597ed30db8c756b0"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 27,
+          "last_line": 27,
+          "quote": "O corpo de `run_in_threadpool` expandido manualmente associa o callable e os argumentos com `functools.partial` e então retorna o resultado aguardado de `anyio.to_thread.run_sync(func)`. A fonte mostra propagação do resultado através desse helper. Não fornece observação em execução de uma thread de trabalho específica, política de cancelamento ou conclusão da aplicação.\n",
+          "quote_sha256": "86ac217673c855e93b509dbb53b44f24bdc48d66447486c032558c08296ccd75"
+        }
+      },
+      "source_span_ids": [
+        "source-span-009"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Delegates partial to AnyIO and propagates awaited result; no worker scheduling/cancellation guarantee.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:10",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 29,
+          "last_line": 29,
+          "quote": "The supplied `is_async_callable` implementation repeatedly unwraps `functools.partial` objects. It then tests `iscoroutinefunction` on the object or, if callable, on its `__call__` member. This is the written predicate, not a universal classifier of every object that might return an awaitable. The response-builder excerpts are also concrete: `error_response` constructs `PlainTextResponse` with the literal `Internal Server Error` and status 500; `debug_response` chooses HTML when the accept header contains `text/html`, otherwise plain text, with status 500 in both written branches. Their formatting helpers were not expanded into a promise about escaping or traceback content.\n",
+          "quote_sha256": "ee1dea14e95badcc636a6d4a8066ee3a80a14355341f9ff9acd61d548e63e715"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 29,
+          "last_line": 29,
+          "quote": "A implementação fornecida de `is_async_callable` desembrulha repetidamente objetos `functools.partial`. Então testa `iscoroutinefunction` no objeto ou, se ele é callable, em seu membro `__call__`. Esse é o predicado escrito, não um classificador universal de todo objeto que possa retornar um awaitable. Os trechos dos construtores de resposta também são concretos: `error_response` constrói `PlainTextResponse` com o literal `Internal Server Error` e status 500; `debug_response` escolhe HTML quando o cabeçalho accept contém `text/html`, caso contrário texto simples, com status 500 nos dois ramos escritos. Seus helpers de formatação não foram expandidos para uma promessa sobre escaping ou conteúdo de traceback.\n",
+          "quote_sha256": "51a7bd8a6e7dd270a187798da929e5eb83ad32f9f92a0ff6307815debc37ce1c"
+        }
+      },
+      "source_span_ids": [
+        "source-span-010",
+        "source-span-011"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Predicate unwraps partial and checks coroutine functions; error response builders contain literal500 but formatting dependencies remain unexpanded.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:11",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 33,
+          "last_line": 33,
+          "quote": "The response-selection block runs before the check of `response_started`. Thus even when a response has already started according to the local marker, this body still selects and constructs its error response, subject to normal helper completion. Only the later `if not response_started` branch awaits `response(scope, receive, send)`, using the original sender. Saying that the handler is never called after a start event would overstate this guard.\n",
+          "quote_sha256": "2a470beac8b8f1e1ad10370f70af2e93328fefaa7e7a8eddaa32573d3d0a438c"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 33,
+          "last_line": 33,
+          "quote": "O bloco de seleção de resposta executa antes da verificação de `response_started`. Assim, mesmo quando uma resposta já começou segundo o marcador local, este corpo ainda seleciona e constrói sua resposta de erro, condicionado à conclusão normal dos helpers. Apenas o ramo posterior `if not response_started` aguarda `response(scope, receive, send)`, usando o emissor original. Dizer que o handler nunca é chamado após um evento de início exageraria essa guarda.\n",
+          "quote_sha256": "ac7ccf9d67cb46b6c94672ad72b5d10d1783893a8cc2791d5bbc0adba9551425"
+        }
+      },
+      "source_span_ids": [
+        "source-span-012"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Selection precedes not-started response invocation, so already-started does not suppress handler construction.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "starlette-server-error-flow:body-paragraph:12",
+      "chapter": "starlette-server-error-flow",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/en.md",
+          "document_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+          "first_line": 35,
+          "last_line": 35,
+          "quote": "After those operations complete, the explicit `raise exc` propagates the caught exception. The error is not silently swallowed merely because a response was sent. If a handler or response invocation raises first, the final statement may not be reached; the body has no finally forcing that original raise after every possible helper failure. This correction preserves the distinction between error-response work, sending and propagation. It reuses the original completed baseline without another model request and remains pending owner review, with exact source and notices retained, no publication and no training approval.\n",
+          "quote_sha256": "3b585feae3f16b82a6b6f180a045411e0b128d75e77524663b4e31c1828737f2"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow/pt-br.md",
+          "document_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+          "first_line": 35,
+          "last_line": 35,
+          "quote": "Depois que essas operações concluem, o `raise exc` explícito propaga a exceção capturada. O erro não é silenciado apenas porque uma resposta foi enviada. Se um handler ou a invocação da resposta lança erro antes, a instrução final pode não ser alcançada; o corpo não possui finally que force aquele raise original após toda falha possível de helper. Esta correção preserva a distinção entre trabalho de resposta de erro, envio e propagação. Reutiliza o baseline original concluído sem outro pedido ao modelo e continua pendente de revisão do proprietário, com fonte e avisos exatos retidos, sem publicação ou aprovação para treinamento.\n",
+          "quote_sha256": "2790c65f57b623d70adca5fae76cf387b9cb53c30e220b2fcc78a21bcb33068f"
+        }
+      },
+      "source_span_ids": [
+        "source-span-013"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Final raise is reached only after earlier operations; no finally guarantees original rethrow after another failure.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:01",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "PROVENANCE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 3,
+          "last_line": 3,
+          "quote": "Codex-authored source-reviewed correction, pending owner approval. Frozen Temporal SDK revision 7e0d845246d36fc7f62ade2af885554f94c29db9. Actual baselines: sdk-retry-function, sdk-retry-with-constants and sdk-contiguous-contract. Expanded evidence: [source excerpts](source-excerpts.json). No SDK application was compiled or executed.\n",
+          "quote_sha256": "27e2b5ff5961bff1e3dcd5bd5fdbc0942f4bd254f09fe8ab7514b0c3018ebf95"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 3,
+          "last_line": 3,
+          "quote": "Correção escrita pelo Codex e revisada contra a fonte, pendente de aprovação do proprietário. Revisão congelada do Temporal SDK 7e0d845246d36fc7f62ade2af885554f94c29db9. Baselines reais: sdk-retry-function, sdk-retry-with-constants e sdk-contiguous-contract. Evidência ampliada: [trechos da fonte](source-excerpts.json). Nenhuma aplicação do SDK foi compilada ou executada.\n",
+          "quote_sha256": "a13070abb2f9bd099cbe8dacff17531e4fdb767d0804d1e6f705bf2dc6a4a21d"
+        }
+      },
+      "source_span_ids": [
+        "source-span-014"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/chapter-source-reverification.json",
+          "sha256": "9d681d56040514e18f4a122544c9db4c500eae20aa4f2eebd4183634f2c9fdbd",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Frozen source and baseline IDs; no SDK execution claimed.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:02",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "PRIMARY_LANGUAGE_REFERENCE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 5,
+          "last_line": 5,
+          "quote": "The conditional builtin interpretation follows the [Go language definition](https://go.dev/ref/spec#Min_and_max).\n",
+          "quote_sha256": "8fd786146b267e7015d5822c4f3e84746020d7c47e4a226aef8f408c684b416a"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 5,
+          "last_line": 5,
+          "quote": "A interpretação condicional da função predeclarada segue a [definição da linguagem Go](https://go.dev/ref/spec#Min_and_max).\n",
+          "quote_sha256": "b0016e810a0c71ab6dede71f8c9c1e41ab0d861404bf16802f52ec16093c0ecc"
+        }
+      },
+      "source_span_ids": [
+        "source-span-015"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/go-build-binding-evaluation.json",
+          "sha256": "e655163bba280abaad012b1e7c57b19e13f8f29fd9836e1b88517659b0a1ccac",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Language reference is conditional on lexical binding; receipt gives bounded build-filtered proof, not complete type/runtime checking.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:03",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 9,
+          "last_line": 9,
+          "quote": "The function `createDynamicServiceRetryPolicy` receives ctx with the written type `context.Context` and returns `backoff.RetryPolicy`. Its body constructs and configures a policy object. It contains no operation callback, sleep, attempt loop or invocation of a retrier. A statement about eventual retry behavior therefore requires another consumer's code. The preserved local-agent baselines blurred configuration and execution, and one later answer misread both the interval arithmetic and the deadline guards.\n",
+          "quote_sha256": "05d5600f2c1aeddb26c775e75138ea6d46b0ea30765c4440e651b59d6eff891b"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 9,
+          "last_line": 9,
+          "quote": "A função `createDynamicServiceRetryPolicy` recebe ctx com o tipo escrito `context.Context` e retorna `backoff.RetryPolicy`. Seu corpo constrói e configura um objeto de política. Não contém callback de operação, espera, laço de tentativas nem invocação de um retrier. Uma afirmação sobre o comportamento posterior das novas tentativas exige, portanto, código de outro consumidor. Os baselines preservados do agente local misturaram configuração e execução, e uma resposta posterior interpretou incorretamente tanto a aritmética dos intervalos quanto as guardas do deadline.\n",
+          "quote_sha256": "2dc82e9ba06bde583289c203688fa5dad4047101e45f32dcb7f4f745c90874c9"
+        }
+      },
+      "source_span_ids": [
+        "source-span-016"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Body configures and returns policy; no operation callback, sleeping or retry loop in this body.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:04",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "REVIEW_PROCESS_AND_SOURCE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 11,
+          "last_line": 11,
+          "quote": "This correction explicitly adds the policy constructor and setters from the same frozen SDK revision. That added evidence supports the configuration handoff, but it does not retroactively make an unsupported earlier model statement correct. The implementation remains source-reviewed documentation, not a measured execution of the SDK or a neural-weight improvement.\n",
+          "quote_sha256": "2be7c3e98e62226d1a457835a2fffa2d60e90140c71093f7043194b7ff2a32d2"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 11,
+          "last_line": 11,
+          "quote": "Esta correção acrescenta explicitamente o construtor da política e os setters da mesma revisão congelada do SDK. A evidência adicional sustenta a passagem da configuração, mas não torna retroativamente correta uma afirmação anterior do modelo sem suporte. A implementação continua sendo documentação revisada contra a fonte, não uma execução medida do SDK nem melhoria de pesos neurais.\n",
+          "quote_sha256": "21079e2568a35f835c74a44953849c0ce63df90c20ba699cd8ae59fcca063e3e"
+        }
+      },
+      "source_span_ids": [
+        "source-span-017",
+        "source-span-018"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Expanded constructor/setters support handoff; correcting source review does not retroactively correct prior model output.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:05",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 15,
+          "last_line": 15,
+          "quote": "The declared initial interval is `200 * time.Millisecond`. The declared default expiration interval is `60 * time.Second`, and the coefficient constant is 2. The nearby explanatory comment mentions 20ms, but the assignment used by the body refers to the declared 200-millisecond constant. A source comment can be useful context while still being inconsistent with the implementation. Copying the comment's smaller number loses the literal contract.\n",
+          "quote_sha256": "eedcac410381487f12aaa46bf07a91a391d30064822f04ea1d83759ffe622996"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 15,
+          "last_line": 15,
+          "quote": "O intervalo inicial declarado é `200 * time.Millisecond`. O intervalo padrão de expiração declarado é `60 * time.Second`, e a constante de coeficiente é 2. O comentário explicativo próximo menciona 20ms, mas a atribuição usada pelo corpo referencia a constante declarada de 200 milissegundos. Um comentário pode ser contexto útil e ainda divergir da implementação. Copiar seu número menor perde o contrato literal.\n",
+          "quote_sha256": "faf61f8f848fd305b47c79874aa02335566e33fe6bfa5b28e765ad394a65090e"
+        }
+      },
+      "source_span_ids": [
+        "source-span-019"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Assignment uses200ms/60s/coefficient2; nearby20ms comment is inconsistent, not stronger evidence.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:06",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 17,
+          "last_line": 17,
+          "quote": "The function first assigns the expiration constant to `timeout`. It does not begin by deriving a duration from an unconditional context deadline. Initializing `timeout`, deciding whether to replace it and configuring the resulting policy are three separate steps. A complete account must retain the default path as well as the context-dependent path.\n",
+          "quote_sha256": "fb40ae599723bf36c2b78acc2054e5ce8263e6d1f5a7e8edd1ca242e3c3413ee"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 17,
+          "last_line": 17,
+          "quote": "A função primeiro atribui a constante de expiração a `timeout`. Não começa extraindo uma duração de um deadline incondicional do contexto. Inicializar `timeout`, decidir se ele será substituído e configurar a política resultante são três passos separados. Uma descrição completa precisa preservar tanto o caminho padrão quanto o caminho dependente do contexto.\n",
+          "quote_sha256": "ff3869f21cade83a1eb93852378e841f3d8cf0d64ccf9b067b7733f9c81260a2"
+        }
+      },
+      "source_span_ids": [
+        "source-span-020"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Initial default is set before conditional context deadline replacement.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:07",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 21,
+          "last_line": 21,
+          "quote": "The outer guard is `ctx != nil`. Inside it, the code samples now with `time.Now()`, then obtains expiration and ok from `ctx.Deadline()`. The replacement occurs only when `ok && expiration.After(now)`. That branch assigns `expiration.Sub(now)` to `timeout`. A missing deadline or a deadline that does not satisfy the strictly-future test leaves the initialized duration unchanged.\n",
+          "quote_sha256": "c2c8abc727c14b8e78766f550c4f66285a5e2985f2891c36ee4b6983d3832238"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 21,
+          "last_line": 21,
+          "quote": "A guarda externa é `ctx != nil`. Dentro dela, o código obtém now com `time.Now()` e depois obtém expiration e ok de `ctx.Deadline()`. A substituição ocorre apenas quando `ok && expiration.After(now)`. Esse ramo atribui `expiration.Sub(now)` a `timeout`. Deadline ausente ou que não satisfaz o teste de futuro estrito deixa a duração inicializada sem alteração.\n",
+          "quote_sha256": "2c2387d045933b1481660a0bd829396cc51605af48261027817cef8e95bed763"
+        }
+      },
+      "source_span_ids": [
+        "source-span-021"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Only nonnil ctx and ok plus strictlyfuture expiration replaces timeout, under normal method completion.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:08",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 23,
+          "last_line": 23,
+          "quote": "There is no comparison selecting the earlier of that future deadline and the sixty-second default. In the ordinary interpretation of the supplied time operations, a future deadline farther away than sixty seconds can therefore produce a longer configured duration. The source does not promise that every non-nil context implementation completes its Deadline call successfully. The guard is a written interface comparison, not proof that all typed-nil implementations or arbitrary methods are safe.\n",
+          "quote_sha256": "fc57bfe80357c36dc215862d4be830fe6d3403716c096a168f38e0e8928570df"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 23,
+          "last_line": 23,
+          "quote": "Não há comparação escolhendo o mais próximo entre esse deadline futuro e o padrão de sessenta segundos. Na interpretação comum das operações de tempo fornecidas, um deadline futuro mais distante que sessenta segundos pode, portanto, produzir duração configurada maior. A fonte não promete que toda implementação não nula do contexto conclua sua chamada Deadline com sucesso. A guarda é uma comparação escrita de interface, não prova de segurança para todas as implementações com ponteiro nulo tipado ou métodos arbitrários.\n",
+          "quote_sha256": "ddc2e65f8fa54b12fda0f9482443afdeda69c999acd2da9269e0515ce2e49c70"
+        }
+      },
+      "source_span_ids": [
+        "source-span-021"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "No min with60seconds; typed-nil method safety is not established by interface comparison.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:09",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "CONDITIONAL_SOURCE_INTERPRETATION",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 27,
+          "last_line": 27,
+          "quote": "The next assignments set `initialInterval` from the initial-interval constant and `maximumInterval` from `max(timeout/10, retryServiceOperationInitialInterval)`. The second operand is the same declared initial-interval constant. It is not a literal twenty milliseconds. Under Go's predeclared `max` binding, that expression chooses the larger operand: the initial interval acts as a floor on this computed configuration value, rather than a cap on `timeout/10`. With the ordinary duration interpretation, the default sixty seconds yields six seconds for this expression.\n",
+          "quote_sha256": "4517f5b9fab1b248ef892c859aaafb9bbc45dac061d8f3784ac9dde672ff8719"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 27,
+          "last_line": 27,
+          "quote": "As atribuições seguintes definem `initialInterval` a partir da constante de intervalo inicial e `maximumInterval` a partir de `max(timeout/10, retryServiceOperationInitialInterval)`. O segundo operando é a mesma constante declarada de intervalo inicial. Não é um literal de vinte milissegundos. Sob o vínculo de `max` como função predeclarada do Go, a expressão escolhe o maior operando: o intervalo inicial funciona como piso desse valor calculado de configuração, em vez de teto para `timeout/10`. Na interpretação comum de duração, o padrão de sessenta segundos produz seis segundos nessa expressão.\n",
+          "quote_sha256": "649244694346a1172b947a107deb0da2792c241146d832728cd0811e912948b2"
+        }
+      },
+      "source_span_ids": [
+        "source-span-015"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/go-build-binding-evaluation.json",
+          "sha256": "e655163bba280abaad012b1e7c57b19e13f8f29fd9836e1b88517659b0a1ccac",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Under predeclaredmax and ordinary durations, initial interval is floor and default computes6seconds; no observed runtime schedule.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:10",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_AND_CENSUS_RECEIPT",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 29,
+          "last_line": 29,
+          "quote": "The word `max` is still an identifier whose binding matters. The earlier unfiltered census refused a binding conclusion because imported time sources included an ignored generator package. A later optional `go/build` experiment inspected all 157 immediate Go files in the SDK package and complete censuses for the three imported packages. Under explicit Darwin/arm64 and Linux/arm64 profiles, 78 ordinary SDK files are active; official build selection excludes the generator, while actual declared import names and package/local declarations leave the bare name lexically unshadowed. The [binding receipt](../../go-build-binding-evaluation.json) and [source census](../../go-build-binding-source-census.json) preserve the proof. This supports the predeclared interpretation under those supplied complete censuses and a valid package build. It does not prove type checking or runtime behavior, and the production syntax parser and default agent routing remain unchanged.\n",
+          "quote_sha256": "4d4e81e7e7cc1a525abef9bee1562917759067059e9b1e3a4b494cda34b32cc0"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 29,
+          "last_line": 29,
+          "quote": "A palavra `max` continua sendo um identificador cujo vínculo importa. O censo anterior sem filtragem recusou uma conclusão sobre o vínculo porque fontes importadas de time incluíam um pacote gerador ignorado. Um experimento opcional posterior com `go/build` inspecionou todos os 157 arquivos Go imediatos do pacote do SDK e censos completos dos três pacotes importados. Sob perfis explícitos Darwin/arm64 e Linux/arm64, 78 arquivos comuns do SDK estão ativos; a seleção oficial de build exclui o gerador, enquanto os nomes declarados reais dos imports e as declarações do pacote e locais deixam o nome simples sem sombreamento léxico. O [recibo de vínculo](../../go-build-binding-evaluation.json) e o [censo de fontes](../../go-build-binding-source-census.json) preservam a prova. Isso sustenta a interpretação predeclarada sob esses censos completos fornecidos e um build válido do pacote. Não prova verificação de tipos nem comportamento em execução, e o parser sintático de produção e o roteamento padrão do agente permanecem sem alteração.\n",
+          "quote_sha256": "c9a7dbae1c5b98725424e5503582148cb4b22a53cc330df64e8c5bf5fd0d75f3"
+        }
+      },
+      "source_span_ids": [
+        "source-span-014"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/go-build-binding-evaluation.json",
+          "sha256": "e655163bba280abaad012b1e7c57b19e13f8f29fd9836e1b88517659b0a1ccac",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/go-build-binding-source-census.json",
+          "sha256": "7d9703565731a2eee35a73afe1ca18cd46c1a07353712c033df232a72281bd47",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "157SDK immediate files,78active under specified profiles and complete import census are a dated tool observation; no general build/type proof.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:11",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 33,
+          "last_line": 33,
+          "quote": "The body calls `backoff.NewExponentialRetryPolicy(initialInterval)`, then `SetBackoffCoefficient`, `SetMaximumInterval` and `SetExpirationInterval` in that order, and finally returns policy. The supplied constructor initializes an `ExponentialRetryPolicy` pointer using the argument and named defaults for other fields. The three supplied setters assign their respective arguments to fields and have no return result. Their bodies do not run the operation, clamp the provided duration or enforce a wall-clock deadline.\n",
+          "quote_sha256": "5da27f5902c26bab7e53310c41a07de1795c828d6d55d3d84f02662209f79762"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 33,
+          "last_line": 33,
+          "quote": "O corpo chama `backoff.NewExponentialRetryPolicy(initialInterval)`, depois `SetBackoffCoefficient`, `SetMaximumInterval` e `SetExpirationInterval` nessa ordem e, por fim, retorna policy. O construtor fornecido inicializa um ponteiro `ExponentialRetryPolicy` usando o argumento e padrões nomeados para outros campos. Os três setters fornecidos atribuem seus respectivos argumentos a campos e não têm resultado de retorno. Seus corpos não executam a operação, não limitam a duração recebida nem impõem um deadline de relógio.\n",
+          "quote_sha256": "976034629157975ab27218c211d91c3b5e2e62b51b18e703f51afe13c2919e55"
+        }
+      },
+      "source_span_ids": [
+        "source-span-022",
+        "source-span-017",
+        "source-span-018"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Exact setter order; shown constructor and setters store fields without executing operations, clamping or enforcing wallclock deadlines.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "sdk-dynamic-retry-policy:body-paragraph:12",
+      "chapter": "sdk-dynamic-retry-policy",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/en.md",
+          "document_sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+          "first_line": 35,
+          "last_line": 35,
+          "quote": "The outer coefficient argument comes from the constant 2, the maximum-interval argument is the computed expression and the expiration argument is `timeout`. Other constructor defaults are not a basis for invented numeric limits or attempt counts here. The source handoff explains what is configured while leaving later delay calculation, retry eligibility, cancellation and actual service activity to their own inspected consumers. The corrected EN/PT chapter remains pending owner approval and is not approved training gold.\n",
+          "quote_sha256": "a3486680b4570720d398ea454bc7f151a7cba9c5ccf74f9d4bc62c92f13761b3"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/sdk-dynamic-retry-policy/pt-br.md",
+          "document_sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+          "first_line": 35,
+          "last_line": 35,
+          "quote": "O argumento externo de coeficiente vem da constante 2, o argumento de intervalo máximo é a expressão calculada e o argumento de expiração é `timeout`. Outros padrões do construtor não fundamentam limites numéricos ou contagens de tentativas inventados aqui. A passagem de dados na fonte explica o que é configurado e deixa cálculo posterior de atraso, elegibilidade de nova tentativa, cancelamento e atividade efetiva do serviço para seus próprios consumidores inspecionados. O capítulo corrigido em EN/PT permanece pendente de aprovação do proprietário e não é treinamento gold aprovado.\n",
+          "quote_sha256": "6013b83be5fca01eb6a95a99c28ca1106606d3bd2459eee6fc5d365e595743be"
+        }
+      },
+      "source_span_ids": [
+        "source-span-023",
+        "source-span-024",
+        "source-span-017",
+        "source-span-018"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Arguments are configured constants/expressions; actual retry eligibility and operations require separate consumers.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:01",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "OWNED_SYNTHETIC_PROVENANCE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 3,
+          "last_line": 8,
+          "quote": "This owned Python fixture demonstrates a port, adapter, mapper and consumer.\nIt is unrelated to Viva Bem and contains no real account, credential or financial\npayload. The [source manifest](source-manifest.json) identifies the exact synthetic\nrevision; [source excerpts](source-excerpts.json) retain full-file hashes and\nphysical line references. This is a source-reviewed documentation candidate,\npending owner approval.\n",
+          "quote_sha256": "84a04f617910b2f47df881bada01beb0e96ef0a747fc53025c14b347cf58249e"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 3,
+          "last_line": 9,
+          "quote": "Este fixture Python próprio demonstra uma porta, um adaptador, um mapeador e um\nconsumidor. Não tem relação com o Viva Bem e não contém conta, credencial ou\npayload financeiro real. O [manifesto de fontes](source-manifest.json) identifica\na revisão sintética exata; os [trechos de fonte](source-excerpts.json) preservam\nhashes dos arquivos completos e referências de linhas físicas. Este é um\ncandidato de documentação revisado contra a fonte, pendente de aprovação do\nproprietário.\n",
+          "quote_sha256": "199a7db1b0aa44581c92000222b8fb97a5d1d60f52950a3bde4644f7e4c92662"
+        }
+      },
+      "source_span_ids": [
+        "source-span-025",
+        "source-span-026"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/owned-adapter/source-manifest.json",
+          "sha256": "39e6f9dfda9259243ae55ad41cce5c3085712f8546a788e678f3e1f9e043e769",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Owned synthetic scope and no real gateway/customer payload; not an external service audit.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:02",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 12,
+          "last_line": 16,
+          "quote": "`BalanceService` receives a `BalancePort` and calls its `read` operation.\n`BalanceAdapter` provides that method and receives a `JsonClient` through its\nconstructor. Python protocol compatibility is structural here: the adapter does\nnot subclass the port, and no runtime protocol check appears in the fixture.\nThe client is an interface rather than a concrete HTTP implementation.\n",
+          "quote_sha256": "c081b61ffd638144bd7a549ea5cbf71f76c40e7b10e1c2f419ed8606f17030a6"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 13,
+          "last_line": 17,
+          "quote": "`BalanceService` recebe uma `BalancePort` e chama sua operação `read`.\n`BalanceAdapter` fornece esse método e recebe um `JsonClient` pelo construtor.\nA compatibilidade com protocolos Python é estrutural aqui: o adaptador não\nherda da porta, e o fixture não verifica o protocolo em execução. O cliente é\numa interface, não uma implementação HTTP concreta.\n",
+          "quote_sha256": "5d32b03a0547fab8d90178dfcabe4e8180f98d21527923a756daeac1adc53a32"
+        }
+      },
+      "source_span_ids": [
+        "source-span-025",
+        "source-span-026",
+        "source-span-027",
+        "source-span-028"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Port compatibility is structural; adapter does not inherit port; injected client is a protocol without concrete HTTP behavior.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:03",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 18,
+          "last_line": 22,
+          "quote": "The service converts the resulting `Balance` into a dictionary with `account`,\n`available_minor` and `currency`. It has no timeout parameter, retry loop or error\ntranslation. Its caller, application startup and production dependency wiring\nare not supplied. The executable example explicitly composes the service with\nthe adapter and a fake client.\n",
+          "quote_sha256": "de91643a7e487ab4c39f055d58686643e1611cee64f35ad03e447c1c626e6633"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 19,
+          "last_line": 23,
+          "quote": "O serviço converte o `Balance` resultante em um dicionário com `account`,\n`available_minor` e `currency`. Não tem parâmetro de timeout, laço de tentativas\nou tradução de erros. Seu chamador, a inicialização da aplicação e a composição\nde dependências de produção não foram fornecidos. O exemplo executável compõe\nexplicitamente o serviço com o adaptador e um cliente falso.\n",
+          "quote_sha256": "a75fa4bb62ccbb12c38dd06ed1e4549b641789947fe00ab4fbaa68f0f4aaf37a"
+        }
+      },
+      "source_span_ids": [
+        "source-span-028",
+        "source-span-029"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Three-field summary, no service timeout/retry/catch; executable example explicitly wires fake; production startup not supplied.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:04",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "DIAGRAM_SCOPE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 40,
+          "last_line": 41,
+          "quote": "The sequence shows the normal written call path. It does not depict observed\nnetwork traffic. Error paths and unknown client behavior are described below.\n",
+          "quote_sha256": "dec07599d20ccf2b7fefc828a1d113626e37bb36f15a88dd98a12b9a451d09a6"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 41,
+          "last_line": 43,
+          "quote": "A sequência mostra o caminho normal de chamadas escrito. Não representa tráfego\nde rede observado. Os caminhos de erro e o comportamento desconhecido do cliente\nsão descritos abaixo.\n",
+          "quote_sha256": "28d6c3b8ac8ac42226d4a413f4c39570cab921d8820ef109f2b54c07a2c4eea9"
+        }
+      },
+      "source_span_ids": [
+        "source-span-028",
+        "source-span-027",
+        "source-span-030"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+          "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Sequence diagram depicts only normal written calls, not network observation.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:05",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 45,
+          "last_line": 49,
+          "quote": "For a nonempty string identifier without a slash, the adapter constructs\n`/sandbox/accounts/{account_id}/balance` and forwards an `Authorization` header\nwhose value is `Bearer {self._token}`. It passes its stored timeout, default\n`2.0`, to the injected client. The adapter contains no general URL encoding,\ntoken validation or timeout validation.\n",
+          "quote_sha256": "0b20966e3fb8b35c8868e58c746de6e622e9e0ad71927686444c63fe91c3bc75"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 47,
+          "last_line": 51,
+          "quote": "Para um identificador string não vazio e sem barra, o adaptador constrói\n`/sandbox/accounts/{account_id}/balance` e encaminha um header `Authorization`\ncujo valor é `Bearer {self._token}`. Passa seu timeout armazenado, por padrão\n`2.0`, ao cliente injetado. O adaptador não contém codificação geral de URL,\nvalidação de token ou validação de timeout.\n",
+          "quote_sha256": "9924d52e1e8372ff3ce9b0d2ec6507b11cffe9d6b07b32ef896473888d3dbbd5"
+        }
+      },
+      "source_span_ids": [
+        "source-span-027"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Written identifier guard, relative path, Bearer header and default2.0 forwarding; no general encoding or timeout/token validation.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:06",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 59,
+          "last_line": 63,
+          "quote": "The mapper reads `available_minor` and `currency` by key and constructs\n`Balance(account_id=account_id, available_minor=amount, currency=currency)`.\nIt does not divide monetary units or obtain the account identifier from the\nresponse. Missing keys propagate as `KeyError`. Its explicit validation failures\nraise `ValueError`. Dataclass annotations alone are not a runtime validator.\n",
+          "quote_sha256": "f60f54779293316c3f9c98f3147709e9d9eb4e3c5d7ab3f4e840a58fcdedcf7b"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 61,
+          "last_line": 65,
+          "quote": "O mapeador lê `available_minor` e `currency` pelas chaves e constrói\n`Balance(account_id=account_id, available_minor=amount, currency=currency)`.\nNão divide unidades monetárias nem obtém o identificador da conta da resposta.\nChaves ausentes propagam `KeyError`. Suas falhas explícitas de validação lançam\n`ValueError`. Anotações de dataclass isoladas não validam em execução.\n",
+          "quote_sha256": "b56f6d1219f3f236bf791237912c70eba07859f56fd3cfbc600bbb304eecbbcf"
+        }
+      },
+      "source_span_ids": [
+        "source-span-025",
+        "source-span-030"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Exactint, three-character string, key access and directaccount source; no monetary conversion/ISO/runtime dataclass validation.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:07",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 67,
+          "last_line": 71,
+          "quote": "Only the client call is inside the adapter's try block. A `GatewayUnavailable`\nfrom that call becomes `BalanceUnavailable` with the original exception retained\nas its cause. The mapper is called after the try block, so its validation\nfailures are not translated by that handler. A different client exception,\nincluding `TimeoutError`, propagates through this adapter and service.\n",
+          "quote_sha256": "53e22bac69e15e08895dcc75263f54561927ef151b7bfcbefdcbf2ab3d86f547"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 69,
+          "last_line": 74,
+          "quote": "Somente a chamada ao cliente está dentro do bloco try do adaptador. Uma\n`GatewayUnavailable` dessa chamada se torna `BalanceUnavailable` com a exceção\noriginal preservada como causa. O mapeador é chamado depois do bloco try, então\nsuas falhas de validação não são traduzidas por esse handler. Uma exceção\ndiferente do cliente, incluindo `TimeoutError`, se propaga por este adaptador\ne serviço.\n",
+          "quote_sha256": "452c6a7630b52edd536c9c318e065aa9772d06f2fa8f3a5c2d1fbaddf8799ffc"
+        }
+      },
+      "source_span_ids": [
+        "source-span-031",
+        "source-span-032",
+        "source-span-028"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "Only named gateway exception from clientcall translatedwithcause; mapping outsidetry and otherclienterrorspropagate.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:08",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 73,
+          "last_line": 77,
+          "quote": "One valid call path invokes the injected client's method once in the adapter's\nbody. This is not proof that the concrete client never retries internally.\nThe shown service, adapter and mapper contain no cache or persistence operation;\nhidden client behavior remains unknown. No concrete host, transport, TLS,\nauthorization policy or external service contract is supplied.\n",
+          "quote_sha256": "0763a9855fbd99e238d6bed4549f7ed842630eb71b1304d137d778901f6a3de7"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 76,
+          "last_line": 81,
+          "quote": "Um caminho de chamada válido invoca uma vez o método do cliente injetado no\ncorpo do adaptador. Isso não prova que o cliente concreto nunca faça tentativas\ninternas. O serviço, adaptador e mapeador mostrados não contêm operação de cache\nou persistência; o comportamento oculto do cliente continua desconhecido.\nNenhum host concreto, transporte, TLS, política de autorização ou contrato de\nserviço externo foi fornecido.\n",
+          "quote_sha256": "44bcb6a40a98ec39f95fdfd60521ffe9d88bf3e9972cad8a5eb1b0d10db808bd"
+        }
+      },
+      "source_span_ids": [
+        "source-span-031",
+        "source-span-030",
+        "source-span-028"
+      ],
+      "execution_or_inspection_receipts": [],
+      "manual_review_finding": "One adapter-level call written; absence of visible cache/persistence does not establish absenthiddenclientbehavior.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:09",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "DOCUMENTED_COMMAND_PREREQUISITE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 81,
+          "last_line": 81,
+          "quote": "From the Engineering Library repository root, with Python 3.10 or newer, run:\n",
+          "quote_sha256": "d01bbbaa06289f155be275ea643ab05f7254174f410fc509b67194fb37902d7b"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 85,
+          "last_line": 86,
+          "quote": "Na raiz do repositório Engineering Library, com Python 3.10 ou mais recente,\nexecute:\n",
+          "quote_sha256": "589e0de8ecba5abbeb1206f05141c343c77ba5a1f78cad6ccee7ad8f851fbe14"
+        }
+      },
+      "source_span_ids": [
+        "source-span-029"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+          "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Command is from repositoryroot with adequate Python; earlier execution receipt verifies currenthost only, not everyPython3.10installation.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:10",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "EXECUTABLE_EXAMPLE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 87,
+          "last_line": 88,
+          "quote": "The [example](examples/balance_summary.py) uses the preserved fake from the\nsynthetic tests. It makes no network request and prints:\n",
+          "quote_sha256": "5e147a3d9ef4c1ea44b9ccc237c49a7f0a5fe6fdf5fa124943e31c5b8030de3f"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 92,
+          "last_line": 93,
+          "quote": "O [exemplo](examples/balance_summary.py) usa o cliente falso preservado nos testes\nsintéticos. Não faz requisição de rede e imprime:\n",
+          "quote_sha256": "ccaab3694a2d5b3207e2f117fb411a0c9fad8c3f9dd930a0b050faa61d2279a0"
+        }
+      },
+      "source_span_ids": [
+        "source-span-029",
+        "source-span-033"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+          "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Fake returns syntheticpayload and recordsonecall; output illustration verified in separate receipt.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:11",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "TEST_COVERAGE",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 94,
+          "last_line": 98,
+          "quote": "The fake records the relative path, header and timeout. The eight source tests\ncover normal composition, exact request forwarding, translated error cause,\nboolean rejection, missing keys, unrelated client errors, invalid identifiers,\ntimeout overrides and the currency rule. Some tests cover more than one concern.\nRun them from the same repository root:\n",
+          "quote_sha256": "f9084bdf89301972c2fb914906e707d32e3ec3d365700675e45d3692c90e73da"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 99,
+          "last_line": 103,
+          "quote": "O cliente falso registra caminho relativo, header e timeout. Os oito testes de\nfonte cobrem composição normal, encaminhamento exato da requisição, causa do\nerro traduzido, rejeição de booleanos, chaves ausentes, erros não relacionados do\ncliente, identificadores inválidos, substituição do timeout e regra de moeda.\nAlguns testes cobrem mais de um aspecto. Execute na mesma raiz de repositório:\n",
+          "quote_sha256": "babe2c8fe861070b683e94263daf1d2e2142cb45c62736ec3aa69e7c87cb055a"
+        }
+      },
+      "source_span_ids": [
+        "source-span-034"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+          "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Eight source tests contain multiple assertions/concerns; coverage is bounded to fixturefake and is not production validation.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    },
+    {
+      "id": "owned-adapter:body-paragraph:12",
+      "chapter": "owned-adapter",
+      "scope": "Before EngineerFAQ; prose paragraph with exact physical span. Headings, codeblocks and table rows excluded from this prose count.",
+      "status": "TEST_SCOPE_LIMIT",
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/en.md",
+          "document_sha256": "aedb1d40d96ebd6bf719909180fbcc0a5de6978c6f4217d2ac8ec0e66ed90f4d",
+          "first_line": 104,
+          "last_line": 105,
+          "quote": "Passing these tests verifies this synthetic composition with a fake. It does not\nverify a real gateway or production integration.\n",
+          "quote_sha256": "841f05e3bef3c7269e96d26773ef04db0ec9545f1b4368ac923ac9e8624cff02"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/owned-adapter/pt-br.md",
+          "document_sha256": "64e80356e831ffb26d156245fd9a6012b5e5b52f88b064269745a54010d386cc",
+          "first_line": 109,
+          "last_line": 110,
+          "quote": "A aprovação nesses testes verifica esta composição sintética com um cliente\nfalso. Não verifica um gateway real ou integração de produção.\n",
+          "quote_sha256": "12a6bf7132da5c800e42eecc0da0b514c7a4582e859f116583c14116d8935baa"
+        }
+      },
+      "source_span_ids": [
+        "source-span-034",
+        "source-span-026"
+      ],
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/owned-adapter/documentation-review.json",
+          "sha256": "491e3e937c907f2ac71f9564d64c161644bf5db8e504b74eb936f16ce8fadbed",
+          "role": "Dated reviewed execution/inspection result, not source behavior or owner approval."
+        }
+      ],
+      "manual_review_finding": "Successful fixture tests do not prove concretegateway or productionintegration.",
+      "bilingual_review": "Manually compared conditions, causal direction, source identifiers and limits in the paired paragraphs; inline-identifier guard passed.",
+      "owner_approved": false,
+      "training_gold": false
+    }
+  ],
+  "model_calls": 0,
+  "source_programs_executed_by_alignment": false,
+  "documentation_text_changed": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "limits": [
+    "Paragraph groups can contain multiple atomic claims;36groups are not36independentfacts ortrainingexamples.",
+    "All prose paragraphs beforeFAQ in these three specific bodies are mapped; headings, fences, table cells and FAQ blocks are separate scope.",
+    "Source mapping and hashvalidation support manual review; they do not prove generic natural-language entailment, all transitive dependencies or runtime behavior.",
+    "The other22candidate chapter bodies are not covered by this incremental ledger. The existing77FAQ alignment remains a separate overlapping ledger.",
+    "References to historical execution results are explicitly receipts, not sourcecode behavior or new test executions."
+  ]
+}

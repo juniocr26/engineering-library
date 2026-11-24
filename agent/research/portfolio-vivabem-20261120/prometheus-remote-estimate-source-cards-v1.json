@@ -1,0 +1,166 @@
+{
+  "at": "2026-11-21T09:38:11.191759+00:00",
+  "cards": [
+    {
+      "id": "E01",
+      "path": "promql/estimate.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8c2bf58bb82b6301cf4cf6bf9a1a10fab60701102eec16e6ba86cc15167966c7",
+      "first_line": 222,
+      "last_line": 237,
+      "quote": "\tvar sampler storage.SampleAndChunkQueryable\n\tif provider, ok := q.(storage.CostSamplingQueryable); ok {\n\t\tif source, supported := provider.CostSamplingQueryable(); supported {\n\t\t\tsampler = source\n\t\t}\n\t}\n\tif err := ctx.Err(); err != nil {\n\t\treturn CostEstimate{}, annos, err\n\t}\n\n\t// The series count uses Func:\"series\" so storage can skip chunk decoding.\n\tquerier, err := q.Querier(unionMint, unionMaxt)\n\tif err != nil {\n\t\treturn CostEstimate{}, annos, err\n\t}\n\tdefer func() { err = errors.Join(err, querier.Close()) }()\n",
+      "quote_sha256": "dcfa8b5e29cacaa3ccf7d4167b2d421c2a00f61337994dedb8e6f7ab0adeff6f"
+    },
+    {
+      "id": "E02",
+      "path": "promql/estimate.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8c2bf58bb82b6301cf4cf6bf9a1a10fab60701102eec16e6ba86cc15167966c7",
+      "first_line": 239,
+      "last_line": 280,
+      "quote": "\tfor _, sel := range selectors {\n\t\tseries, sa, err := countSeries(ctx, querier, sel.mint, sel.maxt, sel.matchers)\n\t\tannos = annos.Merge(sa)\n\t\tif err != nil {\n\t\t\treturn CostEstimate{}, annos, err\n\t\t}\n\n\t\testimate.SeriesTouched = addSaturatingInt64(estimate.SeriesTouched, series)\n\n\t\t// Sample the real window within a fixed chunk budget. Completed series\n\t\t// constrain extrapolation across gaps; partial series still inform the\n\t\t// interval when the window is too large to sample a whole series.\n\t\teffInterval := scrapeInterval\n\t\tavgPointCost := fallbackAvgPointCost\n\t\tvar density selectorDensity\n\t\tif sampler != nil && series > 0 {\n\t\t\tvar sia annotations.Annotations\n\t\t\tdensity, sia, err = sampleSelectorDensity(ctx, sampler, sel.mint, sel.maxt, sel.matchers)\n\t\t\tannos = annos.Merge(sia)\n\t\t\tif err != nil && !samplingUnsupported(err) {\n\t\t\t\treturn CostEstimate{}, annos, err\n\t\t\t}\n\t\t\tif err == nil {\n\t\t\t\tvar sca annotations.Annotations\n\t\t\t\tavgPointCost, sca, err = sampleAvgPointCost(ctx, sampler, sel.mint, sel.maxt, series, scrapeInterval, sel.skipHistogramBuckets, sel.matchers)\n\t\t\t\tannos = annos.Merge(sca)\n\t\t\t\tif err != nil && !samplingUnsupported(err) {\n\t\t\t\t\treturn CostEstimate{}, annos, err\n\t\t\t\t}\n\t\t\t}\n\t\t\tif err != nil {\n\t\t\t\t// A later opening can see a new unsupported layout. Discard both\n\t\t\t\t// measurements rather than keeping a partially sampled estimate.\n\t\t\t\tdensity = selectorDensity{}\n\t\t\t\tavgPointCost = fallbackAvgPointCost\n\t\t\t\tannos.Add(errCostSamplingFallback)\n\t\t\t} else if density.intervalMs > 0 {\n\t\t\t\teffInterval = time.Duration(density.intervalMs * float64(time.Millisecond))\n\t\t\t}\n\t\t} else if series > 0 {\n\t\t\tannos.Add(errCostSamplingFallback)\n\t\t}\n",
+      "quote_sha256": "9586b12eb7f4abe5365651cb3be13900a5bdfb029a76f8d111b9a6072191ff8e"
+    },
+    {
+      "id": "E03",
+      "path": "promql/estimate.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8c2bf58bb82b6301cf4cf6bf9a1a10fab60701102eec16e6ba86cc15167966c7",
+      "first_line": 282,
+      "last_line": 301,
+      "quote": "\t\t// Estimate samples per series following the engine's incremental reads,\n\t\t// then multiply by the series count and scale by the measured per-point\n\t\t// cost. All arithmetic saturates to avoid int64 overflow for huge windows\n\t\t// with tiny scrape intervals.\n\t\tselectorSamples := mulSaturatingInt64(series, samplesPerSeries(sel.isRange, sel.rangeMs, sel.stepMs, effInterval, sel.numSteps))\n\t\tif sel.isRange && density.completeSeries > 0 {\n\t\t\t// A range selector cannot consume more points than exist in its\n\t\t\t// storage window. Extrapolate the mean of fully sampled series, not\n\t\t\t// a partial series that happened to exhaust the sampling budget.\n\t\t\twindowSamples := scaleSaturatingInt64(series, float64(density.samples)/float64(density.completeSeries))\n\t\t\tselectorSamples = min(selectorSamples, windowSamples)\n\t\t}\n\t\tselectorSamples = scaleSaturatingInt64(selectorSamples, avgPointCost)\n\t\testimate.SamplesRead = addSaturatingInt64(estimate.SamplesRead, selectorSamples)\n\t}\n\n\treturn estimate, annos, nil\n}\n\nvar errCostSamplingFallback = errors.New(\"query cost estimate uses the configured scrape interval and float-sized points because bounded storage sampling is unavailable\")\n",
+      "quote_sha256": "4c65282813d9735f9730ef947f6fba05db30bbe9ca29f95f144c278ebe7a9139"
+    },
+    {
+      "id": "E04",
+      "path": "promql/estimate.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8c2bf58bb82b6301cf4cf6bf9a1a10fab60701102eec16e6ba86cc15167966c7",
+      "first_line": 310,
+      "last_line": 313,
+      "quote": "func samplingUnsupported(err error) bool {\n\treturn errors.Is(err, storage.ErrCostSamplingUnsupported) &&\n\t\t!errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded)\n}\n",
+      "quote_sha256": "fe44c85e630f9519d0377bde48fe2289c0ab7cbe259d3e94c203a50f26e53b6d"
+    },
+    {
+      "id": "E05",
+      "path": "promql/estimate.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8c2bf58bb82b6301cf4cf6bf9a1a10fab60701102eec16e6ba86cc15167966c7",
+      "first_line": 364,
+      "last_line": 370,
+      "quote": "// fallbackAvgPointCost is the per-point cost the estimator assumes when sampling\n// finds no in-window points for a selector. Defaulting to one unit\n// treats those series as floats, which neither inflates nor changes the existing\n// float-only estimate. A future config knob could override this for deployments\n// known to be histogram-heavy, but the primary path is the measured average from\n// sampleAvgPointCost.\nconst fallbackAvgPointCost = 1.0\n",
+      "quote_sha256": "df16cb650187d64379f3aed1d653b47f986a7d984b6485226ffe96a198c6c9ad"
+    },
+    {
+      "id": "E06",
+      "path": "promql/estimate.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8c2bf58bb82b6301cf4cf6bf9a1a10fab60701102eec16e6ba86cc15167966c7",
+      "first_line": 602,
+      "last_line": 627,
+      "quote": "func countSeries(ctx context.Context, querier storage.Querier, mint, maxt int64, matchers []*labels.Matcher) (count int64, annos annotations.Annotations, err error) {\n\tdefer func() { err = costEstimationError(ctx, err) }()\n\tif err := ctx.Err(); err != nil {\n\t\treturn 0, annos, err\n\t}\n\t// Func \"series\" lets supporting storage skip sample retrieval.\n\thints := &storage.SelectHints{\n\t\tStart: mint,\n\t\tEnd:   maxt,\n\t\tFunc:  \"series\",\n\t}\n\tset := querier.Select(ctx, false, hints, matchers...)\n\n\tfor set.Next() {\n\t\tif err := ctx.Err(); err != nil {\n\t\t\treturn 0, set.Warnings(), err\n\t\t}\n\t\tcount++\n\t}\n\n\tannos = set.Warnings()\n\tif err := set.Err(); err != nil {\n\t\treturn 0, annos, err\n\t}\n\treturn count, annos, nil\n}\n",
+      "quote_sha256": "e9f353db0c96ad7ec255c05fb8b4fbfba6b63764819fa28713e229736cf6ce15"
+    },
+    {
+      "id": "E07",
+      "path": "promql/estimate.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8c2bf58bb82b6301cf4cf6bf9a1a10fab60701102eec16e6ba86cc15167966c7",
+      "first_line": 673,
+      "last_line": 705,
+      "quote": "func samplesPerSeries(isRange bool, rangeMs, stepMs int64, scrapeInterval time.Duration, numSteps int64) int64 {\n\tif numSteps <= 0 {\n\t\treturn 0\n\t}\n\tif !isRange {\n\t\treturn numSteps\n\t}\n\tperWindow := samplesPerWindow(rangeMs, scrapeInterval)\n\tif numSteps == 1 || stepMs <= 0 || scrapeInterval.Milliseconds() <= 0 {\n\t\treturn perWindow\n\t}\n\tperStep := min(float64(stepMs)/float64(scrapeInterval.Milliseconds()), float64(perWindow))\n\treturn addSaturatingInt64(perWindow, scaleSaturatingInt64(numSteps-1, perStep))\n}\n\n// samplesPerWindow estimates how many samples a single series contributes over\n// a window of windowMs milliseconds given the scrape interval. It assumes one\n// sample every scrapeInterval across the inclusive window, i.e.\n// floor(window/scrapeInterval)+1. If scrapeInterval is non-positive it returns 1\n// so the estimate degrades to the series count rather than dividing by zero.\nfunc samplesPerWindow(windowMs int64, scrapeInterval time.Duration) int64 {\n\tif scrapeInterval <= 0 {\n\t\treturn 1\n\t}\n\tif windowMs < 0 {\n\t\twindowMs = 0\n\t}\n\tintervalMs := scrapeInterval.Milliseconds()\n\tif intervalMs <= 0 {\n\t\treturn 1\n\t}\n\treturn windowMs/intervalMs + 1\n}\n",
+      "quote_sha256": "72bc34acabf723ee7209da0ae78cbbff0126871d686165823daf7eb57172da37"
+    },
+    {
+      "id": "E08",
+      "path": "storage/fanout.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "c088c21e9b1e6f4bebec934af17b133b8dd63fbe6da8e52d8fccb5b40cb855fd",
+      "first_line": 75,
+      "last_line": 100,
+      "quote": "func (f *fanout) Querier(mint, maxt int64) (Querier, error) {\n\tprimary, err := f.primary.Querier(mint, maxt)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\tsecondaries := make([]Querier, 0, len(f.secondaries))\n\tfor _, storage := range f.secondaries {\n\t\tquerier, err := storage.Querier(mint, maxt)\n\t\tif err != nil {\n\t\t\t// Close already open Queriers, append potential errors to returned error.\n\t\t\terrs := []error{\n\t\t\t\terr,\n\t\t\t\tprimary.Close(),\n\t\t\t}\n\t\t\tfor _, q := range secondaries {\n\t\t\t\terrs = append(errs, q.Close())\n\t\t\t}\n\t\t\treturn nil, errors.Join(errs...)\n\t\t}\n\t\tif _, ok := querier.(noopQuerier); !ok {\n\t\t\tsecondaries = append(secondaries, querier)\n\t\t}\n\t}\n\treturn NewMergeQuerier([]Querier{primary}, secondaries, ChainedSeriesMerge), nil\n}\n",
+      "quote_sha256": "ba050d7f2062bacaa81aa836c52e780f925892fb7602dee893fc566fbfec8945"
+    },
+    {
+      "id": "E09",
+      "path": "storage/fanout.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "c088c21e9b1e6f4bebec934af17b133b8dd63fbe6da8e52d8fccb5b40cb855fd",
+      "first_line": 102,
+      "last_line": 124,
+      "quote": "// CostSamplingQueryable forwards a safe primary when every secondary is empty.\nfunc (f *fanout) CostSamplingQueryable() (SampleAndChunkQueryable, bool) {\n\tprovider, ok := f.primary.(CostSamplingQueryable)\n\tif !ok {\n\t\treturn nil, false\n\t}\n\tsource, supported := provider.CostSamplingQueryable()\n\tif !supported {\n\t\treturn nil, false\n\t}\n\tfor _, secondary := range f.secondaries {\n\t\tprovider, ok := secondary.(CostSamplingQueryable)\n\t\tif !ok {\n\t\t\treturn nil, false\n\t\t}\n\t\tsecondarySource, supported := provider.CostSamplingQueryable()\n\t\tif !supported || secondarySource != nil {\n\t\t\t// Merging even native sources can eagerly compact overlapping chunks.\n\t\t\treturn nil, false\n\t\t}\n\t}\n\treturn source, true\n}\n",
+      "quote_sha256": "b6f64ec27cd39a42af7d42513cc95c26c408cce809190ad3c94c2cb467e9ad9a"
+    },
+    {
+      "id": "E10",
+      "path": "storage/remote/storage.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "ebf563164b5926ce69c26ac45a5ea29681da92571f192e4a18ae6a1cf267412f",
+      "first_line": 159,
+      "last_line": 180,
+      "quote": "func (s *Storage) Querier(mint, maxt int64) (storage.Querier, error) {\n\ts.mtx.Lock()\n\tqueryables := s.queryables\n\ts.mtx.Unlock()\n\n\tqueriers := make([]storage.Querier, 0, len(queryables))\n\tfor _, queryable := range queryables {\n\t\tq, err := queryable.Querier(mint, maxt)\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tqueriers = append(queriers, q)\n\t}\n\treturn storage.NewMergeQuerier(nil, queriers, storage.ChainedSeriesMerge), nil\n}\n\n// CostSamplingQueryable reports an empty source only when no remote readers are configured.\nfunc (s *Storage) CostSamplingQueryable() (storage.SampleAndChunkQueryable, bool) {\n\ts.mtx.Lock()\n\tdefer s.mtx.Unlock()\n\treturn nil, len(s.queryables) == 0\n}\n",
+      "quote_sha256": "7792ffc20a50901b3c4f265e84327f2e81690f4a1df893780a42e00de950a6cb"
+    },
+    {
+      "id": "E11",
+      "path": "storage/remote/read.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "bbbdc0d2030e79c588bc412360678e079882b569be7768d6d8387ac28d5d211c",
+      "first_line": 141,
+      "last_line": 173,
+      "quote": "func (q *querier) Select(ctx context.Context, sortSeries bool, hints *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {\n\tif len(q.requiredMatchers) > 0 {\n\t\t// Copy to not modify slice configured by user.\n\t\trequiredMatchers := append([]*labels.Matcher{}, q.requiredMatchers...)\n\t\tfor _, m := range matchers {\n\t\t\tfor i, r := range requiredMatchers {\n\t\t\t\tif m.Type == labels.MatchEqual && m.Name == r.Name && m.Value == r.Value {\n\t\t\t\t\t// Requirement matched.\n\t\t\t\t\trequiredMatchers = append(requiredMatchers[:i], requiredMatchers[i+1:]...)\n\t\t\t\t\tbreak\n\t\t\t\t}\n\t\t\t}\n\t\t\tif len(requiredMatchers) == 0 {\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\tif len(requiredMatchers) > 0 {\n\t\t\treturn storage.NoopSeriesSet()\n\t\t}\n\t}\n\n\tm, added := q.addExternalLabels(matchers)\n\tquery, err := ToQuery(q.mint, q.maxt, m, hints)\n\tif err != nil {\n\t\treturn storage.ErrSeriesSet(fmt.Errorf(\"toQuery: %w\", err))\n\t}\n\n\tres, err := q.client.Read(ctx, query, sortSeries)\n\tif err != nil {\n\t\treturn storage.ErrSeriesSet(fmt.Errorf(\"remote_read: %w\", err))\n\t}\n\treturn newSeriesSetFilter(res, added)\n}\n",
+      "quote_sha256": "3b16c2a71e324a0ae0963babd8e867dc72ed0b2ad5569411e0e771e06d22b696"
+    },
+    {
+      "id": "E12",
+      "path": "web/api/v1/api.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "d48474cc505b02bdea99639856fde5e143ed0faf05f362c54ea084e7b26e45f9",
+      "first_line": 862,
+      "last_line": 871,
+      "quote": "// scrapeInterval returns the global scrape interval from the current\n// configuration, used to estimate the number of samples per series. It falls\n// back to zero when no configuration is available, in which case the estimator\n// degrades to one sample per series.\nfunc (api *API) scrapeInterval() time.Duration {\n\tif api.config == nil {\n\t\treturn 0\n\t}\n\treturn time.Duration(api.config().GlobalConfig.ScrapeInterval)\n}\n",
+      "quote_sha256": "594b3e2d93fed85e307b34d62613cb0d29e79141e65ec4162f4dddcb78ebd057"
+    },
+    {
+      "id": "E13",
+      "path": "web/api/v1/api.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "d48474cc505b02bdea99639856fde5e143ed0faf05f362c54ea084e7b26e45f9",
+      "first_line": 999,
+      "last_line": 1022,
+      "quote": "// estimateQueryCost bounds every estimation, including estimates for cost\n// comparisons, by the engine's concurrency limit and by the effective duration\n// limit, counted from limitStart.\nfunc (api *API) estimateQueryCost(ctx context.Context, limitStart time.Time, qs string, start, end time.Time, step time.Duration, opts promql.QueryOpts) (promql.CostEstimate, annotations.Annotations, error) {\n\t_, _, duration := api.queryCostCeilings()\n\tif limits, ok := opts.(promql.QueryCostOpts); ok && limits.MaxQueryDuration() > 0 {\n\t\tif duration <= 0 || limits.MaxQueryDuration() < duration {\n\t\t\tduration = limits.MaxQueryDuration()\n\t\t}\n\t}\n\tif duration > 0 {\n\t\tvar cancel context.CancelFunc\n\t\tctx, cancel = context.WithDeadline(ctx, limitStart.Add(duration))\n\t\tdefer cancel()\n\t}\n\tif acquirer, ok := api.QueryEngine.(promql.QuerySlotAcquirer); ok {\n\t\trelease, err := acquirer.AcquireQuerySlot(ctx, qs)\n\t\tdefer release()\n\t\tif err != nil {\n\t\t\treturn promql.CostEstimate{}, nil, err\n\t\t}\n\t}\n\treturn promql.EstimateCost(ctx, api.Queryable, api.parser, qs, start, end, step, api.effectiveLookbackDelta(opts), api.subqueryDefaultStep(), api.scrapeInterval())\n}\n",
+      "quote_sha256": "e23dbd6aa6057bd12b9a788043b7e31c105a7ce28c5f82148da31323ae3b6d7d"
+    },
+    {
+      "id": "E14",
+      "path": "web/web.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "ed661e8adcee8a8ef11459ccc0f5e0f7b46bb55e047b8aa42cfae0a237b7edfb",
+      "first_line": 398,
+      "last_line": 403,
+      "quote": "\th.apiV1 = api_v1.NewAPI(h.queryEngine, h.storage, app, appV2, h.exemplarStorage, factorySPr, factoryTr, factoryAr,\n\t\tfunc() config.Config {\n\t\t\th.mtx.RLock()\n\t\t\tdefer h.mtx.RUnlock()\n\t\t\treturn *h.config\n\t\t},\n",
+      "quote_sha256": "81dbadf3f1e65752d119e05990940538612e66e74297a56cdc07b1c190bcbf22"
+    },
+    {
+      "id": "E15",
+      "path": "util/annotations/annotations.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "fff70f37214b1b3447f6f6cbe762f0e84bc7c41c595bb944899df0e3bf458848",
+      "first_line": 26,
+      "last_line": 53,
+      "quote": "// Annotations is a general wrapper for warnings and other information\n// that is returned by the query API along with the results.\n// Each individual annotation is modeled by a Go error.\n// They are deduplicated based on the string returned by error.Error().\n// The zero value is usable without further initialization, see New().\ntype Annotations map[string]error\n\n// New returns new Annotations ready to use. Note that the zero value of\n// Annotations is also fully usable, but using this method is often more\n// readable.\nfunc New() *Annotations {\n\treturn &Annotations{}\n}\n\n// Add adds an annotation (modeled as a Go error) in-place and returns the\n// modified Annotations for convenience.\nfunc (a *Annotations) Add(err error) Annotations {\n\tif *a == nil {\n\t\t*a = Annotations{}\n\t}\n\tif prevErr, exists := (*a)[err.Error()]; exists {\n\t\tif anErr, ok := errors.AsType[annoError](err); ok {\n\t\t\terr = anErr.Merge(prevErr)\n\t\t}\n\t}\n\t(*a)[err.Error()] = err\n\treturn *a\n}\n",
+      "quote_sha256": "b86df054fcc598bec332b25cf23f56949b425fbb0deabbf6ec89cdadfa905975"
+    },
+    {
+      "id": "E16",
+      "path": "util/annotations/annotations.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "fff70f37214b1b3447f6f6cbe762f0e84bc7c41c595bb944899df0e3bf458848",
+      "first_line": 55,
+      "last_line": 73,
+      "quote": "// Merge adds the contents of the second set of Annotations to the first, modifying\n// the first in-place, and returns the merged first Annotations for convenience.\nfunc (a *Annotations) Merge(aa Annotations) Annotations {\n\tif *a == nil {\n\t\tif aa == nil {\n\t\t\treturn nil\n\t\t}\n\t\t*a = Annotations{}\n\t}\n\tfor key, val := range aa {\n\t\tif prevVal, exists := (*a)[key]; exists {\n\t\t\tif anErr, ok := errors.AsType[annoError](val); ok {\n\t\t\t\tval = anErr.Merge(prevVal)\n\t\t\t}\n\t\t}\n\t\t(*a)[key] = val\n\t}\n\treturn *a\n}\n",
+      "quote_sha256": "051a65224e642fe9463adfc725aa92138048cecf55f5311e67479d99627efe04"
+    }
+  ],
+  "source_executed": false
+}

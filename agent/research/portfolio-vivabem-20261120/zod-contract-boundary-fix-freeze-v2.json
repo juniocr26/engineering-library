@@ -1,0 +1,81 @@
+{
+  "at": "2026-11-21T01:58:36.153358+00:00",
+  "counterexample": "zod-contract-tamper-reproduction-v1.json",
+  "script": "observe_zod_safe_parse_v2.cjs",
+  "trusted_contract": "zod-safe-parse-shape-contract-v1.json",
+  "canonical_contract_sha256": "04a155ff1f86bab03087f2133510c3d35d06b328fb7064198695273eb43176eb",
+  "canonicalization": "JSON.stringify parsed object; frozen input order, UTF-8, no whitespace. Same order/characters bound by preserved canonical digest.",
+  "new_boundary": "Refuse all unregistered contract changes before source shape inspection; independent reviewer does not consume fact metadata.",
+  "cases": [
+    {
+      "id": "frozen-source",
+      "expected": true
+    },
+    {
+      "id": "comments-and-spacing",
+      "expected": true
+    },
+    {
+      "id": "sync-no-throw",
+      "expected": false
+    },
+    {
+      "id": "getter-wrong-polarity",
+      "expected": false
+    },
+    {
+      "id": "setter-does-not-store",
+      "expected": false
+    },
+    {
+      "id": "sync-wrong-async",
+      "expected": false
+    },
+    {
+      "id": "failure-marked-success",
+      "expected": false
+    },
+    {
+      "id": "promise-guard-inverted",
+      "expected": false
+    },
+    {
+      "id": "factory-wrong-error",
+      "expected": false
+    },
+    {
+      "id": "getter-missing-release",
+      "expected": false
+    },
+    {
+      "id": "setter-missing-release",
+      "expected": false
+    },
+    {
+      "id": "unrecognized-import",
+      "expected": false
+    },
+    {
+      "id": "duplicate-failure-owner",
+      "expected": false
+    },
+    {
+      "id": "unregistered-contract-fact-text",
+      "expected": false
+    },
+    {
+      "id": "unregistered-contract-runtime-flag",
+      "expected": false
+    },
+    {
+      "id": "unregistered-contract-template",
+      "expected": false
+    },
+    {
+      "id": "unregistered-contract-provenance-hash",
+      "expected": false
+    }
+  ],
+  "no_general_semantic_verifier_claim": true,
+  "scope": "17 development admission controls total; prior13reused,4contract integrity controls added. Not independent evaluation samples."
+}

@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-20T11:36:32.765128+00:00",
+  "cases": [
+    {
+      "id": "helper-as-default",
+      "source": "def helper():\n    return 1\n\ndef entry(fn=helper):\n    return fn()\n",
+      "selector": "entry",
+      "expected_units": [
+        "entry",
+        "helper"
+      ],
+      "expected_shadowing": []
+    },
+    {
+      "id": "parameter-shadowing",
+      "source": "def helper():\n    return 1\n\ndef entry(helper):\n    return helper()\n",
+      "selector": "entry",
+      "expected_units": [
+        "entry",
+        "helper"
+      ],
+      "expected_shadowing": [
+        "helper"
+      ]
+    }
+  ],
+  "interpretation": "Expected units are syntactic candidates, not resolved bindings. Shadowed helper must remain uncertain.",
+  "development_only": true
+}

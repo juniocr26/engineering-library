@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-20T19:55:50.166647+00:00",
+  "status": "FROZEN_BEFORE_CONSUMER_COMPILATION",
+  "hypothesis": "Adding variadic constructor options preserves zero-argument invocation but changes function type assignability. New generic and option names have distinct availability, while the existing retry-with-timer function type may stay compatible. Compile real owned consumers rather than infer complete backward compatibility from a source signature alone.",
+  "cases": [
+    {
+      "id": "zero-argument-call",
+      "source": "package consumer\nimport b \"github.com/cenkalti/backoff/v4\"\nfunc Build(){ _ = b.NewExponentialBackOff() }\n",
+      "expected_compile": {
+        "v4.1.3": true,
+        "v4.3.0": true
+      },
+      "expected_failure_diagnostic_fragment": null
+    },
+    {
+      "id": "zero-argument-factory-type",
+      "source": "package consumer\nimport b \"github.com/cenkalti/backoff/v4\"\nvar Factory func() *b.ExponentialBackOff = b.NewExponentialBackOff\n",
+      "expected_compile": {
+        "v4.1.3": true,
+        "v4.3.0": false
+      },
+      "expected_failure_diagnostic_fragment": "cannot use"
+    },
+    {
+      "id": "variadic-factory-type",
+      "source": "package consumer\nimport b \"github.com/cenkalti/backoff/v4\"\nvar Factory func(...b.ExponentialBackOffOpts) *b.ExponentialBackOff = b.NewExponentialBackOff\n",
+      "expected_compile": {
+        "v4.1.3": false,
+        "v4.3.0": true
+      },
+      "expected_failure_diagnostic_fragment": "undefined"
+    },
+    {
+      "id": "option-call",
+      "source": "package consumer\nimport(\"time\"; b \"github.com/cenkalti/backoff/v4\")\nfunc Build(){ _ = b.NewExponentialBackOff(b.WithInitialInterval(time.Second)) }\n",
+      "expected_compile": {
+        "v4.1.3": false,
+        "v4.3.0": true
+      },
+      "expected_failure_diagnostic_fragment": "undefined"
+    },
+    {
+      "id": "generic-data-function",
+      "source": "package consumer\nimport b \"github.com/cenkalti/backoff/v4\"\nfunc Run()(int,error){return b.RetryWithData(func()(int,error){return 7,nil},&b.StopBackOff{})}\n",
+      "expected_compile": {
+        "v4.1.3": false,
+        "v4.3.0": true
+      },
+      "expected_failure_diagnostic_fragment": "undefined"
+    },
+    {
+      "id": "stable-retry-timer-type",
+      "source": "package consumer\nimport b \"github.com/cenkalti/backoff/v4\"\nvar Retry func(b.Operation,b.BackOff,b.Notify,b.Timer)error = b.RetryNotifyWithTimer\n",
+      "expected_compile": {
+        "v4.1.3": true,
+        "v4.3.0": true
+      },
+      "expected_failure_diagnostic_fragment": null
+    }
+  ],
+  "source_execution_allowed": false,
+  "context": "Existing Go1.27.4LinuxARM64,offline selected root package,CGOoff,GOPATHmode. No minimumsupportedGo or entireAPIcompatibilityclaim.",
+  "training_excluded": true,
+  "owner_approved": false,
+  "model_calls": 0,
+  "permanent_tests_modified": false
+}

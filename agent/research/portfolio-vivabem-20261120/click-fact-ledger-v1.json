@@ -1,0 +1,113 @@
+{
+  "at": "2026-11-21T01:25:39.232712+00:00",
+  "source_protocol": "click-reserved-source-protocol-v1.json",
+  "facts": [
+    {
+      "id": "CK01",
+      "meaning_en": "In the selected Context implementation, __init__ assigns self._meta = getattr(parent, \"meta\", {}). The meta property returns self._meta. For an ordinary Context parent using this getter, the child stores the parent meta mapping rather than a written copy; this does not establish sharing between unrelated root contexts.",
+      "evidence": [
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 411,
+          "last_line": 411,
+          "quote_sha256": "b0682e8e98d6dba3b3f7afd29dbf7414ac3eecf93d7b814083e0217bae3f327d",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "        self._meta = getattr(parent, \"meta\", {})\n"
+        },
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 633,
+          "last_line": 659,
+          "quote_sha256": "fd1f2e68fd10c0a23682b9e8a1309b65e92a63eec930c1ee7528baf2af8f17ff",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "    @property\n    def meta(self) -> dict[str, t.Any]:\n        \"\"\"This is a dictionary which is shared with all the contexts\n        that are nested.  It exists so that click utilities can store some\n        state here if they need to.  It is however the responsibility of\n        that code to manage this dictionary well.\n\n        The keys are supposed to be unique dotted strings.  For instance\n        module paths are a good choice for it.  What is stored in there is\n        irrelevant for the operation of click.  However what is important is\n        that code that places data here adheres to the general semantics of\n        the system.\n\n        Example usage::\n\n            LANG_KEY = f'{__name__}.lang'\n\n            def set_language(value):\n                ctx = get_current_context()\n                ctx.meta[LANG_KEY] = value\n\n            def get_language():\n                return get_current_context().meta.get(LANG_KEY, 'en_US')\n\n        .. versionadded:: 5.0\n        \"\"\"\n        return self._meta\n"
+        }
+      ],
+      "runtime_observed": false,
+      "source_program_executed": false
+    },
+    {
+      "id": "CK02",
+      "meaning_en": "The constructor writes _depth=0. __enter__ increments _depth and calls push_context(self). __exit__ decrements _depth and, only when it is zero, calls _close_with_exception_info before the later pop_context call. Callee completion and overridden methods are not observed.",
+      "evidence": [
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 534,
+          "last_line": 534,
+          "quote_sha256": "92080ee08286c81742a0ae40a7ccd596e21852445f55e70ffb864f1600a6575f",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "        self._depth = 0\n"
+        },
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 576,
+          "last_line": 579,
+          "quote_sha256": "8baabc881d3adc9e98e8776ed21c67bfcf948a2cc7f2a0c0ffad03b42e3dbcec",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "    def __enter__(self) -> t.Self:\n        self._depth += 1\n        push_context(self)\n        return self\n"
+        },
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 581,
+          "last_line": 593,
+          "quote_sha256": "3d64999923b3795969d4d592fb6636ee9fc351c0e141a8e7c0d51bd4150d5c4e",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "    def __exit__(\n        self,\n        exc_type: type[BaseException] | None,\n        exc_value: BaseException | None,\n        tb: TracebackType | None,\n    ) -> bool | None:\n        self._depth -= 1\n        exit_result: bool | None = None\n        if self._depth == 0:\n            exit_result = self._close_with_exception_info(exc_type, exc_value, tb)\n        pop_context()\n\n        return exit_result\n"
+        }
+      ],
+      "runtime_observed": false,
+      "source_program_executed": false
+    },
+    {
+      "id": "CK03",
+      "meaning_en": "scope is decorated with contextmanager. When cleanup=False it increments depth before with self and decrements it in finally. On the ordinary normal path starting at depth0 without body mutation, the depth trace is0→1→2→1→0 and __exit__ skips its zero-depth cleanup branch. This does not prohibit explicit close calls or promise behavior of overrides or failing helpers.",
+      "evidence": [
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 595,
+          "last_line": 631,
+          "quote_sha256": "76ce3cae3424b0754c26042bd5894857fadf5e4ae70793ebd94cf719f6ff8ab2",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "    @contextmanager\n    def scope(self, cleanup: bool = True) -> cabc.Generator[Context]:\n        \"\"\"This helper method can be used with the context object to promote\n        it to the current thread local (see :func:`get_current_context`).\n        The default behavior of this is to invoke the cleanup functions which\n        can be disabled by setting `cleanup` to `False`.  The cleanup\n        functions are typically used for things such as closing file handles.\n\n        If the cleanup is intended the context object can also be directly\n        used as a context manager.\n\n        Example usage::\n\n            with ctx.scope():\n                assert get_current_context() is ctx\n\n        This is equivalent::\n\n            with ctx:\n                assert get_current_context() is ctx\n\n        .. versionadded:: 5.0\n\n        :param cleanup: controls if the cleanup functions should be run or\n                        not.  The default is to run these functions.  In\n                        some situations the context only wants to be\n                        temporarily pushed in which case this can be disabled.\n                        Nested pushes automatically defer the cleanup.\n        \"\"\"\n        if not cleanup:\n            self._depth += 1\n        try:\n            with self as rv:\n                yield rv\n        finally:\n            if not cleanup:\n                self._depth -= 1\n"
+        }
+      ],
+      "runtime_observed": false,
+      "source_program_executed": false
+    },
+    {
+      "id": "CK04",
+      "meaning_en": "call_on_close delegates to self._exit_stack.callback(f). _close_with_exception_info first calls the existing exit stack __exit__, then assigns a fresh ExitStack and returns the result. The reset is not in a finally block, so source does not guarantee the reset line is reached if the first call raises. Actual callback success and cross-thread/task isolation have not been observed.",
+      "evidence": [
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 704,
+          "last_line": 714,
+          "quote_sha256": "99a4422bc86a3477864c3d313c3180b9f85716f187ac3003571635db4f007745",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "    def call_on_close(self, f: t.Callable[..., t.Any]) -> t.Callable[..., t.Any]:\n        \"\"\"Register a function to be called when the context tears down.\n\n        This can be used to close resources opened during the script\n        execution. Resources that support Python's context manager\n        protocol which would be used in a ``with`` statement should be\n        registered with :meth:`with_resource` instead.\n\n        :param f: The function to execute on teardown.\n        \"\"\"\n        return self._exit_stack.callback(f)\n"
+        },
+        {
+          "path": "src/click/core.py",
+          "revision": "08b803cf32ceb2ae6a772c62d5da42757a897d44",
+          "first_line": 723,
+          "last_line": 739,
+          "quote_sha256": "008be6d8ad3549490dbaa4fdb1ce0d0d31b85dddbcc7cb5a3516712627513518",
+          "source_sha256": "cce257121e530d9fea502f0f4b0a7b7e2ebbf2294fab8d97eaa253d9d5672d77",
+          "quote": "    def _close_with_exception_info(\n        self,\n        exc_type: type[BaseException] | None,\n        exc_value: BaseException | None,\n        tb: TracebackType | None,\n    ) -> bool | None:\n        \"\"\"Unwind the exit stack by calling its :meth:`__exit__` providing the exception\n        information to allow for exception handling by the various resources registered\n        using :meth;`with_resource`\n\n        :return: Whatever ``exit_stack.__exit__()`` returns.\n        \"\"\"\n        exit_result = self._exit_stack.__exit__(exc_type, exc_value, tb)\n        # In case the context is reused, create a new exit stack.\n        self._exit_stack = ExitStack()\n\n        return exit_result\n"
+        }
+      ],
+      "runtime_observed": false,
+      "source_program_executed": false
+    }
+  ],
+  "owner_approved": false,
+  "training_gold": false,
+  "prior_exposure_unresolved": true
+}

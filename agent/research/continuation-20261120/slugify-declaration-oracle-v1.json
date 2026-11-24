@@ -1,0 +1,166 @@
+{
+  "at": "2026-11-20T13:59:48.630838+00:00",
+  "freeze_sha256": "33d51d7a3559bb54c03583731c5d8229a3b54580983c7c1028bac40a1e4dba25",
+  "expected_labels_frozen_before_predictions": true,
+  "header_evidence": [
+    {
+      "when": "previous",
+      "selector": "slugify",
+      "revision": "76f4eabe323653555d11702c3e53b66ebf352683",
+      "path": "slugify/slugify.py",
+      "source_sha256": "bf543135a3b464e3902da3bb8530028b6f813714a62993a1e113bfd077e5dd34",
+      "first_line": 77,
+      "last_line": 78,
+      "quote": "def slugify(text, entities=True, decimal=True, hexadecimal=True, max_length=0, word_boundary=False,\n            separator=DEFAULT_SEPARATOR, save_order=False, stopwords=(), regex_pattern=None, lowercase=True):\n",
+      "quote_sha256": "f4a1347bfe430bb782d88d07a469b0234de5637e2bba7518c3294e2098ed3aae",
+      "complete_header": true,
+      "complete_callable_body": false
+    },
+    {
+      "when": "current",
+      "selector": "slugify",
+      "revision": "f85f9488520148d5f6899b5639199882b605e30a",
+      "path": "slugify/slugify.py",
+      "source_sha256": "3103ecc34bb68362d4fbc0414fb2b40ce946b40848c68287403e1f5a5b4a9656",
+      "first_line": 75,
+      "last_line": 89,
+      "quote": "def slugify(\n    text: str,\n    entities: bool = True,\n    decimal: bool = True,\n    hexadecimal: bool = True,\n    max_length: int = 0,\n    word_boundary: bool = False,\n    separator: str = DEFAULT_SEPARATOR,\n    save_order: bool = False,\n    stopwords: Iterable[str] = (),\n    regex_pattern: re.Pattern[str] | str | None = None,\n    lowercase: bool = True,\n    replacements: Iterable[Iterable[str]] = (),\n    allow_unicode: bool = False,\n) -> str:\n",
+      "quote_sha256": "abbfbe9cc096789ac608238bcb5b3429197356ea2c7e5785cc0cc00a453615e5",
+      "complete_header": true,
+      "complete_callable_body": false
+    },
+    {
+      "when": "previous",
+      "selector": "smart_truncate",
+      "revision": "76f4eabe323653555d11702c3e53b66ebf352683",
+      "path": "slugify/slugify.py",
+      "source_sha256": "bf543135a3b464e3902da3bb8530028b6f813714a62993a1e113bfd077e5dd34",
+      "first_line": 35,
+      "last_line": 35,
+      "quote": "def smart_truncate(string, max_length=0, word_boundaries=False, separator=' ', save_order=False):\n",
+      "quote_sha256": "29661dbcf2c73fb00e6c1873c169a7176accde2a2586b596c54c26e32b522fd6",
+      "complete_header": true,
+      "complete_callable_body": false
+    },
+    {
+      "when": "current",
+      "selector": "smart_truncate",
+      "revision": "f85f9488520148d5f6899b5639199882b605e30a",
+      "path": "slugify/slugify.py",
+      "source_sha256": "3103ecc34bb68362d4fbc0414fb2b40ce946b40848c68287403e1f5a5b4a9656",
+      "first_line": 27,
+      "last_line": 33,
+      "quote": "def smart_truncate(\n    string: str,\n    max_length: int = 0,\n    word_boundary: bool = False,\n    separator: str = \" \",\n    save_order: bool = False,\n) -> str:\n",
+      "quote_sha256": "42550861f39454656832ceb041bd2f1f0e9606f620ebfdfcecbb2b1a4c85872d",
+      "complete_header": true,
+      "complete_callable_body": false
+    }
+  ],
+  "cases": [
+    {
+      "id": "slugify-no-allow_unicode",
+      "selector": "slugify",
+      "parameter": "allow_unicode",
+      "documentation": {
+        "en": "slugify has no allow_unicode parameter.",
+        "pt-br": "slugify não possui parâmetro allow_unicode."
+      },
+      "previous_parameter_present": false,
+      "current_parameter_present": true,
+      "expected_action": "MODIFY",
+      "case_kind": "SOURCE_PARAMETER_ADDED",
+      "controlled_document_claim_not_upstream_author_prose": true
+    },
+    {
+      "id": "slugify-no-lowercase",
+      "selector": "slugify",
+      "parameter": "lowercase",
+      "documentation": {
+        "en": "slugify has no lowercase parameter.",
+        "pt-br": "slugify não possui parâmetro lowercase."
+      },
+      "previous_parameter_present": true,
+      "current_parameter_present": true,
+      "expected_action": "MODIFY",
+      "case_kind": "DOCUMENT_ALREADY_WRONG_BEFORE",
+      "controlled_document_claim_not_upstream_author_prose": true
+    },
+    {
+      "id": "slugify-no-replacements",
+      "selector": "slugify",
+      "parameter": "replacements",
+      "documentation": {
+        "en": "slugify has no replacements parameter.",
+        "pt-br": "slugify não possui parâmetro replacements."
+      },
+      "previous_parameter_present": false,
+      "current_parameter_present": true,
+      "expected_action": "MODIFY",
+      "case_kind": "SOURCE_PARAMETER_ADDED",
+      "controlled_document_claim_not_upstream_author_prose": true
+    },
+    {
+      "id": "slugify-no-regex_pattern",
+      "selector": "slugify",
+      "parameter": "regex_pattern",
+      "documentation": {
+        "en": "slugify has no regex_pattern parameter.",
+        "pt-br": "slugify não possui parâmetro regex_pattern."
+      },
+      "previous_parameter_present": true,
+      "current_parameter_present": true,
+      "expected_action": "MODIFY",
+      "case_kind": "DOCUMENT_ALREADY_WRONG_BEFORE",
+      "controlled_document_claim_not_upstream_author_prose": true
+    },
+    {
+      "id": "slugify-no-stopwords",
+      "selector": "slugify",
+      "parameter": "stopwords",
+      "documentation": {
+        "en": "slugify has no stopwords parameter.",
+        "pt-br": "slugify não possui parâmetro stopwords."
+      },
+      "previous_parameter_present": true,
+      "current_parameter_present": true,
+      "expected_action": "MODIFY",
+      "case_kind": "DOCUMENT_ALREADY_WRONG_BEFORE",
+      "controlled_document_claim_not_upstream_author_prose": true
+    },
+    {
+      "id": "smart_truncate-no-save_order",
+      "selector": "smart_truncate",
+      "parameter": "save_order",
+      "documentation": {
+        "en": "smart_truncate has no save_order parameter.",
+        "pt-br": "smart_truncate não possui parâmetro save_order."
+      },
+      "previous_parameter_present": true,
+      "current_parameter_present": true,
+      "expected_action": "MODIFY",
+      "case_kind": "DOCUMENT_ALREADY_WRONG_BEFORE",
+      "controlled_document_claim_not_upstream_author_prose": true
+    },
+    {
+      "id": "smart_truncate-no-regex_pattern",
+      "selector": "smart_truncate",
+      "parameter": "regex_pattern",
+      "documentation": {
+        "en": "smart_truncate has no regex_pattern parameter.",
+        "pt-br": "smart_truncate não possui parâmetro regex_pattern."
+      },
+      "previous_parameter_present": false,
+      "current_parameter_present": false,
+      "expected_action": "NO-OP",
+      "case_kind": "UNCHANGED_VALID_DECLARATION_CLAIM",
+      "controlled_document_claim_not_upstream_author_prose": true
+    }
+  ],
+  "interpretation": "Twoadded-parameterclaims,oneunchangedvalidclaim,fouralready-wrongdocumentrepairclaims. Scoregroupsseparately;do not callfourrepairsnewevolutionchanges.",
+  "unexpected_source_finding": "smart_truncate header renames word_boundaries to word_boundary between2.0.0and8.0.4. It was outsidepredeclaredsevenqueries;recordforlaterdevelopmentfollow-up,notaddtofrozenscore.",
+  "training_exclusion": true,
+  "source_executed": false,
+  "source_family_count": 1,
+  "function_contract_count": 2,
+  "certified_neural_holdout": false
+}

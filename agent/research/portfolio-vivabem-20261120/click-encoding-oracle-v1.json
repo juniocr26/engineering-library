@@ -1,0 +1,42 @@
+{
+  "frozen_at": "2026-11-21T01:25:39.232712+00:00",
+  "questions": [
+    {
+      "id": "Q001",
+      "question_en": "For the selected ordinary Context parent and getter, does a child reuse the parent meta mapping instead of making a copy?",
+      "required_fact_ids": [
+        "CK01"
+      ],
+      "reference": "YES, qualified to the selected ordinary implementation and parent relationship; no global root-context sharing guarantee."
+    },
+    {
+      "id": "Q002",
+      "question_en": "Which cleanup helper is called by __exit__ when its decremented _depth equals zero, and is it before the later pop_context call?",
+      "required_fact_ids": [
+        "CK02"
+      ],
+      "reference": "_close_with_exception_info is called before the later pop_context; reaching pop_context still depends on helper completion."
+    },
+    {
+      "id": "Q003",
+      "question_en": "Does cleanup=False force immediate automatic cleanup on the ordinary depth0 scope path?",
+      "required_fact_ids": [
+        "CK03"
+      ],
+      "reference": "NO: selected normal trace skips zero-depth cleanup; do not claim manual close or all overrides are prevented."
+    },
+    {
+      "id": "Q004",
+      "question_en": "Do the examined source and unexecuted tests establish successful cleanup/reset and thread/task isolation under all runtime conditions?",
+      "required_fact_ids": [
+        "CK04"
+      ],
+      "reference": "NOT_ESTABLISHED: no observed runtime guarantee; reset follows the potentially raising __exit__ call and is not in finally."
+    }
+  ],
+  "evaluation": "Complete source-faithful bilingual question/answer pairs, not merely yes/no labels. Positive Q001/helper identity Q002 prevent constant-No pseudo-success.",
+  "reference_answers_not_sent": true,
+  "public_source_family": "pallets/click",
+  "not_certified_neural_holdout": true,
+  "training_excluded": true
+}

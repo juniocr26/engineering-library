@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-20T11:18:32.011939+00:00",
+  "source_sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc",
+  "selector": "rotate_file",
+  "allowed_calls": [
+    "ValueError",
+    "kept_names.append",
+    "list",
+    "os.path.exists",
+    "os.path.isfile",
+    "os.path.splitext",
+    "os.remove",
+    "os.rename",
+    "range",
+    "reversed",
+    "zip"
+  ],
+  "hypothesis": "The written final remove at kept_names[-1] removes the boundary backup, including the only backup when keep=1.",
+  "cases": [
+    1,
+    2,
+    5
+  ],
+  "expected_backup_counts": [
+    0,
+    1,
+    4
+  ],
+  "safety": "Only selected AST function is compiled; full module is never imported. All filesystem calls use a confined facade over newly created synthetic directories. No external repository or user file is touched.",
+  "classification": "SOURCE_INSPECTED_DEVELOPMENT_CONTROLS_NOT_INDEPENDENT_HOLDOUT"
+}

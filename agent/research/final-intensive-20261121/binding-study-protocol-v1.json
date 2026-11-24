@@ -1,0 +1,496 @@
+{
+  "frozen_at": "2026-11-21T22:46:00.436145+00:00",
+  "hypothesis": "A caller-owned pinned envelope rejects stale/tampered acceptance dependencies and unauthorized promotion while preserving original exact bundles.",
+  "anchor_path": "trusted-binding-anchor-v1.json",
+  "anchor_sha256": "0343b9692d40444f1ea1cc3063741beb151276c2ba6bd615bc99fbb46d32aa06",
+  "cases": [
+    {
+      "id": "fastapi-unchanged",
+      "task": "fastapi",
+      "mutation": "identity",
+      "value": null,
+      "expected": "VALID"
+    },
+    {
+      "id": "fastapi-missing-candidate",
+      "task": "fastapi",
+      "mutation": "missing_role",
+      "value": "candidate",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-candidate",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "candidate",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-source",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "source",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-criteria",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "acceptance_criteria",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-reference",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "references",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-review",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "semantic_review",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-complete-review",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "complete_review",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-request",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "request",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-response",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "raw_response",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-content",
+      "task": "fastapi",
+      "mutation": "append_bytes",
+      "value": "model_content",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-wrong-revision",
+      "task": "fastapi",
+      "mutation": "change_envelope",
+      "value": [
+        "source_identity",
+        "revision",
+        "0000000000000000000000000000000000000000"
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-dropped-requirement",
+      "task": "fastapi",
+      "mutation": "drop_requirement",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-promote-publication",
+      "task": "fastapi",
+      "mutation": "change_envelope",
+      "value": [
+        "publication_approved",
+        true
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-promote-gold",
+      "task": "fastapi",
+      "mutation": "change_envelope",
+      "value": [
+        "training_gold_approved",
+        true
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-assert-independent-human",
+      "task": "fastapi",
+      "mutation": "change_envelope",
+      "value": [
+        "review_independence",
+        "independent human"
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-changed-body-rehashed-envelope",
+      "task": "fastapi",
+      "mutation": "rehash_candidate",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-duplicate-json-key",
+      "task": "fastapi",
+      "mutation": "duplicate_json",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-unsafe-relative-path",
+      "task": "fastapi",
+      "mutation": "change_path",
+      "value": "../../outside",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-absolute-source-path",
+      "task": "fastapi",
+      "mutation": "change_path",
+      "value": "/private/tmp/outside",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "fastapi-symlink-source",
+      "task": "fastapi",
+      "mutation": "symlink_role",
+      "value": "source",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-unchanged",
+      "task": "cobra",
+      "mutation": "identity",
+      "value": null,
+      "expected": "VALID"
+    },
+    {
+      "id": "cobra-missing-candidate",
+      "task": "cobra",
+      "mutation": "missing_role",
+      "value": "candidate",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-candidate",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "candidate",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-source",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "source",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-criteria",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "acceptance_criteria",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-reference",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "references",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-review",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "semantic_review",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-complete-review",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "complete_review",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-request",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "request",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-response",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "raw_response",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-content",
+      "task": "cobra",
+      "mutation": "append_bytes",
+      "value": "model_content",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-wrong-revision",
+      "task": "cobra",
+      "mutation": "change_envelope",
+      "value": [
+        "source_identity",
+        "revision",
+        "0000000000000000000000000000000000000000"
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-dropped-requirement",
+      "task": "cobra",
+      "mutation": "drop_requirement",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-promote-publication",
+      "task": "cobra",
+      "mutation": "change_envelope",
+      "value": [
+        "publication_approved",
+        true
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-promote-gold",
+      "task": "cobra",
+      "mutation": "change_envelope",
+      "value": [
+        "training_gold_approved",
+        true
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-assert-independent-human",
+      "task": "cobra",
+      "mutation": "change_envelope",
+      "value": [
+        "review_independence",
+        "independent human"
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-changed-body-rehashed-envelope",
+      "task": "cobra",
+      "mutation": "rehash_candidate",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-duplicate-json-key",
+      "task": "cobra",
+      "mutation": "duplicate_json",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-unsafe-relative-path",
+      "task": "cobra",
+      "mutation": "change_path",
+      "value": "../../outside",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-absolute-source-path",
+      "task": "cobra",
+      "mutation": "change_path",
+      "value": "/private/tmp/outside",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "cobra-symlink-source",
+      "task": "cobra",
+      "mutation": "symlink_role",
+      "value": "source",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-unchanged",
+      "task": "zod",
+      "mutation": "identity",
+      "value": null,
+      "expected": "VALID"
+    },
+    {
+      "id": "zod-missing-candidate",
+      "task": "zod",
+      "mutation": "missing_role",
+      "value": "candidate",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-candidate",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "candidate",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-source",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "source",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-criteria",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "acceptance_criteria",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-reference",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "references",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-review",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "semantic_review",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-complete-review",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "complete_review",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-request",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "request",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-response",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "raw_response",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-content",
+      "task": "zod",
+      "mutation": "append_bytes",
+      "value": "model_content",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-wrong-revision",
+      "task": "zod",
+      "mutation": "change_envelope",
+      "value": [
+        "source_identity",
+        "revision",
+        "0000000000000000000000000000000000000000"
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-dropped-requirement",
+      "task": "zod",
+      "mutation": "drop_requirement",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-promote-publication",
+      "task": "zod",
+      "mutation": "change_envelope",
+      "value": [
+        "publication_approved",
+        true
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-promote-gold",
+      "task": "zod",
+      "mutation": "change_envelope",
+      "value": [
+        "training_gold_approved",
+        true
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-assert-independent-human",
+      "task": "zod",
+      "mutation": "change_envelope",
+      "value": [
+        "review_independence",
+        "independent human"
+      ],
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-changed-body-rehashed-envelope",
+      "task": "zod",
+      "mutation": "rehash_candidate",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-duplicate-json-key",
+      "task": "zod",
+      "mutation": "duplicate_json",
+      "value": null,
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-unsafe-relative-path",
+      "task": "zod",
+      "mutation": "change_path",
+      "value": "../../outside",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-absolute-source-path",
+      "task": "zod",
+      "mutation": "change_path",
+      "value": "/private/tmp/outside",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "zod-symlink-source",
+      "task": "zod",
+      "mutation": "symlink_role",
+      "value": "source",
+      "expected": "REFUSED"
+    }
+  ],
+  "positive_controls": 3,
+  "negative_controls": 60,
+  "unit": "owned integrity mutation, not factual proposition or document-generation trial",
+  "threat_boundary": "Anchor is caller-owned frozen input. Attacker cannot replace anchor or validator. Full anchor compromise defeats this profile. Symlink/path checks are static preflight, not race-proof concurrent file-open design.",
+  "semantic_boundary": "Hashes prove byte bindings only. Valid envelopes retain historical source-only review; no new semantic acceptance, publication, Gold, independent human certification or production integration.",
+  "new_model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

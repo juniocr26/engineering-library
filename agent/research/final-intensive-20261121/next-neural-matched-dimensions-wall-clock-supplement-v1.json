@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-22T08:28:45.788120+00:00",
+  "role": "PRE_EXECUTION_WALL_CLOCK_BOUNDS_FOR_FUTURE_MATCHED_METADATA_PAIR_NOT_CURRENT_AUTHORIZATION",
+  "original_protocol": {
+    "path": "agent/research/final-intensive-20261121/next-neural-matched-dimensions-protocol-v1.json",
+    "sha256": "56994f684b75816f09901cc58d942e2ce16ff4cff1992582133215e352131b5d"
+  },
+  "execution_status": "NOT_RUN",
+  "current_model_calls": 0,
+  "current_transport_probe_authorized": false,
+  "future_preconditions": [
+    "An already authorized compatible runtime is reachable without bypassing current restrictions.",
+    "Exact model digest and both immutable request payload hashes verified.",
+    "Full task and existing token/context budgets preserved; no truncation to force completion."
+  ],
+  "clock_policy": {
+    "clock": "monotonic elapsed time plus UTC receipts",
+    "all_stages_max_seconds": 1800,
+    "preflight_max_seconds": 120,
+    "per_request_max_seconds": 600,
+    "scoring_and_preservation_reserved_seconds": 480,
+    "max_requests": 2,
+    "order": [
+      "B",
+      "A"
+    ],
+    "retries": 0,
+    "dispatch_admission": "Before each request, remaining all-stage budget must cover the full 600-second request allowance plus the unspent 480-second scoring/preservation reserve. Preflight, load, transport, generation, collection and scoring all count toward the 1800-second ceiling.",
+    "request_timeout_includes": "Connection, model loading, first token, entire response and response collection; no fresh timer per transport stage.",
+    "on_timeout_or_unknown_outcome": "Preserve request/partial response/terminal uncertainty; do not retry or dispatch remaining arm. Local deadline does not prove server cancellation; keep_alive=0 is not a cancellation receipt.",
+    "on_identity_or_transport_denial": "Preserve evidence and stop remaining dispatch without endpoint, socket, HOME or permission workaround.",
+    "incomplete_pair_disposition": "INCONCLUSIVE_UNPAIRED; no winner, pooled success rate or quality improvement claim.",
+    "expiry": "Stop new work at all-stage deadline and preserve the outcome; explicit time spent preserving is still reported even if a cleanup fault overruns the ceiling."
+  },
+  "separation": "This future paired-inference experiment is not LoRA training. Its 1800-second cap is independently specified and does not authorize, consume or extend the separate unapproved first-LoRA pilot budget.",
+  "preservation": [
+    "Both input packets, exact runtime identity if observed, dispatch times, terminal status, partial outputs, scoring records and actual stage durations."
+  ],
+  "production_or_dataset_changes": 0,
+  "training_or_gold_approval": false
+}

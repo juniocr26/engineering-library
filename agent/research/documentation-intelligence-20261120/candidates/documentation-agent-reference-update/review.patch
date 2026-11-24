@@ -1,0 +1,38 @@
+--- a/isolated/documentation-agent-contracts/en.md
++++ b/isolated/documentation-agent-contracts/en.md
+@@ -89,6 +89,16 @@
+ 
+ Owned workspace maintenance is now `0.1.4`. Before declaring a new candidate prepared, it rechecks the candidate root and parent identities and reads back the active/history inventories and contents, exact preconditions, history index and serialized `result.json`. Unchanged active documents must retain their expected mode and mtime. Both `candidate_output_readback_verified` and `candidate_root_identity_rechecked` are reported only on success. The [output-closure study](../../candidate-output-closure-evaluation-v1.json) preserves five earlier false preparation reports caused by root replacement, active/history corruption, an unexpected artifact or a changed durable result. Fresh equivalent mutations now refuse while a valid candidate succeeds. Seven new controls also cover a replaced-directory symlink and preserved-mtime drift; the [current restored cut](../../operational-recovery-current-v7.json) passed all 278 tests on macOS and Linux. Refusals preserve partial evidence and replacement human files without automatic repair or deletion. A result file alone does not establish completion: it may remain after a later final refusal. These sequential checks are not an atomic transaction against changes after the last check, and never authorize publication or training.
+ 
++## Source-reference maintenance supplement — 2026-11-20
++
++The preceding current-cut statements describe the preserved previous campaign. This separate research supplement observes planner `0.3.6` and workspace maintenance `0.1.5`; it does not replace the earlier receipts, count old tests again or imply that the ordinary Ruby writer acquired these optional tools.
++
++The planner accepts only a canonical, bounded repository-relative identity in the source-link path fields. Empty paths, `.` or `..` segments, absolute paths and unsupported characters require review. If both language claims already name the declared current path, it recommends `NO-OP`; a positively identified previous path that differs from the current path can recommend `MODIFY`. This is still an operator-declared source/claim protocol, not proof that an arbitrary path exists in a Git revision.
++
++The filesystem preparation layer adds an independent identity check: supplied `current_path` and `previous_path` metadata must match the operation's registered current and previous files. Equal inline source bytes cannot certify a different path. The new guard rejects a false current-path `NO-OP` and a false previous-path relocation before candidate writes. A valid relocation still prepares an isolated EN/PT candidate; an already-current reference preserves the original bytes and metadata without creating a candidate root.
++
++The twelve planner controls improved from 9/12 to 12/12, and the four physical-identity controls from 2/4 to 4/4, in development only. The frozen public Boltons evaluation remains 0/8 exact actions with eight abstentions; the old matrix remains 22/24. These are separate denominators. No permanent test files, active documentation, publication permissions or model weights changed.
++
+ ## Engineer FAQ
+ 
+ <!-- reading-section: faq:research-not-training -->
+--- a/isolated/documentation-agent-contracts/pt-br.md
++++ b/isolated/documentation-agent-contracts/pt-br.md
+@@ -89,6 +89,16 @@
+ 
+ A manutenção de workspace próprio agora está em `0.1.4`. Antes de declarar um novo candidato preparado, revalida as identidades da raiz e do diretório pai do candidato e lê novamente os inventários e conteúdos ativos/históricos, as precondições exatas, o índice de histórico e o `result.json` serializado. Documentos ativos inalterados devem manter o modo e o mtime esperados. Tanto `candidate_output_readback_verified` quanto `candidate_root_identity_rechecked` são informados somente no sucesso. O [estudo de fechamento das saídas](../../candidate-output-closure-evaluation-v1.json) preserva cinco declarações incorretas anteriores de preparação causadas por substituição da raiz, corrupção de conteúdo ativo/histórico, artefato inesperado ou mudança no resultado persistido. Mutações equivalentes novas agora são recusadas, enquanto um candidato válido funciona. Sete controles novos também cobrem um symlink de diretório substituído e alteração do mtime preservado; o [recorte restaurado atual](../../operational-recovery-current-v7.json) passou nos 278 testes no macOS e no Linux. As recusas preservam evidências parciais e arquivos humanos de substituição sem reparação ou exclusão automática. Um arquivo de resultado, isoladamente, não estabelece conclusão: pode permanecer após uma recusa final posterior. Essas verificações sequenciais não constituem uma transação atômica contra mudanças após a última conferência e nunca autorizam publicação ou treinamento.
+ 
++## Suplemento de manutenção de referências de fonte — 20/11/2026
++
++As afirmações anteriores sobre o recorte atual descrevem a campanha anterior preservada. Este suplemento separado de pesquisa observa o planejador `0.3.6` e a manutenção de workspace `0.1.5`; não substitui recibos anteriores, soma novamente testes antigos nem implica que o escritor Ruby comum passou a consumir essas ferramentas opcionais.
++
++O planejador aceita apenas uma identidade canônica e limitada, relativa ao repositório, nos campos de caminho de referências de fonte. Caminhos vazios, segmentos `.` ou `..`, caminhos absolutos e caracteres não suportados exigem revisão. Se as afirmações dos dois idiomas já nomeiam o caminho atual declarado, recomenda `NO-OP`; um caminho anterior positivamente identificado que difere do atual pode recomendar `MODIFY`. Isso continua sendo um protocolo de fonte/afirmação declarado pelo operador, sem provar que um caminho arbitrário exista em uma revisão Git.
++
++A camada de preparação no sistema de arquivos acrescenta uma conferência independente de identidade: os metadados `current_path` e `previous_path` fornecidos devem corresponder aos arquivos atual e anterior registrados na operação. Bytes iguais na fonte do pacote não podem certificar outro caminho. A nova proteção recusa um `NO-OP` com caminho atual falso e uma relocação com caminho anterior falso antes de gravar candidatos. Uma relocação válida continua preparando um candidato EN/PT isolado; uma referência já atual preserva bytes e metadados originais sem criar uma raiz de candidato.
++
++Os doze controles do planejador passaram de 9/12 para 12/12, e os quatro controles de identidade física de 2/4 para 4/4, somente em desenvolvimento. A avaliação pública Boltons congelada permanece com 0/8 ações exatas e oito abstenções; a matriz antiga permanece em 22/24. São denominadores separados. Nenhum arquivo permanente de teste, documentação ativa, permissão de publicação ou peso do modelo mudou.
++
+ ## FAQ de engenharia
+ 
+ <!-- reading-section: faq:research-not-training -->

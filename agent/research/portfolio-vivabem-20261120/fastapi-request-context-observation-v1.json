@@ -1,0 +1,544 @@
+{
+  "at": "2026-11-21T02:04:50.631822+00:00",
+  "protocol": "fastapi-request-context-protocol-v1.json",
+  "sources": [
+    {
+      "path": "fastapi/routing.py",
+      "source_sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491",
+      "imports": [
+        {
+          "module": "fastapi.dependencies.models",
+          "names": [
+            {
+              "name": "Dependant",
+              "alias": null
+            },
+            {
+              "name": "_is_async_gen_callable",
+              "alias": null
+            },
+            {
+              "name": "_is_coroutine_callable",
+              "alias": null
+            },
+            {
+              "name": "_is_gen_callable",
+              "alias": null
+            }
+          ],
+          "lines": [
+            60,
+            65
+          ]
+        },
+        {
+          "module": "fastapi.dependencies.utils",
+          "names": [
+            {
+              "name": "SolvedDependency",
+              "alias": null
+            },
+            {
+              "name": "_get_body_field",
+              "alias": null
+            },
+            {
+              "name": "_get_flat_body_params",
+              "alias": null
+            },
+            {
+              "name": "_should_embed_body_fields",
+              "alias": null
+            },
+            {
+              "name": "get_dependant",
+              "alias": null
+            },
+            {
+              "name": "get_parameterless_sub_dependant",
+              "alias": null
+            },
+            {
+              "name": "get_stream_item_type",
+              "alias": null
+            },
+            {
+              "name": "get_typed_return_annotation",
+              "alias": null
+            },
+            {
+              "name": "solve_dependencies",
+              "alias": null
+            }
+          ],
+          "lines": [
+            66,
+            76
+          ]
+        }
+      ],
+      "selected_declarations": [
+        {
+          "owner": "serialize_response",
+          "kind": "AsyncFunctionDef",
+          "lines": [
+            329,
+            369
+          ],
+          "arguments": "*, field: ModelField | None=None, response_content: Any, include: IncEx | None=None, exclude: IncEx | None=None, by_alias: bool=True, exclude_unset: bool=False, exclude_defaults: bool=False, exclude_none: bool=False, is_coroutine: bool=True, endpoint_ctx: EndpointContext | None=None, dump_json: bool=False"
+        },
+        {
+          "owner": "run_endpoint_function",
+          "kind": "AsyncFunctionDef",
+          "lines": [
+            372,
+            385
+          ],
+          "arguments": "*, dependant: Dependant, values: dict[str, Any], is_coroutine: bool"
+        },
+        {
+          "owner": "get_request_handler",
+          "kind": "FunctionDef",
+          "lines": [
+            406,
+            821
+          ],
+          "arguments": "dependant: Dependant, body_field: ModelField | None=None, status_code: int | None=None, response_class: type[Response] | DefaultPlaceholder=Default(JSONResponse), response_field: ModelField | None=None, response_model_include: IncEx | None=None, response_model_exclude: IncEx | None=None, response_model_by_alias: bool=True, response_model_exclude_unset: bool=False, response_model_exclude_defaults: bool=False, response_model_exclude_none: bool=False, dependency_overrides_provider: Any | None=None, embed_body_fields: bool=False, strict_content_type: bool | DefaultPlaceholder=Default(True), stream_item_field: ModelField | None=None, is_json_stream: bool=False, form_limits: _FormLimits | None=None"
+        },
+        {
+          "owner": "get_request_handler.app",
+          "kind": "AsyncFunctionDef",
+          "lines": [
+            438,
+            819
+          ],
+          "arguments": "request: Request"
+        },
+        {
+          "owner": "APIRoute.get_route_handler",
+          "kind": "FunctionDef",
+          "lines": [
+            1322,
+            1347
+          ],
+          "arguments": "self"
+        }
+      ],
+      "selected_name_calls": [
+        {
+          "owner": "get_request_handler.app",
+          "callee": "solve_dependencies",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "request": "request",
+            "dependant": "dependant",
+            "body": "body",
+            "dependency_overrides_provider": "dependency_overrides_provider",
+            "async_exit_stack": "async_exit_stack",
+            "embed_body_fields": "embed_body_fields"
+          },
+          "controls": [],
+          "lines": [
+            528,
+            535
+          ],
+          "quote": "solve_dependencies(\n                request=request,\n                dependant=dependant,\n                body=body,\n                dependency_overrides_provider=dependency_overrides_provider,\n                async_exit_stack=async_exit_stack,\n                embed_body_fields=embed_body_fields,\n            )"
+        },
+        {
+          "owner": "get_request_handler.app",
+          "callee": "run_endpoint_function",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "dependant": "dependant",
+            "values": "solved_result.values",
+            "is_coroutine": "is_coroutine"
+          },
+          "controls": [
+            {
+              "kind": "if",
+              "test": "not errors",
+              "branch": "then",
+              "line": 541
+            },
+            {
+              "kind": "if",
+              "test": "is_sse_stream",
+              "branch": "else",
+              "line": 572
+            },
+            {
+              "kind": "if",
+              "test": "is_json_stream",
+              "branch": "else",
+              "line": 703
+            },
+            {
+              "kind": "if",
+              "test": "_is_async_gen_callable(dependant.call) or _is_gen_callable(dependant.call)",
+              "branch": "else",
+              "line": 739
+            }
+          ],
+          "lines": [
+            762,
+            766
+          ],
+          "quote": "run_endpoint_function(\n                    dependant=dependant,\n                    values=solved_result.values,\n                    is_coroutine=is_coroutine,\n                )"
+        },
+        {
+          "owner": "get_request_handler.app",
+          "callee": "serialize_response",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "field": "response_field",
+            "response_content": "raw_response",
+            "include": "response_model_include",
+            "exclude": "response_model_exclude",
+            "by_alias": "response_model_by_alias",
+            "exclude_unset": "response_model_exclude_unset",
+            "exclude_defaults": "response_model_exclude_defaults",
+            "exclude_none": "response_model_exclude_none",
+            "is_coroutine": "is_coroutine",
+            "endpoint_ctx": "endpoint_ctx",
+            "dump_json": "use_dump_json"
+          },
+          "controls": [
+            {
+              "kind": "if",
+              "test": "not errors",
+              "branch": "then",
+              "line": 541
+            },
+            {
+              "kind": "if",
+              "test": "is_sse_stream",
+              "branch": "else",
+              "line": 572
+            },
+            {
+              "kind": "if",
+              "test": "is_json_stream",
+              "branch": "else",
+              "line": 703
+            },
+            {
+              "kind": "if",
+              "test": "_is_async_gen_callable(dependant.call) or _is_gen_callable(dependant.call)",
+              "branch": "else",
+              "line": 739
+            },
+            {
+              "kind": "if",
+              "test": "isinstance(raw_response, Response)",
+              "branch": "else",
+              "line": 767
+            }
+          ],
+          "lines": [
+            784,
+            796
+          ],
+          "quote": "serialize_response(\n                            field=response_field,\n                            response_content=raw_response,\n                            include=response_model_include,\n                            exclude=response_model_exclude,\n                            by_alias=response_model_by_alias,\n                            exclude_unset=response_model_exclude_unset,\n                            exclude_defaults=response_model_exclude_defaults,\n                            exclude_none=response_model_exclude_none,\n                            is_coroutine=is_coroutine,\n                            endpoint_ctx=endpoint_ctx,\n                            dump_json=use_dump_json,\n                        )"
+        },
+        {
+          "owner": "get_websocket_app.app",
+          "callee": "solve_dependencies",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "request": "websocket",
+            "dependant": "dependant",
+            "dependency_overrides_provider": "dependency_overrides_provider",
+            "async_exit_stack": "async_exit_stack",
+            "embed_body_fields": "embed_body_fields"
+          },
+          "controls": [],
+          "lines": [
+            847,
+            853
+          ],
+          "quote": "solve_dependencies(\n                request=websocket,\n                dependant=dependant,\n                dependency_overrides_provider=dependency_overrides_provider,\n                async_exit_stack=async_exit_stack,\n                embed_body_fields=embed_body_fields,\n            )"
+        },
+        {
+          "owner": "APIRoute.__init__",
+          "callee": "request_response",
+          "keyword_unpacking_present": false,
+          "keywords": {},
+          "controls": [],
+          "lines": [
+            1319,
+            1319
+          ],
+          "quote": "request_response(self.get_route_handler())"
+        },
+        {
+          "owner": "APIRoute.get_route_handler",
+          "callee": "get_request_handler",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "dependant": "route.dependant",
+            "body_field": "route.body_field",
+            "status_code": "route.status_code",
+            "response_class": "route.response_class",
+            "response_field": "route.response_field",
+            "response_model_include": "route.response_model_include",
+            "response_model_exclude": "route.response_model_exclude",
+            "response_model_by_alias": "route.response_model_by_alias",
+            "response_model_exclude_unset": "route.response_model_exclude_unset",
+            "response_model_exclude_defaults": "route.response_model_exclude_defaults",
+            "response_model_exclude_none": "route.response_model_exclude_none",
+            "dependency_overrides_provider": "route.dependency_overrides_provider",
+            "embed_body_fields": "route._embed_body_fields",
+            "strict_content_type": "route.strict_content_type",
+            "form_limits": "self.form_limits",
+            "stream_item_field": "route.stream_item_field",
+            "is_json_stream": "route.is_json_stream"
+          },
+          "controls": [],
+          "lines": [
+            1329,
+            1347
+          ],
+          "quote": "get_request_handler(\n            dependant=route.dependant,\n            body_field=route.body_field,\n            status_code=route.status_code,\n            response_class=route.response_class,\n            response_field=route.response_field,\n            response_model_include=route.response_model_include,\n            response_model_exclude=route.response_model_exclude,\n            response_model_by_alias=route.response_model_by_alias,\n            response_model_exclude_unset=route.response_model_exclude_unset,\n            response_model_exclude_defaults=route.response_model_exclude_defaults,\n            response_model_exclude_none=route.response_model_exclude_none,\n            dependency_overrides_provider=route.dependency_overrides_provider,\n            embed_body_fields=route._embed_body_fields,\n            strict_content_type=route.strict_content_type,\n            form_limits=self.form_limits,\n            stream_item_field=route.stream_item_field,\n            is_json_stream=route.is_json_stream,\n        )"
+        },
+        {
+          "owner": "_EffectiveRouteContext.from_api_route",
+          "callee": "request_response",
+          "keyword_unpacking_present": false,
+          "keywords": {},
+          "controls": [],
+          "lines": [
+            1601,
+            1601
+          ],
+          "quote": "request_response(original_route.get_route_handler())"
+        },
+        {
+          "owner": "_FrontendRouteGroup._solve_dependencies",
+          "callee": "solve_dependencies",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "request": "request",
+            "dependant": "dependant",
+            "dependency_overrides_provider": "dependency_overrides_provider",
+            "async_exit_stack": "request_stack",
+            "embed_body_fields": "embed_body_fields"
+          },
+          "controls": [],
+          "lines": [
+            2391,
+            2397
+          ],
+          "quote": "solve_dependencies(\n                        request=request,\n                        dependant=dependant,\n                        dependency_overrides_provider=dependency_overrides_provider,\n                        async_exit_stack=request_stack,\n                        embed_body_fields=embed_body_fields,\n                    )"
+        }
+      ],
+      "cache_events": [],
+      "source_executed": false,
+      "limits": "Lexical paths/if-loop context only; no general control-flow, name-binding, runtime or whole-project proof."
+    },
+    {
+      "path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "imports": [
+        {
+          "module": "fastapi.dependencies.models",
+          "names": [
+            {
+              "name": "Dependant",
+              "alias": null
+            },
+            {
+              "name": "_get_cache_key",
+              "alias": null
+            },
+            {
+              "name": "_get_computed_scope",
+              "alias": null
+            },
+            {
+              "name": "_get_oauth_scopes",
+              "alias": null
+            },
+            {
+              "name": "_is_async_gen_callable",
+              "alias": null
+            },
+            {
+              "name": "_is_coroutine_callable",
+              "alias": null
+            },
+            {
+              "name": "_is_gen_callable",
+              "alias": null
+            },
+            {
+              "name": "_UsesScopesCache",
+              "alias": null
+            }
+          ],
+          "lines": [
+            62,
+            71
+          ]
+        }
+      ],
+      "selected_declarations": [
+        {
+          "owner": "solve_dependencies",
+          "kind": "AsyncFunctionDef",
+          "lines": [
+            671,
+            829
+          ],
+          "arguments": "*, request: Request | WebSocket, dependant: Dependant, body: Any=Undefined, background_tasks: StarletteBackgroundTasks | None=None, response: Response | None=None, dependency_overrides_provider: Any | None=None, dependency_cache: dict[DependencyCacheKey, Any] | None=None, async_exit_stack: AsyncExitStack, embed_body_fields: bool, _uses_scopes_cache: _UsesScopesCache | None=None"
+        }
+      ],
+      "selected_name_calls": [
+        {
+          "owner": "solve_dependencies",
+          "callee": "solve_dependencies",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "request": "request",
+            "dependant": "use_sub_dependant",
+            "body": "body",
+            "background_tasks": "background_tasks",
+            "response": "response",
+            "dependency_overrides_provider": "dependency_overrides_provider",
+            "dependency_cache": "dependency_cache",
+            "async_exit_stack": "async_exit_stack",
+            "embed_body_fields": "embed_body_fields",
+            "_uses_scopes_cache": "_uses_scopes_cache"
+          },
+          "controls": [
+            {
+              "kind": "loop",
+              "target": "sub_dependant",
+              "iterator": "dependant.dependencies",
+              "line": 704
+            }
+          ],
+          "lines": [
+            726,
+            737
+          ],
+          "quote": "solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )"
+        },
+        {
+          "owner": "solve_dependencies",
+          "callee": "SolvedDependency",
+          "keyword_unpacking_present": false,
+          "keywords": {
+            "values": "values",
+            "errors": "errors",
+            "background_tasks": "background_tasks",
+            "response": "response",
+            "dependency_cache": "dependency_cache"
+          },
+          "controls": [],
+          "lines": [
+            823,
+            829
+          ],
+          "quote": "SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+        }
+      ],
+      "cache_events": [
+        {
+          "owner": "solve_dependencies",
+          "node": "Assign",
+          "controls": [
+            {
+              "kind": "if",
+              "test": "dependency_cache is None",
+              "branch": "then",
+              "line": 700
+            }
+          ],
+          "lines": [
+            701,
+            701
+          ],
+          "quote": "dependency_cache = {}"
+        },
+        {
+          "owner": "solve_dependencies",
+          "node": "Assign",
+          "controls": [
+            {
+              "kind": "loop",
+              "target": "sub_dependant",
+              "iterator": "dependant.dependencies",
+              "line": 704
+            }
+          ],
+          "lines": [
+            726,
+            737
+          ],
+          "quote": "solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )"
+        },
+        {
+          "owner": "solve_dependencies",
+          "node": "Assign",
+          "controls": [
+            {
+              "kind": "loop",
+              "target": "sub_dependant",
+              "iterator": "dependant.dependencies",
+              "line": 704
+            },
+            {
+              "kind": "if",
+              "test": "sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache",
+              "branch": "then",
+              "line": 746
+            }
+          ],
+          "lines": [
+            747,
+            747
+          ],
+          "quote": "solved = dependency_cache[sub_dependant_cache_key]"
+        },
+        {
+          "owner": "solve_dependencies",
+          "node": "Assign",
+          "controls": [
+            {
+              "kind": "loop",
+              "target": "sub_dependant",
+              "iterator": "dependant.dependencies",
+              "line": 704
+            },
+            {
+              "kind": "if",
+              "test": "sub_dependant_cache_key not in dependency_cache",
+              "branch": "then",
+              "line": 774
+            }
+          ],
+          "lines": [
+            775,
+            775
+          ],
+          "quote": "dependency_cache[sub_dependant_cache_key] = solved"
+        },
+        {
+          "owner": "solve_dependencies",
+          "node": "Return",
+          "controls": [],
+          "lines": [
+            823,
+            829
+          ],
+          "quote": "return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )"
+        }
+      ],
+      "source_executed": false,
+      "limits": "Lexical paths/if-loop context only; no general control-flow, name-binding, runtime or whole-project proof."
+    }
+  ],
+  "source_executed": false,
+  "owner_approved": false,
+  "training_gold": false
+}

@@ -1,0 +1,98 @@
+{
+  "at": "2026-11-22T03:05:59.052246+00:00",
+  "finding": "ORIGINAL_BOTH_ARMS_OMITTED_SECOND_CHECK_CONTRADICTED",
+  "witnesses": [
+    {
+      "id": "gio-compression-flow-caller",
+      "capture_path": ".local-backups/continuation-20261119/go-image-results.jsonl",
+      "capture_sha256": "3ac5c4da7c52fc6e87eda03030cfed3d11d1c9f87bd6913f368dbf883204af19",
+      "exit_code": 1,
+      "status": "REFUSED_UNREVIEWED",
+      "log": "{\"project\":\"gio-compression-flow-caller\",\"status\":\"error\",\"error\":\"prose omits its selected declaration or method name\"}\n{\"projects\":1,\"failures\":1,\"version\":\"1.9.36\"}\n",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The function checks if the input is empty, then checks if there is an error in the context, compresses the image, and checks again for an error in the context. If any of these checks fail, it returns an error. If the compression is successful, it returns the compressed image.",
+          "pt-br": "A função verifica se o input está vazio, então verifica se há um erro no contexto, comprime a imagem e verifica novamente se há um erro no contexto. Se qualquer dessas verificações falhar, ela retorna um erro. Se a compressão for bem-sucedida, ela retorna a imagem comprimida."
+        }
+      ],
+      "response_path": "agent/research/final-intensive-20261121/go-image-compression-historical-witnesses-v1/gio-compression-flow-caller/raw-response.json",
+      "response_sha256": "cf468ba5f37dd9644233f7b2fdb0b9f0146f170731b0ede6f7b51fdc90589f8c",
+      "request_path": "agent/research/final-intensive-20261121/go-image-compression-historical-witnesses-v1/gio-compression-flow-caller/recorded-request.json",
+      "request_sha256": "813c10960c0f26ac09f59fb7aa8b2709c238f5788e5d329df74a2a532e1daee9",
+      "effective_server_digest": null,
+      "new_model_call": false
+    },
+    {
+      "id": "gio-compression-flow-helpers",
+      "capture_path": ".local-backups/continuation-20261119/go-image-results.jsonl",
+      "capture_sha256": "3ac5c4da7c52fc6e87eda03030cfed3d11d1c9f87bd6913f368dbf883204af19",
+      "exit_code": 1,
+      "status": "REFUSED_UNREVIEWED",
+      "log": "{\"project\":\"gio-compression-flow-helpers\",\"status\":\"error\",\"error\":\"prose omits its selected declaration or method name\"}\n{\"projects\":1,\"failures\":1,\"version\":\"1.9.36\"}\n",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The caller checks if the input image is empty before executing the compression. If the input is empty, it returns an error.",
+          "pt-br": "O chamado verifica se a imagem de entrada está vazia antes de executar a compressão. Se a entrada estiver vazia, ele retorna um erro."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The compressor function checks the format of the input image and compresses it accordingly. If the format is not supported, it returns an error.",
+          "pt-br": "A função de compressão verifica o formato da imagem de entrada e a compressa de acordo. Se o formato não for suportado, ele retorna um erro."
+        },
+        {
+          "evidence_id": "S1",
+          "en": "The caller checks if the input image is empty before executing the compression. If the input is empty, it returns an error.",
+          "pt-br": "O chamado verifica se a imagem de entrada está vazia antes de executar a compressão. Se a entrada estiver vazia, ele retorna um erro."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The compressor function checks the format of the input image and compresses it accordingly. If the format is not supported, it returns an error.",
+          "pt-br": "A função de compressão verifica o formato da imagem de entrada e a compressa de acordo. Se o formato não for suportado, ele retorna um erro."
+        },
+        {
+          "evidence_id": "S1",
+          "en": "The caller checks if the input image is empty before executing the compression. If the input is empty, it returns an error.",
+          "pt-br": "O chamado verifica se a imagem de entrada está vazia antes de executar a compressão. Se a entrada estiver vazia, ele retorna um erro."
+        }
+      ],
+      "response_path": "agent/research/final-intensive-20261121/go-image-compression-historical-witnesses-v1/gio-compression-flow-helpers/raw-response.json",
+      "response_sha256": "a430ef20c1d7b120180983a7951f4eee6e0c4409922ba335833fe7ef05032614",
+      "request_path": "agent/research/final-intensive-20261121/go-image-compression-historical-witnesses-v1/gio-compression-flow-helpers/recorded-request.json",
+      "request_sha256": "2e79eb50cdf7412e25cb0856a8477749284d1f1bed3fd159c9904802df7dc6d0",
+      "effective_server_digest": null,
+      "new_model_call": false
+    }
+  ],
+  "changes": [
+    {
+      "language": "en",
+      "source_path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/f5075b82889e02ebe6e0c9e8f7e95fb62e82b6a03e7c293e937c8093dcff83dd",
+      "before_sha256": "f5075b82889e02ebe6e0c9e8f7e95fb62e82b6a03e7c293e937c8093dcff83dd",
+      "candidate_path": "agent/research/final-intensive-20261121/go-image-compression-attribution-candidate-v1/en.md",
+      "candidate_sha256": "2b6d771ca1452921fedea23dde9f9b70428183552d3cf6f576e42c0ea1c27d5b",
+      "replacement_before": "The model drafts omitted these distinctions and the second check.",
+      "replacement_after": "Both drafts omitted the exact zero-result handoff; only the helper arm omitted the second context check. The caller-only arm explicitly mentioned that second check.",
+      "diff": "--- original/en\n+++ candidate/en\n@@ -18,7 +18,7 @@\n \n If the compression call returns a non-nil error, the method returns `Result{}, err`. A result returned alongside that error is discarded by this application boundary. If compression reports success, the body checks the context again. A non-nil result from the second context check also replaces the computed result with a zero result and returns the context error. Only after both successful checks and a successful compression call does the method return `result, nil`.\n \n-The second check is therefore observable even though the context was not passed into the interface method. It can prevent returning the computed image after the context reports an error. It does not demonstrate that already performed compression work was undone. The model drafts omitted these distinctions and the second check. Error propagation here means returning the inspected error; no retry, exception handler, compensating action or successful-runtime guarantee is present in the method.\n+The second check is therefore observable even though the context was not passed into the interface method. It can prevent returning the computed image after the context reports an error. It does not demonstrate that already performed compression work was undone. Both drafts omitted the exact zero-result handoff; only the helper arm omitted the second context check. The caller-only arm explicitly mentioned that second check. Error propagation here means returning the inspected error; no retry, exception handler, compensating action or successful-runtime guarantee is present in the method.\n \n ## The concrete compressor dispatches after detection\n \n"
+    },
+    {
+      "language": "pt-BR",
+      "source_path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/d0ecf072f42438823974b494e4ee8423f757c71fe4736c56379defc9935c6308",
+      "before_sha256": "d0ecf072f42438823974b494e4ee8423f757c71fe4736c56379defc9935c6308",
+      "candidate_path": "agent/research/final-intensive-20261121/go-image-compression-attribution-candidate-v1/pt-BR.md",
+      "candidate_sha256": "27f9bea26f2448b19c6d94e16baa4025f685208edce6f1c58893bd47ce07b1d7",
+      "replacement_before": "Os rascunhos do modelo omitiram essas diferenças e a segunda consulta.",
+      "replacement_after": "Os dois rascunhos omitiram o descarte exato do resultado; somente o braço com auxiliares omitiu a segunda consulta ao contexto. O braço com apenas o chamador mencionou explicitamente essa segunda consulta.",
+      "diff": "--- original/pt-BR\n+++ candidate/pt-BR\n@@ -18,7 +18,7 @@\n \n Se a compressão retorna um erro diferente de nil, o método retorna `Result{}, err`. Um resultado devolvido junto com esse erro é descartado nessa fronteira da aplicação. Se a compressão informa sucesso, o corpo verifica o contexto novamente. Um erro na segunda consulta ao contexto também substitui o resultado calculado por um resultado zero e retorna o erro de contexto. Somente após as duas verificações sem erro e a compressão bem-sucedida o método retorna `result, nil`.\n \n-Portanto, a segunda verificação é observável mesmo sem passar o contexto ao método da interface. Ela pode impedir o retorno da imagem calculada depois que o contexto informa um erro. Não demonstra que o trabalho de compressão já realizado tenha sido desfeito. Os rascunhos do modelo omitiram essas diferenças e a segunda consulta. Propagar o erro aqui significa retornar o erro examinado; não há nova tentativa, tratador de exceções, ação compensatória ou garantia de execução bem-sucedida no método.\n+Portanto, a segunda verificação é observável mesmo sem passar o contexto ao método da interface. Ela pode impedir o retorno da imagem calculada depois que o contexto informa um erro. Não demonstra que o trabalho de compressão já realizado tenha sido desfeito. Os dois rascunhos omitiram o descarte exato do resultado; somente o braço com auxiliares omitiu a segunda consulta ao contexto. O braço com apenas o chamador mencionou explicitamente essa segunda consulta. Propagar o erro aqui significa retornar o erro examinado; não há nova tentativa, tratador de exceções, ação compensatória ou garantia de execução bem-sucedida no método.\n \n ## O compressor concreto despacha depois da detecção\n \n"
+    }
+  ],
+  "interpretation": "Structural refusal for missing declaration names is confirmed, but the caller-only prose explicitly includes the second context check. Do not invent an omission or score it as semantic failure just because the format guard rejected the output.",
+  "original_status_preserved": true,
+  "original_bytes_unchanged": true,
+  "original_current_technical_status": "FAIL_HISTORICAL_ATTRIBUTION",
+  "candidate_status": "PENDING_FULL_REVIEW_AND_RECOVERY",
+  "new_model_calls": 0,
+  "owner_gold": false,
+  "publication_approved": false
+}

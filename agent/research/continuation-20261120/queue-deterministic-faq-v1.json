@@ -1,0 +1,94 @@
+{
+  "faq": [
+    {
+      "id": "clear-contract",
+      "en": {
+        "question": "What does `clearQueue` establish about pending callers and active work?",
+        "answer": "Here, `clearQueue` removes queued callbacks without cancelling the active task. In the owned observations, cleared callbacks did not run and their caller Promises were still unsettled after 12 microtask checkpoints. This bounded result is not a universal liveness guarantee."
+      },
+      "pt-br": {
+        "question": "O que `clearQueue` estabelece sobre chamadores pendentes e trabalho ativo?",
+        "answer": "Neste recorte, `clearQueue` remove callbacks da fila sem cancelar a tarefa ativa. Nas observações próprias, os callbacks descartados não executaram e seus Promises de chamador continuaram sem resolução após 12 checkpoints de microtarefas. Esse resultado limitado não constitui uma garantia universal de vivacidade."
+      },
+      "evidence_ids": [
+        "limit:factory",
+        "limit:types:LimitFunction",
+        "queue:Queue"
+      ]
+    },
+    {
+      "id": "caller-rejection",
+      "en": {
+        "question": "Does the empty catch in `run` make a failed caller Promise succeed?",
+        "answer": "The empty catch in `run` handles its internal wait, after the result Promise has already been given to the caller resolver. In the owned observation, the caller rejected with the exact original failure object, while the next queued task fulfilled."
+      },
+      "pt-br": {
+        "question": "O catch vazio em `run` torna bem-sucedido um Promise de chamador que falhou?",
+        "answer": "O catch vazio em `run` trata sua espera interna depois que o Promise de resultado já foi passado ao resolvedor do chamador. Na observação própria, o chamador foi rejeitado com o objeto exato da falha original, enquanto a tarefa seguinte na fila se completou."
+      },
+      "evidence_ids": [
+        "limit:factory"
+      ]
+    },
+    {
+      "id": "deferred-start",
+      "en": {
+        "question": "Do `activeCount` and `pendingCount` show immediate callback execution?",
+        "answer": "In the owned observation with two calls and concurrency one, the immediate counters were `activeCount=0` and `pendingCount=2`, with neither callback started. After one microtask checkpoint, they were `activeCount=1` and `pendingCount=1`, and only the first callback had begun. This observes scheduling, without measuring elapsed time."
+      },
+      "pt-br": {
+        "question": "`activeCount` e `pendingCount` mostram execução imediata do callback?",
+        "answer": "Na observação própria com duas chamadas e concorrência um, os contadores imediatos eram `activeCount=0` e `pendingCount=2`, sem callback iniciado. Após um checkpoint de microtarefa, eram `activeCount=1` e `pendingCount=1`, e apenas o primeiro callback havia começado. Isso observa o escalonamento, sem medir o tempo decorrido."
+      },
+      "evidence_ids": [
+        "limit:factory",
+        "queue:Queue"
+      ]
+    },
+    {
+      "id": "factory-return",
+      "en": {
+        "question": "Does `pLimit` return the task Promise or a limiter function?",
+        "answer": "The outer `pLimit` call returns a limiter function, described by `LimitFunction`. Calling that returned function with a task returns `Promise<ReturnType>`. The selected implementation enqueues the callback inside a Promise constructor; these are two different API calls, so their return contracts must stay separate."
+      },
+      "pt-br": {
+        "question": "`pLimit` retorna o Promise da tarefa ou uma função limitadora?",
+        "answer": "A chamada externa de `pLimit` retorna uma função limitadora, descrita por `LimitFunction`. Chamar essa função retornada com uma tarefa retorna `Promise<ReturnType>`. A implementação selecionada coloca o callback na fila dentro de um construtor de Promise; são duas chamadas distintas da API, com contratos separados de retorno."
+      },
+      "evidence_ids": [
+        "limit:factory",
+        "limit:types:pLimit",
+        "limit:types:LimitFunction"
+      ]
+    },
+    {
+      "id": "infinity-validation",
+      "en": {
+        "question": "Is `Number.POSITIVE_INFINITY` rejected by the selected concurrency guard?",
+        "answer": "The selected guard accepts positive integers or `Number.POSITIVE_INFINITY`, with `concurrency > 0`. In the supplied owned Infinity case, the limiter returned a function and fulfilled its task. That one result does not establish memory safety, a resource bound, a throughput guarantee or rate limiting."
+      },
+      "pt-br": {
+        "question": "`Number.POSITIVE_INFINITY` é rejeitado pela condição selecionada de concorrência?",
+        "answer": "A condição selecionada aceita inteiros positivos ou `Number.POSITIVE_INFINITY`, com `concurrency > 0`. No caso próprio fornecido de Infinity, o limitador retornou uma função e completou sua tarefa. Esse único resultado não estabelece segurança de memória, limite de recursos, garantia de vazão nem limitação de taxa."
+      },
+      "evidence_ids": [
+        "limit:factory"
+      ]
+    },
+    {
+      "id": "undefined-queue",
+      "en": {
+        "question": "Does `dequeue` returning `undefined` prove that `Queue` was empty?",
+        "answer": "The selected `Queue` can store `undefined`, and `dequeue` also returns `undefined` when no head exists. In the owned FIFO observation, size changes distinguished the stored value from the later empty return. The return value alone therefore does not prove that the queue was empty."
+      },
+      "pt-br": {
+        "question": "`dequeue` retornar `undefined` prova que `Queue` estava vazia?",
+        "answer": "A `Queue` selecionada pode armazenar `undefined`, e `dequeue` também retorna `undefined` quando não existe cabeça. Na observação FIFO própria, as mudanças no tamanho distinguiram o valor armazenado do retorno vazio posterior. Portanto, apenas o valor retornado não prova que a fila estava vazia."
+      },
+      "evidence_ids": [
+        "queue:Queue",
+        "queue:types:Queue"
+      ]
+    }
+  ]
+}

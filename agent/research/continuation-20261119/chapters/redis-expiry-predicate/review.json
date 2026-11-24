@@ -1,0 +1,81 @@
+{
+  "at": "2026-11-19T20:56:17.595558+00:00",
+  "status": "CODEX_SOURCE_REVIEWED_PENDING_OWNER_APPROVAL",
+  "repository": "redis",
+  "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+  "historical_baseline_id": "REDIS-EXPIRED-GUARD",
+  "historical_model_created_at": "2026-11-19T00:56:09.469274881Z",
+  "historical_caller": "1.9.22",
+  "baseline_reused_without_new_inference": true,
+  "protocol": ".local-backups/continuation-20261119/historical-contract-chapters-v1/protocol.json",
+  "protocol_sha256": "9765b1cb35cc2362b941ab1fe46d05d0ecc9fbffb0c763a4f5b7b19d46167c3b",
+  "baseline_review": {
+    "at": "2026-11-19T01:04:15.583848+00:00",
+    "id": "REDIS-EXPIRED-GUARD",
+    "status": "REJECTED",
+    "reviewer": "Codex source review; not owner approval",
+    "protocol_sha256": "37062ecbe7e85ee0451f3d2d351474b17b20aecb402ba620b434e0991b11fb8c",
+    "mount_mapping_amendment": "numeric-error-mount-amendment.json",
+    "raw_artifact": "numeric-error-results-v2.jsonl",
+    "raw_sha256": "d5444a18427e07b56fec78a3fc98f9631930829d198c864aeeb44efa53aa4c00",
+    "criteria": [
+      {
+        "criterion": "When current_client nonnull and flags contains CLIENT_MASTER, returns0 before commandTimeSnapshot.",
+        "en": "missing",
+        "pt-br": "missing"
+      },
+      {
+        "criterion": "Otherwise true only when when<=commandTimeSnapshot AND !server.loading AND !server.masterhost.",
+        "en": "incorrect",
+        "pt-br": "incorrect"
+      },
+      {
+        "criterion": "Equality is expired; loading or masterhost prevents true; no key deletion performed here.",
+        "en": "partial",
+        "pt-br": "partial"
+      },
+      {
+        "criterion": "Comment about AOF/replication must not replace actual current-client and server guards or promise deletion.",
+        "en": "incorrect",
+        "pt-br": "incorrect"
+      }
+    ],
+    "findings": "Blurs CLIENT_MASTER current-client early return with server master mode, drops !masterhost and exact <= guard, and turns comment rationale about later database/DEL behavior into a function contract although this function only returns a predicate. Both languages fail.",
+    "model_requests": 1,
+    "renderer": {
+      "status": "accepted",
+      "rendered_sha256": {
+        "en": "20b4b8baaecd0256e0dcf8ca3ba0149e9f2af5bf35b780c2554e149541e67cdf",
+        "pt-br": "5e3cdf509bf2bdb4089290b2a5bdcb51d7d4e460782e95888f4eda5a4d6a7bfa"
+      }
+    },
+    "published": false,
+    "training_gold": false,
+    "owner_approved": false
+  },
+  "source_excerpts_sha256": "63dcb9eb37e432cf3c4f8d8005bf1d2552148c54d4f2535f0900cb447df8aab2",
+  "inline_code_span_sequences_equal": true,
+  "inline_spans_per_language": 7,
+  "source_program_executed": false,
+  "new_model_calls": 0,
+  "training_gold": false,
+  "owner_approved": false,
+  "publication": false,
+  "license_notices": [
+    {
+      "path": "agent/research/continuation-20261119/source-licenses/redis.LICENSE.txt",
+      "sha256": "4a0e416b9537688f30dfe69ddaceb2ca64d96b7df02a0a6760d376890ddc4e40"
+    }
+  ],
+  "chapters": {
+    "en": {
+      "sha256": "1e41b190ada9b377145a37cd28d8cde6b0b2be777918031d59c1b6000661ba9f",
+      "words": 618
+    },
+    "pt-br": {
+      "sha256": "24476bc1c586a50a15d8b8cd6357c1427b76c72d7852b1c50bf7f4235bc4677f",
+      "words": 675
+    }
+  },
+  "review_findings": "All predicate/branch conditions and nesting checked against the entire selected function; comment rationale and helper/macro unknowns retained; complete EN/PT source review, not owner approval."
+}

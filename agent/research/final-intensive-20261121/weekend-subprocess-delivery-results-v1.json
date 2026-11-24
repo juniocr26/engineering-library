@@ -1,0 +1,138 @@
+{
+  "at": "2026-11-22T08:50:13.034471+00:00",
+  "producer_sha256": "5f45ff6953472de8b4807568513d7aa806a51bcd8ceaa9c4512394691247f7e1",
+  "consumer_sha256": "93c58bbdec9e5ea45c9f67b53636973a310e3b0188a98dd6c2ff91f1bb89bb95",
+  "cases": [
+    {
+      "id": "success-nonUTF8",
+      "result": {
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "-c",
+          "import sys;sys.stdout.buffer.write(bytes([111,107,255]));sys.stdout.flush()"
+        ],
+        "exit_code": 0,
+        "timeout_seconds": 2,
+        "status": "EXIT_ZERO",
+        "stdout": "ok\ufffd",
+        "stdout_base64": "b2v/",
+        "stdout_sha256": "0bf10424c1a31a1c2ae74ff87421d6214c999789b6b16ec601077617be19953e",
+        "stdout_bytes": 3,
+        "stderr": "",
+        "stderr_base64": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_bytes": 0
+      },
+      "checks": {
+        "status": true,
+        "exit": true,
+        "stdout_raw_exact": true,
+        "stdout_hash_exact": true,
+        "stderr_raw_exact": true,
+        "stderr_hash_exact": true
+      },
+      "matched": true
+    },
+    {
+      "id": "nonzero-stderr",
+      "result": {
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "-c",
+          "import sys;sys.stderr.buffer.write(b'failure');sys.exit(7)"
+        ],
+        "exit_code": 7,
+        "timeout_seconds": 2,
+        "status": "NONZERO_EXIT",
+        "stdout": "",
+        "stdout_base64": "",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 0,
+        "stderr": "failure",
+        "stderr_base64": "ZmFpbHVyZQ==",
+        "stderr_sha256": "16d34b5e7bcb341ee6cb3d16495d90e93fbe57c46d3827432613210a24ebca30",
+        "stderr_bytes": 7
+      },
+      "checks": {
+        "status": true,
+        "exit": true,
+        "stdout_raw_exact": true,
+        "stdout_hash_exact": true,
+        "stderr_raw_exact": true,
+        "stderr_hash_exact": true
+      },
+      "matched": true
+    },
+    {
+      "id": "timeout-partial",
+      "result": {
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "-c",
+          "import sys,time;sys.stdout.buffer.write(b'before');sys.stdout.flush();sys.stderr.buffer.write(b'pending');sys.stderr.flush();time.sleep(10)"
+        ],
+        "exit_code": null,
+        "timeout_seconds": 0.5,
+        "status": "TIMEOUT_PARTIAL_CAPTURED_NO_RETRY",
+        "exception_type": "TimeoutExpired",
+        "exception": "Command '['/opt/homebrew/opt/python@3.14/bin/python3.14', '-B', '-c', \"import sys,time;sys.stdout.buffer.write(b'before');sys.stdout.flush();sys.stderr.buffer.write(b'pending');sys.stderr.flush();time.sleep(10)\"]' timed out after 0.5 seconds",
+        "capture_scope": "Exact bytes available on TimeoutExpired, not a claim that every byte ever emitted was captured.",
+        "stdout": "before",
+        "stdout_base64": "YmVmb3Jl",
+        "stdout_sha256": "6db7d803e74f1ffa7d8f5adc0bf95b3e15bf4c8373fffadf546227cc6c6742cb",
+        "stdout_bytes": 6,
+        "stderr": "pending",
+        "stderr_base64": "cGVuZGluZw==",
+        "stderr_sha256": "62a2fed3d6e08c44835fce71f02210b1ddabfb066e39edf1e6c261988f824dd3",
+        "stderr_bytes": 7
+      },
+      "checks": {
+        "status": true,
+        "exit": true,
+        "stdout_raw_exact": true,
+        "stdout_hash_exact": true,
+        "stderr_raw_exact": true,
+        "stderr_hash_exact": true
+      },
+      "matched": true
+    },
+    {
+      "id": "missing-executable",
+      "result": {
+        "command": [
+          "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/final-intensive-20261121/INTENTIONALLY_ABSENT_CONTROL_EXECUTABLE"
+        ],
+        "exit_code": null,
+        "timeout_seconds": 2,
+        "status": "LAUNCH_FAILURE_NO_RETRY",
+        "exception_type": "FileNotFoundError",
+        "exception": "[Errno 2] No such file or directory: '/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/final-intensive-20261121/INTENTIONALLY_ABSENT_CONTROL_EXECUTABLE'",
+        "stdout": "",
+        "stdout_base64": "",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 0,
+        "stderr": "",
+        "stderr_base64": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_bytes": 0
+      },
+      "checks": {
+        "status": true,
+        "exit": true,
+        "stdout_raw_exact": true,
+        "stdout_hash_exact": true,
+        "stderr_raw_exact": true,
+        "stderr_hash_exact": true
+      },
+      "matched": true
+    }
+  ],
+  "matched_controls": 4,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "real_recovery_timeout_observed": false,
+  "scope": "Owned artificial child outcomes only; original successfulv1receipt is preserved, not reclassified as a failed real restore."
+}

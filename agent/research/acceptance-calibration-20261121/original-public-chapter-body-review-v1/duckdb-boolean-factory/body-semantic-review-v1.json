@@ -1,0 +1,121 @@
+{
+  "at": "2026-11-21T18:19:46.008056+00:00",
+  "topic": "duckdb-boolean-factory",
+  "family": "duckdb",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/duckdb-boolean-factory/en.candidate.txt",
+      "sha256": "179c499bd86d2927fb840c7ea4b1f22da91dd12bddc693e25c643157912d3b5b",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/duckdb-boolean-factory/pt-br.candidate.txt",
+      "sha256": "a82049613e059b234e995ae44e3c4ca41e666924829de06b73897a4aebca66a8",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "BOOLEAN is static factory in header; separate constructor initializes type and null flag.",
+    "Factory writes boolean payload and false null flag separately and returns Value; conceptual true/false table is not runtime execution.",
+    "Full build, overload resolution, SQL conversion, allocation and performance explicitly outside claim.",
+    "Actual baseline constructor-role error preserved; original selected source packet had definition and constructor but no static header."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/duckdb/e41515de6f7efb19b43293ab49cb967cd64ab9f9/src/common/types/value.cpp",
+      "source_sha256": "554a9a9eeb7d79a7a5ecad6b4cec611203eb24f70ee5ffb616016296d492701c",
+      "source_path": "src/common/types/value.cpp",
+      "source_lines": [
+        134,
+        135
+      ],
+      "exact_source_evidence": "Value::Value(LogicalType type) : type_(std::move(type)), is_null(true) {\n}",
+      "reviewed_interpretation": "Constructor initialization.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/duckdb/e41515de6f7efb19b43293ab49cb967cd64ab9f9/src/common/types/value.cpp",
+      "source_sha256": "554a9a9eeb7d79a7a5ecad6b4cec611203eb24f70ee5ffb616016296d492701c",
+      "source_path": "src/common/types/value.cpp",
+      "source_lines": [
+        490,
+        495
+      ],
+      "exact_source_evidence": "Value Value::BOOLEAN(bool value) {\n\tValue result(LogicalType::BOOLEAN);\n\tresult.value_.boolean = value;\n\tresult.is_null = false;\n\treturn result;\n}",
+      "reviewed_interpretation": "Factory payload/nullness/result.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/duckdb/e41515de6f7efb19b43293ab49cb967cd64ab9f9/src/include/duckdb/common/types/value.hpp",
+      "source_sha256": "c5afe8526adf7710832d5ff1c94cc4608caf37d215b2fb4c6d77a5e9fa3839bb",
+      "source_path": "src/include/duckdb/common/types/value.hpp",
+      "source_lines": [
+        47,
+        53
+      ],
+      "exact_source_evidence": "public:\n\t//! Create an empty NULL value of the specified type\n\tDUCKDB_API explicit Value(LogicalType type = LogicalType::SQLNULL);\n\t//! Create an INTEGER value\n\tDUCKDB_API Value(int32_t val); // NOLINT: Allow implicit conversion from `int32_t`\n\t//! Create a BOOLEAN value\n\texplicit DUCKDB_API Value(bool val);",
+      "reviewed_interpretation": "Explicit LogicalType constructor declaration.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/duckdb/e41515de6f7efb19b43293ab49cb967cd64ab9f9/src/include/duckdb/common/types/value.hpp",
+      "source_sha256": "c5afe8526adf7710832d5ff1c94cc4608caf37d215b2fb4c6d77a5e9fa3839bb",
+      "source_path": "src/include/duckdb/common/types/value.hpp",
+      "source_lines": [
+        107,
+        108
+      ],
+      "exact_source_evidence": "\t//! Create a boolean Value from a specified value\n\tDUCKDB_API static Value BOOLEAN(bool value);",
+      "reviewed_interpretation": "Static BOOLEAN declaration.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/duckdb/e41515de6f7efb19b43293ab49cb967cd64ab9f9/src/include/duckdb/common/types.hpp",
+      "source_sha256": "235f16544bdf7db33fb5f05de9811bdcde681ecea1e67650884cae46ab1f7e4f",
+      "source_path": "src/include/duckdb/common/types.hpp",
+      "source_lines": [
+        364,
+        366
+      ],
+      "exact_source_evidence": "\tDUCKDB_API LogicalType();\n\tDUCKDB_API LogicalType(LogicalTypeId id); // NOLINT: Allow implicit conversion from `LogicalTypeId`\n\tDUCKDB_API LogicalType(LogicalTypeId id, unique_ptr<LogicalTypeInfo> type_info);",
+      "reviewed_interpretation": "Implicit LogicalTypeId conversion declaration; not complete overload proof.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "duckdb-boolean-factory",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/duckdb-boolean-factory/raw-response.json",
+      "sha256": "e458763e588aad5198f929e168e0dfba3f93a25f3f7fefe2cc8d277a0c5b1354",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

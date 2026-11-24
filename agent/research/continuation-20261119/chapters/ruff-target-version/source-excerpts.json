@@ -1,0 +1,19 @@
+{
+  "repository": "ruff",
+  "revision": "0222c19dd8e0c9a927f2e47bf3774a108431da25",
+  "path": "crates/ruff_workspace/src/settings.rs",
+  "source_sha256": "1cd5c228eaefa5d798d70c049ae79ec378ffc0cb3cb2d44858eef49cbdd9eff0",
+  "source_program_executed": false,
+  "excerpts": [
+    {
+      "first_line": 187,
+      "last_line": 195,
+      "quote": "    /// See [`FormatterSettings::resolve_target_version`] for a way to obtain the Python version for\n    /// a given file, while respecting the overrides in `per_file_target_version`.\n    pub unresolved_target_version: PythonVersion,\n    /// Path-specific overrides to `unresolved_target_version`.\n    ///\n    /// See [`FormatterSettings::resolve_target_version`] for a way to check a given [`Path`]\n    /// against these patterns, while falling back to `unresolved_target_version` if none of them\n    /// match.\n    pub per_file_target_version: CompiledPerFileTargetVersionList,\n"
+    },
+    {
+      "first_line": 264,
+      "last_line": 268,
+      "quote": "    pub fn resolve_target_version(&self, path: &Path) -> PythonVersion {\n        self.per_file_target_version\n            .is_match(path)\n            .unwrap_or(self.unresolved_target_version)\n    }\n"
+    }
+  ]
+}

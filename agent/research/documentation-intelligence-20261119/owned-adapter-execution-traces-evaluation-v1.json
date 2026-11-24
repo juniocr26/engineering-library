@@ -1,0 +1,1342 @@
+{
+  "at": "2026-11-20T09:20:17.368617+00:00",
+  "status": "FIFTEEN_OWNED_EXECUTION_TRACES_AND_TWO_NORMAL_DIAGRAM_SEQUENCES_MATCH",
+  "protocol_ref": {
+    "path": ".local-backups/documentation-intelligence-20261119/owned-adapter-traces-v1/protocol.json",
+    "sha256": "ab3970ed1660690a080b5cdad723112aa0be5c0f7dbbecfe99fb4ecccdc0203e"
+  },
+  "owned_trace_cases": 15,
+  "reference_matches": 15,
+  "observed_outcomes": {
+    "SUCCESS": 7,
+    "BalanceUnavailable": 1,
+    "GatewayUnavailable": 1,
+    "TimeoutError": 1,
+    "ValueError": 4,
+    "KeyError": 1
+  },
+  "normal_success_paths_matching_six_cross_actor_edges": 7,
+  "bilingual_diagram_sequences_checked": 2,
+  "prior_browser_receipt_ref": {
+    "path": "agent/research/documentation-intelligence-20261119/mermaid-browser-evaluation.json",
+    "sha256": "7a68d257c2a3935ce6f6fc6f61b7f028b106d0e154ae0da311809992b77306be"
+  },
+  "owned_fixture_source_executed": true,
+  "external_source_programs_executed": false,
+  "real_gateway_or_HTTP_requests": 0,
+  "socket_creation_attempts": 0,
+  "source_example_test_or_chapter_bytes_changed": false,
+  "instrumentation_only_in_new_own_process_memory": true,
+  "prior_eight_source_tests_repeated": false,
+  "documentation_unit_test_count_unchanged": 278,
+  "new_browser_renders": 0,
+  "model_calls": 0,
+  "training_runs": 0,
+  "new_training_records": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "diagrams": [
+    {
+      "language": "en",
+      "physical_body_sha256": "044d42b279fe98e860309c85e1ed4f9cb05bf171c01e95d2c6c0dabc2fe8cd7f",
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "same_as_prior_actual_browser_render": true
+    },
+    {
+      "language": "pt-br",
+      "physical_body_sha256": "01bfb45153d6ab3b1c8fe21306fb95602df8c362fe4031a4e8b0050a14dc4b15",
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "same_as_prior_actual_browser_render": true
+    }
+  ],
+  "results": [
+    {
+      "id": "normal-default",
+      "expected": "SUCCESS",
+      "observed": "SUCCESS",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "adapter.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "service.return",
+          "summary": {
+            "account": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": {
+        "account": "fixture-account",
+        "available_minor": 7,
+        "currency": "TST"
+      },
+      "error_type": null,
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "configured-timeout",
+      "expected": "SUCCESS",
+      "observed": "SUCCESS",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 0.25
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "adapter.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "service.return",
+          "summary": {
+            "account": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": {
+        "account": "fixture-account",
+        "available_minor": 7,
+        "currency": "TST"
+      },
+      "error_type": null,
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "gateway-from-client",
+      "expected": "BalanceUnavailable",
+      "observed": "BalanceUnavailable",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.error",
+          "type": "GatewayUnavailable"
+        },
+        {
+          "event": "adapter.error",
+          "type": "BalanceUnavailable"
+        },
+        {
+          "event": "service.error",
+          "type": "BalanceUnavailable"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ]
+      ],
+      "payload_keys_attempted": [],
+      "result": null,
+      "error_type": "BalanceUnavailable",
+      "original_client_exception_retained_as_cause": true,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "gateway-from-mapper",
+      "expected": "GatewayUnavailable",
+      "observed": "GatewayUnavailable",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "mapper.error",
+          "type": "GatewayUnavailable"
+        },
+        {
+          "event": "adapter.error",
+          "type": "GatewayUnavailable"
+        },
+        {
+          "event": "service.error",
+          "type": "GatewayUnavailable"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor"
+      ],
+      "result": null,
+      "error_type": "GatewayUnavailable",
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": true,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "timeout-from-client",
+      "expected": "TimeoutError",
+      "observed": "TimeoutError",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.error",
+          "type": "TimeoutError"
+        },
+        {
+          "event": "adapter.error",
+          "type": "TimeoutError"
+        },
+        {
+          "event": "service.error",
+          "type": "TimeoutError"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ]
+      ],
+      "payload_keys_attempted": [],
+      "result": null,
+      "error_type": "TimeoutError",
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": true
+    },
+    {
+      "id": "boolean-amount",
+      "expected": "ValueError",
+      "observed": "ValueError",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.error",
+          "type": "ValueError"
+        },
+        {
+          "event": "adapter.error",
+          "type": "ValueError"
+        },
+        {
+          "event": "service.error",
+          "type": "ValueError"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": null,
+      "error_type": "ValueError",
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "missing-currency-before-boolean-validation",
+      "expected": "KeyError",
+      "observed": "KeyError",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.error",
+          "type": "KeyError"
+        },
+        {
+          "event": "adapter.error",
+          "type": "KeyError"
+        },
+        {
+          "event": "service.error",
+          "type": "KeyError"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": null,
+      "error_type": "KeyError",
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "empty-identifier",
+      "expected": "ValueError",
+      "observed": "ValueError",
+      "matches": true,
+      "client_calls": 0,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": ""
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": ""
+        },
+        {
+          "event": "adapter.error",
+          "type": "ValueError"
+        },
+        {
+          "event": "service.error",
+          "type": "ValueError"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ]
+      ],
+      "payload_keys_attempted": [],
+      "result": null,
+      "error_type": "ValueError",
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "slash-identifier",
+      "expected": "ValueError",
+      "observed": "ValueError",
+      "matches": true,
+      "client_calls": 0,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "a/b"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "a/b"
+        },
+        {
+          "event": "adapter.error",
+          "type": "ValueError"
+        },
+        {
+          "event": "service.error",
+          "type": "ValueError"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ]
+      ],
+      "payload_keys_attempted": [],
+      "result": null,
+      "error_type": "ValueError",
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "unicode-currency-and-negative-amount",
+      "expected": "SUCCESS",
+      "observed": "SUCCESS",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": -7,
+            "currency": "aé𝄞"
+          }
+        },
+        {
+          "event": "adapter.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": -7,
+            "currency": "aé𝄞"
+          }
+        },
+        {
+          "event": "service.return",
+          "summary": {
+            "account": "fixture-account",
+            "available_minor": -7,
+            "currency": "aé𝄞"
+          }
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": {
+        "account": "fixture-account",
+        "available_minor": -7,
+        "currency": "aé𝄞"
+      },
+      "error_type": null,
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "integer-subclass",
+      "expected": "ValueError",
+      "observed": "ValueError",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.error",
+          "type": "ValueError"
+        },
+        {
+          "event": "adapter.error",
+          "type": "ValueError"
+        },
+        {
+          "event": "service.error",
+          "type": "ValueError"
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": null,
+      "error_type": "ValueError",
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "negative-timeout-forwarded",
+      "expected": "SUCCESS",
+      "observed": "SUCCESS",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": -1.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "adapter.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "service.return",
+          "summary": {
+            "account": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": {
+        "account": "fixture-account",
+        "available_minor": 7,
+        "currency": "TST"
+      },
+      "error_type": null,
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "empty-token-forwarded",
+      "expected": "SUCCESS",
+      "observed": "SUCCESS",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer "
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "adapter.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "service.return",
+          "summary": {
+            "account": "fixture-account",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": {
+        "account": "fixture-account",
+        "available_minor": 7,
+        "currency": "TST"
+      },
+      "error_type": null,
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "query-character-not-encoded",
+      "expected": "SUCCESS",
+      "observed": "SUCCESS",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture?view=1"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture?view=1"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture?view=1/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture?view=1"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.return",
+          "balance": {
+            "account_id": "fixture?view=1",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "adapter.return",
+          "balance": {
+            "account_id": "fixture?view=1",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "service.return",
+          "summary": {
+            "account": "fixture?view=1",
+            "available_minor": 7,
+            "currency": "TST"
+          }
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": {
+        "account": "fixture?view=1",
+        "available_minor": 7,
+        "currency": "TST"
+      },
+      "error_type": null,
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    },
+    {
+      "id": "large-amount-and-payload-account-ignored",
+      "expected": "SUCCESS",
+      "observed": "SUCCESS",
+      "matches": true,
+      "client_calls": 1,
+      "events": [
+        {
+          "event": "service.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "adapter.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "client.get",
+          "path": "/sandbox/accounts/fixture-account/balance",
+          "headers": {
+            "Authorization": "Bearer TRACE-NOT-A-CREDENTIAL"
+          },
+          "timeout": 2.0
+        },
+        {
+          "event": "client.return",
+          "payload_type": "ObservedPayload"
+        },
+        {
+          "event": "mapper.enter",
+          "account_id": "fixture-account"
+        },
+        {
+          "event": "payload.read",
+          "key": "available_minor"
+        },
+        {
+          "event": "payload.read",
+          "key": "currency"
+        },
+        {
+          "event": "mapper.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 1267650600228229401496703205376,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "adapter.return",
+          "balance": {
+            "account_id": "fixture-account",
+            "available_minor": 1267650600228229401496703205376,
+            "currency": "TST"
+          }
+        },
+        {
+          "event": "service.return",
+          "summary": {
+            "account": "fixture-account",
+            "available_minor": 1267650600228229401496703205376,
+            "currency": "TST"
+          }
+        }
+      ],
+      "cross_actor_edges": [
+        [
+          "S",
+          "A"
+        ],
+        [
+          "A",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ],
+        [
+          "A",
+          "M"
+        ],
+        [
+          "M",
+          "A"
+        ],
+        [
+          "A",
+          "S"
+        ]
+      ],
+      "payload_keys_attempted": [
+        "available_minor",
+        "currency"
+      ],
+      "result": {
+        "account": "fixture-account",
+        "available_minor": 1267650600228229401496703205376,
+        "currency": "TST"
+      },
+      "error_type": null,
+      "original_client_exception_retained_as_cause": false,
+      "same_mapping_exception_propagated": false,
+      "same_client_exception_propagated": false
+    }
+  ],
+  "findings": [
+    "ClientGatewayUnavailable is translated with its original cause; the same exception class raised during payloadlookup outside the tryblock propagates unchanged.",
+    "The missingcurrency key is lookedup before booleanamount validation, so that controlled combination raisesKeyError.",
+    "ThreeUnicodecodepoints taking sevenUTF8bytes and a negativeamount are accepted; an integersubclass is rejected by the exactbuiltinint check.",
+    "Negative timeout, emptytoken and querycharacter account are forwarded as written to the fake; no concrete HTTP/deadline/authorization semantics are inferred.",
+    "The calleraccount is retained even if the payload contains anotheraccount; arbitrarylarge builtinint values are not rangechecked."
+  ],
+  "limits": [
+    "One instrumented synthetic composition is not production wiring, HTTP traffic, TLS, real authorization or a network deadline.",
+    "One adapter-level fake call says nothing about a missing concrete client internal retry/cache/persistence policy.",
+    "Diagram self-arrows are source-level internal actions; compare only the six observable cross-component edges on the normal path.",
+    "These are additional execution probes, not another run of the prior eight source tests or a change to the278documentation unit-test count.",
+    "In-memory spies/subclasses invoke the preserved owned implementation; the observation is conditional on this instrumented fake composition and its controlled payloads.",
+    "No new FAQ, chapter text, neural target, production wiring or general runtime-binding guarantee follows from these probes."
+  ]
+}

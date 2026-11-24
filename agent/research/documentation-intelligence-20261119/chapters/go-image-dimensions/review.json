@@ -1,0 +1,74 @@
+{
+  "at": "2026-11-20T00:59:01.178078+00:00",
+  "chapter_id": "go-image-dimensions",
+  "source_repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "wrapper",
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "lines": [
+        19,
+        21
+      ],
+      "review": "Two parameters cfg,maxPixels; returns ValidateImageSize(cfg.Width,cfg.Height,maxPixels)."
+    },
+    {
+      "id": "guard-order",
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "lines": [
+        23,
+        33
+      ],
+      "review": "Either nonpositive dimension ->invalid before division; positiveheight reachesstrictwidth>budget/height; else nil."
+    },
+    {
+      "id": "explicit-budget",
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "lines": [
+        9,
+        21
+      ],
+      "review": "32million nameddefault exists but wrapper forwardsprovidedbudget, no automaticselection."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "b27082fd48ac69e8c081c1c495d73da566c81ebf5f4ff0de8a1f0867bf21e173",
+      "after_sha256": "d9a51a95346d9830f93b1bf84a9b96e26012d72a1b766bbfd37840b5c44f1a83",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -25,3 +25,22 @@\n The file declares `DefaultMaxDecodedPixels` as `32_000_000`. Its comment motivates the bound using decoded-memory growth and an approximate RGBA example. The static wrapper, however, uses the budget supplied by its caller. It does not select that named default internally. Other functions in the same file can choose it explicitly; sharing a file does not make it an implicit parameter value for every call.\n \n The helper-enriched neural response mentioned positive dimensions, but omitted the exact division, distinct error paths and normal nil return. It also placed helper behavior under the caller's separate citation. The corrected evidence therefore preserves both declarations and their own locations. Successful source selection and literal-citation checking do not prove that a generated explanation preserves parameter roles, early returns or boundary operators. This chapter is a reviewed candidate for later human approval, with no claim about actual decoder execution, memory consumption or network behavior.\n+\n+## Engineer FAQ\n+\n+<!-- reading-section: faq:wrapper-parameters -->\n+### Does the wrapper take width and height as separate parameters?\n+\n+It receives a configuration and a pixel budget. It extracts the width and height fields when calling the helper. Parser metadata and those argument expressions do not add parameters to the wrapper's declaration.\n+\n+<!-- reading-section: faq:quotient-equality -->\n+### Is equality with the integer budget quotient rejected?\n+\n+The written comparison is strictly greater than. After positive dimensions pass the earlier guard, equality with the quotient avoids that error branch. Nonpositive dimensions return their own earlier error before division.\n+\n+<!-- reading-section: faq:explicit-budget-argument -->\n+### Does the static wrapper automatically use the named default?\n+\n+It forwards its caller's budget unchanged. The named default is a separate declaration. The [animation validator](../go-image-animation/en.md) explicitly selects that static default before its different aggregate check; those choices must not be merged.\n+\n+The budget concerns pixels, not encoded bytes or an exact resident-memory cap. Decoder validity, imported error identities and observed memory use remain outside this source review.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "d5c2cf37ba5e85a3bbd30c7994ba3f3a5ce0d60bd506a80cbc3c48572b59a386",
+      "after_sha256": "cc712a850fdf110599a3b75de5633712abb4308069e7ce9d77add569d5830e06",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -25,3 +25,22 @@\n O arquivo declara `DefaultMaxDecodedPixels` como `32_000_000`. Seu comentário motiva o limite com o crescimento da memória decodificada e um exemplo RGBA aproximado. O wrapper estático, porém, usa o orçamento fornecido pelo chamador. Não seleciona essa constante internamente. Outras funções no mesmo arquivo podem escolhê-la de forma explícita; compartilhar um arquivo não a torna valor implícito de parâmetro em toda chamada.\n \n A resposta neural com auxiliar mencionou dimensões positivas, mas omitiu a divisão exata, os caminhos de erro distintos e o retorno nil normal. Também atribuiu comportamento do auxiliar à citação separada do chamador. Por isso, a evidência corrigida preserva as duas declarações e suas próprias localizações. Selecionar a fonte e conferir citações literais com sucesso não prova que a explicação preserve papéis de parâmetros, retornos antecipados ou operadores de limite. Este capítulo é um candidato revisado para aprovação humana posterior, sem alegações sobre execução real de decodificadores, consumo de memória ou comportamento de rede.\n+\n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:wrapper-parameters -->\n+### O wrapper recebe largura e altura como parâmetros separados?\n+\n+Ele recebe uma configuração e um orçamento de pixels. Extrai os campos de largura e altura ao chamar o helper. Metadados do parser e essas expressões de argumentos não acrescentam parâmetros à declaração do wrapper.\n+\n+<!-- reading-section: faq:quotient-equality -->\n+### A igualdade com o quociente inteiro do orçamento é rejeitada?\n+\n+A comparação escrita é estritamente maior que. Depois que dimensões positivas passam pela guarda anterior, igualdade com o quociente evita esse ramo de erro. Dimensões não positivas retornam seu próprio erro anterior antes da divisão.\n+\n+<!-- reading-section: faq:explicit-budget-argument -->\n+### O wrapper estático usa automaticamente o padrão nomeado?\n+\n+Ele encaminha sem alteração o orçamento do chamador. O padrão nomeado é uma declaração separada. O [validador de animação](../go-image-animation/pt-br.md) seleciona explicitamente esse padrão estático antes de sua verificação agregada distinta; essas escolhas não devem ser fundidas.\n+\n+O orçamento trata de pixels, não bytes codificados ou limite exato de memória residente. Validade do decodificador, identidades dos erros importados e uso observado de memória permanecem fora desta revisão de fonte.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.307050+00:00",
+    "canonical_question_ids": [
+      "wrapper-parameters",
+      "quotient-equality",
+      "explicit-budget-argument"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/go-image-dimensions",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

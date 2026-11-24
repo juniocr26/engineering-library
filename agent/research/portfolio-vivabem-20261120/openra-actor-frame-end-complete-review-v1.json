@@ -1,0 +1,209 @@
+{
+  "at": "2026-11-21T04:52:29.315548+00:00",
+  "hypothesis": "H43",
+  "protocol": "openra-actor-frame-end-evaluation-protocol-v1.json",
+  "request_freeze": "openra-actor-frame-end-request-freeze-v1.json",
+  "oracle": "openra-actor-frame-end-oracle-v2.json",
+  "fresh_source_files": [
+    {
+      "path": "COPYING",
+      "sha256": "e79e9c8a0c85d735ff98185918ec94ed7d175efc377012787aebcf3b80f0d90b",
+      "fresh_matches_frozen": true
+    },
+    {
+      "path": "OpenRA.Game/Actor.cs",
+      "sha256": "f871fc13f30ebd804328814992d44001218a33c0cc3c267a60668d3409af70f2",
+      "fresh_matches_frozen": true
+    },
+    {
+      "path": "OpenRA.Game/World.cs",
+      "sha256": "3ef7573b518cfbb78d375d0ede8c16fe0a45220fcc68e5bb15673926e1406f73",
+      "fresh_matches_frozen": true
+    },
+    {
+      "path": "OpenRA.Game/Traits/TraitsInterfaces.cs",
+      "sha256": "8d7a0ba7ec134228cd626caa2e3aafadefb60b348364bb6ff8bbcaee46ead90d",
+      "fresh_matches_frozen": true
+    }
+  ],
+  "fresh_source_cards_verified": 11,
+  "raw_request_response_hashes_verified": true,
+  "full_inner_JSON_complete": false,
+  "parse_error": {
+    "class": "JSONDecodeError",
+    "offset": 70,
+    "reason": "Unterminated string starting at"
+  },
+  "first_en_field_individually_decodable": true,
+  "first_en_field": "Actor disposal and World frame-end queue lifecycle",
+  "first_en_field_word_count": 7,
+  "prefix_inspection_not_JSON_or_chapter_repair": true,
+  "source_card_ID_occurrences": 0,
+  "introductory_claim_group_review": [
+    {
+      "id": "ActorinterfaceandWorldfield",
+      "outcome": "SUPPORTED_SELECTED_SCOPE",
+      "review": "Actor declaresIDisposableandreadonlyWorld; no broadercurrentworldpresence/runtimeproof."
+    },
+    {
+      "id": "ActoralsoINotifyActorDisposing",
+      "outcome": "CONTRADICTED",
+      "review": "ActualActorclassinterfacelistdoesnotdeclarethis;Actorlooksuptraitsimplementingnotificationinterface."
+    },
+    {
+      "id": "Queueforworldtermination",
+      "outcome": "CONTRADICTED",
+      "review": "World.Tickdrainsframeendqueueoutsidepauseupdategate; worldshutdownisaseparateconsumer."
+    },
+    {
+      "id": "Disposetriggeredbyworldremoval",
+      "outcome": "UNSUPPORTED_CAUSAL_RELATIONSHIP",
+      "review": "SelectedActor.DisposequeuesconditionalWorld.Remove; World.RemovebodydoesnotcallDispose. Externalcallbacksnotfullyanalyzed."
+    },
+    {
+      "id": "OnActorDisposeOuterreceiver",
+      "outcome": "PARTIAL_AMBIGUOUS_RECEIVER",
+      "review": "ActualreceiverisCurrentActivity, not anActormethod; proseattributesittocurrentactor."
+    },
+    {
+      "id": "WillDisposeandactorenqueued",
+      "outcome": "PARTIAL_TYPE_DESCRIPTION",
+      "review": "WillDisposesetthenAction<World>closureenqueued, notliteralActorobject."
+    },
+    {
+      "id": "Worldaddedtriggersenqueue",
+      "outcome": "UNSUPPORTED_CAUSAL_RELATIONSHIP",
+      "review": "AddFrameEndTaskenqueues; suppliedWorldAdddoesnotestablishthisworld-addedtrigger."
+    },
+    {
+      "id": "Worldremovedtriggersdequeue",
+      "outcome": "UNSUPPORTED_CAUSAL_RELATIONSHIP",
+      "review": "SelectedqueueconsumersTick/Dispose, notagenericworld-removedtrigger."
+    },
+    {
+      "id": "Queueexecutedworldendsrepeat",
+      "outcome": "CONTRADICTED_REPEATED_TIMING",
+      "review": "Repeatsworldtermination/frameendconflation; notanindependentcriticalerror."
+    }
+  ],
+  "intro_group_count": 9,
+  "fully_supported_intro_groups": 1,
+  "partially_supported_or_ambiguous_intro_groups": 2,
+  "contradicted_intro_groups_including_repeated_timing": 3,
+  "unsupported_causal_intro_groups": 3,
+  "not_universal_atomic_precision": true,
+  "critical_distinct_factual_error_categories": [
+    "Actorvsdisposingtraitinterfaceownership",
+    "Frame-endqueuevsworld-terminationtiming"
+  ],
+  "critical_factual_error_category_count": 2,
+  "example_validity_errors_separate_from_factual_count": true,
+  "dimensions": [
+    {
+      "dimension": "factual accuracy",
+      "outcome": "REJECTED",
+      "evidence": "Interfaceowner andframeend/worldendtimingerrors, plus unsupportedadd/remove triggers; preservedintro9groupreviewnotatomicprecision."
+    },
+    {
+      "dimension": "source provenance",
+      "outcome": "REJECTED",
+      "evidence": "NoOAsourcecardcitationIDs emitted; repeatedmodifiedcodeblocksarenotindependentlyverifiedproseprovenance."
+    },
+    {
+      "dimension": "architectural understanding",
+      "outcome": "REJECTED",
+      "evidence": "Actor/traitinterfaceandframe-end/world-lifetimeboundariesconflated."
+    },
+    {
+      "dimension": "relevant completeness",
+      "outcome": "REJECTED",
+      "evidence": "Englishonlytitle, invalidtruncatedJSON, repeatedexamplesdominateandrequiredselectedcontractsnotcompletelyexplained."
+    },
+    {
+      "dimension": "API and behavior contracts",
+      "outcome": "REJECTED",
+      "evidence": "Enqueuedactionvsactorobjectandshutdownclear/newdraincontractsnotcorrectlyexplained; repeat-callphasequalifieromitted."
+    },
+    {
+      "dimension": "error/exception correctness",
+      "outcome": "INCOMPLETE",
+      "evidence": "No adequatecallbacknormal-completion/exception/queue-recoverylimits."
+    },
+    {
+      "dimension": "testing documentation",
+      "outcome": "INCOMPLETE",
+      "evidence": "No honeststatementofmissingdirectlifecycle-testbody/results; no executedtestproof."
+    },
+    {
+      "dimension": "example/command validity",
+      "outcome": "REJECTED",
+      "evidence": "Inventedclasswrappers/visibility/typecontext and newQueuewithoutconstructorcall; notoneshortexactlabelledsourcefragment. NoC#compilation/executionclaimed."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "outcome": "REJECTED",
+      "evidence": "Englishfieldonly7wordtitle, Portugueselongrepetitivebody; noin-scopebilingualchapterparity."
+    },
+    {
+      "dimension": "FAQ quality",
+      "outcome": "REJECTED",
+      "evidence": "3PTcoarseNo conclusionsbutmissingrequiredreasons/qualifiers; noEnglishFAQ,0/3completepairs."
+    },
+    {
+      "dimension": "preservation",
+      "outcome": "PASS_ARTIFACT_PRESERVATION_ONLY",
+      "evidence": "Originalsource/docsandrawgenerationpreserved, noautomaticapplyorrepair; outputdoesnotitselfprovideallrequestedpreservationcaveats."
+    },
+    {
+      "dimension": "uncertainty",
+      "outcome": "REJECTED",
+      "evidence": "Noadequatefullchapterlimit/ownerreview/no-runtimequalification; inventedexamplesandcausalclaims."
+    }
+  ],
+  "FAQ": [
+    {
+      "id": "OQ1",
+      "coarse_PT_conclusion_supported": true,
+      "complete_PT_rationale": false,
+      "missing": "ImmediateWillDisposevsdelayedDisposedandwhywholecallisnotwhollyidempotent; currentactivityphase mayrepeat.",
+      "complete_EN_PT_pair": false
+    },
+    {
+      "id": "OQ2",
+      "coarse_PT_conclusion_supported": true,
+      "complete_PT_rationale": false,
+      "missing": "ExplicitloopoutsidepauseupdatebranchandifTickreachesloop/normalcompletionqualification.",
+      "complete_EN_PT_pair": false
+    },
+    {
+      "id": "OQ3",
+      "coarse_PT_conclusion_supported": true,
+      "complete_PT_rationale": false,
+      "missing": "OldqueueClearbeforeactordisposal/newdrain; no universalcompletion guarantee.",
+      "complete_EN_PT_pair": false
+    }
+  ],
+  "coarse_PT_FAQ_conclusions": "3/3",
+  "complete_EN_PT_FAQ_pairs": "0/3",
+  "complete_output_status": "REJECTED",
+  "complete_requested_output_attempts_accepted": 0,
+  "complete_requested_output_attempts_total": 1,
+  "done_reason": "length",
+  "generated_tokens": 3200,
+  "prompt_tokens": 4090,
+  "server_seconds": 814.841000663,
+  "wall_seconds": 814.9818898749982,
+  "context": 16384,
+  "token_cap": 3200,
+  "interpretation": "Largercombinedsource-firstbudgetdidnotyieldacompletecorrectbilingualchapterinthisoneprospectivelocalC#case. Repetition/falseclaims/missingEnglish accompanylengthstop; not acontrolledlanguage-only/budget-onlycausalfinding orproof ofallmodelcapacitylimits.",
+  "reviewer": "SeparatefreshGit/cardreconstructionandmanualcomplete-outputreviewbysamecampaignreviewer, notindependenthuman.",
+  "no_candidate_composed_or_model_prose_repaired": true,
+  "retries": 0,
+  "no_prompt_provider_or_model_tuning_on_family": true,
+  "role": "PROSPECTIVE_LOCAL_EVALUATION_ONLY_NO_TUNING",
+  "pretraining_or_historical_independence_certified": false,
+  "training_gold": false,
+  "owner_approved": false,
+  "operational_integration": false,
+  "model_weight_changes": 0
+}

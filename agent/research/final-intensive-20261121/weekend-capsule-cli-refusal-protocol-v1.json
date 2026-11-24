@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-22T08:51:08.279463+00:00",
+  "before_outcomes": true,
+  "consumer_sha256": "93c58bbdec9e5ea45c9f67b53636973a310e3b0188a98dd6c2ff91f1bb89bb95",
+  "cases": [
+    {
+      "id": "wrong-receipt-pin",
+      "replace": "--receipt-sha256",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000",
+      "exception": "RECEIPT_PIN_MISMATCH"
+    },
+    {
+      "id": "wrong-postnote-pin",
+      "replace": "--postnote-sha256",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000",
+      "exception": "POSTNOTE_PIN_MISMATCH"
+    },
+    {
+      "id": "byte-bound",
+      "append": [
+        "--max-total-bytes",
+        "1"
+      ],
+      "exception": "DECLARED_RESOURCE_BOUND_EXCEEDED"
+    },
+    {
+      "id": "existing-result",
+      "exception": "RESULT_ALREADY_EXISTS"
+    }
+  ],
+  "expected": "All nonzero; no extraction root. Existing result bytes unchanged. Other3failures create a failure receipt with no consumer dispatch.",
+  "scope": "Four owned CLI refusal conditions using pinned existing capsule read-only; no source mutation,framework/model/optimizer orgeneral securityclaim."
+}

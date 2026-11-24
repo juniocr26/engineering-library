@@ -1,0 +1,31 @@
+
+
+## Consolidação intensiva 067 — corte atual de pesquisa, ainda em execução
+
+Corte UTC: 2026-11-22T08:41:17.553806+00:00; 9.976 horas de parede desde a baseline instrumentada de 2026-11-21 22:42:45.313891 UTC. Este corte não encerra a campanha de aproximadamente doze horas. As aberturas dos relatórios e seus números antigos são versões históricas preservadas; esta seção identifica os resultados atuais. Não se somam durações de campanhas anteriores.
+
+**Decisão: NO_GO para execução LoRA; zero condições de lançamento aprovadas entre nove.** Nenhum framework instalado/importado nesta etapa, novos pesos baixados, adapter criado, update de otimizador ou treinamento autorizado.
+
+| Condição | Decisão | Evidência atual |
+| --- | --- | --- |
+| 1. model/tokenizer | NO_GO | UNVERIFIED_MATCHING_TRAINABLE_BASE_FULL_TOKENIZER_MASK_AND_TEMPLATE |
+| 2. approved targets and rights | NO_GO | NO_OWNER_GOLD_OR_TARGET_RIGHTS_APPROVAL |
+| 3. independent evaluation | NO_GO | NO_APPROVED_INDEPENDENT_PAIRED_PILOT_EVALUATION |
+| 4. hardware feasibility | NO_GO | NO_MEASURED_NATIVE_TRAINING_PEAK_OR_ALL_STAGE_FEASIBILITY |
+| 5. framework/environment | NO_GO | NO_VERIFIED_COMPATIBLE_MLX_MLXLM_ENVIRONMENT |
+| 6. state persistence | NO_GO | RESEARCH_RECOVERY_VERIFIED_TRAINING_STATE_RESUME_UNVERIFIED |
+| 7. pilot budget approval | NO_GO | NO_SEPARATELY_APPROVED_EXECUTABLE_TRAINING_PLAN |
+| 8. isolation/rollback | NO_GO | NO_ACTUAL_ADAPTER_ISOLATION_AND_ROLLBACK_VALIDATION |
+| 9. evaluation/recovery reproducibility | NO_GO | NO_MATCHED_UNADAPTED_TRAINABLE_BASE_VS_ADAPTER_COMPLETE_EVALUATION |
+
+[ fine-tuning-current-nine-gates-assessment-v3.json ](agent/research/final-intensive-20261121/fine-tuning-current-nine-gates-assessment-v3.json) mantém os estados históricos sem convertê-los em PASS; [ first-lora-owner-authorization-package-v1.json ](agent/research/final-intensive-20261121/first-lora-owner-authorization-package-v1.json) é pacote de decisão não executável, não deve ser passado a CLI.
+
+O GGUF inferencial e um índice MLX não são prova de bases treináveis equivalentes. As256IDs adicionais e Jinja idêntica não substituem tokenizer completo, prefixo real, máscara e cobertura do alvo. A tentativa pinada de tokenizer falhou no DNS antes de HTTP/bytes e não foi repetida. A geometria histórica Q/V rank4nas duas últimas camadas tem81.920coeficientes; a ilustração de28camadas tem1.146.880,14vezes mais, e não amplia o piloto. Estimativas de buffers de coeficientes não medem pico de RAM.
+
+A auditoria H71/H72confere14unidades físicas e seis vetores históricos. O limite superior inclusivo da máscara pode selecionar o primeiro padding numa linha curta; contagem positiva pode conter só padding ou parte do alvo truncado. Prefixo templated separado exige igualdade real de tokens. O futuro preflight precisa incluir todo alvo real aprovado, excluir prompt/padding por posição e preservar sequência completa; não se deve descartar uma língua ou reduzir tarefa para caber em512. Não houve execução MLX ou observação de NaN.
+
+Payload adapter-only não é snapshot completo de optimizer/RNG/cursor/acumulação. O piloto futuro precisará preservar e restaurar esses estados, conferir inventário integral de tensores e provar rollback/isolamento. train=False não é guarda: o entrypoint selecionado carrega modelo/datasets antes da decisão e pode buscar fallback remoto. Nenhuma CLI foi invocada.
+
+A proposta histórica permanece até16updates, batch1, seq512, rank4, Q/V das camadas26/27, LR1e-5, seed0; parâmetros não validados. Até600sde otimizador dentro de até1.800stotais, incluindo baseline, carga, máscara, avaliação e preservação. Não existe janela extra escondida. Só autorizar após direitos/Gold e avaliação independente congelada contra a mesma base sem adapter; perda menor, empate ou ganho em DEV não bastam.
+
+O par futuro de inferência sobre metadados é experimento DEV separado, NOT_RUN, com dois pedidos preparados e nenhum vencedor. Seu suplemento de prazo não autoriza treino: [ next-neural-matched-dimensions-wall-clock-supplement-v1.json ](agent/research/final-intensive-20261121/next-neural-matched-dimensions-wall-clock-supplement-v1.json).

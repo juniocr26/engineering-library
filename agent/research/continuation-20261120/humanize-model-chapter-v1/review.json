@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-20T19:38:58.408637+00:00",
+  "status": "REJECTED_INCOMPLETE_BILINGUAL_TASK_AND_FACTUAL_ERRORS",
+  "model": "llama3.2:3b",
+  "response_sha256": "5053acb988a7820acd75b324a59383325a227df153ef0ac9bd6b6a546de971ce",
+  "envelope_valid_json": true,
+  "message_content_valid_json": true,
+  "schema_shape_items": 2,
+  "language_values": [
+    "en",
+    "en"
+  ],
+  "exactly_one_each_language": false,
+  "done_reason": "stop",
+  "generated_tokens": 423,
+  "prompt_tokens": 4184,
+  "model_seconds": 443.843977204,
+  "requested_chapter_pairs": 1,
+  "accepted_complete_chapter_pairs": 0,
+  "rubric": [
+    {
+      "criterion": "language-completeness",
+      "status": "FAIL",
+      "reason": "Two array items both language=en. No pt-br chapter. First item stops inside import text; second item is a continuation fragment."
+    },
+    {
+      "criterion": "fixed-vs-big-precision",
+      "status": "FAIL",
+      "reason": "Omits ParseBigBytes/big.Rat comparison and 2^53 observation; output64bits is conflated with intermediate float64 precision."
+    },
+    {
+      "criterion": "new-unit-api-boundary",
+      "status": "FAIL",
+      "reason": "No R/Q additions or unchanged ParseBytes distinction."
+    },
+    {
+      "criterion": "input-ownership",
+      "status": "FAIL",
+      "reason": "No BigComma mutation or formatter input-copy distinction."
+    },
+    {
+      "criterion": "si-unit-split",
+      "status": "FAIL",
+      "reason": "No ParseSI magnitude/unit split."
+    },
+    {
+      "criterion": "prediction-mismatch",
+      "status": "FAIL",
+      "reason": "No35/36 outcome or owned ComputeSI float expectation error."
+    },
+    {
+      "criterion": "evidence-context-example",
+      "status": "FAIL",
+      "reason": "No source IDs or runtime context/module directive. Table claims negative uint64 output without error. First code fence is unclosed; second fragment lacks a complete package/import/function implementation."
+    },
+    {
+      "criterion": "bilingual-faq-equivalence",
+      "status": "FAIL",
+      "reason": "No Portuguese and no relevant paired FAQ answers."
+    }
+  ],
+  "rubric_is_not_independent_test_count": true,
+  "factual_counterexample": {
+    "model_claim": "| ParseBytes | -1,234,567 | -1234567 | None",
+    "source_evidence": "ParseBytes scans only leading digits/dot/comma, so leading - leaves empty number and ParseFloat errors. Its result type uint64 cannot represent the model claimed negative integer.",
+    "source_pack": "humanize-source-pack-v1.json",
+    "related_owned_runtime_case": "parse-negative (-1KB) is a different concrete input; no falsely claimed execution of exact model table input."
+  },
+  "code_fragments_not_stitched_or_executed": true,
+  "normal_stop_is_not_content_completeness": true,
+  "no_generation_ceiling_exhaustion_in_this_call": true,
+  "retry": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "publication_authorized": false,
+  "certified_neural_holdout": false,
+  "neural_improvement": false
+}

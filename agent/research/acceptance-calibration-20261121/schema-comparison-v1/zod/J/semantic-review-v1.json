@@ -1,0 +1,417 @@
+{
+  "at": "2026-11-21T16:03:39.798147+00:00",
+  "task": "zod",
+  "method": "J",
+  "content_sha256": "19df9a6e35a13be1a724057cd191443eeab8375bf067bdcdd6abfa8265b23353",
+  "structure": {
+    "syntax_valid": true,
+    "frozen_subset_schema_errors": [],
+    "both_language_blocks": true,
+    "all_required_ids_each_language": true
+  },
+  "required_fact_claims": [
+    {
+      "claim_id": "J-zod-Z01",
+      "reference_id": "Z01",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        71,
+        72
+      ],
+      "exact_source_evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+      "expected_interpretation": {
+        "en": "The synchronous returned arrow creates ctx with async: false.",
+        "pt-BR": "A arrow síncrona retornada cria ctx com async: false."
+      },
+      "generated_en": {
+        "id": "Z01",
+        "text": "The synchronous returned arrow creates ctx with async: false.",
+        "source": "packages/zod/src/v4/core/parse.ts:[71, 72]"
+      },
+      "generated_pt_BR": {
+        "id": "Z01",
+        "text": "A arrow síncrona retornada cria ctx com async: false.",
+        "source": "packages/zod/src/v4/core/parse.ts:[71, 72]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z02",
+      "reference_id": "Z02",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        73,
+        73
+      ],
+      "exact_source_evidence": "  const result = schema._zod.run({ value, issues: [] }, ctx);",
+      "expected_interpretation": {
+        "en": "The synchronous arrow calls schema._zod.run with { value, issues: [] } and ctx.",
+        "pt-BR": "A arrow síncrona chama schema._zod.run com { value, issues: [] } e ctx."
+      },
+      "generated_en": {
+        "id": "Z02",
+        "text": "The synchronous arrow calls schema._zod.run with { value, issues: [] } and ctx.",
+        "source": "packages/zod/src/v4/core/parse.ts:[73, 73]"
+      },
+      "generated_pt_BR": {
+        "id": "Z02",
+        "text": "A arrow síncrona chama schema._zod.run com { value, issues: [] } e ctx.",
+        "source": "packages/zod/src/v4/core/parse.ts:[73, 73]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z03",
+      "reference_id": "Z03",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        74,
+        76
+      ],
+      "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+      "expected_interpretation": {
+        "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+        "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+      },
+      "generated_en": {
+        "id": "Z03",
+        "text": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+        "source": "packages/zod/src/v4/core/parse.ts:[74, 76]"
+      },
+      "generated_pt_BR": {
+        "id": "Z03",
+        "text": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise.",
+        "source": "packages/zod/src/v4/core/parse.ts:[74, 76]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z04",
+      "reference_id": "Z04",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return, truthy result.issues.length selects failure.",
+        "pt-BR": "No retorno normal, result.issues.length truthy seleciona failure."
+      },
+      "generated_en": {
+        "id": "Z04",
+        "text": "At the normal return, truthy result.issues.length selects failure.",
+        "source": "packages/zod/src/v4/core/parse.ts:[78, 78]"
+      },
+      "generated_pt_BR": {
+        "id": "Z04",
+        "text": "No retorno normal, result.issues.length truthy seleciona failure.",
+        "source": "packages/zod/src/v4/core/parse.ts:[78, 78]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z05",
+      "reference_id": "Z05",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has success: true.",
+        "pt-BR": "No retorno normal sem issues, o literal tem success: true."
+      },
+      "generated_en": {
+        "id": "Z05",
+        "text": "At the normal return with no issues, the literal has success: true.",
+        "source": "packages/zod/src/v4/core/parse.ts:[78, 78]"
+      },
+      "generated_pt_BR": {
+        "id": "Z05",
+        "text": "No retorno normal sem issues, o literal tem success: true.",
+        "source": "packages/zod/src/v4/core/parse.ts:[78, 78]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z06",
+      "reference_id": "Z06",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        87,
+        89
+      ],
+      "exact_source_evidence": "    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));",
+      "expected_interpretation": {
+        "en": "The error getter construction branch is guarded by !error.",
+        "pt-BR": "O ramo de construção no getter de error é condicionado por !error."
+      },
+      "generated_en": {
+        "id": "Z06",
+        "text": "The error getter construction branch is guarded by !error.",
+        "source": "packages/zod/src/v4/core/parse.ts:[87, 89]"
+      },
+      "generated_pt_BR": {
+        "id": "Z06",
+        "text": "O ramo de construção no getter de error é condicionado por !error.",
+        "source": "packages/zod/src/v4/core/parse.ts:[87, 89]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z07",
+      "reference_id": "Z07",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        96,
+        97
+      ],
+      "exact_source_evidence": "    set error(e: errors.$ZodError) {\n      error = e;",
+      "expected_interpretation": {
+        "en": "The error setter assigns e to the local error.",
+        "pt-BR": "O setter de error atribui e à variável local error."
+      },
+      "generated_en": {
+        "id": "Z07",
+        "text": "The error setter assigns e to the local error.",
+        "source": "packages/zod/src/v4/core/parse.ts:[96, 97]"
+      },
+      "generated_pt_BR": {
+        "id": "Z07",
+        "text": "O setter de error atribui e à variável local error.",
+        "source": "packages/zod/src/v4/core/parse.ts:[96, 97]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z08",
+      "reference_id": "Z08",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        111,
+        114
+      ],
+      "exact_source_evidence": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;",
+      "expected_interpretation": {
+        "en": "The asynchronous arrow awaits result when result instanceof Promise.",
+        "pt-BR": "A arrow assíncrona aguarda result quando result instanceof Promise."
+      },
+      "generated_en": {
+        "id": "Z08",
+        "text": "The asynchronous arrow awaits result when result instanceof Promise.",
+        "source": "packages/zod/src/v4/core/parse.ts:[111, 114]"
+      },
+      "generated_pt_BR": {
+        "id": "Z08",
+        "text": "A arrow assíncrona aguarda result quando result instanceof Promise.",
+        "source": "packages/zod/src/v4/core/parse.ts:[111, 114]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z09",
+      "reference_id": "Z09",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        80,
+        80
+      ],
+      "exact_source_evidence": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);",
+      "expected_interpretation": {
+        "en": "The core safeParse binding supplies errors.$ZodRealError to _safeParse.",
+        "pt-BR": "O vínculo safeParse do core fornece errors.$ZodRealError a _safeParse."
+      },
+      "generated_en": {
+        "id": "Z09",
+        "text": "The core safeParse binding supplies errors.$ZodRealError to _safeParse.",
+        "source": "packages/zod/src/v4/core/parse.ts:[80, 80]"
+      },
+      "generated_pt_BR": {
+        "id": "Z09",
+        "text": "O vínculo safeParse do core fornece errors.$ZodRealError a _safeParse.",
+        "source": "packages/zod/src/v4/core/parse.ts:[80, 80]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    },
+    {
+      "claim_id": "J-zod-Z10",
+      "reference_id": "Z10",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has data: result.value.",
+        "pt-BR": "No retorno normal sem issues, o literal tem data: result.value."
+      },
+      "generated_en": {
+        "id": "Z10",
+        "text": "At the normal return with no issues, the literal has data: result.value.",
+        "source": "packages/zod/src/v4/core/parse.ts:[78, 78]"
+      },
+      "generated_pt_BR": {
+        "id": "Z10",
+        "text": "No retorno normal sem issues, o literal tem data: result.value.",
+        "source": "packages/zod/src/v4/core/parse.ts:[78, 78]"
+      },
+      "verdict": "SUPPORTED",
+      "bilingual_semantics_correct": true,
+      "critical_if_false": true
+    }
+  ],
+  "additional_claims": [
+    {
+      "claim_id": "J-zod-limit-universal-negative",
+      "generated_en": "The asynchronous arrow does not always fulfill without rejection. The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise. The selected source does not establish that every asynchronous parse always fulfills without rejection.",
+      "generated_pt_BR": "A arrow assíncrona não sempre cumprirá sem rejeição. A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise. A fonte selecionada não estabelece que todos os parses assíncronos sempre cumprirão sem rejeição.",
+      "verdict": "INSUFFICIENT",
+      "critical_if_read_as_stronger_runtime_assertion": true,
+      "reason": "First sentence says async does not always fulfill, stronger than the later statement that the selected source does not establish universal fulfillment. Read as a concrete runtime/existential assertion it is not demonstrated by this static experiment; read as shorthand for no guarantee it is appropriately cautious. Preserve ambiguity, do not claim a measured counterexample or definitively false runtime behavior.",
+      "source_context": {
+        "claim_id": "U-Z",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": null,
+        "source_file_sha256": null,
+        "exact_source_evidence": "Selected source cards do not establish the requested universal or cross-request runtime contract. No project-wide negative proof claimed.",
+        "source_lines": null,
+        "expected_interpretation": {
+          "en": "Not established by the selected source; abstain from the universal runtime claim.",
+          "pt-BR": "Não; a seleção não estabelece resolução sempre bem-sucedida sem rejeição."
+        },
+        "reference_verdict": "INSUFFICIENT",
+        "critical": true,
+        "reviewer": "Codex same campaign agent",
+        "provenance": "Frozen scope-limitation control, not observed runtime counterexample.",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      }
+    }
+  ],
+  "selected_english_code_claim_metrics": {
+    "supported": 10,
+    "contradicted": 0,
+    "insufficient": 1,
+    "denominator": 11,
+    "scope": "Ten unique main facts plus stronger/ambiguous limitation assertion; correct FAQ and repeated sync throw are not extra independent facts."
+  },
+  "required_fact_coverage": {
+    "numerator": 10,
+    "denominator": 10
+  },
+  "strict_required_fact_bilingual_coverage": {
+    "numerator": 10,
+    "denominator": 10
+  },
+  "faq_source_correct": {
+    "numerator": 1,
+    "denominator": 1
+  },
+  "full_bilingual_precision": null,
+  "dimensions": [
+    {
+      "dimension": "factual correctness",
+      "score": 1,
+      "reason": "Ten facts source-correct, but categorical-negative versus lack-of-proof wording in limitations needs clarification."
+    },
+    {
+      "dimension": "relevant completeness",
+      "score": 0,
+      "reason": "Required tests/examples execution statements absent; error_boundaries is comma only."
+    },
+    {
+      "dimension": "architecture and dependencies",
+      "score": 2,
+      "reason": "Core factory, runner and sync/async ownership preserved within bounded selected file."
+    },
+    {
+      "dimension": "API contracts",
+      "score": 2,
+      "reason": "Guard, setter input/local dataflow and result literals all correct."
+    },
+    {
+      "dimension": "errors and exceptions",
+      "score": 1,
+      "reason": "Explicit sync throw correct and lack of universal fulfillment noted; separate error_boundaries field lacks meaningful content."
+    },
+    {
+      "dimension": "existing tests and actual execution status",
+      "score": 0,
+      "reason": "Required external-tests-not-executed statement missing."
+    },
+    {
+      "dimension": "examples and commands",
+      "score": 0,
+      "reason": "Required examples/commands-unverified statement missing."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "score": 2,
+      "reason": "Ten facts and FAQ preserve technical meaning in both languages; FAQ accent/grammar is editorial, not a renamed code literal."
+    },
+    {
+      "dimension": "FAQ correctness",
+      "score": 2,
+      "reason": "FAQ reuses correct Z01 async:false fact."
+    },
+    {
+      "dimension": "citation relevance",
+      "score": 2,
+      "reason": "All main exact path/range associations match pinned reference source."
+    },
+    {
+      "dimension": "explicit limitations",
+      "score": 1,
+      "reason": "Correct final not-established clause, but first sentence can strengthen its quantifier; mandatory execution boundaries missing."
+    }
+  ],
+  "whole_note": "REJECTED",
+  "all_available_code_propositions_reviewed": true,
+  "not_full_acceptance_from_correct_required_facts": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

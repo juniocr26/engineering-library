@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-21T09:35:46.255526+00:00",
+  "hypothesis": "H76",
+  "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+  "previous_status": "D6 rule-coverage subclaim INCONCLUSIVE; other D6 topics remain unaudited",
+  "current_status": "SOURCE_SUPPORTED_FOR_SELECTED_STANDARD_SERVER_RULE_PATH",
+  "findings": [
+    {
+      "claim": "Non-agent standard server creates one promql.Engine with feature flag and startup timeout, passes it through rules.EngineQueryFunc to manager; groups retain manager options.",
+      "cards": [
+        "R01",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08"
+      ]
+    },
+    {
+      "claim": "Query-engine reloader captures startup enableQueryCost flag outside shadowed config parameter and conditionally applies global series/sample/duration values via SetQueryLimits; agent mode returns early.",
+      "cards": [
+        "R02",
+        "R03",
+        "R13"
+      ]
+    },
+    {
+      "claim": "EngineQueryFunc calls NewInstantQuery with nil options, defers query.Close and propagates construction/execution error; recording and alerting Eval use this callback, group marks errors unhealthy and records failures.",
+      "cards": [
+        "R04",
+        "R09",
+        "R10",
+        "R11"
+      ]
+    },
+    {
+      "claim": "Nil query options become zero-override PrometheusQueryOpts; feature-enabled newQuery therefore inherits operator limits. Nonzero configured duration replaces startup timeout; zero configuration without override retains startup timeout.",
+      "cards": [
+        "R12",
+        "R14",
+        "R15",
+        "R16",
+        "R17",
+        "R18"
+      ]
+    },
+    {
+      "claim": "Feature-enabled evaluation constructs and passes a shared budget; positive limits are enforced with > checks, not >=. This supports exposure of the selected rule query to the engine limit branches, not measured time/error outcomes.",
+      "cards": [
+        "R19",
+        "R20",
+        "R21"
+      ]
+    }
+  ],
+  "documentation_disposition": "Keep the existing rule-coverage statement for standard configured server path with feature-enabled/nonzero-limit qualifications. No external documentation modified. Do not generalize arbitrary injected rule QueryFunc/custom engines, disabled feature or agent mode.",
+  "unresolved": [
+    "Actual running server configuration, scheduler execution, query/storage/cancellation timing and recovery unobserved.",
+    "No dedicated matching rule-limit test found by selected path/pattern search; this is not absence of all possible relevant tests. Existing engine tests previously inspected remain unexecuted.",
+    "Remote-read density and physical-I/O versus evaluator sample units, all HTTP errors/statuses and complete three-page documentation acceptance remain outside this trace."
+  ],
+  "no_new_complete_chapter_or_lifecycle_or_neural_population": true,
+  "source_files": 8,
+  "source_cards": 21,
+  "upstream_tests_executed": false,
+  "source_or_database_execution": false,
+  "owner_approved": false,
+  "gold": false,
+  "training_eligible": false
+}

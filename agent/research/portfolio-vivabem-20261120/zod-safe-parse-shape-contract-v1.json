@@ -1,0 +1,91 @@
+{
+  "at": "2026-11-21T01:44:40.036027+00:00",
+  "protocol": "zod-safe-parse-profile-protocol-v1.json",
+  "source": "agent/research/portfolio-vivabem-20261120/public-source-evidence-v1/zod/2a343ed2a4ffbea73fb83862ee1e317662292481/packages/zod/src/v4/core/parse.ts",
+  "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+  "admission": "Top-level owner AST kind, unique selected declarations and canonical token-exact selected source shapes; whitespace/comments ignored. Closed handwritten semantic interpretation, not arbitrary TS proof.",
+  "templates": {
+    "_safeParse": {
+      "lines": [
+        71,
+        79
+      ],
+      "text": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };\n  const result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }\n\n  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n};"
+    },
+    "failure": {
+      "lines": [
+        83,
+        103
+      ],
+      "text": "function failure(Err: $ZodErrorClass, issues: errors.$ZodRawIssue[], ctx: schemas.ParseContextInternal): any {\n  let error: errors.$ZodError | undefined;\n  return {\n    success: false,\n    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));\n        // finalizeIssue drops `input`, so the built error holds nothing; keeping the raw issues past this point pins the parsed value for the life of the result\n        issues = undefined as any;\n        ctx = undefined as any;\n      }\n      return error;\n    },\n    set error(e: errors.$ZodError) {\n      error = e;\n      // a replacement makes the getter's branch unreachable, so the captures have to go here too\n      issues = undefined as any;\n      ctx = undefined as any;\n    },\n  };\n}"
+    },
+    "_safeParseAsync": {
+      "lines": [
+        111,
+        117
+      ],
+      "text": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;\n\n  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n};"
+    },
+    "safeParse": {
+      "lines": [
+        80,
+        80
+      ],
+      "text": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);"
+    },
+    "safeParseAsync": {
+      "lines": [
+        119,
+        119
+      ],
+      "text": "export const safeParseAsync: $SafeParseAsync = /* @__PURE__*/ _safeParseAsync(errors.$ZodRealError);"
+    }
+  },
+  "imports": "import * as core from \"./core.js\";\nimport * as errors from \"./errors.js\";\nimport type * as schemas from \"./schemas.js\";\nimport * as util from \"./util.js\";",
+  "facts": [
+    {
+      "id": "ZF01",
+      "owner": "_safeParse",
+      "description": "Returned sync arrow sets async false, calls schema._zod.run with value and empty issues, throws new core.$ZodAsyncError on written instanceof Promise guard.",
+      "runtime_executed": false
+    },
+    {
+      "id": "ZF02",
+      "owner": "_safeParse",
+      "description": "After the guard, issues.length selects failure(_Err, result.issues, ctx); otherwise object has success true and data result.value.",
+      "runtime_executed": false
+    },
+    {
+      "id": "ZF03",
+      "owner": "failure",
+      "description": "Local error initially undefined; object success false; getter constructs through Err and finalizeIssue only if !error, clears issues and ctx after construction completes, then returns error.",
+      "runtime_executed": false
+    },
+    {
+      "id": "ZF04",
+      "owner": "failure",
+      "description": "Setter assigns supplied e to error then clears issues and ctx. Getter later checks truthiness; declared TS type is not a runtime validation guard.",
+      "runtime_executed": false
+    },
+    {
+      "id": "ZF05",
+      "owner": "_safeParseAsync",
+      "description": "Returned async arrow sets async true, calls run and awaits result only when instanceof Promise, then returns the same written failure/success ternary shape.",
+      "runtime_executed": false
+    },
+    {
+      "id": "ZF06",
+      "owner": "safeParse/safeParseAsync",
+      "description": "Core exported constants call the respective factories with errors.$ZodRealError. This does not certify all public import paths.",
+      "runtime_executed": false
+    }
+  ],
+  "limits": [
+    "Token shape identity proves the admitted selected source shapes only; handwritten fact descriptions require review.",
+    "No runtime exception safety, typecheck, imports/module resolution, callback contracts or Promise realm behavior certified.",
+    "Getter construction or dependencies can throw before clearing; setters can be invoked before getters.",
+    "Comments claiming performance measurements are not reproduced or accepted as measured campaign evidence."
+  ],
+  "owner_approved": false,
+  "training_gold": false
+}

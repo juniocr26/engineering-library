@@ -1,0 +1,806 @@
+{
+  "at": "2026-11-20T13:08:32.680601+00:00",
+  "frozen_before_predictions": true,
+  "cases": [
+    {
+      "id": "windows-context",
+      "request": {
+        "context": {
+          "goos": "windows",
+          "goarch": "amd64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "amd64.v1"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "a_linux.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          },
+          {
+            "path": "a_windows.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          }
+        ]
+      },
+      "expected_status": "CONSTRAINT_MATCH_OBSERVATIONS",
+      "expected_selected": [
+        "a_windows.go"
+      ],
+      "expected_flags": {}
+    },
+    {
+      "id": "custom-tag-enabled",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [
+            "custom"
+          ],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "feature.go",
+            "source": "//go:build custom\n\npackage sample\n",
+            "sha256": "3e8706911ccf6071e38ec0e772949a294a32e8ea959df6f6997e7c12cde8be34"
+          }
+        ]
+      },
+      "expected_status": "CONSTRAINT_MATCH_OBSERVATIONS",
+      "expected_selected": [
+        "feature.go"
+      ],
+      "expected_flags": {}
+    },
+    {
+      "id": "previous-release-context",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26"
+          ]
+        },
+        "files": [
+          {
+            "path": "new.go",
+            "source": "//go:build go1.27\n\npackage sample\n",
+            "sha256": "aa7f1b6ce46ffaebe882a6f2e003598e62cfdc11238487868eced0ab5e68ba73"
+          },
+          {
+            "path": "old.go",
+            "source": "//go:build go1.26\n\npackage sample\n",
+            "sha256": "4f2adeffd3d99dc02261dd70833c15ec847a51f2f543d710e410ae8e8b6ae59e"
+          }
+        ]
+      },
+      "expected_status": "CONSTRAINT_MATCH_OBSERVATIONS",
+      "expected_selected": [
+        "old.go"
+      ],
+      "expected_flags": {}
+    },
+    {
+      "id": "test-role-not-library",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "lib.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          },
+          {
+            "path": "lib_test.go",
+            "source": "package sample_test\n",
+            "sha256": "76b991a9bc9e79034938ae994a64a639fbd13f9bd7cf109e07723394d1ea3a59"
+          }
+        ]
+      },
+      "expected_status": "CONSTRAINT_MATCH_OBSERVATIONS",
+      "expected_selected": [
+        "lib.go",
+        "lib_test.go"
+      ],
+      "expected_flags": {
+        "test_file": "lib_test.go"
+      }
+    },
+    {
+      "id": "mixed-library-package",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "a.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          },
+          {
+            "path": "b.go",
+            "source": "package other\n",
+            "sha256": "a8dc1654ea9b95fc9bf25e0b1c8f67f64c0d1d5107df07769be5684bd8db09d4"
+          }
+        ]
+      },
+      "expected_status": "CONSTRAINT_MATCH_OBSERVATIONS",
+      "expected_selected": [
+        "a.go",
+        "b.go"
+      ],
+      "expected_flags": {
+        "ambiguous_dirs": [
+          "."
+        ]
+      }
+    },
+    {
+      "id": "invalid-body-not-compiler-proof",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "a.go",
+            "source": "package sample\nfunc invalid( {\n",
+            "sha256": "5bfc1859db3830e432f71f8c6c44efa0e8819a61fd57601b7f298c1193a7ed58"
+          }
+        ]
+      },
+      "expected_status": "CONSTRAINT_MATCH_OBSERVATIONS",
+      "expected_selected": [
+        "a.go"
+      ],
+      "expected_flags": {}
+    },
+    {
+      "id": "import-C-remains-unresolved",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "cgo.go",
+            "source": "package sample\nimport \"C\"\n",
+            "sha256": "5ed3c5cfc468e69dddff64ae9910d08031ec3744a0363201b1d7691bf7596031"
+          }
+        ]
+      },
+      "expected_status": "CONSTRAINT_MATCH_OBSERVATIONS",
+      "expected_selected": [
+        "cgo.go"
+      ],
+      "expected_flags": {
+        "cgo_paths": [
+          "cgo.go"
+        ]
+      }
+    },
+    {
+      "id": "unknown-context-field",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ],
+          "unknown": true
+        },
+        "files": [
+          {
+            "path": "a.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          }
+        ]
+      },
+      "expected_status": "INCONCLUSIVE",
+      "expected_selected": null,
+      "expected_flags": {}
+    },
+    {
+      "id": "missing-context-field",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "a.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          }
+        ]
+      },
+      "expected_status": "INCONCLUSIVE",
+      "expected_selected": null,
+      "expected_flags": {}
+    },
+    {
+      "id": "path-traversal",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "../a.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          }
+        ]
+      },
+      "expected_status": "INCONCLUSIVE",
+      "expected_selected": null,
+      "expected_flags": {}
+    },
+    {
+      "id": "empty-source-list",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": []
+      },
+      "expected_status": "INCONCLUSIVE",
+      "expected_selected": null,
+      "expected_flags": {}
+    },
+    {
+      "id": "stale-source-hash",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "a.go",
+            "source": "package sample\n",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      },
+      "expected_status": "INCONCLUSIVE",
+      "expected_selected": null,
+      "expected_flags": {}
+    },
+    {
+      "id": "duplicate-JSON-key",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "a.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          }
+        ]
+      },
+      "expected_status": "INCONCLUSIVE",
+      "expected_selected": null,
+      "expected_flags": {},
+      "raw_request": "{\"context\":{\"goos\": \"linux\", \"goarch\": \"arm64\", \"compiler\": \"gc\", \"cgo_enabled\": false, \"build_tags\": [], \"tool_tags\": [\"arm64.v8.0\"], \"release_tags\": [\"go1.1\", \"go1.2\", \"go1.3\", \"go1.4\", \"go1.5\", \"go1.6\", \"go1.7\", \"go1.8\", \"go1.9\", \"go1.10\", \"go1.11\", \"go1.12\", \"go1.13\", \"go1.14\", \"go1.15\", \"go1.16\", \"go1.17\", \"go1.18\", \"go1.19\", \"go1.20\", \"go1.21\", \"go1.22\", \"go1.23\", \"go1.24\", \"go1.25\", \"go1.26\", \"go1.27\"]},\"context\": {\"goos\": \"linux\", \"goarch\": \"arm64\", \"compiler\": \"gc\", \"cgo_enabled\": false, \"build_tags\": [], \"tool_tags\": [\"arm64.v8.0\"], \"release_tags\": [\"go1.1\", \"go1.2\", \"go1.3\", \"go1.4\", \"go1.5\", \"go1.6\", \"go1.7\", \"go1.8\", \"go1.9\", \"go1.10\", \"go1.11\", \"go1.12\", \"go1.13\", \"go1.14\", \"go1.15\", \"go1.16\", \"go1.17\", \"go1.18\", \"go1.19\", \"go1.20\", \"go1.21\", \"go1.22\", \"go1.23\", \"go1.24\", \"go1.25\", \"go1.26\", \"go1.27\"]}, \"files\": [{\"path\": \"a.go\", \"source\": \"package sample\\n\", \"sha256\": \"bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73\"}]}"
+    },
+    {
+      "id": "trailing-JSON-object",
+      "request": {
+        "context": {
+          "goos": "linux",
+          "goarch": "arm64",
+          "compiler": "gc",
+          "cgo_enabled": false,
+          "build_tags": [],
+          "tool_tags": [
+            "arm64.v8.0"
+          ],
+          "release_tags": [
+            "go1.1",
+            "go1.2",
+            "go1.3",
+            "go1.4",
+            "go1.5",
+            "go1.6",
+            "go1.7",
+            "go1.8",
+            "go1.9",
+            "go1.10",
+            "go1.11",
+            "go1.12",
+            "go1.13",
+            "go1.14",
+            "go1.15",
+            "go1.16",
+            "go1.17",
+            "go1.18",
+            "go1.19",
+            "go1.20",
+            "go1.21",
+            "go1.22",
+            "go1.23",
+            "go1.24",
+            "go1.25",
+            "go1.26",
+            "go1.27"
+          ]
+        },
+        "files": [
+          {
+            "path": "a.go",
+            "source": "package sample\n",
+            "sha256": "bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73"
+          }
+        ]
+      },
+      "expected_status": "INCONCLUSIVE",
+      "expected_selected": null,
+      "expected_flags": {},
+      "raw_request": "{\"context\": {\"goos\": \"linux\", \"goarch\": \"arm64\", \"compiler\": \"gc\", \"cgo_enabled\": false, \"build_tags\": [], \"tool_tags\": [\"arm64.v8.0\"], \"release_tags\": [\"go1.1\", \"go1.2\", \"go1.3\", \"go1.4\", \"go1.5\", \"go1.6\", \"go1.7\", \"go1.8\", \"go1.9\", \"go1.10\", \"go1.11\", \"go1.12\", \"go1.13\", \"go1.14\", \"go1.15\", \"go1.16\", \"go1.17\", \"go1.18\", \"go1.19\", \"go1.20\", \"go1.21\", \"go1.22\", \"go1.23\", \"go1.24\", \"go1.25\", \"go1.26\", \"go1.27\"]}, \"files\": [{\"path\": \"a.go\", \"source\": \"package sample\\n\", \"sha256\": \"bfc24d88543deb4ce0cfc2cce0dea672837948397e74160e7eab9d3e01473d73\"}]}{}"
+    }
+  ],
+  "goal": "Validate context changes and explicit refusal/limits, including no full-language syntax guarantee from ImportsOnly."
+}

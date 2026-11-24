@@ -1,0 +1,204 @@
+{
+  "family": "source-repository:opencv",
+  "source_atoms": [
+    {
+      "id": "OC01",
+      "proposition": "coerceTypes accepts two int depth codes and bool muldiv, returning int; no array/image buffer parameter.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        314,
+        320
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC02",
+      "proposition": "Equal depths select the first depth before any operation-flag branch.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        316,
+        319
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC03",
+      "proposition": "Negated muldiv participates only in the nested unequal integer-boundary choice.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        316,
+        319
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC04",
+      "proposition": "Selected non-muldiv coercion path calls helper for input depths, then again with requested output depth.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        552,
+        557
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC05",
+      "proposition": "Selected muldiv coercion path similarly passes true to both helper calls.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        559,
+        563
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC06",
+      "proposition": "Later operation-specific branch can raise wtype to at least CV_32F before type construction.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        565,
+        572
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC07",
+      "proposition": "The shape helper appends acn/bcn to the shape arrays.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        613,
+        618
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC08",
+      "proposition": "Its loop starts at each last index and continues only while both remain nonnegative.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        619,
+        619
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC09",
+      "proposition": "A visited pair rejects only if unequal and neither dimension equals1.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        620,
+        622
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC10",
+      "proposition": "Thus appended channel dimensions are tested first by the same predicate, not a separate equality-only condition.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        617,
+        622
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC11",
+      "proposition": "Unmatched leading dimensions are not visited after either reverse index is exhausted; not a whole InputArray validity claim.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        619,
+        623
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC12",
+      "proposition": "Caller fallback block requires neither operand initially scalar, then probes scalar-like geometry and failed shape compatibility.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        681,
+        689
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "OC13",
+      "proposition": "Fallback sets s1=like1 and s2=like2&&!like1, preferring first when both qualify.",
+      "source_path": "modules/core/src/arithm.cpp",
+      "lines": [
+        684,
+        687
+      ],
+      "verdict": "SUPPORTED"
+    }
+  ],
+  "pair_notes": {
+    "caller-working-type-adjustment": {
+      "source_atom_ids": [
+        "OC04",
+        "OC05",
+        "OC06"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Two calls are qualified to coercion paths, not same-depth fast branch or every public API. Laterwtypeadjustment/sourcebackendlimits retained; extra paragraph procedural/sourcebounds checked, not new runtime observations."
+    },
+    "operation-flag-precedence": {
+      "source_atom_ids": [
+        "OC02",
+        "OC03"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Conditional expression selects equal-depth result first. Flag is nested in later unequal integer-boundary branch; no claim about arbitrary numeric macro values."
+    },
+    "type-helper-not-image-conversion": {
+      "source_atom_ids": [
+        "OC01"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Complete helper signature/body supports source-local absence of imagebuffer/outputarray/conversion effects; not a negative claim about all OpenCV."
+    },
+    "channel-dimension-broadcasting": {
+      "source_atom_ids": [
+        "OC07",
+        "OC08",
+        "OC09",
+        "OC10"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Appendedchannelpairvisitedfirst;sameunequal/neither1predicateallowsvisitedonecase. Later visited mismatch canreject. No measuredactualbroadcastresult."
+    },
+    "scalar-fallback-consumer": {
+      "source_atom_ids": [
+        "OC12",
+        "OC13"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "False helperresult participates in a condition choosing scalarflags, not an immediate unconditional reject of wholearithmeticoperation. Extra limitations deny benchmarks/apps/tests and keep example illustrative."
+    },
+    "trailing-dimension-comparison": {
+      "source_atom_ids": [
+        "OC08",
+        "OC11"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Onlyjointnonnegativeindiceswalked; unmatchedleadingdimensionsnotcheckedhere. Wordingselectedtrailingcomparison preserves narrow scope."
+    }
+  },
+  "all_actual_EN_PT_answers_read_in_full": true,
+  "source_context_review": "CompletecoerceTypes,shapesBroadcastCompatandselectedconsumer/coercionpathsplusenclosingOpenCL/CPUdispatchread. No builds/apps/tests/nativeC++execution.",
+  "source_only_pair_review_pass": true,
+  "selected_source_relations_not_full_prose_precision": 13,
+  "full_universal_atomic_precision": null,
+  "reviewer": "Samecampaignagent staticpublicsource, not independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "model_calls": 0,
+  "optimizer_updates": 0
+}

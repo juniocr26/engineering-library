@@ -1,0 +1,50 @@
+{
+  "at": "2026-11-21T23:52:19.351408+00:00",
+  "protocol_sha256": "39c991f872672dc5e6f9844756bb01599500f5e25890b45a78d2d7c00adb9d17",
+  "python_example_syntax_valid": true,
+  "python_owned_malformed_refused": true,
+  "solver_direct_dependency_cache_store_lines": [
+    701
+  ],
+  "go_owned_wrapped_input": {
+    "source": "package ownedexample\nimport cobra \"github.com/spf13/cobra\"\nfunc reviewExample() {\nvalidator := cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs)\ncmd := &cobra.Command{ValidArgs: []string{\"red\", \"blue\"}}\nerr := validator(cmd, []string{\"red\", \"blue\"})\n_ = err\n\n}\n",
+    "path": "owned_example.go",
+    "selectors": [
+      "reviewExample"
+    ]
+  },
+  "go_native_result": {
+    "go_version": "go1.27.4",
+    "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+    "path": "owned_example.go",
+    "platform": "darwin/arm64",
+    "profile": "go-standard-parser-declarations-v1",
+    "source_executed": false,
+    "source_sha256": "4baee4fb8fd0d7d1b858538d5e21b29123e2e9b0b390878314136352636ae105",
+    "syntax_only": true,
+    "units": [
+      {
+        "selector": "reviewExample",
+        "declaration_kind": "function",
+        "symbol": "ownedexample.reviewExample",
+        "start_line": 3,
+        "end_line": 9,
+        "quote": "func reviewExample() {\nvalidator := cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs)\ncmd := &cobra.Command{ValidArgs: []string{\"red\", \"blue\"}}\nerr := validator(cmd, []string{\"red\", \"blue\"})\n_ = err\n\n}",
+        "declaration": "func reviewExample()",
+        "function_type": "func()"
+      }
+    ],
+    "producer": {
+      "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+      "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+      "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+      "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+      "version": "1.6.1"
+    }
+  },
+  "go_owned_malformed_refusal": "Go syntax refused: owned_bad.go:2:21: expected ')', found '{' (and 3 more errors)",
+  "target_code_executed": false,
+  "typecheck_or_import_resolution": false,
+  "neural_calls": 0,
+  "scope": "Exact candidate examples syntax; one selected lexical store query. Not application suites, semantic model accuracy or whole-function runtime proof."
+}

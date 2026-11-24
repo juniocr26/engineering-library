@@ -1,0 +1,102 @@
+{
+  "at": "2026-11-22T06:13:47.705182+00:00",
+  "bindings": [
+    {
+      "topic": "sqlx-in-expansion",
+      "path": "bind.go",
+      "lines": [
+        117,
+        137
+      ],
+      "source_sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+      "quote_sha256": "0adeb6aa746ac4e7e499a182b37f52c25c321447777bab65e4074714f088414e"
+    },
+    {
+      "topic": "sqlx-in-expansion",
+      "path": "bind.go",
+      "lines": [
+        142,
+        244
+      ],
+      "source_sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+      "quote_sha256": "4b96f2d895db8f8bf221979b7d2884af75a020e538e4b9c889c907ea7d4f9e35"
+    },
+    {
+      "topic": "sqlx-in-expansion",
+      "path": "bind.go",
+      "lines": [
+        246,
+        265
+      ],
+      "source_sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+      "quote_sha256": "2ab996c422cf1b9d02b79c3103e7b0fc0c4a98ba557cdd058cfbfd832d26dba3"
+    },
+    {
+      "topic": "sqlx-in-expansion",
+      "path": "reflectx/reflect.go",
+      "lines": [
+        231,
+        236
+      ],
+      "source_sha256": "3de3b248e6b88566c09becf518b3b3c3e999ff5a9ae86dc170cea425fd01b9db",
+      "quote_sha256": "e3736d4804a57024f217e810aa7e0769660d57f7449c68f3bc7d37d626b74f6e"
+    },
+    {
+      "topic": "sqlx-in-expansion",
+      "path": "named.go",
+      "lines": [
+        197,
+        208
+      ],
+      "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "quote_sha256": "a0649fd18da5ce539e39f1555130aaee5bd0c92aa19acef293c7d3e62543edd9"
+    },
+    {
+      "topic": "sqlx-map-argument-binding",
+      "path": "named.go",
+      "lines": [
+        197,
+        208
+      ],
+      "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "quote_sha256": "a0649fd18da5ce539e39f1555130aaee5bd0c92aa19acef293c7d3e62543edd9"
+    },
+    {
+      "topic": "sqlx-map-argument-binding",
+      "path": "named.go",
+      "lines": [
+        162,
+        167
+      ],
+      "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "quote_sha256": "b3e5ce063d78a1e538f937cf5248f6534c9d05e89d7169c2fc0d240a5cbf74c5"
+    },
+    {
+      "topic": "sqlx-map-argument-binding",
+      "path": "named.go",
+      "lines": [
+        210,
+        229
+      ],
+      "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "quote_sha256": "ab8e47cb195206432aa86a6b2c41f1de9480a13d7980e7fb4e66226f1b6fde4d"
+    }
+  ],
+  "review_status": "IN_PROGRESS",
+  "preliminary_observations": [
+    "Stack32 is metadata storage choice, largerargs allocate, no countlimiterror",
+    "Valuer runs duringpreparation; noexpandableslice returnquery,args,nil preservesoriginalargs eveniflocalargtransformed",
+    "asSliceForIn Derefonlytype once,returnedreflectValueunchanged; no pointervaluesafety guarantee",
+    "Emptysliceerrorbeforequeryscan; exact[]byte typeexcluded, namedbyte-slicenotblanketexcluded",
+    "Mapbind orderednamescommaok,nilpresent vsmissing,prefixreturn; bindAnyArgs forwardsmaphelper butbindStructerroremptyquery/emptyargs",
+    "Originalmap packet bindAnyArgs range162\u2013167 omits closingbrace168; full acquiredfile andwholefunctionread, partialquote not language-completenessproof or current citationgap transferredfromotherchapter"
+  ],
+  "remaining": [
+    "ReadcompletePT/historicalresponses andinterruptedInattemptlineage",
+    "SDKmap/reflectionprimarycontracts andexistingtestsource",
+    "ScopedGo syntaxreceipt/adversejudgments/actualrecovery"
+  ],
+  "new_model_calls": 0,
+  "source_program_executed": false,
+  "owner_gold": false
+}

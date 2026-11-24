@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-21T16:31:04.390883+00:00",
+  "case": "fastapi-I1",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-I1",
+    "task": "fastapi",
+    "claim": "All live server requests share one process-wide dependency cache.",
+    "expected_verdict": "INSUFFICIENT",
+    "reference_id": "U-F",
+    "reviewer": "Same campaign agent, frozen source interpretation; not independent owner",
+    "critical": true,
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "scope": "Selected cards only; no project-wide runtime truth label"
+  },
+  "reference_anchor": {
+    "claim_id": "U-F",
+    "task": "fastapi",
+    "family": "fastapi/fastapi",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_path": null,
+    "source_file_sha256": null,
+    "exact_source_evidence": "Selected source cards do not establish the requested universal or cross-request runtime contract. No project-wide negative proof claimed.",
+    "source_lines": null,
+    "expected_interpretation": {
+      "en": "Not established by the selected source; abstain from the universal runtime claim.",
+      "pt-BR": "Não; a seleção não estabelece cache único compartilhado entre requisições."
+    },
+    "reference_verdict": "INSUFFICIENT",
+    "critical": true,
+    "reviewer": "Codex same campaign agent",
+    "provenance": "Frozen scope-limitation control, not observed runtime counterexample.",
+    "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+    "not_independent_holdout": true
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "Implementation",
+    "evidence": "The code uses a dependency cache, but it does not explicitly state that all live server requests share one process-wide dependency cache. The cache is used to store the results of dependencies, and it is updated based on the dependencies used in the request. However, the code does not provide any information about how the cache is shared across all live server requests.",
+    "reason": "The source does not provide enough information to establish that all live server requests share one process-wide dependency cache. The cache is used to store the results of dependencies, but it is not clear how it is shared across all requests."
+  },
+  "content_sha256": "cf3d49ea8d8dd22172fcf0c8cb3eef6c3d78279f2be3b6d17dcdddf123b05bd5",
+  "raw_response_sha256": "705314abb66b1b71ee25c4af6567f9c340184b95cbf15d8e10a0a3dde46ff464",
+  "primary_raw_label_agreement": true,
+  "rationale_support_for_requested_claim": "SUPPORTED",
+  "evidence_form": "Accurate source paraphrase rather than a literal quote.",
+  "source_relationship_review": "Selected local cache code does not establish universal process-wide sharing; no opposite global guarantee added.",
+  "diagnostic_note": "Justified bounded abstention; cache storage/update description supported under selected control flow.",
+  "end_to_end_label_and_rationale_supported": true,
+  "original_label_and_reference_unchanged": true,
+  "reviewer": "Same campaign agent; detailed rationale rubric fixed before reading any V/R outputs, but after some V predictions existed unread. Primary protocol/labels froze before predictions.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

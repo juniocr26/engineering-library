@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-21T14:45:47.703386+00:00",
+  "task": "zod",
+  "method": "D",
+  "content_sha256": "d5446a209f4d6cba9da822a91c928525c5941180ee17fb2c39b17e13e7586989",
+  "raw_response_sha256": "076691aeafa841dbe4a99b341fed5937ae305881d5b3d47a7ac3e1e8a9f37540",
+  "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+  "claims": [
+    {
+      "claim_id": "NEW-D-zod-Z01",
+      "reference_id": "Z01",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        71,
+        72
+      ],
+      "exact_source_evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+      "expected_interpretation": {
+        "en": "The synchronous returned arrow creates ctx with async: false.",
+        "pt-BR": "A arrow síncrona retornada cria ctx com async: false."
+      },
+      "generated_interpretation": {
+        "en": "The synchronous returned arrow sets the async flag to false.",
+        "pt-BR": "A arrow sincrônica retornada configura a flag async para falso."
+      },
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "SAME_SELECTED_FACT_WITH_QUESTION_CONTEXT",
+      "reviewer": "sameCodexcampaignagent; source-readingnotowner",
+      "notes": "Code/type literal may be identical in both languagefields; do not infer identifiertranslation merelyfromordinarytranslatedwords."
+    }
+  ],
+  "all_generated_claims_reviewed": true,
+  "all_required_claims_covered": false,
+  "critical_unsupported_claims": 0,
+  "bilingual_equivalence": true,
+  "selected_generated_atomic_precision": {
+    "numerator": 1,
+    "denominator": 1
+  },
+  "required_factual_coverage": {
+    "numerator": 1,
+    "denominator": 10
+  },
+  "missing_required_claim_ids": [
+    "Z02",
+    "Z03",
+    "Z04",
+    "Z05",
+    "Z06",
+    "Z07",
+    "Z08",
+    "Z09",
+    "Z10"
+  ],
+  "citation_association": "REAL_FILE_BUT_NO_PHYSICAL_LINE_RANGE",
+  "uncertainty": {
+    "original": {
+      "id": "U-Z",
+      "en": "No information is provided about asynchronous parses fulfilling without rejection.",
+      "pt-BR": "Nenhuma informação é fornecida sobre os parses assíncronos sempre cumprindo sem rejeição.",
+      "source": "packages/zod/src/v4/core/parse.ts @ 2a343ed2a4ffbea73fb83862ee1e317662292481"
+    },
+    "reference": "INSUFFICIENT",
+    "coarse_abstention_correct": true,
+    "strict_source_specific_rationale_complete": false
+  },
+  "whole_output": "REJECTED_INCOMPLETE",
+  "complete_document_accepted": false,
+  "F_gate_eligible": false,
+  "F_eligibility_reason": "Missing requiredfacts; sourcecitation issue separatelyrecorded. No generatedprose repairedorfilled fromoracle.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

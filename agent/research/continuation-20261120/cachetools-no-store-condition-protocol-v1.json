@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-20T21:28:53.288215+00:00",
+  "status": "FROZEN_BEFORE_ADDITIONAL_NO_STORE_CONDITION_OBSERVATION",
+  "parent_protocol": "cachetools-confined-runtime-protocol-v1.json",
+  "hypothesis": "Condition-based exclusion may prevent overlapping same-key computation without guaranteeing exactly-once successful computation when the value cannot be cached. The attached cache_condition field does not override the uncached router branch.",
+  "case": {
+    "id": "oversized-value-not-stored",
+    "expected": {
+      "computations": 2,
+      "peak_concurrent_user_functions": 1,
+      "results": {
+        "first": "xx",
+        "second": "xx"
+      },
+      "cache_size": 0,
+      "wait_observed": true,
+      "no_live_workers": true
+    }
+  },
+  "inputs": {
+    "Cache_maxsize": 1,
+    "getsizeof": "builtin len",
+    "function_result": "xx",
+    "threads": 2,
+    "first_function_release": "explicit owned Event after second enters Condition.wait",
+    "timeouts_seconds": 5
+  },
+  "source_executed_after_freeze_only": true,
+  "real_ttl_wait_or_sleep": false,
+  "new_independent_family": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "model_calls": 0,
+  "training_steps": 0
+}

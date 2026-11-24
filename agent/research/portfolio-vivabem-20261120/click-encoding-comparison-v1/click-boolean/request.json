@@ -1,0 +1,82 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "properties": {
+      "faq": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "Q001",
+                "Q002",
+                "Q003",
+                "Q004"
+              ]
+            },
+            "question_en": {
+              "type": "string"
+            },
+            "question_pt": {
+              "type": "string"
+            },
+            "answer_en": {
+              "type": "string"
+            },
+            "answer_pt": {
+              "type": "string"
+            },
+            "fact_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "CK01",
+                  "CK02",
+                  "CK03",
+                  "CK04"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "id",
+            "question_en",
+            "question_pt",
+            "answer_en",
+            "answer_pt",
+            "fact_ids"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 4,
+        "maxItems": 4
+      }
+    },
+    "required": [
+      "faq"
+    ],
+    "additionalProperties": false
+  },
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 1400
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Generate a source-faithful bilingual technical FAQ. Written source observations are not runtime guarantees. Preserve exact code identifiers and uncertainty. Never approve owner gold, training or publication. Return only required JSON."
+    },
+    {
+      "role": "user",
+      "content": "Answer each question ID exactly once in English and Brazilian Portuguese, at most two sentences per answer. Use relevant fact_ids. The verified source meanings are supplied so this measures faithful prose/translation, not independent source discovery. Preserve parent/child, depth, before/after and normal-versus-exception conditions. Uncertainty fields express unavailable proof, not positive guarantees. Do not invent callback success, test execution or isolation.\n\nINPUT:\n{\"source_family\": \"pallets/click\", \"revision\": \"08b803cf32ceb2ae6a772c62d5da42757a897d44\", \"facts\": [{\"id\": \"CK01\", \"written_source_meaning\": \"In the selected Context implementation, __init__ assigns self._meta = getattr(parent, \\\"meta\\\", {}). The meta property returns self._meta. For an ordinary Context parent using this getter, the child stores the parent meta mapping rather than a written copy; this does not establish sharing between unrelated root contexts.\", \"references\": [{\"path\": \"src/click/core.py\", \"first_line\": 411, \"last_line\": 411}, {\"path\": \"src/click/core.py\", \"first_line\": 633, \"last_line\": 659}]}, {\"id\": \"CK02\", \"written_source_meaning\": \"The constructor writes _depth=0. __enter__ increments _depth and calls push_context(self). __exit__ decrements _depth and, only when it is zero, calls _close_with_exception_info before the later pop_context call. Callee completion and overridden methods are not observed.\", \"references\": [{\"path\": \"src/click/core.py\", \"first_line\": 534, \"last_line\": 534}, {\"path\": \"src/click/core.py\", \"first_line\": 576, \"last_line\": 579}, {\"path\": \"src/click/core.py\", \"first_line\": 581, \"last_line\": 593}]}, {\"id\": \"CK03\", \"written_source_meaning\": \"scope is decorated with contextmanager. When cleanup=False it increments depth before with self and decrements it in finally. On the ordinary normal path starting at depth0 without body mutation, the depth trace is0→1→2→1→0 and __exit__ skips its zero-depth cleanup branch. This does not prohibit explicit close calls or promise behavior of overrides or failing helpers.\", \"references\": [{\"path\": \"src/click/core.py\", \"first_line\": 595, \"last_line\": 631}]}, {\"id\": \"CK04\", \"written_source_meaning\": \"call_on_close delegates to self._exit_stack.callback(f). _close_with_exception_info first calls the existing exit stack __exit__, then assigns a fresh ExitStack and returns the result. The reset is not in a finally block, so source does not guarantee the reset line is reached if the first call raises. Actual callback success and cross-thread/task isolation have not been observed.\", \"references\": [{\"path\": \"src/click/core.py\", \"first_line\": 704, \"last_line\": 714}, {\"path\": \"src/click/core.py\", \"first_line\": 723, \"last_line\": 739}]}], \"uncertainty\": {\"callback_success_unverified\": true, \"thread_task_isolation_unverified\": true, \"click_runtime_execution_not_performed\": true}, \"questions\": [{\"id\": \"Q001\", \"question_en\": \"For the selected ordinary Context parent and getter, does a child reuse the parent meta mapping instead of making a copy?\"}, {\"id\": \"Q002\", \"question_en\": \"Which cleanup helper is called by __exit__ when its decremented _depth equals zero, and is it before the later pop_context call?\"}, {\"id\": \"Q003\", \"question_en\": \"Does cleanup=False force immediate automatic cleanup on the ordinary depth0 scope path?\"}, {\"id\": \"Q004\", \"question_en\": \"Do the examined source and unexecuted tests establish successful cleanup/reset and thread/task isolation under all runtime conditions?\"}]}"
+    }
+  ]
+}

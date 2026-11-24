@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-20T12:27:14.979011+00:00",
+  "cases": [
+    {
+      "id": "duplicate-positional-vararg",
+      "source": "def value(x,*x):\n    return x\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "duplicate-positional-kwarg",
+      "source": "def value(x,**x):\n    return x\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "module-return-outside-function",
+      "source": "return 1\ndef value():\n    return 1\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "nonlocal-without-binding",
+      "source": "def value():\n    nonlocal x\n    return x\n",
+      "selector": "value",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "valid-empty-module",
+      "source": "",
+      "selector": "value",
+      "expected": "NO_WRITTEN_MODULE_BINDING"
+    },
+    {
+      "id": "wrong-extension",
+      "source": "def value():\n    return 1\n",
+      "selector": "value",
+      "path": "owned.go",
+      "expected": "INCONCLUSIVE"
+    }
+  ],
+  "requirement": "AST parsing alone can admit statically uncompilable source. Compile validation must not execute inspected modules.",
+  "classification": "OWNED_CONTROL_NOT_PUBLIC_HOLDOUT"
+}

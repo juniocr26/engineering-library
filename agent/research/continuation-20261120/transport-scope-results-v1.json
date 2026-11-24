@@ -1,0 +1,1462 @@
+{
+  "at": "2026-11-20T16:06:12.825159+00:00",
+  "version": "1",
+  "rows": [
+    {
+      "id": "scope-original",
+      "expected": "WRITTEN_MAPPING_FACTS",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": true,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(to_exc, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(message) from exc",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "source_sha256": "6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+            "quote_sha256": "4e9426cb499647b704f27c3f99ed82e97945fa71bc59dba452eb8c1f9f2fd6c8",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "source_sha256": "6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "first_line": 22,
+            "last_line": 22,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "revision": "owned-sha256:6b019f25ef868170b0e06c23c2bfc7cf81d35a7d480bfbc6e091d995edf4058f",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "caught-binding-shadows-str",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "str",
+          "specificity_condition": "mapped_exc is None or issubclass(to_exc, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(message) from str",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:0fc46d6c675daebc7aa057984e5b2e309c02ddf6660493f500e335a663c35eda",
+            "source_sha256": "0fc46d6c675daebc7aa057984e5b2e309c02ddf6660493f500e335a663c35eda",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as str:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(str, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(str)\n        raise mapped_exc(message) from str\n",
+            "quote_sha256": "5dbeb3a47072e4f7a7cdfb1b67d2bbe136ccba639422b336f726ba836182ce6b",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:0fc46d6c675daebc7aa057984e5b2e309c02ddf6660493f500e335a663c35eda",
+            "source_sha256": "0fc46d6c675daebc7aa057984e5b2e309c02ddf6660493f500e335a663c35eda",
+            "first_line": 21,
+            "last_line": 21,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "0fc46d6c675daebc7aa057984e5b2e309c02ddf6660493f500e335a663c35eda",
+            "revision": "owned-sha256:0fc46d6c675daebc7aa057984e5b2e309c02ddf6660493f500e335a663c35eda",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "loop-target-shadows-issubclass",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(issubclass, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(message) from exc",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:5e2d780d1e8ff1cd6b6ae8e481e8002a68ec767d56ad6fffd87cb4aceb5087b7",
+            "source_sha256": "5e2d780d1e8ff1cd6b6ae8e481e8002a68ec767d56ad6fffd87cb4aceb5087b7",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, issubclass in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(issubclass, mapped_exc):\n                mapped_exc = issubclass\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+            "quote_sha256": "6561c6cbaf7c948c7dcba93083b5913bbe8b9d5437bd416216fa8128ab87bdf8",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:5e2d780d1e8ff1cd6b6ae8e481e8002a68ec767d56ad6fffd87cb4aceb5087b7",
+            "source_sha256": "5e2d780d1e8ff1cd6b6ae8e481e8002a68ec767d56ad6fffd87cb4aceb5087b7",
+            "first_line": 21,
+            "last_line": 21,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "5e2d780d1e8ff1cd6b6ae8e481e8002a68ec767d56ad6fffd87cb4aceb5087b7",
+            "revision": "owned-sha256:5e2d780d1e8ff1cd6b6ae8e481e8002a68ec767d56ad6fffd87cb4aceb5087b7",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "loop-source-shadows-isinstance",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(to_exc, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(message) from exc",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:8857e2a5eeafd07f3f31e0c229954d8a2b599c5f79abf9017169b953f21889f7",
+            "source_sha256": "8857e2a5eeafd07f3f31e0c229954d8a2b599c5f79abf9017169b953f21889f7",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for isinstance, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, isinstance):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+            "quote_sha256": "2e4b31df98050e495b85648c49b6e497844bfc2e37cba39737199cd6229dc009",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:8857e2a5eeafd07f3f31e0c229954d8a2b599c5f79abf9017169b953f21889f7",
+            "source_sha256": "8857e2a5eeafd07f3f31e0c229954d8a2b599c5f79abf9017169b953f21889f7",
+            "first_line": 21,
+            "last_line": 21,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "8857e2a5eeafd07f3f31e0c229954d8a2b599c5f79abf9017169b953f21889f7",
+            "revision": "owned-sha256:8857e2a5eeafd07f3f31e0c229954d8a2b599c5f79abf9017169b953f21889f7",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "accumulator-shadows-caught-exception-type",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "Exception is None or issubclass(to_exc, Exception)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise Exception(message) from exc",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:0919fda32ac38ee95ba121b7074a855c86a34f9b6a43aa49c0e3afef9c236397",
+            "source_sha256": "0919fda32ac38ee95ba121b7074a855c86a34f9b6a43aa49c0e3afef9c236397",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        Exception = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if Exception is None or issubclass(to_exc, Exception):\n                Exception = to_exc\n        if Exception is None:\n            raise\n        message = str(exc)\n        raise Exception(message) from exc\n",
+            "quote_sha256": "4f2d789913c2070554828e9b7518c1cba55cc4931c825be24d87f4f873e78bcf",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:0919fda32ac38ee95ba121b7074a855c86a34f9b6a43aa49c0e3afef9c236397",
+            "source_sha256": "0919fda32ac38ee95ba121b7074a855c86a34f9b6a43aa49c0e3afef9c236397",
+            "first_line": 21,
+            "last_line": 21,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "0919fda32ac38ee95ba121b7074a855c86a34f9b6a43aa49c0e3afef9c236397",
+            "revision": "owned-sha256:0919fda32ac38ee95ba121b7074a855c86a34f9b6a43aa49c0e3afef9c236397",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "message-binding-shadows-str",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(to_exc, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(str) from exc",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:1f2debabbe9485da0fdf36866884c885e1658f563adebd620fcd337af23fdfdd",
+            "source_sha256": "1f2debabbe9485da0fdf36866884c885e1658f563adebd620fcd337af23fdfdd",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        str = str(exc)\n        raise mapped_exc(str) from exc\n",
+            "quote_sha256": "6f3ba977660596f68f870345c6a534a1800aff84810404613cf26c61c6ee847e",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:1f2debabbe9485da0fdf36866884c885e1658f563adebd620fcd337af23fdfdd",
+            "source_sha256": "1f2debabbe9485da0fdf36866884c885e1658f563adebd620fcd337af23fdfdd",
+            "first_line": 21,
+            "last_line": 21,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "1f2debabbe9485da0fdf36866884c885e1658f563adebd620fcd337af23fdfdd",
+            "revision": "owned-sha256:1f2debabbe9485da0fdf36866884c885e1658f563adebd620fcd337af23fdfdd",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "loop-target-shadows-module-map",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(HTTPCORE_EXC_MAP, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(message) from exc",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:958dd36d7aea320eee93a1fa7104651ed10db0b25c5075ef13e894554eea4da4",
+            "source_sha256": "958dd36d7aea320eee93a1fa7104651ed10db0b25c5075ef13e894554eea4da4",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, HTTPCORE_EXC_MAP in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(HTTPCORE_EXC_MAP, mapped_exc):\n                mapped_exc = HTTPCORE_EXC_MAP\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+            "quote_sha256": "3a8b8f98759d543115d88e126f6672f852dd0efa9b1fb82a424b0c1eba2d409f",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:958dd36d7aea320eee93a1fa7104651ed10db0b25c5075ef13e894554eea4da4",
+            "source_sha256": "958dd36d7aea320eee93a1fa7104651ed10db0b25c5075ef13e894554eea4da4",
+            "first_line": 21,
+            "last_line": 21,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "958dd36d7aea320eee93a1fa7104651ed10db0b25c5075ef13e894554eea4da4",
+            "revision": "owned-sha256:958dd36d7aea320eee93a1fa7104651ed10db0b25c5075ef13e894554eea4da4",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "loader-local-import-shadows-target-class",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "empty_module_map_then_loader_before_try_yield",
+        "loader_function": "_load_httpcore_exceptions",
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "NetworkError.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "NetworkError.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(to_exc, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(message) from exc",
+          "initializer_before_protected_yield": true
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:0ab808b7377b2d236cbe58eb6d898116cb69e58ff4ee5f430873398a26d16344",
+            "source_sha256": "0ab808b7377b2d236cbe58eb6d898116cb69e58ff4ee5f430873398a26d16344",
+            "first_line": 10,
+            "last_line": 27,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    global HTTPCORE_EXC_MAP\n    if len(HTTPCORE_EXC_MAP) == 0:\n        HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+            "quote_sha256": "9bbd8fbb51337c9f8e37eb7cc96dec3e5b68dc3789101307f6514b046854c8eb",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:0ab808b7377b2d236cbe58eb6d898116cb69e58ff4ee5f430873398a26d16344",
+            "source_sha256": "0ab808b7377b2d236cbe58eb6d898116cb69e58ff4ee5f430873398a26d16344",
+            "first_line": 6,
+            "last_line": 8,
+            "quote": "def _load_httpcore_exceptions():\n    import httpcore as NetworkError\n    return {NetworkError.NetworkError: NetworkError, NetworkError.ConnectError: ConnectError}\n",
+            "quote_sha256": "f58e9c8f66cfefb6c3862b41218a8004041af64cfd27985740a35aafc638da52",
+            "kind": "complete-loader-function",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "0ab808b7377b2d236cbe58eb6d898116cb69e58ff4ee5f430873398a26d16344",
+            "revision": "owned-sha256:0ab808b7377b2d236cbe58eb6d898116cb69e58ff4ee5f430873398a26d16344",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "lazy-message-binding-shadows-loader",
+      "expected": "INCONCLUSIVE",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": false,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "empty_module_map_then_loader_before_try_yield",
+        "loader_function": "_load_httpcore_exceptions",
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "exc",
+          "specificity_condition": "mapped_exc is None or issubclass(to_exc, mapped_exc)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise mapped_exc(_load_httpcore_exceptions) from exc",
+          "initializer_before_protected_yield": true
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:bf28bac5c45c2599109fc8243e47f9219f40fef248f6d84d188fbaa4fb4079ee",
+            "source_sha256": "bf28bac5c45c2599109fc8243e47f9219f40fef248f6d84d188fbaa4fb4079ee",
+            "first_line": 10,
+            "last_line": 27,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    global HTTPCORE_EXC_MAP\n    if len(HTTPCORE_EXC_MAP) == 0:\n        HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        _load_httpcore_exceptions = str(exc)\n        raise mapped_exc(_load_httpcore_exceptions) from exc\n",
+            "quote_sha256": "c7f3040262780a807a2613d68aeaab2a9a36527d321644e1f4ea99082fda4735",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:bf28bac5c45c2599109fc8243e47f9219f40fef248f6d84d188fbaa4fb4079ee",
+            "source_sha256": "bf28bac5c45c2599109fc8243e47f9219f40fef248f6d84d188fbaa4fb4079ee",
+            "first_line": 6,
+            "last_line": 8,
+            "quote": "def _load_httpcore_exceptions():\n    import httpcore\n    return {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "93a2773f5e9e7e18832426afe55f76a244a11ef12d0cbd0786a791ea7a80c686",
+            "kind": "complete-loader-function",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "bf28bac5c45c2599109fc8243e47f9219f40fef248f6d84d188fbaa4fb4079ee",
+            "revision": "owned-sha256:bf28bac5c45c2599109fc8243e47f9219f40fef248f6d84d188fbaa4fb4079ee",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    },
+    {
+      "id": "unambiguous-renamed-local-bindings",
+      "expected": "WRITTEN_MAPPING_FACTS",
+      "actual": "WRITTEN_MAPPING_FACTS",
+      "matches": true,
+      "result": {
+        "version": "0.0.1-research",
+        "status": "WRITTEN_MAPPING_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "physical_source_paths_authenticated": false,
+        "owner_approved": false,
+        "training_gold": false,
+        "publication_authorized": false,
+        "model_calls": 0,
+        "writes": 0,
+        "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39",
+        "initialization": "eager_module_literal",
+        "loader_function": null,
+        "context_selector": "map_httpcore_exceptions",
+        "map_name": "HTTPCORE_EXC_MAP",
+        "mapping_pairs": [
+          {
+            "source_expression": "httpcore.NetworkError",
+            "target_local_name": "NetworkError",
+            "target_declared_class": "NetworkError",
+            "target_declared_ancestry": [
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          },
+          {
+            "source_expression": "httpcore.ConnectError",
+            "target_local_name": "ConnectError",
+            "target_declared_class": "ConnectError",
+            "target_declared_ancestry": [
+              "ConnectError",
+              "NetworkError",
+              "RequestError",
+              "HTTPError",
+              "Exception"
+            ],
+            "runtime_class_identity_verified": false
+          }
+        ],
+        "mapping_pair_count": 2,
+        "handler": {
+          "caught_type_expression": "Exception",
+          "binding": "caught_err",
+          "specificity_condition": "selected_cls is None or issubclass(target_cls, selected_cls)",
+          "unmapped": "bare raise",
+          "translated_raise": "raise selected_cls(error_message) from caught_err",
+          "initializer_before_protected_yield": false
+        },
+        "all_mapped_targets_have_declared_requesterror_ancestor": true,
+        "evidence": {
+          "context": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:82bd8bc5b7c5767f28b3c62531ea39c0ad67a3b7702c7863120276374cfc06af",
+            "source_sha256": "82bd8bc5b7c5767f28b3c62531ea39c0ad67a3b7702c7863120276374cfc06af",
+            "first_line": 6,
+            "last_line": 20,
+            "quote": "@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as caught_err:\n        selected_cls = None\n        for source_cls, target_cls in HTTPCORE_EXC_MAP.items():\n            if not isinstance(caught_err, source_cls):\n                continue\n            if selected_cls is None or issubclass(target_cls, selected_cls):\n                selected_cls = target_cls\n        if selected_cls is None:\n            raise\n        error_message = str(caught_err)\n        raise selected_cls(error_message) from caught_err\n",
+            "quote_sha256": "2ee2ae52760384bc4824da787cd4ddab4a02551f6297beb2bb86d80f44890cd9",
+            "kind": "complete-decorated-context-function",
+            "source_executed": false
+          },
+          "mapping_provider": {
+            "path": "httpx/_transports/default.py",
+            "revision": "owned-sha256:82bd8bc5b7c5767f28b3c62531ea39c0ad67a3b7702c7863120276374cfc06af",
+            "source_sha256": "82bd8bc5b7c5767f28b3c62531ea39c0ad67a3b7702c7863120276374cfc06af",
+            "first_line": 21,
+            "last_line": 21,
+            "quote": "HTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+            "quote_sha256": "e2cd5d6da0ec0951e8b8c34da56dae2e38c87a3dd2cba22e3e71cba637f41c32",
+            "kind": "complete-module-map-statement",
+            "source_executed": false
+          },
+          "exception:NetworkError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 5,
+            "last_line": 6,
+            "quote": "class NetworkError(RequestError):\n    pass\n",
+            "quote_sha256": "5f5660bc31e114e7902efe84384906ad0f482f7c328dae56910823e7600ab309",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:RequestError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 3,
+            "last_line": 4,
+            "quote": "class RequestError(HTTPError):\n    pass\n",
+            "quote_sha256": "7420caf2b4f01226ba8a378c3461bbd3ddaf0a6f16224ddb7a573c2c038c82ae",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:HTTPError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 1,
+            "last_line": 2,
+            "quote": "class HTTPError(Exception):\n    pass\n",
+            "quote_sha256": "1cecfdfc147cbcc41b085560457c8691a5ce2aa76f8d671ab6e82741289fd0b6",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          },
+          "exception:ConnectError": {
+            "path": "httpx/_exceptions.py",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "source_sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "first_line": 7,
+            "last_line": 8,
+            "quote": "class ConnectError(NetworkError):\n    pass\n",
+            "quote_sha256": "dafb32f49869c8e43b9a860f492922929ed97ae03cc3dd8397b455b369fd37c4",
+            "kind": "complete-declared-exception-class",
+            "source_executed": false
+          }
+        },
+        "source_identities": {
+          "httpx/_transports/default.py": {
+            "sha256": "82bd8bc5b7c5767f28b3c62531ea39c0ad67a3b7702c7863120276374cfc06af",
+            "revision": "owned-sha256:82bd8bc5b7c5767f28b3c62531ea39c0ad67a3b7702c7863120276374cfc06af",
+            "path": "httpx/_transports/default.py"
+          },
+          "httpx/_exceptions.py": {
+            "sha256": "4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "revision": "owned-sha256:4d4e58021130c0ae599fe3aa93f658e28a6c211a94672285ee2189adabf055e4",
+            "path": "httpx/_exceptions.py"
+          }
+        },
+        "limitations": [
+          "Only reviewed direct written context/map/declared single-base target ancestry profile.",
+          "Imports/decorators/classes/contexts are not executed; actual external exception classes, runtime receivers and all error paths remain unverified.",
+          "No physical current-file or upstream Git authenticity, general semantic equivalence, publication or owner approval."
+        ]
+      }
+    }
+  ],
+  "correct": 2,
+  "n": 10,
+  "source_executed": false,
+  "model_calls": 0,
+  "production_component_changed": false,
+  "producer_sha256": "7cb910ed9a13c8dadbde24741a80f0df3c07bb4cf0476ae5b5af150bb9ad8a39"
+}

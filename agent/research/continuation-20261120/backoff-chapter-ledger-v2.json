@@ -1,0 +1,3155 @@
+{
+  "at": "2026-11-20T20:01:07.043273+00:00",
+  "repository": "cenkalti/backoff",
+  "claims": [
+    {
+      "id": "purpose",
+      "section": "Purpose / Propósito",
+      "en": "The pinned `backoff` package composes retry operations with delay policies, context wrappers and optional notification. The policy interface supplies `NextBackOff` and `Reset`; the retry loop, timer and context have different responsibilities. A policy value alone does not establish an application retry, deadline or cancellation guarantee.",
+      "pt-br": "O pacote `backoff` fixado compõe operações de repetição com políticas de atraso, wrappers de contexto e notificação opcional. A interface da política fornece `NextBackOff` e `Reset`; o laço de repetição, o timer e o contexto possuem responsabilidades distintas. Um valor de política sozinho não estabelece garantia de repetição, prazo ou cancelamento de uma aplicação.",
+      "evidence_ids": [
+        "v4.3.0:BackOff",
+        "v4.3.0:Retry",
+        "v4.3.0:RetryNotifyWithTimer",
+        "v4.3.0:Timer",
+        "v4.3.0:BackOffContext"
+      ],
+      "runtime_case_ids": [],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "architecture",
+      "section": "Architecture / Arquitetura",
+      "en": "In the current cut, `Retry` delegates through `RetryNotify` and `RetryNotifyWithTimer` into generic `doRetryNotify`; `Operation.withEmptyData` adapts the no-data callback. The earlier `RetryNotifyWithTimer` contains the loop directly. The refactor changes where complete behavior evidence must be selected, even though the shared bounded observations agree.",
+      "pt-br": "No recorte atual, `Retry` delega por `RetryNotify` e `RetryNotifyWithTimer` até o auxiliar genérico `doRetryNotify`; `Operation.withEmptyData` adapta o callback sem dados. O `RetryNotifyWithTimer` anterior contém o laço diretamente. A refatoração muda onde a evidência completa de comportamento precisa ser selecionada, embora as observações limitadas compartilhadas coincidam.",
+      "evidence_ids": [
+        "v4.3.0:Retry",
+        "v4.3.0:RetryNotify",
+        "v4.3.0:RetryNotifyWithTimer",
+        "v4.3.0:Operation.withEmptyData",
+        "v4.3.0:doRetryNotify",
+        "v4.1.3:RetryNotifyWithTimer"
+      ],
+      "runtime_case_ids": [],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "configuration",
+      "section": "Dependencies and configuration / Dependências e configuração",
+      "en": "Both selected root packages use only Go standard-library imports. Their module directives change from `go 1.13` to `go 1.18` for `github.com/cenkalti/backoff/v4`. The executed context is existing Go1.27.4 Linux/ARM64 with CGO and package downloads disabled; no minimum-version or installed-distribution compatibility claim follows from those directives.",
+      "pt-br": "Os dois pacotes raiz selecionados usam apenas imports da biblioteca padrão Go. Suas diretivas de módulo mudam de `go 1.13` para `go 1.18` em `github.com/cenkalti/backoff/v4`. O contexto executado é o Go1.27.4 existente em Linux/ARM64, com CGO e downloads de pacotes desativados; dessas diretivas não decorre alegação de compatibilidade com versão mínima ou distribuição instalada.",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:WithContext",
+        "v4.3.0:ExponentialBackOff.NextBackOff"
+      ],
+      "runtime_case_ids": [],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "attempts",
+      "section": "Attempts and notification / Tentativas e notificação",
+      "en": "`WithMaxRetries` counts allowed calls through its wrapper, not total operation attempts. In the frozen failing-operation observations, a limit of 0 still allowed the initial operation once, while a limit of 2 produced three attempts, two notifications and two owned timer starts. These counts apply to the shown composition and do not establish a network retry policy.",
+      "pt-br": "`WithMaxRetries` conta chamadas permitidas por seu wrapper, não o total de tentativas da operação. Nas observações congeladas com operação que falha, um limite de 0 ainda permitiu a operação inicial uma vez, enquanto um limite de 2 produziu três tentativas, duas notificações e duas partidas do timer próprio. Essas contagens valem para a composição mostrada e não estabelecem uma política de repetição de rede.",
+      "evidence_ids": [
+        "v4.3.0:WithMaxRetries",
+        "v4.3.0:backOffTries.NextBackOff",
+        "v4.3.0:doRetryNotify"
+      ],
+      "runtime_case_ids": [
+        "max-retries-zero",
+        "max-retries-two"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "initial-context",
+      "section": "Context boundaries / Limites de contexto",
+      "en": "With the valid owned policy, a context canceled before retry did not prevent the first operation. An immediate successful operation returned success. A failing operation returned `context.Canceled` when the context-backed policy stopped; a permanent failure instead returned its wrapped operation error because that check precedes the backoff/context stop path.",
+      "pt-br": "Com a política própria válida, um contexto cancelado antes da repetição não impediu a primeira operação. Uma operação imediatamente bem-sucedida retornou sucesso. Uma operação que falhou retornou `context.Canceled` quando a política apoiada no contexto parou; uma falha permanente retornou seu erro de operação encapsulado, pois essa verificação precede o caminho de parada da política e do contexto.",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:WithContext",
+        "v4.3.0:backOffContext.NextBackOff"
+      ],
+      "runtime_case_ids": [
+        "canceled-success",
+        "canceled-error",
+        "canceled-permanent"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "context-wrappers",
+      "section": "Context boundaries / Limites de contexto",
+      "en": "`getContext` recognizes a context-backed policy and recursively unwraps `backOffTries`. Both wrapper orders returned the canceled context error in the selected observations. Separately, wrapping an existing direct context wrapper with `WithContext` replaces its context rather than preserving both cancellation conditions; the observed new live context allowed the underlying zero delay despite the old canceled context.",
+      "pt-br": "`getContext` reconhece uma política apoiada no contexto e desembrulha recursivamente `backOffTries`. As duas ordens de wrappers retornaram o erro de contexto cancelado nas observações selecionadas. Separadamente, envolver um wrapper direto de contexto existente com `WithContext` substitui seu contexto, em vez de preservar as duas condições de cancelamento; o novo contexto ativo observado permitiu o atraso zero subjacente apesar do contexto antigo cancelado.",
+      "evidence_ids": [
+        "v4.3.0:getContext",
+        "v4.3.0:WithContext",
+        "v4.3.0:backOffContext.NextBackOff",
+        "v4.3.0:backOffTries.NextBackOff"
+      ],
+      "runtime_case_ids": [
+        "tries-outside-context",
+        "context-outside-tries",
+        "context-rewrap"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "permanent",
+      "section": "Errors and identity / Erros e identidade",
+      "en": "The retry loop uses `errors.As` to find `*PermanentError` even through an owned outer wrapper, then returns its inner error. `Permanent(nil)` returns `nil`. Separately, `PermanentError.Is` recognizes the wrapper type regardless of the compared inner errors, while `Unwrap` exposes the inner error. These are distinct class-match and error-identity relationships.",
+      "pt-br": "O laço de repetição usa `errors.As` para encontrar `*PermanentError` mesmo através de um wrapper externo próprio, e então retorna seu erro interno. `Permanent(nil)` retorna `nil`. Separadamente, `PermanentError.Is` reconhece o tipo do wrapper independentemente dos erros internos comparados, enquanto `Unwrap` expõe o erro interno. São relações distintas de correspondência de classe e identidade de erro.",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:Permanent",
+        "v4.3.0:PermanentError.Is",
+        "v4.3.0:PermanentError.Unwrap"
+      ],
+      "runtime_case_ids": [
+        "permanent-direct",
+        "permanent-wrapped",
+        "permanent-nil",
+        "permanent-is-class",
+        "permanent-unwrap"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "notify",
+      "section": "Attempts and notification / Tentativas e notificação",
+      "en": "Notification occurs only after a failed non-permanent operation obtains a delay other than `Stop`, and before the timer starts. The owned order trace is reset, first operation, next delay, notification, timer start, second operation and timer stop. A final stop or permanent error produced no notification.",
+      "pt-br": "A notificação ocorre apenas depois que uma operação não permanente que falhou obtém um atraso diferente de `Stop`, e antes da partida do timer. O rastreamento próprio de ordem é reset, primeira operação, próximo atraso, notificação, partida do timer, segunda operação e parada do timer. Uma parada final ou um erro permanente não produziu notificação.",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:Timer"
+      ],
+      "runtime_case_ids": [
+        "notify-order",
+        "stop-error",
+        "permanent-direct"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "panic-cleanup",
+      "section": "Errors and identity / Erros e identidade",
+      "en": "The loop defers `Timer.Stop`. Owned panics from the operation, notification and timer-start callbacks propagated to the driver recovery while the owned timer stop count was one. This is bounded cleanup evidence, not a claim that the library catches callback panics, restores application state or provides crash recovery.",
+      "pt-br": "O laço adia `Timer.Stop`. Panics próprios dos callbacks de operação, notificação e partida do timer propagaram até a recuperação do driver, enquanto a contagem de parada do timer próprio foi um. Isso é evidência limitada de limpeza, não alegação de que a biblioteca captura panics de callbacks, restaura estado da aplicação ou fornece recuperação de falhas.",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:Timer"
+      ],
+      "runtime_case_ids": [
+        "operation-panic",
+        "notify-panic",
+        "timer-start-panic"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "stop-option",
+      "section": "Stop sentinel and elapsed budget / Sentinela de parada e limite decorrido",
+      "en": "`WithRetryStopDuration` assigns `ExponentialBackOff.Stop`; it does not set `MaxElapsedTime`. The policy can return that configured value after its elapsed-plus-next-delay check, while the retry loop compares against package `Stop`, whose value is -1. With a configured positive 5 ms stop value and an owned expired clock, the observed loop scheduled that value and made a second successful attempt. The same effect existed through the earlier public field; the new option is not a newly introduced runtime effect.",
+      "pt-br": "`WithRetryStopDuration` atribui `ExponentialBackOff.Stop`; não define `MaxElapsedTime`. A política pode retornar esse valor configurado após verificar tempo decorrido mais próximo atraso, enquanto o laço de repetição compara com `Stop` do pacote, cujo valor é -1. Com valor de parada positivo de 5 ms e relógio próprio expirado, o laço observado agendou esse valor e realizou uma segunda tentativa bem-sucedida. O mesmo efeito existia pelo campo público anterior; a nova opção não é um efeito de execução recém-introduzido.",
+      "evidence_ids": [
+        "v4.3.0:WithRetryStopDuration",
+        "v4.3.0:ExponentialBackOff.NextBackOff",
+        "v4.3.0:doRetryNotify",
+        "v4.1.3:ExponentialBackOff.NextBackOff",
+        "v4.1.3:RetryNotifyWithTimer"
+      ],
+      "runtime_case_ids": [
+        "exp-custom-stop",
+        "custom-positive-stop-retry",
+        "positive-stop-option-retry"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "intervals",
+      "section": "Stop sentinel and elapsed budget / Sentinela de parada e limite decorrido",
+      "en": "The next-delay check includes both elapsed time and the proposed wait, so the owned policy could return `Stop` at elapsed time zero when its first delay exceeded the budget. A separately configured initial interval above the maximum interval produced 100 ms and then 50 ms with jitter output disabled. The selected code does not validate those caller settings or guarantee every proposed delay is within the configured maximum.",
+      "pt-br": "A verificação do próximo atraso inclui tanto o tempo decorrido quanto a espera proposta, de modo que a política própria pôde retornar `Stop` com tempo decorrido zero quando seu primeiro atraso excedia o limite. Um intervalo inicial configurado separadamente acima do intervalo máximo produziu 100 ms e depois 50 ms com a saída de jitter desativada. O código selecionado não valida essas configurações do chamador nem garante que todo atraso proposto esteja dentro do máximo configurado.",
+      "evidence_ids": [
+        "v4.3.0:ExponentialBackOff.NextBackOff",
+        "v4.3.0:ExponentialBackOff.incrementCurrentInterval",
+        "v4.3.0:ExponentialBackOff.Reset",
+        "v4.3.0:getRandomValueFromInterval"
+      ],
+      "runtime_case_ids": [
+        "exp-predicted-wait-cutoff",
+        "exp-initial-over-cap",
+        "exp-growth"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "data",
+      "section": "Inputs and outputs / Entradas e saídas",
+      "en": "The current generic loop returns the latest operation data even on its final error paths. Owned observations returned data 73 with the operation error, 91 with the inner permanent error and 17 with cancellation; success returned 42. Do not describe every error result as zero data, and do not infer useful application data from these synthetic values.",
+      "pt-br": "O laço genérico atual retorna os dados mais recentes da operação mesmo em seus caminhos finais de erro. As observações próprias retornaram dados 73 com o erro da operação, 91 com o erro permanente interno e 17 com cancelamento; o sucesso retornou 42. Não descreva todo resultado de erro como dados zerados, nem deduza dados úteis de aplicação desses valores sintéticos.",
+      "evidence_ids": [
+        "v4.3.0:OperationWithData",
+        "v4.3.0:RetryNotifyWithTimerAndData",
+        "v4.3.0:doRetryNotify"
+      ],
+      "runtime_case_ids": [
+        "generic-final-error",
+        "generic-permanent",
+        "generic-cancel",
+        "generic-success"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "factory-type",
+      "section": "Source compatibility / Compatibilidade de código",
+      "en": "Adding variadic constructor options preserved the compiled zero-argument call, but changed function type assignability: an owned `func() *backoff.ExponentialBackOff` factory assignment compiled before and failed in the new cut. The variadic factory type, option call and generic data function compiled only in the current cut; the existing retry-with-timer function type compiled in both. This is six consumer shapes, not full API compatibility.",
+      "pt-br": "Adicionar opções variádicas ao construtor preservou a chamada compilada sem argumentos, mas mudou a atribuição entre tipos de função: uma atribuição própria de fábrica `func() *backoff.ExponentialBackOff` compilou antes e falhou no novo recorte. O tipo de fábrica variádica, a chamada com opção e a função genérica de dados compilaram apenas no recorte atual; o tipo existente da função de repetição com timer compilou nos dois. São seis formas de consumo, não compatibilidade completa da API.",
+      "evidence_ids": [
+        "v4.3.0:NewExponentialBackOff",
+        "v4.3.0:ExponentialBackOffOpts",
+        "v4.1.3:NewExponentialBackOff",
+        "v4.3.0:RetryNotifyWithTimer"
+      ],
+      "runtime_case_ids": [],
+      "compiler_consumer_ids": [
+        "zero-argument-call",
+        "zero-argument-factory-type",
+        "variadic-factory-type",
+        "option-call",
+        "generic-data-function",
+        "stable-retry-timer-type"
+      ],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "options",
+      "section": "Source compatibility / Compatibilidade de código",
+      "en": "Constructor options run in order before `Reset`; the last observed initial-interval option won, and the owned clock was read once during construction. Supplying a nil clock option panicked in the bounded observation. The setter names do not imply configuration validation or a guaranteed valid clock.",
+      "pt-br": "As opções do construtor são executadas em ordem antes de `Reset`; a última opção observada de intervalo inicial prevaleceu, e o relógio próprio foi lido uma vez durante a construção. Fornecer uma opção de relógio nulo produziu panic na observação limitada. Os nomes dos setters não implicam validação de configuração nem garantia de relógio válido.",
+      "evidence_ids": [
+        "v4.3.0:NewExponentialBackOff",
+        "v4.3.0:WithInitialInterval",
+        "v4.3.0:WithClockProvider",
+        "v4.3.0:ExponentialBackOff.Reset"
+      ],
+      "runtime_case_ids": [
+        "constructor-options",
+        "constructor-option-order",
+        "nil-clock-option-panic"
+      ],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    },
+    {
+      "id": "limits",
+      "section": "Limitations / Limitações",
+      "en": "Thirty shared frozen scenarios matched once per source cut, and eight current-only API scenarios matched in the current cut. Six compile-only consumer shapes were checked per cut. The retry observations used owned timers that immediately supply buffered channel values and owned clocks: no real sleeping, retry timer, ticker, network request or upstream test was used. No other operating system, race safety, arbitrary callback behavior or installed dependency identity was certified.",
+      "pt-br": "Trinta cenários congelados compartilhados coincidiram uma vez por recorte de código, e oito cenários de APIs apenas atuais coincidiram no recorte atual. Seis formas de consumo apenas compiladas foram verificadas por recorte. As observações de repetição usaram timers próprios que fornecem imediatamente valores a canais com buffer e relógios próprios: nenhuma espera real, timer de repetição, ticker, requisição de rede ou teste externo foi usado. Nenhum outro sistema operacional, segurança contra condições de corrida, comportamento de callback arbitrário ou identidade de dependência instalada foi certificado.",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:Timer",
+        "v4.3.0:getContext"
+      ],
+      "runtime_case_ids": [],
+      "compiler_consumer_ids": [],
+      "review_status": "AGENT_SOURCE_REVIEWED_NOT_OWNER_GOLD"
+    }
+  ],
+  "faq": [
+    {
+      "id": "attempts",
+      "en_q": "Does a retry limit of zero prevent the initial operation?",
+      "pt-br_q": "Um limite de repetição zero impede a operação inicial?",
+      "en_a": "`WithMaxRetries` counts allowed calls through its wrapper, not total operation attempts. In the frozen failing-operation observations, a limit of 0 still allowed the initial operation once, while a limit of 2 produced three attempts, two notifications and two owned timer starts. These counts apply to the shown composition and do not establish a network retry policy.",
+      "pt-br_a": "`WithMaxRetries` conta chamadas permitidas por seu wrapper, não o total de tentativas da operação. Nas observações congeladas com operação que falha, um limite de 0 ainda permitiu a operação inicial uma vez, enquanto um limite de 2 produziu três tentativas, duas notificações e duas partidas do timer próprio. Essas contagens valem para a composição mostrada e não estabelecem uma política de repetição de rede.",
+      "claim_id": "attempts",
+      "evidence_ids": [
+        "v4.3.0:WithMaxRetries",
+        "v4.3.0:backOffTries.NextBackOff",
+        "v4.3.0:doRetryNotify"
+      ]
+    },
+    {
+      "id": "cancellation",
+      "en_q": "Does prior cancellation always prevent the operation or override a permanent error?",
+      "pt-br_q": "O cancelamento anterior sempre impede a operação ou substitui um erro permanente?",
+      "en_a": "With the valid owned policy, a context canceled before retry did not prevent the first operation. An immediate successful operation returned success. A failing operation returned `context.Canceled` when the context-backed policy stopped; a permanent failure instead returned its wrapped operation error because that check precedes the backoff/context stop path.",
+      "pt-br_a": "Com a política própria válida, um contexto cancelado antes da repetição não impediu a primeira operação. Uma operação imediatamente bem-sucedida retornou sucesso. Uma operação que falhou retornou `context.Canceled` quando a política apoiada no contexto parou; uma falha permanente retornou seu erro de operação encapsulado, pois essa verificação precede o caminho de parada da política e do contexto.",
+      "claim_id": "initial-context",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:WithContext",
+        "v4.3.0:backOffContext.NextBackOff"
+      ]
+    },
+    {
+      "id": "stop",
+      "en_q": "Does the stop-duration option set an elapsed-time deadline?",
+      "pt-br_q": "A opção de duração de parada define um prazo de tempo decorrido?",
+      "en_a": "`WithRetryStopDuration` assigns `ExponentialBackOff.Stop`; it does not set `MaxElapsedTime`. The policy can return that configured value after its elapsed-plus-next-delay check, while the retry loop compares against package `Stop`, whose value is -1. With a configured positive 5 ms stop value and an owned expired clock, the observed loop scheduled that value and made a second successful attempt. The same effect existed through the earlier public field; the new option is not a newly introduced runtime effect.",
+      "pt-br_a": "`WithRetryStopDuration` atribui `ExponentialBackOff.Stop`; não define `MaxElapsedTime`. A política pode retornar esse valor configurado após verificar tempo decorrido mais próximo atraso, enquanto o laço de repetição compara com `Stop` do pacote, cujo valor é -1. Com valor de parada positivo de 5 ms e relógio próprio expirado, o laço observado agendou esse valor e realizou uma segunda tentativa bem-sucedida. O mesmo efeito existia pelo campo público anterior; a nova opção não é um efeito de execução recém-introduzido.",
+      "claim_id": "stop-option",
+      "evidence_ids": [
+        "v4.3.0:WithRetryStopDuration",
+        "v4.3.0:ExponentialBackOff.NextBackOff",
+        "v4.3.0:doRetryNotify",
+        "v4.1.3:ExponentialBackOff.NextBackOff",
+        "v4.1.3:RetryNotifyWithTimer"
+      ]
+    },
+    {
+      "id": "data",
+      "en_q": "Must final error data be zero in the generic API?",
+      "pt-br_q": "Os dados finais de erro precisam ser zero na API genérica?",
+      "en_a": "The current generic loop returns the latest operation data even on its final error paths. Owned observations returned data 73 with the operation error, 91 with the inner permanent error and 17 with cancellation; success returned 42. Do not describe every error result as zero data, and do not infer useful application data from these synthetic values.",
+      "pt-br_a": "O laço genérico atual retorna os dados mais recentes da operação mesmo em seus caminhos finais de erro. As observações próprias retornaram dados 73 com o erro da operação, 91 com o erro permanente interno e 17 com cancelamento; o sucesso retornou 42. Não descreva todo resultado de erro como dados zerados, nem deduza dados úteis de aplicação desses valores sintéticos.",
+      "claim_id": "data",
+      "evidence_ids": [
+        "v4.3.0:OperationWithData",
+        "v4.3.0:RetryNotifyWithTimerAndData",
+        "v4.3.0:doRetryNotify"
+      ]
+    },
+    {
+      "id": "factory",
+      "en_q": "Are zero-argument calls and zero-argument factory types equally compatible?",
+      "pt-br_q": "Chamadas sem argumentos e tipos de fábrica sem argumentos são igualmente compatíveis?",
+      "en_a": "Adding variadic constructor options preserved the compiled zero-argument call, but changed function type assignability: an owned `func() *backoff.ExponentialBackOff` factory assignment compiled before and failed in the new cut. The variadic factory type, option call and generic data function compiled only in the current cut; the existing retry-with-timer function type compiled in both. This is six consumer shapes, not full API compatibility.",
+      "pt-br_a": "Adicionar opções variádicas ao construtor preservou a chamada compilada sem argumentos, mas mudou a atribuição entre tipos de função: uma atribuição própria de fábrica `func() *backoff.ExponentialBackOff` compilou antes e falhou no novo recorte. O tipo de fábrica variádica, a chamada com opção e a função genérica de dados compilaram apenas no recorte atual; o tipo existente da função de repetição com timer compilou nos dois. São seis formas de consumo, não compatibilidade completa da API.",
+      "claim_id": "factory-type",
+      "evidence_ids": [
+        "v4.3.0:NewExponentialBackOff",
+        "v4.3.0:ExponentialBackOffOpts",
+        "v4.1.3:NewExponentialBackOff",
+        "v4.3.0:RetryNotifyWithTimer"
+      ]
+    },
+    {
+      "id": "notification",
+      "en_q": "Is every failed attempt notified?",
+      "pt-br_q": "Toda tentativa que falha é notificada?",
+      "en_a": "Notification occurs only after a failed non-permanent operation obtains a delay other than `Stop`, and before the timer starts. The owned order trace is reset, first operation, next delay, notification, timer start, second operation and timer stop. A final stop or permanent error produced no notification.",
+      "pt-br_a": "A notificação ocorre apenas depois que uma operação não permanente que falhou obtém um atraso diferente de `Stop`, e antes da partida do timer. O rastreamento próprio de ordem é reset, primeira operação, próximo atraso, notificação, partida do timer, segunda operação e parada do timer. Uma parada final ou um erro permanente não produziu notificação.",
+      "claim_id": "notify",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:Timer"
+      ]
+    },
+    {
+      "id": "error-identity",
+      "en_q": "Does matching a permanent wrapper prove equal inner errors?",
+      "pt-br_q": "Corresponder a um wrapper permanente comprova erros internos iguais?",
+      "en_a": "The retry loop uses `errors.As` to find `*PermanentError` even through an owned outer wrapper, then returns its inner error. `Permanent(nil)` returns `nil`. Separately, `PermanentError.Is` recognizes the wrapper type regardless of the compared inner errors, while `Unwrap` exposes the inner error. These are distinct class-match and error-identity relationships.",
+      "pt-br_a": "O laço de repetição usa `errors.As` para encontrar `*PermanentError` mesmo através de um wrapper externo próprio, e então retorna seu erro interno. `Permanent(nil)` retorna `nil`. Separadamente, `PermanentError.Is` reconhece o tipo do wrapper independentemente dos erros internos comparados, enquanto `Unwrap` expõe o erro interno. São relações distintas de correspondência de classe e identidade de erro.",
+      "claim_id": "permanent",
+      "evidence_ids": [
+        "v4.3.0:doRetryNotify",
+        "v4.3.0:Permanent",
+        "v4.3.0:PermanentError.Is",
+        "v4.3.0:PermanentError.Unwrap"
+      ]
+    }
+  ],
+  "units": {
+    "v4.1.3:BackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 16,
+      "last_line": 33,
+      "quote": "type BackOff interface {\n\t// NextBackOff returns the duration to wait before retrying the operation,\n\t// or backoff. Stop to indicate that no more retries should be made.\n\t//\n\t// Example usage:\n\t//\n\t// \tduration := backoff.NextBackOff();\n\t// \tif (duration == backoff.Stop) {\n\t// \t\t// Do not retry operation.\n\t// \t} else {\n\t// \t\t// Sleep for duration and retry operation.\n\t// \t}\n\t//\n\tNextBackOff() time.Duration\n\n\t// Reset to initial state.\n\tReset()\n}",
+      "quote_sha256": "a43d01ce99c0ecaa9590dcaab5f44b4e28e723a854a5f8b0396ec142c22ccd99",
+      "unit": {
+        "selector": "BackOff",
+        "declaration_kind": "type",
+        "symbol": "backoff.BackOff",
+        "start_line": 16,
+        "end_line": 33,
+        "quote": "type BackOff interface {\n\t// NextBackOff returns the duration to wait before retrying the operation,\n\t// or backoff. Stop to indicate that no more retries should be made.\n\t//\n\t// Example usage:\n\t//\n\t// \tduration := backoff.NextBackOff();\n\t// \tif (duration == backoff.Stop) {\n\t// \t\t// Do not retry operation.\n\t// \t} else {\n\t// \t\t// Sleep for duration and retry operation.\n\t// \t}\n\t//\n\tNextBackOff() time.Duration\n\n\t// Reset to initial state.\n\tReset()\n}",
+        "declaration": "type BackOff interface {\n\t// NextBackOff returns the duration to wait before retrying the operation,\n\t// or backoff. Stop to indicate that no more retries should be made.\n\t//\n\t// Example usage:\n\t//\n\t// \tduration := backoff.NextBackOff();\n\t// \tif (duration == backoff.Stop) {\n\t// \t\t// Do not retry operation.\n\t// \t} else {\n\t// \t\t// Sleep for duration and retry operation.\n\t// \t}\n\t//\n\tNextBackOff() time.Duration\n\n\t// Reset to initial state.\n\tReset()\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:StopBackOff.NextBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 52,
+      "last_line": 52,
+      "quote": "func (b *StopBackOff) NextBackOff() time.Duration { return Stop }",
+      "quote_sha256": "ba5bf6b9e3855efb89f11c375c98258013fea83e1830e8150feaebd4b1faf0b6",
+      "unit": {
+        "selector": "StopBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.StopBackOff.NextBackOff",
+        "start_line": 52,
+        "end_line": 52,
+        "quote": "func (b *StopBackOff) NextBackOff() time.Duration { return Stop }",
+        "declaration": "func (b *StopBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*StopBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.Ident"
+          ],
+          "expressions": [
+            "Stop"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:ZeroBackOff.NextBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 44,
+      "last_line": 44,
+      "quote": "func (b *ZeroBackOff) NextBackOff() time.Duration { return 0 }",
+      "quote_sha256": "ecd812f2383cedf0c6fd3d349a4c00f8523ebe6d5d9754e35ad73b77131847fb",
+      "unit": {
+        "selector": "ZeroBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.ZeroBackOff.NextBackOff",
+        "start_line": 44,
+        "end_line": 44,
+        "quote": "func (b *ZeroBackOff) NextBackOff() time.Duration { return 0 }",
+        "declaration": "func (b *ZeroBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ZeroBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.BasicLit"
+          ],
+          "expressions": [
+            "0"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:ConstantBackOff.NextBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 62,
+      "last_line": 62,
+      "quote": "func (b *ConstantBackOff) NextBackOff() time.Duration { return b.Interval }",
+      "quote_sha256": "e8a00182158c15efac6d1a386888747b607da8c2a432e13d322c0d5378e6894b",
+      "unit": {
+        "selector": "ConstantBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.ConstantBackOff.NextBackOff",
+        "start_line": 62,
+        "end_line": 62,
+        "quote": "func (b *ConstantBackOff) NextBackOff() time.Duration { return b.Interval }",
+        "declaration": "func (b *ConstantBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ConstantBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.SelectorExpr"
+          ],
+          "expressions": [
+            "b.Interval"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:BackOffContext": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 10,
+      "last_line": 13,
+      "quote": "type BackOffContext interface { // nolint: golint\n\tBackOff\n\tContext() context.Context\n}",
+      "quote_sha256": "204889165275f69723c55b57eac2b77ef931af42382255017fa5e414f191fe62",
+      "unit": {
+        "selector": "BackOffContext",
+        "declaration_kind": "type",
+        "symbol": "backoff.BackOffContext",
+        "start_line": 10,
+        "end_line": 13,
+        "quote": "type BackOffContext interface { // nolint: golint\n\tBackOff\n\tContext() context.Context\n}",
+        "declaration": "type BackOffContext interface { // nolint: golint\n\tBackOff\n\tContext() context.Context\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:WithContext": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 23,
+      "last_line": 39,
+      "quote": "func WithContext(b BackOff, ctx context.Context) BackOffContext { // nolint: golint\n\tif ctx == nil {\n\t\tpanic(\"nil context\")\n\t}\n\n\tif b, ok := b.(*backOffContext); ok {\n\t\treturn &backOffContext{\n\t\t\tBackOff: b.BackOff,\n\t\t\tctx:     ctx,\n\t\t}\n\t}\n\n\treturn &backOffContext{\n\t\tBackOff: b,\n\t\tctx:     ctx,\n\t}\n}",
+      "quote_sha256": "6be03d5f8dd01833b200726c5a7b3e95268615b6b26641b37226accf5ef36d55",
+      "unit": {
+        "selector": "WithContext",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithContext",
+        "start_line": 23,
+        "end_line": 39,
+        "quote": "func WithContext(b BackOff, ctx context.Context) BackOffContext { // nolint: golint\n\tif ctx == nil {\n\t\tpanic(\"nil context\")\n\t}\n\n\tif b, ok := b.(*backOffContext); ok {\n\t\treturn &backOffContext{\n\t\t\tBackOff: b.BackOff,\n\t\t\tctx:     ctx,\n\t\t}\n\t}\n\n\treturn &backOffContext{\n\t\tBackOff: b,\n\t\tctx:     ctx,\n\t}\n}",
+        "declaration": "func WithContext(b BackOff, ctx context.Context) BackOffContext",
+        "function_type": "func(b BackOff, ctx context.Context) BackOffContext"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:getContext": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 41,
+      "last_line": 49,
+      "quote": "func getContext(b BackOff) context.Context {\n\tif cb, ok := b.(BackOffContext); ok {\n\t\treturn cb.Context()\n\t}\n\tif tb, ok := b.(*backOffTries); ok {\n\t\treturn getContext(tb.delegate)\n\t}\n\treturn context.Background()\n}",
+      "quote_sha256": "66477a008f1a132c63059e6dac31036e6dba1d1e73207ba16bfc143839dcba7d",
+      "unit": {
+        "selector": "getContext",
+        "declaration_kind": "function",
+        "symbol": "backoff.getContext",
+        "start_line": 41,
+        "end_line": 49,
+        "quote": "func getContext(b BackOff) context.Context {\n\tif cb, ok := b.(BackOffContext); ok {\n\t\treturn cb.Context()\n\t}\n\tif tb, ok := b.(*backOffTries); ok {\n\t\treturn getContext(tb.delegate)\n\t}\n\treturn context.Background()\n}",
+        "declaration": "func getContext(b BackOff) context.Context",
+        "function_type": "func(b BackOff) context.Context"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:backOffContext.Context": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 51,
+      "last_line": 53,
+      "quote": "func (b *backOffContext) Context() context.Context {\n\treturn b.ctx\n}",
+      "quote_sha256": "8c8a7cd0ccfa03f46808668c485a3d6f49b96fcbe6b43aab68d60ee2e5102d5b",
+      "unit": {
+        "selector": "backOffContext.Context",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffContext.Context",
+        "start_line": 51,
+        "end_line": 53,
+        "quote": "func (b *backOffContext) Context() context.Context {\n\treturn b.ctx\n}",
+        "declaration": "func (b *backOffContext) Context() context.Context",
+        "function_type": "func() context.Context",
+        "receiver_type": "*backOffContext",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.SelectorExpr"
+          ],
+          "expressions": [
+            "b.ctx"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:backOffContext.NextBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 55,
+      "last_line": 62,
+      "quote": "func (b *backOffContext) NextBackOff() time.Duration {\n\tselect {\n\tcase <-b.ctx.Done():\n\t\treturn Stop\n\tdefault:\n\t\treturn b.BackOff.NextBackOff()\n\t}\n}",
+      "quote_sha256": "b2ac189494ea2bd8a876054f56496363b1e85c4aca30a627c5153879abc64502",
+      "unit": {
+        "selector": "backOffContext.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffContext.NextBackOff",
+        "start_line": 55,
+        "end_line": 62,
+        "quote": "func (b *backOffContext) NextBackOff() time.Duration {\n\tselect {\n\tcase <-b.ctx.Done():\n\t\treturn Stop\n\tdefault:\n\t\treturn b.BackOff.NextBackOff()\n\t}\n}",
+        "declaration": "func (b *backOffContext) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*backOffContext"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:ExponentialBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 54,
+      "last_line": 67,
+      "quote": "type ExponentialBackOff struct {\n\tInitialInterval     time.Duration\n\tRandomizationFactor float64\n\tMultiplier          float64\n\tMaxInterval         time.Duration\n\t// After MaxElapsedTime the ExponentialBackOff returns Stop.\n\t// It never stops if MaxElapsedTime == 0.\n\tMaxElapsedTime time.Duration\n\tStop           time.Duration\n\tClock          Clock\n\n\tcurrentInterval time.Duration\n\tstartTime       time.Time\n}",
+      "quote_sha256": "614f18b73d2015384943461a53a45dcfc8f0692077415e9c3728799b10116fb9",
+      "unit": {
+        "selector": "ExponentialBackOff",
+        "declaration_kind": "type",
+        "symbol": "backoff.ExponentialBackOff",
+        "start_line": 54,
+        "end_line": 67,
+        "quote": "type ExponentialBackOff struct {\n\tInitialInterval     time.Duration\n\tRandomizationFactor float64\n\tMultiplier          float64\n\tMaxInterval         time.Duration\n\t// After MaxElapsedTime the ExponentialBackOff returns Stop.\n\t// It never stops if MaxElapsedTime == 0.\n\tMaxElapsedTime time.Duration\n\tStop           time.Duration\n\tClock          Clock\n\n\tcurrentInterval time.Duration\n\tstartTime       time.Time\n}",
+        "declaration": "type ExponentialBackOff struct {\n\tInitialInterval     time.Duration\n\tRandomizationFactor float64\n\tMultiplier          float64\n\tMaxInterval         time.Duration\n\t// After MaxElapsedTime the ExponentialBackOff returns Stop.\n\t// It never stops if MaxElapsedTime == 0.\n\tMaxElapsedTime time.Duration\n\tStop           time.Duration\n\tClock          Clock\n\n\tcurrentInterval time.Duration\n\tstartTime       time.Time\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:Clock": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 70,
+      "last_line": 72,
+      "quote": "type Clock interface {\n\tNow() time.Time\n}",
+      "quote_sha256": "0a2fe0c90e901fd56b088706ee7491df15c93309cd00c96ec75ac4b2558251a8",
+      "unit": {
+        "selector": "Clock",
+        "declaration_kind": "type",
+        "symbol": "backoff.Clock",
+        "start_line": 70,
+        "end_line": 72,
+        "quote": "type Clock interface {\n\tNow() time.Time\n}",
+        "declaration": "type Clock interface {\n\tNow() time.Time\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:NewExponentialBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 84,
+      "last_line": 96,
+      "quote": "func NewExponentialBackOff() *ExponentialBackOff {\n\tb := &ExponentialBackOff{\n\t\tInitialInterval:     DefaultInitialInterval,\n\t\tRandomizationFactor: DefaultRandomizationFactor,\n\t\tMultiplier:          DefaultMultiplier,\n\t\tMaxInterval:         DefaultMaxInterval,\n\t\tMaxElapsedTime:      DefaultMaxElapsedTime,\n\t\tStop:                Stop,\n\t\tClock:               SystemClock,\n\t}\n\tb.Reset()\n\treturn b\n}",
+      "quote_sha256": "55c8c1dca871a13275251db8966a8536e324a68f4f017a8d621a2fd90dd0623d",
+      "unit": {
+        "selector": "NewExponentialBackOff",
+        "declaration_kind": "function",
+        "symbol": "backoff.NewExponentialBackOff",
+        "start_line": 84,
+        "end_line": 96,
+        "quote": "func NewExponentialBackOff() *ExponentialBackOff {\n\tb := &ExponentialBackOff{\n\t\tInitialInterval:     DefaultInitialInterval,\n\t\tRandomizationFactor: DefaultRandomizationFactor,\n\t\tMultiplier:          DefaultMultiplier,\n\t\tMaxInterval:         DefaultMaxInterval,\n\t\tMaxElapsedTime:      DefaultMaxElapsedTime,\n\t\tStop:                Stop,\n\t\tClock:               SystemClock,\n\t}\n\tb.Reset()\n\treturn b\n}",
+        "declaration": "func NewExponentialBackOff() *ExponentialBackOff",
+        "function_type": "func() *ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:ExponentialBackOff.Reset": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 109,
+      "last_line": 112,
+      "quote": "func (b *ExponentialBackOff) Reset() {\n\tb.currentInterval = b.InitialInterval\n\tb.startTime = b.Clock.Now()\n}",
+      "quote_sha256": "e5063a8d572561707f2d94de9ebbe54ae7aaf3c7fa514cdadb294df052b41752",
+      "unit": {
+        "selector": "ExponentialBackOff.Reset",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.Reset",
+        "start_line": 109,
+        "end_line": 112,
+        "quote": "func (b *ExponentialBackOff) Reset() {\n\tb.currentInterval = b.InitialInterval\n\tb.startTime = b.Clock.Now()\n}",
+        "declaration": "func (b *ExponentialBackOff) Reset()",
+        "function_type": "func()",
+        "receiver_type": "*ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:ExponentialBackOff.NextBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 116,
+      "last_line": 125,
+      "quote": "func (b *ExponentialBackOff) NextBackOff() time.Duration {\n\t// Make sure we have not gone over the maximum elapsed time.\n\telapsed := b.GetElapsedTime()\n\tnext := getRandomValueFromInterval(b.RandomizationFactor, rand.Float64(), b.currentInterval)\n\tb.incrementCurrentInterval()\n\tif b.MaxElapsedTime != 0 && elapsed+next > b.MaxElapsedTime {\n\t\treturn b.Stop\n\t}\n\treturn next\n}",
+      "quote_sha256": "0c6ef53b528511ca3fc759718920ff8748be4b5523acc849e97862e6e54d6721",
+      "unit": {
+        "selector": "ExponentialBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.NextBackOff",
+        "start_line": 116,
+        "end_line": 125,
+        "quote": "func (b *ExponentialBackOff) NextBackOff() time.Duration {\n\t// Make sure we have not gone over the maximum elapsed time.\n\telapsed := b.GetElapsedTime()\n\tnext := getRandomValueFromInterval(b.RandomizationFactor, rand.Float64(), b.currentInterval)\n\tb.incrementCurrentInterval()\n\tif b.MaxElapsedTime != 0 && elapsed+next > b.MaxElapsedTime {\n\t\treturn b.Stop\n\t}\n\treturn next\n}",
+        "declaration": "func (b *ExponentialBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:ExponentialBackOff.GetElapsedTime": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 133,
+      "last_line": 135,
+      "quote": "func (b *ExponentialBackOff) GetElapsedTime() time.Duration {\n\treturn b.Clock.Now().Sub(b.startTime)\n}",
+      "quote_sha256": "52899312949e61c5e2e39ee7739d8bf49f2b1ee8fe6c7352f3b49f609e35a308",
+      "unit": {
+        "selector": "ExponentialBackOff.GetElapsedTime",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.GetElapsedTime",
+        "start_line": 133,
+        "end_line": 135,
+        "quote": "func (b *ExponentialBackOff) GetElapsedTime() time.Duration {\n\treturn b.Clock.Now().Sub(b.startTime)\n}",
+        "declaration": "func (b *ExponentialBackOff) GetElapsedTime() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ExponentialBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "b.Clock.Now().Sub(b.startTime)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:ExponentialBackOff.incrementCurrentInterval": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 138,
+      "last_line": 145,
+      "quote": "func (b *ExponentialBackOff) incrementCurrentInterval() {\n\t// Check for overflow, if overflow is detected set the current interval to the max interval.\n\tif float64(b.currentInterval) >= float64(b.MaxInterval)/b.Multiplier {\n\t\tb.currentInterval = b.MaxInterval\n\t} else {\n\t\tb.currentInterval = time.Duration(float64(b.currentInterval) * b.Multiplier)\n\t}\n}",
+      "quote_sha256": "b8c8a71b59737af1f40f94b44a447b0c622c225599add3b6f00268a71cfb3794",
+      "unit": {
+        "selector": "ExponentialBackOff.incrementCurrentInterval",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.incrementCurrentInterval",
+        "start_line": 138,
+        "end_line": 145,
+        "quote": "func (b *ExponentialBackOff) incrementCurrentInterval() {\n\t// Check for overflow, if overflow is detected set the current interval to the max interval.\n\tif float64(b.currentInterval) >= float64(b.MaxInterval)/b.Multiplier {\n\t\tb.currentInterval = b.MaxInterval\n\t} else {\n\t\tb.currentInterval = time.Duration(float64(b.currentInterval) * b.Multiplier)\n\t}\n}",
+        "declaration": "func (b *ExponentialBackOff) incrementCurrentInterval()",
+        "function_type": "func()",
+        "receiver_type": "*ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:getRandomValueFromInterval": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/exponential.go",
+      "source_sha256": "73492c2d55e59b5c1132a786f565bcfe64213951ffd740d944001b701bb7c41d",
+      "first_line": 149,
+      "last_line": 161,
+      "quote": "func getRandomValueFromInterval(randomizationFactor, random float64, currentInterval time.Duration) time.Duration {\n\tif randomizationFactor == 0 {\n\t\treturn currentInterval // make sure no randomness is used when randomizationFactor is 0.\n\t}\n\tvar delta = randomizationFactor * float64(currentInterval)\n\tvar minInterval = float64(currentInterval) - delta\n\tvar maxInterval = float64(currentInterval) + delta\n\n\t// Get a random value from the range [minInterval, maxInterval].\n\t// The formula used below has a +1 because if the minInterval is 1 and the maxInterval is 3 then\n\t// we want a 33% chance for selecting either 1, 2 or 3.\n\treturn time.Duration(minInterval + (random * (maxInterval - minInterval + 1)))\n}",
+      "quote_sha256": "26cf7d06dbe0a3c8807fc62325cd71a3671e95f889669e86f2cadb0382c9b8f3",
+      "unit": {
+        "selector": "getRandomValueFromInterval",
+        "declaration_kind": "function",
+        "symbol": "backoff.getRandomValueFromInterval",
+        "start_line": 149,
+        "end_line": 161,
+        "quote": "func getRandomValueFromInterval(randomizationFactor, random float64, currentInterval time.Duration) time.Duration {\n\tif randomizationFactor == 0 {\n\t\treturn currentInterval // make sure no randomness is used when randomizationFactor is 0.\n\t}\n\tvar delta = randomizationFactor * float64(currentInterval)\n\tvar minInterval = float64(currentInterval) - delta\n\tvar maxInterval = float64(currentInterval) + delta\n\n\t// Get a random value from the range [minInterval, maxInterval].\n\t// The formula used below has a +1 because if the minInterval is 1 and the maxInterval is 3 then\n\t// we want a 33% chance for selecting either 1, 2 or 3.\n\treturn time.Duration(minInterval + (random * (maxInterval - minInterval + 1)))\n}",
+        "declaration": "func getRandomValueFromInterval(randomizationFactor, random float64, currentInterval time.Duration) time.Duration",
+        "function_type": "func(randomizationFactor, random float64, currentInterval time.Duration) time.Duration"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:Operation": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 10,
+      "last_line": 10,
+      "quote": "type Operation func() error",
+      "quote_sha256": "8f281d9e3bdd3999fe1969a2c69a227ffa21ce3da2c6b99ee3aa059bb54c1a35",
+      "unit": {
+        "selector": "Operation",
+        "declaration_kind": "type",
+        "symbol": "backoff.Operation",
+        "start_line": 10,
+        "end_line": 10,
+        "quote": "type Operation func() error",
+        "declaration": "type Operation func() error",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:Notify": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 17,
+      "last_line": 17,
+      "quote": "type Notify func(error, time.Duration)",
+      "quote_sha256": "f5d912f3247bf8b077c057259e6d995cc069362394bab456874e57e44e42c3c2",
+      "unit": {
+        "selector": "Notify",
+        "declaration_kind": "type",
+        "symbol": "backoff.Notify",
+        "start_line": 17,
+        "end_line": 17,
+        "quote": "type Notify func(error, time.Duration)",
+        "declaration": "type Notify func(error, time.Duration)",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:Retry": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 27,
+      "last_line": 29,
+      "quote": "func Retry(o Operation, b BackOff) error {\n\treturn RetryNotify(o, b, nil)\n}",
+      "quote_sha256": "eeeac583659d6c02ec47b7cfeabfb16ae1958a4e2e34a605982956894216a6d6",
+      "unit": {
+        "selector": "Retry",
+        "declaration_kind": "function",
+        "symbol": "backoff.Retry",
+        "start_line": 27,
+        "end_line": 29,
+        "quote": "func Retry(o Operation, b BackOff) error {\n\treturn RetryNotify(o, b, nil)\n}",
+        "declaration": "func Retry(o Operation, b BackOff) error",
+        "function_type": "func(o Operation, b BackOff) error",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "RetryNotify(o, b, nil)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:RetryNotify": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 33,
+      "last_line": 35,
+      "quote": "func RetryNotify(operation Operation, b BackOff, notify Notify) error {\n\treturn RetryNotifyWithTimer(operation, b, notify, nil)\n}",
+      "quote_sha256": "f561c9e379ff3ff8cdf822f5b20e7e012a60742aabb2f1b6a98a34e4841c1995",
+      "unit": {
+        "selector": "RetryNotify",
+        "declaration_kind": "function",
+        "symbol": "backoff.RetryNotify",
+        "start_line": 33,
+        "end_line": 35,
+        "quote": "func RetryNotify(operation Operation, b BackOff, notify Notify) error {\n\treturn RetryNotifyWithTimer(operation, b, notify, nil)\n}",
+        "declaration": "func RetryNotify(operation Operation, b BackOff, notify Notify) error",
+        "function_type": "func(operation Operation, b BackOff, notify Notify) error",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "RetryNotifyWithTimer(operation, b, notify, nil)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:RetryNotifyWithTimer": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 40,
+      "last_line": 84,
+      "quote": "func RetryNotifyWithTimer(operation Operation, b BackOff, notify Notify, t Timer) error {\n\tvar err error\n\tvar next time.Duration\n\tif t == nil {\n\t\tt = &defaultTimer{}\n\t}\n\n\tdefer func() {\n\t\tt.Stop()\n\t}()\n\n\tctx := getContext(b)\n\n\tb.Reset()\n\tfor {\n\t\tif err = operation(); err == nil {\n\t\t\treturn nil\n\t\t}\n\n\t\tvar permanent *PermanentError\n\t\tif errors.As(err, &permanent) {\n\t\t\treturn permanent.Err\n\t\t}\n\n\t\tif next = b.NextBackOff(); next == Stop {\n\t\t\tif cerr := ctx.Err(); cerr != nil {\n\t\t\t\treturn cerr\n\t\t\t}\n\n\t\t\treturn err\n\t\t}\n\n\t\tif notify != nil {\n\t\t\tnotify(err, next)\n\t\t}\n\n\t\tt.Start(next)\n\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn ctx.Err()\n\t\tcase <-t.C():\n\t\t}\n\t}\n}",
+      "quote_sha256": "3556b32257f6850f7191367b2e9b0d277beca49ac273a32eab87be443139b794",
+      "unit": {
+        "selector": "RetryNotifyWithTimer",
+        "declaration_kind": "function",
+        "symbol": "backoff.RetryNotifyWithTimer",
+        "start_line": 40,
+        "end_line": 84,
+        "quote": "func RetryNotifyWithTimer(operation Operation, b BackOff, notify Notify, t Timer) error {\n\tvar err error\n\tvar next time.Duration\n\tif t == nil {\n\t\tt = &defaultTimer{}\n\t}\n\n\tdefer func() {\n\t\tt.Stop()\n\t}()\n\n\tctx := getContext(b)\n\n\tb.Reset()\n\tfor {\n\t\tif err = operation(); err == nil {\n\t\t\treturn nil\n\t\t}\n\n\t\tvar permanent *PermanentError\n\t\tif errors.As(err, &permanent) {\n\t\t\treturn permanent.Err\n\t\t}\n\n\t\tif next = b.NextBackOff(); next == Stop {\n\t\t\tif cerr := ctx.Err(); cerr != nil {\n\t\t\t\treturn cerr\n\t\t\t}\n\n\t\t\treturn err\n\t\t}\n\n\t\tif notify != nil {\n\t\t\tnotify(err, next)\n\t\t}\n\n\t\tt.Start(next)\n\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn ctx.Err()\n\t\tcase <-t.C():\n\t\t}\n\t}\n}",
+        "declaration": "func RetryNotifyWithTimer(operation Operation, b BackOff, notify Notify, t Timer) error",
+        "function_type": "func(operation Operation, b BackOff, notify Notify, t Timer) error"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:PermanentError": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 87,
+      "last_line": 89,
+      "quote": "type PermanentError struct {\n\tErr error\n}",
+      "quote_sha256": "29180055950383e617ea6efacf22f097fc1d9e325f20e280945f74b4a488e18d",
+      "unit": {
+        "selector": "PermanentError",
+        "declaration_kind": "type",
+        "symbol": "backoff.PermanentError",
+        "start_line": 87,
+        "end_line": 89,
+        "quote": "type PermanentError struct {\n\tErr error\n}",
+        "declaration": "type PermanentError struct {\n\tErr error\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:PermanentError.Error": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 91,
+      "last_line": 93,
+      "quote": "func (e *PermanentError) Error() string {\n\treturn e.Err.Error()\n}",
+      "quote_sha256": "790e77a36e6402e77a584b132b802d3f15edd96eb76b65a4d3407b2fa528b306",
+      "unit": {
+        "selector": "PermanentError.Error",
+        "declaration_kind": "method",
+        "symbol": "backoff.PermanentError.Error",
+        "start_line": 91,
+        "end_line": 93,
+        "quote": "func (e *PermanentError) Error() string {\n\treturn e.Err.Error()\n}",
+        "declaration": "func (e *PermanentError) Error() string",
+        "function_type": "func() string",
+        "receiver_type": "*PermanentError",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "e.Err.Error()"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:PermanentError.Unwrap": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 95,
+      "last_line": 97,
+      "quote": "func (e *PermanentError) Unwrap() error {\n\treturn e.Err\n}",
+      "quote_sha256": "6f35611b07bad63af7fcf821fd13493653944b62ac01314a73e59d1200ab0caa",
+      "unit": {
+        "selector": "PermanentError.Unwrap",
+        "declaration_kind": "method",
+        "symbol": "backoff.PermanentError.Unwrap",
+        "start_line": 95,
+        "end_line": 97,
+        "quote": "func (e *PermanentError) Unwrap() error {\n\treturn e.Err\n}",
+        "declaration": "func (e *PermanentError) Unwrap() error",
+        "function_type": "func() error",
+        "receiver_type": "*PermanentError",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.SelectorExpr"
+          ],
+          "expressions": [
+            "e.Err"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:PermanentError.Is": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 99,
+      "last_line": 102,
+      "quote": "func (e *PermanentError) Is(target error) bool {\n\t_, ok := target.(*PermanentError)\n\treturn ok\n}",
+      "quote_sha256": "357b750a7d82a64a605331d8266d7b28e6576ced6594a5645b1b8d8f52d3aa3e",
+      "unit": {
+        "selector": "PermanentError.Is",
+        "declaration_kind": "method",
+        "symbol": "backoff.PermanentError.Is",
+        "start_line": 99,
+        "end_line": 102,
+        "quote": "func (e *PermanentError) Is(target error) bool {\n\t_, ok := target.(*PermanentError)\n\treturn ok\n}",
+        "declaration": "func (e *PermanentError) Is(target error) bool",
+        "function_type": "func(target error) bool",
+        "receiver_type": "*PermanentError"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:Permanent": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/retry.go",
+      "source_sha256": "a684fbb371daca15fcf4100d67e88430aec6117d4353736ff9ae87cad70bf59b",
+      "first_line": 105,
+      "last_line": 112,
+      "quote": "func Permanent(err error) error {\n\tif err == nil {\n\t\treturn nil\n\t}\n\treturn &PermanentError{\n\t\tErr: err,\n\t}\n}",
+      "quote_sha256": "9571ac4823fd535b3615a2317403b68460420f3e8f02744ee6c204c84afb835f",
+      "unit": {
+        "selector": "Permanent",
+        "declaration_kind": "function",
+        "symbol": "backoff.Permanent",
+        "start_line": 105,
+        "end_line": 112,
+        "quote": "func Permanent(err error) error {\n\tif err == nil {\n\t\treturn nil\n\t}\n\treturn &PermanentError{\n\t\tErr: err,\n\t}\n}",
+        "declaration": "func Permanent(err error) error",
+        "function_type": "func(err error) error"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:Timer": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "timer.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/timer.go",
+      "source_sha256": "573cf5acb47aed687ec55dededb00a18ad82429ee9ad0e9ca60c4872197a2c89",
+      "first_line": 5,
+      "last_line": 9,
+      "quote": "type Timer interface {\n\tStart(duration time.Duration)\n\tStop()\n\tC() <-chan time.Time\n}",
+      "quote_sha256": "553c8d95ead851cb3437d6d8b674998e9931d33b86e061115998c42f34b8d293",
+      "unit": {
+        "selector": "Timer",
+        "declaration_kind": "type",
+        "symbol": "backoff.Timer",
+        "start_line": 5,
+        "end_line": 9,
+        "quote": "type Timer interface {\n\tStart(duration time.Duration)\n\tStop()\n\tC() <-chan time.Time\n}",
+        "declaration": "type Timer interface {\n\tStart(duration time.Duration)\n\tStop()\n\tC() <-chan time.Time\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:defaultTimer.Start": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "timer.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/timer.go",
+      "source_sha256": "573cf5acb47aed687ec55dededb00a18ad82429ee9ad0e9ca60c4872197a2c89",
+      "first_line": 22,
+      "last_line": 28,
+      "quote": "func (t *defaultTimer) Start(duration time.Duration) {\n\tif t.timer == nil {\n\t\tt.timer = time.NewTimer(duration)\n\t} else {\n\t\tt.timer.Reset(duration)\n\t}\n}",
+      "quote_sha256": "66b94618a6089127b8a835642c18aa488b5f9e188a19d29b988fbb6635f2cb79",
+      "unit": {
+        "selector": "defaultTimer.Start",
+        "declaration_kind": "method",
+        "symbol": "backoff.defaultTimer.Start",
+        "start_line": 22,
+        "end_line": 28,
+        "quote": "func (t *defaultTimer) Start(duration time.Duration) {\n\tif t.timer == nil {\n\t\tt.timer = time.NewTimer(duration)\n\t} else {\n\t\tt.timer.Reset(duration)\n\t}\n}",
+        "declaration": "func (t *defaultTimer) Start(duration time.Duration)",
+        "function_type": "func(duration time.Duration)",
+        "receiver_type": "*defaultTimer"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:defaultTimer.Stop": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "timer.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/timer.go",
+      "source_sha256": "573cf5acb47aed687ec55dededb00a18ad82429ee9ad0e9ca60c4872197a2c89",
+      "first_line": 31,
+      "last_line": 35,
+      "quote": "func (t *defaultTimer) Stop() {\n\tif t.timer != nil {\n\t\tt.timer.Stop()\n\t}\n}",
+      "quote_sha256": "ee1ba64cef8575cc25305add9cdbb95ae72ac504b759137511be63a898746368",
+      "unit": {
+        "selector": "defaultTimer.Stop",
+        "declaration_kind": "method",
+        "symbol": "backoff.defaultTimer.Stop",
+        "start_line": 31,
+        "end_line": 35,
+        "quote": "func (t *defaultTimer) Stop() {\n\tif t.timer != nil {\n\t\tt.timer.Stop()\n\t}\n}",
+        "declaration": "func (t *defaultTimer) Stop()",
+        "function_type": "func()",
+        "receiver_type": "*defaultTimer"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:WithMaxRetries": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "tries.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/tries.go",
+      "source_sha256": "4dfae8898960edaf75a4d0c75deb7fd49b04b7ea06d7d665fc9043a411040ed8",
+      "first_line": 12,
+      "last_line": 14,
+      "quote": "func WithMaxRetries(b BackOff, max uint64) BackOff {\n\treturn &backOffTries{delegate: b, maxTries: max}\n}",
+      "quote_sha256": "e4f868f6703946a974421bcf717e6c962aeaaa09e825ec14e8059993305cdbd6",
+      "unit": {
+        "selector": "WithMaxRetries",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithMaxRetries",
+        "start_line": 12,
+        "end_line": 14,
+        "quote": "func WithMaxRetries(b BackOff, max uint64) BackOff {\n\treturn &backOffTries{delegate: b, maxTries: max}\n}",
+        "declaration": "func WithMaxRetries(b BackOff, max uint64) BackOff",
+        "function_type": "func(b BackOff, max uint64) BackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.UnaryExpr"
+          ],
+          "expressions": [
+            "&backOffTries{delegate: b, maxTries: max}"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:backOffTries.NextBackOff": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "tries.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/tries.go",
+      "source_sha256": "4dfae8898960edaf75a4d0c75deb7fd49b04b7ea06d7d665fc9043a411040ed8",
+      "first_line": 22,
+      "last_line": 33,
+      "quote": "func (b *backOffTries) NextBackOff() time.Duration {\n\tif b.maxTries == 0 {\n\t\treturn Stop\n\t}\n\tif b.maxTries > 0 {\n\t\tif b.maxTries <= b.numTries {\n\t\t\treturn Stop\n\t\t}\n\t\tb.numTries++\n\t}\n\treturn b.delegate.NextBackOff()\n}",
+      "quote_sha256": "f65fd03ddad42304ea5682c3a62656595ce64edd3d6f0070f2181f0d54e11f7a",
+      "unit": {
+        "selector": "backOffTries.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffTries.NextBackOff",
+        "start_line": 22,
+        "end_line": 33,
+        "quote": "func (b *backOffTries) NextBackOff() time.Duration {\n\tif b.maxTries == 0 {\n\t\treturn Stop\n\t}\n\tif b.maxTries > 0 {\n\t\tif b.maxTries <= b.numTries {\n\t\t\treturn Stop\n\t\t}\n\t\tb.numTries++\n\t}\n\treturn b.delegate.NextBackOff()\n}",
+        "declaration": "func (b *backOffTries) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*backOffTries"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.1.3:backOffTries.Reset": {
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "source_path": "tries.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/6b0e4ad0cd65431b217393bff47d1dff727b264b/tries.go",
+      "source_sha256": "4dfae8898960edaf75a4d0c75deb7fd49b04b7ea06d7d665fc9043a411040ed8",
+      "first_line": 35,
+      "last_line": 38,
+      "quote": "func (b *backOffTries) Reset() {\n\tb.numTries = 0\n\tb.delegate.Reset()\n}",
+      "quote_sha256": "59f14f2e47fb87af3be116b3a7bd9bea08381b014a32171032cc1b628f4845d3",
+      "unit": {
+        "selector": "backOffTries.Reset",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffTries.Reset",
+        "start_line": 35,
+        "end_line": 38,
+        "quote": "func (b *backOffTries) Reset() {\n\tb.numTries = 0\n\tb.delegate.Reset()\n}",
+        "declaration": "func (b *backOffTries) Reset()",
+        "function_type": "func()",
+        "receiver_type": "*backOffTries"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:BackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 16,
+      "last_line": 33,
+      "quote": "type BackOff interface {\n\t// NextBackOff returns the duration to wait before retrying the operation,\n\t// or backoff. Stop to indicate that no more retries should be made.\n\t//\n\t// Example usage:\n\t//\n\t// \tduration := backoff.NextBackOff();\n\t// \tif (duration == backoff.Stop) {\n\t// \t\t// Do not retry operation.\n\t// \t} else {\n\t// \t\t// Sleep for duration and retry operation.\n\t// \t}\n\t//\n\tNextBackOff() time.Duration\n\n\t// Reset to initial state.\n\tReset()\n}",
+      "quote_sha256": "a43d01ce99c0ecaa9590dcaab5f44b4e28e723a854a5f8b0396ec142c22ccd99",
+      "unit": {
+        "selector": "BackOff",
+        "declaration_kind": "type",
+        "symbol": "backoff.BackOff",
+        "start_line": 16,
+        "end_line": 33,
+        "quote": "type BackOff interface {\n\t// NextBackOff returns the duration to wait before retrying the operation,\n\t// or backoff. Stop to indicate that no more retries should be made.\n\t//\n\t// Example usage:\n\t//\n\t// \tduration := backoff.NextBackOff();\n\t// \tif (duration == backoff.Stop) {\n\t// \t\t// Do not retry operation.\n\t// \t} else {\n\t// \t\t// Sleep for duration and retry operation.\n\t// \t}\n\t//\n\tNextBackOff() time.Duration\n\n\t// Reset to initial state.\n\tReset()\n}",
+        "declaration": "type BackOff interface {\n\t// NextBackOff returns the duration to wait before retrying the operation,\n\t// or backoff. Stop to indicate that no more retries should be made.\n\t//\n\t// Example usage:\n\t//\n\t// \tduration := backoff.NextBackOff();\n\t// \tif (duration == backoff.Stop) {\n\t// \t\t// Do not retry operation.\n\t// \t} else {\n\t// \t\t// Sleep for duration and retry operation.\n\t// \t}\n\t//\n\tNextBackOff() time.Duration\n\n\t// Reset to initial state.\n\tReset()\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:StopBackOff.NextBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 52,
+      "last_line": 52,
+      "quote": "func (b *StopBackOff) NextBackOff() time.Duration { return Stop }",
+      "quote_sha256": "ba5bf6b9e3855efb89f11c375c98258013fea83e1830e8150feaebd4b1faf0b6",
+      "unit": {
+        "selector": "StopBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.StopBackOff.NextBackOff",
+        "start_line": 52,
+        "end_line": 52,
+        "quote": "func (b *StopBackOff) NextBackOff() time.Duration { return Stop }",
+        "declaration": "func (b *StopBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*StopBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.Ident"
+          ],
+          "expressions": [
+            "Stop"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ZeroBackOff.NextBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 44,
+      "last_line": 44,
+      "quote": "func (b *ZeroBackOff) NextBackOff() time.Duration { return 0 }",
+      "quote_sha256": "ecd812f2383cedf0c6fd3d349a4c00f8523ebe6d5d9754e35ad73b77131847fb",
+      "unit": {
+        "selector": "ZeroBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.ZeroBackOff.NextBackOff",
+        "start_line": 44,
+        "end_line": 44,
+        "quote": "func (b *ZeroBackOff) NextBackOff() time.Duration { return 0 }",
+        "declaration": "func (b *ZeroBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ZeroBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.BasicLit"
+          ],
+          "expressions": [
+            "0"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ConstantBackOff.NextBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "backoff.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/backoff.go",
+      "source_sha256": "29ac6bfd43e1a21d838f1ccf459cdeb46b93c9246bf7666d5216b3426ecaed35",
+      "first_line": 62,
+      "last_line": 62,
+      "quote": "func (b *ConstantBackOff) NextBackOff() time.Duration { return b.Interval }",
+      "quote_sha256": "e8a00182158c15efac6d1a386888747b607da8c2a432e13d322c0d5378e6894b",
+      "unit": {
+        "selector": "ConstantBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.ConstantBackOff.NextBackOff",
+        "start_line": 62,
+        "end_line": 62,
+        "quote": "func (b *ConstantBackOff) NextBackOff() time.Duration { return b.Interval }",
+        "declaration": "func (b *ConstantBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ConstantBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.SelectorExpr"
+          ],
+          "expressions": [
+            "b.Interval"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:BackOffContext": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 10,
+      "last_line": 13,
+      "quote": "type BackOffContext interface { // nolint: golint\n\tBackOff\n\tContext() context.Context\n}",
+      "quote_sha256": "204889165275f69723c55b57eac2b77ef931af42382255017fa5e414f191fe62",
+      "unit": {
+        "selector": "BackOffContext",
+        "declaration_kind": "type",
+        "symbol": "backoff.BackOffContext",
+        "start_line": 10,
+        "end_line": 13,
+        "quote": "type BackOffContext interface { // nolint: golint\n\tBackOff\n\tContext() context.Context\n}",
+        "declaration": "type BackOffContext interface { // nolint: golint\n\tBackOff\n\tContext() context.Context\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithContext": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 23,
+      "last_line": 39,
+      "quote": "func WithContext(b BackOff, ctx context.Context) BackOffContext { // nolint: golint\n\tif ctx == nil {\n\t\tpanic(\"nil context\")\n\t}\n\n\tif b, ok := b.(*backOffContext); ok {\n\t\treturn &backOffContext{\n\t\t\tBackOff: b.BackOff,\n\t\t\tctx:     ctx,\n\t\t}\n\t}\n\n\treturn &backOffContext{\n\t\tBackOff: b,\n\t\tctx:     ctx,\n\t}\n}",
+      "quote_sha256": "6be03d5f8dd01833b200726c5a7b3e95268615b6b26641b37226accf5ef36d55",
+      "unit": {
+        "selector": "WithContext",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithContext",
+        "start_line": 23,
+        "end_line": 39,
+        "quote": "func WithContext(b BackOff, ctx context.Context) BackOffContext { // nolint: golint\n\tif ctx == nil {\n\t\tpanic(\"nil context\")\n\t}\n\n\tif b, ok := b.(*backOffContext); ok {\n\t\treturn &backOffContext{\n\t\t\tBackOff: b.BackOff,\n\t\t\tctx:     ctx,\n\t\t}\n\t}\n\n\treturn &backOffContext{\n\t\tBackOff: b,\n\t\tctx:     ctx,\n\t}\n}",
+        "declaration": "func WithContext(b BackOff, ctx context.Context) BackOffContext",
+        "function_type": "func(b BackOff, ctx context.Context) BackOffContext"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:getContext": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 41,
+      "last_line": 49,
+      "quote": "func getContext(b BackOff) context.Context {\n\tif cb, ok := b.(BackOffContext); ok {\n\t\treturn cb.Context()\n\t}\n\tif tb, ok := b.(*backOffTries); ok {\n\t\treturn getContext(tb.delegate)\n\t}\n\treturn context.Background()\n}",
+      "quote_sha256": "66477a008f1a132c63059e6dac31036e6dba1d1e73207ba16bfc143839dcba7d",
+      "unit": {
+        "selector": "getContext",
+        "declaration_kind": "function",
+        "symbol": "backoff.getContext",
+        "start_line": 41,
+        "end_line": 49,
+        "quote": "func getContext(b BackOff) context.Context {\n\tif cb, ok := b.(BackOffContext); ok {\n\t\treturn cb.Context()\n\t}\n\tif tb, ok := b.(*backOffTries); ok {\n\t\treturn getContext(tb.delegate)\n\t}\n\treturn context.Background()\n}",
+        "declaration": "func getContext(b BackOff) context.Context",
+        "function_type": "func(b BackOff) context.Context"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:backOffContext.Context": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 51,
+      "last_line": 53,
+      "quote": "func (b *backOffContext) Context() context.Context {\n\treturn b.ctx\n}",
+      "quote_sha256": "8c8a7cd0ccfa03f46808668c485a3d6f49b96fcbe6b43aab68d60ee2e5102d5b",
+      "unit": {
+        "selector": "backOffContext.Context",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffContext.Context",
+        "start_line": 51,
+        "end_line": 53,
+        "quote": "func (b *backOffContext) Context() context.Context {\n\treturn b.ctx\n}",
+        "declaration": "func (b *backOffContext) Context() context.Context",
+        "function_type": "func() context.Context",
+        "receiver_type": "*backOffContext",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.SelectorExpr"
+          ],
+          "expressions": [
+            "b.ctx"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:backOffContext.NextBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "context.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/context.go",
+      "source_sha256": "b7884b0062bafb41eb9f7032f64704a55280fd6fc6a42d260c50637582982514",
+      "first_line": 55,
+      "last_line": 62,
+      "quote": "func (b *backOffContext) NextBackOff() time.Duration {\n\tselect {\n\tcase <-b.ctx.Done():\n\t\treturn Stop\n\tdefault:\n\t\treturn b.BackOff.NextBackOff()\n\t}\n}",
+      "quote_sha256": "b2ac189494ea2bd8a876054f56496363b1e85c4aca30a627c5153879abc64502",
+      "unit": {
+        "selector": "backOffContext.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffContext.NextBackOff",
+        "start_line": 55,
+        "end_line": 62,
+        "quote": "func (b *backOffContext) NextBackOff() time.Duration {\n\tselect {\n\tcase <-b.ctx.Done():\n\t\treturn Stop\n\tdefault:\n\t\treturn b.BackOff.NextBackOff()\n\t}\n}",
+        "declaration": "func (b *backOffContext) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*backOffContext"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ExponentialBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 54,
+      "last_line": 67,
+      "quote": "type ExponentialBackOff struct {\n\tInitialInterval     time.Duration\n\tRandomizationFactor float64\n\tMultiplier          float64\n\tMaxInterval         time.Duration\n\t// After MaxElapsedTime the ExponentialBackOff returns Stop.\n\t// It never stops if MaxElapsedTime == 0.\n\tMaxElapsedTime time.Duration\n\tStop           time.Duration\n\tClock          Clock\n\n\tcurrentInterval time.Duration\n\tstartTime       time.Time\n}",
+      "quote_sha256": "614f18b73d2015384943461a53a45dcfc8f0692077415e9c3728799b10116fb9",
+      "unit": {
+        "selector": "ExponentialBackOff",
+        "declaration_kind": "type",
+        "symbol": "backoff.ExponentialBackOff",
+        "start_line": 54,
+        "end_line": 67,
+        "quote": "type ExponentialBackOff struct {\n\tInitialInterval     time.Duration\n\tRandomizationFactor float64\n\tMultiplier          float64\n\tMaxInterval         time.Duration\n\t// After MaxElapsedTime the ExponentialBackOff returns Stop.\n\t// It never stops if MaxElapsedTime == 0.\n\tMaxElapsedTime time.Duration\n\tStop           time.Duration\n\tClock          Clock\n\n\tcurrentInterval time.Duration\n\tstartTime       time.Time\n}",
+        "declaration": "type ExponentialBackOff struct {\n\tInitialInterval     time.Duration\n\tRandomizationFactor float64\n\tMultiplier          float64\n\tMaxInterval         time.Duration\n\t// After MaxElapsedTime the ExponentialBackOff returns Stop.\n\t// It never stops if MaxElapsedTime == 0.\n\tMaxElapsedTime time.Duration\n\tStop           time.Duration\n\tClock          Clock\n\n\tcurrentInterval time.Duration\n\tstartTime       time.Time\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:Clock": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 70,
+      "last_line": 72,
+      "quote": "type Clock interface {\n\tNow() time.Time\n}",
+      "quote_sha256": "0a2fe0c90e901fd56b088706ee7491df15c93309cd00c96ec75ac4b2558251a8",
+      "unit": {
+        "selector": "Clock",
+        "declaration_kind": "type",
+        "symbol": "backoff.Clock",
+        "start_line": 70,
+        "end_line": 72,
+        "quote": "type Clock interface {\n\tNow() time.Time\n}",
+        "declaration": "type Clock interface {\n\tNow() time.Time\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:NewExponentialBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 87,
+      "last_line": 102,
+      "quote": "func NewExponentialBackOff(opts ...ExponentialBackOffOpts) *ExponentialBackOff {\n\tb := &ExponentialBackOff{\n\t\tInitialInterval:     DefaultInitialInterval,\n\t\tRandomizationFactor: DefaultRandomizationFactor,\n\t\tMultiplier:          DefaultMultiplier,\n\t\tMaxInterval:         DefaultMaxInterval,\n\t\tMaxElapsedTime:      DefaultMaxElapsedTime,\n\t\tStop:                Stop,\n\t\tClock:               SystemClock,\n\t}\n\tfor _, fn := range opts {\n\t\tfn(b)\n\t}\n\tb.Reset()\n\treturn b\n}",
+      "quote_sha256": "c9690af5942fb572aad6b74d33b7cd77eef70f420d779639e87f63fc0d801bb0",
+      "unit": {
+        "selector": "NewExponentialBackOff",
+        "declaration_kind": "function",
+        "symbol": "backoff.NewExponentialBackOff",
+        "start_line": 87,
+        "end_line": 102,
+        "quote": "func NewExponentialBackOff(opts ...ExponentialBackOffOpts) *ExponentialBackOff {\n\tb := &ExponentialBackOff{\n\t\tInitialInterval:     DefaultInitialInterval,\n\t\tRandomizationFactor: DefaultRandomizationFactor,\n\t\tMultiplier:          DefaultMultiplier,\n\t\tMaxInterval:         DefaultMaxInterval,\n\t\tMaxElapsedTime:      DefaultMaxElapsedTime,\n\t\tStop:                Stop,\n\t\tClock:               SystemClock,\n\t}\n\tfor _, fn := range opts {\n\t\tfn(b)\n\t}\n\tb.Reset()\n\treturn b\n}",
+        "declaration": "func NewExponentialBackOff(opts ...ExponentialBackOffOpts) *ExponentialBackOff",
+        "function_type": "func(opts ...ExponentialBackOffOpts) *ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ExponentialBackOff.Reset": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 164,
+      "last_line": 167,
+      "quote": "func (b *ExponentialBackOff) Reset() {\n\tb.currentInterval = b.InitialInterval\n\tb.startTime = b.Clock.Now()\n}",
+      "quote_sha256": "e5063a8d572561707f2d94de9ebbe54ae7aaf3c7fa514cdadb294df052b41752",
+      "unit": {
+        "selector": "ExponentialBackOff.Reset",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.Reset",
+        "start_line": 164,
+        "end_line": 167,
+        "quote": "func (b *ExponentialBackOff) Reset() {\n\tb.currentInterval = b.InitialInterval\n\tb.startTime = b.Clock.Now()\n}",
+        "declaration": "func (b *ExponentialBackOff) Reset()",
+        "function_type": "func()",
+        "receiver_type": "*ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ExponentialBackOff.NextBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 171,
+      "last_line": 180,
+      "quote": "func (b *ExponentialBackOff) NextBackOff() time.Duration {\n\t// Make sure we have not gone over the maximum elapsed time.\n\telapsed := b.GetElapsedTime()\n\tnext := getRandomValueFromInterval(b.RandomizationFactor, rand.Float64(), b.currentInterval)\n\tb.incrementCurrentInterval()\n\tif b.MaxElapsedTime != 0 && elapsed+next > b.MaxElapsedTime {\n\t\treturn b.Stop\n\t}\n\treturn next\n}",
+      "quote_sha256": "0c6ef53b528511ca3fc759718920ff8748be4b5523acc849e97862e6e54d6721",
+      "unit": {
+        "selector": "ExponentialBackOff.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.NextBackOff",
+        "start_line": 171,
+        "end_line": 180,
+        "quote": "func (b *ExponentialBackOff) NextBackOff() time.Duration {\n\t// Make sure we have not gone over the maximum elapsed time.\n\telapsed := b.GetElapsedTime()\n\tnext := getRandomValueFromInterval(b.RandomizationFactor, rand.Float64(), b.currentInterval)\n\tb.incrementCurrentInterval()\n\tif b.MaxElapsedTime != 0 && elapsed+next > b.MaxElapsedTime {\n\t\treturn b.Stop\n\t}\n\treturn next\n}",
+        "declaration": "func (b *ExponentialBackOff) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ExponentialBackOff.GetElapsedTime": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 188,
+      "last_line": 190,
+      "quote": "func (b *ExponentialBackOff) GetElapsedTime() time.Duration {\n\treturn b.Clock.Now().Sub(b.startTime)\n}",
+      "quote_sha256": "52899312949e61c5e2e39ee7739d8bf49f2b1ee8fe6c7352f3b49f609e35a308",
+      "unit": {
+        "selector": "ExponentialBackOff.GetElapsedTime",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.GetElapsedTime",
+        "start_line": 188,
+        "end_line": 190,
+        "quote": "func (b *ExponentialBackOff) GetElapsedTime() time.Duration {\n\treturn b.Clock.Now().Sub(b.startTime)\n}",
+        "declaration": "func (b *ExponentialBackOff) GetElapsedTime() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*ExponentialBackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "b.Clock.Now().Sub(b.startTime)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ExponentialBackOff.incrementCurrentInterval": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 193,
+      "last_line": 200,
+      "quote": "func (b *ExponentialBackOff) incrementCurrentInterval() {\n\t// Check for overflow, if overflow is detected set the current interval to the max interval.\n\tif float64(b.currentInterval) >= float64(b.MaxInterval)/b.Multiplier {\n\t\tb.currentInterval = b.MaxInterval\n\t} else {\n\t\tb.currentInterval = time.Duration(float64(b.currentInterval) * b.Multiplier)\n\t}\n}",
+      "quote_sha256": "b8c8a71b59737af1f40f94b44a447b0c622c225599add3b6f00268a71cfb3794",
+      "unit": {
+        "selector": "ExponentialBackOff.incrementCurrentInterval",
+        "declaration_kind": "method",
+        "symbol": "backoff.ExponentialBackOff.incrementCurrentInterval",
+        "start_line": 193,
+        "end_line": 200,
+        "quote": "func (b *ExponentialBackOff) incrementCurrentInterval() {\n\t// Check for overflow, if overflow is detected set the current interval to the max interval.\n\tif float64(b.currentInterval) >= float64(b.MaxInterval)/b.Multiplier {\n\t\tb.currentInterval = b.MaxInterval\n\t} else {\n\t\tb.currentInterval = time.Duration(float64(b.currentInterval) * b.Multiplier)\n\t}\n}",
+        "declaration": "func (b *ExponentialBackOff) incrementCurrentInterval()",
+        "function_type": "func()",
+        "receiver_type": "*ExponentialBackOff"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:getRandomValueFromInterval": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 204,
+      "last_line": 216,
+      "quote": "func getRandomValueFromInterval(randomizationFactor, random float64, currentInterval time.Duration) time.Duration {\n\tif randomizationFactor == 0 {\n\t\treturn currentInterval // make sure no randomness is used when randomizationFactor is 0.\n\t}\n\tvar delta = randomizationFactor * float64(currentInterval)\n\tvar minInterval = float64(currentInterval) - delta\n\tvar maxInterval = float64(currentInterval) + delta\n\n\t// Get a random value from the range [minInterval, maxInterval].\n\t// The formula used below has a +1 because if the minInterval is 1 and the maxInterval is 3 then\n\t// we want a 33% chance for selecting either 1, 2 or 3.\n\treturn time.Duration(minInterval + (random * (maxInterval - minInterval + 1)))\n}",
+      "quote_sha256": "26cf7d06dbe0a3c8807fc62325cd71a3671e95f889669e86f2cadb0382c9b8f3",
+      "unit": {
+        "selector": "getRandomValueFromInterval",
+        "declaration_kind": "function",
+        "symbol": "backoff.getRandomValueFromInterval",
+        "start_line": 204,
+        "end_line": 216,
+        "quote": "func getRandomValueFromInterval(randomizationFactor, random float64, currentInterval time.Duration) time.Duration {\n\tif randomizationFactor == 0 {\n\t\treturn currentInterval // make sure no randomness is used when randomizationFactor is 0.\n\t}\n\tvar delta = randomizationFactor * float64(currentInterval)\n\tvar minInterval = float64(currentInterval) - delta\n\tvar maxInterval = float64(currentInterval) + delta\n\n\t// Get a random value from the range [minInterval, maxInterval].\n\t// The formula used below has a +1 because if the minInterval is 1 and the maxInterval is 3 then\n\t// we want a 33% chance for selecting either 1, 2 or 3.\n\treturn time.Duration(minInterval + (random * (maxInterval - minInterval + 1)))\n}",
+        "declaration": "func getRandomValueFromInterval(randomizationFactor, random float64, currentInterval time.Duration) time.Duration",
+        "function_type": "func(randomizationFactor, random float64, currentInterval time.Duration) time.Duration"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:ExponentialBackOffOpts": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 75,
+      "last_line": 75,
+      "quote": "type ExponentialBackOffOpts func(*ExponentialBackOff)",
+      "quote_sha256": "e72f4be41bb102c44f06f9abcb5504b72a17afafbac4cb54d012ca959290b1b0",
+      "unit": {
+        "selector": "ExponentialBackOffOpts",
+        "declaration_kind": "type",
+        "symbol": "backoff.ExponentialBackOffOpts",
+        "start_line": 75,
+        "end_line": 75,
+        "quote": "type ExponentialBackOffOpts func(*ExponentialBackOff)",
+        "declaration": "type ExponentialBackOffOpts func(*ExponentialBackOff)",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithInitialInterval": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 105,
+      "last_line": 109,
+      "quote": "func WithInitialInterval(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.InitialInterval = duration\n\t}\n}",
+      "quote_sha256": "ebd7f3bea0633fcc454ce78a67cb46b71097f52070ac91a8c65f0fec2aeb6657",
+      "unit": {
+        "selector": "WithInitialInterval",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithInitialInterval",
+        "start_line": 105,
+        "end_line": 109,
+        "quote": "func WithInitialInterval(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.InitialInterval = duration\n\t}\n}",
+        "declaration": "func WithInitialInterval(duration time.Duration) ExponentialBackOffOpts",
+        "function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(ebo *ExponentialBackOff)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(ebo *ExponentialBackOff)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithRandomizationFactor": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 112,
+      "last_line": 116,
+      "quote": "func WithRandomizationFactor(randomizationFactor float64) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.RandomizationFactor = randomizationFactor\n\t}\n}",
+      "quote_sha256": "1fb51edcb4e96299ce5241e590240fc56164affbb4d9d34b110c06ddf8923009",
+      "unit": {
+        "selector": "WithRandomizationFactor",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithRandomizationFactor",
+        "start_line": 112,
+        "end_line": 116,
+        "quote": "func WithRandomizationFactor(randomizationFactor float64) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.RandomizationFactor = randomizationFactor\n\t}\n}",
+        "declaration": "func WithRandomizationFactor(randomizationFactor float64) ExponentialBackOffOpts",
+        "function_type": "func(randomizationFactor float64) ExponentialBackOffOpts",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(randomizationFactor float64) ExponentialBackOffOpts",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(ebo *ExponentialBackOff)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(ebo *ExponentialBackOff)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithMultiplier": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 119,
+      "last_line": 123,
+      "quote": "func WithMultiplier(multiplier float64) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.Multiplier = multiplier\n\t}\n}",
+      "quote_sha256": "7b7a8ba5b0b6a7b8b7c850b04bd8633cc14c8024cd558d77716e220870c23b1b",
+      "unit": {
+        "selector": "WithMultiplier",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithMultiplier",
+        "start_line": 119,
+        "end_line": 123,
+        "quote": "func WithMultiplier(multiplier float64) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.Multiplier = multiplier\n\t}\n}",
+        "declaration": "func WithMultiplier(multiplier float64) ExponentialBackOffOpts",
+        "function_type": "func(multiplier float64) ExponentialBackOffOpts",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(multiplier float64) ExponentialBackOffOpts",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(ebo *ExponentialBackOff)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(ebo *ExponentialBackOff)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithMaxInterval": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 126,
+      "last_line": 130,
+      "quote": "func WithMaxInterval(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.MaxInterval = duration\n\t}\n}",
+      "quote_sha256": "efd9f8327d0f4db08604040e624d1c47a1d2070d6463b17c1719167205bfef5c",
+      "unit": {
+        "selector": "WithMaxInterval",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithMaxInterval",
+        "start_line": 126,
+        "end_line": 130,
+        "quote": "func WithMaxInterval(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.MaxInterval = duration\n\t}\n}",
+        "declaration": "func WithMaxInterval(duration time.Duration) ExponentialBackOffOpts",
+        "function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(ebo *ExponentialBackOff)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(ebo *ExponentialBackOff)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithMaxElapsedTime": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 133,
+      "last_line": 137,
+      "quote": "func WithMaxElapsedTime(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.MaxElapsedTime = duration\n\t}\n}",
+      "quote_sha256": "b658ccdf64131057b69de0cedde39b757f4b4b0c9c575c5b5e827ec8fe5c23ee",
+      "unit": {
+        "selector": "WithMaxElapsedTime",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithMaxElapsedTime",
+        "start_line": 133,
+        "end_line": 137,
+        "quote": "func WithMaxElapsedTime(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.MaxElapsedTime = duration\n\t}\n}",
+        "declaration": "func WithMaxElapsedTime(duration time.Duration) ExponentialBackOffOpts",
+        "function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(ebo *ExponentialBackOff)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(ebo *ExponentialBackOff)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithRetryStopDuration": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 140,
+      "last_line": 144,
+      "quote": "func WithRetryStopDuration(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.Stop = duration\n\t}\n}",
+      "quote_sha256": "63cd67f1e48e494de945fa1f70d2ad4e8b0e3d8f17bd924a83e913c7c02615e0",
+      "unit": {
+        "selector": "WithRetryStopDuration",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithRetryStopDuration",
+        "start_line": 140,
+        "end_line": 144,
+        "quote": "func WithRetryStopDuration(duration time.Duration) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.Stop = duration\n\t}\n}",
+        "declaration": "func WithRetryStopDuration(duration time.Duration) ExponentialBackOffOpts",
+        "function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(duration time.Duration) ExponentialBackOffOpts",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(ebo *ExponentialBackOff)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(ebo *ExponentialBackOff)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithClockProvider": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "exponential.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/exponential.go",
+      "source_sha256": "cd5e77b2c07db015cae3d8ad5224600f73db66b8d5f8bf1f75b73051689ddcfc",
+      "first_line": 147,
+      "last_line": 151,
+      "quote": "func WithClockProvider(clock Clock) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.Clock = clock\n\t}\n}",
+      "quote_sha256": "c44068265575ca88fa49017e19376fa7ce0ae4ae7b4c4b5a538967ac2ed4cbc2",
+      "unit": {
+        "selector": "WithClockProvider",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithClockProvider",
+        "start_line": 147,
+        "end_line": 151,
+        "quote": "func WithClockProvider(clock Clock) ExponentialBackOffOpts {\n\treturn func(ebo *ExponentialBackOff) {\n\t\tebo.Clock = clock\n\t}\n}",
+        "declaration": "func WithClockProvider(clock Clock) ExponentialBackOffOpts",
+        "function_type": "func(clock Clock) ExponentialBackOffOpts",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func(clock Clock) ExponentialBackOffOpts",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func(ebo *ExponentialBackOff)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func(ebo *ExponentialBackOff)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:Operation": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 14,
+      "last_line": 14,
+      "quote": "type Operation func() error",
+      "quote_sha256": "8f281d9e3bdd3999fe1969a2c69a227ffa21ce3da2c6b99ee3aa059bb54c1a35",
+      "unit": {
+        "selector": "Operation",
+        "declaration_kind": "type",
+        "symbol": "backoff.Operation",
+        "start_line": 14,
+        "end_line": 14,
+        "quote": "type Operation func() error",
+        "declaration": "type Operation func() error",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:Notify": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 27,
+      "last_line": 27,
+      "quote": "type Notify func(error, time.Duration)",
+      "quote_sha256": "f5d912f3247bf8b077c057259e6d995cc069362394bab456874e57e44e42c3c2",
+      "unit": {
+        "selector": "Notify",
+        "declaration_kind": "type",
+        "symbol": "backoff.Notify",
+        "start_line": 27,
+        "end_line": 27,
+        "quote": "type Notify func(error, time.Duration)",
+        "declaration": "type Notify func(error, time.Duration)",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:Retry": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 37,
+      "last_line": 39,
+      "quote": "func Retry(o Operation, b BackOff) error {\n\treturn RetryNotify(o, b, nil)\n}",
+      "quote_sha256": "eeeac583659d6c02ec47b7cfeabfb16ae1958a4e2e34a605982956894216a6d6",
+      "unit": {
+        "selector": "Retry",
+        "declaration_kind": "function",
+        "symbol": "backoff.Retry",
+        "start_line": 37,
+        "end_line": 39,
+        "quote": "func Retry(o Operation, b BackOff) error {\n\treturn RetryNotify(o, b, nil)\n}",
+        "declaration": "func Retry(o Operation, b BackOff) error",
+        "function_type": "func(o Operation, b BackOff) error",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "RetryNotify(o, b, nil)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:RetryNotify": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 48,
+      "last_line": 50,
+      "quote": "func RetryNotify(operation Operation, b BackOff, notify Notify) error {\n\treturn RetryNotifyWithTimer(operation, b, notify, nil)\n}",
+      "quote_sha256": "f561c9e379ff3ff8cdf822f5b20e7e012a60742aabb2f1b6a98a34e4841c1995",
+      "unit": {
+        "selector": "RetryNotify",
+        "declaration_kind": "function",
+        "symbol": "backoff.RetryNotify",
+        "start_line": 48,
+        "end_line": 50,
+        "quote": "func RetryNotify(operation Operation, b BackOff, notify Notify) error {\n\treturn RetryNotifyWithTimer(operation, b, notify, nil)\n}",
+        "declaration": "func RetryNotify(operation Operation, b BackOff, notify Notify) error",
+        "function_type": "func(operation Operation, b BackOff, notify Notify) error",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "RetryNotifyWithTimer(operation, b, notify, nil)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:RetryNotifyWithTimer": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 60,
+      "last_line": 63,
+      "quote": "func RetryNotifyWithTimer(operation Operation, b BackOff, notify Notify, t Timer) error {\n\t_, err := doRetryNotify(operation.withEmptyData(), b, notify, t)\n\treturn err\n}",
+      "quote_sha256": "fde5751d96a776bf3e9a1fd74dc4aa0aa5bb403047cb6dd60f5364197c0ea0b3",
+      "unit": {
+        "selector": "RetryNotifyWithTimer",
+        "declaration_kind": "function",
+        "symbol": "backoff.RetryNotifyWithTimer",
+        "start_line": 60,
+        "end_line": 63,
+        "quote": "func RetryNotifyWithTimer(operation Operation, b BackOff, notify Notify, t Timer) error {\n\t_, err := doRetryNotify(operation.withEmptyData(), b, notify, t)\n\treturn err\n}",
+        "declaration": "func RetryNotifyWithTimer(operation Operation, b BackOff, notify Notify, t Timer) error",
+        "function_type": "func(operation Operation, b BackOff, notify Notify, t Timer) error"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:PermanentError": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 121,
+      "last_line": 123,
+      "quote": "type PermanentError struct {\n\tErr error\n}",
+      "quote_sha256": "29180055950383e617ea6efacf22f097fc1d9e325f20e280945f74b4a488e18d",
+      "unit": {
+        "selector": "PermanentError",
+        "declaration_kind": "type",
+        "symbol": "backoff.PermanentError",
+        "start_line": 121,
+        "end_line": 123,
+        "quote": "type PermanentError struct {\n\tErr error\n}",
+        "declaration": "type PermanentError struct {\n\tErr error\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:PermanentError.Error": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 125,
+      "last_line": 127,
+      "quote": "func (e *PermanentError) Error() string {\n\treturn e.Err.Error()\n}",
+      "quote_sha256": "790e77a36e6402e77a584b132b802d3f15edd96eb76b65a4d3407b2fa528b306",
+      "unit": {
+        "selector": "PermanentError.Error",
+        "declaration_kind": "method",
+        "symbol": "backoff.PermanentError.Error",
+        "start_line": 125,
+        "end_line": 127,
+        "quote": "func (e *PermanentError) Error() string {\n\treturn e.Err.Error()\n}",
+        "declaration": "func (e *PermanentError) Error() string",
+        "function_type": "func() string",
+        "receiver_type": "*PermanentError",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "e.Err.Error()"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:PermanentError.Unwrap": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 129,
+      "last_line": 131,
+      "quote": "func (e *PermanentError) Unwrap() error {\n\treturn e.Err\n}",
+      "quote_sha256": "6f35611b07bad63af7fcf821fd13493653944b62ac01314a73e59d1200ab0caa",
+      "unit": {
+        "selector": "PermanentError.Unwrap",
+        "declaration_kind": "method",
+        "symbol": "backoff.PermanentError.Unwrap",
+        "start_line": 129,
+        "end_line": 131,
+        "quote": "func (e *PermanentError) Unwrap() error {\n\treturn e.Err\n}",
+        "declaration": "func (e *PermanentError) Unwrap() error",
+        "function_type": "func() error",
+        "receiver_type": "*PermanentError",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.SelectorExpr"
+          ],
+          "expressions": [
+            "e.Err"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:PermanentError.Is": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 133,
+      "last_line": 136,
+      "quote": "func (e *PermanentError) Is(target error) bool {\n\t_, ok := target.(*PermanentError)\n\treturn ok\n}",
+      "quote_sha256": "357b750a7d82a64a605331d8266d7b28e6576ced6594a5645b1b8d8f52d3aa3e",
+      "unit": {
+        "selector": "PermanentError.Is",
+        "declaration_kind": "method",
+        "symbol": "backoff.PermanentError.Is",
+        "start_line": 133,
+        "end_line": 136,
+        "quote": "func (e *PermanentError) Is(target error) bool {\n\t_, ok := target.(*PermanentError)\n\treturn ok\n}",
+        "declaration": "func (e *PermanentError) Is(target error) bool",
+        "function_type": "func(target error) bool",
+        "receiver_type": "*PermanentError"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:Permanent": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 139,
+      "last_line": 146,
+      "quote": "func Permanent(err error) error {\n\tif err == nil {\n\t\treturn nil\n\t}\n\treturn &PermanentError{\n\t\tErr: err,\n\t}\n}",
+      "quote_sha256": "9571ac4823fd535b3615a2317403b68460420f3e8f02744ee6c204c84afb835f",
+      "unit": {
+        "selector": "Permanent",
+        "declaration_kind": "function",
+        "symbol": "backoff.Permanent",
+        "start_line": 139,
+        "end_line": 146,
+        "quote": "func Permanent(err error) error {\n\tif err == nil {\n\t\treturn nil\n\t}\n\treturn &PermanentError{\n\t\tErr: err,\n\t}\n}",
+        "declaration": "func Permanent(err error) error",
+        "function_type": "func(err error) error"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:OperationWithData": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 10,
+      "last_line": 10,
+      "quote": "type OperationWithData[T any] func() (T, error)",
+      "quote_sha256": "69dd120467a45e658077c91eb23daa63a74227bfe258ccee6001ffa259f11c4e",
+      "unit": {
+        "selector": "OperationWithData",
+        "declaration_kind": "type",
+        "symbol": "backoff.OperationWithData",
+        "start_line": 10,
+        "end_line": 10,
+        "quote": "type OperationWithData[T any] func() (T, error)",
+        "declaration": "type OperationWithData[T any] func() (T, error)",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:Operation.withEmptyData": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 16,
+      "last_line": 20,
+      "quote": "func (o Operation) withEmptyData() OperationWithData[struct{}] {\n\treturn func() (struct{}, error) {\n\t\treturn struct{}{}, o()\n\t}\n}",
+      "quote_sha256": "f328cef24d20722d8ae398bbdabcb970e097f3404556de971203dfe21c09b411",
+      "unit": {
+        "selector": "Operation.withEmptyData",
+        "declaration_kind": "method",
+        "symbol": "backoff.Operation.withEmptyData",
+        "start_line": 16,
+        "end_line": 20,
+        "quote": "func (o Operation) withEmptyData() OperationWithData[struct{}] {\n\treturn func() (struct{}, error) {\n\t\treturn struct{}{}, o()\n\t}\n}",
+        "declaration": "func (o Operation) withEmptyData() OperationWithData[struct{}]",
+        "function_type": "func() OperationWithData[struct{}]",
+        "receiver_type": "Operation",
+        "factory": {
+          "callback_body_statements": 1,
+          "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+          "outer_function_type": "func() OperationWithData[struct{}]",
+          "profile": "returned-function-literal-signature-v1",
+          "returned_literal_type": "func() (struct{}, error)"
+        },
+        "return_contract": {
+          "callback_body_analyzed": false,
+          "kind": "sole-return-function-literal",
+          "literal_signature": "func() (struct{}, error)"
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:RetryWithData": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 42,
+      "last_line": 44,
+      "quote": "func RetryWithData[T any](o OperationWithData[T], b BackOff) (T, error) {\n\treturn RetryNotifyWithData(o, b, nil)\n}",
+      "quote_sha256": "6fcfddd8fce17a4b9e23805c80e8799ab416568cde9e1d352466fa55c00020c1",
+      "unit": {
+        "selector": "RetryWithData",
+        "declaration_kind": "function",
+        "symbol": "backoff.RetryWithData",
+        "start_line": 42,
+        "end_line": 44,
+        "quote": "func RetryWithData[T any](o OperationWithData[T], b BackOff) (T, error) {\n\treturn RetryNotifyWithData(o, b, nil)\n}",
+        "declaration": "func RetryWithData[T any](o OperationWithData[T], b BackOff) (T, error)",
+        "function_type": "func[T any](o OperationWithData[T], b BackOff) (T, error)",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "RetryNotifyWithData(o, b, nil)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:RetryNotifyWithData": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 53,
+      "last_line": 55,
+      "quote": "func RetryNotifyWithData[T any](operation OperationWithData[T], b BackOff, notify Notify) (T, error) {\n\treturn doRetryNotify(operation, b, notify, nil)\n}",
+      "quote_sha256": "ddf2248a289d545d6c0ab4ae4ff47c395081300266f602a086068cb21613a00c",
+      "unit": {
+        "selector": "RetryNotifyWithData",
+        "declaration_kind": "function",
+        "symbol": "backoff.RetryNotifyWithData",
+        "start_line": 53,
+        "end_line": 55,
+        "quote": "func RetryNotifyWithData[T any](operation OperationWithData[T], b BackOff, notify Notify) (T, error) {\n\treturn doRetryNotify(operation, b, notify, nil)\n}",
+        "declaration": "func RetryNotifyWithData[T any](operation OperationWithData[T], b BackOff, notify Notify) (T, error)",
+        "function_type": "func[T any](operation OperationWithData[T], b BackOff, notify Notify) (T, error)",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "doRetryNotify(operation, b, notify, nil)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:RetryNotifyWithTimerAndData": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 66,
+      "last_line": 68,
+      "quote": "func RetryNotifyWithTimerAndData[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error) {\n\treturn doRetryNotify(operation, b, notify, t)\n}",
+      "quote_sha256": "c7c9cd17bb9af702f02774f323df71a6485c270e3b46869bc6cac4e0b1128afb",
+      "unit": {
+        "selector": "RetryNotifyWithTimerAndData",
+        "declaration_kind": "function",
+        "symbol": "backoff.RetryNotifyWithTimerAndData",
+        "start_line": 66,
+        "end_line": 68,
+        "quote": "func RetryNotifyWithTimerAndData[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error) {\n\treturn doRetryNotify(operation, b, notify, t)\n}",
+        "declaration": "func RetryNotifyWithTimerAndData[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error)",
+        "function_type": "func[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error)",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.CallExpr"
+          ],
+          "expressions": [
+            "doRetryNotify(operation, b, notify, t)"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:doRetryNotify": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "retry.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/retry.go",
+      "source_sha256": "b21e168bb7e9cef042818138ed24658db1ad314ef740218dc3b61725e2cd3212",
+      "first_line": 70,
+      "last_line": 118,
+      "quote": "func doRetryNotify[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error) {\n\tvar (\n\t\terr  error\n\t\tnext time.Duration\n\t\tres  T\n\t)\n\tif t == nil {\n\t\tt = &defaultTimer{}\n\t}\n\n\tdefer func() {\n\t\tt.Stop()\n\t}()\n\n\tctx := getContext(b)\n\n\tb.Reset()\n\tfor {\n\t\tres, err = operation()\n\t\tif err == nil {\n\t\t\treturn res, nil\n\t\t}\n\n\t\tvar permanent *PermanentError\n\t\tif errors.As(err, &permanent) {\n\t\t\treturn res, permanent.Err\n\t\t}\n\n\t\tif next = b.NextBackOff(); next == Stop {\n\t\t\tif cerr := ctx.Err(); cerr != nil {\n\t\t\t\treturn res, cerr\n\t\t\t}\n\n\t\t\treturn res, err\n\t\t}\n\n\t\tif notify != nil {\n\t\t\tnotify(err, next)\n\t\t}\n\n\t\tt.Start(next)\n\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn res, ctx.Err()\n\t\tcase <-t.C():\n\t\t}\n\t}\n}",
+      "quote_sha256": "c60e791227a1f63d334d6d0c796b64fc4590fc9187d3b25429b88f132df56e2d",
+      "unit": {
+        "selector": "doRetryNotify",
+        "declaration_kind": "function",
+        "symbol": "backoff.doRetryNotify",
+        "start_line": 70,
+        "end_line": 118,
+        "quote": "func doRetryNotify[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error) {\n\tvar (\n\t\terr  error\n\t\tnext time.Duration\n\t\tres  T\n\t)\n\tif t == nil {\n\t\tt = &defaultTimer{}\n\t}\n\n\tdefer func() {\n\t\tt.Stop()\n\t}()\n\n\tctx := getContext(b)\n\n\tb.Reset()\n\tfor {\n\t\tres, err = operation()\n\t\tif err == nil {\n\t\t\treturn res, nil\n\t\t}\n\n\t\tvar permanent *PermanentError\n\t\tif errors.As(err, &permanent) {\n\t\t\treturn res, permanent.Err\n\t\t}\n\n\t\tif next = b.NextBackOff(); next == Stop {\n\t\t\tif cerr := ctx.Err(); cerr != nil {\n\t\t\t\treturn res, cerr\n\t\t\t}\n\n\t\t\treturn res, err\n\t\t}\n\n\t\tif notify != nil {\n\t\t\tnotify(err, next)\n\t\t}\n\n\t\tt.Start(next)\n\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn res, ctx.Err()\n\t\tcase <-t.C():\n\t\t}\n\t}\n}",
+        "declaration": "func doRetryNotify[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error)",
+        "function_type": "func[T any](operation OperationWithData[T], b BackOff, notify Notify, t Timer) (T, error)"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:Timer": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "timer.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/timer.go",
+      "source_sha256": "573cf5acb47aed687ec55dededb00a18ad82429ee9ad0e9ca60c4872197a2c89",
+      "first_line": 5,
+      "last_line": 9,
+      "quote": "type Timer interface {\n\tStart(duration time.Duration)\n\tStop()\n\tC() <-chan time.Time\n}",
+      "quote_sha256": "553c8d95ead851cb3437d6d8b674998e9931d33b86e061115998c42f34b8d293",
+      "unit": {
+        "selector": "Timer",
+        "declaration_kind": "type",
+        "symbol": "backoff.Timer",
+        "start_line": 5,
+        "end_line": 9,
+        "quote": "type Timer interface {\n\tStart(duration time.Duration)\n\tStop()\n\tC() <-chan time.Time\n}",
+        "declaration": "type Timer interface {\n\tStart(duration time.Duration)\n\tStop()\n\tC() <-chan time.Time\n}",
+        "function_type": ""
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:defaultTimer.Start": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "timer.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/timer.go",
+      "source_sha256": "573cf5acb47aed687ec55dededb00a18ad82429ee9ad0e9ca60c4872197a2c89",
+      "first_line": 22,
+      "last_line": 28,
+      "quote": "func (t *defaultTimer) Start(duration time.Duration) {\n\tif t.timer == nil {\n\t\tt.timer = time.NewTimer(duration)\n\t} else {\n\t\tt.timer.Reset(duration)\n\t}\n}",
+      "quote_sha256": "66b94618a6089127b8a835642c18aa488b5f9e188a19d29b988fbb6635f2cb79",
+      "unit": {
+        "selector": "defaultTimer.Start",
+        "declaration_kind": "method",
+        "symbol": "backoff.defaultTimer.Start",
+        "start_line": 22,
+        "end_line": 28,
+        "quote": "func (t *defaultTimer) Start(duration time.Duration) {\n\tif t.timer == nil {\n\t\tt.timer = time.NewTimer(duration)\n\t} else {\n\t\tt.timer.Reset(duration)\n\t}\n}",
+        "declaration": "func (t *defaultTimer) Start(duration time.Duration)",
+        "function_type": "func(duration time.Duration)",
+        "receiver_type": "*defaultTimer"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:defaultTimer.Stop": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "timer.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/timer.go",
+      "source_sha256": "573cf5acb47aed687ec55dededb00a18ad82429ee9ad0e9ca60c4872197a2c89",
+      "first_line": 31,
+      "last_line": 35,
+      "quote": "func (t *defaultTimer) Stop() {\n\tif t.timer != nil {\n\t\tt.timer.Stop()\n\t}\n}",
+      "quote_sha256": "ee1ba64cef8575cc25305add9cdbb95ae72ac504b759137511be63a898746368",
+      "unit": {
+        "selector": "defaultTimer.Stop",
+        "declaration_kind": "method",
+        "symbol": "backoff.defaultTimer.Stop",
+        "start_line": 31,
+        "end_line": 35,
+        "quote": "func (t *defaultTimer) Stop() {\n\tif t.timer != nil {\n\t\tt.timer.Stop()\n\t}\n}",
+        "declaration": "func (t *defaultTimer) Stop()",
+        "function_type": "func()",
+        "receiver_type": "*defaultTimer"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:WithMaxRetries": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "tries.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/tries.go",
+      "source_sha256": "4dfae8898960edaf75a4d0c75deb7fd49b04b7ea06d7d665fc9043a411040ed8",
+      "first_line": 12,
+      "last_line": 14,
+      "quote": "func WithMaxRetries(b BackOff, max uint64) BackOff {\n\treturn &backOffTries{delegate: b, maxTries: max}\n}",
+      "quote_sha256": "e4f868f6703946a974421bcf717e6c962aeaaa09e825ec14e8059993305cdbd6",
+      "unit": {
+        "selector": "WithMaxRetries",
+        "declaration_kind": "function",
+        "symbol": "backoff.WithMaxRetries",
+        "start_line": 12,
+        "end_line": 14,
+        "quote": "func WithMaxRetries(b BackOff, max uint64) BackOff {\n\treturn &backOffTries{delegate: b, maxTries: max}\n}",
+        "declaration": "func WithMaxRetries(b BackOff, max uint64) BackOff",
+        "function_type": "func(b BackOff, max uint64) BackOff",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.UnaryExpr"
+          ],
+          "expressions": [
+            "&backOffTries{delegate: b, maxTries: max}"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:backOffTries.NextBackOff": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "tries.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/tries.go",
+      "source_sha256": "4dfae8898960edaf75a4d0c75deb7fd49b04b7ea06d7d665fc9043a411040ed8",
+      "first_line": 22,
+      "last_line": 33,
+      "quote": "func (b *backOffTries) NextBackOff() time.Duration {\n\tif b.maxTries == 0 {\n\t\treturn Stop\n\t}\n\tif b.maxTries > 0 {\n\t\tif b.maxTries <= b.numTries {\n\t\t\treturn Stop\n\t\t}\n\t\tb.numTries++\n\t}\n\treturn b.delegate.NextBackOff()\n}",
+      "quote_sha256": "f65fd03ddad42304ea5682c3a62656595ce64edd3d6f0070f2181f0d54e11f7a",
+      "unit": {
+        "selector": "backOffTries.NextBackOff",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffTries.NextBackOff",
+        "start_line": 22,
+        "end_line": 33,
+        "quote": "func (b *backOffTries) NextBackOff() time.Duration {\n\tif b.maxTries == 0 {\n\t\treturn Stop\n\t}\n\tif b.maxTries > 0 {\n\t\tif b.maxTries <= b.numTries {\n\t\t\treturn Stop\n\t\t}\n\t\tb.numTries++\n\t}\n\treturn b.delegate.NextBackOff()\n}",
+        "declaration": "func (b *backOffTries) NextBackOff() time.Duration",
+        "function_type": "func() time.Duration",
+        "receiver_type": "*backOffTries"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    },
+    "v4.3.0:backOffTries.Reset": {
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "source_path": "tries.go",
+      "source_snapshot": "new-public-sources-v1/cenkalti--backoff/720b78985a65c0452fd37bb155c7cac4157a7c45/tries.go",
+      "source_sha256": "4dfae8898960edaf75a4d0c75deb7fd49b04b7ea06d7d665fc9043a411040ed8",
+      "first_line": 35,
+      "last_line": 38,
+      "quote": "func (b *backOffTries) Reset() {\n\tb.numTries = 0\n\tb.delegate.Reset()\n}",
+      "quote_sha256": "59f14f2e47fb87af3be116b3a7bd9bea08381b014a32171032cc1b628f4845d3",
+      "unit": {
+        "selector": "backOffTries.Reset",
+        "declaration_kind": "method",
+        "symbol": "backoff.backOffTries.Reset",
+        "start_line": 35,
+        "end_line": 38,
+        "quote": "func (b *backOffTries) Reset() {\n\tb.numTries = 0\n\tb.delegate.Reset()\n}",
+        "declaration": "func (b *backOffTries) Reset()",
+        "function_type": "func()",
+        "receiver_type": "*backOffTries"
+      },
+      "producer": {
+        "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+        "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+        "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.6.1"
+      },
+      "complete_callable_or_type": true,
+      "physical_quote_verified": true,
+      "runtime_guarantee_from_syntax": false
+    }
+  },
+  "files": {
+    "backoff-chapter-candidates-v2/en.md": {
+      "bytes": 22570,
+      "sha256": "aa16d802aeb7455a7f171ef19a2bedd2426a480a9d020185400d6c69d8547c9c"
+    },
+    "backoff-chapter-candidates-v2/pt-br.md": {
+      "bytes": 23975,
+      "sha256": "417f0086656a262aa51e0c6ba5a90a5f60c20210f34398f517cc4c3f338f7e23"
+    }
+  },
+  "source_pack_sha256": "94bd64582d717b59d9566d9c4026f01ad5c7e180f3dc9b807e4f76dad888a19a",
+  "runtime_results_sha256": "51f1fb6d25c913bdee829d025b7302b8748087f839590099ee221cc13b7b829f",
+  "compatibility_results_sha256": "0aa448140ef6f1d23287ec271bbefb7b033162cd5479b5d0821cceb1e29dbb70",
+  "source_executed_under_confined_protocol": true,
+  "real_retry_timer_or_sleep": false,
+  "example_executed": false,
+  "command_executed": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_excluded": true,
+  "publication_authorized": false,
+  "faq_overlap": "All seven FAQ answers derive from chapter claims; not seven independent examples.",
+  "comparison_frozen_before_model_response": true
+}

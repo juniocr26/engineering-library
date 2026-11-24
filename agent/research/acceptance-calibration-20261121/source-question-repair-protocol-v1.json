@@ -1,0 +1,36 @@
+{
+  "frozen_at": "2026-11-21T17:11:50.976685+00:00",
+  "before_Mprediction": true,
+  "hypothesis": "C01questionmislabelsPositionalArgs asfunction while frozen source/reference define a function type. Repair only that leading question, preserving every other question/source/schema/options, may recover correct declaration role and complete signature without supplied answer bank. It may still fail complete-note acceptance.",
+  "model": "llama3.2:3b",
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "transport_timeout_seconds": 900,
+  "calls": [
+    {
+      "task": "cobra",
+      "method": "M",
+      "request": "agent/research/acceptance-calibration-20261121/source-question-repair-v1/cobra/M/request.json",
+      "request_sha256": "cf899a84a0b3194abc18a8401a8cfce8998e18f6fc996d6b580bda8e1adebff3"
+    }
+  ],
+  "baseline_Lrequest_sha256": "f3602784e6a6c8c9c4f1d6c89927b915649d75d9041e33d805b6e228a00fa2ec",
+  "sole_intended_input_difference": {
+    "field": "messages[1].content embeddedJSON.questions[0].question",
+    "from": "What is the PositionalArgs function signature?",
+    "to": "What kind of declaration is PositionalArgs, and which parameter types and result type does it define?",
+    "serialization": "EmbeddedJSON reserializedensure_asciiFalse; semantic allotherfieldsassertedequal below."
+  },
+  "primary_metrics": [
+    "C01exactdefinedfunctiontyperole",
+    "C01parametersanderrorresultcoverage"
+  ],
+  "secondary_metrics": [
+    "All unchanged nine required propositions and EN/PTparity",
+    "Complete bounded mixed note under unchanged11dimensions"
+  ],
+  "limitations": "One development-exposed deterministic prompt intervention. No independent generalization, weight changes or lower factual standard. Do not replace original Loutput or conditionalLcriticselection with this result.",
+  "stop_policy": "One request only, no retries; transport failure preserved. Run after Lterminal and resource reassessment.",
+  "owner_approved": false,
+  "gold": 0,
+  "optimizer_updates": 0
+}

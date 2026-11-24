@@ -1,0 +1,101 @@
+{
+  "at": "2026-11-21T05:59:12.740333+00:00",
+  "task": "H53 complete selected cv::Algorithm virtual/default/persistence context",
+  "candidate": "opencv-algorithm-context-candidate-v1",
+  "acceptance": "acceptance-protocol-v1.json",
+  "required_dimensions": [
+    "factual accuracy",
+    "source provenance",
+    "architecture boundaries",
+    "relevant completeness",
+    "API and behavior",
+    "errors and exceptions",
+    "test evidence versus execution",
+    "example validity",
+    "EN/PT-BR equivalence",
+    "FAQ quality",
+    "existing-document preservation",
+    "uncertainty"
+  ],
+  "scope": "Selected base Algorithm class and seven pinned public files, not full derived algorithm/FileStorage implementation, build integration or successful persistence. Source-first manual output, not neural or independent-family result.",
+  "required_fact_groups": [
+    "Basevirtualdeclarationsanddefaultempty/write/read/clearbodies",
+    "Nonvirtualnamedwritewrapperandinnervirtualcall",
+    "Staticread/load/loadFromStringwrittenstagesanddifferentguards",
+    "FileStorage/FileNode/Ptr/create/derivedoverride dependencies and unresolved behavior",
+    "Save/defaultname/writeFormat source context without success/atomicity promise",
+    "Assertionconfigurationandconditionaldeprecateddeclaration limits",
+    "Rootlicenseplusfile-specificnoticesandhistoricalexposure",
+    "ActualownedC++controlscopeversusOpenCV/upstreamtests",
+    "Existingheaderdocumentationandboundedwritten-testdiscoverylimitations",
+    "CompleteEN/PTmeaningandatleastfivegroundedFAQpairs",
+    "Actualmatchingownedexampleandreceipt,noexternalbuild/run",
+    "Preservation/uncertainty/ownerandtrainingseparation"
+  ],
+  "source_facts": "opencv-algorithm-context-source-facts-v1.json",
+  "owned_language_evidence": "cpp-owned-dispatch-observation-review-v1.json",
+  "written_test_discovery": "opencv-algorithm-written-test-discovery-v1.json",
+  "adverse_claims": [
+    {
+      "id": "OCA1",
+      "claim": "All derived Algorithm.empty implementations return false.",
+      "oracle": "UNSUPPORTED_OR_CONTRADICTED_GENERALIZATION"
+    },
+    {
+      "id": "OCA2",
+      "claim": "The named write overload is nonvirtual, so its inner one-argument write cannot dispatch virtually.",
+      "oracle": "CONTRADICTED"
+    },
+    {
+      "id": "OCA3",
+      "claim": "Selected loadFromString explicitly checks fn.empty before calling create.",
+      "oracle": "CONTRADICTED"
+    },
+    {
+      "id": "OCA4",
+      "claim": "CV_Assert is removed in every release build.",
+      "oracle": "CONTRADICTED"
+    },
+    {
+      "id": "OCA5",
+      "claim": "Save guarantees every parameter is durably and atomically persisted.",
+      "oracle": "UNSUPPORTED_RUNTIME_GUARANTEE"
+    },
+    {
+      "id": "OCA6",
+      "claim": "The pointer-storage write overload has been globally removed because its definition is absent from selected algorithm.cpp.",
+      "oracle": "UNSUPPORTED_REMOVAL"
+    },
+    {
+      "id": "OCA7",
+      "claim": "Owned C++ controls prove OpenCV and every derived type were compiled and tested.",
+      "oracle": "FALSE_PROVENANCE"
+    },
+    {
+      "id": "OCA8",
+      "claim": "The root Apache2 text replaces every selected source-file notice.",
+      "oracle": "UNSUPPORTED_RIGHTS_GENERALIZATION"
+    }
+  ],
+  "supported_controls": [
+    {
+      "id": "OCP1",
+      "claim": "Selected base empty returns false; derived behavior needs more evidence."
+    },
+    {
+      "id": "OCP2",
+      "claim": "Selected load has an explicit empty-node early empty Ptr return."
+    },
+    {
+      "id": "OCP3",
+      "claim": "Selected named-write wrapper calls the one-argument virtual write."
+    },
+    {
+      "id": "OCP4",
+      "claim": "Selected loadFromString lacks the same explicit open/node guards shown in load; full invalid-input outcomes remain unresolved."
+    }
+  ],
+  "automatic_gold_or_publication": false,
+  "owner_approved": false,
+  "upstream_execution": false
+}

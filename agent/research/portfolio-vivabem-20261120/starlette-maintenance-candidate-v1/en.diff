@@ -1,0 +1,11 @@
+--- en-before.md
++++ en-after.md
+@@ -1,5 +1,5 @@
+-# Config casting diagnostic — before revision
++# Config casting diagnostic — after revision
+ 
+-At `9b403a0c33f0e2eebba099e9e6aa1c1e9535daec`, the selected `Config._perform_cast` handler catches `TypeError` and `ValueError` from `cast(value)`. Its error message directly reads `cast.__name__`.
++At `271c277da0ff64e2048a4d46ecc812b9d61db5f6`, the selected `Config._perform_cast` handler still catches `TypeError` and `ValueError` from `cast(value)`. It now assigns `cast_name = getattr(cast, "__name__", type(cast).__name__)` and uses `cast_name` in its error message.
+ 
+-Evidence: `starlette/config.py:139–142`. This is a static description of the selected branch, without runtime execution.
++Evidence: `starlette/config.py:139–143`. The default expression names the callable's type when the ordinary attribute lookup has no `__name__`. This does not establish that every custom attribute lookup or diagnostic construction succeeds. The selected method's preceding AST, call expression and caught exception types are unchanged. No runtime execution was performed.

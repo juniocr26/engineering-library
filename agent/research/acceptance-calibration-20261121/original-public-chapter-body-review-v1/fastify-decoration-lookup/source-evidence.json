@@ -1,0 +1,92 @@
+{
+  "repository": "fastify",
+  "revision": "825d7722e4932a39193729997c76535d0a963b6b",
+  "parent_source_evidence": "agent/research/continuation-20261119/chapters/fastify-decoration-lookup/source-excerpts.json",
+  "parent_source_evidence_sha256": "6d068051609d77e4754a4557530b36857a92cd9cecae511e3f1b7e75055ef84b",
+  "sources": [
+    {
+      "path": "lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "start_line": 1,
+      "end_line": 161,
+      "quote": "'use strict'\n\nconst {\n  kReply,\n  kRequest,\n  kState,\n  kHasBeenDecorated\n} = require('./symbols.js')\n\nconst {\n  FST_ERR_DEC_ALREADY_PRESENT,\n  FST_ERR_DEC_MISSING_DEPENDENCY,\n  FST_ERR_DEC_AFTER_START,\n  FST_ERR_DEC_REFERENCE_TYPE,\n  FST_ERR_DEC_DEPENDENCY_INVALID_TYPE,\n  FST_ERR_DEC_UNDECLARED\n} = require('./errors')\n\nfunction decorate (instance, name, fn, dependencies) {\n  if (Object.hasOwn(instance, name)) {\n    throw new FST_ERR_DEC_ALREADY_PRESENT(name)\n  }\n\n  checkDependencies(instance, name, dependencies)\n\n  if (fn && (typeof fn.getter === 'function' || typeof fn.setter === 'function')) {\n    Object.defineProperty(instance, name, {\n      get: fn.getter,\n      set: fn.setter\n    })\n  } else {\n    instance[name] = fn\n  }\n}\n\nfunction getInstanceDecorator (name) {\n  if (!checkExistence(this, name)) {\n    throw new FST_ERR_DEC_UNDECLARED(name, 'instance')\n  }\n\n  const decorator = this[name]\n  if (typeof decorator === 'function') {\n    return decorator.bind(this)\n  }\n\n  return decorator\n}\n\nfunction decorateConstructor (konstructor, name, fn, dependencies) {\n  const instance = konstructor.prototype\n  if (Object.hasOwn(instance, name) || hasKey(konstructor, name) || hasInstanceProperty(konstructor, name)) {\n    throw new FST_ERR_DEC_ALREADY_PRESENT(name)\n  }\n\n  konstructor[kHasBeenDecorated] = true\n  checkDependencies(konstructor, name, dependencies)\n\n  if (fn && (typeof fn.getter === 'function' || typeof fn.setter === 'function')) {\n    Object.defineProperty(instance, name, {\n      get: fn.getter,\n      set: fn.setter\n    })\n  } else if (typeof fn === 'function') {\n    instance[name] = fn\n  } else {\n    konstructor.props.push({ key: name, value: fn })\n  }\n}\n\nfunction checkReferenceType (name, fn) {\n  if (typeof fn === 'object' && fn && !(typeof fn.getter === 'function' || typeof fn.setter === 'function')) {\n    throw new FST_ERR_DEC_REFERENCE_TYPE(name, typeof fn)\n  }\n}\n\nfunction decorateFastify (name, fn, dependencies) {\n  assertNotStarted(this, name)\n  decorate(this, name, fn, dependencies)\n  return this\n}\n\nfunction checkExistence (instance, name) {\n  if (name) {\n    return name in instance || (instance.prototype && name in instance.prototype) || hasKey(instance, name)\n  }\n\n  return instance in this\n}\n\nfunction hasKey (fn, name) {\n  return fn.props ? fn.props.some(p => p.key === name) : false\n}\n\nfunction hasInstanceProperty (konstructor, name) {\n  let k = konstructor\n  while (k) {\n    if (k.instanceProperties && k.instanceProperties.has(name)) return true\n    k = k.parent\n  }\n  return false\n}\n\nfunction checkRequestExistence (name) {\n  if (name && hasKey(this[kRequest], name)) return true\n  if (name && hasInstanceProperty(this[kRequest], name)) return true\n  return checkExistence(this[kRequest].prototype, name)\n}\n\nfunction checkReplyExistence (name) {\n  if (name && hasKey(this[kReply], name)) return true\n  if (name && hasInstanceProperty(this[kReply], name)) return true\n  return checkExistence(this[kReply].prototype, name)\n}\n\nfunction checkDependencies (instance, name, deps) {\n  if (deps === undefined || deps === null) {\n    return\n  }\n\n  if (!Array.isArray(deps)) {\n    throw new FST_ERR_DEC_DEPENDENCY_INVALID_TYPE(name)\n  }\n\n  for (let i = 0; i !== deps.length; ++i) {\n    if (!checkExistence(instance, deps[i]) && !hasInstanceProperty(instance, deps[i])) {\n      throw new FST_ERR_DEC_MISSING_DEPENDENCY(deps[i])\n    }\n  }\n}\n\nfunction decorateReply (name, fn, dependencies) {\n  assertNotStarted(this, name)\n  checkReferenceType(name, fn)\n  decorateConstructor(this[kReply], name, fn, dependencies)\n  return this\n}\n\nfunction decorateRequest (name, fn, dependencies) {\n  assertNotStarted(this, name)\n  checkReferenceType(name, fn)\n  decorateConstructor(this[kRequest], name, fn, dependencies)\n  return this\n}\n\nfunction assertNotStarted (instance, name) {\n  if (instance[kState].started) {\n    throw new FST_ERR_DEC_AFTER_START(name)\n  }\n}\n\nmodule.exports = {\n  add: decorateFastify,\n  exist: checkExistence,\n  existRequest: checkRequestExistence,\n  existReply: checkReplyExistence,\n  dependencies: checkDependencies,\n  decorateReply,\n  decorateRequest,\n  getInstanceDecorator,\n  hasKey\n}\n",
+      "role": "Expanded correction evidence; not all of this full file was supplied to the original model baseline."
+    },
+    {
+      "path": "fastify.js",
+      "source_sha256": "c64c8e3fd61261e76a849fe545d8f5eb8f9ea6136445fc86f1b30730e3b41d25",
+      "first_line": 40,
+      "last_line": 45,
+      "quote": "const { createServer } = require('./lib/server')\nconst Reply = require('./lib/reply')\nconst Request = require('./lib/request')\nconst Context = require('./lib/context.js')\nconst decorator = require('./lib/decorate')\nconst ContentTypeParser = require('./lib/content-type-parser.js')\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    },
+    {
+      "path": "fastify.js",
+      "source_sha256": "c64c8e3fd61261e76a849fe545d8f5eb8f9ea6136445fc86f1b30730e3b41d25",
+      "first_line": 136,
+      "last_line": 139,
+      "quote": "  // Public API\n  const fastify = {\n    // Fastify internals\n    [kState]: {\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    },
+    {
+      "path": "fastify.js",
+      "source_sha256": "c64c8e3fd61261e76a849fe545d8f5eb8f9ea6136445fc86f1b30730e3b41d25",
+      "first_line": 186,
+      "last_line": 190,
+      "quote": "    ),\n    [kReply]: Reply.buildReply(Reply),\n    [kRequest]: Request.buildRequest(Request, options.trustProxy),\n    [kFourOhFour]: fourOhFour,\n    [pluginUtils.kRegisteredPlugins]: [],\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    },
+    {
+      "path": "fastify.js",
+      "source_sha256": "c64c8e3fd61261e76a849fe545d8f5eb8f9ea6136445fc86f1b30730e3b41d25",
+      "first_line": 284,
+      "last_line": 290,
+      "quote": "    decorate: decorator.add,\n    hasDecorator: decorator.exist,\n    decorateReply: decorator.decorateReply,\n    decorateRequest: decorator.decorateRequest,\n    hasRequestDecorator: decorator.existRequest,\n    hasReplyDecorator: decorator.existReply,\n    getDecorator: decorator.getInstanceDecorator,\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    },
+    {
+      "path": "lib/symbols.js",
+      "source_sha256": "bddfadc6be13b7c28869ac052d499b0f400c6dacddc667500e3097cd7e6a4a6c",
+      "first_line": 27,
+      "last_line": 32,
+      "quote": "  kSchemaErrorFormatter: Symbol('fastify.schemaErrorFormatter'),\n  kSchemaVisited: Symbol('fastify.schemas.visited'),\n  // Request\n  kRequest: Symbol('fastify.Request'),\n  kRequestPayloadStream: Symbol('fastify.RequestPayloadStream'),\n  kRequestAcceptVersion: Symbol('fastify.RequestAcceptVersion'),\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    },
+    {
+      "path": "lib/symbols.js",
+      "source_sha256": "bddfadc6be13b7c28869ac052d499b0f400c6dacddc667500e3097cd7e6a4a6c",
+      "first_line": 45,
+      "last_line": 49,
+      "quote": "  kDefaultJsonParse: Symbol('fastify.defaultJSONParse'),\n  // Reply\n  kReply: Symbol('fastify.Reply'),\n  kReplySerializer: Symbol('fastify.reply.serializer'),\n  kReplyIsError: Symbol('fastify.reply.isError'),\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    },
+    {
+      "path": "types/instance.d.ts",
+      "source_sha256": "d131c9268b2c3d541743e376c439d8ca7611e04b187175bfb268d40724b7103f",
+      "first_line": 118,
+      "last_line": 127,
+      "quote": " * Fastify server instance. Returned by the core `fastify()` method.\n */\nexport interface FastifyInstance<\n  RawServer extends RawServerBase = RawServerDefault,\n  RawRequest extends RawRequestDefaultExpression<RawServer> = RawRequestDefaultExpression<RawServer>,\n  RawReply extends RawReplyDefaultExpression<RawServer> = RawReplyDefaultExpression<RawServer>,\n  Logger extends FastifyBaseLogger = FastifyBaseLogger,\n  TypeProvider extends FastifyTypeProvider = FastifyTypeProviderDefault\n> {\n  server: RawServer;\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    },
+    {
+      "path": "types/instance.d.ts",
+      "source_sha256": "d131c9268b2c3d541743e376c439d8ca7611e04b187175bfb268d40724b7103f",
+      "first_line": 160,
+      "last_line": 164,
+      "quote": "\n  hasDecorator(decorator: string | symbol): boolean;\n  hasRequestDecorator(decorator: string | symbol): boolean;\n  hasReplyDecorator(decorator: string | symbol): boolean;\n  hasPlugin(name: string): boolean;\n",
+      "role": "New interface/wiring evidence, not retroactively part of model baseline"
+    }
+  ],
+  "source_program_executed": false,
+  "primary_language_sources": [
+    "https://tc39.es/ecma262/2026/multipage/ordinary-and-exotic-objects-behaviours.html#sec-ordinarycallbindthis",
+    "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-relational-operators-runtime-semantics-evaluation"
+  ],
+  "license": {
+    "notice_file": "agent/research/adaptive-20261118/chapters/source-licenses/fastify.LICENSE",
+    "sha256": "23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2",
+    "local_research_access_authorized": true,
+    "training_approved": false,
+    "publication_approved": false
+  }
+}

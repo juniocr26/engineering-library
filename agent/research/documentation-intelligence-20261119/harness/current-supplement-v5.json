@@ -1,0 +1,117 @@
+{
+  "at": "2026-11-20T08:16:59.639739+00:00",
+  "schema": "harness-dated-current-supplement-v5",
+  "earlier_v4": {
+    "path": "agent/research/documentation-intelligence-20261119/harness/current-supplement-v4.json",
+    "sha256": "1d1dc614a1163a7585cc165ea628cc181549cc319344c258c1828ada3a4e7f58",
+    "bytes": 7041
+  },
+  "earlier_records_preserved": true,
+  "rows": [
+    {
+      "id": "all-body-alignment",
+      "status": "EXPERIMENTAL_OPTIONAL_VERIFIED_WITH_LIMITATIONS",
+      "capability_en": "All candidate paragraph bodies",
+      "capability_pt_br": "Todos os corpos candidatos de parágrafos",
+      "finding_en": "25 chapter pairs: 292 paired paragraph groups, 584 document spans and 276 unique source spans. Manual source mapping excludes tables, fences and FAQs; it does not establish generic entailment or independent approval.",
+      "finding_pt_br": "25 pares de capítulos: 292 grupos de parágrafos pareados, 584 trechos de documentos e 276 intervalos únicos de fonte. O mapeamento manual separa tabelas, blocos cercados e FAQs; não estabelece implicação genérica ou aprovação independente.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/chapter-body-claim-alignment-audit-v7.json",
+          "sha256": "6cc3cc7932a46aef5bee53aff35bb4c914fe67954ca7977392e547e434c5fe96",
+          "bytes": 1163
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/body-audit-version-routing-repair.json",
+          "sha256": "8f0cf4cd568a9f5fc6c1b36b0b5f92bdb9c70badda3fd587fa9c413c398fb5e1",
+          "bytes": 2433
+        }
+      ]
+    },
+    {
+      "id": "artifact-scope",
+      "status": "EXPERIMENTAL_OPTIONAL_VERIFIED_WITH_LIMITATIONS",
+      "capability_en": "Tables, commands and diagram identity",
+      "capability_pt_br": "Tabelas, comandos e identidade dos diagramas",
+      "finding_en": "Six paired tables contain 28 paired data rows. Twelve physical fences are checked separately, including six diagram bodies identical to the prior browser rendering. Existing command receipts are reused without claiming another execution.",
+      "finding_pt_br": "Seis tabelas pareadas contêm 28 linhas de dados pareadas. Doze blocos cercados físicos são conferidos separadamente, incluindo seis corpos de diagramas idênticos à renderização anterior no navegador. Recibos existentes de comandos são reutilizados sem alegar nova execução.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/document-tables-fences-alignment-v1.json",
+          "sha256": "6c262d627cb5dd326498ec651a8d032148064d45506099d10c630bc6a1ab3917",
+          "bytes": 95112
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/document-tables-fences-audit-v1.json",
+          "sha256": "43d5ecfda274c070f3e089550598ee639f06884ef9dbaf602907a1d3d4024600",
+          "bytes": 1060
+        }
+      ]
+    },
+    {
+      "id": "bounded-reader",
+      "status": "EXPERIMENTAL_OPTIONAL_VERIFIED_WITH_LIMITATIONS",
+      "capability_en": "Bounded evidence reading",
+      "capability_pt_br": "Leitura limitada de evidências",
+      "finding_en": "Twenty-five chapter-specific proof bundles partition the paragraph mapping; each is below 1 MiB. Reader V6 loads 376 targets matching its 376 local AST edges across 184 derived documents. Only 50 documents are chapter derivatives; two are review indices, 130 are artifact views and two are root indices.",
+      "finding_pt_br": "Vinte e cinco pacotes de prova por capítulo particionam o mapeamento de parágrafos; cada um fica abaixo de 1 MiB. O leitor V6 carrega 376 destinos correspondentes às 376 arestas locais da AST em 184 documentos derivados. Somente 50 documentos são derivados de capítulos; dois são índices de revisão, 130 são vistas de artefatos e dois são índices raiz.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-evaluation-v1.json",
+          "sha256": "bd1931b8cabe43a9f2d0619ec0c20de81d9f5d118f1242582d3deed81aa07541",
+          "bytes": 572
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/reader-bundle-evaluation-v6.json",
+          "sha256": "a803b67ebe1b6417bb4a6e6ffc20c5fe87736b12d2f7a7646099457eec62b0af",
+          "bytes": 2141
+        }
+      ]
+    },
+    {
+      "id": "static-source-canaries",
+      "status": "EXPERIMENTAL_OPTIONAL_VERIFIED_WITH_LIMITATIONS",
+      "capability_en": "Untrusted source directives in a closed profile",
+      "capability_pt_br": "Diretivas não confiáveis de fonte em perfil fechado",
+      "finding_en": "Twelve owned development canaries match their frozen references: five MODIFY, one NO-OP and six INCONCLUSIVE. No source executes and no canary enters candidate answers. This is deterministic profile evidence, not general LLM prompt-injection resistance.",
+      "finding_pt_br": "Doze canários próprios de desenvolvimento correspondem às referências congeladas: cinco MODIFY, um NO-OP e seis INCONCLUSIVE. Nenhuma fonte é executada e nenhum canário entra nas respostas candidatas. É evidência de perfil determinístico, não resistência geral de LLM a injeção de prompt.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/conditional-faq-source-canaries-evaluation-v1.json",
+          "sha256": "879fea0a730b14ad36e74eded399209fddf7f45431b20fdf5298fa8e4472cec9",
+          "bytes": 112957
+        }
+      ]
+    },
+    {
+      "id": "candidate-readiness",
+      "status": "EXPERIMENTAL_OPTIONAL_VERIFIED_WITH_LIMITATIONS",
+      "capability_en": "Current V8 candidates remain quarantined",
+      "capability_pt_br": "Candidatos V8 continuam em quarentena",
+      "finding_en": "The current dataset retains 305 effective records and 1,525 false authority flags, with 1,271 direct reference checks. No training gate is fully passed and no optimizer step occurs. Source recovery V3 predates these latest artifacts; a new sealed delta must verify them before claiming recovery.",
+      "finding_pt_br": "O dataset atual mantém 305 registros efetivos e 1.525 flags falsas de autoridade, com 1.271 conferências diretas de referências. Nenhum gate de treino está totalmente satisfeito e nenhum passo de otimizador ocorre. A recuperação de fontes V3 antecede estes artefatos recentes; um novo delta selado deve verificá-los antes de alegar recuperação.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/training-readiness-current-data-v8-reconciliation.json",
+          "sha256": "762d19ece101a3fa4231753dd52791ace2c84cfb53d9542f31198a5ae00010e6",
+          "bytes": 4067
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/dataset-current-lineage-audit-v8.json",
+          "sha256": "9d7943ff03d5b4670433fd289557f882cf3704a39f9f67c9405ac5d74b5b8b0e",
+          "bytes": 1807
+        }
+      ]
+    }
+  ],
+  "row_count": 5,
+  "rows_overlap_earlier_capabilities": true,
+  "do_not_sum_as_independent_capabilities": true,
+  "ordinary_ruby_routing_changed": false,
+  "active_catalog_changed": false,
+  "new_mcp_server_installed": false,
+  "plugin_installed": false,
+  "autonomous_model_tool_loop_demonstrated": false,
+  "owner_approved": false,
+  "training_runs": 0
+}

@@ -1,0 +1,1298 @@
+{
+  "at": "2026-11-21T18:18:07.823388+00:00",
+  "rows": [
+    {
+      "id": "chi-recoverer",
+      "request_sha256": "456d22ea67d985e12c9a2f37bed20ed25804633a6e4a32c6d382348aadfc8f7a",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "middleware/recoverer.go",
+              "line": 22,
+              "quote": "func Recoverer(next http.Handler) http.Handler {\n\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\tdefer func() {\n\t\t\tif rvr := recover(); rvr != nil {\n\t\t\t\tif rvr == http.ErrAbortHandler {\n\t\t\t\t\t// we don't recover http.ErrAbortHandler so the response\n\t\t\t\t\t// to the client is aborted, this should not be logged\n\t\t\t\t\tpanic(rvr)\n\t\t\t\t}\n\n\t\t\t\tlogEntry := GetLogEntry(r)\n\t\t\t\tif logEntry != nil {\n\t\t\t\t\tlogEntry.Panic(rvr, debug.Stack())\n\t\t\t\t} else {\n\t\t\t\t\tPrintPrettyStack(rvr)\n\t\t\t\t}\n\n\t\t\t\tif r.Header.Get(\"Connection\") != \"Upgrade\" {\n\t\t\t\t\tw.WriteHeader(http.StatusInternalServerError)\n\t\t\t\t}\n\t\t\t}\n\t\t}()\n\n\t\tnext.ServeHTTP(w, r)\n\t}\n\n\treturn http.HandlerFunc(fn)\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "Recoverer",
+              "qualified_symbol": "middleware.Recoverer",
+              "enclosing_impl_hint": "middleware",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "chi-retry-after-helper",
+      "request_sha256": "471b903cac38e33d5812fa0aaaba030350f64bd4ce8d0bff54d3127125506658",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "middleware/throttle.go",
+              "line": 149,
+              "quote": "func (t throttler) setRetryAfterHeaderIfNeeded(w http.ResponseWriter, ctxDone bool) {\n\tif t.retryAfterFn == nil {\n\t\treturn\n\t}\n\t// delay-seconds is non-negative, and rounding up avoids asking clients to\n\t// retry before the duration returned by RetryAfterFn has elapsed.\n\tdelay := t.retryAfterFn(ctxDone)\n\tseconds := delay / time.Second\n\tif delay < 0 {\n\t\tseconds = 0\n\t} else if delay%time.Second != 0 {\n\t\tseconds++\n\t}\n\tw.Header().Set(\"Retry-After\", strconv.FormatInt(int64(seconds), 10))\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "setRetryAfterHeaderIfNeeded",
+              "qualified_symbol": "middleware.throttler.setRetryAfterHeaderIfNeeded",
+              "enclosing_impl_hint": "throttler",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+                "binary_sha256": "5aa75795445383f47f1f61824c50be60bf6308f0f7b43fa38f161e5d3cc01cab",
+                "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.5.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "chi-throttle-contract",
+      "request_sha256": "1121adce215f90f19cbe883e70d593b8b60cfc22edfb7ae2f31482d85be59edf",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "middleware/throttle.go",
+              "line": 47,
+              "quote": "func ThrottleWithOpts(opts ThrottleOpts) func(http.Handler) http.Handler {\n\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n\n\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n\n\tstatusCode := opts.StatusCode\n\tif statusCode == 0 {\n\t\tstatusCode = http.StatusTooManyRequests\n\t}\n\n\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n\n\t// Filling tokens.\n\tfor i := 0; i < opts.Limit+opts.BacklogLimit; i++ {\n\t\tif i < opts.Limit {\n\t\t\tt.tokens <- token{}\n\t\t}\n\t\tt.backlogTokens <- token{}\n\t}\n\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx := r.Context()\n\n\t\t\tselect {\n\n\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\treturn\n\n\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n\n\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n\t\t\t\tdefault:\n\t\t\t\t\t// No immediate token available, need to wait with timer\n\t\t\t\t}\n\n\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n\t\t\t\tselect {\n\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n\n\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n\t\t\t\treturn\n\t\t\t}\n\t\t}\n\n\t\treturn http.HandlerFunc(fn)\n\t}\n}\n",
+              "complete_unit": true,
+              "symbol": "ThrottleWithOpts",
+              "enclosing_impl_hint": "middleware",
+              "qualified_symbol": "middleware.ThrottleWithOpts",
+              "preparation": "explicit complete definition-layout range; not a language/semantic or runtime verifier"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "chi-throttle-workflow",
+      "request_sha256": "0f09b005d344d6852f5240dfa0f0ce5641fbdf175f68b64ab093c7e6178607ad",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "middleware/throttle.go",
+              "line": 47,
+              "quote": "func ThrottleWithOpts(opts ThrottleOpts) func(http.Handler) http.Handler {\n\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n\n\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n\n\tstatusCode := opts.StatusCode\n\tif statusCode == 0 {\n\t\tstatusCode = http.StatusTooManyRequests\n\t}\n\n\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n\n\t// Filling tokens.\n\tfor i := 0; i < opts.Limit+opts.BacklogLimit; i++ {\n\t\tif i < opts.Limit {\n\t\t\tt.tokens <- token{}\n\t\t}\n\t\tt.backlogTokens <- token{}\n\t}\n\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx := r.Context()\n\n\t\t\tselect {\n\n\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\treturn\n\n\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n\n\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n\t\t\t\tdefault:\n\t\t\t\t\t// No immediate token available, need to wait with timer\n\t\t\t\t}\n\n\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n\t\t\t\tselect {\n\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n\n\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n\t\t\t\treturn\n\t\t\t}\n\t\t}\n\n\t\treturn http.HandlerFunc(fn)\n\t}\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ThrottleWithOpts",
+              "qualified_symbol": "middleware.ThrottleWithOpts",
+              "enclosing_impl_hint": "middleware",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+                "binary_sha256": "a37bbbf654efda375494201a8e8bbc427509f71d7911be648613c8e986c16781",
+                "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.6.1"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "middleware/throttle.go",
+              "line": 149,
+              "quote": "func (t throttler) setRetryAfterHeaderIfNeeded(w http.ResponseWriter, ctxDone bool) {\n\tif t.retryAfterFn == nil {\n\t\treturn\n\t}\n\t// delay-seconds is non-negative, and rounding up avoids asking clients to\n\t// retry before the duration returned by RetryAfterFn has elapsed.\n\tdelay := t.retryAfterFn(ctxDone)\n\tseconds := delay / time.Second\n\tif delay < 0 {\n\t\tseconds = 0\n\t} else if delay%time.Second != 0 {\n\t\tseconds++\n\t}\n\tw.Header().Set(\"Retry-After\", strconv.FormatInt(int64(seconds), 10))\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "setRetryAfterHeaderIfNeeded",
+              "qualified_symbol": "middleware.throttler.setRetryAfterHeaderIfNeeded",
+              "enclosing_impl_hint": "throttler",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+                "binary_sha256": "a37bbbf654efda375494201a8e8bbc427509f71d7911be648613c8e986c16781",
+                "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.6.1"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "chi-timeout",
+      "request_sha256": "768c7dbae4e13465b04e91ae6918153e3c977bedcc9a2f625a2419f89787c8e4",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "middleware/timeout.go",
+              "line": 32,
+              "quote": "func Timeout(timeout time.Duration) func(next http.Handler) http.Handler {\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx, cancel := context.WithTimeout(r.Context(), timeout)\n\t\t\tdefer func() {\n\t\t\t\tcancel()\n\t\t\t\tif ctx.Err() == context.DeadlineExceeded {\n\t\t\t\t\tw.WriteHeader(http.StatusGatewayTimeout)\n\t\t\t\t}\n\t\t\t}()\n\n\t\t\tr = r.WithContext(ctx)\n\t\t\tnext.ServeHTTP(w, r)\n\t\t}\n\t\treturn http.HandlerFunc(fn)\n\t}\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "Timeout",
+              "qualified_symbol": "middleware.Timeout",
+              "enclosing_impl_hint": "middleware",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "coverage-policy-live-gio-dimensions-helpers",
+      "request_sha256": "d56577467ab0a4a73605e3c1cf49baad3ace36c9b324a254bdf0f70f6408ad1e",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 19,
+              "quote": "func ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateDimensions",
+              "qualified_symbol": "imaging.ValidateDimensions",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+                "binary_sha256": "a37bbbf654efda375494201a8e8bbc427509f71d7911be648613c8e986c16781",
+                "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.6.1"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 23,
+              "quote": "func ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateImageSize",
+              "qualified_symbol": "imaging.ValidateImageSize",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+                "binary_sha256": "a37bbbf654efda375494201a8e8bbc427509f71d7911be648613c8e986c16781",
+                "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.6.1"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "duckdb-boolean-factory",
+      "request_sha256": "26efe580c3e5d9fdc7feb56ea61974af0b5b1b9a5286c73c47b5883aefd06e53",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "src/common/types/value.cpp",
+              "line": 490,
+              "quote": "Value Value::BOOLEAN(bool value) {\n\tValue result(LogicalType::BOOLEAN);\n\tresult.value_.boolean = value;\n\tresult.is_null = false;\n\treturn result;\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            },
+            "S2": {
+              "path": "src/common/types/value.cpp",
+              "line": 134,
+              "quote": "Value::Value(LogicalType type) : type_(std::move(type)), is_null(true) {\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "fastify-checkrequestexistence",
+      "request_sha256": "db0dcf14df796cdfa7e51c6a89f07b49dc27e428e2190d7b70b848957261ce53",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "lib/decorate.js",
+              "line": 103,
+              "quote": "function checkRequestExistence (name) {\n  if (name && hasKey(this[kRequest], name)) return true\n  if (name && hasInstanceProperty(this[kRequest], name)) return true\n  return checkExistence(this[kRequest].prototype, name)\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-animated-limits-caller",
+      "request_sha256": "7b99159331d954c487f2f75deb3827fe22a60b8bdb618e8e5e60acf34747188e",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 35,
+              "quote": "func ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateAnimatedDimensions",
+              "qualified_symbol": "imaging.ValidateAnimatedDimensions",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-animated-limits-helpers",
+      "request_sha256": "5d0e8ae795cb583dc67beeb6b8c5c240dc19ea388c50d643e5fe2c3116c9e8ab",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 35,
+              "quote": "func ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateAnimatedDimensions",
+              "qualified_symbol": "imaging.ValidateAnimatedDimensions",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 23,
+              "quote": "func ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateImageSize",
+              "qualified_symbol": "imaging.ValidateImageSize",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-compression-flow-caller",
+      "request_sha256": "60285c71e018c11f5e5708e6aac4042d8373cbf43871e99585cbad77a0b51094",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/application/imagecompression/usecase.go",
+              "line": 46,
+              "quote": "func (u UseCase) Execute(ctx context.Context, input []byte) (Result, error) {\n\tif len(input) == 0 {\n\t\treturn Result{}, ErrEmptyImage\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tresult, err := u.compressor.Compress(input)\n\tif err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\treturn result, nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "Execute",
+              "qualified_symbol": "imagecompression.UseCase.Execute",
+              "enclosing_impl_hint": "UseCase",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-compression-flow-helpers",
+      "request_sha256": "c8198fa26d14284eebce46328427c07333ca8795320e04eaae9296c6f3015799",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/application/imagecompression/usecase.go",
+              "line": 46,
+              "quote": "func (u UseCase) Execute(ctx context.Context, input []byte) (Result, error) {\n\tif len(input) == 0 {\n\t\treturn Result{}, ErrEmptyImage\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tresult, err := u.compressor.Compress(input)\n\tif err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\treturn result, nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "Execute",
+              "qualified_symbol": "imagecompression.UseCase.Execute",
+              "enclosing_impl_hint": "UseCase",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+              "line": 40,
+              "quote": "func (c Compressor) Compress(input []byte) (imagecompression.Result, error) {\n\tdetected, err := imaging.DetectFormat(input)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tswitch detected.Format {\n\tcase imagecompression.FormatJPEG:\n\t\treturn c.compressJPEG(input)\n\tcase imagecompression.FormatPNG:\n\t\treturn c.compressPNG(input)\n\tcase imagecompression.FormatWebP:\n\t\treturn c.compressWebP(input)\n\tcase imagecompression.FormatAVIF:\n\t\treturn c.compressAVIF(input)\n\tcase imagecompression.FormatHEIF:\n\t\treturn c.compressHEIF(input, detected.ContentType)\n\tcase imagecompression.FormatGIF:\n\t\treturn c.compressGIF(input)\n\tcase imagecompression.FormatBMP:\n\t\treturn c.compressBMP(input)\n\tcase imagecompression.FormatTIFF:\n\t\treturn c.compressTIFF(input)\n\tdefault:\n\t\treturn imagecompression.Result{}, imagecompression.ErrUnsupportedFormat\n\t}\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "Compress",
+              "qualified_symbol": "compress.Compressor.Compress",
+              "enclosing_impl_hint": "Compressor",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-configuration-caller",
+      "request_sha256": "83c1aab0fc8387712a7af557faf4267a8e68bdb150f834030be139dbcf70a584",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/config/config.go",
+              "line": 14,
+              "quote": "func Load() (Config, error) {\n\tcfg := Config{\n\t\tPort: getEnv(\"PORT\", \"8080\"),\n\t}\n\n\tif err := validatePort(cfg.Port); err != nil {\n\t\treturn Config{}, err\n\t}\n\n\treturn cfg, nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "Load",
+              "qualified_symbol": "config.Load",
+              "enclosing_impl_hint": "config",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-configuration-helpers",
+      "request_sha256": "d3ec74bd7332dbaaeab239bec782a5cabc0b99304896dfeb01171fbdeb932d8a",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/config/config.go",
+              "line": 14,
+              "quote": "func Load() (Config, error) {\n\tcfg := Config{\n\t\tPort: getEnv(\"PORT\", \"8080\"),\n\t}\n\n\tif err := validatePort(cfg.Port); err != nil {\n\t\treturn Config{}, err\n\t}\n\n\treturn cfg, nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "Load",
+              "qualified_symbol": "config.Load",
+              "enclosing_impl_hint": "config",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "backend/internal/config/config.go",
+              "line": 30,
+              "quote": "func getEnv(key, fallback string) string {\n\tvalue := os.Getenv(key)\n\tif value == \"\" {\n\t\treturn fallback\n\t}\n\treturn value\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "getEnv",
+              "qualified_symbol": "config.getEnv",
+              "enclosing_impl_hint": "config",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S3": {
+              "path": "backend/internal/config/config.go",
+              "line": 38,
+              "quote": "func validatePort(port string) error {\n\tnumber, err := strconv.Atoi(port)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"PORT must be a number: %w\", err)\n\t}\n\n\tif number < 1 || number > 65535 {\n\t\treturn fmt.Errorf(\"PORT must be between 1 and 65535\")\n\t}\n\n\treturn nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "validatePort",
+              "qualified_symbol": "config.validatePort",
+              "enclosing_impl_hint": "config",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-dimensions-caller",
+      "request_sha256": "5aa5ce4501ed50a5d731998296edbc8e2ead16fb865f4a9feae5d57925e04b9b",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 19,
+              "quote": "func ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateDimensions",
+              "qualified_symbol": "imaging.ValidateDimensions",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-dimensions-helpers",
+      "request_sha256": "a66a1e0299b4f2e7bdd7c74ab2c62d9c1e8593be91ad641e69141e3f6b249a7b",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 19,
+              "quote": "func ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateDimensions",
+              "qualified_symbol": "imaging.ValidateDimensions",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "backend/internal/infrastructure/imaging/limits.go",
+              "line": 23,
+              "quote": "func ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "ValidateImageSize",
+              "qualified_symbol": "imaging.ValidateImageSize",
+              "enclosing_impl_hint": "imaging",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-quality-caller",
+      "request_sha256": "c6840810aef8281059d1095a45de64054ee8c51ab651afb74b6f06485158e332",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+              "line": 82,
+              "quote": "func (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "jpegQuality",
+              "qualified_symbol": "compress.Compressor.jpegQuality",
+              "enclosing_impl_hint": "Compressor",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "gio-quality-helpers",
+      "request_sha256": "ea2f98c5f6ff0d703dad71f2a23885e13185960f662ac7698d9c4b97951b51a4",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+              "line": 82,
+              "quote": "func (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "jpegQuality",
+              "qualified_symbol": "compress.Compressor.jpegQuality",
+              "enclosing_impl_hint": "Compressor",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+              "line": 114,
+              "quote": "func clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "clampQuality",
+              "qualified_symbol": "compress.clampQuality",
+              "enclosing_impl_hint": "compress",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "go-image-optimizer-dimensionerror",
+      "request_sha256": "98db47daa54cb35772c62e6a438c0b5751d851f67bb9aa8fcceb896452522a59",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "frontend/app/components/image-resize/resize-options.ts",
+              "line": 43,
+              "quote": "export function dimensionError(\n  info: ImageInfo,\n  target: ReturnType<typeof targetDimensions>,\n) {\n  if (!target) return \"Enter a positive whole number for each dimension.\";\n  if (target.width * target.height > 32_000_000)\n    return \"The output must not exceed 32 million pixels.\";\n  if (target.width * target.height * info.frameCount > 64_000_000)\n    return \"This animation exceeds the output frame pixel limit.\";\n  return null;\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "opencv-shape-contract",
+      "request_sha256": "2362d41d95c5090144abe26342a44e33e83c5530499fabbafa0b4cfb33cd980f",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "modules/core/src/arithm.cpp",
+              "line": 613,
+              "quote": "static bool shapesBroadcastCompat(InputArray a, int acn, InputArray b, int bcn)\n{\n    int asz[MatShape::MAX_DIMS + 1], bsz[MatShape::MAX_DIMS + 1];\n    int ad = a.sizend(asz), bd = b.sizend(bsz);\n    asz[ad++] = acn;\n    bsz[bd++] = bcn;\n    for (int i1 = ad - 1, i2 = bd - 1; i1 >= 0 && i2 >= 0; i1--, i2--)\n        if (asz[i1] != bsz[i2] && asz[i1] != 1 && bsz[i2] != 1)\n            return false;\n    return true;\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "prometheus-keep-bookkeeping",
+      "request_sha256": "b358d7aae1bb38634d12d57c64be0263331bd9c626d7ba6dcec15062a390ce40",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "model/labels/labels_common.go",
+              "line": 177,
+              "quote": "func (b *Builder) Keep(ns ...string) *Builder {\n\tb.base.Range(func(l Label) {\n\t\tif slices.Contains(ns, l.Name) {\n\t\t\treturn\n\t\t}\n\t\tb.del = append(b.del, l.Name)\n\t})\n\treturn b\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "Keep",
+              "qualified_symbol": "labels.Builder.Keep",
+              "enclosing_impl_hint": "Builder",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+                "binary_sha256": "5aa75795445383f47f1f61824c50be60bf6308f0f7b43fa38f161e5d3cc01cab",
+                "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.5.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "redis-active-expiry-caller",
+      "request_sha256": "4350c9114b5a90a7642e5db0651e76353550e1957ce2bbd5d257018fdab4fed9",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "src/expire.c",
+              "line": 40,
+              "quote": "int activeExpireCycleTryExpire(redisDb *db, kvobj *kv, long long now) {\n    if (now < kvobjGetExpire(kv))\n        return 0;\n\n    enterExecutionUnit(1, 0);\n    sds key = kvobjGetKey(kv);\n    robj *keyobj = createStringObject(key,sdslen(key));\n    deleteExpiredKeyAndPropagate(db,keyobj);\n    server.stat_expiredkeys_active++;\n    decrRefCount(keyobj);\n    exitExecutionUnit();\n    /* Propagate the DEL command */\n    postExecutionUnitOperations();\n    return 1;\n}\n\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "redis-active-expiry-complete-helper-units",
+      "request_sha256": "db58293dabb72692aeb96c210183e5c6bc65d698b4990e52cbf99a585f805aa7",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "src/expire.c",
+              "line": 40,
+              "quote": "int activeExpireCycleTryExpire(redisDb *db, kvobj *kv, long long now) {\n    if (now < kvobjGetExpire(kv))\n        return 0;\n\n    enterExecutionUnit(1, 0);\n    sds key = kvobjGetKey(kv);\n    robj *keyobj = createStringObject(key,sdslen(key));\n    deleteExpiredKeyAndPropagate(db,keyobj);\n    server.stat_expiredkeys_active++;\n    decrRefCount(keyobj);\n    exitExecutionUnit();\n    /* Propagate the DEL command */\n    postExecutionUnitOperations();\n    return 1;\n}\n",
+              "complete_unit": true,
+              "symbol": "activeExpireCycleTryExpire",
+              "enclosing_impl_hint": null,
+              "qualified_symbol": "activeExpireCycleTryExpire",
+              "preparation": "explicit complete definition-layout range; not a language/semantic or runtime verifier"
+            },
+            "S2": {
+              "path": "src/db.c",
+              "line": 2980,
+              "quote": "static void deleteKeyAndPropagate(redisDb *db, robj *keyobj, int notify_type, long long *key_mem_freed) {\n    mstime_t latency;\n    int del_flag = notify_type == NOTIFY_EXPIRED ? DB_FLAG_KEY_EXPIRED : DB_FLAG_KEY_EVICTED;\n    int lazy_flag = notify_type == NOTIFY_EXPIRED ? server.lazyfree_lazy_expire : server.lazyfree_lazy_eviction;\n    char *latency_name = notify_type == NOTIFY_EXPIRED ? \"expire-del\" : \"evict-del\";\n    char *notify_name = notify_type == NOTIFY_EXPIRED ? \"expired\" : \"evicted\";\n\n    /* The key needs to be converted from static to heap before deleted */\n    int static_key = keyobj->refcount == OBJ_STATIC_REFCOUNT;\n    if (static_key) {\n        keyobj = createStringObject(keyobj->ptr, sdslen(keyobj->ptr));\n    }\n\n    serverLog(LL_DEBUG,\"key %s %s: deleting it\", redactLogCstr((char*)keyobj->ptr), notify_type == NOTIFY_EXPIRED ? \"expired\" : \"evicted\");\n\n    /* We compute the amount of memory freed by db*Delete() alone.\n     * It is possible that actually the memory needed to propagate\n     * the DEL in AOF and replication link is greater than the one\n     * we are freeing removing the key, but we can't account for\n     * that otherwise we would never exit the loop.\n     *\n     * Same for CSC invalidation messages generated by keyModified.\n     *\n     * AOF and Output buffer memory will be freed eventually so\n     * we only care about memory used by the key space.\n     *\n     * The code here used to first propagate and then record delta\n     * using only zmalloc_used_memory but in CRDT we can't do that\n     * so we use freeMemoryGetNotCountedMemory to avoid counting\n     * AOF and slave buffers */\n    if (key_mem_freed) *key_mem_freed = (long long) zmalloc_used_memory() - freeMemoryGetNotCountedMemory();\n    latencyStartMonitor(latency);\n    dbGenericDelete(db, keyobj, lazy_flag, del_flag);\n    latencyEndMonitor(latency);\n    latencyAddSampleIfNeeded(latency_name, latency);\n    if (key_mem_freed) *key_mem_freed -= (long long) zmalloc_used_memory() - freeMemoryGetNotCountedMemory();\n\n    notifyKeyspaceEvent(notify_type, notify_name,keyobj, db->id);\n    keyModified(NULL, db, keyobj, NULL, 1);\n    propagateDeletion(db, keyobj, lazy_flag);\n\n    if (notify_type == NOTIFY_EXPIRED)\n        server.stat_expiredkeys++;\n    else\n        server.stat_evictedkeys++;\n\n    if (static_key)\n        decrRefCount(keyobj);\n}\n",
+              "complete_unit": true,
+              "symbol": "deleteKeyAndPropagate",
+              "enclosing_impl_hint": null,
+              "qualified_symbol": "deleteKeyAndPropagate",
+              "preparation": "explicit complete definition-layout range; not a language/semantic or runtime verifier"
+            },
+            "S3": {
+              "path": "src/db.c",
+              "line": 3031,
+              "quote": "void deleteExpiredKeyAndPropagate(redisDb *db, robj *keyobj) {\n    deleteKeyAndPropagate(db, keyobj, NOTIFY_EXPIRED, NULL);\n}\n",
+              "complete_unit": true,
+              "symbol": "deleteExpiredKeyAndPropagate",
+              "enclosing_impl_hint": null,
+              "qualified_symbol": "deleteExpiredKeyAndPropagate",
+              "preparation": "explicit complete definition-layout range; not a language/semantic or runtime verifier"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "redis-ttl-replies",
+      "request_sha256": "a8cf453db0312582192a729a1579db27368cd34313a382b2945e60a6cd043cf7",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "src/expire.c",
+              "line": 882,
+              "quote": "void ttlGenericCommand(client *c, int output_ms, int output_abs) {\n    long long expire, ttl = -1;\n\n    /* If the key does not exist at all, return -2 */\n    kvobj *kv = lookupKeyReadWithFlags(c->db,c->argv[1],LOOKUP_NOTOUCH);\n    if (kv == NULL) {\n        addReplyLongLong(c,-2);\n        return;\n    }\n\n    /* The key exists. Return -1 if it has no expire, or the actual\n     * TTL value otherwise. */\n    expire = kvobjGetExpire(kv);\n    if (expire != -1) {\n        ttl = output_abs ? expire : expire-commandTimeSnapshot();\n        if (ttl < 0) ttl = 0;\n    }\n    if (ttl == -1) {\n        addReplyLongLong(c,-1);\n    } else {\n        addReplyLongLong(c,output_ms ? ttl : ((ttl+500)/1000));\n    }\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "ruby-owner-rails-baseline",
+      "request_sha256": "58d31469b2d603b569462e160d283cf0486334c6416cb04db640dc7765935466",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "action_dispatch/http/request.rb",
+              "line": 152,
+              "quote": "      @request_method ||= check_method(super)\n    end\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            },
+            "S2": {
+              "path": "action_dispatch/http/request.rb",
+              "line": 209,
+              "quote": "      HTTP_METHOD_LOOKUP[request_method]\n    end\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            },
+            "S3": {
+              "path": "action_dispatch/http/request.rb",
+              "line": 218,
+              "quote": "      if args.empty?\n        @method ||= check_method(\n          get_header(\"rack.methodoverride.original_method\") ||\n          get_header(\"REQUEST_METHOD\")\n        )\n      else\n        super\n      end\n    end\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            },
+            "S4": {
+              "path": "action_dispatch/http/request.rb",
+              "line": 231,
+              "quote": "      HTTP_METHOD_LOOKUP[method]\n    end\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "ruff-target-version",
+      "request_sha256": "9ec73aef4906712cb69ee194fc0c3f44beff3d9fe10229c1726c06d0c90c86ff",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "crates/ruff_workspace/src/settings.rs",
+              "line": 264,
+              "quote": "    pub fn resolve_target_version(&self, path: &Path) -> PythonVersion {\n        self.per_file_target_version\n            .is_match(path)\n            .unwrap_or(self.unresolved_target_version)\n    }\n",
+              "complete_unit": true,
+              "symbol": "resolve_target_version",
+              "enclosing_impl_hint": "FormatterSettings",
+              "qualified_symbol": "FormatterSettings::resolve_target_version",
+              "preparation": "explicit complete definition-layout range; not a language/semantic or runtime verifier"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "sdk-contiguous-contract",
+      "request_sha256": "1eab8ee487bcca3d7403c42c1d1fd5fa72f065ac7f8f1d75d635374be84f8fed",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "internal/internal_retry.go",
+              "line": 12,
+              "quote": "const (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n)\n\n// Creates a retry policy which allows appropriate retries for the deadline passed in as context.\n// It uses the context deadline to set MaxInterval as 1/10th of context timeout\n// MaxInterval = Max(context_timeout/10, 20ms)\n// defaults to ExpirationInterval of 60 seconds, or uses context deadline as expiration interval\nfunc createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "sdk-retry-function",
+      "request_sha256": "b281536c40c4e04ebbec88e0c312d34f2f7a64f609d032cb62601377bc7dffcb",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "internal/internal_retry.go",
+              "line": 22,
+              "quote": "func createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "sdk-retry-with-constants",
+      "request_sha256": "751c69ded52f2b7834f8d84cc6e254d891b6904b23ba7a19da166f603fdc0110",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "internal/internal_retry.go",
+              "line": 12,
+              "quote": "const (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n)\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            },
+            "S2": {
+              "path": "internal/internal_retry.go",
+              "line": 22,
+              "quote": "func createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n}\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "set-and-del",
+      "request_sha256": "e2ffbbcccaf23f44bec8930f67f2508dffac882d4ac833623bc2d782a5ab3acd",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "model/labels/labels_common.go",
+              "line": 188,
+              "quote": "func (b *Builder) Set(n, v string) *Builder {\n\tif v == \"\" {\n\t\t// Empty labels are the same as missing labels.\n\t\treturn b.Del(n)\n\t}\n\tfor i, a := range b.add {\n\t\tif a.Name == n {\n\t\t\tb.add[i].Value = v\n\t\t\treturn b\n\t\t}\n\t}\n\tb.add = append(b.add, Label{Name: n, Value: v})\n\n\treturn b\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "Set",
+              "qualified_symbol": "labels.Builder.Set",
+              "enclosing_impl_hint": "Builder",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S2": {
+              "path": "model/labels/labels_common.go",
+              "line": 164,
+              "quote": "func (b *Builder) Del(ns ...string) *Builder {\n\tfor _, n := range ns {\n\t\tfor i, a := range b.add {\n\t\t\tif a.Name == n {\n\t\t\t\tb.add = append(b.add[:i], b.add[i+1:]...)\n\t\t\t}\n\t\t}\n\t\tb.del = append(b.del, n)\n\t}\n\treturn b\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "Del",
+              "qualified_symbol": "labels.Builder.Del",
+              "enclosing_impl_hint": "Builder",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "set-only",
+      "request_sha256": "96acb436ba4ad32785ecc1bd514fb2b26c529011796b1767ac7bfb379da60506",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "model/labels/labels_common.go",
+              "line": 188,
+              "quote": "func (b *Builder) Set(n, v string) *Builder {\n\tif v == \"\" {\n\t\t// Empty labels are the same as missing labels.\n\t\treturn b.Del(n)\n\t}\n\tfor i, a := range b.add {\n\t\tif a.Name == n {\n\t\t\tb.add[i].Value = v\n\t\t\treturn b\n\t\t}\n\t}\n\tb.add = append(b.add, Label{Name: n, Value: v})\n\n\treturn b\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "method",
+              "symbol": "Set",
+              "qualified_symbol": "labels.Builder.Set",
+              "enclosing_impl_hint": "Builder",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "sqlx-bind-map",
+      "request_sha256": "e2837fb8ec645ef2ad38645e3befe0291849823c72cb56b07cb4c9e1c8922dae",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "named.go",
+              "line": 197,
+              "quote": "func bindMapArgs(names []string, arg map[string]interface{}) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\tfor _, name := range names {\n\t\tval, ok := arg[name]\n\t\tif !ok {\n\t\t\treturn arglist, fmt.Errorf(\"could not find name %s in %#v\", name, arg)\n\t\t}\n\t\targlist = append(arglist, val)\n\t}\n\treturn arglist, nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "bindMapArgs",
+              "qualified_symbol": "sqlx.bindMapArgs",
+              "enclosing_impl_hint": "sqlx",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+                "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+                "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.4.0"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "sqlx-in-expansion-recovery",
+      "request_sha256": "88cbc694ca93ff20348ee1c8012b7264dcb30568de44232293919619ffdef14d",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "bind.go",
+              "line": 142,
+              "quote": "func In(query string, args ...interface{}) (string, []interface{}, error) {\n\t// argMeta stores reflect.Value and length for slices and\n\t// the value itself for non-slice arguments\n\ttype argMeta struct {\n\t\tv      reflect.Value\n\t\ti      interface{}\n\t\tlength int\n\t}\n\n\tvar flatArgsCount int\n\tvar anySlices bool\n\n\tvar stackMeta [32]argMeta\n\n\tvar meta []argMeta\n\tif len(args) <= len(stackMeta) {\n\t\tmeta = stackMeta[:len(args)]\n\t} else {\n\t\tmeta = make([]argMeta, len(args))\n\t}\n\n\tfor i, arg := range args {\n\t\tif a, ok := arg.(driver.Valuer); ok {\n\t\t\tvar err error\n\t\t\targ, err = a.Value()\n\t\t\tif err != nil {\n\t\t\t\treturn \"\", nil, err\n\t\t\t}\n\t\t}\n\n\t\tif v, ok := asSliceForIn(arg); ok {\n\t\t\tmeta[i].length = v.Len()\n\t\t\tmeta[i].v = v\n\n\t\t\tanySlices = true\n\t\t\tflatArgsCount += meta[i].length\n\n\t\t\tif meta[i].length == 0 {\n\t\t\t\treturn \"\", nil, errors.New(\"empty slice passed to 'in' query\")\n\t\t\t}\n\t\t} else {\n\t\t\tmeta[i].i = arg\n\t\t\tflatArgsCount++\n\t\t}\n\t}\n\n\t// don't do any parsing if there aren't any slices;  note that this means\n\t// some errors that we might have caught below will not be returned.\n\tif !anySlices {\n\t\treturn query, args, nil\n\t}\n\n\tnewArgs := make([]interface{}, 0, flatArgsCount)\n\n\tvar buf strings.Builder\n\tbuf.Grow(len(query) + len(\", ?\")*flatArgsCount)\n\n\tvar arg, offset int\n\n\tfor i := strings.IndexByte(query[offset:], '?'); i != -1; i = strings.IndexByte(query[offset:], '?') {\n\t\tif arg >= len(meta) {\n\t\t\t// if an argument wasn't passed, lets return an error;  this is\n\t\t\t// not actually how database/sql Exec/Query works, but since we are\n\t\t\t// creating an argument list programmatically, we want to be able\n\t\t\t// to catch these programmer errors earlier.\n\t\t\treturn \"\", nil, errors.New(\"number of bindVars exceeds arguments\")\n\t\t}\n\n\t\targMeta := meta[arg]\n\t\targ++\n\n\t\t// not a slice, continue.\n\t\t// our questionmark will either be written before the next expansion\n\t\t// of a slice or after the loop when writing the rest of the query\n\t\tif argMeta.length == 0 {\n\t\t\toffset = offset + i + 1\n\t\t\tnewArgs = append(newArgs, argMeta.i)\n\t\t\tcontinue\n\t\t}\n\n\t\t// write everything up to and including our ? character\n\t\tbuf.WriteString(query[:offset+i+1])\n\n\t\tfor si := 1; si < argMeta.length; si++ {\n\t\t\tbuf.WriteString(\", ?\")\n\t\t}\n\n\t\tnewArgs = appendReflectSlice(newArgs, argMeta.v, argMeta.length)\n\n\t\t// slice the query and reset the offset. this avoids some bookkeeping for\n\t\t// the write after the loop\n\t\tquery = query[offset+i+1:]\n\t\toffset = 0\n\t}\n\n\tbuf.WriteString(query)\n\n\tif arg < len(meta) {\n\t\treturn \"\", nil, errors.New(\"number of bindVars less than number arguments\")\n\t}\n\n\treturn buf.String(), newArgs, nil\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "In",
+              "qualified_symbol": "sqlx.In",
+              "enclosing_impl_hint": "sqlx",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+                "binary_sha256": "a37bbbf654efda375494201a8e8bbc427509f71d7911be648613c8e986c16781",
+                "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.6.1"
+              },
+              "syntax_parser_version": "go1.27.4",
+              "required_symbol": "sqlx.In"
+            },
+            "S2": {
+              "path": "bind.go",
+              "line": 117,
+              "quote": "func asSliceForIn(i interface{}) (v reflect.Value, ok bool) {\n\tif i == nil {\n\t\treturn reflect.Value{}, false\n\t}\n\n\tv = reflect.ValueOf(i)\n\tt := reflectx.Deref(v.Type())\n\n\t// Only expand slices\n\tif t.Kind() != reflect.Slice {\n\t\treturn reflect.Value{}, false\n\t}\n\n\t// []byte is a driver.Value type so it should not be expanded\n\tif t == reflect.TypeOf([]byte{}) {\n\t\treturn reflect.Value{}, false\n\n\t}\n\n\treturn v, true\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "asSliceForIn",
+              "qualified_symbol": "sqlx.asSliceForIn",
+              "enclosing_impl_hint": "sqlx",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+                "binary_sha256": "a37bbbf654efda375494201a8e8bbc427509f71d7911be648613c8e986c16781",
+                "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.6.1"
+              },
+              "syntax_parser_version": "go1.27.4"
+            },
+            "S3": {
+              "path": "reflectx/reflect.go",
+              "line": 231,
+              "quote": "func Deref(t reflect.Type) reflect.Type {\n\tif t.Kind() == reflect.Ptr {\n\t\tt = t.Elem()\n\t}\n\treturn t\n}\n",
+              "complete_unit": true,
+              "declaration_kind": "function",
+              "symbol": "Deref",
+              "qualified_symbol": "reflectx.Deref",
+              "enclosing_impl_hint": "reflectx",
+              "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+              "syntax_producer": {
+                "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+                "binary_sha256": "a37bbbf654efda375494201a8e8bbc427509f71d7911be648613c8e986c16781",
+                "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+                "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+                "version": "1.6.1"
+              },
+              "syntax_parser_version": "go1.27.4"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "starlette-background-caller",
+      "request_sha256": "a13640c770bf422a75d4e75f7ef5904ae445ed6438e6f9454c91eb4a909ca041",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "starlette/background.py",
+              "line": 26,
+              "quote": "class BackgroundTasks(BackgroundTask):\n    def __init__(self, tasks: Sequence[BackgroundTask] | None = None):\n        self.tasks = list(tasks) if tasks else []\n\n    def add_task(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        task = BackgroundTask(func, *args, **kwargs)\n        self.tasks.append(task)\n\n    async def __call__(self) -> None:\n        for task in self.tasks:\n            await task()\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "starlette-background-helpers",
+      "request_sha256": "4277f7bed0fc75074b5d81d501f8144ff89f10cedb241012b68037f90232bba2",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "starlette/background.py",
+              "line": 12,
+              "quote": "class BackgroundTask:\n    def __init__(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        self.func = func\n        self.args = args\n        self.kwargs = kwargs\n        self.is_async = is_async_callable(func)\n\n    async def __call__(self) -> None:\n        if self.is_async:\n            await self.func(*self.args, **self.kwargs)\n        else:\n            await run_in_threadpool(self.func, *self.args, **self.kwargs)\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            },
+            "S2": {
+              "path": "starlette/background.py",
+              "line": 26,
+              "quote": "class BackgroundTasks(BackgroundTask):\n    def __init__(self, tasks: Sequence[BackgroundTask] | None = None):\n        self.tasks = list(tasks) if tasks else []\n\n    def add_task(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        task = BackgroundTask(func, *args, **kwargs)\n        self.tasks.append(task)\n\n    async def __call__(self) -> None:\n        for task in self.tasks:\n            await task()\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "starlette-iteration-next-helper",
+      "request_sha256": "9330523adc7cca9250ed84a3fb1f41c3418130bdf13b7c551915b9f64ce0968d",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "starlette/concurrency.py",
+              "line": 37,
+              "quote": "class _StopIteration(Exception):\n    pass\n\n\ndef _next(iterator: Iterator[T]) -> T:\n    # We can't raise `StopIteration` from within the threadpool iterator\n    # and catch it outside that context, so we coerce them into a different\n    # exception type.\n    try:\n        return next(iterator)\n    except StopIteration:\n        raise _StopIteration\n\n\nasync def iterate_in_threadpool(\n    iterator: Iterable[T],\n) -> AsyncIterator[T]:\n    as_iterator = iter(iterator)\n    while True:\n        try:\n            yield await anyio.to_thread.run_sync(_next, as_iterator)\n        except _StopIteration:\n            break\n",
+              "complete_unit": false,
+              "preparation": "explicit original line range; surrounding dependencies and complete syntax are not implied"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "starlette-server-error-contract",
+      "request_sha256": "ad5dd593749229f81bd0b95a9e10fb68607b15c9907b2cd1d02c62297616eaca",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "starlette/middleware/errors.py",
+              "line": 149,
+              "quote": "    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:\n        if scope[\"type\"] != \"http\":\n            await self.app(scope, receive, send)\n            return\n\n        response_started = False\n\n        async def _send(message: Message) -> None:\n            nonlocal response_started, send\n\n            if message[\"type\"] == \"http.response.start\":\n                response_started = True\n            await send(message)\n\n        try:\n            await self.app(scope, receive, _send)\n        except Exception as exc:\n            request = Request(scope)\n            if self.debug:\n                # In debug mode, return traceback responses.\n                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n\n            if not response_started:\n                await response(scope, receive, send)\n\n            # We always continue to raise the exception.\n            # This allows servers to log the error, or allows test clients\n            # to optionally raise the error within the test case.\n            raise exc\n",
+              "complete_unit": true,
+              "symbol": "__call__",
+              "enclosing_impl_hint": "ServerErrorMiddleware",
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "ServerErrorMiddleware.__call__"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    },
+    {
+      "id": "starlette-thread-return",
+      "request_sha256": "9af3966f24ec6508df32c978ae6c831240525ee06236db9cc65c4fd053d9c741",
+      "source_card_blocks": [
+        {
+          "message_index": 1,
+          "cards": {
+            "S1": {
+              "path": "starlette/concurrency.py",
+              "line": 32,
+              "quote": "async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:\n    func = functools.partial(func, *args, **kwargs)\n    return await anyio.to_thread.run_sync(func)\n",
+              "complete_unit": true,
+              "symbol": "run_in_threadpool",
+              "enclosing_impl_hint": null,
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification"
+            }
+          }
+        }
+      ],
+      "all_source_quotes_extracted": true,
+      "literal_token_membership_not_semantic_fact": "A number may occur in line metadata, hashes or task instructions; only declaration quote determines supplied numeric constant evidence."
+    }
+  ],
+  "captures": 38,
+  "all38singlecardblock": true,
+  "new_inference_calls": 0,
+  "original_scores_unchanged": true,
+  "no_gold": true
+}

@@ -1,0 +1,147 @@
+{
+  "at": "2026-11-21T09:09:09.161353+00:00",
+  "commit": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "units": [
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "selector": "TextDataset.process",
+      "start": 28,
+      "end": 32,
+      "file_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "quote_sha256": "9dbc9de6920f6b2c85634c1db7cfa9d17c51b5b6b21ae69845c453629f8e682c",
+      "quote": "    def process(self, d):\n        d = self.tokenizer.encode(d[self.text_key])\n        if d[-1] != self.tokenizer.eos_token_id:\n            d.append(self.tokenizer.eos_token_id)\n        return (d, 0)\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py#L28-L32"
+    },
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "selector": "ChatDataset.process",
+      "start": 59,
+      "end": 79,
+      "file_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "quote_sha256": "5163df9164ba394a31ee43192f20dacfc8e0312bce1ab95cb595f08ea165a1b5",
+      "quote": "    def process(self, d):\n        messages = d[self.chat_key]\n        tools = d.get(\"tools\", None)\n        tokens = self.tokenizer.apply_chat_template(\n            messages,\n            tools=tools,\n            return_dict=False,\n        )\n        if self.mask_prompt:\n            add_generation_prompt = messages[-1].get(\"role\") == \"assistant\"\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=add_generation_prompt,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n        else:\n            return (tokens, 0)\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py#L59-L79"
+    },
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "selector": "CompletionsDataset.process",
+      "start": 109,
+      "end": 129,
+      "file_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "quote_sha256": "d1379ebebba1d52dc89981e173b45414ccc61516fb1a00ed556ce2f50a10ca23",
+      "quote": "    def process(self, d):\n        tools = d.get(\"tools\", None)\n        messages = [\n            {\"role\": \"user\", \"content\": d[self.prompt_key]},\n            {\"role\": \"assistant\", \"content\": d[self.completion_key]},\n        ]\n        tokens = self.tokenizer.apply_chat_template(\n            messages, tools=tools, return_dict=False\n        )\n        if self.mask_prompt:\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=True,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n\n        return (tokens, 0)\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py#L109-L129"
+    },
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "selector": "CacheDataset.itemlen",
+      "start": 166,
+      "end": 167,
+      "file_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "quote_sha256": "26592b351e62ff003b94cc95f736794d9b3d9cbf013be409e0fd89cb46c3e4b6",
+      "quote": "    def itemlen(self, idx: int):\n        return len(self._data[idx])\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py#L166-L167"
+    },
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "selector": "CacheDataset.__getitem__",
+      "start": 169,
+      "end": 172,
+      "file_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "quote_sha256": "4296e80850f2b5f8ae734c1fab18dbac0e417d52227b9873d709295d91d935c9",
+      "quote": "    def __getitem__(self, idx: int):\n        if self._proc_data[idx] is None:\n            self._proc_data[idx] = self._data.process(self._data[idx])\n        return self._proc_data[idx]\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py#L169-L172"
+    },
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "selector": "create_dataset",
+      "start": 178,
+      "end": 205,
+      "file_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "quote_sha256": "a90bff9f589285bdfb769d596ce247f3b8cefb8544cbb913e9b03879d75c8692",
+      "quote": "def create_dataset(\n    data,\n    tokenizer: PreTrainedTokenizer,\n    config,\n):\n    mask_prompt = getattr(config, \"mask_prompt\", False)\n    prompt_feature = getattr(config, \"prompt_feature\", \"prompt\")\n    text_feature = getattr(config, \"text_feature\", \"text\")\n    completion_feature = getattr(config, \"completion_feature\", \"completion\")\n    chat_feature = getattr(config, \"chat_feature\", \"messages\")\n    sample = data[0]\n    if prompt_feature in sample and completion_feature in sample:\n        return CompletionsDataset(\n            data, tokenizer, prompt_feature, completion_feature, mask_prompt\n        )\n    elif chat_feature in sample:\n        return ChatDataset(\n            data, tokenizer, chat_key=chat_feature, mask_prompt=mask_prompt\n        )\n    elif text_feature in sample:\n        if mask_prompt:\n            raise ValueError(\"Prompt masking not supported for text dataset.\")\n        return TextDataset(data, tokenizer, text_key=text_feature)\n    else:\n        raise ValueError(\n            \"Unsupported data format, check the supported formats here:\\n\"\n            \"https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/LORA.md#Data.\"\n        )\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py#L178-L205"
+    },
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "selector": "load_dataset",
+      "start": 312,
+      "end": 335,
+      "file_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+      "quote_sha256": "f46beb96b66fc7aac82aef5abf811e38a7e9d9213a9d8ca00c5260531ae4f22d",
+      "quote": "def load_dataset(args, tokenizer: PreTrainedTokenizer):\n    if getattr(args, \"hf_dataset\", False):\n        train, valid, test = load_custom_hf_dataset(args, tokenizer)\n    else:\n        data_path = Path(args.data)\n        if data_path.exists():\n            train, valid, test = load_local_dataset(data_path, tokenizer, args)\n        else:\n            rprint(f\"Loading Hugging Face dataset {args.data}.\")\n            train, valid, test = load_hf_dataset(args.data, tokenizer, args)\n\n    if args.train and len(train) == 0:\n        raise ValueError(\n            \"Training set not found or empty. Must provide training set for fine-tuning.\"\n        )\n    if args.train and len(valid) == 0:\n        rprint(\n            \"Warning: Validation set not found or empty. Training will proceed without validation.\"\n        )\n    if args.test and len(test) == 0:\n        raise ValueError(\n            \"Test set not found or empty. Must provide test set for evaluation.\"\n        )\n    return train, valid, test\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/datasets.py#L312-L335"
+    },
+    {
+      "path": "mlx_lm/tuner/trainer.py",
+      "selector": "default_loss",
+      "start": 88,
+      "end": 101,
+      "file_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "quote_sha256": "57a73ea5a993ca52fe02282aed1cf8643b0e91ca1c66a1afc54de4ce639dda8c",
+      "quote": "def default_loss(model, batch, lengths):\n    inputs = batch[:, :-1]\n    targets = batch[:, 1:]\n\n    logits = model(inputs)\n\n    steps = mx.arange(1, targets.shape[1] + 1)\n    mask = mx.logical_and(steps >= lengths[:, 0:1], steps <= lengths[:, 1:])\n\n    ce = nn.losses.cross_entropy(logits, targets) * mask\n    ntoks = mask.sum()\n    ce = ce.astype(mx.float32).sum() / ntoks\n\n    return ce, ntoks\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py#L88-L101"
+    },
+    {
+      "path": "mlx_lm/tuner/trainer.py",
+      "selector": "iterate_batches",
+      "start": 104,
+      "end": 175,
+      "file_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "quote_sha256": "8a758ab8660880c5b5debd3ff3f4026d17f112233cb437c077f9d90446810d87",
+      "quote": "def iterate_batches(\n    dataset,\n    batch_size,\n    max_seq_length,\n    loop=False,\n    seed=None,\n    comm_group=None,\n):\n    # Sort by length:\n    if isinstance(dataset, CacheDataset):\n        len_fn = lambda idx: dataset.itemlen(idx)\n    else:\n        len_fn = lambda idx: len(dataset[idx][0])\n    idx = sorted(range(len(dataset)), key=len_fn)\n    if len(dataset) < batch_size:\n        raise ValueError(\n            f\"Dataset must have at least batch_size={batch_size}\"\n            f\" examples but only has {len(dataset)}.\"\n        )\n\n    # If running in distributed mode (N machines) then each one should skip N-1\n    # samples\n    if comm_group is not None:\n        offset = comm_group.rank()\n        step = comm_group.size()\n    else:\n        offset = 0\n        step = 1\n    if batch_size % step != 0:\n        raise ValueError(\"The batch size must be divisible by the number of workers\")\n\n    # Make the batches:\n    batch_idx = [\n        idx[i + offset : i + offset + batch_size : step]\n        for i in range(0, len(idx) - batch_size + 1, batch_size)\n    ]\n    if seed is not None:\n        np.random.seed(seed)\n    while True:\n        indices = np.random.permutation(len(batch_idx))\n        for i in indices:\n            batch = [dataset[j] for j in batch_idx[i]]\n            if len(batch[0]) == 2:\n                batch, offsets = zip(*batch)\n            else:\n                offsets = [0] * len(batch)\n            lengths = [len(x) for x in batch]\n            if max(lengths) > max_seq_length:\n                rprint(\n                    f\"[WARNING] Some sequences are longer than {max_seq_length} tokens. \"\n                    f\"The longest sentence {max(lengths)} will be truncated to {max_seq_length}. \"\n                    \"Consider pre-splitting your data to save memory.\"\n                )\n\n            # Pad to one plus nearest multiple of pad_to or the maximum length\n            pad_to = 32\n            max_length_in_batch = 1 + pad_to * ((max(lengths) + pad_to - 1) // pad_to)\n            max_length_in_batch = min(max_length_in_batch, max_seq_length)\n\n            batch_arr = np.zeros((batch_size // step, max_length_in_batch), np.int32)\n\n            for j in range(batch_size // step):\n                truncated_length = min(lengths[j], max_seq_length)\n                batch_arr[j, :truncated_length] = batch[j][:truncated_length]\n                lengths[j] = (\n                    truncated_length  # Update lengths to match truncated lengths\n                )\n            batch = mx.array(batch_arr)\n            yield batch, mx.array(list(zip(offsets, lengths)))\n\n        if not loop:\n            break\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py#L104-L175"
+    },
+    {
+      "path": "mlx_lm/tuner/trainer.py",
+      "selector": "evaluate",
+      "start": 178,
+      "end": 218,
+      "file_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "quote_sha256": "eb13e2510a1572d8bdb738b77b96265bc80edb8f0c0cfbb2c37eeed85aa4766f",
+      "quote": "def evaluate(\n    model,\n    dataset,\n    batch_size,\n    num_batches,\n    max_seq_length=2048,\n    loss: callable = default_loss,\n    iterate_batches: callable = iterate_batches,\n    clear_cache_threshold: int = 0,\n    progress_callback: Optional[callable] = None,\n):\n    model.eval()\n    all_losses = mx.array(0.0)\n    ntokens = mx.array(0)\n\n    index_iterator = iter(range(num_batches)) if num_batches != -1 else iter(int, 1)\n\n    batch_iter = zip(\n        index_iterator,\n        iterate_batches(\n            dataset=dataset,\n            batch_size=batch_size,\n            max_seq_length=max_seq_length,\n            comm_group=mx.distributed.init(),\n        ),\n    )\n\n    for _, batch in batch_iter:\n        losses, toks = loss(model, *batch)\n        all_losses += losses * toks\n        ntokens += toks\n        mx.eval(all_losses, ntokens)\n        _clear_cache(clear_cache_threshold)\n        if progress_callback is not None:\n            progress_callback()\n\n    all_losses = mx.distributed.all_sum(all_losses, stream=mx.cpu)\n    ntokens = mx.distributed.all_sum(ntokens, stream=mx.cpu)\n    avg_loss = (all_losses / ntokens).item()\n\n    return avg_loss\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py#L178-L218"
+    },
+    {
+      "path": "mlx_lm/tuner/trainer.py",
+      "selector": "train",
+      "start": 221,
+      "end": 380,
+      "file_sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "quote_sha256": "7e3082c746372475cdb9dd65ac5ac2d65f63f232a93cea86cffbb913a7631d6c",
+      "quote": "def train(\n    model,\n    optimizer,\n    train_dataset,\n    val_dataset=None,\n    args: TrainingArgs = TrainingArgs(),\n    loss: callable = default_loss,\n    iterate_batches: callable = iterate_batches,\n    training_callback: TrainingCallback = None,\n):\n    _ = maybe_set_recommended_wired_limit()\n    world = mx.distributed.init()\n    world_size = world.size()\n    rank = world.rank()\n\n    if args.grad_checkpoint:\n        grad_checkpoint(model.layers[0])\n\n    loss_value_and_grad = nn.value_and_grad(model, loss)\n\n    grad_accum_steps = args.grad_accumulation_steps\n    if grad_accum_steps < 1:\n        raise ValueError(\"grad_accumulation_steps must be at least 1\")\n\n    state = [model.state, optimizer.state, mx.random.state]\n\n    @partial(mx.compile, inputs=state, outputs=state)\n    def step(batch, prev_grad, do_update):\n        (lvalue, toks), grad = loss_value_and_grad(model, *batch)\n\n        if prev_grad is not None:\n            grad = tree_map(lambda x, y: x + y, grad, prev_grad)\n\n        if do_update:\n            grad = average_gradients(grad)\n            if grad_accum_steps > 1:\n                grad = tree_map(lambda x: x / grad_accum_steps, grad)\n            optimizer.update(model, grad)\n            grad = None\n\n        return lvalue, toks, grad\n\n    model.train()\n    losses = 0\n    n_tokens = 0\n    steps = 0\n    trained_tokens = 0\n    train_time = 0\n    grad_accum = None\n\n    ui = TrainUI(args.iters, rank=rank)\n    with ui:\n        # Main training loop\n        for it, batch in zip(\n            range(1, args.iters + 1),\n            iterate_batches(\n                dataset=train_dataset,\n                batch_size=args.batch_size,\n                max_seq_length=args.max_seq_length,\n                loop=True,\n                comm_group=world,\n            ),\n        ):\n            tic = time.perf_counter()\n            if val_dataset and (\n                it == 1 or it % args.steps_per_eval == 0 or it == args.iters\n            ):\n                if args.val_batches == -1:\n                    val_total = len(val_dataset) // args.batch_size\n                else:\n                    val_total = min(\n                        len(val_dataset) // args.batch_size, args.val_batches\n                    )\n\n                tic = time.perf_counter()\n                with ui.val_task(val_total) as advance_val:\n                    val_loss = evaluate(\n                        model=model,\n                        dataset=val_dataset,\n                        loss=loss,\n                        batch_size=args.batch_size,\n                        num_batches=args.val_batches,\n                        max_seq_length=args.max_seq_length,\n                        iterate_batches=iterate_batches,\n                        progress_callback=advance_val,\n                    )\n                model.train()\n                val_time = time.perf_counter() - tic\n                ui.report_val(it, val_loss, val_time)\n\n                if training_callback is not None:\n                    training_callback.on_val_loss_report(\n                        {\n                            \"iteration\": it - 1,\n                            \"val_loss\": val_loss,\n                            \"val_time\": val_time,\n                        }\n                    )\n\n                tic = time.perf_counter()\n\n            lvalue, toks, grad_accum = step(\n                batch,\n                grad_accum,\n                it % grad_accum_steps == 0,\n            )\n\n            losses += lvalue\n            n_tokens += toks\n            steps += 1\n            mx.eval(state, losses, n_tokens, grad_accum)\n            _clear_cache(args.clear_cache_threshold)\n            train_time += time.perf_counter() - tic\n\n            ui.advance()\n\n            # Report training loss if needed\n            if it % args.steps_per_report == 0 or it == args.iters:\n                train_loss = mx.distributed.all_sum(losses, stream=mx.cpu).item()\n                train_loss /= steps * world_size\n                n_tokens = mx.distributed.all_sum(n_tokens, stream=mx.cpu).item()\n                learning_rate = optimizer.learning_rate.item()\n                it_sec = args.steps_per_report / train_time\n                tokens_sec = float(n_tokens) / train_time\n                trained_tokens += n_tokens\n                peak_mem = mx.get_peak_memory() / 1e9\n                ui.report_train(it, train_loss, tokens_sec, trained_tokens)\n\n                if training_callback is not None:\n                    training_callback.on_train_loss_report(\n                        {\n                            \"iteration\": it,\n                            \"train_loss\": train_loss,\n                            \"learning_rate\": learning_rate,\n                            \"iterations_per_second\": it_sec,\n                            \"tokens_per_second\": tokens_sec,\n                            \"trained_tokens\": trained_tokens,\n                            \"peak_memory\": peak_mem,\n                        }\n                    )\n\n                losses = 0\n                n_tokens = 0\n                steps = 0\n                train_time = 0\n\n            # Save adapter weights\n            if it % args.steps_per_save == 0 and rank == 0:\n                adapter_weights = dict(tree_flatten(model.trainable_parameters()))\n                mx.save_safetensors(str(args.adapter_file), adapter_weights)\n                checkpoint = (\n                    Path(args.adapter_file).parent / f\"{it:07d}_adapters.safetensors\"\n                )\n                mx.save_safetensors(str(checkpoint), adapter_weights)\n                ui.report_save(checkpoint)\n\n    # Save final weights\n    if rank == 0:\n        adapter_weights = dict(tree_flatten(model.trainable_parameters()))\n        mx.save_safetensors(str(args.adapter_file), adapter_weights)\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/trainer.py#L221-L380"
+    },
+    {
+      "path": "mlx_lm/lora.py",
+      "selector": "train_model",
+      "start": 226,
+      "end": 319,
+      "file_sha256": "341dce80747705c9363728823d3f117e96f821fc3b35d35db2f47b3151d3adc5",
+      "quote_sha256": "eefa2215d65506763c99aac645382f27cb03c533b66df2b54bf19bd4f141e87f",
+      "quote": "def train_model(\n    args,\n    model: nn.Module,\n    train_set,\n    valid_set,\n    training_callback: TrainingCallback = None,\n):\n    mx.random.seed(args.seed)\n    model.freeze()\n    if args.num_layers > len(model.layers):\n        raise ValueError(\n            f\"Requested to train {args.num_layers} layers \"\n            f\"but the model only has {len(model.layers)} layers.\"\n        )\n\n    if args.fine_tune_type == \"full\":\n        for l in model.layers[-max(args.num_layers, 0) :]:\n            l.unfreeze()\n\n        args.lora_parameters = None\n    elif args.fine_tune_type in [\"lora\", \"dora\"]:\n        # Convert linear layers to lora/dora layers and unfreeze in the process\n        linear_to_lora_layers(\n            model,\n            args.num_layers,\n            args.lora_parameters,\n            use_dora=(args.fine_tune_type == \"dora\"),\n        )\n    else:\n        raise ValueError(f\"Received unknown fine-tune-type {args.fine_tune_type}\")\n\n    # Resume from weights if provided\n    if args.resume_adapter_file is not None:\n        rprint(f\"Loading fine-tuned weights from {args.resume_adapter_file}\")\n        load_adapter_weights(\n            model,\n            path=args.resume_adapter_file,\n            fine_tune_type=args.fine_tune_type,\n        )\n\n    if mx.distributed.init().rank() == 0:\n        print_lora_run_header(make_console(), args)\n    print_trainable_parameters(model)\n\n    adapter_path = Path(args.adapter_path)\n    adapter_path.mkdir(parents=True, exist_ok=True)\n\n    adapter_file = adapter_path / \"adapters.safetensors\"\n    save_config(vars(args), adapter_path / \"adapter_config.json\")\n\n    # init training args\n    training_args = TrainingArgs(\n        batch_size=args.batch_size,\n        iters=args.iters,\n        val_batches=args.val_batches,\n        steps_per_report=args.steps_per_report,\n        steps_per_eval=args.steps_per_eval,\n        steps_per_save=args.save_every,\n        adapter_file=adapter_file,\n        max_seq_length=args.max_seq_length,\n        grad_checkpoint=args.grad_checkpoint,\n        grad_accumulation_steps=args.grad_accumulation_steps,\n        clear_cache_threshold=args.clear_cache_threshold,\n    )\n\n    # Initialize the selected optimizer\n    lr = build_schedule(args.lr_schedule) if args.lr_schedule else args.learning_rate\n\n    optimizer_name = args.optimizer.lower()\n    optimizer_config = args.optimizer_config.get(optimizer_name, {})\n    if optimizer_name == \"adam\":\n        opt_class = optim.Adam\n    elif optimizer_name == \"adamw\":\n        opt_class = optim.AdamW\n    elif optimizer_name == \"muon\":\n        opt_class = optim.Muon\n    elif optimizer_name == \"sgd\":\n        opt_class = optim.SGD\n    elif optimizer_name == \"adafactor\":\n        opt_class = optim.Adafactor\n    else:\n        raise ValueError(f\"Unsupported optimizer: {optimizer_name}\")\n\n    opt = opt_class(learning_rate=lr, **optimizer_config)\n\n    # Train model\n    train(\n        model=model,\n        args=training_args,\n        optimizer=opt,\n        train_dataset=CacheDataset(train_set),\n        val_dataset=CacheDataset(valid_set),\n        training_callback=training_callback,\n    )\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/lora.py#L226-L319"
+    },
+    {
+      "path": "mlx_lm/lora.py",
+      "selector": "run",
+      "start": 344,
+      "end": 376,
+      "file_sha256": "341dce80747705c9363728823d3f117e96f821fc3b35d35db2f47b3151d3adc5",
+      "quote_sha256": "bbfa7fa2e9e08a19d18a36338d0b57fdb6abaeaf0013715652b34f2bd3e097f6",
+      "quote": "def run(args, training_callback: TrainingCallback = None):\n    np.random.seed(args.seed)\n    training_callback = get_reporting_callbacks(\n        args.report_to,\n        project_name=args.project_name,\n        log_dir=args.adapter_path,\n        config=vars(args),\n    )\n\n    rprint(\"Loading pretrained model\")\n    model, tokenizer = load(\n        args.model,\n        tokenizer_config={\"trust_remote_code\": args.trust_remote_code},\n        trust_remote_code=args.trust_remote_code,\n    )\n\n    rprint(\"Loading datasets\")\n    train_set, valid_set, test_set = load_dataset(args, tokenizer)\n\n    if args.test and not args.train:\n        # Allow testing without LoRA layers by providing empty path\n        if args.adapter_path != \"\":\n            load_adapters(model, args.adapter_path)\n\n    elif args.train:\n        rprint(\"Training\")\n        train_model(args, model, train_set, valid_set, training_callback)\n    else:\n        raise ValueError(\"Must provide at least one of --train or --test\")\n\n    if args.test:\n        rprint(\"Testing\")\n        evaluate_model(args, model, test_set)\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/lora.py#L344-L376"
+    },
+    {
+      "path": "mlx_lm/tuner/utils.py",
+      "selector": "load_adapter_weights",
+      "start": 170,
+      "end": 198,
+      "file_sha256": "e1260940a0e974ed573ae59f348254b46628be8633347e10818f28b76d7809da",
+      "quote_sha256": "4b76215fdab39f477d4faa6db30f681ce42a49bc88f318635e9935c101b06399",
+      "quote": "def load_adapter_weights(\n    model: nn.Module, *, path: str | Path, fine_tune_type: str\n) -> None:\n    \"\"\"Load adapter weights into a model that already has its LoRA or DoRA layers.\"\"\"\n    weights = mx.load(str(path))\n    params = dict(tree_flatten(model.parameters()))\n    if fine_tune_type == \"full\":\n        allowed = params\n    else:\n        allowed = {\n            name: param\n            for name, param in params.items()\n            if name.rsplit(\".\", 1)[-1] in _ADAPTER_LEAVES\n        }\n        weights = _match_by_layer(weights, allowed)\n    errors: list[str] = []\n    for name, w in weights.items():\n        if name not in allowed:\n            errors.append(f\"  {name}: not an adapter parameter in the model\")\n        elif w.shape != allowed[name].shape:\n            errors.append(\n                f\"  {name}: adapter shape {tuple(w.shape)} does not match \"\n                f\"model parameter shape {tuple(allowed[name].shape)}\"\n            )\n    if errors:\n        raise ValueError(\n            f\"Adapter at {path} contains incompatible tensors:\\n\" + \"\\n\".join(errors)\n        )\n    model.load_weights(list(weights.items()), strict=False)\n",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0/mlx_lm/tuner/utils.py#L170-L198"
+    }
+  ],
+  "analysis": "HostPythonAST/quotes only;no source module imports/tokenizer/MLX execution."
+}

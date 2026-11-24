@@ -1,0 +1,6916 @@
+// Copyright The Prometheus Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package promql_test
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"math"
+	"os"
+	"path/filepath"
+	"slices"
+	"sort"
+	"strconv"
+	"strings"
+	"sync"
+	"testing"
+	"testing/synctest"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/promslog"
+	"github.com/stretchr/testify/require"
+
+	"github.com/prometheus/prometheus/model/histogram"
+	"github.com/prometheus/prometheus/model/labels"
+	"github.com/prometheus/prometheus/model/timestamp"
+	"github.com/prometheus/prometheus/model/value"
+	"github.com/prometheus/prometheus/promql"
+	"github.com/prometheus/prometheus/promql/parser"
+	"github.com/prometheus/prometheus/promql/parser/posrange"
+	"github.com/prometheus/prometheus/promql/promqltest"
+	"github.com/prometheus/prometheus/storage"
+	"github.com/prometheus/prometheus/tsdb"
+	"github.com/prometheus/prometheus/tsdb/chunkenc"
+	"github.com/prometheus/prometheus/tsdb/chunks"
+	"github.com/prometheus/prometheus/util/annotations"
+	"github.com/prometheus/prometheus/util/logging"
+	"github.com/prometheus/prometheus/util/stats"
+	"github.com/prometheus/prometheus/util/testutil"
+)
+
+const (
+	env                  = "query execution"
+	defaultLookbackDelta = 5 * time.Minute
+)
+
+func TestMain(m *testing.M) {
+	testutil.TolerantVerifyLeak(m)
+}
+
+func TestQueryConcurrency(t *testing.T) {
+	maxConcurrency := 10
+
+	queryTracker, err := promql.NewActiveQueryTracker(t.TempDir(), maxConcurrency, nil)
+	require.NoError(t, err)
+	opts := promql.EngineOpts{
+		Logger:             nil,
+		Reg:                nil,
+		MaxSamples:         10,
+		Timeout:            100 * time.Second,
+		ActiveQueryTracker: queryTracker,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+
+	ctx, cancelCtx := context.WithCancel(context.Background())
+	t.Cleanup(cancelCtx)
+
+	block := make(chan struct{})
+	processing := make(chan struct{})
+	done := make(chan int)
+	t.Cleanup(func() {
+		close(done)
+	})
+
+	f := func(context.Context) error {
+		select {
+		case processing <- struct{}{}:
+		case <-done:
+		}
+
+		select {
+		case <-block:
+		case <-done:
+		}
+		return nil
+	}
+
+	var wg sync.WaitGroup
+	for range maxConcurrency {
+		q := engine.NewTestQuery(f)
+		wg.Go(func() {
+			q.Exec(ctx)
+		})
+		select {
+		case <-processing:
+			// Expected.
+		case <-time.After(20 * time.Millisecond):
+			require.Fail(t, "Query within concurrency threshold not being executed")
+		}
+	}
+
+	q := engine.NewTestQuery(f)
+	wg.Go(func() {
+		q.Exec(ctx)
+	})
+
+	select {
+	case <-processing:
+		require.Fail(t, "Query above concurrency threshold being executed")
+	case <-time.After(20 * time.Millisecond):
+		// Expected.
+	}
+
+	// Terminate a running query.
+	block <- struct{}{}
+
+	select {
+	case <-processing:
+		// Expected.
+	case <-time.After(20 * time.Millisecond):
+		require.Fail(t, "Query within concurrency threshold not being executed")
+	}
+
+	// Terminate remaining queries.
+	for range maxConcurrency {
+		block <- struct{}{}
+	}
+
+	wg.Wait()
+}
+
+// contextDone returns an error if the context was canceled or timed out.
+func contextDone(ctx context.Context, env string) error {
+	if err := ctx.Err(); err != nil {
+		switch {
+		case errors.Is(err, context.Canceled):
+			return promql.ErrQueryCanceled(env)
+		case errors.Is(err, context.DeadlineExceeded):
+			return promql.ErrQueryTimeout(env)
+		default:
+			return err
+		}
+	}
+	return nil
+}
+
+func TestQueryTimeout(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:     nil,
+		Reg:        nil,
+		MaxSamples: 10,
+		Timeout:    5 * time.Millisecond,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+	ctx := t.Context()
+
+	query := engine.NewTestQuery(func(ctx context.Context) error {
+		time.Sleep(100 * time.Millisecond)
+		return contextDone(ctx, "test statement execution")
+	})
+
+	res := query.Exec(ctx)
+	require.Error(t, res.Err, "expected timeout error but got none")
+
+	var e promql.ErrQueryTimeout
+	require.ErrorAs(t, res.Err, &e, "expected timeout error but got: %s", res.Err)
+}
+
+const errQueryCanceled = promql.ErrQueryCanceled("test statement execution")
+
+func TestQueryCancel(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:     nil,
+		Reg:        nil,
+		MaxSamples: 10,
+		Timeout:    10 * time.Second,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+	ctx := t.Context()
+
+	// Cancel a running query before it completes.
+	block := make(chan struct{})
+	processing := make(chan struct{})
+
+	query1 := engine.NewTestQuery(func(ctx context.Context) error {
+		processing <- struct{}{}
+		<-block
+		return contextDone(ctx, "test statement execution")
+	})
+
+	var res *promql.Result
+
+	go func() {
+		res = query1.Exec(ctx)
+		processing <- struct{}{}
+	}()
+
+	<-processing
+	query1.Cancel()
+	block <- struct{}{}
+	<-processing
+
+	require.Error(t, res.Err, "expected cancellation error for query1 but got none")
+	require.Equal(t, errQueryCanceled, res.Err)
+
+	// Canceling a query before starting it must have no effect.
+	query2 := engine.NewTestQuery(func(ctx context.Context) error {
+		return contextDone(ctx, "test statement execution")
+	})
+
+	query2.Cancel()
+	res = query2.Exec(ctx)
+	require.NoError(t, res.Err)
+}
+
+// errQuerier implements storage.Querier which always returns error.
+type errQuerier struct {
+	err error
+}
+
+func (q *errQuerier) Select(context.Context, bool, *storage.SelectHints, ...*labels.Matcher) storage.SeriesSet {
+	return errSeriesSet{err: q.err}
+}
+
+func (*errQuerier) LabelValues(context.Context, string, *storage.LabelHints, ...*labels.Matcher) ([]string, annotations.Annotations, error) {
+	return nil, nil, nil
+}
+
+func (*errQuerier) LabelNames(context.Context, *storage.LabelHints, ...*labels.Matcher) ([]string, annotations.Annotations, error) {
+	return nil, nil, nil
+}
+func (*errQuerier) Close() error { return nil }
+
+// errSeriesSet implements storage.SeriesSet which always returns error.
+type errSeriesSet struct {
+	err error
+}
+
+func (errSeriesSet) Next() bool                        { return false }
+func (errSeriesSet) At() storage.Series                { return nil }
+func (e errSeriesSet) Err() error                      { return e.err }
+func (errSeriesSet) Warnings() annotations.Annotations { return nil }
+
+func TestQueryError(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:     nil,
+		Reg:        nil,
+		MaxSamples: 10,
+		Timeout:    10 * time.Second,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+	errStorage := promql.ErrStorage{errors.New("storage error")}
+	queryable := storage.QueryableFunc(func(_, _ int64) (storage.Querier, error) {
+		return &errQuerier{err: errStorage}, nil
+	})
+	ctx := t.Context()
+
+	vectorQuery, err := engine.NewInstantQuery(ctx, queryable, nil, "foo", time.Unix(1, 0))
+	require.NoError(t, err)
+
+	res := vectorQuery.Exec(ctx)
+	require.Error(t, res.Err, "expected error on failed select but got none")
+	require.ErrorIs(t, res.Err, errStorage, "expected error doesn't match")
+
+	matrixQuery, err := engine.NewInstantQuery(ctx, queryable, nil, "foo[1m]", time.Unix(1, 0))
+	require.NoError(t, err)
+
+	res = matrixQuery.Exec(ctx)
+	require.Error(t, res.Err, "expected error on failed select but got none")
+	require.ErrorIs(t, res.Err, errStorage, "expected error doesn't match")
+}
+
+type noopHintRecordingQueryable struct {
+	hints []*storage.SelectHints
+}
+
+func (h *noopHintRecordingQueryable) Querier(int64, int64) (storage.Querier, error) {
+	return &hintRecordingQuerier{Querier: &errQuerier{}, h: h}, nil
+}
+
+type hintRecordingQuerier struct {
+	storage.Querier
+
+	h *noopHintRecordingQueryable
+}
+
+func (h *hintRecordingQuerier) Select(ctx context.Context, sortSeries bool, hints *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {
+	h.h.hints = append(h.h.hints, hints)
+	return h.Querier.Select(ctx, sortSeries, hints, matchers...)
+}
+
+type hintsClampingQueryable struct {
+	storage.Queryable
+}
+
+func (q hintsClampingQueryable) Querier(mint, maxt int64) (storage.Querier, error) {
+	querier, err := q.Queryable.Querier(mint, maxt)
+	if err != nil {
+		return nil, err
+	}
+	return &hintsClampingQuerier{Querier: querier, mint: mint, maxt: maxt}, nil
+}
+
+type hintsClampingQuerier struct {
+	storage.Querier
+	mint, maxt int64
+}
+
+func (q *hintsClampingQuerier) Select(ctx context.Context, sortSeries bool, hints *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {
+	if hints == nil {
+		return q.Querier.Select(ctx, sortSeries, nil, matchers...)
+	}
+
+	clampedHints := *hints
+	if clampedHints.Start < q.mint {
+		clampedHints.Start = q.mint
+	}
+	if clampedHints.End > q.maxt {
+		clampedHints.End = q.maxt
+	}
+	if clampedHints.Start > clampedHints.End {
+		return storage.EmptySeriesSet()
+	}
+	return q.Querier.Select(ctx, sortSeries, &clampedHints, matchers...)
+}
+
+func TestSelectHintsSetCorrectly(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:           nil,
+		Reg:              nil,
+		MaxSamples:       10,
+		Timeout:          10 * time.Second,
+		LookbackDelta:    5 * time.Second,
+		EnableAtModifier: true,
+	}
+
+	for _, tc := range []struct {
+		query string
+
+		// All times are in milliseconds.
+		start int64
+		end   int64
+
+		// TODO(bwplotka): Add support for better hints when subquerying.
+		expected []*storage.SelectHints
+	}{
+		{
+			query: "foo", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: 5001, End: 10000},
+			},
+		}, {
+			query: "foo @ 15", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: 10001, End: 15000},
+			},
+		}, {
+			query: "foo @ 1", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: -3999, End: 1000},
+			},
+		}, {
+			query: "foo[2m]", start: 200000,
+			expected: []*storage.SelectHints{
+				{Start: 80001, End: 200000, Range: 120000},
+			},
+		}, {
+			query: "foo[2m] @ 180", start: 200000,
+			expected: []*storage.SelectHints{
+				{Start: 60001, End: 180000, Range: 120000},
+			},
+		}, {
+			query: "foo[2m] @ 300", start: 200000,
+			expected: []*storage.SelectHints{
+				{Start: 180001, End: 300000, Range: 120000},
+			},
+		}, {
+			query: "foo[2m] @ 60", start: 200000,
+			expected: []*storage.SelectHints{
+				{Start: -59999, End: 60000, Range: 120000},
+			},
+		}, {
+			query: "foo[2m] offset 2m", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: 60001, End: 180000, Range: 120000},
+			},
+		}, {
+			query: "foo[2m] @ 200 offset 2m", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: -39999, End: 80000, Range: 120000},
+			},
+		}, {
+			query: "foo[2m:1s]", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: 175001, End: 300000, Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s])", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: 175001, End: 300000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] @ 300)", start: 200000,
+			expected: []*storage.SelectHints{
+				{Start: 175001, End: 300000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] @ 200)", start: 200000,
+			expected: []*storage.SelectHints{
+				{Start: 75001, End: 200000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] @ 100)", start: 200000,
+			expected: []*storage.SelectHints{
+				{Start: -24999, End: 100000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] offset 10s)", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: 165001, End: 290000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time((foo offset 10s)[2m:1s] offset 10s)", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: 155001, End: 280000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			// When the @ is on the vector selector, the enclosing subquery parameters
+			// don't affect the hint ranges.
+			query: "count_over_time((foo @ 200 offset 10s)[2m:1s] offset 10s)", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: 185001, End: 190000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			// When the @ is on the vector selector, the enclosing subquery parameters
+			// don't affect the hint ranges.
+			query: "count_over_time((foo @ 200 offset 10s)[2m:1s] @ 100 offset 10s)", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: 185001, End: 190000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time((foo offset 10s)[2m:1s] @ 100 offset 10s)", start: 300000,
+			expected: []*storage.SelectHints{
+				{Start: -44999, End: 80000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "foo", start: 10000, end: 20000,
+			expected: []*storage.SelectHints{
+				{Start: 5001, End: 20000, Step: 1000},
+			},
+		}, {
+			query: "foo @ 15", start: 10000, end: 20000,
+			expected: []*storage.SelectHints{
+				{Start: 10001, End: 15000, Step: 1000},
+			},
+		}, {
+			query: "foo @ 1", start: 10000, end: 20000,
+			expected: []*storage.SelectHints{
+				{Start: -3999, End: 1000, Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2m] @ 180)", start: 200000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 60001, End: 180000, Range: 120000, Func: "rate", Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2m] @ 300)", start: 200000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 180001, End: 300000, Range: 120000, Func: "rate", Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2m] @ 60)", start: 200000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: -59999, End: 60000, Range: 120000, Func: "rate", Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2m])", start: 200000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 80001, End: 500000, Range: 120000, Func: "rate", Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2m] offset 2m)", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 60001, End: 380000, Range: 120000, Func: "rate", Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2m:1s])", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 175001, End: 500000, Func: "rate", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s])", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 175001, End: 500000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] offset 10s)", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 165001, End: 490000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] @ 300)", start: 200000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 175001, End: 300000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] @ 200)", start: 200000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 75001, End: 200000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time(foo[2m:1s] @ 100)", start: 200000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: -24999, End: 100000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time((foo offset 10s)[2m:1s] offset 10s)", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 155001, End: 480000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			// When the @ is on the vector selector, the enclosing subquery parameters
+			// don't affect the hint ranges.
+			query: "count_over_time((foo @ 200 offset 10s)[2m:1s] offset 10s)", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 185001, End: 190000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			// When the @ is on the vector selector, the enclosing subquery parameters
+			// don't affect the hint ranges.
+			query: "count_over_time((foo @ 200 offset 10s)[2m:1s] @ 100 offset 10s)", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 185001, End: 190000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "count_over_time((foo offset 10s)[2m:1s] @ 100 offset 10s)", start: 300000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: -44999, End: 80000, Func: "count_over_time", Step: 1000},
+			},
+		}, {
+			query: "sum by (dim1) (foo)", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: 5001, End: 10000, Func: "sum", By: true, Grouping: []string{"dim1"}},
+			},
+		}, {
+			query: "sum without (dim1) (foo)", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: 5001, End: 10000, Func: "sum", Grouping: []string{"dim1"}},
+			},
+		}, {
+			query: "sum by (dim1) (avg_over_time(foo[1s]))", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: 9001, End: 10000, Func: "avg_over_time", Range: 1000},
+			},
+		}, {
+			query: "sum by (dim1) (max by (dim2) (foo))", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: 5001, End: 10000, Func: "max", By: true, Grouping: []string{"dim2"}},
+			},
+		}, {
+			query: "(max by (dim1) (foo))[5s:1s]", start: 10000,
+			expected: []*storage.SelectHints{
+				{Start: 1, End: 10000, Func: "max", By: true, Grouping: []string{"dim1"}, Step: 1000},
+			},
+		}, {
+			query: "(sum(http_requests{group=~\"p.*\"})+max(http_requests{group=~\"c.*\"}))[20s:5s]", start: 120000,
+			expected: []*storage.SelectHints{
+				{Start: 95001, End: 120000, Func: "sum", By: true, Step: 5000},
+				{Start: 95001, End: 120000, Func: "max", By: true, Step: 5000},
+			},
+		}, {
+			query: "foo @ 50 + bar @ 250 + baz @ 900", start: 100000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 45001, End: 50000, Step: 1000},
+				{Start: 245001, End: 250000, Step: 1000},
+				{Start: 895001, End: 900000, Step: 1000},
+			},
+		}, {
+			query: "foo @ 50 + bar + baz @ 900", start: 100000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 45001, End: 50000, Step: 1000},
+				{Start: 95001, End: 500000, Step: 1000},
+				{Start: 895001, End: 900000, Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2s] @ 50) + bar @ 250 + baz @ 900", start: 100000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 48001, End: 50000, Step: 1000, Func: "rate", Range: 2000},
+				{Start: 245001, End: 250000, Step: 1000},
+				{Start: 895001, End: 900000, Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2s:1s] @ 50) + bar + baz", start: 100000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 43001, End: 50000, Step: 1000, Func: "rate"},
+				{Start: 95001, End: 500000, Step: 1000},
+				{Start: 95001, End: 500000, Step: 1000},
+			},
+		}, {
+			query: "rate(foo[2s:1s] @ 50) + bar + rate(baz[2m:1s] @ 900 offset 2m) ", start: 100000, end: 500000,
+			expected: []*storage.SelectHints{
+				{Start: 43001, End: 50000, Step: 1000, Func: "rate"},
+				{Start: 95001, End: 500000, Step: 1000},
+				{Start: 655001, End: 780000, Step: 1000, Func: "rate"},
+			},
+		}, { // Hints are based on the inner most subquery timestamp.
+			query: `sum_over_time(sum_over_time(metric{job="1"}[100s])[100s:25s] @ 50)[3s:1s] @ 3000`, start: 100000,
+			expected: []*storage.SelectHints{
+				{Start: -149999, End: 50000, Range: 100000, Func: "sum_over_time", Step: 25000},
+			},
+		}, { // Hints are based on the inner most subquery timestamp.
+			query: `sum_over_time(sum_over_time(metric{job="1"}[100s])[100s:25s] @ 3000)[3s:1s] @ 50`,
+			expected: []*storage.SelectHints{
+				{Start: 2800001, End: 3000000, Range: 100000, Func: "sum_over_time", Step: 25000},
+			},
+		},
+	} {
+		t.Run(tc.query, func(t *testing.T) {
+			engine := promqltest.NewTestEngineWithOpts(t, opts)
+			hintsRecorder := &noopHintRecordingQueryable{}
+
+			var (
+				query promql.Query
+				err   error
+			)
+			ctx := context.Background()
+
+			if tc.end == 0 {
+				query, err = engine.NewInstantQuery(ctx, hintsRecorder, nil, tc.query, timestamp.Time(tc.start))
+			} else {
+				query, err = engine.NewRangeQuery(ctx, hintsRecorder, nil, tc.query, timestamp.Time(tc.start), timestamp.Time(tc.end), time.Second)
+			}
+			require.NoError(t, err)
+
+			res := query.Exec(context.Background())
+			require.NoError(t, res.Err)
+
+			require.Equal(t, tc.expected, hintsRecorder.hints)
+		})
+	}
+}
+
+func TestFindMinMaxTimeForInfo(t *testing.T) {
+	const lookbackDelta = 5 * time.Second
+	testParser := parser.NewParser(parser.Options{EnableExperimentalFunctions: true})
+
+	testCases := []struct {
+		name       string
+		query      string
+		start, end time.Time
+		wantMin    int64
+		wantMax    int64
+	}{
+		{
+			name:    "mixed fixed references",
+			query:   "info(metric @ 120 or other_metric @ 480)",
+			start:   time.Unix(480, 0),
+			end:     time.Unix(540, 0),
+			wantMin: 115001,
+			wantMax: 540000,
+		},
+		{
+			name:    "mixed offsets",
+			query:   "info(metric offset 2m or other_metric offset 6m)",
+			start:   time.Unix(480, 0),
+			end:     time.Unix(540, 0),
+			wantMin: 115001,
+			wantMax: 540000,
+		},
+		{
+			name:    "selector-free input",
+			query:   `info(label_replace(label_replace(vector(1), "instance", "a", "__name__", ".*"), "job", "1", "__name__", ".*"))`,
+			start:   time.Unix(480, 0),
+			end:     time.Unix(540, 0),
+			wantMin: 475001,
+			wantMax: 540000,
+		},
+		{
+			name:    "offset subquery",
+			query:   "last_over_time((info(metric @ 120 or other_metric @ 480))[5m:1m] offset 6m)",
+			start:   time.Unix(1200, 0),
+			end:     time.Unix(1260, 0),
+			wantMin: 115001,
+			wantMax: 900000,
+		},
+		{
+			name:    "anchored offset subquery",
+			query:   "last_over_time((info(metric @ 120 or other_metric @ 480))[5m:1m] @ 1200 offset 6m)",
+			start:   time.Unix(1200, 0),
+			end:     time.Unix(1260, 0),
+			wantMin: 115001,
+			wantMax: 840000,
+		},
+		{
+			name:    "uniform fixed reference remains narrow",
+			query:   "info(metric @ 120 or other_metric @ 120)",
+			start:   time.Unix(480, 0),
+			end:     time.Unix(540, 0),
+			wantMin: 115001,
+			wantMax: 120000,
+		},
+		{
+			name:    "uniform short range includes metadata lookback",
+			query:   "info(last_over_time(metric[1s]))",
+			start:   time.Unix(480, 0),
+			end:     time.Unix(540, 0),
+			wantMin: 475001,
+			wantMax: 540000,
+		},
+		{
+			name:    "uniform fixed short range includes metadata lookback",
+			query:   "info(last_over_time(metric[1s] @ 120))",
+			start:   time.Unix(480, 0),
+			end:     time.Unix(540, 0),
+			wantMin: 115001,
+			wantMax: 120000,
+		},
+		{
+			name:    "uniform offset short range includes metadata lookback",
+			query:   "info(last_over_time(metric[1s] offset 2m))",
+			start:   time.Unix(480, 0),
+			end:     time.Unix(540, 0),
+			wantMin: 355001,
+			wantMax: 420000,
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			expr, err := testParser.ParseExpr(tc.query)
+			require.NoError(t, err)
+			expr, err = promql.PreprocessExpr(expr, tc.start, tc.end, time.Minute)
+			require.NoError(t, err)
+
+			stmt := &parser.EvalStmt{
+				Expr:          expr,
+				Start:         tc.start,
+				End:           tc.end,
+				Interval:      time.Minute,
+				LookbackDelta: lookbackDelta,
+			}
+			gotMin, gotMax := promql.FindMinMaxTime(stmt)
+			require.Equal(t, tc.wantMin, gotMin)
+			require.Equal(t, tc.wantMax, gotMax)
+		})
+	}
+}
+
+func TestInfoIncludesMetadataLookbackInQuerierBounds(t *testing.T) {
+	testStorage := promqltest.LoadedStorage(t, `
+		load 1m
+			metric{instance="a", job="1"} _ _ _ _ _ _ _ _ _ _ 1
+			target_info{instance="a", job="1", version="v1"} _ _ _ _ _ _ 1
+	`)
+	queryable := hintsClampingQueryable{Queryable: testStorage}
+	engine := promqltest.NewTestEngine(t, false, defaultLookbackDelta, promqltest.DefaultMaxSamplesPerQuery)
+
+	query, err := engine.NewInstantQuery(t.Context(), queryable, nil, "info(last_over_time(metric[1m]))", time.Unix(600, 0))
+	require.NoError(t, err)
+	t.Cleanup(query.Close)
+
+	result := query.Exec(t.Context())
+	require.NoError(t, result.Err)
+	vector, err := result.Vector()
+	require.NoError(t, err)
+	require.Len(t, vector, 1)
+	testutil.RequireEqual(t, labels.FromStrings("__name__", "metric", "instance", "a", "job", "1", "version", "v1"), vector[0].Metric)
+}
+
+func TestEngineShutdown(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:     nil,
+		Reg:        nil,
+		MaxSamples: 10,
+		Timeout:    10 * time.Second,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+	ctx, cancelCtx := context.WithCancel(context.Background())
+
+	block := make(chan struct{})
+	processing := make(chan struct{})
+
+	// Shutdown engine on first handler execution. Should handler execution ever become
+	// concurrent this test has to be adjusted accordingly.
+	f := func(ctx context.Context) error {
+		processing <- struct{}{}
+		<-block
+		return contextDone(ctx, "test statement execution")
+	}
+	query1 := engine.NewTestQuery(f)
+
+	// Stopping the engine must cancel the base context. While executing queries is
+	// still possible, their context is canceled from the beginning and execution should
+	// terminate immediately.
+
+	var res *promql.Result
+	go func() {
+		res = query1.Exec(ctx)
+		processing <- struct{}{}
+	}()
+
+	<-processing
+	cancelCtx()
+	block <- struct{}{}
+	<-processing
+
+	require.Error(t, res.Err, "expected error on shutdown during query but got none")
+	require.Equal(t, errQueryCanceled, res.Err)
+
+	query2 := engine.NewTestQuery(func(context.Context) error {
+		require.FailNow(t, "reached query execution unexpectedly")
+		return nil
+	})
+
+	// The second query is started after the engine shut down. It must
+	// be canceled immediately.
+	res2 := query2.Exec(ctx)
+	require.Error(t, res2.Err, "expected error on querying with canceled context but got none")
+
+	var e promql.ErrQueryCanceled
+	require.ErrorAs(t, res2.Err, &e, "expected cancellation error but got: %s", res2.Err)
+}
+
+func TestEngineEvalStmtTimestamps(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  metric 1 2
+`)
+
+	cases := []struct {
+		Query       string
+		Result      parser.Value
+		Start       time.Time
+		End         time.Time
+		Interval    time.Duration
+		ShouldError bool
+	}{
+		// Instant queries.
+		{
+			Query:  "1",
+			Result: promql.Scalar{V: 1, T: 1000},
+			Start:  time.Unix(1, 0),
+		},
+		{
+			Query: "metric",
+			Result: promql.Vector{
+				promql.Sample{
+					F:      1,
+					T:      1000,
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+			Start: time.Unix(1, 0),
+		},
+		{
+			Query: "metric[20s]",
+			Result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: 0}, {F: 2, T: 10000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+			Start: time.Unix(10, 0),
+		},
+		// Range queries.
+		{
+			Query: "1",
+			Result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: 0}, {F: 1, T: 1000}, {F: 1, T: 2000}},
+					Metric: labels.EmptyLabels(),
+				},
+			},
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(2, 0),
+			Interval: time.Second,
+		},
+		{
+			Query: "metric",
+			Result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: 0}, {F: 1, T: 1000}, {F: 1, T: 2000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(2, 0),
+			Interval: time.Second,
+		},
+		{
+			Query: "metric",
+			Result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: 0}, {F: 1, T: 5000}, {F: 2, T: 10000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+			Start:    time.Unix(0, 0),
+			End:      time.Unix(10, 0),
+			Interval: 5 * time.Second,
+		},
+		{
+			Query:       `count_values("wrong label!\xff", metric)`,
+			ShouldError: true,
+		},
+	}
+
+	for i, c := range cases {
+		t.Run(fmt.Sprintf("%d query=%s", i, c.Query), func(t *testing.T) {
+			var err error
+			var qry promql.Query
+			engine := newTestEngine(t)
+			if c.Interval == 0 {
+				qry, err = engine.NewInstantQuery(context.Background(), storage, nil, c.Query, c.Start)
+			} else {
+				qry, err = engine.NewRangeQuery(context.Background(), storage, nil, c.Query, c.Start, c.End, c.Interval)
+			}
+			require.NoError(t, err)
+
+			res := qry.Exec(context.Background())
+			if c.ShouldError {
+				require.Error(t, res.Err, "expected error for the query %q", c.Query)
+				return
+			}
+
+			require.NoError(t, res.Err)
+			require.Equal(t, c.Result, res.Value, "query %q failed", c.Query)
+		})
+	}
+}
+
+func TestQueryStatistics(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  metricWith1SampleEvery10Seconds 1+1x100
+  metricWith3SampleEvery10Seconds{a="1",b="1"} 1+1x100
+  metricWith3SampleEvery10Seconds{a="2",b="2"} 1+1x100
+  metricWith3SampleEvery10Seconds{a="3",b="2"} 1+1x100
+  metricWith1HistogramEvery10Seconds {{schema:1 count:5 sum:20 buckets:[1 2 1 1]}}+{{schema:1 count:10 sum:5 buckets:[1 2 3 4]}}x100
+`)
+
+	type testCase struct {
+		Query               string
+		SkipMaxCheck        bool
+		TotalSamples        int64
+		TotalSamplesPerStep stats.TotalSamplesPerStep
+		SamplesRead         int64                     // Samples read (delta for range-vector).
+		SamplesReadPerStep  stats.TotalSamplesPerStep // Per-step samples read.
+		PeakSamples         int
+		Start               time.Time
+		End                 time.Time
+		Interval            time.Duration
+	}
+	cases := []testCase{
+		{
+			Query:        `"literal string"`,
+			SkipMaxCheck: true, // This can't fail from a max samples limit.
+			Start:        time.Unix(21, 0),
+			TotalSamples: 0,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 0,
+			},
+			SamplesRead: 0,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 0,
+			},
+		},
+		{
+			Query:        "1",
+			Start:        time.Unix(21, 0),
+			TotalSamples: 0,
+			PeakSamples:  1,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 0,
+			},
+			SamplesRead: 0,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 0,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds",
+			Start:        time.Unix(21, 0),
+			PeakSamples:  1,
+			TotalSamples: 1, // 1 sample / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+		},
+		{
+			Query:        "metricWith1HistogramEvery10Seconds",
+			Start:        time.Unix(21, 0),
+			PeakSamples:  13,
+			TotalSamples: 13, // 1 histogram HPoint of size 13 / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 13,
+			},
+			SamplesRead: 13,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 13,
+			},
+		},
+		{
+			// timestamp function has a special handling.
+			Query:        "timestamp(metricWith1SampleEvery10Seconds)",
+			Start:        time.Unix(21, 0),
+			PeakSamples:  2,
+			TotalSamples: 1, // 1 sample / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+		},
+		{
+			Query:        "timestamp(metricWith1HistogramEvery10Seconds)",
+			Start:        time.Unix(21, 0),
+			PeakSamples:  2,
+			TotalSamples: 1, // 1 float sample (because of timestamp) / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds",
+			Start:        time.Unix(22, 0),
+			PeakSamples:  1,
+			TotalSamples: 1, // 1 sample / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				22000: 1, // Aligned to the step time, not the sample time.
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				22000: 1,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds offset 10s",
+			Start:        time.Unix(21, 0),
+			PeakSamples:  1,
+			TotalSamples: 1, // 1 sample / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds @ 15",
+			Start:        time.Unix(21, 0),
+			PeakSamples:  1,
+			TotalSamples: 1, // 1 sample / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+		},
+		{
+			Query:        `metricWith3SampleEvery10Seconds{a="1"}`,
+			Start:        time.Unix(21, 0),
+			PeakSamples:  1,
+			TotalSamples: 1, // 1 sample / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+		},
+		{
+			Query:        `metricWith3SampleEvery10Seconds{a="1"} @ 19`,
+			Start:        time.Unix(21, 0),
+			PeakSamples:  1,
+			TotalSamples: 1, // 1 sample / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 1,
+			},
+		},
+		{
+			Query:        `metricWith3SampleEvery10Seconds{a="1"}[20s] @ 19`,
+			Start:        time.Unix(21, 0),
+			PeakSamples:  2,
+			TotalSamples: 2, // (1 sample / 10 seconds) * 20s
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 2,
+			},
+			SamplesRead: 2,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 2,
+			},
+		},
+		{
+			Query:        "metricWith3SampleEvery10Seconds",
+			Start:        time.Unix(21, 0),
+			PeakSamples:  3,
+			TotalSamples: 3, // 3 samples / 10 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				21000: 3,
+			},
+			SamplesRead: 3,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				21000: 3,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds[60s]",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  6,
+			TotalSamples: 6, // 1 sample / 10 seconds * 60 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+		},
+		{
+			Query:        "metricWith1HistogramEvery10Seconds[60s]",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  78,
+			TotalSamples: 78, // 1 histogram (size 13 HPoint) / 10 seconds * 60 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 78,
+			},
+			SamplesRead: 78,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 78,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[60s])[20s:5s]",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  10,
+			TotalSamples: 24, // (1 sample / 10 seconds * 60 seconds) * 4
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 24,
+			},
+			SamplesRead: 8,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 8,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[61s])[20s:5s]",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  11,
+			TotalSamples: 26, // (1 sample / 10 seconds * 60 seconds) * 4 + 2 as
+			// max_over_time(metricWith1SampleEvery10Seconds[61s]) @ 190 and 200 will return 7 samples.
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 26,
+			},
+			SamplesRead: 8,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 8,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith1HistogramEvery10Seconds[60s])[20s:5s]",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  78,
+			TotalSamples: 312, // (1 histogram (size 13) / 10 seconds * 60 seconds) * 4
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 312,
+			},
+			SamplesRead: 104,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 104,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds[60s] @ 30",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  4,
+			TotalSamples: 4, // @ modifier force the evaluation to at 30 seconds - So it brings 4 datapoints (0, 10, 20, 30 seconds) * 1 series
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 4,
+			},
+			SamplesRead: 4,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 4,
+			},
+		},
+		{
+			Query:        "metricWith1HistogramEvery10Seconds[60s] @ 30",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  52,
+			TotalSamples: 52, // @ modifier force the evaluation to at 30 seconds - So it brings 4 datapoints (0, 10, 20, 30 seconds) * 1 series
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 52,
+			},
+			SamplesRead: 52,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 52,
+			},
+		},
+		{
+			Query:        "sum(max_over_time(metricWith3SampleEvery10Seconds[60s] @ 30))",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  7,
+			TotalSamples: 12, // @ modifier force the evaluation to at 30 seconds - So it brings 4 datapoints (0, 10, 20, 30 seconds) * 3 series
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+			SamplesRead: 12,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+		},
+		{
+			Query:        "sum by (b) (max_over_time(metricWith3SampleEvery10Seconds[60s] @ 30))",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  7,
+			TotalSamples: 12, // @ modifier force the evaluation to at 30 seconds - So it brings 4 datapoints (0, 10, 20, 30 seconds) * 3 series
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+			SamplesRead: 12,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds[60s] offset 10s",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  6,
+			TotalSamples: 6, // 1 sample / 10 seconds * 60 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+		},
+		{
+			Query:        "metricWith3SampleEvery10Seconds[60s]",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  18,
+			TotalSamples: 18, // 3 sample / 10 seconds * 60 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 18,
+			},
+			SamplesRead: 18,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 18,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[60s])",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  7,
+			TotalSamples: 6, // 1 sample / 10 seconds * 60 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+		},
+		{
+			Query:        "absent_over_time(metricWith1SampleEvery10Seconds[60s])",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  7,
+			TotalSamples: 6, // 1 sample / 10 seconds * 60 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith3SampleEvery10Seconds[60s])",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  9,
+			TotalSamples: 18, // 3 sample / 10 seconds * 60 seconds
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 18,
+			},
+			SamplesRead: 18,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 18,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds[60s:5s]",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  12,
+			TotalSamples: 12, // 1 sample per query * 12 queries (60/5).
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+			SamplesRead: 12,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+		},
+		{
+			Query:        "metricWith1SampleEvery10Seconds[60s:5s] offset 10s",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  12,
+			TotalSamples: 12, // 1 sample per query * 12 queries (60/5).
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+			SamplesRead: 12,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith3SampleEvery10Seconds[60s:5s])",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  51,
+			TotalSamples: 36,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 36,
+			},
+			SamplesRead: 36,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 36,
+			},
+		},
+		{
+			Query:        "sum(max_over_time(metricWith3SampleEvery10Seconds[60s:5s])) + sum(max_over_time(metricWith3SampleEvery10Seconds[60s:5s]))",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  52,
+			TotalSamples: 72,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 72,
+			},
+			SamplesRead: 72,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 72,
+			},
+		},
+		{
+			Query:        `metricWith3SampleEvery10Seconds{a="1"}`,
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  4,
+			TotalSamples: 4, // 1 sample per query * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+			SamplesRead: 4,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+		},
+		{
+			Query:        `metricWith3SampleEvery10Seconds{a="1"}`,
+			Start:        time.Unix(204, 0),
+			End:          time.Unix(223, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  4,
+			TotalSamples: 4, // 1 sample per query * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				204000: 1, // aligned to the step time, not the sample time
+				209000: 1,
+				214000: 1,
+				219000: 1,
+			},
+			SamplesRead: 4,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				204000: 1,
+				209000: 1,
+				214000: 1,
+				219000: 1,
+			},
+		},
+		{
+			Query:        `metricWith1HistogramEvery10Seconds`,
+			Start:        time.Unix(204, 0),
+			End:          time.Unix(223, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  52,
+			TotalSamples: 52, // 1 histogram (size 13 HPoint) per query * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				204000: 13, // aligned to the step time, not the sample time
+				209000: 13,
+				214000: 13,
+				219000: 13,
+			},
+			SamplesRead: 52,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				204000: 13,
+				209000: 13,
+				214000: 13,
+				219000: 13,
+			},
+		},
+		{
+			// timestamp function has a special handling
+			Query:        "timestamp(metricWith1SampleEvery10Seconds)",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  5,
+			TotalSamples: 4, // 1 sample per query * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+			SamplesRead: 4,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+		},
+		{
+			// timestamp function has a special handling
+			Query:        "timestamp(metricWith1HistogramEvery10Seconds)",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  5,
+			TotalSamples: 4, // 1 sample per query * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+			SamplesRead: 4,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+		},
+		{
+			Query:        `max_over_time(metricWith3SampleEvery10Seconds{a="1"}[10s])`,
+			Start:        time.Unix(991, 0),
+			End:          time.Unix(1021, 0),
+			Interval:     10 * time.Second,
+			PeakSamples:  2,
+			TotalSamples: 2, // 1 sample per query * 2 steps with data
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				991000:  1,
+				1001000: 1,
+				1011000: 0,
+				1021000: 0,
+			},
+			SamplesRead: 2,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				991000:  1,
+				1001000: 1,
+				1011000: 0,
+				1021000: 0,
+			},
+		},
+		{
+			Query:        `metricWith3SampleEvery10Seconds{a="1"} offset 10s`,
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  4,
+			TotalSamples: 4, // 1 sample per query * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+			SamplesRead: 4,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 1,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith3SampleEvery10Seconds[60s] @ 30)",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  12,
+			TotalSamples: 48, // @ modifier force the evaluation timestamp at 30 seconds - So it brings 4 datapoints (0, 10, 20, 30 seconds) * 3 series * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+				206000: 12,
+				211000: 12,
+				216000: 12,
+			},
+			SamplesRead: 12, // StepInvariantExpr: added once at step 0 only
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+				206000: 0,
+				211000: 0,
+				216000: 0,
+			},
+		},
+		{
+			Query:        `metricWith3SampleEvery10Seconds`,
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			PeakSamples:  12,
+			Interval:     5 * time.Second,
+			TotalSamples: 12, // 3 sample per query * 4 steps
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 3,
+				206000: 3,
+				211000: 3,
+				216000: 3,
+			},
+			SamplesRead: 12,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 3,
+				206000: 3,
+				211000: 3,
+				216000: 3,
+			},
+		},
+		{
+			Query:        `max_over_time(metricWith3SampleEvery10Seconds[60s])`,
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  18,
+			TotalSamples: 72, // (3 sample / 10 seconds * 60 seconds) * 4 steps = 72
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 18,
+				206000: 18,
+				211000: 18,
+				216000: 18,
+			},
+			SamplesRead: 21,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 18,
+				206000: 0,
+				211000: 3,
+				216000: 0,
+			},
+		},
+		{
+			Query:        "sum_over_time(metricWith1SampleEvery10Seconds[60s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(231, 0),
+			Interval:     10 * time.Second,
+			PeakSamples:  10,
+			TotalSamples: 24, // 6 samples in each 60s aggregation window * 4 steps.
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+				211000: 6,
+				221000: 6,
+				231000: 6,
+			},
+			SamplesRead: 9,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+				211000: 1,
+				221000: 1,
+				231000: 1,
+			},
+		},
+		{
+			Query:        "last_over_time(sum_over_time(metricWith1SampleEvery10Seconds[60s])[10s:10s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(231, 0),
+			Interval:     10 * time.Second,
+			PeakSamples:  10,
+			TotalSamples: 24, // 6 underlying samples per step * 4 steps.
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+				211000: 6,
+				221000: 6,
+				231000: 6,
+			},
+			SamplesRead: 9,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+				211000: 1,
+				221000: 1,
+				231000: 1,
+			},
+		},
+		{
+			Query:        "last_over_time(last_over_time(sum_over_time(metricWith1SampleEvery10Seconds[60s])[10s:10s])[10s:10s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(231, 0),
+			Interval:     10 * time.Second,
+			PeakSamples:  10,
+			TotalSamples: 24, // 6 underlying samples per step * 4 steps.
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+				211000: 6,
+				221000: 6,
+				231000: 6,
+			},
+			SamplesRead: 9,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 6,
+				211000: 1,
+				221000: 1,
+				231000: 1,
+			},
+		},
+		{
+			// Aligned counterpart of the unaligned case below: end=216 is the
+			// last actual evaluation step when start=201, step=5. Both cases
+			// should yield identical sample stats; subqueries inside an
+			// unaligned range query must not evaluate past the parent's last
+			// aligned step.
+			Query:        "max_over_time(metricWith3SampleEvery10Seconds[60s:5s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(216, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  69,
+			TotalSamples: 144,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 36,
+				206000: 36,
+				211000: 36,
+				216000: 36,
+			},
+			SamplesRead: 45,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 36,
+				206000: 3,
+				211000: 3,
+				216000: 3,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith3SampleEvery10Seconds[60s:5s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0), // 4s past the last aligned step (216).
+			Interval:     5 * time.Second,
+			PeakSamples:  69,
+			TotalSamples: 144,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 36,
+				206000: 36,
+				211000: 36,
+				216000: 36,
+			},
+			SamplesRead: 45,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 36,
+				206000: 3,
+				211000: 3,
+				216000: 3,
+			},
+		},
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[60s:5s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  31,
+			TotalSamples: 48,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+				206000: 12,
+				211000: 12,
+				216000: 12,
+			},
+			SamplesRead: 15,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+		},
+		{
+			Query:        "sum by (b) (max_over_time(metricWith1SampleEvery10Seconds[60s:5s]))",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  31,
+			TotalSamples: 48,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+				206000: 12,
+				211000: 12,
+				216000: 12,
+			},
+			SamplesRead: 15,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 12,
+				206000: 1,
+				211000: 1,
+				216000: 1,
+			},
+		},
+		{
+			Query:        "sum(max_over_time(metricWith3SampleEvery10Seconds[60s:5s])) + sum(max_over_time(metricWith3SampleEvery10Seconds[60s:5s]))",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  73,
+			TotalSamples: 288,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 72,
+				206000: 72,
+				211000: 72,
+				216000: 72,
+			},
+			SamplesRead: 90,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 72,
+				206000: 6,
+				211000: 6,
+				216000: 6,
+			},
+		},
+		{
+			// Aligned counterpart of the unaligned case below (composite
+			// expression with two sibling subqueries). end=216 is the last
+			// aligned step when start=201, step=5. Both cases should yield
+			// identical sample stats.
+			Query:        "sum(max_over_time(metricWith3SampleEvery10Seconds[60s:5s])) + sum(max_over_time(metricWith1SampleEvery10Seconds[60s:5s]))",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(216, 0),
+			Interval:     5 * time.Second,
+			PeakSamples:  69,
+			TotalSamples: 192,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 48,
+				206000: 48,
+				211000: 48,
+				216000: 48,
+			},
+			SamplesRead: 60,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 48,
+				206000: 4,
+				211000: 4,
+				216000: 4,
+			},
+		},
+		{
+			Query:        "sum(max_over_time(metricWith3SampleEvery10Seconds[60s:5s])) + sum(max_over_time(metricWith1SampleEvery10Seconds[60s:5s]))",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(220, 0), // 4s past the last aligned step (216).
+			Interval:     5 * time.Second,
+			PeakSamples:  69,
+			TotalSamples: 192,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 48,
+				206000: 48,
+				211000: 48,
+				216000: 48,
+			},
+			SamplesRead: 60,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 48,
+				206000: 4,
+				211000: 4,
+				216000: 4,
+			},
+		},
+
+		// Subquery with @ in a range query: every step consumes the fixed window
+		// (180s, 200s], so per-step stats match the instant query below.
+		{
+			Query:        "quantile_over_time(time() / 1000, metricWith1SampleEvery10Seconds[20s:10s] @ 200)",
+			Start:        time.Unix(250, 0),
+			End:          time.Unix(280, 0),
+			Interval:     10 * time.Second,
+			PeakSamples:  16,
+			TotalSamples: 8,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				250000: 2,
+				260000: 2,
+				270000: 2,
+				280000: 2,
+			},
+			SamplesRead: 2,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				250000: 2,
+				260000: 0,
+				270000: 0,
+				280000: 0,
+			},
+		},
+		{
+			Query:        "quantile_over_time(time() / 1000, metricWith1SampleEvery10Seconds[20s:10s] @ 200)",
+			Start:        time.Unix(250, 0),
+			PeakSamples:  7,
+			TotalSamples: 2,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				250000: 2,
+			},
+			SamplesRead: 2,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				250000: 2,
+			},
+		},
+
+		// Instant subquery: basic SamplesRead merging.
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[20s:10s])",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  5,
+			TotalSamples: 2,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 2,
+			},
+			SamplesRead: 2,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 2,
+			},
+		},
+
+		// Boundary: step == range, single inner evaluation.
+		{
+			Query:        "sum_over_time(metricWith1SampleEvery10Seconds[30s:30s])",
+			Start:        time.Unix(90, 0),
+			PeakSamples:  3,
+			TotalSamples: 1,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				90000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				90000: 1,
+			},
+		},
+
+		// Boundary: step > range, sparse sampling.
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[30s:2m])",
+			Start:        time.Unix(240, 0),
+			PeakSamples:  3,
+			TotalSamples: 1,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				240000: 1,
+			},
+			SamplesRead: 1,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				240000: 1,
+			},
+		},
+
+		// Range query + subquery, non-overlapping windows (step >= range).
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[30s:10s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(231, 0),
+			Interval:     30 * time.Second,
+			PeakSamples:  11,
+			TotalSamples: 6,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 3,
+				231000: 3,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 3,
+				231000: 3,
+			},
+		},
+
+		// Range query + subquery, overlapping windows (range > step):
+		// SamplesRead < TotalSamples due to windowed delta attribution.
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[20s:10s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(261, 0),
+			Interval:     10 * time.Second,
+			PeakSamples:  17,
+			TotalSamples: 14,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 2,
+				211000: 2,
+				221000: 2,
+				231000: 2,
+				241000: 2,
+				251000: 2,
+				261000: 2,
+			},
+			SamplesRead: 8,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 2,
+				211000: 1,
+				221000: 1,
+				231000: 1,
+				241000: 1,
+				251000: 1,
+				261000: 1,
+			},
+		},
+
+		// Range query + subquery, outer step wider than subquery range.
+		// Subquery materialises 9 samples (T=180,190,...,260) but only the
+		// 3 samples in each outer step's window contribute to that step's
+		// output; the 3 samples in the gap (201,231] between outer windows
+		// are not counted.
+		{
+			Query:        "max_over_time(metricWith1SampleEvery10Seconds[30s:10s])",
+			Start:        time.Unix(201, 0),
+			End:          time.Unix(261, 0),
+			Interval:     1 * time.Minute,
+			PeakSamples:  14,
+			TotalSamples: 6,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 3,
+				261000: 3,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 3,
+				261000: 3,
+			},
+		},
+
+		// Histogram subquery: histogram size counting in subquery path.
+		{
+			Query:        "histogram_count(max_over_time(metricWith1HistogramEvery10Seconds[20s:10s]))",
+			Start:        time.Unix(201, 0),
+			PeakSamples:  52,
+			TotalSamples: 26,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				201000: 26,
+			},
+			SamplesRead: 26,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				201000: 26,
+			},
+		},
+
+		// Histogram range query + subquery: histogram delta attribution.
+		{
+			Query:        "avg_over_time(metricWith1HistogramEvery10Seconds[2m:1m])",
+			Start:        time.Unix(120, 0),
+			End:          time.Unix(240, 0),
+			Interval:     60 * time.Second,
+			PeakSamples:  117,
+			TotalSamples: 78,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				120000: 26,
+				180000: 26,
+				240000: 26,
+			},
+			SamplesRead: 52,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				120000: 26,
+				180000: 13,
+				240000: 13,
+			},
+		},
+
+		// Range query with multiple series + subquery: covers cardinality.
+		{
+			Query:        "max_over_time(metricWith3SampleEvery10Seconds[60s:10s])",
+			Start:        time.Unix(200, 0),
+			End:          time.Unix(400, 0),
+			Interval:     30 * time.Second,
+			PeakSamples:  99,
+			TotalSamples: 126,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				200000: 18,
+				230000: 18,
+				260000: 18,
+				290000: 18,
+				320000: 18,
+				350000: 18,
+				380000: 18,
+			},
+			SamplesRead: 72,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				200000: 18,
+				230000: 9,
+				260000: 9,
+				290000: 9,
+				320000: 9,
+				350000: 9,
+				380000: 9,
+			},
+		},
+
+		// Range query with @ modifier on a matrix selector wrapped in an
+		// at-modifier-unsafe function (predict_linear), so the call is not
+		// hoisted into a step-invariant expression. The @ modifier freezes
+		// the evaluation window, so every parent step consumes the same
+		// matrix. TotalSamples must reflect the full window at every step;
+		// SamplesRead is counted only once (no new I/O after step 0).
+		{
+			Query:        "predict_linear(metricWith1SampleEvery10Seconds[60s] @ 100, 60)",
+			Start:        time.Unix(100, 0),
+			End:          time.Unix(300, 0),
+			Interval:     100 * time.Second,
+			PeakSamples:  12,
+			TotalSamples: 18, // 6 samples per window * 3 steps.
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				100000: 6,
+				200000: 6,
+				300000: 6,
+			},
+			SamplesRead: 6, // @ modifier: single read at step 0; later steps reuse.
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				100000: 6,
+				200000: 0,
+				300000: 0,
+			},
+		},
+
+		// Subquery with @ modifier.
+		{
+			Query:        "sum_over_time(metricWith3SampleEvery10Seconds[20s:10s] @ 200)",
+			Start:        time.Unix(250, 0),
+			PeakSamples:  11,
+			TotalSamples: 6,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				250000: 6,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				250000: 6,
+			},
+		},
+
+		// Subquery with offset.
+		{
+			Query:        "sum_over_time(metricWith1SampleEvery10Seconds[20s:10s] offset 1m)",
+			Start:        time.Unix(240, 0),
+			PeakSamples:  5,
+			TotalSamples: 2,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				240000: 2,
+			},
+			SamplesRead: 2,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				240000: 2,
+			},
+		},
+
+		{
+			Query:        "sum_over_time(metricWith1SampleEvery10Seconds[20s:10s] offset 1m)",
+			Start:        time.Unix(240, 0),
+			End:          time.Unix(270, 0),
+			Interval:     10 * time.Second,
+			PeakSamples:  11,
+			TotalSamples: 8,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				240000: 2,
+				250000: 2,
+				260000: 2,
+				270000: 2,
+			},
+			SamplesRead: 5,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				240000: 2,
+				250000: 1,
+				260000: 1,
+				270000: 1,
+			},
+		},
+
+		// Subquery with offset + @ modifier combined.
+		{
+			Query:        "sum_over_time(metricWith3SampleEvery10Seconds[1m:10s] @ 200 offset 1m)",
+			Start:        time.Unix(300, 0),
+			PeakSamples:  27,
+			TotalSamples: 18,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				300000: 18,
+			},
+			SamplesRead: 18,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				300000: 18,
+			},
+		},
+
+		// Nested subquery: recursive merging across two subquery levels.
+		{
+			Query:        "sum_over_time(max_over_time(metricWith3SampleEvery10Seconds[60s] @ 300)[5m:1m] @ 600)[10m:2m]",
+			Start:        time.Unix(800, 0),
+			PeakSamples:  23,
+			TotalSamples: 450,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				800000: 450,
+			},
+			SamplesRead: 18,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				800000: 18,
+			},
+		},
+
+		// Outer subquery wrapping inner range-vector (evalSubquery path):
+		// TotalSamples includes only the underlying samples in the inner range-vector windows.
+		{
+			Query:        "rate(sum_over_time(metricWith1SampleEvery10Seconds[30s])[1m:30s])",
+			Start:        time.Unix(240, 0),
+			PeakSamples:  5,
+			TotalSamples: 6,
+			TotalSamplesPerStep: stats.TotalSamplesPerStep{
+				240000: 6,
+			},
+			SamplesRead: 6,
+			SamplesReadPerStep: stats.TotalSamplesPerStep{
+				240000: 6,
+			},
+		},
+	}
+
+	runQuery := func(t *testing.T, engine promql.QueryEngine, opts promql.QueryOpts, c testCase, expErr error) *stats.Statistics {
+		t.Helper()
+		var err error
+		var qry promql.Query
+		if c.Interval == 0 {
+			qry, err = engine.NewInstantQuery(context.Background(), storage, opts, c.Query, c.Start)
+		} else {
+			qry, err = engine.NewRangeQuery(context.Background(), storage, opts, c.Query, c.Start, c.End, c.Interval)
+		}
+		require.NoError(t, err)
+
+		res := qry.Exec(context.Background())
+		require.Equal(t, expErr, res.Err)
+
+		return qry.Stats()
+	}
+
+	for _, c := range cases {
+		t.Run(c.Query, func(t *testing.T) {
+			t.Run("perStepEnabled", func(t *testing.T) {
+				opts := promql.NewPrometheusQueryOpts(true, 0, nil)
+				engine := promqltest.NewTestEngine(t, true, 0, promqltest.DefaultMaxSamplesPerQuery)
+
+				stats := runQuery(t, engine, opts, c, nil)
+				require.Equal(t, c.TotalSamples, stats.Samples.TotalSamples, "Total samples mismatch")
+				require.Equal(t, &c.TotalSamplesPerStep, stats.Samples.TotalSamplesPerStepMap(), "Total samples per time mismatch")
+				require.Equal(t, c.SamplesRead, stats.Samples.SamplesRead, "Samples read mismatch")
+				require.Equal(t, &c.SamplesReadPerStep, stats.Samples.SamplesReadPerStepMap(), "Samples read per step mismatch")
+				require.Equal(t, c.PeakSamples, stats.Samples.PeakSamples, "Peak samples mismatch")
+				for ts, total := range c.TotalSamplesPerStep {
+					if c.Interval == 0 {
+						break
+					}
+					instant := c
+					instant.Start = time.UnixMilli(ts)
+					instant.Interval = 0
+					instantStats := runQuery(t, engine, opts, instant, nil)
+					require.Equal(t, int64(total), instantStats.Samples.TotalSamples, "Instant query total at %d", ts)
+				}
+
+				// Re-run with the max set to one less than the observed peak;
+				// confirms the peak is what gates the query.max-samples limit.
+				if c.SkipMaxCheck {
+					return
+				}
+				engine = promqltest.NewTestEngine(t, true, 0, stats.Samples.PeakSamples-1)
+				runQuery(t, engine, opts, c, promql.ErrTooManySamples(env))
+			})
+
+			t.Run("perStepDisabled", func(t *testing.T) {
+				opts := promql.NewPrometheusQueryOpts(false, 0, nil)
+				engine := promqltest.NewTestEngine(t, false, 0, promqltest.DefaultMaxSamplesPerQuery)
+
+				stats := runQuery(t, engine, opts, c, nil)
+				require.Equal(t, c.TotalSamples, stats.Samples.TotalSamples,
+					"TotalSamples should match when per-step stats are disabled")
+				require.Equal(t, c.SamplesRead, stats.Samples.SamplesRead,
+					"SamplesRead should match when per-step stats are disabled")
+			})
+		})
+	}
+}
+
+func TestMaxQuerySamples(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  metric 1+1x100
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+  metricWith1HistogramEvery10Seconds {{schema:1 count:5 sum:20 buckets:[1 2 1 1]}}+{{schema:1 count:10 sum:5 buckets:[1 2 3 4]}}x100
+`)
+
+	// These test cases should be touching the limit exactly (hence no exceeding).
+	// Exceeding the limit will be tested by doing -1 to the MaxSamples.
+	cases := []struct {
+		Query      string
+		MaxSamples int
+		Start      time.Time
+		End        time.Time
+		Interval   time.Duration
+	}{
+		// Instant queries.
+		{
+			Query:      "1",
+			MaxSamples: 1,
+			Start:      time.Unix(1, 0),
+		},
+		{
+			Query:      "metric",
+			MaxSamples: 1,
+			Start:      time.Unix(1, 0),
+		},
+		{
+			Query:      "metric[20s]",
+			MaxSamples: 2,
+			Start:      time.Unix(10, 0),
+		},
+		{
+			Query:      "rate(metric[20s])",
+			MaxSamples: 3,
+			Start:      time.Unix(10, 0),
+		},
+		{
+			Query:      "metric[20s:5s]",
+			MaxSamples: 3,
+			Start:      time.Unix(10, 0),
+		},
+		{
+			Query:      "metric[20s] @ 10",
+			MaxSamples: 2,
+			Start:      time.Unix(0, 0),
+		},
+		// Range queries.
+		{
+			Query:      "1",
+			MaxSamples: 3,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(2, 0),
+			Interval:   time.Second,
+		},
+		{
+			Query:      "1",
+			MaxSamples: 3,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(2, 0),
+			Interval:   time.Second,
+		},
+		{
+			Query:      "metric",
+			MaxSamples: 3,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(2, 0),
+			Interval:   time.Second,
+		},
+		{
+			Query:      "metric",
+			MaxSamples: 3,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(10, 0),
+			Interval:   5 * time.Second,
+		},
+		{
+			Query:      "rate(bigmetric[1s])",
+			MaxSamples: 1,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(10, 0),
+			Interval:   5 * time.Second,
+		},
+		{
+			// Result is duplicated, so @ also produces 3 samples.
+			Query:      "metric @ 10",
+			MaxSamples: 3,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(10, 0),
+			Interval:   5 * time.Second,
+		},
+		{
+			// The peak samples in memory is during the first evaluation:
+			//   - Subquery takes 20 samples, 10 for each bigmetric.
+			//   - Result is calculated per series where the series samples is buffered, hence 10 more here.
+			//   - The result of two series is added before the last series buffer is discarded, so 2 more here.
+			//   Hence at peak it is 20 (subquery) + 10 (buffer of a series) + 2 (result from 2 series).
+			// The subquery samples and the buffer is discarded before duplicating.
+			Query:      `rate(bigmetric[10s:1s] @ 10)`,
+			MaxSamples: 32,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(10, 0),
+			Interval:   5 * time.Second,
+		},
+		{
+			// Here the reasoning is same as above. But LHS and RHS are done one after another.
+			// So while one of them takes 32 samples at peak, we need to hold the 2 sample
+			// result of the other till then.
+			Query:      `rate(bigmetric[10s:1s] @ 10) + rate(bigmetric[10s:1s] @ 30)`,
+			MaxSamples: 34,
+			Start:      time.Unix(0, 0),
+			End:        time.Unix(10, 0),
+			Interval:   5 * time.Second,
+		},
+		{
+			// promql.Sample as above but with only 1 part as step invariant.
+			// Here the peak is caused by the non-step invariant part as it touches more time range.
+			// Hence at peak it is 2*20 (subquery from 0s to 20s)
+			//                     + 10 (buffer of a series per evaluation)
+			//                     + 6 (result from 2 series at 3 eval times).
+			Query:      `rate(bigmetric[10s:1s]) + rate(bigmetric[10s:1s] @ 30)`,
+			MaxSamples: 56,
+			Start:      time.Unix(10, 0),
+			End:        time.Unix(20, 0),
+			Interval:   5 * time.Second,
+		},
+		{
+			// Nested subquery.
+			// We saw that innermost rate takes 32 samples which is still the peak
+			// since the other two subqueries just duplicate the result.
+			Query:      `rate(rate(bigmetric[10:1s] @ 10)[100s:25s] @ 1000)[100s:20s] @ 2000`,
+			MaxSamples: 32,
+			Start:      time.Unix(10, 0),
+		},
+		{
+			// Nested subquery.
+			// Now the outermost subquery produces more samples than innermost rate.
+			Query:      `rate(rate(bigmetric[10s:1s] @ 10)[100s:25s] @ 1000)[17s:1s] @ 2000`,
+			MaxSamples: 34,
+			Start:      time.Unix(10, 0),
+		},
+		{
+			Query:      "max_over_time(metricWith1HistogramEvery10Seconds[61s])[20s:5s]",
+			MaxSamples: 91,
+			Start:      time.Unix(201, 0),
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.Query, func(t *testing.T) {
+			engine := newTestEngine(t)
+			testFunc := func(expError error) {
+				var err error
+				var qry promql.Query
+				if c.Interval == 0 {
+					qry, err = engine.NewInstantQuery(context.Background(), storage, nil, c.Query, c.Start)
+				} else {
+					qry, err = engine.NewRangeQuery(context.Background(), storage, nil, c.Query, c.Start, c.End, c.Interval)
+				}
+				require.NoError(t, err)
+
+				res := qry.Exec(context.Background())
+				stats := qry.Stats()
+				require.Equal(t, expError, res.Err)
+				require.NotNil(t, stats)
+				if expError == nil {
+					require.Equal(t, c.MaxSamples, stats.Samples.PeakSamples, "peak samples mismatch for query %q", c.Query)
+				}
+			}
+
+			// Within limit.
+			engine = promqltest.NewTestEngine(t, false, 0, c.MaxSamples)
+			testFunc(nil)
+
+			// Exceeding limit.
+			engine = promqltest.NewTestEngine(t, false, 0, c.MaxSamples-1)
+			testFunc(promql.ErrTooManySamples(env))
+		})
+	}
+}
+
+func newQueryCostEngine(t *testing.T) *promql.Engine {
+	return promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+		MaxSamples:               1e6,
+		Timeout:                  100 * time.Second,
+		NoStepSubqueryIntervalFn: func(int64) int64 { return int64(time.Minute / time.Millisecond) },
+		EnableAtModifier:         true,
+		EnableNegativeOffset:     true,
+		EnableDelayedNameRemoval: true,
+		EnableQueryCost:          true,
+		EnablePerStepStats:       true,
+		Parser:                   parser.NewParser(promqltest.TestParserOpts),
+	})
+}
+
+func TestQueryCostMaxSeries(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+  bigmetric{a="3"} 1+1x100
+`)
+	t.Cleanup(func() { storage.Close() })
+
+	engine := newQueryCostEngine(t)
+	ts := time.Unix(0, 0)
+
+	// Operator ceiling of 3 series allows the query.
+	engine.SetQueryLimits(3, 0, 0)
+	qry, err := engine.NewInstantQuery(context.Background(), storage, nil, "bigmetric", ts)
+	require.NoError(t, err)
+	require.NoError(t, qry.Exec(context.Background()).Err)
+
+	// Operator ceiling of 2 series rejects the query.
+	engine.SetQueryLimits(2, 0, 0)
+	qry, err = engine.NewInstantQuery(context.Background(), storage, nil, "bigmetric", ts)
+	require.NoError(t, err)
+	require.Equal(t, promql.ErrTooManySeries(env), qry.Exec(context.Background()).Err)
+
+	// A per-query override may lower the ceiling and reject the query.
+	engine.SetQueryLimits(10, 0, 0)
+	opts := promql.NewPrometheusQueryOptsWithLimits(false, 0, 2, 0, 0, nil)
+	qry, err = engine.NewInstantQuery(context.Background(), storage, opts, "bigmetric", ts)
+	require.NoError(t, err)
+	require.Equal(t, promql.ErrTooManySeries(env), qry.Exec(context.Background()).Err)
+
+	// A per-query override may not raise the ceiling above the operator limit:
+	// the query is rejected at construction time rather than clamped.
+	engine.SetQueryLimits(2, 0, 0)
+	opts = promql.NewPrometheusQueryOptsWithLimits(false, 0, 100, 0, 0, nil)
+	_, err = engine.NewInstantQuery(context.Background(), storage, opts, "bigmetric", ts)
+	var limitErr promql.ErrLimitAboveCeiling
+	require.ErrorAs(t, err, &limitErr)
+	require.Equal(t, "max_series", limitErr.Limit)
+}
+
+func TestQueryCostMaxSamplesRead(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+`)
+	t.Cleanup(func() { storage.Close() })
+
+	engine := newQueryCostEngine(t)
+	ts := time.Unix(1000, 0)
+	query := "sum_over_time(bigmetric[100s])"
+
+	// A generous ceiling allows the query.
+	engine.SetQueryLimits(0, 1e6, 0)
+	qry, err := engine.NewInstantQuery(context.Background(), storage, nil, query, ts)
+	require.NoError(t, err)
+	require.NoError(t, qry.Exec(context.Background()).Err)
+
+	// A tiny ceiling rejects the query.
+	engine.SetQueryLimits(0, 1, 0)
+	qry, err = engine.NewInstantQuery(context.Background(), storage, nil, query, ts)
+	require.NoError(t, err)
+	require.Equal(t, promql.ErrTooManySamplesRead(env), qry.Exec(context.Background()).Err)
+}
+
+func TestQueryCostDisabledFeature(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+`)
+	t.Cleanup(func() { storage.Close() })
+
+	// The feature is disabled, so limits and per-query overrides are ignored.
+	engine := promqltest.NewTestEngine(t, false, 0, 1e6)
+	engine.SetQueryLimits(1, 1, 0)
+	opts := promql.NewPrometheusQueryOptsWithLimits(false, 0, 1, 1, 0, nil)
+	qry, err := engine.NewInstantQuery(context.Background(), storage, opts, "bigmetric", time.Unix(0, 0))
+	require.NoError(t, err)
+	require.NoError(t, qry.Exec(context.Background()).Err)
+}
+
+func TestQueryCostSamplesAccounting(t *testing.T) {
+	// The cost accounting the API reports as the actual cost of a query is the
+	// samples accounting, which is collected whether or not the query-cost
+	// feature is enabled. There is no separate cost object in the statistics.
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+`)
+	t.Cleanup(func() { storage.Close() })
+
+	ts := time.Unix(0, 0)
+
+	for _, c := range []struct {
+		name   string
+		engine *promql.Engine
+	}{
+		{name: "feature disabled", engine: promqltest.NewTestEngine(t, false, 0, 1e6)},
+		{name: "feature enabled", engine: newQueryCostEngine(t)},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			qry, err := c.engine.NewInstantQuery(context.Background(), storage, nil, "bigmetric", ts)
+			require.NoError(t, err)
+			require.NoError(t, qry.Exec(context.Background()).Err)
+			st := qry.Stats()
+			require.Equal(t, int64(2), st.Samples.TotalSeries, "series touched must be accounted")
+			require.Equal(t, int64(2), st.Samples.SamplesRead, "samples read must be accounted")
+			require.Positive(t, st.Samples.PeakSamples, "peak samples must be accounted")
+		})
+	}
+}
+
+// TestQueryCostLimitResolution covers how a per-query override of a counting
+// cost limit resolves against the operator-set ceiling. An override may only
+// tighten the ceiling: a request above it is rejected at query construction
+// time with an ErrLimitAboveCeiling instead of being silently clamped down.
+func TestQueryCostLimitResolution(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+  bigmetric{a="3"} 1+1x100
+`)
+	t.Cleanup(func() { storage.Close() })
+
+	ts := time.Unix(1000, 0)
+
+	// The value of each limit is not directly observable, so it is probed with a
+	// query that the tight value rejects and the loose value allows.
+	limits := []struct {
+		name         string
+		query        string
+		tight, loose uint64
+		setCeiling   func(engine *promql.Engine, ceiling uint64)
+		opts         func(requested uint64) promql.QueryOpts
+		wantRejected error
+	}{
+		{
+			name:       "max_series",
+			query:      "bigmetric",
+			tight:      2,
+			loose:      1000,
+			setCeiling: func(engine *promql.Engine, ceiling uint64) { engine.SetQueryLimits(ceiling, 0, 0) },
+			opts: func(requested uint64) promql.QueryOpts {
+				return promql.NewPrometheusQueryOptsWithLimits(false, 0, requested, 0, 0, nil)
+			},
+			wantRejected: promql.ErrTooManySeries(env),
+		},
+		{
+			name:       "max_samples_read",
+			query:      "sum_over_time(bigmetric[100s])",
+			tight:      1,
+			loose:      1e6,
+			setCeiling: func(engine *promql.Engine, ceiling uint64) { engine.SetQueryLimits(0, ceiling, 0) },
+			opts: func(requested uint64) promql.QueryOpts {
+				return promql.NewPrometheusQueryOptsWithLimits(false, 0, 0, requested, 0, nil)
+			},
+			wantRejected: promql.ErrTooManySamplesRead(env),
+		},
+	}
+
+	// unset means the ceiling or the request is zero, i.e. not set.
+	const (
+		unset = "unset"
+		tight = "tight"
+		loose = "loose"
+	)
+
+	cases := []struct {
+		name             string
+		ceiling          string
+		requested        string
+		wantConstructErr bool
+		wantRejected     bool
+	}{
+		{name: "request below the ceiling tightens it", ceiling: loose, requested: tight, wantRejected: true},
+		{name: "request equal to the ceiling is accepted", ceiling: tight, requested: tight, wantRejected: true},
+		{name: "request above the ceiling is rejected", ceiling: tight, requested: loose, wantConstructErr: true},
+		{name: "no request falls back to the ceiling", ceiling: tight, requested: unset, wantRejected: true},
+		{name: "no request and a generous ceiling allows the query", ceiling: loose, requested: unset},
+		{name: "unlimited ceiling applies the request", ceiling: unset, requested: tight, wantRejected: true},
+		{name: "unlimited ceiling applies a large request", ceiling: unset, requested: loose},
+	}
+
+	for _, limit := range limits {
+		value := func(which string) uint64 {
+			switch which {
+			case tight:
+				return limit.tight
+			case loose:
+				return limit.loose
+			default:
+				return 0
+			}
+		}
+		for _, c := range cases {
+			t.Run(limit.name+"/"+c.name, func(t *testing.T) {
+				engine := newQueryCostEngine(t)
+				limit.setCeiling(engine, value(c.ceiling))
+
+				var opts promql.QueryOpts
+				if requested := value(c.requested); requested > 0 {
+					opts = limit.opts(requested)
+				}
+				qry, err := engine.NewInstantQuery(context.Background(), storage, opts, limit.query, ts)
+				if c.wantConstructErr {
+					var limitErr promql.ErrLimitAboveCeiling
+					require.ErrorAs(t, err, &limitErr)
+					require.Equal(t, limit.name, limitErr.Limit)
+					require.Equal(t, strconv.FormatUint(value(c.requested), 10), limitErr.Requested)
+					require.Equal(t, strconv.FormatUint(value(c.ceiling), 10), limitErr.Ceiling)
+					return
+				}
+				require.NoError(t, err)
+				if c.wantRejected {
+					require.Equal(t, limit.wantRejected, qry.Exec(context.Background()).Err)
+					return
+				}
+				require.NoError(t, qry.Exec(context.Background()).Err)
+			})
+		}
+	}
+}
+
+func TestQueryCostMaxSamplesReadMatrix(t *testing.T) {
+	t.Run("limits", func(t *testing.T) {
+		// A large matrix window must stop consuming points as soon as its budget is exhausted.
+		storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x1000
+`)
+		t.Cleanup(func() { storage.Close() })
+
+		engine := newQueryCostEngine(t)
+		ts := time.Unix(10000, 0)
+		for _, tc := range []struct {
+			query string
+			reads uint64
+		}{
+			{query: "bigmetric[10000s]", reads: 1000},
+			{query: "sum_over_time(bigmetric[10000s])", reads: 1000},
+			{query: "sum_over_time(bigmetric[10000s] @ 10000)", reads: 1000},
+			{query: "rate(bigmetric[10000s] anchored)", reads: 1001},
+			{query: "rate(bigmetric[10000s] smoothed)", reads: 1001},
+		} {
+			t.Run(tc.query, func(t *testing.T) {
+				engine.SetQueryLimits(0, tc.reads, 0)
+				qry, err := engine.NewInstantQuery(t.Context(), storage, nil, tc.query, ts)
+				require.NoError(t, err)
+				require.NoError(t, qry.Exec(t.Context()).Err)
+				require.Equal(t, int64(tc.reads), qry.Stats().Samples.SamplesRead)
+				qry.Close()
+
+				engine.SetQueryLimits(0, 10, 0)
+				counted := &sampleReadQueryable{Queryable: storage}
+				qry, err = engine.NewInstantQuery(t.Context(), counted, nil, tc.query, ts)
+				require.NoError(t, err)
+				defer qry.Close()
+				require.Equal(t, promql.ErrTooManySamplesRead(env), qry.Exec(t.Context()).Err)
+				require.Equal(t, int64(11), qry.Stats().Samples.SamplesRead, "stop before consuming the full window")
+				require.LessOrEqual(t, counted.reads, 12, "stop before buffering the full window")
+			})
+		}
+	})
+
+	t.Run("buffer_accounting", func(t *testing.T) {
+		for _, kind := range []string{"float", "histogram", "float histogram", "custom histogram", "mixed", "stale"} {
+			t.Run(kind, func(t *testing.T) {
+				opts := tsdb.DefaultHeadOptions()
+				opts.ChunkDirRoot = t.TempDir()
+				head, err := tsdb.NewHead(nil, nil, nil, nil, opts, nil)
+				require.NoError(t, err)
+				t.Cleanup(func() { require.NoError(t, head.Close()) })
+				app := head.Appender(t.Context())
+				metric := labels.FromStrings(labels.MetricName, "metric")
+				var interruptedCost int64
+				for i := range 1001 {
+					ts := int64(i * 10000)
+					h := &histogram.Histogram{
+						Count: uint64(i + 1), Sum: float64(i + 1),
+						PositiveSpans: []histogram.Span{{Length: 1}}, PositiveBuckets: []int64{int64(i + 1)},
+					}
+					pointCost := int64(1)
+					switch {
+					case kind == "float", kind == "mixed" && i%2 == 0:
+						_, err = app.Append(0, metric, ts, float64(i))
+					case kind == "stale":
+						pointCost = 0
+						_, err = app.Append(0, metric, ts, math.Float64frombits(value.StaleNaN))
+					case kind == "histogram":
+						pointCost = int64((h.ToFloat(nil).Size() + 8) / 16)
+						_, err = app.AppendHistogram(0, metric, ts, h, nil)
+					default:
+						fh := h.ToFloat(nil)
+						if kind == "custom histogram" {
+							fh.Schema = histogram.CustomBucketsSchema
+							fh.CustomValues = []float64{1, 2}
+						}
+						pointCost = int64((fh.Size() + 8) / 16)
+						_, err = app.AppendHistogram(0, metric, ts, nil, fh)
+					}
+					require.NoError(t, err)
+					if i > 0 && i <= 10 {
+						interruptedCost += pointCost
+					}
+				}
+				require.NoError(t, app.Commit())
+				queryable := storage.QueryableFunc(func(mint, maxt int64) (storage.Querier, error) {
+					return tsdb.NewBlockQuerier(head, mint, maxt)
+				})
+				engine := newQueryCostEngine(t)
+				for _, expr := range []string{"metric[10000s]", "metric smoothed", "sum_over_time(metric[10000s])", "last_over_time(metric[10000s])", "histogram_sum(sum_over_time(metric[10000s]))", "last_over_time(sum_over_time(metric[10000s])[1s:1s])"} {
+					t.Run(expr, func(t *testing.T) {
+						engine.SetQueryLimits(0, 0, 0)
+						q, err := engine.NewInstantQuery(t.Context(), queryable, nil, expr, time.Unix(10000, 0))
+						require.NoError(t, err)
+						result := q.Exec(t.Context())
+						require.NoError(t, result.Err)
+						want := result.Value.String()
+						reads := q.Stats().Samples.SamplesRead
+						q.Close()
+						engine.SetQueryLimits(0, uint64(reads), 0)
+						q, err = engine.NewInstantQuery(t.Context(), queryable, nil, expr, time.Unix(10000, 0))
+						require.NoError(t, err)
+						result = q.Exec(t.Context())
+						require.NoError(t, result.Err)
+						require.Equal(t, want, result.Value.String())
+						require.Equal(t, reads, q.Stats().Samples.SamplesRead)
+						q.Close()
+						if kind == "stale" {
+							return
+						}
+						engine.SetQueryLimits(0, 25, 0)
+						counted := &sampleReadQueryable{Queryable: queryable}
+						q, err = engine.NewInstantQuery(t.Context(), counted, nil, expr, time.Unix(10000, 0))
+						require.NoError(t, err)
+						defer q.Close()
+						require.Equal(t, promql.ErrTooManySamplesRead(env), q.Exec(t.Context()).Err)
+						require.Greater(t, q.Stats().Samples.SamplesRead, int64(25))
+						require.LessOrEqual(t, q.Stats().Samples.SamplesRead, int64(38))
+						require.LessOrEqual(t, counted.reads, 27, "storage input must stop before the full window")
+					})
+				}
+				for _, quota := range []uint64{0, 1000000} {
+					t.Run(fmt.Sprintf("cancellation/quota=%d", quota), func(t *testing.T) {
+						ctx, cancel := context.WithCancel(t.Context())
+						defer cancel()
+						counted := &sampleReadQueryable{Queryable: queryable}
+						counted.onRead = func() {
+							if counted.reads == 10 {
+								cancel()
+							}
+						}
+						engine.SetQueryLimits(0, quota, 0)
+						q, err := engine.NewInstantQuery(ctx, counted, nil, "metric[10000s]", time.Unix(10000, 0))
+						require.NoError(t, err)
+						defer q.Close()
+						require.Equal(t, promql.ErrQueryCanceled(env), q.Exec(ctx).Err)
+						require.Equal(t, 10, counted.reads)
+						require.Equal(t, interruptedCost, q.Stats().Samples.SamplesRead)
+					})
+				}
+			})
+		}
+	})
+}
+
+// Count storage sample accesses before they enter the evaluator's buffer.
+type sampleReadQueryable struct {
+	storage.Queryable
+	reads  int
+	onRead func()
+}
+
+func (q *sampleReadQueryable) Querier(mint, maxt int64) (storage.Querier, error) {
+	inner, err := q.Queryable.Querier(mint, maxt)
+	return sampleReadQuerier{Querier: inner, owner: q}, err
+}
+
+type sampleReadQuerier struct {
+	storage.Querier
+	owner *sampleReadQueryable
+}
+
+func (q sampleReadQuerier) Select(ctx context.Context, sorted bool, hints *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {
+	return sampleReadSet{SeriesSet: q.Querier.Select(ctx, sorted, hints, matchers...), owner: q.owner}
+}
+
+type sampleReadSet struct {
+	storage.SeriesSet
+	owner *sampleReadQueryable
+}
+
+func (s sampleReadSet) At() storage.Series {
+	return sampleReadSeries{Series: s.SeriesSet.At(), owner: s.owner}
+}
+
+type sampleReadSeries struct {
+	storage.Series
+	owner *sampleReadQueryable
+}
+
+func (s sampleReadSeries) Iterator(it chunkenc.Iterator) chunkenc.Iterator {
+	if previous, ok := it.(*sampleReadIterator); ok {
+		previous.Iterator = s.Series.Iterator(previous.Iterator)
+		previous.owner = s.owner
+		return previous
+	}
+	return &sampleReadIterator{Iterator: s.Series.Iterator(nil), owner: s.owner}
+}
+
+type sampleReadIterator struct {
+	chunkenc.Iterator
+	owner *sampleReadQueryable
+}
+
+func (it *sampleReadIterator) recordRead() {
+	it.owner.reads++
+	if it.owner.onRead != nil {
+		it.owner.onRead()
+	}
+}
+
+func (it *sampleReadIterator) At() (int64, float64) {
+	it.recordRead()
+	return it.Iterator.At()
+}
+
+func (it *sampleReadIterator) AtHistogram(h *histogram.Histogram) (int64, *histogram.Histogram) {
+	it.recordRead()
+	return it.Iterator.AtHistogram(h)
+}
+
+func (it *sampleReadIterator) AtFloatHistogram(h *histogram.FloatHistogram) (int64, *histogram.FloatHistogram) {
+	it.recordRead()
+	return it.Iterator.AtFloatHistogram(h)
+}
+
+// sleepyQuerier is a storage.Querier whose Select blocks for the given
+// duration before returning an empty series set. It is used to make a query
+// run longer than a short per-query duration limit.
+type sleepyQuerier struct {
+	sleep time.Duration
+}
+
+func (q sleepyQuerier) Select(ctx context.Context, _ bool, _ *storage.SelectHints, _ ...*labels.Matcher) storage.SeriesSet {
+	select {
+	case <-time.After(q.sleep):
+	case <-ctx.Done():
+	}
+	return errSeriesSet{err: ctx.Err()}
+}
+
+func (sleepyQuerier) LabelValues(context.Context, string, *storage.LabelHints, ...*labels.Matcher) ([]string, annotations.Annotations, error) {
+	return nil, nil, nil
+}
+
+func (sleepyQuerier) LabelNames(context.Context, *storage.LabelHints, ...*labels.Matcher) ([]string, annotations.Annotations, error) {
+	return nil, nil, nil
+}
+
+func (sleepyQuerier) Close() error { return nil }
+
+func TestQueryCostMaxDuration(t *testing.T) {
+	// The engine timeout is generous, but the per-query duration limit is tiny.
+	// A query that runs longer than the limit must surface as ErrQueryTimeout.
+	engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+		MaxSamples:               1e6,
+		Timeout:                  100 * time.Second,
+		NoStepSubqueryIntervalFn: func(int64) int64 { return int64(time.Minute / time.Millisecond) },
+		EnableQueryCost:          true,
+		Parser:                   parser.NewParser(promqltest.TestParserOpts),
+	})
+
+	queryable := storage.QueryableFunc(func(_, _ int64) (storage.Querier, error) {
+		return sleepyQuerier{sleep: time.Second}, nil
+	})
+
+	// An operator-set duration limit of 5ms, well below the engine timeout,
+	// rejects the slow query.
+	engine.SetQueryLimits(0, 0, 5*time.Millisecond)
+	qry, err := engine.NewInstantQuery(context.Background(), queryable, nil, "metric", time.Unix(0, 0))
+	require.NoError(t, err)
+	var timeoutErr promql.ErrQueryTimeout
+	require.ErrorAs(t, qry.Exec(context.Background()).Err, &timeoutErr)
+
+	// A per-query override may also impose a short duration limit.
+	engine.SetQueryLimits(0, 0, 0)
+	opts := promql.NewPrometheusQueryOptsWithLimits(false, 0, 0, 0, 5*time.Millisecond, nil)
+	qry, err = engine.NewInstantQuery(context.Background(), queryable, opts, "metric", time.Unix(0, 0))
+	require.NoError(t, err)
+	require.ErrorAs(t, qry.Exec(context.Background()).Err, &timeoutErr)
+}
+
+// TestQueryCostMaxDurationResolution covers how a per-query max_query_duration
+// override resolves against its ceiling, and how that ceiling relates to the
+// deprecated -query.timeout flag: query_max_duration is the ceiling on its own
+// when set, and may be longer than the flag; while it is unset the flag remains
+// the ceiling.
+func TestQueryCostMaxDurationResolution(t *testing.T) {
+	// The query sleeps in Select, so it overruns a 5ms limit but finishes well
+	// within a limit of a second or more.
+	const querySleep = 500 * time.Millisecond
+
+	cases := []struct {
+		name string
+		// engineTimeout is the -query.timeout flag value.
+		engineTimeout    time.Duration
+		ceiling          time.Duration
+		requested        time.Duration
+		wantConstructErr bool
+		wantErrCeiling   string
+		wantTimeout      bool
+	}{
+		{
+			name:          "request below the ceiling tightens it",
+			engineTimeout: 100 * time.Second,
+			ceiling:       10 * time.Second,
+			requested:     5 * time.Millisecond,
+			wantTimeout:   true,
+		},
+		{
+			name:          "request equal to the ceiling is accepted",
+			engineTimeout: 100 * time.Second,
+			ceiling:       5 * time.Millisecond,
+			requested:     5 * time.Millisecond,
+			wantTimeout:   true,
+		},
+		{
+			name:             "request above the ceiling is rejected",
+			engineTimeout:    100 * time.Second,
+			ceiling:          5 * time.Millisecond,
+			requested:        10 * time.Second,
+			wantConstructErr: true,
+			wantErrCeiling:   "5ms",
+		},
+		{
+			name:          "no request falls back to the ceiling",
+			engineTimeout: 100 * time.Second,
+			ceiling:       5 * time.Millisecond,
+			wantTimeout:   true,
+		},
+		{
+			name:          "no request and a generous ceiling allows the query",
+			engineTimeout: 100 * time.Second,
+			ceiling:       10 * time.Second,
+		},
+		{
+			name:          "unset ceiling leaves the query timeout flag in force",
+			engineTimeout: 5 * time.Millisecond,
+			wantTimeout:   true,
+		},
+		{
+			name:          "unset ceiling accepts a request below the query timeout flag",
+			engineTimeout: 100 * time.Second,
+			requested:     5 * time.Millisecond,
+			wantTimeout:   true,
+		},
+		{
+			name:             "unset ceiling rejects a request above the query timeout flag",
+			engineTimeout:    50 * time.Millisecond,
+			requested:        10 * time.Second,
+			wantConstructErr: true,
+			wantErrCeiling:   "50ms",
+		},
+		{
+			name:          "ceiling above the query timeout flag is effective on its own",
+			engineTimeout: 50 * time.Millisecond,
+			ceiling:       10 * time.Second,
+		},
+		{
+			name:          "ceiling above the query timeout flag allows a request above it",
+			engineTimeout: 50 * time.Millisecond,
+			ceiling:       10 * time.Second,
+			requested:     5 * time.Second,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+				MaxSamples:               1e6,
+				Timeout:                  c.engineTimeout,
+				NoStepSubqueryIntervalFn: func(int64) int64 { return int64(time.Minute / time.Millisecond) },
+				EnableQueryCost:          true,
+				Parser:                   parser.NewParser(promqltest.TestParserOpts),
+			})
+			engine.SetQueryLimits(0, 0, c.ceiling)
+
+			queryable := storage.QueryableFunc(func(_, _ int64) (storage.Querier, error) {
+				return sleepyQuerier{sleep: querySleep}, nil
+			})
+
+			var opts promql.QueryOpts
+			if c.requested > 0 {
+				opts = promql.NewPrometheusQueryOptsWithLimits(false, 0, 0, 0, c.requested, nil)
+			}
+			qry, err := engine.NewInstantQuery(context.Background(), queryable, opts, "metric", time.Unix(0, 0))
+			if c.wantConstructErr {
+				var limitErr promql.ErrLimitAboveCeiling
+				require.ErrorAs(t, err, &limitErr)
+				require.Equal(t, "max_query_duration", limitErr.Limit)
+				require.Equal(t, c.requested.String(), limitErr.Requested)
+				require.Equal(t, c.wantErrCeiling, limitErr.Ceiling)
+				return
+			}
+			require.NoError(t, err)
+
+			execErr := qry.Exec(context.Background()).Err
+			if c.wantTimeout {
+				var timeoutErr promql.ErrQueryTimeout
+				require.ErrorAs(t, execErr, &timeoutErr)
+				return
+			}
+			require.NoError(t, execErr)
+		})
+	}
+}
+
+func queryCostRejections(t *testing.T, reg *prometheus.Registry, reason string) float64 {
+	t.Helper()
+	families, err := reg.Gather()
+	require.NoError(t, err)
+	for _, family := range families {
+		if family.GetName() != "prometheus_engine_query_rejected_total" {
+			continue
+		}
+		for _, metric := range family.GetMetric() {
+			for _, label := range metric.GetLabel() {
+				if label.GetName() == "reason" && label.GetValue() == reason {
+					return metric.GetCounter().GetValue()
+				}
+			}
+		}
+	}
+	return 0
+}
+
+func TestQueryCostMaxDurationRejectAttribution(t *testing.T) {
+	for _, tc := range []struct {
+		name       string
+		ceiling    time.Duration
+		requested  time.Duration
+		caller     time.Duration
+		cancel     bool
+		wantReject float64
+	}{
+		{name: "configured duration", ceiling: 100 * time.Millisecond, wantReject: 1},
+		{name: "request duration", requested: 100 * time.Millisecond, wantReject: 1},
+		{name: "startup timeout"},
+		{name: "earlier caller deadline", ceiling: time.Second, caller: 10 * time.Millisecond},
+		{name: "caller cancellation", ceiling: time.Second, caller: 10 * time.Millisecond, cancel: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			synctest.Test(t, func(t *testing.T) {
+				reg := prometheus.NewRegistry()
+				engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+					Reg: reg, MaxSamples: 1000, Timeout: 100 * time.Millisecond, EnableQueryCost: true,
+				})
+				engine.SetQueryLimits(0, 0, tc.ceiling)
+				queryable := storage.QueryableFunc(func(_, _ int64) (storage.Querier, error) {
+					return sleepyQuerier{sleep: 2 * time.Second}, nil
+				})
+				opts := promql.NewPrometheusQueryOptsWithLimits(false, 0, 0, 0, tc.requested, nil)
+				ctx := t.Context()
+				if tc.caller > 0 {
+					var cancel context.CancelFunc
+					if tc.cancel {
+						ctx, cancel = context.WithCancel(ctx)
+						stop := time.AfterFunc(tc.caller, cancel)
+						defer stop.Stop()
+					} else {
+						ctx, cancel = context.WithTimeout(ctx, tc.caller)
+					}
+					defer cancel()
+				}
+				q, err := engine.NewInstantQuery(ctx, queryable, opts, "metric", time.Unix(0, 0))
+				require.NoError(t, err)
+				defer q.Close()
+				if tc.cancel {
+					var canceled promql.ErrQueryCanceled
+					require.ErrorAs(t, q.Exec(ctx).Err, &canceled)
+				} else {
+					var timeout promql.ErrQueryTimeout
+					require.ErrorAs(t, q.Exec(ctx).Err, &timeout)
+				}
+				require.Equal(t, tc.wantReject, queryCostRejections(t, reg, "max_duration"))
+			})
+		})
+	}
+}
+
+func TestEngine_QueryCostDurationLifecycle(t *testing.T) {
+	t.Run("deadline_snapshot", func(t *testing.T) {
+		for _, enabled := range []bool{false, true} {
+			for _, rangeQuery := range []bool{false, true} {
+				t.Run(fmt.Sprintf("enabled=%t/range=%t", enabled, rangeQuery), func(t *testing.T) {
+					synctest.Test(t, func(t *testing.T) {
+						engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+							MaxSamples: 1000, Timeout: time.Second, EnableQueryCost: enabled,
+						})
+						queryable := storage.QueryableFunc(func(_, _ int64) (storage.Querier, error) {
+							return &storage.MockQuerier{}, nil
+						})
+						var q promql.Query
+						var err error
+						if rangeQuery {
+							q, err = engine.NewRangeQuery(t.Context(), queryable, nil, "1", time.Unix(0, 0), time.Unix(60, 0), time.Minute)
+						} else {
+							q, err = engine.NewInstantQuery(t.Context(), queryable, nil, "1", time.Unix(0, 0))
+						}
+						require.NoError(t, err)
+						defer q.Close()
+						engine.SetQueryLimits(0, 0, 5*time.Second)
+						time.Sleep(2 * time.Second)
+						if enabled {
+							require.Equal(t, promql.ErrQueryTimeout(env), q.Exec(t.Context()).Err)
+						} else {
+							require.NoError(t, q.Exec(t.Context()).Err, "the disabled feature must leave the timeout relative to Exec")
+						}
+					})
+				})
+			}
+		}
+	})
+
+	t.Run("queue", func(t *testing.T) {
+		for _, tc := range []struct {
+			name       string
+			ceiling    time.Duration
+			requested  time.Duration
+			caller     time.Duration
+			cancel     bool
+			wantReject float64
+		}{
+			{name: "configured duration", ceiling: 100 * time.Millisecond, wantReject: 1},
+			{name: "request duration", requested: 50 * time.Millisecond, wantReject: 1},
+			{name: "startup fallback"},
+			{name: "earlier caller deadline", ceiling: time.Second, caller: 10 * time.Millisecond},
+			{name: "caller cancellation", ceiling: time.Second, caller: 10 * time.Millisecond, cancel: true},
+		} {
+			for _, rangeQuery := range []bool{false, true} {
+				for _, phase := range []string{"construction", "execution", "expired before execution"} {
+					t.Run(fmt.Sprintf("%s/range=%t/%s", tc.name, rangeQuery, phase), func(t *testing.T) {
+						synctest.Test(t, func(t *testing.T) {
+							tracker, err := promql.NewActiveQueryTracker(t.TempDir(), 1, nil)
+							require.NoError(t, err)
+							reg := prometheus.NewRegistry()
+							engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+								Reg: reg, MaxSamples: 1000, Timeout: 200 * time.Millisecond,
+								ActiveQueryTracker: tracker, EnableQueryCost: true,
+							})
+							engine.SetQueryLimits(0, 0, tc.ceiling)
+							opts := promql.NewPrometheusQueryOptsWithLimits(false, 0, 0, 0, tc.requested, nil)
+							queryable := storage.QueryableFunc(func(_, _ int64) (storage.Querier, error) {
+								return &storage.MockQuerier{}, nil
+							})
+							ctx := t.Context()
+							if tc.caller > 0 {
+								var cancel context.CancelFunc
+								if tc.cancel {
+									ctx, cancel = context.WithCancel(ctx)
+									stop := time.AfterFunc(tc.caller, cancel)
+									defer stop.Stop()
+								} else {
+									ctx, cancel = context.WithTimeout(ctx, tc.caller)
+								}
+								defer cancel()
+							}
+							newQuery := func(ctx context.Context) (promql.Query, error) {
+								if rangeQuery {
+									return engine.NewRangeQuery(ctx, queryable, opts, "1", time.Unix(0, 0), time.Unix(60, 0), time.Minute)
+								}
+								return engine.NewInstantQuery(ctx, queryable, opts, "1", time.Unix(0, 0))
+							}
+							var q promql.Query
+							start := time.Now()
+							if phase != "construction" {
+								q, err = newQuery(ctx)
+								require.NoError(t, err)
+								defer q.Close()
+							}
+							release, err := engine.AcquireQuerySlot(t.Context(), "held slot")
+							require.NoError(t, err)
+							released := false
+							defer func() {
+								if !released {
+									release()
+								}
+							}()
+							duration := 200 * time.Millisecond
+							if tc.ceiling > 0 {
+								duration = tc.ceiling
+							}
+							if tc.requested > 0 {
+								duration = tc.requested
+							}
+							if tc.caller > 0 {
+								duration = tc.caller
+							}
+							if phase == "construction" {
+								// An external safety deadline also lets the regression fail
+								// deterministically when construction has no duration limit.
+								ctx, cancel := context.WithTimeout(ctx, time.Second)
+								defer cancel()
+								if rangeQuery {
+									_, err = engine.NewRangeQuery(ctx, queryable, opts, "1", time.Unix(0, 0), time.Unix(60, 0), time.Minute)
+								} else {
+									_, err = engine.NewInstantQuery(ctx, queryable, opts, "1", time.Unix(0, 0))
+								}
+							} else {
+								if phase == "expired before execution" {
+									time.Sleep(duration * 2)
+									duration *= 2
+								} else {
+									time.Sleep(duration / 4)
+								}
+								err = q.Exec(ctx).Err
+							}
+							if tc.cancel {
+								require.Equal(t, promql.ErrQueryCanceled(env), err)
+							} else {
+								require.Equal(t, promql.ErrQueryTimeout(env), err)
+							}
+							require.Equal(t, duration, time.Since(start), "construction and execution must share a deadline")
+							require.Equal(t, tc.wantReject, queryCostRejections(t, reg, "max_duration"))
+							release()
+							released = true
+							recovery, err := newQuery(t.Context())
+							require.NoError(t, err)
+							defer recovery.Close()
+							require.NoError(t, recovery.Exec(t.Context()).Err, "failed queueing must preserve the slot")
+						})
+					})
+				}
+			}
+		}
+	})
+
+	t.Run("parsing", func(t *testing.T) {
+		for _, tc := range []struct {
+			expr     string
+			duration time.Duration
+			timeout  bool
+		}{
+			{expr: "1", duration: time.Second, timeout: true},
+			{expr: "broken(", duration: time.Second, timeout: true},
+			{expr: "rate(metric[1s-2s])", duration: 10 * time.Second},
+		} {
+			for _, rangeQuery := range []bool{false, true} {
+				t.Run(fmt.Sprintf("%s/range=%t", tc.expr, rangeQuery), func(t *testing.T) {
+					synctest.Test(t, func(t *testing.T) {
+						reg := prometheus.NewRegistry()
+						engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+							Reg: reg, MaxSamples: 1000, Timeout: time.Minute, EnableQueryCost: true,
+							Parser: delayedCostParser{Parser: parser.NewParser(promqltest.TestParserOpts)},
+						})
+						engine.SetQueryLimits(0, 0, tc.duration)
+						var q promql.Query
+						var err error
+						if rangeQuery {
+							q, err = engine.NewRangeQuery(t.Context(), nil, nil, tc.expr, time.Unix(0, 0), time.Unix(60, 0), time.Minute)
+						} else {
+							q, err = engine.NewInstantQuery(t.Context(), nil, nil, tc.expr, time.Unix(0, 0))
+						}
+						if q != nil {
+							defer q.Close()
+						}
+						if tc.timeout {
+							require.Nil(t, q)
+							require.Equal(t, promql.ErrQueryTimeout(env), err)
+							require.Equal(t, float64(1), queryCostRejections(t, reg, "max_duration"))
+						} else {
+							require.Error(t, err, "preprocessing errors must be preserved before the deadline")
+							require.Zero(t, queryCostRejections(t, reg, "max_duration"))
+						}
+					})
+				})
+			}
+		}
+	})
+}
+
+type delayedCostParser struct {
+	parser.Parser
+}
+
+func (p delayedCostParser) ParseExpr(expr string) (parser.Expr, error) {
+	time.Sleep(2 * time.Second)
+	return p.Parser.ParseExpr(expr)
+}
+
+func TestQueryCostRejectMetricReason(t *testing.T) {
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+  bigmetric{a="3"} 1+1x100
+`)
+	t.Cleanup(func() { require.NoError(t, storage.Close()) })
+
+	for _, tc := range []struct {
+		name           string
+		query          string
+		ts             int64
+		maxSeries      uint64
+		maxSamplesRead uint64
+		wantErr        error
+	}{
+		{
+			name:      "max_series",
+			query:     "bigmetric",
+			maxSeries: 2,
+			wantErr:   promql.ErrTooManySeries(env),
+		},
+		{
+			name:           "max_samples_read",
+			query:          "sum_over_time(bigmetric[100s])",
+			ts:             1000,
+			maxSamplesRead: 1,
+			wantErr:        promql.ErrTooManySamplesRead(env),
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			reg := prometheus.NewRegistry()
+			engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+				Reg:                      reg,
+				MaxSamples:               1e6,
+				Timeout:                  100 * time.Second,
+				NoStepSubqueryIntervalFn: func(int64) int64 { return int64(time.Minute / time.Millisecond) },
+				EnableAtModifier:         true,
+				EnableNegativeOffset:     true,
+				EnableDelayedNameRemoval: true,
+				EnableQueryCost:          true,
+				EnablePerStepStats:       true,
+				Parser:                   parser.NewParser(promqltest.TestParserOpts),
+			})
+			engine.SetQueryLimits(tc.maxSeries, tc.maxSamplesRead, 0)
+			qry, err := engine.NewInstantQuery(t.Context(), storage, nil, tc.query, time.Unix(tc.ts, 0))
+			require.NoError(t, err)
+			defer qry.Close()
+			require.Equal(t, tc.wantErr, qry.Exec(t.Context()).Err)
+
+			for _, reason := range []string{"max_series", "max_samples_read", "max_duration"} {
+				var want float64
+				if reason == tc.name {
+					want = 1
+				}
+				require.Equal(t, want, queryCostRejections(t, reg, reason), "rejection counter for %s", reason)
+			}
+		})
+	}
+}
+
+func TestQueryCostMaxSeriesSubquery(t *testing.T) {
+	// Parent, subquery, and step-invariant evaluators share the query budget.
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  bigmetric{a="1"} 1+1x100
+  bigmetric{a="2"} 1+1x100
+  bigmetric{a="3"} 1+1x100
+  other{b="1"} 1+1x100
+  other{b="2"} 1+1x100
+  other{b="3"} 1+1x100
+`)
+	t.Cleanup(func() { storage.Close() })
+
+	engine := newQueryCostEngine(t)
+	ts := time.Unix(1000, 0)
+	for _, query := range []string{
+		"other + sum_over_time(bigmetric[20s:10s])",
+		"other + bigmetric @ 1000",
+		"bigmetric @ 1000 + other",
+		"other + sum_over_time(bigmetric[20s:10s] @ 1000)",
+		"other + sum_over_time(bigmetric[20s] @ 1000)",
+	} {
+		t.Run(query, func(t *testing.T) {
+			engine.SetQueryLimits(6, 0, 0)
+			qry, err := engine.NewInstantQuery(context.Background(), storage, nil, query, ts)
+			require.NoError(t, err)
+			require.NoError(t, qry.Exec(context.Background()).Err)
+			require.Equal(t, int64(6), qry.Stats().Samples.TotalSeries)
+			samples := qry.Stats().Samples.SamplesRead
+			qry.Close()
+
+			engine.SetQueryLimits(4, 0, 0)
+			qry, err = engine.NewInstantQuery(context.Background(), storage, nil, query, ts)
+			require.NoError(t, err)
+			require.Equal(t, promql.ErrTooManySeries(env), qry.Exec(context.Background()).Err)
+			require.Equal(t, int64(5), qry.Stats().Samples.TotalSeries)
+			qry.Close()
+
+			// The same shared budget applies to sample reads, even if a binary
+			// expression returns no matching output series.
+			for _, limit := range []int64{samples, samples - 1} {
+				engine.SetQueryLimits(0, uint64(limit), 0)
+				qry, err = engine.NewInstantQuery(context.Background(), storage, nil, query, ts)
+				require.NoError(t, err)
+				if limit == samples {
+					require.NoError(t, qry.Exec(context.Background()).Err)
+				} else {
+					require.Equal(t, promql.ErrTooManySamplesRead(env), qry.Exec(context.Background()).Err)
+				}
+				qry.Close()
+			}
+		})
+	}
+}
+
+func TestQueryCostMaxSeriesInfo(t *testing.T) {
+	// metric contributes 3 series through its own vector selector; the info()
+	// join then selects 3 matching target_info series. The series guardrail
+	// must account for the info series too, otherwise an info() query could
+	// touch unbounded series without ErrTooManySeries ever firing.
+	storage := promqltest.LoadedStorage(t, `
+load 10s
+  metric{instance="a", job="1"} 1+1x100
+  metric{instance="a", job="2"} 1+1x100
+  metric{instance="a", job="3"} 1+1x100
+  target_info{instance="a", job="1", data="one"} 1+0x100
+  target_info{instance="a", job="2", data="two"} 1+0x100
+  target_info{instance="a", job="3", data="three"} 1+0x100
+`)
+	t.Cleanup(func() { storage.Close() })
+
+	engine := newQueryCostEngine(t)
+	ts := time.Unix(0, 0)
+	query := `info(metric)`
+
+	// A generous ceiling allows the base series plus all selected info series.
+	engine.SetQueryLimits(10, 0, 0)
+	qry, err := engine.NewInstantQuery(context.Background(), storage, nil, query, ts)
+	require.NoError(t, err)
+	require.NoError(t, qry.Exec(context.Background()).Err)
+
+	// A ceiling of 4 is above the 3 base series alone but below the cumulative
+	// total once the 3 info series are accounted for, so the query is rejected.
+	engine.SetQueryLimits(4, 0, 0)
+	qry, err = engine.NewInstantQuery(context.Background(), storage, nil, query, ts)
+	require.NoError(t, err)
+	require.Equal(t, promql.ErrTooManySeries(env), qry.Exec(context.Background()).Err)
+}
+
+// countingSeriesSet is a storage.SeriesSet that yields up to total distinct
+// series and records how many times Next was called. It is used to prove that
+// the series guardrail stops pulling series as soon as the ceiling is exceeded,
+// rather than materializing the whole set first.
+type countingSeriesSet struct {
+	total    int
+	produced int
+	calls    int
+}
+
+func (s *countingSeriesSet) Next() bool {
+	s.calls++
+	if s.produced >= s.total {
+		return false
+	}
+	s.produced++
+	return true
+}
+
+func (s *countingSeriesSet) At() storage.Series {
+	return storage.NewListSeries(labels.FromStrings(labels.MetricName, "bigmetric", "i", strconv.Itoa(s.produced)), nil)
+}
+
+func (*countingSeriesSet) Err() error { return nil }
+
+func (*countingSeriesSet) Warnings() annotations.Annotations { return nil }
+
+func TestQueryCostMaxSeriesEarlyTermination(t *testing.T) {
+	// The series guardrail must reject a selector as soon as the cumulative
+	// series count exceeds the ceiling, without materializing the entire set.
+	// We back the query with a SeriesSet that yields far more series than the
+	// ceiling and counts how many times Next is called. With a ceiling of N,
+	// the limit trips on the (N+1)th series, so Next is called exactly N+1
+	// times - not once per series in the whole set.
+	const (
+		maxSeries  = 5
+		totalAvail = 1000
+	)
+
+	set := &countingSeriesSet{total: totalAvail}
+	queryable := &storage.MockQueryable{
+		MockQuerier: &storage.MockQuerier{
+			SelectMockFunction: func(_ bool, _ *storage.SelectHints, _ ...*labels.Matcher) storage.SeriesSet {
+				return set
+			},
+		},
+	}
+
+	engine := newQueryCostEngine(t)
+	engine.SetQueryLimits(maxSeries, 0, 0)
+
+	qry, err := engine.NewInstantQuery(context.Background(), queryable, nil, "bigmetric", time.Unix(0, 0))
+	require.NoError(t, err)
+	require.Equal(t, promql.ErrTooManySeries(env), qry.Exec(context.Background()).Err)
+
+	// Next is called once per produced series plus the call that trips the
+	// limit; the limit trips on the (maxSeries+1)th series. Crucially it is far
+	// below totalAvail, proving the set was not fully materialized.
+	require.Equal(t, maxSeries+1, set.calls, "expected early termination after exceeding the ceiling")
+	require.Less(t, set.calls, totalAvail, "the whole series set must not be materialized")
+}
+
+func TestExtendedRangeSelectors(t *testing.T) {
+	engine := newTestEngine(t)
+	storage := promqltest.LoadedStorage(t, `
+	load 10s
+		metric 1+1x10
+		withreset 1+1x4 1+1x5
+		notregular 0 5 100 2 8
+	`)
+
+	tc := []struct {
+		query    string
+		t        time.Time
+		expected promql.Matrix
+	}{
+		{
+			query: "metric[10s] smoothed",
+			t:     time.Unix(10, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: 0}, {F: 2, T: 10000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "metric[10s] smoothed",
+			t:     time.Unix(15, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1.5, T: 5000}, {F: 2, T: 10000}, {F: 2.5, T: 15000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "metric[10s] smoothed",
+			t:     time.Unix(5, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: -5000}, {F: 1, T: 0}, {F: 1.5, T: 5000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "metric[10s] smoothed",
+			t:     time.Unix(105, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 10.5, T: 95000}, {F: 11, T: 100000}, {F: 11, T: 105000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "withreset[10s] smoothed",
+			t:     time.Unix(45, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 4.5, T: 35000}, {F: 5, T: 40000}, {F: 3, T: 45000}},
+					Metric: labels.FromStrings("__name__", "withreset"),
+				},
+			},
+		},
+		{
+			query: "metric[10s] anchored",
+			t:     time.Unix(10, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: 0}, {F: 2, T: 10000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "metric[10s] anchored",
+			t:     time.Unix(15, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: 5000}, {F: 2, T: 10000}, {F: 2, T: 15000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "metric[10s] anchored",
+			t:     time.Unix(5, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 1, T: -5000}, {F: 1, T: 0}, {F: 1, T: 5000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "metric[10s] anchored",
+			t:     time.Unix(105, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 10, T: 95000}, {F: 11, T: 100000}, {F: 11, T: 105000}},
+					Metric: labels.FromStrings("__name__", "metric"),
+				},
+			},
+		},
+		{
+			query: "withreset[10s] anchored",
+			t:     time.Unix(45, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 4, T: 35000}, {F: 5, T: 40000}, {F: 5, T: 45000}},
+					Metric: labels.FromStrings("__name__", "withreset"),
+				},
+			},
+		},
+		{
+			query: "notregular[20s] smoothed",
+			t:     time.Unix(30, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 5, T: 10000}, {F: 100, T: 20000}, {F: 2, T: 30000}},
+					Metric: labels.FromStrings("__name__", "notregular"),
+				},
+			},
+		},
+		{
+			query: "notregular[20s] anchored",
+			t:     time.Unix(30, 0),
+			expected: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 5, T: 10000}, {F: 100, T: 20000}, {F: 2, T: 30000}},
+					Metric: labels.FromStrings("__name__", "notregular"),
+				},
+			},
+		},
+	}
+
+	for _, tc := range tc {
+		t.Run(tc.query, func(t *testing.T) {
+			engine = promqltest.NewTestEngine(t, false, 0, 100)
+			qry, err := engine.NewInstantQuery(context.Background(), storage, nil, tc.query, tc.t)
+			require.NoError(t, err)
+			res := qry.Exec(context.Background())
+			require.NoError(t, res.Err)
+			require.Equal(t, tc.expected, res.Value)
+		})
+	}
+}
+
+// TestParserConfigIsolation ensures the engine's parser configuration is respected.
+func TestParserConfigIsolation(t *testing.T) {
+	ctx := context.Background()
+	storage := promqltest.LoadedStorage(t, `
+		load 10s
+			metric 1+1x10
+	`)
+	t.Cleanup(func() { storage.Close() })
+
+	query := "mad_over_time(metric[10s])"
+	t.Run("engine_with_feature_disabled_rejects", func(t *testing.T) {
+		engine := promql.NewEngine(promql.EngineOpts{
+			MaxSamples: 1000, Timeout: 10 * time.Second,
+			Parser: parser.NewParser(parser.Options{EnableExperimentalFunctions: false}),
+		})
+		t.Cleanup(func() { _ = engine.Close() })
+		_, err := engine.NewInstantQuery(ctx, storage, nil, query, time.Unix(10, 0))
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "parse")
+	})
+	t.Run("engine_with_feature_enabled_accepts", func(t *testing.T) {
+		engine := promql.NewEngine(promql.EngineOpts{
+			MaxSamples: 1000, Timeout: 10 * time.Second,
+			Parser: parser.NewParser(parser.Options{EnableExperimentalFunctions: true}),
+		})
+		t.Cleanup(func() { _ = engine.Close() })
+		q, err := engine.NewInstantQuery(ctx, storage, nil, query, time.Unix(10, 0))
+		require.NoError(t, err)
+		defer q.Close()
+		res := q.Exec(ctx)
+		require.NoError(t, res.Err)
+	})
+}
+
+func TestAtModifier(t *testing.T) {
+	engine := newTestEngine(t)
+	store := promqltest.LoadedStorage(t, `
+load 10s
+  metric{job="1"} 0+1x1000
+  metric{job="2"} 0+2x1000
+  metric_topk{instance="1"} 0+1x1000
+  metric_topk{instance="2"} 0+2x1000
+  metric_topk{instance="3"} 1000-1x1000
+
+load 1ms
+  metric_ms 0+1x10000
+`)
+
+	lbls1 := labels.FromStrings("__name__", "metric", "job", "1")
+	lbls2 := labels.FromStrings("__name__", "metric", "job", "2")
+	lblstopk2 := labels.FromStrings("__name__", "metric_topk", "instance", "2")
+	lblstopk3 := labels.FromStrings("__name__", "metric_topk", "instance", "3")
+	lblsms := labels.FromStrings("__name__", "metric_ms")
+	lblsneg := labels.FromStrings("__name__", "metric_neg")
+
+	// Add some samples with negative timestamp.
+	db := store.DB
+	app := db.AppenderV2(context.Background())
+	ref, err := app.Append(0, lblsneg, 0, -1000000, 1000, nil, nil, storage.AOptions{})
+	require.NoError(t, err)
+	for ts := int64(-1000000 + 1000); ts <= 0; ts += 1000 {
+		_, err := app.Append(ref, lblsneg, 0, ts, -float64(ts/1000)+1, nil, nil, storage.AOptions{})
+		require.NoError(t, err)
+	}
+
+	// To test the fix for https://github.com/prometheus/prometheus/issues/8433.
+	_, err = app.Append(0, labels.FromStrings("__name__", "metric_timestamp"), 0, 3600*1000, 1000, nil, nil, storage.AOptions{})
+	require.NoError(t, err)
+
+	require.NoError(t, app.Commit())
+
+	cases := []struct {
+		query                string
+		start, end, interval int64 // Time in seconds.
+		result               parser.Value
+	}{
+		{ // Time of the result is the evaluation time.
+			query: `metric_neg @ 0`,
+			start: 100,
+			result: promql.Vector{
+				promql.Sample{F: 1, T: 100000, Metric: lblsneg},
+			},
+		}, {
+			query: `metric_neg @ -200`,
+			start: 100,
+			result: promql.Vector{
+				promql.Sample{F: 201, T: 100000, Metric: lblsneg},
+			},
+		}, {
+			query: `metric{job="2"} @ 50`,
+			start: -2, end: 2, interval: 1,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 10, T: -2000}, {F: 10, T: -1000}, {F: 10, T: 0}, {F: 10, T: 1000}, {F: 10, T: 2000}},
+					Metric: lbls2,
+				},
+			},
+		}, { // Timestamps for matrix selector does not depend on the evaluation time.
+			query: "metric[20s] @ 300",
+			start: 10,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 29, T: 290000}, {F: 30, T: 300000}},
+					Metric: lbls1,
+				},
+				promql.Series{
+					Floats: []promql.FPoint{{F: 58, T: 290000}, {F: 60, T: 300000}},
+					Metric: lbls2,
+				},
+			},
+		}, {
+			query: `metric_neg[2s] @ 0`,
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 2, T: -1000}, {F: 1, T: 0}},
+					Metric: lblsneg,
+				},
+			},
+		}, {
+			query: `metric_neg[3s] @ -500`,
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 503, T: -502000}, {F: 502, T: -501000}, {F: 501, T: -500000}},
+					Metric: lblsneg,
+				},
+			},
+		}, {
+			query: `metric_ms[3ms] @ 2.345`,
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 2343, T: 2343}, {F: 2344, T: 2344}, {F: 2345, T: 2345}},
+					Metric: lblsms,
+				},
+			},
+		}, {
+			query: "metric[100s:25s] @ 300",
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 22, T: 225000}, {F: 25, T: 250000}, {F: 27, T: 275000}, {F: 30, T: 300000}},
+					Metric: lbls1,
+				},
+				promql.Series{
+					Floats: []promql.FPoint{{F: 44, T: 225000}, {F: 50, T: 250000}, {F: 54, T: 275000}, {F: 60, T: 300000}},
+					Metric: lbls2,
+				},
+			},
+		}, {
+			query: "metric[100s1ms:25s] @ 300", // Add 1ms to the range to see the legacy behavior of the previous test.
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 20, T: 200000}, {F: 22, T: 225000}, {F: 25, T: 250000}, {F: 27, T: 275000}, {F: 30, T: 300000}},
+					Metric: lbls1,
+				},
+				promql.Series{
+					Floats: []promql.FPoint{{F: 40, T: 200000}, {F: 44, T: 225000}, {F: 50, T: 250000}, {F: 54, T: 275000}, {F: 60, T: 300000}},
+					Metric: lbls2,
+				},
+			},
+		}, {
+			query: "metric_neg[50s:25s] @ 0",
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 26, T: -25000}, {F: 1, T: 0}},
+					Metric: lblsneg,
+				},
+			},
+		}, {
+			query: "metric_neg[50s1ms:25s] @ 0", // Add 1ms to the range to see the legacy behavior of the previous test.
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 51, T: -50000}, {F: 26, T: -25000}, {F: 1, T: 0}},
+					Metric: lblsneg,
+				},
+			},
+		}, {
+			query: "metric_neg[50s:25s] @ -100",
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 126, T: -125000}, {F: 101, T: -100000}},
+					Metric: lblsneg,
+				},
+			},
+		}, {
+			query: "metric_neg[50s1ms:25s] @ -100", // Add 1ms to the range to see the legacy behavior of the previous test.
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 151, T: -150000}, {F: 126, T: -125000}, {F: 101, T: -100000}},
+					Metric: lblsneg,
+				},
+			},
+		}, {
+			query: `metric_ms[101ms:25ms] @ 2.345`,
+			start: 100,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 2250, T: 2250}, {F: 2275, T: 2275}, {F: 2300, T: 2300}, {F: 2325, T: 2325}},
+					Metric: lblsms,
+				},
+			},
+		}, {
+			query: `metric_topk and topk(1, sum_over_time(metric_topk[50s] @ 100))`,
+			start: 50, end: 80, interval: 10,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 995, T: 50000}, {F: 994, T: 60000}, {F: 993, T: 70000}, {F: 992, T: 80000}},
+					Metric: lblstopk3,
+				},
+			},
+		}, {
+			query: `metric_topk and topk(1, sum_over_time(metric_topk[50s] @ 5000))`,
+			start: 50, end: 80, interval: 10,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 10, T: 50000}, {F: 12, T: 60000}, {F: 14, T: 70000}, {F: 16, T: 80000}},
+					Metric: lblstopk2,
+				},
+			},
+		}, {
+			query: `metric_topk and topk(1, sum_over_time(metric_topk[50s] @ end()))`,
+			start: 70, end: 100, interval: 10,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 993, T: 70000}, {F: 992, T: 80000}, {F: 991, T: 90000}, {F: 990, T: 100000}},
+					Metric: lblstopk3,
+				},
+			},
+		}, {
+			query: `metric_topk and topk(1, sum_over_time(metric_topk[50s] @ start()))`,
+			start: 100, end: 130, interval: 10,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{{F: 990, T: 100000}, {F: 989, T: 110000}, {F: 988, T: 120000}, {F: 987, T: 130000}},
+					Metric: lblstopk3,
+				},
+			},
+		}, {
+			// Tests for https://github.com/prometheus/prometheus/issues/8433.
+			// The trick here is that the query range should be > lookback delta.
+			query: `timestamp(metric_timestamp @ 3600)`,
+			start: 0, end: 7 * 60, interval: 60,
+			result: promql.Matrix{
+				promql.Series{
+					Floats: []promql.FPoint{
+						{F: 3600, T: 0},
+						{F: 3600, T: 60 * 1000},
+						{F: 3600, T: 2 * 60 * 1000},
+						{F: 3600, T: 3 * 60 * 1000},
+						{F: 3600, T: 4 * 60 * 1000},
+						{F: 3600, T: 5 * 60 * 1000},
+						{F: 3600, T: 6 * 60 * 1000},
+						{F: 3600, T: 7 * 60 * 1000},
+					},
+					Metric:   labels.EmptyLabels(),
+					DropName: true,
+				},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.query, func(t *testing.T) {
+			if c.interval == 0 {
+				c.interval = 1
+			}
+			start, end, interval := time.Unix(c.start, 0), time.Unix(c.end, 0), time.Duration(c.interval)*time.Second
+			var err error
+			var qry promql.Query
+			if c.end == 0 {
+				qry, err = engine.NewInstantQuery(context.Background(), store, nil, c.query, start)
+			} else {
+				qry, err = engine.NewRangeQuery(context.Background(), store, nil, c.query, start, end, interval)
+			}
+			require.NoError(t, err)
+
+			res := qry.Exec(context.Background())
+			require.NoError(t, res.Err)
+			if expMat, ok := c.result.(promql.Matrix); ok {
+				sort.Sort(expMat)
+				sort.Sort(res.Value.(promql.Matrix))
+			}
+			testutil.RequireEqual(t, c.result, res.Value, "query %q failed", c.query)
+		})
+	}
+}
+
+func TestSubquerySelector(t *testing.T) {
+	type caseType struct {
+		Query  string
+		Result promql.Result
+		Start  time.Time
+	}
+
+	for _, tst := range []struct {
+		loadString string
+		cases      []caseType
+	}{
+		{
+			loadString: `load 10s
+							metric 1 2`,
+			cases: []caseType{
+				{
+					Query: "metric[20s:10s]",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 1, T: 0}, {F: 2, T: 10000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(10, 0),
+				},
+				{
+					Query: "metric[20s:5s]",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 1, T: 0}, {F: 1, T: 5000}, {F: 2, T: 10000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(10, 0),
+				},
+				{
+					Query: "metric[20s:5s] offset 2s",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 1, T: 0}, {F: 1, T: 5000}, {F: 2, T: 10000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(12, 0),
+				},
+				{
+					Query: "metric[20s:5s] offset 6s",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 1, T: 0}, {F: 1, T: 5000}, {F: 2, T: 10000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(20, 0),
+				},
+				{
+					Query: "metric[20s:5s] offset 4s",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 2, T: 15000}, {F: 2, T: 20000}, {F: 2, T: 25000}, {F: 2, T: 30000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(35, 0),
+				},
+				{
+					Query: "metric[20s:5s] offset 5s",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 2, T: 15000}, {F: 2, T: 20000}, {F: 2, T: 25000}, {F: 2, T: 30000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(35, 0),
+				},
+				{
+					Query: "metric[20s:5s] offset 6s",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 2, T: 10000}, {F: 2, T: 15000}, {F: 2, T: 20000}, {F: 2, T: 25000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(35, 0),
+				},
+				{
+					Query: "metric[20s:5s] offset 7s",
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 2, T: 10000}, {F: 2, T: 15000}, {F: 2, T: 20000}, {F: 2, T: 25000}},
+								Metric: labels.FromStrings("__name__", "metric"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(35, 0),
+				},
+			},
+		},
+		{
+			loadString: `load 10s
+							http_requests{job="api-server", instance="0", group="production"}	0+10x1000 100+30x1000
+							http_requests{job="api-server", instance="1", group="production"}	0+20x1000 200+30x1000
+							http_requests{job="api-server", instance="0", group="canary"}		0+30x1000 300+80x1000
+							http_requests{job="api-server", instance="1", group="canary"}		0+40x2000`,
+			cases: []caseType{
+				{ // Normal selector.
+					Query: `http_requests{group=~"pro.*",instance="0"}[30s:10s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 10000, T: 10000000}, {F: 100, T: 10010000}, {F: 130, T: 10020000}},
+								Metric: labels.FromStrings("__name__", "http_requests", "job", "api-server", "instance", "0", "group", "production"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(10020, 0),
+				},
+				{ // Normal selector. Add 1ms to the range to see the legacy behavior of the previous test.
+					Query: `http_requests{group=~"pro.*",instance="0"}[30s1ms:10s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 9990, T: 9990000}, {F: 10000, T: 10000000}, {F: 100, T: 10010000}, {F: 130, T: 10020000}},
+								Metric: labels.FromStrings("__name__", "http_requests", "job", "api-server", "instance", "0", "group", "production"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(10020, 0),
+				},
+				{ // Default step.
+					Query: `http_requests{group=~"pro.*",instance="0"}[5m:]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 9840, T: 9840000}, {F: 9900, T: 9900000}, {F: 9960, T: 9960000}, {F: 130, T: 10020000}, {F: 310, T: 10080000}},
+								Metric: labels.FromStrings("__name__", "http_requests", "job", "api-server", "instance", "0", "group", "production"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(10100, 0),
+				},
+				{ // Checking if high offset (>LookbackDelta) is being taken care of.
+					Query: `http_requests{group=~"pro.*",instance="0"}[5m:] offset 20m`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 8640, T: 8640000}, {F: 8700, T: 8700000}, {F: 8760, T: 8760000}, {F: 8820, T: 8820000}, {F: 8880, T: 8880000}},
+								Metric: labels.FromStrings("__name__", "http_requests", "job", "api-server", "instance", "0", "group", "production"),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(10100, 0),
+				},
+				{
+					Query: `rate(http_requests[1m])[15s:5s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 3, T: 7990000}, {F: 3, T: 7995000}, {F: 3, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "0", "group", "canary"),
+								DropName: true,
+							},
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 4, T: 7990000}, {F: 4, T: 7995000}, {F: 4, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "1", "group", "canary"),
+								DropName: true,
+							},
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 1, T: 7990000}, {F: 1, T: 7995000}, {F: 1, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "0", "group", "production"),
+								DropName: true,
+							},
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 2, T: 7990000}, {F: 2, T: 7995000}, {F: 2, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "1", "group", "production"),
+								DropName: true,
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(8000, 0),
+				},
+				{
+					Query: `rate(http_requests[1m])[15s1ms:5s]`, // Add 1ms to the range to see the legacy behavior of the previous test.
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 3, T: 7985000}, {F: 3, T: 7990000}, {F: 3, T: 7995000}, {F: 3, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "0", "group", "canary"),
+								DropName: true,
+							},
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 4, T: 7985000}, {F: 4, T: 7990000}, {F: 4, T: 7995000}, {F: 4, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "1", "group", "canary"),
+								DropName: true,
+							},
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 1, T: 7985000}, {F: 1, T: 7990000}, {F: 1, T: 7995000}, {F: 1, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "0", "group", "production"),
+								DropName: true,
+							},
+							promql.Series{
+								Floats:   []promql.FPoint{{F: 2, T: 7985000}, {F: 2, T: 7990000}, {F: 2, T: 7995000}, {F: 2, T: 8000000}},
+								Metric:   labels.FromStrings("job", "api-server", "instance", "1", "group", "production"),
+								DropName: true,
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(8000, 0),
+				},
+				{
+					Query: `sum(http_requests{group=~"pro.*"})[30s:10s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 300, T: 100000}, {F: 330, T: 110000}, {F: 360, T: 120000}},
+								Metric: labels.EmptyLabels(),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(120, 0),
+				},
+				{
+					Query: `sum(http_requests{group=~"pro.*"})[30s:10s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 300, T: 100000}, {F: 330, T: 110000}, {F: 360, T: 120000}},
+								Metric: labels.EmptyLabels(),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(121, 0), // 1s later doesn't change the result.
+				},
+				{
+					// Add 1ms to the range to see the legacy behavior of the previous test.
+					Query: `sum(http_requests{group=~"pro.*"})[30s1ms:10s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 270, T: 90000}, {F: 300, T: 100000}, {F: 330, T: 110000}, {F: 360, T: 120000}},
+								Metric: labels.EmptyLabels(),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(120, 0),
+				},
+				{
+					Query: `sum(http_requests)[40s:10s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 900, T: 90000}, {F: 1000, T: 100000}, {F: 1100, T: 110000}, {F: 1200, T: 120000}},
+								Metric: labels.EmptyLabels(),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(120, 0),
+				},
+				{
+					Query: `sum(http_requests)[40s1ms:10s]`, // Add 1ms to the range to see the legacy behavior of the previous test.
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 800, T: 80000}, {F: 900, T: 90000}, {F: 1000, T: 100000}, {F: 1100, T: 110000}, {F: 1200, T: 120000}},
+								Metric: labels.EmptyLabels(),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(120, 0),
+				},
+				{
+					Query: `(sum(http_requests{group=~"p.*"})+sum(http_requests{group=~"c.*"}))[20s:5s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 1000, T: 105000}, {F: 1100, T: 110000}, {F: 1100, T: 115000}, {F: 1200, T: 120000}},
+								Metric: labels.EmptyLabels(),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(120, 0),
+				},
+				{
+					// Add 1ms to the range to see the legacy behavior of the previous test.
+					Query: `(sum(http_requests{group=~"p.*"})+sum(http_requests{group=~"c.*"}))[20s1ms:5s]`,
+					Result: promql.Result{
+						nil,
+						promql.Matrix{
+							promql.Series{
+								Floats: []promql.FPoint{{F: 1000, T: 100000}, {F: 1000, T: 105000}, {F: 1100, T: 110000}, {F: 1100, T: 115000}, {F: 1200, T: 120000}},
+								Metric: labels.EmptyLabels(),
+							},
+						},
+						nil,
+					},
+					Start: time.Unix(120, 0),
+				},
+			},
+		},
+	} {
+		t.Run("", func(t *testing.T) {
+			engine := newTestEngine(t)
+			storage := promqltest.LoadedStorage(t, tst.loadString)
+
+			for _, c := range tst.cases {
+				t.Run(c.Query, func(t *testing.T) {
+					qry, err := engine.NewInstantQuery(context.Background(), storage, nil, c.Query, c.Start)
+					require.NoError(t, err)
+
+					res := qry.Exec(context.Background())
+					require.Equal(t, c.Result.Err, res.Err)
+					mat := res.Value.(promql.Matrix)
+					sort.Sort(mat)
+					testutil.RequireEqual(t, c.Result.Value, mat)
+				})
+			}
+		})
+	}
+}
+
+func getLogLines(t *testing.T, name string) []string {
+	content, err := os.ReadFile(name)
+	require.NoError(t, err)
+
+	lines := strings.Split(string(content), "\n")
+	for i, v := range slices.Backward(lines) {
+		if v == "" {
+			lines = append(lines[:i], lines[i+1:]...)
+		}
+	}
+	return lines
+}
+
+func TestQueryLogger_basic(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:     nil,
+		Reg:        nil,
+		MaxSamples: 10,
+		Timeout:    10 * time.Second,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+
+	queryExec := func() {
+		ctx, cancelCtx := context.WithCancel(context.Background())
+		defer cancelCtx()
+		query := engine.NewTestQuery(func(ctx context.Context) error {
+			return contextDone(ctx, "test statement execution")
+		})
+		res := query.Exec(ctx)
+		require.NoError(t, res.Err)
+	}
+
+	// promql.Query works without query log initialized.
+	queryExec()
+
+	tmpDir := t.TempDir()
+	ql1File := filepath.Join(tmpDir, "query1.log")
+	f1, err := logging.NewJSONFileLogger(ql1File)
+	require.NoError(t, err)
+
+	engine.SetQueryLogger(f1)
+	queryExec()
+	logLines := getLogLines(t, ql1File)
+	require.Contains(t, logLines[0], "params", map[string]any{"query": "test statement"})
+	require.Len(t, logLines, 1)
+
+	l := len(logLines)
+	queryExec()
+	logLines = getLogLines(t, ql1File)
+	l2 := len(logLines)
+	require.Equal(t, l2, 2*l)
+
+	// Test that we close the query logger when unsetting it. The following
+	// attempt to close the file should error.
+	engine.SetQueryLogger(nil)
+	err = f1.Close()
+	require.ErrorContains(t, err, "file already closed", "expected f1 to be closed, got open")
+	queryExec()
+
+	// Test that we close the query logger when swapping.
+	ql2File := filepath.Join(tmpDir, "query2.log")
+	f2, err := logging.NewJSONFileLogger(ql2File)
+	require.NoError(t, err)
+	ql3File := filepath.Join(tmpDir, "query3.log")
+	f3, err := logging.NewJSONFileLogger(ql3File)
+	require.NoError(t, err)
+	engine.SetQueryLogger(f2)
+	queryExec()
+	engine.SetQueryLogger(f3)
+	err = f2.Close()
+	require.ErrorContains(t, err, "file already closed", "expected f2 to be closed, got open")
+	queryExec()
+	err = f3.Close()
+	require.NoError(t, err)
+}
+
+func TestQueryLogger_fields(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:     nil,
+		Reg:        nil,
+		MaxSamples: 10,
+		Timeout:    10 * time.Second,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+
+	tmpDir := t.TempDir()
+	ql1File := filepath.Join(tmpDir, "query1.log")
+	f1, err := logging.NewJSONFileLogger(ql1File)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, f1.Close())
+	})
+
+	engine.SetQueryLogger(f1)
+
+	ctx, cancelCtx := context.WithCancel(context.Background())
+	ctx = promql.NewOriginContext(ctx, map[string]any{"foo": "bar"})
+	defer cancelCtx()
+	query := engine.NewTestQuery(func(ctx context.Context) error {
+		return contextDone(ctx, "test statement execution")
+	})
+
+	res := query.Exec(ctx)
+	require.NoError(t, res.Err)
+
+	logLines := getLogLines(t, ql1File)
+	require.Contains(t, logLines[0], "foo", "bar")
+}
+
+func TestQueryLogger_error(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:     nil,
+		Reg:        nil,
+		MaxSamples: 10,
+		Timeout:    10 * time.Second,
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+
+	tmpDir := t.TempDir()
+	ql1File := filepath.Join(tmpDir, "query1.log")
+	f1, err := logging.NewJSONFileLogger(ql1File)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, f1.Close())
+	})
+
+	engine.SetQueryLogger(f1)
+
+	ctx, cancelCtx := context.WithCancel(context.Background())
+	ctx = promql.NewOriginContext(ctx, map[string]any{"foo": "bar"})
+	defer cancelCtx()
+	testErr := errors.New("failure")
+	query := engine.NewTestQuery(func(context.Context) error {
+		return testErr
+	})
+
+	res := query.Exec(ctx)
+	require.Error(t, res.Err, "query should have failed")
+
+	logLines := getLogLines(t, ql1File)
+	require.Contains(t, logLines[0], "error", testErr)
+	require.Contains(t, logLines[0], "params", map[string]any{"query": "test statement"})
+}
+
+func TestPreprocessExpr(t *testing.T) {
+	t.Run("preserve subquery duration expressions", func(t *testing.T) {
+		for _, input := range []string{
+			"foo[1h / 2:1h / 2]",
+			"foo[1h / 2:30m]",
+			"foo[1h / 2:]",
+		} {
+			t.Run(input, func(t *testing.T) {
+				expr, err := testParser.ParseExpr(input)
+				require.NoError(t, err)
+				expr, err = promql.PreprocessExpr(expr, time.Unix(1000, 0), time.Unix(9999, 0), time.Minute)
+				require.NoError(t, err)
+				require.Equal(t, input, expr.String())
+			})
+		}
+	})
+
+	t.Run("wrap step-invariant expressions", func(t *testing.T) {
+		startTime := time.Unix(1000, 0)
+		endTime := time.Unix(9999, 0)
+		testCases := []struct {
+			input      string      // The input to be parsed.
+			expected   parser.Expr // The expected expression AST.
+			outputTest bool
+		}{
+			{
+				input: "123.4567",
+				expected: &parser.NumberLiteral{
+					Val:      123.4567,
+					PosRange: posrange.PositionRange{Start: 0, End: 8},
+				},
+			},
+			{
+				input: `"foo"`,
+				expected: &parser.StringLiteral{
+					Val:      "foo",
+					PosRange: posrange.PositionRange{Start: 0, End: 5},
+				},
+			},
+			{
+				input: "foo * bar",
+				expected: &parser.BinaryExpr{
+					Op: parser.MUL,
+					LHS: &parser.VectorSelector{
+						Name: "foo",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   3,
+						},
+					},
+					RHS: &parser.VectorSelector{
+						Name: "bar",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "bar"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 6,
+							End:   9,
+						},
+					},
+					VectorMatching: &parser.VectorMatching{Card: parser.CardOneToOne},
+				},
+			},
+			{
+				input: "foo * bar @ 10",
+				expected: &parser.BinaryExpr{
+					Op: parser.MUL,
+					LHS: &parser.VectorSelector{
+						Name: "foo",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   3,
+						},
+					},
+					RHS: &parser.StepInvariantExpr{
+						Expr: &parser.VectorSelector{
+							Name: "bar",
+							LabelMatchers: []*labels.Matcher{
+								parser.MustLabelMatcher(labels.MatchEqual, "__name__", "bar"),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 6,
+								End:   14,
+							},
+							Timestamp: makeInt64Pointer(10000),
+						},
+					},
+					VectorMatching: &parser.VectorMatching{Card: parser.CardOneToOne},
+				},
+			},
+			{
+				input: "foo @ 20 * bar @ 10",
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.BinaryExpr{
+						Op: parser.MUL,
+						LHS: &parser.VectorSelector{
+							Name: "foo",
+							LabelMatchers: []*labels.Matcher{
+								parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 0,
+								End:   8,
+							},
+							Timestamp: makeInt64Pointer(20000),
+						},
+						RHS: &parser.VectorSelector{
+							Name: "bar",
+							LabelMatchers: []*labels.Matcher{
+								parser.MustLabelMatcher(labels.MatchEqual, "__name__", "bar"),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 11,
+								End:   19,
+							},
+							Timestamp: makeInt64Pointer(10000),
+						},
+						VectorMatching: &parser.VectorMatching{Card: parser.CardOneToOne},
+					},
+				},
+			},
+			{
+				input: "test[5s]",
+				expected: &parser.MatrixSelector{
+					VectorSelector: &parser.VectorSelector{
+						Name: "test",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "test"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   4,
+						},
+					},
+					Range:  5 * time.Second,
+					EndPos: 8,
+				},
+			},
+			{
+				input: `test{a="b"}[5y] @ 1603774699`,
+				expected: &parser.MatrixSelector{
+					VectorSelector: &parser.VectorSelector{
+						Name:      "test",
+						Timestamp: makeInt64Pointer(1603774699000),
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "a", "b"),
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "test"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   11,
+						},
+					},
+					Range:  5 * 365 * 24 * time.Hour,
+					EndPos: 28,
+				},
+			},
+			{
+				input: "sum by (foo)(some_metric)",
+				expected: &parser.AggregateExpr{
+					Op: parser.SUM,
+					Expr: &parser.VectorSelector{
+						Name: "some_metric",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 13,
+							End:   24,
+						},
+					},
+					Grouping: []string{"foo"},
+					PosRange: posrange.PositionRange{
+						Start: 0,
+						End:   25,
+					},
+				},
+			},
+			{
+				input: "sum by (foo)(some_metric @ 10)",
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.AggregateExpr{
+						Op: parser.SUM,
+						Expr: &parser.VectorSelector{
+							Name: "some_metric",
+							LabelMatchers: []*labels.Matcher{
+								parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 13,
+								End:   29,
+							},
+							Timestamp: makeInt64Pointer(10000),
+						},
+						Grouping: []string{"foo"},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   30,
+						},
+					},
+				},
+			},
+			{
+				input: "sum(some_metric1 @ 10) + sum(some_metric2 @ 20)",
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.BinaryExpr{
+						Op:             parser.ADD,
+						VectorMatching: &parser.VectorMatching{},
+						LHS: &parser.AggregateExpr{
+							Op: parser.SUM,
+							Expr: &parser.VectorSelector{
+								Name: "some_metric1",
+								LabelMatchers: []*labels.Matcher{
+									parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric1"),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 4,
+									End:   21,
+								},
+								Timestamp: makeInt64Pointer(10000),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 0,
+								End:   22,
+							},
+						},
+						RHS: &parser.AggregateExpr{
+							Op: parser.SUM,
+							Expr: &parser.VectorSelector{
+								Name: "some_metric2",
+								LabelMatchers: []*labels.Matcher{
+									parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric2"),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 29,
+									End:   46,
+								},
+								Timestamp: makeInt64Pointer(20000),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 25,
+								End:   47,
+							},
+						},
+					},
+				},
+			},
+			{
+				input: "some_metric and topk(5, rate(some_metric[1m] @ 20))",
+				expected: &parser.BinaryExpr{
+					Op: parser.LAND,
+					VectorMatching: &parser.VectorMatching{
+						Card: parser.CardManyToMany,
+					},
+					LHS: &parser.VectorSelector{
+						Name: "some_metric",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   11,
+						},
+					},
+					RHS: &parser.StepInvariantExpr{
+						Expr: &parser.AggregateExpr{
+							Op: parser.TOPK,
+							Expr: &parser.Call{
+								Func: parser.MustGetFunction("rate"),
+								Args: parser.Expressions{
+									&parser.MatrixSelector{
+										VectorSelector: &parser.VectorSelector{
+											Name: "some_metric",
+											LabelMatchers: []*labels.Matcher{
+												parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+											},
+											PosRange: posrange.PositionRange{
+												Start: 29,
+												End:   40,
+											},
+											Timestamp: makeInt64Pointer(20000),
+										},
+										Range:  1 * time.Minute,
+										EndPos: 49,
+									},
+								},
+								PosRange: posrange.PositionRange{
+									Start: 24,
+									End:   50,
+								},
+							},
+							Param: &parser.NumberLiteral{
+								Val: 5,
+								PosRange: posrange.PositionRange{
+									Start: 21,
+									End:   22,
+								},
+							},
+							PosRange: posrange.PositionRange{
+								Start: 16,
+								End:   51,
+							},
+						},
+					},
+				},
+			},
+			{
+				input: "time()",
+				expected: &parser.Call{
+					Func: parser.MustGetFunction("time"),
+					Args: parser.Expressions{},
+					PosRange: posrange.PositionRange{
+						Start: 0,
+						End:   6,
+					},
+				},
+			},
+			{
+				input: `foo{bar="baz"}[10m:6s]`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.VectorSelector{
+						Name: "foo",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "bar", "baz"),
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   14,
+						},
+					},
+					Range:  10 * time.Minute,
+					Step:   6 * time.Second,
+					EndPos: 22,
+				},
+			},
+			{
+				input: `foo{bar="baz"}[10m:6s] @ 10`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.VectorSelector{
+						Name: "foo",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "bar", "baz"),
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   14,
+						},
+					},
+					Range:     10 * time.Minute,
+					Step:      6 * time.Second,
+					Timestamp: makeInt64Pointer(10000),
+					EndPos:    27,
+				},
+			},
+			{ // Even though the subquery is step invariant, the inside is also wrapped separately.
+				input: `sum(foo{bar="baz"} @ 20)[10m:6s] @ 10`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.StepInvariantExpr{
+						Expr: &parser.AggregateExpr{
+							Op: parser.SUM,
+							Expr: &parser.VectorSelector{
+								Name: "foo",
+								LabelMatchers: []*labels.Matcher{
+									parser.MustLabelMatcher(labels.MatchEqual, "bar", "baz"),
+									parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 4,
+									End:   23,
+								},
+								Timestamp: makeInt64Pointer(20000),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 0,
+								End:   24,
+							},
+						},
+					},
+					Range:     10 * time.Minute,
+					Step:      6 * time.Second,
+					Timestamp: makeInt64Pointer(10000),
+					EndPos:    37,
+				},
+			},
+			{
+				input: `min_over_time(rate(foo{bar="baz"}[2s])[5m:] @ 1603775091)[4m:3s]`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.StepInvariantExpr{
+						Expr: &parser.Call{
+							Func: parser.MustGetFunction("min_over_time"),
+							Args: parser.Expressions{
+								&parser.SubqueryExpr{
+									Expr: &parser.Call{
+										Func: parser.MustGetFunction("rate"),
+										Args: parser.Expressions{
+											&parser.MatrixSelector{
+												VectorSelector: &parser.VectorSelector{
+													Name: "foo",
+													LabelMatchers: []*labels.Matcher{
+														parser.MustLabelMatcher(labels.MatchEqual, "bar", "baz"),
+														parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+													},
+													PosRange: posrange.PositionRange{
+														Start: 19,
+														End:   33,
+													},
+												},
+												Range:  2 * time.Second,
+												EndPos: 37,
+											},
+										},
+										PosRange: posrange.PositionRange{
+											Start: 14,
+											End:   38,
+										},
+									},
+									Range:     5 * time.Minute,
+									Timestamp: makeInt64Pointer(1603775091000),
+									EndPos:    56,
+								},
+							},
+							PosRange: posrange.PositionRange{
+								Start: 0,
+								End:   57,
+							},
+						},
+					},
+					Range:  4 * time.Minute,
+					Step:   3 * time.Second,
+					EndPos: 64,
+				},
+			},
+			{
+				input: `some_metric @ 123 offset 1m [10m:5s]`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.StepInvariantExpr{
+						Expr: &parser.VectorSelector{
+							Name: "some_metric",
+							LabelMatchers: []*labels.Matcher{
+								parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+							},
+							PosRange: posrange.PositionRange{
+								Start: 0,
+								End:   27,
+							},
+							Timestamp:      makeInt64Pointer(123000),
+							OriginalOffset: 1 * time.Minute,
+						},
+					},
+					Range:  10 * time.Minute,
+					Step:   5 * time.Second,
+					EndPos: 36,
+				},
+			},
+			{
+				input: `some_metric[10m:5s] offset 1m @ 123`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.VectorSelector{
+						Name: "some_metric",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   11,
+						},
+					},
+					Timestamp:      makeInt64Pointer(123000),
+					OriginalOffset: 1 * time.Minute,
+					Range:          10 * time.Minute,
+					Step:           5 * time.Second,
+					EndPos:         35,
+				},
+			},
+			{
+				input: `(foo + bar{nm="val"} @ 1234)[5m:] @ 1603775019`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.ParenExpr{
+						Expr: &parser.BinaryExpr{
+							Op: parser.ADD,
+							VectorMatching: &parser.VectorMatching{
+								Card: parser.CardOneToOne,
+							},
+							LHS: &parser.VectorSelector{
+								Name: "foo",
+								LabelMatchers: []*labels.Matcher{
+									parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 1,
+									End:   4,
+								},
+							},
+							RHS: &parser.StepInvariantExpr{
+								Expr: &parser.VectorSelector{
+									Name: "bar",
+									LabelMatchers: []*labels.Matcher{
+										parser.MustLabelMatcher(labels.MatchEqual, "nm", "val"),
+										parser.MustLabelMatcher(labels.MatchEqual, "__name__", "bar"),
+									},
+									Timestamp: makeInt64Pointer(1234000),
+									PosRange: posrange.PositionRange{
+										Start: 7,
+										End:   27,
+									},
+								},
+							},
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   28,
+						},
+					},
+					Range:     5 * time.Minute,
+					Timestamp: makeInt64Pointer(1603775019000),
+					EndPos:    46,
+				},
+			},
+			{
+				input: "abs(abs(metric @ 10))",
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.Call{
+						Func: &parser.Function{
+							Name:       "abs",
+							ArgTypes:   []parser.ValueType{parser.ValueTypeVector},
+							ReturnType: parser.ValueTypeVector,
+						},
+						Args: parser.Expressions{&parser.Call{
+							Func: &parser.Function{
+								Name:       "abs",
+								ArgTypes:   []parser.ValueType{parser.ValueTypeVector},
+								ReturnType: parser.ValueTypeVector,
+							},
+							Args: parser.Expressions{&parser.VectorSelector{
+								Name: "metric",
+								LabelMatchers: []*labels.Matcher{
+									parser.MustLabelMatcher(labels.MatchEqual, "__name__", "metric"),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 8,
+									End:   19,
+								},
+								Timestamp: makeInt64Pointer(10000),
+							}},
+							PosRange: posrange.PositionRange{
+								Start: 4,
+								End:   20,
+							},
+						}},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   21,
+						},
+					},
+				},
+			},
+			{
+				input: "sum(sum(some_metric1 @ 10) + sum(some_metric2 @ 20))",
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.AggregateExpr{
+						Op: parser.SUM,
+						Expr: &parser.BinaryExpr{
+							Op:             parser.ADD,
+							VectorMatching: &parser.VectorMatching{},
+							LHS: &parser.AggregateExpr{
+								Op: parser.SUM,
+								Expr: &parser.VectorSelector{
+									Name: "some_metric1",
+									LabelMatchers: []*labels.Matcher{
+										parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric1"),
+									},
+									PosRange: posrange.PositionRange{
+										Start: 8,
+										End:   25,
+									},
+									Timestamp: makeInt64Pointer(10000),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 4,
+									End:   26,
+								},
+							},
+							RHS: &parser.AggregateExpr{
+								Op: parser.SUM,
+								Expr: &parser.VectorSelector{
+									Name: "some_metric2",
+									LabelMatchers: []*labels.Matcher{
+										parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric2"),
+									},
+									PosRange: posrange.PositionRange{
+										Start: 33,
+										End:   50,
+									},
+									Timestamp: makeInt64Pointer(20000),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 29,
+									End:   51,
+								},
+							},
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   52,
+						},
+					},
+				},
+			},
+			{
+				input: `foo @ start()`,
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.VectorSelector{
+						Name: "foo",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   13,
+						},
+						Timestamp:  makeInt64Pointer(timestamp.FromTime(startTime)),
+						StartOrEnd: parser.START,
+					},
+				},
+			},
+			{
+				input: `foo @ end()`,
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.VectorSelector{
+						Name: "foo",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "foo"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   11,
+						},
+						Timestamp:  makeInt64Pointer(timestamp.FromTime(endTime)),
+						StartOrEnd: parser.END,
+					},
+				},
+			},
+			{
+				input: `sum_over_time(test[5y] @ start())`,
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.Call{
+						Func: &parser.Function{
+							Name:       "sum_over_time",
+							ArgTypes:   []parser.ValueType{parser.ValueTypeMatrix},
+							ReturnType: parser.ValueTypeVector,
+						},
+						Args: parser.Expressions{
+							&parser.MatrixSelector{
+								VectorSelector: &parser.VectorSelector{
+									Name:       "test",
+									Timestamp:  makeInt64Pointer(timestamp.FromTime(startTime)),
+									StartOrEnd: parser.START,
+									LabelMatchers: []*labels.Matcher{
+										parser.MustLabelMatcher(labels.MatchEqual, "__name__", "test"),
+									},
+									PosRange: posrange.PositionRange{
+										Start: 14,
+										End:   18,
+									},
+								},
+								Range:  5 * 365 * 24 * time.Hour,
+								EndPos: 32,
+							},
+						},
+						PosRange: posrange.PositionRange{Start: 0, End: 33},
+					},
+				},
+			},
+			{
+				input: `test[5y] @ end()`,
+				expected: &parser.MatrixSelector{
+					VectorSelector: &parser.VectorSelector{
+						Name:       "test",
+						Timestamp:  makeInt64Pointer(timestamp.FromTime(endTime)),
+						StartOrEnd: parser.END,
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "test"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   4,
+						},
+					},
+					Range:  5 * 365 * 24 * time.Hour,
+					EndPos: 16,
+				},
+			},
+			{
+				input: `some_metric[10m:5s] @ start()`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.VectorSelector{
+						Name: "some_metric",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   11,
+						},
+					},
+					Timestamp:  makeInt64Pointer(timestamp.FromTime(startTime)),
+					StartOrEnd: parser.START,
+					Range:      10 * time.Minute,
+					Step:       5 * time.Second,
+					EndPos:     29,
+				},
+			},
+			{
+				input: `some_metric[10m:5s] @ end()`,
+				expected: &parser.SubqueryExpr{
+					Expr: &parser.VectorSelector{
+						Name: "some_metric",
+						LabelMatchers: []*labels.Matcher{
+							parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+						},
+						PosRange: posrange.PositionRange{
+							Start: 0,
+							End:   11,
+						},
+					},
+					Timestamp:  makeInt64Pointer(timestamp.FromTime(endTime)),
+					StartOrEnd: parser.END,
+					Range:      10 * time.Minute,
+					Step:       5 * time.Second,
+					EndPos:     27,
+				},
+			},
+			{
+				input:      `floor(some_metric / (3 * 1024))`,
+				outputTest: true,
+				expected: &parser.Call{
+					Func: &parser.Function{
+						Name:       "floor",
+						ArgTypes:   []parser.ValueType{parser.ValueTypeVector},
+						ReturnType: parser.ValueTypeVector,
+					},
+					Args: parser.Expressions{
+						&parser.BinaryExpr{
+							Op: parser.DIV,
+							LHS: &parser.VectorSelector{
+								Name: "some_metric",
+								LabelMatchers: []*labels.Matcher{
+									parser.MustLabelMatcher(labels.MatchEqual, "__name__", "some_metric"),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 6,
+									End:   17,
+								},
+							},
+							RHS: &parser.StepInvariantExpr{
+								Expr: &parser.ParenExpr{
+									Expr: &parser.BinaryExpr{
+										Op: parser.MUL,
+										LHS: &parser.NumberLiteral{
+											Val: 3,
+											PosRange: posrange.PositionRange{
+												Start: 21,
+												End:   22,
+											},
+										},
+										RHS: &parser.NumberLiteral{
+											Val: 1024,
+											PosRange: posrange.PositionRange{
+												Start: 25,
+												End:   29,
+											},
+										},
+									},
+									PosRange: posrange.PositionRange{
+										Start: 20,
+										End:   30,
+									},
+								},
+							},
+						},
+					},
+					PosRange: posrange.PositionRange{
+						Start: 0,
+						End:   31,
+					},
+				},
+			},
+			{
+				input: "timestamp(metric @ 10)",
+				expected: &parser.StepInvariantExpr{
+					Expr: &parser.Call{
+						Func: parser.MustGetFunction("timestamp"),
+						Args: parser.Expressions{
+							&parser.VectorSelector{
+								Name:                 "metric",
+								Timestamp:            makeInt64Pointer(10000),
+								SkipHistogramBuckets: true,
+								LabelMatchers: []*labels.Matcher{
+									parser.MustLabelMatcher(labels.MatchEqual, "__name__", "metric"),
+								},
+								PosRange: posrange.PositionRange{
+									Start: 10,
+									End:   21,
+								},
+							},
+						},
+						PosRange: posrange.PositionRange{Start: 0, End: 22},
+					},
+				},
+			},
+			{
+				input: "timestamp(abs(metric @ 10))",
+				expected: &parser.Call{
+					Func: parser.MustGetFunction("timestamp"),
+					Args: parser.Expressions{
+						&parser.StepInvariantExpr{
+							Expr: &parser.Call{
+								Func: parser.MustGetFunction("abs"),
+								Args: parser.Expressions{
+									&parser.VectorSelector{
+										Name:                 "metric",
+										Timestamp:            makeInt64Pointer(10000),
+										SkipHistogramBuckets: true,
+										LabelMatchers: []*labels.Matcher{
+											parser.MustLabelMatcher(labels.MatchEqual, "__name__", "metric"),
+										},
+										PosRange: posrange.PositionRange{
+											Start: 14,
+											End:   25,
+										},
+									},
+								},
+								PosRange: posrange.PositionRange{
+									Start: 10,
+									End:   26,
+								},
+							},
+						},
+					},
+					PosRange: posrange.PositionRange{Start: 0, End: 27},
+				},
+			},
+		}
+		for _, test := range testCases {
+			t.Run(test.input, func(t *testing.T) {
+				expr, err := testParser.ParseExpr(test.input)
+				require.NoError(t, err)
+				expr, err = promql.PreprocessExpr(expr, startTime, endTime, 0)
+				require.NoError(t, err)
+				if test.outputTest {
+					require.Equal(t, test.input, expr.String(), "error on input '%s'", test.input)
+				}
+				require.Equal(t, test.expected, expr, "error on input '%s'", test.input)
+			})
+		}
+	})
+
+	t.Run("info step invariance", func(t *testing.T) {
+		startTime := time.Unix(1000, 0)
+		endTime := time.Unix(9999, 0)
+		testParser := parser.NewParser(parser.Options{EnableExperimentalFunctions: true})
+		testCases := []struct {
+			name                   string
+			input                  string
+			wantCallStepInvariant  bool
+			wantInputStepInvariant bool
+		}{
+			{
+				name:                   "different fixed references",
+				input:                  "info(metric @ 120 or other_metric @ 480)",
+				wantInputStepInvariant: true,
+			},
+			{
+				name:                   "different fixed references with data label selector",
+				input:                  `info(metric @ 120 or other_metric @ 480, {foo="bar"} @ 120)`,
+				wantInputStepInvariant: true,
+			},
+			{
+				name:                  "same fixed reference",
+				input:                 "info(metric @ 120 or other_metric @ 120)",
+				wantCallStepInvariant: true,
+			},
+			{
+				name:                  "same fixed reference with data label selector",
+				input:                 `info(metric @ 120 or other_metric @ 120, {foo="bar"})`,
+				wantCallStepInvariant: true,
+			},
+			{
+				name:                  "equivalent fixed references",
+				input:                 "info(metric @ 180 offset 1m or other_metric @ 120)",
+				wantCallStepInvariant: true,
+			},
+			{
+				name:                   "reference-free input with data label selector",
+				input:                  `info(label_replace(label_replace(vector(1), "instance", "a", "__name__", ".*"), "job", "1", "__name__", ".*"), {version=~".*"})`,
+				wantInputStepInvariant: true,
+			},
+			{
+				name:                   "reference-free left input with fixed sibling",
+				input:                  `info(label_replace(label_replace(vector(1), "instance", "a", "__name__", ".*"), "job", "1", "__name__", ".*") or other_metric @ 120, {version=~".*"})`,
+				wantInputStepInvariant: true,
+			},
+			{
+				name:                   "reference-free right input with fixed sibling",
+				input:                  `info(other_metric @ 120 or label_replace(label_replace(vector(1), "instance", "a", "__name__", ".*"), "job", "1", "__name__", ".*"), {version=~".*"})`,
+				wantInputStepInvariant: true,
+			},
+		}
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				expr, err := testParser.ParseExpr(tc.input)
+				require.NoError(t, err)
+				expr, err = promql.PreprocessExpr(expr, startTime, endTime, 0)
+				require.NoError(t, err)
+
+				stepInvariant, gotCallStepInvariant := expr.(*parser.StepInvariantExpr)
+				require.Equal(t, tc.wantCallStepInvariant, gotCallStepInvariant)
+				if gotCallStepInvariant {
+					expr = stepInvariant.Expr
+				}
+				call, ok := expr.(*parser.Call)
+				require.True(t, ok)
+				_, gotInputStepInvariant := call.Args[0].(*parser.StepInvariantExpr)
+				require.Equal(t, tc.wantInputStepInvariant, gotInputStepInvariant)
+				if len(call.Args) > 1 {
+					_, ok := call.Args[1].(*parser.VectorSelector)
+					require.True(t, ok)
+				}
+			})
+		}
+	})
+}
+
+func TestDetectHistogramStatsDecoding(t *testing.T) {
+	cases := []struct {
+		expr string
+		// expectSkip is whether the vector selector in the expression is
+		// expected to have SkipHistogramBuckets set after preprocessing.
+		expectSkip bool
+	}{
+		{expr: `metric`, expectSkip: false},
+		{expr: `histogram_count(metric)`, expectSkip: true},
+		{expr: `histogram_sum(metric)`, expectSkip: true},
+		{expr: `histogram_avg(metric)`, expectSkip: true},
+		{expr: `histogram_count(rate(metric[1m]))`, expectSkip: true},
+		{expr: `histogram_count(sum(rate(metric[1m])))`, expectSkip: true},
+		{expr: `histogram_quantile(0.9, metric)`, expectSkip: false},
+		{expr: `histogram_fraction(0, 0.5, metric)`, expectSkip: false},
+		// timestamp(), start_timestamp() and absent() do not look at
+		// sample values at all.
+		{expr: `timestamp(metric)`, expectSkip: true},
+		{expr: `start_timestamp(metric)`, expectSkip: true},
+		{expr: `absent(metric)`, expectSkip: true},
+		// histogram_stddev and histogram_stdvar estimate the variance from
+		// the buckets, so buckets must not be skipped, even if a function
+		// further up the path would allow skipping them.
+		{expr: `histogram_stddev(metric)`, expectSkip: false},
+		{expr: `histogram_stdvar(metric)`, expectSkip: false},
+		{expr: `timestamp(histogram_stddev(metric))`, expectSkip: false},
+		{expr: `timestamp(histogram_stdvar(metric))`, expectSkip: false},
+		// Buckets are needed for counter reset detection inside subqueries.
+		{expr: `histogram_count(last_over_time(metric[5m:1m]))`, expectSkip: false},
+		// Comparing histograms for (in)equality needs the buckets.
+		{expr: `histogram_count(metric == other)`, expectSkip: false},
+		{expr: `timestamp(metric != other)`, expectSkip: false},
+		{expr: `absent(metric == other)`, expectSkip: false},
+		// Other binary operators do not prevent skipping buckets.
+		{expr: `histogram_count(metric + other)`, expectSkip: true},
+		// Detecting changes and counting distinct values needs the buckets.
+		{expr: `timestamp(changes(metric[5m]))`, expectSkip: false},
+		{expr: `timestamp(count_values("value", metric))`, expectSkip: false},
+	}
+
+	// start_timestamp is an experimental function.
+	p := parser.NewParser(parser.Options{EnableExperimentalFunctions: true})
+	for _, tc := range cases {
+		t.Run(tc.expr, func(t *testing.T) {
+			expr, err := p.ParseExpr(tc.expr)
+			require.NoError(t, err)
+			expr, err = promql.PreprocessExpr(expr, time.Unix(1000, 0), time.Unix(9999, 0), 0)
+			require.NoError(t, err)
+			var selectors []*parser.VectorSelector
+			parser.Inspect(expr, func(node parser.Node, _ []parser.Node) error {
+				if vs, ok := node.(*parser.VectorSelector); ok {
+					selectors = append(selectors, vs)
+				}
+				return nil
+			})
+			require.NotEmpty(t, selectors)
+			for _, vs := range selectors {
+				require.Equal(t, tc.expectSkip, vs.SkipHistogramBuckets, "error on input '%s'", tc.expr)
+			}
+		})
+	}
+}
+
+func TestEngineOptsValidation(t *testing.T) {
+	cases := []struct {
+		opts     promql.EngineOpts
+		query    string
+		fail     bool
+		expError error
+	}{
+		{
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "metric @ 100", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "rate(metric[1m] @ 100)", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "rate(metric[1h:1m] @ 100)", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "metric @ start()", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "rate(metric[1m] @ start())", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "rate(metric[1h:1m] @ start())", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "metric @ end()", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "rate(metric[1m] @ end())", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: false},
+			query: "rate(metric[1h:1m] @ end())", fail: true, expError: promql.ErrValidationAtModifierDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: true},
+			query: "metric @ 100",
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: true},
+			query: "rate(metric[1m] @ start())",
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: true},
+			query: "rate(metric[1h:1m] @ end())",
+		}, {
+			opts:  promql.EngineOpts{EnableNegativeOffset: false},
+			query: "metric offset -1s", fail: true, expError: promql.ErrValidationNegativeOffsetDisabled,
+		}, {
+			opts:  promql.EngineOpts{EnableNegativeOffset: true},
+			query: "metric offset -1s",
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: true, EnableNegativeOffset: true},
+			query: "metric @ 100 offset -2m",
+		}, {
+			opts:  promql.EngineOpts{EnableAtModifier: true, EnableNegativeOffset: true},
+			query: "metric offset -2m @ 100",
+		},
+	}
+
+	for _, c := range cases {
+		eng := promqltest.NewTestEngineWithOpts(t, c.opts)
+		_, err1 := eng.NewInstantQuery(context.Background(), nil, nil, c.query, time.Unix(10, 0))
+		_, err2 := eng.NewRangeQuery(context.Background(), nil, nil, c.query, time.Unix(0, 0), time.Unix(10, 0), time.Second)
+		if c.fail {
+			require.Equal(t, c.expError, err1)
+			require.Equal(t, c.expError, err2)
+		} else {
+			require.NoError(t, err1)
+			require.NoError(t, err2)
+		}
+	}
+}
+
+func TestEngine_Close(t *testing.T) {
+	t.Run("nil engine", func(t *testing.T) {
+		var ng *promql.Engine
+		require.NoError(t, ng.Close())
+	})
+
+	t.Run("non-nil engine", func(t *testing.T) {
+		ng := promql.NewEngine(promql.EngineOpts{
+			Logger:                   nil,
+			Reg:                      nil,
+			MaxSamples:               0,
+			Timeout:                  100 * time.Second,
+			NoStepSubqueryIntervalFn: nil,
+			EnableAtModifier:         true,
+			EnableNegativeOffset:     true,
+			EnablePerStepStats:       false,
+			LookbackDelta:            0,
+			EnableDelayedNameRemoval: true,
+		})
+		require.NoError(t, ng.Close())
+	})
+}
+
+func TestQueryLookbackDelta(t *testing.T) {
+	var (
+		load = `load 5m
+metric 0 1 2
+`
+		query           = "metric"
+		lastDatapointTs = time.Unix(600, 0)
+	)
+
+	cases := []struct {
+		name                          string
+		ts                            time.Time
+		engineLookback, queryLookback time.Duration
+		expectSamples                 bool
+	}{
+		{
+			name:          "default lookback delta",
+			ts:            lastDatapointTs.Add(defaultLookbackDelta - time.Millisecond),
+			expectSamples: true,
+		},
+		{
+			name:          "outside default lookback delta",
+			ts:            lastDatapointTs.Add(defaultLookbackDelta),
+			expectSamples: false,
+		},
+		{
+			name:           "custom engine lookback delta",
+			ts:             lastDatapointTs.Add(10*time.Minute - time.Millisecond),
+			engineLookback: 10 * time.Minute,
+			expectSamples:  true,
+		},
+		{
+			name:           "outside custom engine lookback delta",
+			ts:             lastDatapointTs.Add(10 * time.Minute),
+			engineLookback: 10 * time.Minute,
+			expectSamples:  false,
+		},
+		{
+			name:           "custom query lookback delta",
+			ts:             lastDatapointTs.Add(20*time.Minute - time.Millisecond),
+			engineLookback: 10 * time.Minute,
+			queryLookback:  20 * time.Minute,
+			expectSamples:  true,
+		},
+		{
+			name:           "outside custom query lookback delta",
+			ts:             lastDatapointTs.Add(20 * time.Minute),
+			engineLookback: 10 * time.Minute,
+			queryLookback:  20 * time.Minute,
+			expectSamples:  false,
+		},
+		{
+			name:           "negative custom query lookback delta",
+			ts:             lastDatapointTs.Add(20*time.Minute - time.Millisecond),
+			engineLookback: -10 * time.Minute,
+			queryLookback:  20 * time.Minute,
+			expectSamples:  true,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			engine := promqltest.NewTestEngine(t, false, c.engineLookback, promqltest.DefaultMaxSamplesPerQuery)
+			storage := promqltest.LoadedStorage(t, load)
+
+			opts := promql.NewPrometheusQueryOpts(false, c.queryLookback, nil)
+			qry, err := engine.NewInstantQuery(context.Background(), storage, opts, query, c.ts)
+			require.NoError(t, err)
+
+			res := qry.Exec(context.Background())
+			require.NoError(t, res.Err)
+			vec, ok := res.Value.(promql.Vector)
+			require.True(t, ok)
+			if c.expectSamples {
+				require.NotEmpty(t, vec)
+			} else {
+				require.Empty(t, vec)
+			}
+		})
+	}
+}
+
+func makeInt64Pointer(val int64) *int64 {
+	valp := new(int64)
+	*valp = val
+	return valp
+}
+
+func TestHistogramCopyFromIteratorRegression(t *testing.T) {
+	// Loading the following histograms creates two chunks because there's a
+	// counter reset. Not only the counter is lower in the last histogram
+	// but also there's missing buckets.
+	// This in turns means that chunk iterators will have different spans.
+	load := `load 1m
+histogram {{sum:4 count:4 buckets:[2 2]}} {{sum:6 count:6 buckets:[3 3]}} {{sum:1 count:1 buckets:[1]}}
+`
+	storage := promqltest.LoadedStorage(t, load)
+
+	engine := promqltest.NewTestEngine(t, false, 0, promqltest.DefaultMaxSamplesPerQuery)
+
+	verify := func(t *testing.T, qry promql.Query, expected []histogram.FloatHistogram) {
+		res := qry.Exec(context.Background())
+		require.NoError(t, res.Err)
+
+		m, ok := res.Value.(promql.Matrix)
+		require.True(t, ok)
+
+		require.Len(t, m, 1)
+		series := m[0]
+
+		require.Empty(t, series.Floats)
+		require.Len(t, series.Histograms, len(expected))
+		for i, e := range expected {
+			series.Histograms[i].H.CounterResetHint = histogram.UnknownCounterReset // Don't care.
+			require.Equal(t, &e, series.Histograms[i].H)
+		}
+	}
+
+	qry, err := engine.NewRangeQuery(context.Background(), storage, nil, "increase(histogram[90s])", time.Unix(0, 0), time.Unix(0, 0).Add(60*time.Second), time.Minute)
+	require.NoError(t, err)
+	verify(t, qry, []histogram.FloatHistogram{
+		{
+			Count:           3,
+			Sum:             3,                                        // Increase from 4 to 6 is 2. Interpolation adds 1.
+			PositiveSpans:   []histogram.Span{{Offset: 0, Length: 2}}, // Two buckets changed between the first and second histogram.
+			PositiveBuckets: []float64{1.5, 1.5},                      // Increase from 2 to 3 is 1 in both buckets. Interpolation adds 0.5.
+		},
+	})
+
+	qry, err = engine.NewInstantQuery(context.Background(), storage, nil, "histogram[61s]", time.Unix(0, 0).Add(2*time.Minute))
+	require.NoError(t, err)
+	verify(t, qry, []histogram.FloatHistogram{
+		{
+			Count:           6,
+			Sum:             6,
+			PositiveSpans:   []histogram.Span{{Offset: 0, Length: 2}},
+			PositiveBuckets: []float64{3, 3},
+		},
+		{
+			Count:           1,
+			Sum:             1,
+			PositiveSpans:   []histogram.Span{{Offset: 0, Length: 1}},
+			PositiveBuckets: []float64{1},
+		},
+	})
+}
+
+func TestRateAnnotations(t *testing.T) {
+	testCases := map[string]struct {
+		data                       string
+		expr                       string
+		typeAndUnitLabelsEnabled   bool
+		expectedWarningAnnotations []string
+		expectedInfoAnnotations    []string
+	}{
+		"info annotation when two samples are selected": {
+			data: `
+				series 1 2
+			`,
+			expr:                       "rate(series[1m1s])",
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations: []string{
+				`PromQL info: metric might not be a counter, name does not end in _total/_sum/_count/_bucket: "series" (1:6)`,
+			},
+		},
+		"no info annotations when no samples": {
+			data: `
+				series
+			`,
+			expr:                       "rate(series[1m1s])",
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotations when selecting one sample": {
+			data: `
+				series 1 2
+			`,
+			expr:                       "rate(series[10s])",
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotations when no samples due to mixed data types": {
+			data: `
+				series{label="a"} 1 {{schema:1 sum:15 count:10 buckets:[1 2 3]}}
+			`,
+			expr: "rate(series[1m1s])",
+			expectedWarningAnnotations: []string{
+				`PromQL warning: encountered a mix of histograms and floats for metric name "series" (1:6)`,
+			},
+			expectedInfoAnnotations: []string{},
+		},
+		"no info annotations when selecting two native histograms": {
+			data: `
+				series{label="a"} {{schema:1 sum:10 count:5 buckets:[1 2 3]}} {{schema:1 sum:15 count:10 buckets:[1 2 3]}}
+			`,
+			expr:                       "rate(series[1m1s])",
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"info annotation when rate() over series without _total suffix": {
+			data: `
+				series{label="a"} 1 2 3
+			`,
+			expr: "rate(series[1m1s])",
+			expectedInfoAnnotations: []string{
+				`PromQL info: metric might not be a counter, name does not end in _total/_sum/_count/_bucket: "series" (1:6)`,
+			},
+			expectedWarningAnnotations: []string{},
+		},
+		"info annotation when increase() over series without _total suffix": {
+			data: `
+				series{label="a"} 1 2 3
+			`,
+			expr: "increase(series[1m1s])",
+			expectedInfoAnnotations: []string{
+				`PromQL info: metric might not be a counter, name does not end in _total/_sum/_count/_bucket: "series" (1:10)`,
+			},
+			expectedWarningAnnotations: []string{},
+		},
+		"info annotation when rate() over series without __type__=counter label": {
+			data: `
+				series{label="a"} 1 2 3
+			`,
+			expr:                     "rate(series[1m1s])",
+			typeAndUnitLabelsEnabled: true,
+			expectedInfoAnnotations: []string{
+				`PromQL info: metric might not be a counter, __type__ label is not set to "counter" or "histogram", got "": "series" (1:6)`,
+			},
+			expectedWarningAnnotations: []string{},
+		},
+		"info annotation when increase() over series without __type__=counter label": {
+			data: `
+				series{label="a"} 1 2 3
+			`,
+			expr:                     "increase(series[1m1s])",
+			typeAndUnitLabelsEnabled: true,
+			expectedInfoAnnotations: []string{
+				`PromQL info: metric might not be a counter, __type__ label is not set to "counter" or "histogram", got "": "series" (1:10)`,
+			},
+			expectedWarningAnnotations: []string{},
+		},
+		"no info annotation when rate() over series with __type__=counter label": {
+			data: `
+				series{label="a", __type__="counter"} 1 2 3
+			`,
+			expr:                       "rate(series[1m1s])",
+			typeAndUnitLabelsEnabled:   true,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when rate() over series with __type__=histogram label": {
+			data: `
+				series{label="a", __type__="histogram"} 1 2 3
+			`,
+			expr:                       "rate(series[1m1s])",
+			typeAndUnitLabelsEnabled:   true,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when increase() over series with __type__=counter label": {
+			data: `
+				series{label="a", __type__="counter"} 1 2 3
+			`,
+			expr:                       "increase(series[1m1s])",
+			typeAndUnitLabelsEnabled:   true,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when increase() over series with __type__=histogram label": {
+			data: `
+				series{label="a", __type__="histogram"} 1 2 3
+			`,
+			expr:                       "increase(series[1m1s])",
+			typeAndUnitLabelsEnabled:   true,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when rate() over series with _total suffix": {
+			data: `
+				series_total{label="a"} 1 2 3
+			`,
+			expr:                       "rate(series_total[1m1s])",
+			typeAndUnitLabelsEnabled:   false,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when rate() over series with _sum suffix": {
+			data: `
+				series_sum{label="a"} 1 2 3
+			`,
+			expr:                       "rate(series_sum[1m1s])",
+			typeAndUnitLabelsEnabled:   false,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when rate() over series with _count suffix": {
+			data: `
+				series_count{label="a"} 1 2 3
+			`,
+			expr:                       "rate(series_count[1m1s])",
+			typeAndUnitLabelsEnabled:   false,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when rate() over series with _bucket suffix": {
+			data: `
+				series_bucket{label="a"} 1 2 3
+			`,
+			expr:                       "rate(series_bucket[1m1s])",
+			typeAndUnitLabelsEnabled:   false,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when increase() over series with _total suffix": {
+			data: `
+				series_total{label="a"} 1 2 3
+			`,
+			expr:                       "increase(series_total[1m1s])",
+			expectedWarningAnnotations: []string{},
+			typeAndUnitLabelsEnabled:   false,
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when increase() over series with _sum suffix": {
+			data: `
+				series_sum{label="a"} 1 2 3
+			`,
+			expr:                       "increase(series_sum[1m1s])",
+			typeAndUnitLabelsEnabled:   false,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when increase() over series with _count suffix": {
+			data: `
+				series_count{label="a"} 1 2 3
+			`,
+			expr:                       "increase(series_count[1m1s])",
+			typeAndUnitLabelsEnabled:   false,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+		"no info annotation when increase() over series with _bucket suffix": {
+			data: `
+				series_bucket{label="a"} 1 2 3
+			`,
+			expr:                       "increase(series_bucket[1m1s])",
+			typeAndUnitLabelsEnabled:   false,
+			expectedWarningAnnotations: []string{},
+			expectedInfoAnnotations:    []string{},
+		},
+	}
+	for name, testCase := range testCases {
+		t.Run(name, func(t *testing.T) {
+			store := promqltest.LoadedStorage(t, "load 1m\n"+strings.TrimSpace(testCase.data))
+			t.Cleanup(func() { _ = store.Close() })
+
+			engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+				Logger:                   nil,
+				Reg:                      nil,
+				MaxSamples:               promqltest.DefaultMaxSamplesPerQuery,
+				Timeout:                  100 * time.Minute,
+				NoStepSubqueryIntervalFn: func(int64) int64 { return int64((1 * time.Minute / time.Millisecond / time.Nanosecond)) },
+				EnableAtModifier:         true,
+				EnableNegativeOffset:     true,
+				EnablePerStepStats:       false,
+				LookbackDelta:            0,
+				EnableDelayedNameRemoval: true,
+				EnableTypeAndUnitLabels:  testCase.typeAndUnitLabelsEnabled,
+			})
+			query, err := engine.NewInstantQuery(context.Background(), store, nil, testCase.expr, timestamp.Time(0).Add(1*time.Minute))
+			require.NoError(t, err)
+			t.Cleanup(query.Close)
+
+			res := query.Exec(context.Background())
+			require.NoError(t, res.Err)
+
+			warnings, infos := res.Warnings.AsStrings(testCase.expr, 0, 0)
+			testutil.RequireEqual(t, testCase.expectedWarningAnnotations, warnings)
+			testutil.RequireEqual(t, testCase.expectedInfoAnnotations, infos)
+		})
+	}
+}
+
+func TestHistogramRateWithFloatStaleness(t *testing.T) {
+	// Make a chunk with two normal histograms of the same value.
+	h1 := histogram.Histogram{
+		Schema:          2,
+		Count:           10,
+		Sum:             100,
+		PositiveSpans:   []histogram.Span{{Offset: 0, Length: 1}},
+		PositiveBuckets: []int64{100},
+	}
+
+	c1 := chunkenc.NewHistogramChunk()
+	app, err := c1.Appender()
+	require.NoError(t, err)
+	var (
+		newc    chunkenc.Chunk
+		recoded bool
+	)
+
+	newc, recoded, app, err = app.AppendHistogram(nil, 0, 0, h1.Copy(), false)
+	require.NoError(t, err)
+	require.False(t, recoded)
+	require.Nil(t, newc)
+
+	newc, recoded, _, err = app.AppendHistogram(nil, 0, 10, h1.Copy(), false)
+	require.NoError(t, err)
+	require.False(t, recoded)
+	require.Nil(t, newc)
+
+	// Make a chunk with a single float stale marker.
+	c2 := chunkenc.NewXORChunk()
+	app, err = c2.Appender()
+	require.NoError(t, err)
+
+	app.Append(0, 20, math.Float64frombits(value.StaleNaN))
+
+	// Make a chunk with two normal histograms that have zero value.
+	h2 := histogram.Histogram{
+		Schema: 2,
+	}
+
+	c3 := chunkenc.NewHistogramChunk()
+	app, err = c3.Appender()
+	require.NoError(t, err)
+
+	newc, recoded, app, err = app.AppendHistogram(nil, 0, 30, h2.Copy(), false)
+	require.NoError(t, err)
+	require.False(t, recoded)
+	require.Nil(t, newc)
+
+	newc, recoded, _, err = app.AppendHistogram(nil, 0, 40, h2.Copy(), false)
+	require.NoError(t, err)
+	require.False(t, recoded)
+	require.Nil(t, newc)
+
+	querier := storage.MockQuerier{
+		SelectMockFunction: func(bool, *storage.SelectHints, ...*labels.Matcher) storage.SeriesSet {
+			return &singleSeriesSet{
+				series: mockSeries{chunks: []chunkenc.Chunk{c1, c2, c3}, labelSet: []string{"__name__", "foo"}},
+			}
+		},
+	}
+
+	queriable := storage.MockQueryable{MockQuerier: &querier}
+
+	engine := promqltest.NewTestEngine(t, false, 0, promqltest.DefaultMaxSamplesPerQuery)
+
+	q, err := engine.NewInstantQuery(context.Background(), &queriable, nil, "rate(foo[40s])", timestamp.Time(45))
+	require.NoError(t, err)
+	defer q.Close()
+
+	res := q.Exec(context.Background())
+	require.NoError(t, res.Err)
+
+	vec, err := res.Vector()
+	require.NoError(t, err)
+
+	// Single sample result.
+	require.Len(t, vec, 1)
+	// The result is a histogram.
+	require.NotNil(t, vec[0].H)
+	// The result should be zero as the histogram has not increased, so the rate is zero.
+	require.Equal(t, 0.0, vec[0].H.Count)
+	require.Equal(t, 0.0, vec[0].H.Sum)
+}
+
+// TestInvalidHistogramBucketLayoutFailsQuery checks that a query fails with an
+// error when it has to reduce the resolution of a stored histogram with an
+// invalid bucket layout, rather than silently dropping or miscomputing the
+// result. The histograms are served by a mock querier, because the TSDB rejects
+// invalid histograms when they are appended.
+func TestInvalidHistogramBucketLayoutFailsQuery(t *testing.T) {
+	// The second span has a negative offset. Its schema is higher than valid's,
+	// so combining the two reduces its resolution.
+	invalid := &histogram.FloatHistogram{
+		CounterResetHint: histogram.GaugeType,
+		Schema:           1,
+		Count:            5,
+		Sum:              10,
+		PositiveSpans:    []histogram.Span{{Offset: 0, Length: 1}, {Offset: -2, Length: 1}},
+		PositiveBuckets:  []float64{2, 3},
+	}
+	valid := &histogram.FloatHistogram{
+		CounterResetHint: histogram.GaugeType,
+		Schema:           0,
+		Count:            5,
+		Sum:              10,
+		PositiveSpans:    []histogram.Span{{Offset: 0, Length: 2}},
+		PositiveBuckets:  []float64{2, 3},
+	}
+
+	// Counter versions of the same histograms. rate reduces the last sample to
+	// the lowest schema in the range before it handles counter resets, but it
+	// discards the first sample if there is a reset between the first two, so
+	// the invalid sample comes after two valid ones.
+	invalidCounter := invalid.Copy()
+	invalidCounter.CounterResetHint = histogram.UnknownCounterReset
+	validCounter := valid.Copy()
+	validCounter.CounterResetHint = histogram.UnknownCounterReset
+
+	series := map[string][]chunks.Sample{
+		"invalid_higher_schema": {fhSample{t: 60000, fh: invalid}},
+		"valid_lower_schema":    {fhSample{t: 60000, fh: valid}},
+		// The schema increases, so functions over both samples reduce the invalid one.
+		"schema_increase":         {fhSample{t: 0, fh: valid}, fhSample{t: 60000, fh: invalid}},
+		"counter_schema_increase": {fhSample{t: 0, fh: validCounter}, fhSample{t: 30000, fh: validCounter}, fhSample{t: 60000, fh: invalidCounter}},
+		// The schema decreases, so the invalid histogram that is reduced is the
+		// one that is subtracted, not the one that is subtracted from.
+		"schema_decrease": {fhSample{t: 30000, fh: invalid}, fhSample{t: 60000, fh: valid}},
+	}
+	querier := storage.MockQuerier{
+		SelectMockFunction: func(_ bool, _ *storage.SelectHints, matchers ...*labels.Matcher) storage.SeriesSet {
+		nextSeries:
+			for name, samples := range series {
+				lset := labels.FromStrings("__name__", name)
+				for _, m := range matchers {
+					if !m.Matches(lset.Get(m.Name)) {
+						continue nextSeries
+					}
+				}
+				return &singleSeriesSet{series: storage.NewListSeries(lset, samples)}
+			}
+			return storage.EmptySeriesSet()
+		},
+	}
+	queryable := storage.MockQueryable{MockQuerier: &querier}
+	engine := promqltest.NewTestEngine(t, false, 0, promqltest.DefaultMaxSamplesPerQuery)
+
+	for _, expr := range []string{
+		"invalid_higher_schema + valid_lower_schema",
+		"valid_lower_schema + invalid_higher_schema",
+		"invalid_higher_schema - valid_lower_schema",
+		"valid_lower_schema - invalid_higher_schema",
+		"rate(counter_schema_increase[2m])",
+		"increase(counter_schema_increase[2m])",
+		"delta(schema_increase[2m])",
+		"idelta(schema_increase[2m])",
+		"delta(schema_decrease[2m])",
+		"idelta(schema_decrease[2m])",
+		// irate is not included, because it detects a counter reset with this
+		// data and returns the later sample without a subtraction.
+		"rate(counter_schema_increase[2m] anchored)",
+		"increase(counter_schema_increase[2m] anchored)",
+		"delta(schema_increase[30s] anchored)",
+		// Smoothed selectors interpolate between the two samples at 30s.
+		"schema_increase offset 30s smoothed",
+		"delta(schema_increase[30s] smoothed)",
+		"delta(schema_increase[30s] offset 30s smoothed)",
+	} {
+		t.Run(expr, func(t *testing.T) {
+			q, err := engine.NewInstantQuery(context.Background(), &queryable, nil, expr, timestamp.Time(60000))
+			require.NoError(t, err)
+			defer q.Close()
+
+			res := q.Exec(context.Background())
+			require.ErrorIs(t, res.Err, histogram.ErrHistogramSpanNegativeOffset)
+		})
+	}
+}
+
+// fhSample is a float histogram sample for storage.NewListSeries.
+type fhSample struct {
+	t  int64
+	fh *histogram.FloatHistogram
+}
+
+func (s fhSample) T() int64                      { return s.t }
+func (fhSample) ST() int64                       { return 0 }
+func (fhSample) F() float64                      { return 0 }
+func (fhSample) H() *histogram.Histogram         { return nil }
+func (s fhSample) FH() *histogram.FloatHistogram { return s.fh }
+func (fhSample) Type() chunkenc.ValueType        { return chunkenc.ValFloatHistogram }
+func (s fhSample) Copy() chunks.Sample           { return fhSample{t: s.t, fh: s.fh.Copy()} }
+
+type singleSeriesSet struct {
+	series   storage.Series
+	consumed bool
+}
+
+func (s *singleSeriesSet) Next() bool                     { c := s.consumed; s.consumed = true; return !c }
+func (s singleSeriesSet) At() storage.Series              { return s.series }
+func (singleSeriesSet) Err() error                        { return nil }
+func (singleSeriesSet) Warnings() annotations.Annotations { return nil }
+
+type mockSeries struct {
+	chunks   []chunkenc.Chunk
+	labelSet []string
+}
+
+func (s mockSeries) Labels() labels.Labels {
+	return labels.FromStrings(s.labelSet...)
+}
+
+func (s mockSeries) Iterator(it chunkenc.Iterator) chunkenc.Iterator {
+	iterables := []chunkenc.Iterator{}
+	for _, c := range s.chunks {
+		iterables = append(iterables, c.Iterator(nil))
+	}
+	return storage.ChainSampleIteratorFromIterators(it, iterables)
+}
+
+func TestEvaluationWithDelayedNameRemovalDisabled(t *testing.T) {
+	opts := promql.EngineOpts{
+		Logger:                   nil,
+		Reg:                      nil,
+		EnableAtModifier:         true,
+		MaxSamples:               10000,
+		Timeout:                  10 * time.Second,
+		EnableDelayedNameRemoval: false,
+		Parser:                   parser.NewParser(promqltest.TestParserOpts),
+	}
+	engine := promqltest.NewTestEngineWithOpts(t, opts)
+
+	promqltest.RunTest(t, `
+load 5m
+	metric_total{env="1"}	0 60 120
+	another_metric{env="1"}	60 120 180
+
+# Does not drop __name__ for vector selector
+eval instant at 10m metric_total{env="1"}
+	metric_total{env="1"} 120
+
+# Drops __name__ for unary operators
+eval instant at 10m -metric_total
+	{env="1"} -120
+
+# Drops __name__ for binary operators
+eval instant at 10m metric_total + another_metric
+	{env="1"} 300
+
+# Does not drop __name__ for binary comparison operators
+eval instant at 10m metric_total <= another_metric
+	metric_total{env="1"} 120
+
+# Drops __name__ for binary comparison operators with "bool" modifier
+eval instant at 10m metric_total <= bool another_metric
+	{env="1"} 1
+
+# Drops __name__ for vector-scalar operations
+eval instant at 10m metric_total * 2
+	{env="1"} 240
+
+# Drops __name__ for instant-vector functions
+eval instant at 10m clamp(metric_total, 0, 100)
+	{env="1"} 100
+
+# Drops __name__ for round function
+eval instant at 10m round(metric_total)
+	{env="1"} 120
+
+# Drops __name__ for range-vector functions
+eval instant at 10m rate(metric_total{env="1"}[10m])
+	{env="1"} 0.2
+
+# Does not drop __name__ for last_over_time function
+eval instant at 10m last_over_time(metric_total{env="1"}[10m])
+	metric_total{env="1"} 120
+
+# Does not drop __name__ for first_over_time function
+eval instant at 10m first_over_time(metric_total{env="1"}[10m])
+	metric_total{env="1"} 60
+
+# Drops name for other _over_time functions
+eval instant at 10m max_over_time(metric_total{env="1"}[10m])
+	{env="1"} 120
+
+clear
+
+load 1m
+	float{a="b"}									2x10
+	classic_histogram_invalid{abe="0.1"}			2x10
+	native_histogram{a="b", c="d"}					{{sum:0 count:0}}x10
+    histogram_nan{case="100% NaNs"} 				{{schema:0 count:0 sum:0}} {{schema:0 count:3 sum:NaN}}
+    histogram_nan{case="20% NaNs"} 					{{schema:0 count:0 sum:0}} {{schema:0 count:15 sum:NaN buckets:[12]}}
+	conflicting_histogram{le="0.1"}					2x10
+	conflicting_histogram							{{sum:0}}x10
+	nonmonotonic_bucket{le="0.1"}   				0+2x10
+	nonmonotonic_bucket{le="1"}     				0+1x10
+	nonmonotonic_bucket{le="10"}    				0+5x10
+	nonmonotonic_bucket{le="100"}   				0+4x10
+	nonmonotonic_bucket{le="1000"}  				0+9x10
+	nonmonotonic_bucket{le="+Inf"}  				0+8x10
+
+eval instant at 1m histogram_quantile(0.5, classic_histogram_invalid)
+	expect warn msg: PromQL warning: bucket label "le" is missing or has a malformed value of "" (1:25)
+
+eval instant at 1m histogram_fraction(0.5, 1, conflicting_histogram)
+	expect warn msg: PromQL warning: vector contains a mix of classic and native histograms (1:28)
+
+eval instant at 1m histogram_quantile(0.5, nonmonotonic_bucket)
+	expect info regex: PromQL info: input to histogram_quantile needed to be fixed for monotonicity .* \(1:25\)
+	{} 8.5
+
+eval instant at 1m histogram_quantile(1, histogram_nan)
+    expect info msg: PromQL info: input to histogram_quantile has NaN observations, result is NaN (1:23)
+    {case="100% NaNs"} NaN
+    {case="20% NaNs"} NaN
+
+eval instant at 1m histogram_quantile(0.8, histogram_nan{case="20% NaNs"})
+    expect info msg: PromQL info: input to histogram_quantile has NaN observations, result is skewed higher (1:25)
+    {case="20% NaNs"} 1
+
+eval instant at 1m histogram_fraction(-Inf, 0.7071067811865475, histogram_nan)
+    expect info msg: PromQL info: input to histogram_fraction has NaN observations, which are excluded from all fractions (1:46)
+    {case="100% NaNs"} 0.0
+    {case="20% NaNs"} 0.4
+
+# Test unary negation with non-overlapping series that have different metric names.
+# After negation, the __name__ label is dropped, so series with different names
+# but same other labels should merge if they don't overlap in time.
+clear
+load 20m
+  http_requests{job="api"} 2 _
+  http_errors{job="api"} _ 4
+
+eval instant at 0 -{job="api"}
+  {job="api"} -2
+
+eval instant at 20m -{job="api"}
+  {job="api"} -4
+
+eval range from 0 to 20m step 20m -{job="api"}
+  {job="api"} -2 -4
+
+# Test unary negation failure with overlapping timestamps (same labelset at same time).
+clear
+load 1m
+  http_requests{job="api"} 1
+  http_errors{job="api"} 2
+
+eval_fail instant at 0 -{job="api"}
+
+# Test unary negation with "or" operator combining metrics with removed names.
+clear
+load 10m
+    metric_a   1  _
+    metric_b   3  4
+
+# Use "-" unary operator as a simple way to remove the metric name.
+eval range from 0 to 20m step 10m -metric_a or -metric_b
+    {} -1  -4
+
+# Test range vector functions with non-overlapping series that have the same labelset
+# after __name__ removal. This verifies the fix for issue #14695.
+# When evaluated as a range query, at each step only one series has data in the
+# window, so the results should merge correctly without collision.
+clear
+load 6m
+  metric_1{common="label"} 0 1 _ _ 4
+  metric_2{common="label"} _ _ 2 3 _
+
+eval range from 0 to 24m step 6m max_over_time({__name__=~"metric_.*"}[5m])
+  {common="label"} 0 1 2 3 4
+
+# Range vector function should fail when both series have data within the same window.
+clear
+load 6m
+  metric_1{common="label"} 0 1 2
+  metric_2{common="label"} 3 4 5
+
+eval_fail instant at 12m max_over_time({__name__=~"metric_.*"}[30m])
+
+# Test cross-type (float vs histogram) timestamp collision detection.
+# When one series has floats and another has histograms at the same labelset,
+# non-overlapping timestamps should merge successfully.
+clear
+load 6m
+  float_metric{common="label"} 0 1 _ _
+  hist_metric{common="label"} _ _ {{schema:0 sum:3 count:3}} {{schema:0 sum:4 count:4}}
+
+eval range from 0 to 18m step 6m sum_over_time({__name__=~".*_metric"}[5m])
+  {common="label"} 0 1 {{schema:0 sum:3 count:3}} {{schema:0 sum:4 count:4}}
+
+# Overlapping float and histogram at the same timestamp should fail.
+clear
+load 6m
+  float_metric{common="label"} 0 1 2
+  hist_metric{common="label"} {{schema:0 sum:1 count:1}} {{schema:0 sum:2 count:2}} {{schema:0 sum:3 count:3}}
+
+eval_fail range from 0 to 12m step 6m sum_over_time({__name__=~".*_metric"}[5m])
+
+`, engine)
+}
+
+// TestInconsistentHistogramCount is testing for
+// https://github.com/prometheus/prometheus/issues/16681 which needs mixed
+// integer and float histograms. The promql test framework only uses float
+// histograms, so we cannot move this to promql tests.
+func TestInconsistentHistogramCount(t *testing.T) {
+	dir := t.TempDir()
+
+	opts := tsdb.DefaultHeadOptions()
+	opts.ChunkDirRoot = dir
+	// We use TSDB head only. By using full TSDB DB, and appending samples to it, closing it would cause unnecessary HEAD compaction, which slows down the test.
+	head, err := tsdb.NewHead(nil, nil, nil, nil, opts, nil)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = head.Close()
+	})
+
+	app := head.AppenderV2(context.Background())
+
+	l := labels.FromStrings("__name__", "series_1")
+
+	mint := time.Now().Add(-time.Hour).UnixMilli()
+	maxt := mint
+	dT := int64(15 * 1000) // 15 seconds in milliseconds.
+	inHs := []*histogram.Histogram{
+		{
+			Count: 2,
+			Sum:   100,
+			PositiveSpans: []histogram.Span{
+				{Offset: 0, Length: 1},
+			},
+			PositiveBuckets: []int64{2},
+		},
+		{
+			Count: 4,
+			Sum:   200,
+			PositiveSpans: []histogram.Span{
+				{Offset: 0, Length: 1},
+			},
+			PositiveBuckets: []int64{4},
+		},
+		{}, // Empty histogram to trigger counter reset.
+	}
+
+	for i, h := range inHs {
+		maxt = mint + dT*int64(i)
+		_, err = app.Append(0, l, 0, maxt, 0, h, nil, storage.AOptions{})
+		require.NoError(t, err)
+	}
+
+	require.NoError(t, app.Commit())
+	queryable := storage.QueryableFunc(func(mint, maxt int64) (storage.Querier, error) {
+		return tsdb.NewBlockQuerier(head, mint, maxt)
+	})
+
+	engine := promql.NewEngine(promql.EngineOpts{
+		MaxSamples:    1000000,
+		Timeout:       10 * time.Second,
+		LookbackDelta: 5 * time.Minute,
+	})
+
+	var (
+		query       promql.Query
+		queryResult *promql.Result
+		v           promql.Vector
+	)
+
+	query, err = engine.NewInstantQuery(context.Background(), queryable, nil, "(rate(series_1[1m]))", time.UnixMilli(maxt))
+	require.NoError(t, err)
+	queryResult = query.Exec(context.Background())
+	require.NoError(t, queryResult.Err)
+	require.NotNil(t, queryResult)
+	v, err = queryResult.Vector()
+	require.NoError(t, err)
+	require.Len(t, v, 1)
+	require.NotNil(t, v[0].H)
+	require.Greater(t, v[0].H.Count, float64(0))
+	query.Close()
+	countFromHistogram := v[0].H.Count
+
+	query, err = engine.NewInstantQuery(context.Background(), queryable, nil, "histogram_count((rate(series_1[1m])))", time.UnixMilli(maxt))
+	require.NoError(t, err)
+	queryResult = query.Exec(context.Background())
+	require.NoError(t, queryResult.Err)
+	require.NotNil(t, queryResult)
+	v, err = queryResult.Vector()
+	require.NoError(t, err)
+	require.Len(t, v, 1)
+	require.Nil(t, v[0].H)
+	query.Close()
+	countFromFunction := float64(v[0].F)
+
+	require.Equal(t, countFromHistogram, countFromFunction, "histogram_count function should return the same count as the histogram itself")
+}
+
+// TestSubQueryHistogramsCopy reproduces a bug where native histogram values from subqueries are not copied.
+func TestSubQueryHistogramsCopy(t *testing.T) {
+	start := time.Unix(0, 0)
+	end := time.Unix(144, 0)
+	step := time.Second * 3
+
+	load := `load 2m
+			http_request_duration_seconds{pod="nginx-1"} {{schema:0 count:110 sum:818.00 buckets:[1 14 95]}}+{{schema:0 count:110 buckets:[1 14 95]}}x20
+			http_request_duration_seconds{pod="nginx-2"} {{schema:0 count:210 sum:1598.00 buckets:[1 19 190]}}+{{schema:0 count:210 buckets:[1 19 190]}}x30`
+
+	subQuery := `min_over_time({__name__="http_request_duration_seconds"}[1h:1m])`
+	testQuery := `rate({__name__="http_request_duration_seconds"}[3m])`
+	ctx := context.Background()
+
+	for range 100 {
+		queryable := promqltest.LoadedStorage(t, load)
+		engine := promqltest.NewTestEngine(t, false, 0, promqltest.DefaultMaxSamplesPerQuery)
+
+		q, err := engine.NewRangeQuery(ctx, queryable, nil, subQuery, start, end, step)
+		require.NoError(t, err)
+		q.Exec(ctx)
+		q.Close()
+		queryable.Close()
+	}
+
+	for range 100 {
+		queryable := promqltest.LoadedStorage(t, load)
+		engine := promqltest.NewTestEngine(t, false, 0, promqltest.DefaultMaxSamplesPerQuery)
+
+		q, err := engine.NewRangeQuery(ctx, queryable, nil, testQuery, start, end, step)
+		require.NoError(t, err)
+		result := q.Exec(ctx)
+
+		mat, err := result.Matrix()
+		require.NoError(t, err)
+
+		for _, s := range mat {
+			for _, h := range s.Histograms {
+				require.NotEmpty(t, h.H.PositiveBuckets)
+			}
+		}
+		q.Close()
+		queryable.Close()
+	}
+}
+
+func TestHistogram_CounterResetHint(t *testing.T) {
+	baseT := timestamp.Time(0)
+	load := `
+		load 2m
+		test_histogram {{count:0}}+{{count:1}}x4
+	`
+	testCases := []struct {
+		name  string
+		query string
+		want  histogram.CounterResetHint
+	}{
+		{
+			name:  "adding histograms",
+			query: `test_histogram + test_histogram`,
+			want:  histogram.NotCounterReset,
+		},
+		{
+			name:  "subtraction",
+			query: `test_histogram - test_histogram`,
+			want:  histogram.GaugeType,
+		},
+		{
+			name:  "negated addition",
+			query: `test_histogram + (-test_histogram)`,
+			want:  histogram.GaugeType,
+		},
+		{
+			name:  "negated subtraction",
+			query: `test_histogram - (-test_histogram)`,
+			want:  histogram.GaugeType,
+		},
+		{
+			name:  "unary negation",
+			query: `-test_histogram`,
+			want:  histogram.GaugeType,
+		},
+		{
+			name:  "repeated unary negation",
+			query: `-(-test_histogram)`,
+			want:  histogram.GaugeType,
+		},
+		{
+			name:  "multiplication",
+			query: `2 * test_histogram`,
+			want:  histogram.NotCounterReset,
+		},
+		{
+			name:  "negative multiplication",
+			query: `-1 * test_histogram`,
+			want:  histogram.GaugeType,
+		},
+		{
+			name:  "division",
+			query: `test_histogram / 2`,
+			want:  histogram.NotCounterReset,
+		},
+		{
+			name:  "negative division",
+			query: `test_histogram / -1`,
+			want:  histogram.GaugeType,
+		},
+		// Equality and unequality should always return the LHS:
+		{
+			name:  "equality (not counter reset)",
+			query: `test_histogram == test_histogram`,
+			want:  histogram.NotCounterReset,
+		},
+		{
+			name:  "equality (gauge)",
+			query: `-test_histogram == -test_histogram`,
+			want:  histogram.GaugeType,
+		},
+		{
+			name:  "unequality (not counter reset)",
+			query: `test_histogram != -test_histogram`,
+			want:  histogram.NotCounterReset,
+		},
+		{
+			name:  "unequality (gauge)",
+			query: `-test_histogram != test_histogram`,
+			want:  histogram.GaugeType,
+		},
+	}
+	ctx := context.Background()
+	queryable := promqltest.LoadedStorage(t, load)
+	defer queryable.Close()
+	engine := promqltest.NewTestEngine(t, false, 0, promqltest.DefaultMaxSamplesPerQuery)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			q, err := engine.NewInstantQuery(ctx, queryable, nil, tc.query, baseT.Add(2*time.Minute))
+			require.NoError(t, err)
+			defer q.Close()
+			res := q.Exec(ctx)
+			require.NoError(t, res.Err)
+			v, err := res.Vector()
+			require.NoError(t, err)
+			require.Len(t, v, 1)
+			require.NotNil(t, v[0].H)
+			require.Equal(t, tc.want, v[0].H.CounterResetHint)
+		})
+	}
+}
+
+func TestQueryStartTimestampsOverride(t *testing.T) {
+	testStorageOpts := func(opts *tsdb.Options) {
+		opts.FloatChunkEncoding = chunkenc.EncXOR2
+		opts.EnableSTStorage = true
+	}
+
+	load := `load 10s
+  metric@st 0 -5s
+  metric 1 1
+`
+	storage := promqltest.LoadedStorage(t, load, testStorageOpts)
+	defer storage.Close()
+
+	trueVal := true
+	falseVal := false
+
+	testCases := []struct {
+		name     string
+		engineST bool
+		queryST  *bool
+		expected string
+	}{
+		{
+			name:     "Override to false (engine default: true)",
+			engineST: true,
+			queryST:  &falseVal,
+			expected: "{} => 0 @[10000]",
+		},
+		{
+			name:     "Override to true on false default (engine default: false)",
+			engineST: false,
+			queryST:  &trueVal,
+			expected: "{} => 2 @[10000]",
+		},
+		{
+			name:     "Default is used when nil (engine default: true)",
+			engineST: true,
+			queryST:  nil,
+			expected: "{} => 2 @[10000]",
+		},
+		{
+			name:     "Default is used when nil (engine default: false)",
+			engineST: false,
+			queryST:  nil,
+			expected: "{} => 0 @[10000]",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+				UseStartTimestamps: tc.engineST,
+				Timeout:            5 * time.Minute,
+				MaxSamples:         promqltest.DefaultMaxSamplesPerQuery,
+			})
+			opts := promql.NewPrometheusQueryOpts(false, 0, tc.queryST)
+			q, err := engine.NewInstantQuery(context.Background(), storage, opts, "increase(metric[20s])", time.Unix(10, 0))
+			require.NoError(t, err)
+			defer q.Close()
+
+			res := q.Exec(context.Background())
+			require.NoError(t, res.Err)
+			require.NotNil(t, res.Value)
+			require.Equal(t, tc.expected, res.Value.String())
+		})
+	}
+}
+
+func TestEngine_NativeHistogramsAsClassic(t *testing.T) {
+	const load = `
+load 1m
+	%s {{schema:-53 sum:5 count:4 custom_values:[1 2] buckets:[1 2 1]}}
+`
+	// Secondary storage stands in for a remote-read endpoint behind the fanout,
+	// which is how cmd/prometheus wires local and remote storage.
+	primary := promqltest.LoadedStorage(t, fmt.Sprintf(load, "local_seconds"))
+	secondary := promqltest.LoadedStorage(t, fmt.Sprintf(load, "remote_seconds"))
+	fanout := storage.NewFanout(promslog.NewNopLogger(), primary, secondary)
+
+	for _, enabled := range []bool{false, true} {
+		t.Run(fmt.Sprintf("enabled=%v", enabled), func(t *testing.T) {
+			opts := promql.EngineOpts{
+				MaxSamples:                      1000,
+				Timeout:                         10 * time.Second,
+				EnableNativeHistogramsAsClassic: enabled,
+			}
+			ng := promqltest.NewTestEngineWithOpts(t, opts)
+
+			q, err := ng.NewInstantQuery(t.Context(), fanout, nil, `local_seconds_count or on(__name__) remote_seconds_count`, time.Unix(0, 0))
+			require.NoError(t, err)
+			t.Cleanup(q.Close)
+			res := q.Exec(t.Context())
+			require.NoError(t, res.Err)
+			vec, err := res.Vector()
+			require.NoError(t, err)
+
+			got := map[string]float64{}
+			for _, s := range vec {
+				got[s.Metric.Get(labels.MetricName)] = s.F
+			}
+			if !enabled {
+				require.Empty(t, got)
+				return
+			}
+			// Both local and remote-read NHCBs are converted, since the conversion
+			// wraps the engine's queryable rather than a single fanout leg.
+			require.Equal(t, map[string]float64{"local_seconds_count": 4, "remote_seconds_count": 4}, got)
+
+			// Other consumers of the same storage (e.g. the remote read API) still
+			// see raw data only.
+			sq, err := fanout.Querier(math.MinInt64, math.MaxInt64)
+			require.NoError(t, err)
+			t.Cleanup(func() { require.NoError(t, sq.Close()) })
+			ss := sq.Select(t.Context(), false, nil, labels.MustNewMatcher(labels.MatchEqual, labels.MetricName, "local_seconds_count"))
+			require.False(t, ss.Next())
+			require.NoError(t, ss.Err())
+		})
+	}
+}
+
+func TestTypeAndUnitMetadataLabelsInFunctionsAndMatching(t *testing.T) {
+	load := `load 1m
+  hist_metric{__type__="histogram", __unit__="seconds", job="api"} {{schema:1 sum:10 count:5 buckets:[1 2 2]}}
+  lhs_metric{__type__="counter", __unit__="requests", job="api", instance="0"} 10
+  rhs_metric{__type__="gauge", __unit__="seconds", job="only-rhs", instance="1"} 20
+  target_info{__type__="info", job="api", instance="0", env="prod"} 1
+`
+	storage := promqltest.LoadedStorage(t, load)
+	defer storage.Close()
+
+	for _, delayedNameRemoval := range []bool{false, true} {
+		t.Run(fmt.Sprintf("delayedNameRemoval=%v", delayedNameRemoval), func(t *testing.T) {
+			engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+				Timeout:                  5 * time.Minute,
+				MaxSamples:               promqltest.DefaultMaxSamplesPerQuery,
+				EnableDelayedNameRemoval: delayedNameRemoval,
+				EnableTypeAndUnitLabels:  true,
+				Parser: parser.NewParser(parser.Options{
+					EnableBinopFillModifiers:    true,
+					EnableExperimentalFunctions: true,
+				}),
+			})
+
+			for _, tc := range []struct {
+				expr     string
+				expected string
+			}{
+				{
+					expr:     `histogram_count(hist_metric)`,
+					expected: `{job="api"} => 5 @[0]`,
+				},
+				{
+					expr:     `histogram_sum(hist_metric)`,
+					expected: `{job="api"} => 10 @[0]`,
+				},
+				{
+					expr:     `absent(nonexistent{__type__="counter", __unit__="seconds", job="api"})`,
+					expected: `{job="api"} => 1 @[0]`,
+				},
+				{
+					expr:     `sum without (instance) (lhs_metric)`,
+					expected: `{job="api"} => 10 @[0]`,
+				},
+				{
+					expr:     `lhs_metric > ignoring(instance) fill_left(100) rhs_metric`,
+					expected: `{job="only-rhs"} => 100 @[0]`,
+				},
+				{
+					expr:     `info(sum by (job, instance) (lhs_metric))`,
+					expected: `{env="prod", instance="0", job="api"} => 10 @[0]`,
+				},
+			} {
+				q, err := engine.NewInstantQuery(context.Background(), storage, nil, tc.expr, time.Unix(0, 0))
+				require.NoError(t, err)
+				res := q.Exec(context.Background())
+				q.Close()
+				require.NoError(t, res.Err)
+				require.Equal(t, tc.expected, res.Value.String(), "query: %s", tc.expr)
+			}
+		})
+	}
+}
+
+func TestQueryCostSamplesAccountingRange(t *testing.T) {
+	s := promqltest.LoadedStorage(t, `
+load 10s
+  metric{instance="a"} 1+1x100
+  metric{instance="b"} 1+1x100
+`)
+	t.Cleanup(func() { s.Close() })
+	engine := newQueryCostEngine(t)
+	for _, tc := range []struct {
+		query  string
+		reads  int64
+		totals []int64
+	}{
+		{query: "metric", reads: 8, totals: []int64{2, 2, 2, 2}},
+		{query: "rate(metric[20s])", reads: 16, totals: []int64{4, 4, 4, 4}},
+		{query: "metric + metric @ 100", reads: 10, totals: []int64{4, 4, 4, 4}},
+		// All child reads count against the budget, but totals include only consumed windows.
+		{query: "sum_over_time(metric[10s:10s])", reads: 20, totals: []int64{2, 2, 2, 2}},
+		{query: "sum_over_time(metric[10s:10s] offset 10s)", reads: 20, totals: []int64{2, 2, 2, 2}},
+		{query: "sum_over_time(metric[10s:10s] offset -10s)", reads: 20, totals: []int64{2, 2, 2, 2}},
+		{query: "last_over_time(sum_over_time(metric[60s])[10s:10s])", reads: 30, totals: []int64{12, 12, 12, 12}},
+		{query: "last_over_time(last_over_time(sum_over_time(metric[60s])[10s:10s])[10s:10s])", reads: 30, totals: []int64{12, 12, 12, 12}},
+		// Overlapping windows repeat logical consumption without repeating reads.
+		{query: "sum_over_time(metric[60s:10s])", reads: 30, totals: []int64{12, 12, 12, 12}},
+		// A varying scalar prevents step-invariant evaluation of the whole call.
+		{query: "quantile_over_time(time() / 1000, metric[20s:10s] @ 200)", reads: 4, totals: []int64{4, 4, 4, 4}},
+		{query: "quantile_over_time(time() / 1000, metric[20s:10s] @ 50)", reads: 4, totals: []int64{4, 4, 4, 4}},
+		{query: "quantile_over_time(time() / 1000, metric[20s:10s] @ 200 offset 1m)", reads: 4, totals: []int64{4, 4, 4, 4}},
+		{query: "quantile_over_time(time() / 1000, metric[20s:10s] @ 200 offset -1m)", reads: 4, totals: []int64{4, 4, 4, 4}},
+		{query: "quantile_over_time(time() / 1000, metric[20s:10s] @ start())", reads: 4, totals: []int64{4, 4, 4, 4}},
+		{query: "quantile_over_time(time() / 1000, metric[20s:10s] @ end())", reads: 4, totals: []int64{4, 4, 4, 4}},
+	} {
+		for _, perStep := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s/perStep=%t", tc.query, perStep), func(t *testing.T) {
+				engine.SetQueryLimits(0, uint64(tc.reads), 0)
+				opts := promql.NewPrometheusQueryOpts(perStep, 0, nil)
+				q, err := engine.NewRangeQuery(context.Background(), s, opts, tc.query, time.Unix(100, 0), time.Unix(200, 0), 30*time.Second)
+				require.NoError(t, err)
+				defer q.Close()
+				require.NoError(t, q.Exec(context.Background()).Err)
+				st := q.Stats().Samples
+				series := int64(2)
+				if tc.query == "metric + metric @ 100" {
+					series = 4
+				}
+				require.Equal(t, series, st.TotalSeries)
+				require.Equal(t, tc.reads, st.SamplesRead)
+				var total int64
+				for _, n := range tc.totals {
+					total += n
+				}
+				require.Equal(t, total, st.TotalSamples)
+				if perStep {
+					require.Equal(t, tc.totals, st.TotalSamplesPerStep)
+					var reads int64
+					for _, n := range st.SamplesReadPerStep {
+						reads += n
+					}
+					require.Equal(t, st.SamplesRead, reads)
+					if strings.HasPrefix(tc.query, "quantile_over_time(") {
+						require.Equal(t, []int64{tc.reads, 0, 0, 0}, st.SamplesReadPerStep)
+					}
+				}
+
+				engine.SetQueryLimits(0, uint64(tc.reads-1), 0)
+				limited, err := engine.NewRangeQuery(context.Background(), s, opts, tc.query, time.Unix(100, 0), time.Unix(200, 0), 30*time.Second)
+				require.NoError(t, err)
+				defer limited.Close()
+				require.Equal(t, promql.ErrTooManySamplesRead(env), limited.Exec(context.Background()).Err)
+			})
+		}
+	}
+}
+
+func TestUnquotedUTF8NamesEvaluation(t *testing.T) {
+	store := promqltest.LoadedStorage(t, `
+load 1m
+    {"http.server.requests", "service.name"="api", "resource.k8s.namespace"="system"} 0 60 120
+    {"http.server.requests", "service.name"="web", "resource.k8s.namespace"="system"} 0 120 240
+    service_info{"service.name"="api", "équipe"="infra"} 2 2 2
+    service_info{"service.name"="web", "équipe"="frontend"} 3 3 3
+    {"温度", "場所"="東京"} 10 20 30
+    {"histogram.count"} 1 2 3
+    {"target.info"} 4 5 6
+    {"foo..bar."} 7 8 9
+    a 1 1 1
+    {"а"} 2 2 2
+    {"ö"} 3 3 3
+    {"ö"} 4 4 4
+`)
+	defer store.Close()
+	engine := promqltest.NewTestEngineWithOpts(t, promql.EngineOpts{
+		MaxSamples: 10000,
+		Timeout:    time.Minute,
+		Parser:     parser.NewParser(parser.Options{}),
+	})
+	for _, tc := range []struct{ unquoted, quoted string }{
+		{`http.server.requests{resource.k8s.namespace="system",service.name="api"}`, `{"http.server.requests","resource.k8s.namespace"="system","service.name"="api"}`},
+		{`温度{場所="東京"}`, `{"温度","場所"="東京"}`},
+		{`sum by (service.name) (http.server.requests)`, `sum by ("service.name") ({"http.server.requests"})`},
+		{`sum without (service.name) (http.server.requests)`, `sum without ("service.name") ({"http.server.requests"})`},
+		{`http.server.requests + on (service.name) group_left (équipe) service_info`, `{"http.server.requests"} + on ("service.name") group_left ("équipe") service_info`},
+		{`service_info + on (service.name) group_right (équipe) http.server.requests`, `service_info + on ("service.name") group_right ("équipe") {"http.server.requests"}`},
+		{`rate(http.server.requests[2m])`, `rate({"http.server.requests"}[2m])`},
+		{`histogram.count`, `{"histogram.count"}`},
+		{`target.info`, `{"target.info"}`},
+		{`foo..bar.`, `{"foo..bar."}`},
+		{`a or on (__name__) а`, `{"a"} or on (__name__) {"а"}`},
+		{`ö or on (__name__) {"ö"}`, `{"ö"} or on (__name__) {"ö"}`},
+	} {
+		t.Run(tc.unquoted, func(t *testing.T) {
+			unquoted, err := engine.NewInstantQuery(t.Context(), store, nil, tc.unquoted, time.Unix(120, 0))
+			require.NoError(t, err)
+			defer unquoted.Close()
+			quoted, err := engine.NewInstantQuery(t.Context(), store, nil, tc.quoted, time.Unix(120, 0))
+			require.NoError(t, err)
+			defer quoted.Close()
+			actual := unquoted.Exec(t.Context())
+			expected := quoted.Exec(t.Context())
+			require.NoError(t, actual.Err)
+			require.NoError(t, expected.Err)
+			require.NotEmpty(t, actual.Value)
+			require.Equal(t, expected.Value, actual.Value)
+			if tc.unquoted == "a or on (__name__) а" || tc.unquoted == `ö or on (__name__) {"ö"}` {
+				vector := actual.Value.(promql.Vector)
+				require.Len(t, vector, 2)
+				require.NotEqual(t, vector[0].F, vector[1].F)
+			}
+		})
+	}
+}

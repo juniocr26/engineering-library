@@ -1,0 +1,60 @@
+{
+  "at": "2026-11-21T08:00:19.196290+00:00",
+  "extends": "prometheus-query-native-quotes-review-v1.json",
+  "requests": [
+    {
+      "request": 6,
+      "path": "promql/engine.go",
+      "selectors": [
+        "Engine.NewTestQuery",
+        "contextErr",
+        "QueryEngine",
+        "QueryLogger"
+      ],
+      "returncode": 0,
+      "request_sha256": "e52f1dc464611cbe73638c4ee8a627118289b0f57c60ede8116c25f5c736cf1d",
+      "stdout_sha256": "da55f5a67fdd536b823b82a0f46b8bc3bd61c92720cb63e90acc1c8d0527d049",
+      "stderr": ""
+    },
+    {
+      "request": 7,
+      "path": "web/api/v1/api.go",
+      "selectors": [
+        "API.query",
+        "API.queryRange",
+        "apiFuncResult"
+      ],
+      "returncode": 0,
+      "request_sha256": "71651afc4937cf71e4fd80a5e1073e58528c67037b415cb8b439d047f8830f84",
+      "stdout_sha256": "7229e967d34ba03213bc6bce08d8fa09534891ffb5f15f08542a8bf5f27fbdb5",
+      "stderr": ""
+    },
+    {
+      "request": 8,
+      "path": "storage/interface.go",
+      "selectors": [
+        "Queryable",
+        "Querier",
+        "LabelQuerier"
+      ],
+      "returncode": 2,
+      "request_sha256": "5b9ffb37cf01f7d450e34b4dcbc9d7fa6110032002145853efc83f302ad62860",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "Go AST tool refused: selector Querier has 3 matches\n"
+    },
+    {
+      "request": 9,
+      "path": "promql/engine_test.go",
+      "selectors": [
+        "TestQueryTimeout",
+        "TestQueryCancel",
+        "TestEngine_Close"
+      ],
+      "returncode": 0,
+      "request_sha256": "b1a87cafe7e0c46107bcf11b9f15f088034fa3916b76ea17f3815b3e7f971eb7",
+      "stdout_sha256": "5f3e6166925d56ff0978c60e2146e101d10f29f2fb991df77b347231dc7f1fa3",
+      "stderr": ""
+    }
+  ],
+  "scope": "Native syntax inspection only, including inspected test declarations; not target execution or passing tests."
+}

@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-21T18:02:16.262652+00:00",
+  "case": "zod-Z05",
+  "method": "V",
+  "frozen_reference": {
+    "id": "zod-Z05",
+    "task": "zod",
+    "fact_id": "Z05",
+    "original_pair": {
+      "en": "The success flag is written in the no-issues literal as success: true.",
+      "pt-BR": "A flag de sucesso é escrita na literal sem issues como success: true."
+    },
+    "expected_verdict": "SUPPORTED",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/zod/L/semantic-review-v2.json",
+    "source_review_sha256": "947e10b0b97bf285543276fd33dcac55b91228ea10ccc15b6df0b568b75a5e3f",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "SUPPORTED",
+    "source_path": "packages/zod/src/v4/core/parse.ts @ 2a343ed2a4ffbea73fb83862ee1e317662292481",
+    "source_role": "code",
+    "evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n78:   const result = schema._zod.run({ value, issues: [] }, ctx);\n79:   if (result instanceof Promise) {\n80:     throw new core.$ZodAsyncError();\n81:   }\n82:   return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n83: };\n84: export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);\n",
+    "reason": "The source code defines a function `_safeParse` that returns a `success` flag as `true` when the parsing is successful."
+  },
+  "content_sha256": "8793370ec4106a503b92a9872598aaa3af0e0e3d56e0693a6e4c5ae45249c883",
+  "primary_raw_label_agreement": true,
+  "rationale_support_for_requested_claim": "SUPPORTED",
+  "source_relationship_review": "Labelandrequestedno-issuesliteralrelationshipsourcedcorrectly; quotecontainsactualsuccess:true/data:returnliteralbutannotatesrunner/guard/returnwithincorrectphysicallines (e.g.constresultquoted78, actual73; returnquoted82, actual78). Preservecorrectfactualsemanticsseparatelyfromfalseprovenancelocators.",
+  "evidence_form": "SOURCE_TEXT_WITH_INCORRECT_LINE_ANNOTATIONS",
+  "end_to_end_label_and_rationale_supported": false,
+  "label_plus_requested_relation_semantics_supported_despite_locator_defect": true,
+  "rationale_grading_basis": "semantic-verifier-rationale-review-rubric-v1.json",
+  "reviewer": "Samecampaignagent; frozenrefunchanged; no independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

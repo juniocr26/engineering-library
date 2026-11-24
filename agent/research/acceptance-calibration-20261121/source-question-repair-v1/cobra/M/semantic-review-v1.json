@@ -1,0 +1,140 @@
+{
+  "at": "2026-11-21T17:17:51.553481+00:00",
+  "task": "cobra",
+  "method": "M",
+  "protocol": "source-question-repair-protocol-v1.json",
+  "content_sha256": "7855cb79f1ec2db08d53a8cb7a78cb27645e33c1ba8a028f3f1649e401a0255e",
+  "rows": [
+    {
+      "fact_id": "C01",
+      "original_generated_pair": {
+        "en": "PositionalArgs is a function type that defines a declaration for a function that takes a pointer to a Command and a slice of string arguments, and returns an error.",
+        "pt-BR": "O tipo PositionalArgs é um tipo de declaração que define uma declaração de função que recebe um ponteiro para um Command e uma slice de string como argumentos, e retorna um erro."
+      },
+      "pair_verdict": "SUPPORTED",
+      "source_relationship_review": "ENexplicitlyfunctiontype andcorrectparameters/errorresult. PTbeginsOtipoPositionalArgs anddescribessignature; repetitive tipo/declaracao wording awkward, but namedtype/function-signature role recoverable and no callablefunctionassertion. This narrow source-only judgment is sameagent, not independenteditorialapproval.",
+      "critical": false
+    },
+    {
+      "fact_id": "C02",
+      "original_generated_pair": {
+        "en": "OnlyValidArgs performs membership checks when the Command has subcommands and there are arguments provided.",
+        "pt-BR": "O OnlyValidArgs verifica a membroesia quando o Command tem subcomandos e há argumentos fornecidos."
+      },
+      "pair_verdict": "CONTRADICTED",
+      "source_relationship_review": "WrongHasSubCommands/argsprovidedguard persists. PTmembroesia malformed; sourcecontradiction already decisive.",
+      "critical": true
+    },
+    {
+      "fact_id": "C03",
+      "original_generated_pair": {
+        "en": "Descriptions are separated from the allowlist entry by a tab character.",
+        "pt-BR": "As descrições são separadas da lista de permitidos por um caractere de tabulação."
+      },
+      "pair_verdict": "SUPPORTED",
+      "source_relationship_review": "True tabseparator statement, still omits prefixprojection.",
+      "critical": false
+    },
+    {
+      "fact_id": "C04",
+      "original_generated_pair": {
+        "en": "ExactArgs(n) returns a function that checks if the number of arguments is equal to n.",
+        "pt-BR": "A função ExactArgs(n) retorna uma função que verifica se o número de argumentos é igual a n."
+      },
+      "pair_verdict": "SUPPORTED",
+      "source_relationship_review": "Returns callback and validateswhetherlength matchesn. This behavioral phrasing does not claim exactASToperator==; actual!=n rejects invalidlength, so equalityvalidation meaning is supported. EarlierLaddedrejectsn, which was false.",
+      "critical": false
+    },
+    {
+      "fact_id": "C05",
+      "original_generated_pair": {
+        "en": "The returned ExactArgs callback rejects a length condition of exactly n.",
+        "pt-BR": "A função de callback ExactArgs rejeita uma condição de comprimento de exatamente n."
+      },
+      "pair_verdict": "CONTRADICTED",
+      "source_relationship_review": "Now explicitly rejects exactlyn: directopposite of!=n. Regression from earliertruebutpartiallessthannstatement.",
+      "critical": true
+    },
+    {
+      "fact_id": "C06",
+      "original_generated_pair": {
+        "en": "MatchAll invokes supplied validators in the order they are supplied.",
+        "pt-BR": "O MatchAll invoca os validadores fornecidos no ordem em que são fornecidos."
+      },
+      "pair_verdict": "SUPPORTED",
+      "source_relationship_review": "Source-order invocation preserved.",
+      "critical": false
+    },
+    {
+      "fact_id": "C07",
+      "original_generated_pair": {
+        "en": "When the first non-nil MatchAll validator error occurs, the function returns that error.",
+        "pt-BR": "Quando ocorre o primeiro erro não nulo do validador MatchAll, a função retorna esse erro."
+      },
+      "pair_verdict": "SUPPORTED",
+      "source_relationship_review": "Firstnon-nilerrorreturn preserved.",
+      "critical": false
+    },
+    {
+      "fact_id": "C08",
+      "original_generated_pair": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": "A função ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+      },
+      "pair_verdict": "SUPPORTED",
+      "source_relationship_review": "Exactdelegation preserved.",
+      "critical": false
+    },
+    {
+      "fact_id": "C09",
+      "original_generated_pair": {
+        "en": "ExactValidArgs is deprecated and should not be used.",
+        "pt-BR": "ExactValidArgs está deprecado e não deve ser usado."
+      },
+      "pair_verdict": "SUPPORTED",
+      "source_relationship_review": "Deprecation/replacementrecommendation reading unchanged fromL; no runtimeban inferred.",
+      "critical": false
+    }
+  ],
+  "structural_schema_errors": [],
+  "primary_C01_declaration_role_and_signature": "SOURCE_SUPPORTED_BOTH_LANGUAGES_WITH_AWKWARD_PT_PROSE",
+  "primary_C01_L_baseline": "CONTRADICTEDfunctionroleandmissingerrorresult",
+  "required_ids_correct": [
+    "C01",
+    "C04",
+    "C06",
+    "C07",
+    "C08",
+    "C09"
+  ],
+  "fully_correct_reference_pairs": {
+    "numerator": 6,
+    "denominator": 9
+  },
+  "supported_generated_pairs": {
+    "numerator": 7,
+    "denominator": 9,
+    "contradicted": 2
+  },
+  "secondary_changes": "C04return/checking explanation corrected; C05becamefalseexact-nrejection, so not every change followsprimaryhypothesis. C02stillfalse,C03truebutreferencepartial.",
+  "all_generated_claims_reviewed": true,
+  "all_required_claims_covered": false,
+  "bilingual_semantics_correct": false,
+  "critical_unsupported_claims": 2,
+  "source_only_semantic_admission": false,
+  "complete_bounded_note_accepted": false,
+  "whole_acceptance": {
+    "numerator": 0,
+    "denominator": 1
+  },
+  "comparison_limits": [
+    "Onlyonequestionsemanticallychanged; one deterministicdevelopmentcase, modelunchanged.",
+    "Promptserialization/cacheandattention can affect otherfactstrings; no independentgeneralaccuracy or weightgain.",
+    "OriginalLreferences/outputs/criticselectionunchanged; no referenceanswersprovided."
+  ],
+  "reviewer": "Samecampaignagent, source-only",
+  "training_excluded": true,
+  "owner_approved": false,
+  "gold": 0,
+  "optimizer_updates": 0
+}

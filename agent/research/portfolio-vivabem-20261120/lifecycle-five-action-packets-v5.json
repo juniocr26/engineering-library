@@ -1,0 +1,156 @@
+{
+  "at": "2026-11-21T02:15:35.629943+00:00",
+  "cases": [
+    {
+      "id": "explicit-new-definition",
+      "expected": "ADD",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "",
+        "current_source": "def answer():\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v5-explicit-new-definition"
+      }
+    },
+    {
+      "id": "changed-literal-contract",
+      "expected": "MODIFY",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "def answer():\n    return 2\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v5-changed-literal-contract"
+      }
+    },
+    {
+      "id": "unchanged-literal-contract",
+      "expected": "NO-OP",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "def answer():\n    return 1\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v5-unchanged-literal-contract"
+      }
+    },
+    {
+      "id": "explicit-retirement",
+      "expected": "REMOVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "RETIRED_CONTRACTS = {\"owned.answer\": True}\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": true,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v5-explicit-retirement"
+      }
+    },
+    {
+      "id": "partial-source-disappearance",
+      "expected": "INCONCLUSIVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": false,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": true,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v5-partial-source-disappearance"
+      }
+    },
+    {
+      "id": "no-positive-retirement",
+      "expected": "INCONCLUSIVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v5-no-positive-retirement"
+      }
+    }
+  ],
+  "source_scope": "Complete_scope is owned-fixture declaration, not repository-wide proof."
+}

@@ -1,0 +1,42 @@
+{
+  "status": "VERIFIED_INTEGRATED",
+  "caller_before": "1.9.35",
+  "caller_after": "1.9.36",
+  "defect": "Explicit invalid UTF8/NUL helper silently omitted while other source remained; incomplete selection could rewrite owned documentation.",
+  "before": {
+    "command": "docker exec engineering-library-backend-1 bundle exec ruby test/offline/documentation_command_offline.rb --name /invalid_source_never|invalid_selected_helper/",
+    "log": "private-research://continuation-20261119/invalid-selected-source-before.log",
+    "runs": 2,
+    "failures": 2
+  },
+  "after": {
+    "command": "docker exec engineering-library-backend-1 sh -lc 'ruby -Itest -e \\'Dir[\"test/offline/*_offline.rb\"].sort.each { |f| require_relative f }\\''",
+    "log": "private-research://continuation-20261119/caller36-ruby-suite.log",
+    "runs": 236,
+    "assertions": 1508,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "scope": "Application selection safety; not neural training or general semantic correctness. Automatic default sampling behavior preserved.",
+  "actual_consumers": [
+    "backend/Makefile -> Documentation::Command#run -> #process -> #evidence",
+    "SectionCommand overrides evidence and already refuses invalid text"
+  ],
+  "operational_updates": [
+    {
+      "path": "backend/lib/documentation/command.rb",
+      "before_size": 75111,
+      "before_sha256": "48464eded8533917ff406fd7f501f87194f0914ec175b9fb7b4454dd00eef35b",
+      "after_size": 75228,
+      "after_sha256": "e6a701ac9cd21e7f9adfe32a23a36aeecbd98bd6d720191ffc4f97d8efe56ea0"
+    },
+    {
+      "path": "backend/test/offline/documentation_command_offline.rb",
+      "before_size": 61252,
+      "before_sha256": "181d82da3f417a17dafdc64bde4387cdd531edc7d41157832e2ec6babc5d4b54",
+      "after_size": 62305,
+      "after_sha256": "ee6e4f0f8fc225a36c9a1ff2c142523284008a9edad94eaa630198d58147621c"
+    }
+  ]
+}

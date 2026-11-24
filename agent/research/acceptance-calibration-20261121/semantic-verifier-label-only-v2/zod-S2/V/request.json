@@ -1,0 +1,39 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "properties": {
+      "verdict": {
+        "type": "string",
+        "enum": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "INSUFFICIENT"
+        ]
+      }
+    },
+    "required": [
+      "verdict"
+    ],
+    "additionalProperties": false
+  },
+  "keep_alive": 0,
+  "options": {
+    "temperature": 0,
+    "seed": 11621,
+    "num_ctx": 4096,
+    "num_predict": 128,
+    "num_thread": 4
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Classify the single claim using only the supplied pinned source. SUPPORTED means the source supports the complete claim; CONTRADICTED means the source directly conflicts with it; INSUFFICIENT means the selected source cannot establish it. Return exactly the required verdict-only JSON. Do not claim runtime tests ran. Do not add evidence, explanation, line numbers, or other keys; those are reviewed separately against the frozen source."
+    },
+    {
+      "role": "user",
+      "content": "{\"claim\": \"The failure setter assigns its incoming parameter e into the closure-local error before clearing captures.\", \"pinned_revision\": \"2a343ed2a4ffbea73fb83862ee1e317662292481\", \"source_cards\": \"packages/zod/src/v4/core/parse.ts @ 2a343ed2a4ffbea73fb83862ee1e317662292481\\n65: export type $SafeParse = <T extends schemas.$ZodType>(\\n66:   schema: T,\\n67:   value: unknown,\\n68:   _ctx?: schemas.ParseContext<errors.$ZodIssue>\\n69: ) => util.SafeParseResult<core.output<T>>;\\n70: \\n71: export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\\n72:   const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };\\n73:   const result = schema._zod.run({ value, issues: [] }, ctx);\\n74:   if (result instanceof Promise) {\\n75:     throw new core.$ZodAsyncError();\\n76:   }\\n77: \\n78:   return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\\n79: };\\n80: export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);\\n81: \\n82: // the error is built on the first read of `error`: finalizing the issues and constructing the instance is most of a failing parse, and a caller that only branches on `success` never pays it. a getter in the literal keeps this small; the alternative, one shared accessor descriptor plus a hidden state slot, reads ~15% faster but costs ~75 B gzipped in every bundle\\n83: function failure(Err: $ZodErrorClass, issues: errors.$ZodRawIssue[], ctx: schemas.ParseContextInternal): any {\\n84:   let error: errors.$ZodError | undefined;\\n85:   return {\\n86:     success: false,\\n87:     get error() {\\n88:       if (!error) {\\n89:         error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));\\n90:         // finalizeIssue drops `input`, so the built error holds nothing; keeping the raw issues past this point pins the parsed value for the life of the result\\n91:         issues = undefined as any;\\n92:         ctx = undefined as any;\\n93:       }\\n94:       return error;\\n95:     },\\n96:     set error(e: errors.$ZodError) {\\n97:       error = e;\\n98:       // a replacement makes the getter's branch unreachable, so the captures have to go here too\\n99:       issues = undefined as any;\\n100:       ctx = undefined as any;\\n101:     },\\n102:   };\\n103: }\\n104: \\n105: export type $SafeParseAsync = <T extends schemas.$ZodType>(\\n106:   schema: T,\\n107:   value: unknown,\\n108:   _ctx?: schemas.ParseContext<errors.$ZodIssue>\\n109: ) => Promise<util.SafeParseResult<core.output<T>>>;\\n110: \\n111: export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\\n112:   const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\\n113:   let result = schema._zod.run({ value, issues: [] }, ctx);\\n114:   if (result instanceof Promise) result = await result;\\n115: \\n116:   return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\\n117: };\\n118: \\n119: export const safeParseAsync: $SafeParseAsync = /* @__PURE__*/ _safeParseAsync(errors.$ZodRealError);\"}"
+    }
+  ]
+}

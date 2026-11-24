@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-21T19:21:06.330316+00:00",
+  "task": "fastapi",
+  "method": "W",
+  "protocol": "line-addressed-source-copy-protocol-v1.json",
+  "model_content_sha256": "00c4c8e5711fedfd7f60d69d186a0c74decf4df5a9372f418c59dd088c8eab0e",
+  "records": [
+    {
+      "id": "F01",
+      "source_path": "fastapi/dependencies/models.py",
+      "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "physical_line": 53,
+      "expected_exact_line": "    use_cache: bool = True",
+      "generated_original_string": "    35: @dataclass(slots=True)\n",
+      "exact_full_line": false,
+      "secondary_stripped_code_equal": false,
+      "observed_failure_boundary": "Returned dataclass decorator from line35 plus number/newline, rather than use_cache declaration at53."
+    },
+    {
+      "id": "F04",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "physical_line": 733,
+      "expected_exact_line": "            dependency_cache=dependency_cache,",
+      "generated_original_string": "    733:         solved = await call(**solved_result.values)\n",
+      "exact_full_line": false,
+      "secondary_stripped_code_equal": false,
+      "observed_failure_boundary": "Returned a different solver statement and falsely prefixed733, rather than recursive cache keyword/value."
+    },
+    {
+      "id": "F07",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "physical_line": 774,
+      "expected_exact_line": "        if sub_dependant_cache_key not in dependency_cache:",
+      "generated_original_string": "    774:         dependency_cache[sub_dependant_cache_key] = solved",
+      "exact_full_line": false,
+      "secondary_stripped_code_equal": false,
+      "observed_failure_boundary": "Returned later cache assignment rather than addressed write guard; number prefix retained."
+    }
+  ],
+  "primary_exact_count": 0,
+  "secondary_stripped_count": 0,
+  "requested_lines": 3,
+  "not_semantic_claim_or_complete_note_acceptance": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

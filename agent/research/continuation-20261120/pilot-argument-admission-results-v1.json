@@ -1,0 +1,686 @@
+{
+  "at": "2026-11-20T20:15:14.212322+00:00",
+  "protocol_sha256": "4d27eb0efbf5baf1b1579d438878b5ea2205dcbb25e85ab495d6152816dcdc95",
+  "source_sha256": "341dce80747705c9363728823d3f117e96f821fc3b35d35db2f47b3151d3adc5",
+  "selected_function": {
+    "name": "build_parser",
+    "first_line": 86,
+    "last_line": 223,
+    "quote": "def build_parser():\n    parser = argparse.ArgumentParser(description=\"LoRA or QLoRA finetuning.\")\n    parser.add_argument(\n        \"--model\",\n        type=str,\n        help=\"The path to the local model directory or Hugging Face repo.\",\n    )\n\n    # Training args\n    parser.add_argument(\n        \"--train\",\n        action=\"store_true\",\n        help=\"Do training\",\n        default=None,\n    )\n    parser.add_argument(\n        \"--data\",\n        type=str,\n        help=(\n            \"Directory with {train, valid, test}.jsonl files or the name \"\n            \"of a Hugging Face dataset (e.g., 'mlx-community/wikisql')\"\n        ),\n    )\n    parser.add_argument(\n        \"--fine-tune-type\",\n        type=str,\n        choices=[\"lora\", \"dora\", \"full\"],\n        help=\"Type of fine-tuning to perform: lora, dora, or full.\",\n    )\n    parser.add_argument(\n        \"--optimizer\",\n        type=str,\n        choices=[\"adam\", \"adamw\", \"muon\", \"sgd\", \"adafactor\"],\n        default=None,\n        help=\"Optimizer to use for training: adam, adamw, sgd, or adafactor.\",\n    )\n    parser.add_argument(\n        \"--mask-prompt\",\n        action=\"store_true\",\n        help=\"Mask the prompt in the loss when training\",\n        default=None,\n    )\n    parser.add_argument(\n        \"--num-layers\",\n        type=int,\n        help=\"Number of layers to fine-tune. Default is 16, use -1 for all.\",\n    )\n    parser.add_argument(\"--batch-size\", type=int, help=\"Minibatch size.\")\n    parser.add_argument(\"--iters\", type=int, help=\"Iterations to train for.\")\n    parser.add_argument(\n        \"--val-batches\",\n        type=int,\n        help=\"Number of validation batches, -1 uses the entire validation set.\",\n    )\n    parser.add_argument(\"--learning-rate\", type=float, help=\"Adam learning rate.\")\n    parser.add_argument(\n        \"--steps-per-report\",\n        type=int,\n        help=\"Number of training steps between loss reporting.\",\n    )\n    parser.add_argument(\n        \"--steps-per-eval\",\n        type=int,\n        help=\"Number of training steps between validations.\",\n    )\n    parser.add_argument(\n        \"--grad-accumulation-steps\",\n        type=int,\n        help=\"Number of steps to accumulate before each optimizer update.\",\n    )\n    parser.add_argument(\n        \"--resume-adapter-file\",\n        type=str,\n        help=\"Load path to resume training from the given fine-tuned weights.\",\n    )\n    parser.add_argument(\n        \"--adapter-path\",\n        type=str,\n        help=\"Save/load path for the fine-tuned weights.\",\n    )\n    parser.add_argument(\n        \"--save-every\",\n        type=int,\n        help=\"Save the model every N iterations.\",\n    )\n    parser.add_argument(\n        \"--test\",\n        action=\"store_true\",\n        help=\"Evaluate on the test set after training\",\n        default=None,\n    )\n    parser.add_argument(\n        \"--test-batches\",\n        type=int,\n        help=\"Number of test set batches, -1 uses the entire test set.\",\n    )\n    parser.add_argument(\n        \"--max-seq-length\",\n        type=int,\n        help=\"Maximum sequence length.\",\n    )\n    parser.add_argument(\n        \"-c\",\n        \"--config\",\n        type=str,\n        help=\"A YAML configuration file with the training options\",\n    )\n    parser.add_argument(\n        \"--grad-checkpoint\",\n        action=\"store_true\",\n        help=\"Use gradient checkpointing to reduce memory use.\",\n        default=None,\n    )\n    parser.add_argument(\n        \"--clear-cache-threshold\",\n        type=_parse_size,\n        default=0,\n        help=\"Clear the allocator cache between steps if it grows too large.\",\n    )\n    parser.add_argument(\n        \"--report-to\",\n        type=str,\n        default=None,\n        help=\"Services to report logs to ('wandb', 'swanlab', or 'wandb,swanlab').\",\n    )\n    parser.add_argument(\n        \"--project-name\",\n        type=str,\n        default=None,\n        help=\"Project name for logging. Defaults to the name of the root directory.\",\n    )\n    parser.add_argument(\"--seed\", type=int, help=\"The PRNG seed\")\n    parser.add_argument(\n        \"--trust-remote-code\",\n        action=\"store_true\",\n        help=\"Enable trusting remote code for tokenizer/model loading.\",\n    )\n    return parser",
+    "quote_sha256": "23accdc922287a0366127010cf0f436a6c1f9a91daaef753e22abda4b2ca8124"
+  },
+  "argument_metadata": [
+    {
+      "flags": [
+        "--model"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "help": "The path to the local model directory or Hugging Face repo."
+      },
+      "source_line": 88,
+      "end_line": 92
+    },
+    {
+      "flags": [
+        "--train"
+      ],
+      "keywords": {
+        "action": "store_true",
+        "help": "Do training",
+        "default": null
+      },
+      "source_line": 95,
+      "end_line": 100
+    },
+    {
+      "flags": [
+        "--data"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "help": "Directory with {train, valid, test}.jsonl files or the name of a Hugging Face dataset (e.g., 'mlx-community/wikisql')"
+      },
+      "source_line": 101,
+      "end_line": 108
+    },
+    {
+      "flags": [
+        "--fine-tune-type"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "choices": [
+          "lora",
+          "dora",
+          "full"
+        ],
+        "help": "Type of fine-tuning to perform: lora, dora, or full."
+      },
+      "source_line": 109,
+      "end_line": 114
+    },
+    {
+      "flags": [
+        "--optimizer"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "choices": [
+          "adam",
+          "adamw",
+          "muon",
+          "sgd",
+          "adafactor"
+        ],
+        "default": null,
+        "help": "Optimizer to use for training: adam, adamw, sgd, or adafactor."
+      },
+      "source_line": 115,
+      "end_line": 121
+    },
+    {
+      "flags": [
+        "--mask-prompt"
+      ],
+      "keywords": {
+        "action": "store_true",
+        "help": "Mask the prompt in the loss when training",
+        "default": null
+      },
+      "source_line": 122,
+      "end_line": 127
+    },
+    {
+      "flags": [
+        "--num-layers"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Number of layers to fine-tune. Default is 16, use -1 for all."
+      },
+      "source_line": 128,
+      "end_line": 132
+    },
+    {
+      "flags": [
+        "--batch-size"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Minibatch size."
+      },
+      "source_line": 133,
+      "end_line": 133
+    },
+    {
+      "flags": [
+        "--iters"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Iterations to train for."
+      },
+      "source_line": 134,
+      "end_line": 134
+    },
+    {
+      "flags": [
+        "--val-batches"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Number of validation batches, -1 uses the entire validation set."
+      },
+      "source_line": 135,
+      "end_line": 139
+    },
+    {
+      "flags": [
+        "--learning-rate"
+      ],
+      "keywords": {
+        "type_symbol": "float",
+        "help": "Adam learning rate."
+      },
+      "source_line": 140,
+      "end_line": 140
+    },
+    {
+      "flags": [
+        "--steps-per-report"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Number of training steps between loss reporting."
+      },
+      "source_line": 141,
+      "end_line": 145
+    },
+    {
+      "flags": [
+        "--steps-per-eval"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Number of training steps between validations."
+      },
+      "source_line": 146,
+      "end_line": 150
+    },
+    {
+      "flags": [
+        "--grad-accumulation-steps"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Number of steps to accumulate before each optimizer update."
+      },
+      "source_line": 151,
+      "end_line": 155
+    },
+    {
+      "flags": [
+        "--resume-adapter-file"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "help": "Load path to resume training from the given fine-tuned weights."
+      },
+      "source_line": 156,
+      "end_line": 160
+    },
+    {
+      "flags": [
+        "--adapter-path"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "help": "Save/load path for the fine-tuned weights."
+      },
+      "source_line": 161,
+      "end_line": 165
+    },
+    {
+      "flags": [
+        "--save-every"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Save the model every N iterations."
+      },
+      "source_line": 166,
+      "end_line": 170
+    },
+    {
+      "flags": [
+        "--test"
+      ],
+      "keywords": {
+        "action": "store_true",
+        "help": "Evaluate on the test set after training",
+        "default": null
+      },
+      "source_line": 171,
+      "end_line": 176
+    },
+    {
+      "flags": [
+        "--test-batches"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Number of test set batches, -1 uses the entire test set."
+      },
+      "source_line": 177,
+      "end_line": 181
+    },
+    {
+      "flags": [
+        "--max-seq-length"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "Maximum sequence length."
+      },
+      "source_line": 182,
+      "end_line": 186
+    },
+    {
+      "flags": [
+        "-c",
+        "--config"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "help": "A YAML configuration file with the training options"
+      },
+      "source_line": 187,
+      "end_line": 192
+    },
+    {
+      "flags": [
+        "--grad-checkpoint"
+      ],
+      "keywords": {
+        "action": "store_true",
+        "help": "Use gradient checkpointing to reduce memory use.",
+        "default": null
+      },
+      "source_line": 193,
+      "end_line": 198
+    },
+    {
+      "flags": [
+        "--clear-cache-threshold"
+      ],
+      "keywords": {
+        "type_symbol": "_parse_size",
+        "default": 0,
+        "help": "Clear the allocator cache between steps if it grows too large."
+      },
+      "source_line": 199,
+      "end_line": 204
+    },
+    {
+      "flags": [
+        "--report-to"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "default": null,
+        "help": "Services to report logs to ('wandb', 'swanlab', or 'wandb,swanlab')."
+      },
+      "source_line": 205,
+      "end_line": 210
+    },
+    {
+      "flags": [
+        "--project-name"
+      ],
+      "keywords": {
+        "type_symbol": "str",
+        "default": null,
+        "help": "Project name for logging. Defaults to the name of the root directory."
+      },
+      "source_line": 211,
+      "end_line": 216
+    },
+    {
+      "flags": [
+        "--seed"
+      ],
+      "keywords": {
+        "type_symbol": "int",
+        "help": "The PRNG seed"
+      },
+      "source_line": 217,
+      "end_line": 217
+    },
+    {
+      "flags": [
+        "--trust-remote-code"
+      ],
+      "keywords": {
+        "action": "store_true",
+        "help": "Enable trusting remote code for tokenizer/model loading."
+      },
+      "source_line": 218,
+      "end_line": 222
+    }
+  ],
+  "literal_config_defaults": {
+    "model": "Qwen/Qwen3-0.6b",
+    "train": false,
+    "fine_tune_type": "lora",
+    "optimizer": "adam",
+    "optimizer_config": {
+      "adam": {},
+      "adamw": {},
+      "muon": {},
+      "sgd": {},
+      "adafactor": {}
+    },
+    "data": "mlx-community/WikiSQL",
+    "seed": 0,
+    "num_layers": 16,
+    "batch_size": 4,
+    "iters": 1000,
+    "val_batches": 25,
+    "learning_rate": 1e-05,
+    "steps_per_report": 10,
+    "steps_per_eval": 200,
+    "resume_adapter_file": null,
+    "adapter_path": "adapters",
+    "save_every": 100,
+    "test": false,
+    "test_batches": 500,
+    "max_seq_length": 2048,
+    "config": null,
+    "grad_checkpoint": false,
+    "grad_accumulation_steps": 1,
+    "clear_cache_threshold": 0,
+    "lr_schedule": null,
+    "lora_parameters": {
+      "rank": 8,
+      "dropout": 0.0,
+      "scale": 20.0
+    },
+    "mask_prompt": false,
+    "report_to": null,
+    "project_name": null,
+    "trust_remote_code": false
+  },
+  "reviewed_merge_spans": [
+    {
+      "name": "config",
+      "first_line": 390,
+      "last_line": 392,
+      "quote": "for k, v in config.items():\n            if args.get(k, None) is None:\n                args[k] = v"
+    },
+    {
+      "name": "CONFIG_DEFAULTS",
+      "first_line": 395,
+      "last_line": 397,
+      "quote": "for k, v in CONFIG_DEFAULTS.items():\n        if args.get(k, None) is None:\n            args[k] = v"
+    }
+  ],
+  "rows": [
+    {
+      "id": "defaults-are-not-pilot",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "train": false,
+        "model": "Qwen/Qwen3-0.6b",
+        "data": "mlx-community/WikiSQL",
+        "iters": 1000,
+        "num_layers": 16,
+        "batch_size": 4,
+        "mask_prompt": false
+      },
+      "field_checks": {
+        "train": true,
+        "model": true,
+        "data": true,
+        "iters": true,
+        "num_layers": true,
+        "batch_size": true,
+        "mask_prompt": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "proposal-fields-without-resolved-roots",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "train": false,
+        "model": "Qwen/Qwen3-0.6b",
+        "data": "mlx-community/WikiSQL",
+        "iters": 16,
+        "num_layers": 2,
+        "mask_prompt": true,
+        "lora_parameters.rank": 4,
+        "trust_remote_code": false
+      },
+      "field_checks": {
+        "train": true,
+        "model": true,
+        "data": true,
+        "iters": true,
+        "num_layers": true,
+        "mask_prompt": true,
+        "lora_parameters.rank": true,
+        "trust_remote_code": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "config-mask-true",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "mask_prompt": true
+      },
+      "field_checks": {
+        "mask_prompt": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "cli-mask-wins",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "mask_prompt": true
+      },
+      "field_checks": {
+        "mask_prompt": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "config-trust-true-ignored",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "trust_remote_code": false
+      },
+      "field_checks": {
+        "trust_remote_code": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "cli-trust-true-wins",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "trust_remote_code": true
+      },
+      "field_checks": {
+        "trust_remote_code": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "config-cache-threshold-ignored",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "clear_cache_threshold": 0
+      },
+      "field_checks": {
+        "clear_cache_threshold": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "config-lora-parameters",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "lora_parameters.rank": 4,
+        "lora_parameters.scale": 8.0
+      },
+      "field_checks": {
+        "lora_parameters.rank": true,
+        "lora_parameters.scale": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "rank-is-not-cli-flag",
+      "status": "REFUSED_ARGUMENTS",
+      "observed_fields": {},
+      "field_checks": {},
+      "stderr": "usage: observe_pilot_argument_admission_v1.py [-h] [--model MODEL] [--train]\n                                              [--data DATA]\n                                              [--fine-tune-type {lora,dora,full}]\n                                              [--optimizer {adam,adamw,muon,sgd,adafactor}]\n                                              [--mask-prompt]\n                                              [--num-layers NUM_LAYERS]\n                                              [--batch-size BATCH_SIZE]\n                                              [--iters ITERS]\n                                              [--val-batches VAL_BATCHES]\n                                              [--learning-rate LEARNING_RATE]\n                                              [--steps-per-report STEPS_PER_REPORT]\n                                              [--steps-per-eval STEPS_PER_EVAL]\n                                              [--grad-accumulation-steps GRAD_ACCUMULATION_STEPS]\n                                              [--resume-adapter-file RESUME_ADAPTER_FILE]\n                                              [--adapter-path ADAPTER_PATH]\n                                              [--save-every SAVE_EVERY]\n                                              [--test]\n                                              [--test-batches TEST_BATCHES]\n                                              [--max-seq-length MAX_SEQ_LENGTH]\n                                              [-c CONFIG] [--grad-checkpoint]\n                                              [--clear-cache-threshold CLEAR_CACHE_THRESHOLD]\n                                              [--report-to REPORT_TO]\n                                              [--project-name PROJECT_NAME]\n                                              [--seed SEED]\n                                              [--trust-remote-code]\nobserve_pilot_argument_admission_v1.py: error: unrecognized arguments: --rank 4\n",
+      "pass": true
+    },
+    {
+      "id": "no-trust-inverse-flag",
+      "status": "REFUSED_ARGUMENTS",
+      "observed_fields": {},
+      "field_checks": {},
+      "stderr": "usage: observe_pilot_argument_admission_v1.py [-h] [--model MODEL] [--train]\n                                              [--data DATA]\n                                              [--fine-tune-type {lora,dora,full}]\n                                              [--optimizer {adam,adamw,muon,sgd,adafactor}]\n                                              [--mask-prompt]\n                                              [--num-layers NUM_LAYERS]\n                                              [--batch-size BATCH_SIZE]\n                                              [--iters ITERS]\n                                              [--val-batches VAL_BATCHES]\n                                              [--learning-rate LEARNING_RATE]\n                                              [--steps-per-report STEPS_PER_REPORT]\n                                              [--steps-per-eval STEPS_PER_EVAL]\n                                              [--grad-accumulation-steps GRAD_ACCUMULATION_STEPS]\n                                              [--resume-adapter-file RESUME_ADAPTER_FILE]\n                                              [--adapter-path ADAPTER_PATH]\n                                              [--save-every SAVE_EVERY]\n                                              [--test]\n                                              [--test-batches TEST_BATCHES]\n                                              [--max-seq-length MAX_SEQ_LENGTH]\n                                              [-c CONFIG] [--grad-checkpoint]\n                                              [--clear-cache-threshold CLEAR_CACHE_THRESHOLD]\n                                              [--report-to REPORT_TO]\n                                              [--project-name PROJECT_NAME]\n                                              [--seed SEED]\n                                              [--trust-remote-code]\nobserve_pilot_argument_admission_v1.py: error: unrecognized arguments: --no-trust-remote-code\n",
+      "pass": true
+    },
+    {
+      "id": "negative-iters-parses",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "iters": -1
+      },
+      "field_checks": {
+        "iters": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "qlora-not-cli-choice",
+      "status": "REFUSED_ARGUMENTS",
+      "observed_fields": {},
+      "field_checks": {},
+      "stderr": "usage: observe_pilot_argument_admission_v1.py [-h] [--model MODEL] [--train]\n                                              [--data DATA]\n                                              [--fine-tune-type {lora,dora,full}]\n                                              [--optimizer {adam,adamw,muon,sgd,adafactor}]\n                                              [--mask-prompt]\n                                              [--num-layers NUM_LAYERS]\n                                              [--batch-size BATCH_SIZE]\n                                              [--iters ITERS]\n                                              [--val-batches VAL_BATCHES]\n                                              [--learning-rate LEARNING_RATE]\n                                              [--steps-per-report STEPS_PER_REPORT]\n                                              [--steps-per-eval STEPS_PER_EVAL]\n                                              [--grad-accumulation-steps GRAD_ACCUMULATION_STEPS]\n                                              [--resume-adapter-file RESUME_ADAPTER_FILE]\n                                              [--adapter-path ADAPTER_PATH]\n                                              [--save-every SAVE_EVERY]\n                                              [--test]\n                                              [--test-batches TEST_BATCHES]\n                                              [--max-seq-length MAX_SEQ_LENGTH]\n                                              [-c CONFIG] [--grad-checkpoint]\n                                              [--clear-cache-threshold CLEAR_CACHE_THRESHOLD]\n                                              [--report-to REPORT_TO]\n                                              [--project-name PROJECT_NAME]\n                                              [--seed SEED]\n                                              [--trust-remote-code]\nobserve_pilot_argument_admission_v1.py: error: argument --fine-tune-type: invalid choice: 'qlora' (choose from 'lora', 'dora', 'full')\n",
+      "pass": true
+    },
+    {
+      "id": "config-bypasses-choice-check",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "fine_tune_type": "qlora"
+      },
+      "field_checks": {
+        "fine_tune_type": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "config-value-not-cast",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "iters": "16"
+      },
+      "field_checks": {
+        "iters": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "documentary-launch-flag-not-framework-guard",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "launch_allowed": false,
+        "train": true
+      },
+      "field_checks": {
+        "launch_allowed": true,
+        "train": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "cli-eval-and-accum-win",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "steps_per_eval": 4,
+        "grad_accumulation_steps": 1
+      },
+      "field_checks": {
+        "steps_per_eval": true,
+        "grad_accumulation_steps": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "cli-checkpoint-wins",
+      "status": "PARSED_MERGED",
+      "observed_fields": {
+        "grad_checkpoint": true
+      },
+      "field_checks": {
+        "grad_checkpoint": true
+      },
+      "stderr": "",
+      "pass": true
+    },
+    {
+      "id": "unknown-size-converter-blocked",
+      "status": "OWN_UNSUPPORTED_CONVERTER",
+      "observed_fields": {},
+      "field_checks": {},
+      "stderr": "",
+      "pass": true
+    }
+  ],
+  "passes": 18,
+  "cases": 18,
+  "upstream_pure_build_parser_executed": true,
+  "upstream_module_imported": false,
+  "mlx_numpy_yaml_tqdm_imported": false,
+  "framework_training_or_run_main_called": false,
+  "unknown_size_converter_executed": false,
+  "new_imported_modules": [
+    "_bz2",
+    "_colorize",
+    "_locale",
+    "_lzma",
+    "_opcode",
+    "_opcode_metadata",
+    "_tokenize",
+    "_zstd",
+    "annotationlib",
+    "bz2",
+    "compression",
+    "compression._common",
+    "compression._common._streams",
+    "compression.zstd",
+    "compression.zstd._zstdfile",
+    "dataclasses",
+    "dis",
+    "importlib",
+    "importlib._bootstrap",
+    "importlib._bootstrap_external",
+    "importlib.machinery",
+    "inspect",
+    "linecache",
+    "locale",
+    "lzma",
+    "opcode",
+    "shutil",
+    "token",
+    "tokenize",
+    "zlib"
+  ],
+  "static_run_order": {
+    "load_call_line": 354,
+    "load_dataset_line": 361,
+    "train_test_branch_line": 363,
+    "finding": "Absence of --train is not a safe dry run of upstream main/run: selected source places model/data loading before branch admission. Neither main nor run was executed here."
+  },
+  "important_findings": [
+    "Default model/data and budgets are not the owner pilot; model/data roots remain unresolved.",
+    "None-only merge means config trust_remote_code true and clear_cache_threshold nonzero do not override CLI False/0 defaults.",
+    "Predecoded config values bypass parser choices and scalar casts at this merge; downstream validation is separate and was not executed.",
+    "launch_allowed false is a documentary field, not an upstream launch guard: the inspected run does not check it.",
+    "LoRA rank/scale are configuration-only nested values in this CLI, not standalone --rank flags.",
+    "The unknown size converter and actual YAML syntax were not evaluated."
+  ],
+  "training_steps": 0,
+  "optimizer_created": false,
+  "model_or_tokenizer_loaded": false,
+  "weights_downloaded": false,
+  "packages_installed": false,
+  "training_launch_command_emitted": false,
+  "launch_allowed": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "readiness": "NO-GO_UNCHANGED",
+  "limits": "This adds selected pure CLI-builder execution to the earlier static-only framework review phase. It does not import MLX-LM/MLX, load a model, validate all downstream configuration or establish training feasibility."
+}

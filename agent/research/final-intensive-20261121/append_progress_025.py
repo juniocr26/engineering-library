@@ -1,0 +1,17 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Final intensive progress 025 — original target identities and report lineage
+
+The frozen exact-target comparison (`dataset-current-candidate-correspondence-results-v1.json`) examined297nonprivate original rows:196 contain selected direct document references to different bytes,101 lack candidate_documentation_ref/document_ref fields, and0 directly match the24 currently accepted chapter document hashes. Eight private rows were excluded from parsing; all seven original dataset file hashes remained unchanged. This selected-field comparison is not exhaustive indirect lineage or semantic near-duplicate analysis. No current technical acceptance propagates to old targets by family name; in particular, the SQLX named-context citation gap does not classify different SQLX expansion/map chapters. No original label, approval or training split changed.
+
+`root-report-chain-audit-results-v3.json` additionally covers the canonical write-ahead report bundles and successful attempt hashes omitted by the legacy receipt-shape audit:168of168append edges resolve, every preserved canonical state is a byte prefix of the observed root reports, and no nonprefix state was found. This is local byte provenance, not semantic approval or power-loss proof. `file-inventory-cut-011.json` lists2481 files with exact path/size/hash/purpose (2405 research files plus canonical reports and local checkpoint sidecars at its declared cut). Dependencies outside the research directory are recorded separately by checkpoint manifests; file count differences are not lost artifacts.
+
+Checkpoint020 remains the latest verified archive:2733regularfiles,21finite replay groups and exact reconstruction of four reports. Later correspondence/lineage/inventory artifacts await the next archive. Next substantive research checks a public original dataset target against its exact frozen scope and source, retaining old labels and any newly discovered limitations separately. Campaign active; no local neural calls, training updates, production mutations, Gold or publication approval.
+'''
+j=p/'root-report-bundle-progress-025';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v25.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

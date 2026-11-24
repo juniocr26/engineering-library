@@ -1,0 +1,23 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common="""
+
+### Progresso intensivo 076 — diagnóstico histórico não é população uniforme de falhas
+
+A nova curadoria auditou 56 linhas não privadas de diagnóstico, todas de uma família sintética já exposta. Seus requests/responses e demais referências admitidas tiveram hashes confrontados; 40 observações coincidem com o JSON completo da resposta, duas com sua lista de claims e 14 com o conteúdo bruto exato. Todos os 56 responses têm done_reason stop e JSON parseável. As datas reportadas pela API vão de 19/11/2026 23:01:13 UTC a 20/11/2026 04:49:21 UTC: são chamadas históricas, não as desta campanha.
+
+O papel rejected_observation_not_target não significa que toda observação esteja factualmente errada. Das 24 linhas com source_review inline, 15 têm rótulo REJECTED_FACTUAL_ERROR, três REQUIRES_CORRECTION, três VERIFIED_WITH_LIMITATIONS e três TECHNICALLY_VERIFIED para razões curtas; outras 32 usam esquemas diferentes. Nenhum desses rótulos aprova capítulo completo, Gold ou treino. As 24 respostas do grupo lifecycle-baseline repetem MODIFY em cenários diferentes; isso não prova loops textuais nem identifica causalidade dos pesos.
+
+A taxonomia v2 cobre os 14 mecanismos solicitados e os oito estágios, distinguindo contradição observada, hipótese, controle estrutural e ausência de evidência no subconjunto. Exemplos confirmados incluem a atribuição de timeout ao serviço em vez do adaptador, uma recomendação REMOVE com função Go ainda presente, confusão entre registro de aposentadoria e retorno de função, tradução de literais one/unavailable e PT corrompido já no response bruto. O efeito causal do comentário adversarial não foi isolado.
+
+A fonte indisponível leva a MODIFY em um caso e a uma abstenção segura com razão sem apoio em outro; ação correta não torna toda a explicação correta. Um request de perfil fechado contém explicitamente o fato admitido 9, mas a resposta diz que o fato está ausente. Isso confronta a razão com o payload fornecido, sem provar bindings Python reais nem justificar culpa automática de recuperação ou pesos. No outro extremo, fatos que o helper recusa antes da inferência por escopo/budget não devem ser debitados ao modelo como se ele os tivesse recebido.
+
+Seis calibrações literais separadas têm três correspondências exatas e três respostas com campo lógico ou soma errados, embora JSON válido; não são aceitação de documentos nem benchmark independente. Não houve truncamento ou JSON inválido nesses 56 responses, o que não apaga falhas de outras populações históricas. Nenhum registro original, rótulo, split ou aprovação foi alterado; oito linhas privadas continuaram sem JSON decode. O fechamento v44 reúne 793 dependências para preservar essa curadoria.
+
+A matriz pré-final também captura as 22 seções do pedido, seus bullets, os oito estágios/nove passos/22 perguntas numerados e os dez critérios de sucesso da pesquisa. Ela mantém pendentes o tempo real aproximado de doze horas, a consolidação final e sua recuperação; não transforma objetivos experimentais não alcançados em resultados fabricados.
+"""
+j=p/'root-report-bundle-progress-076';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v76.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

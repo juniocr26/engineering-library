@@ -1,0 +1,23 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Progresso intensivo 055 — Fastify original aceito e SQLx em recuperação
+
+O par original Fastify decoration-lookup passou G1–G9 após o checkpoint039. Nove arquivos públicos foram adquiridos na revisão825d7722e4932a39193729997c76535d0a963b6b; nove trechos coincidem com a fonte. A resposta histórica afirma explicitamente que nome ausente retorna false; essa atribuição está comprovada. Os wrappers preservam duas guardas ordenadas e uma chamada final, com distinção entre identificador fornecido e símbolo interno do receptor. hasInstanceProperty segue parent, sem detecção de ciclo ou garantia para objeto arbitrário.
+
+As regras oficiais ECMAScript2026 de EvaluateCall, WithBaseObject, OrdinaryCallBindThis e operador in foram consultadas. A inferência é condicional: se alcançada a chamada simples estrita e depois o ramo instance in this, this é undefined e o operando direito não objeto causa TypeError. Acessos anteriores podem falhar; não se afirma que todas as consultas lançam erro. O probe sintético histórico Node24 foi localizado com hash, sem nova execução. O código das fábricas e testes foi lido como contexto; a descrição histórica do suplemento não passou a alegar execução dessas dependências.
+
+Seis arquivos JS passaram pelo parser TypeScript5.9.3 no JavaScriptCore do host, como texto, e um controle malformado foi recusado. Nenhum módulo, servidor ou teste Fastify foi executado; nenhuma resolução de módulos ou verificação de tipos foi feita. O checkpoint039 restaurou4.508arquivos regulares, arquivo compactado121.124.779bytes e40grupos finitos com resultados esperados. As quatro notas de relatório foram reconstruídas.
+
+A auditoria v17 conta35versões relacionadas:30aceitas,1lacuna de citação e4falhas históricas de atribuição; helper interno separado. O lote v17 contém23pares públicos,3prioritários+20suplementares, todos ainda sem aprovação de publicação/Gold/treino. A reconciliação v16 mantém os16nomes de métricas, sem taxa neural para zero novas chamadas locais.
+
+Os dois pares originais SQLx In e bindMapArgs passaram G1–G8 e seu consumidor atual, mas G9 aguarda o checkpoint040 em execução neste corte. Oito trechos coincidem com a fonte, seis arquivos Go passaram gofmt sintático e o controle inválido foi recusado. Valuer pode executar antes do caminho sem slices, que retorna os argumentos originais; o array32é escolha de armazenamento, não limite público. bindMapArgs preserva prefixo no erro, enquanto bindStruct o descarta. O tipo desreferenciado uma vez não é um reflect.Value desreferenciado. Testes existentes foram lidos, sem execução SQLx/banco; comentários mais/menos inconsistentes não substituem os ramos do código. A tentativa histórica interrompida de In continua sem resposta/tokens/sucesso conhecidos, separada da recuperação recebida.
+
+O registro de ações v18 mantém42blocos e acrescenta17comandos de aquisição Fastify/SQLx, uma busca de testes e contexto primário de linguagem, sem mutação Git. Seus HEAD/status anteriores continuam observações datadas, não estado final de12horas. A campanha segue ativa.
+'''
+j=p/'root-report-bundle-progress-055';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v55.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

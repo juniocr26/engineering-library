@@ -1,0 +1,414 @@
+{
+  "at": "2026-11-21T17:11:26.337233+00:00",
+  "protocol": "source-only-fact-render-protocol-v1.json",
+  "task": "cobra",
+  "method": "L",
+  "content_sha256": "c778292af4099b4efaaaf8fbf882b0883644da7662b4f81a3158d418839b875d",
+  "rows": [
+    {
+      "fact_id": "C01",
+      "original_generated_pair": {
+        "en": "The PositionalArgs function takes two arguments: a Command pointer and a slice of strings.",
+        "pt-BR": "A função PositionalArgs recebe dois argumentos: um ponteiro para Command e uma slice de strings."
+      },
+      "pair_verdict": "CONTRADICTED",
+      "reference": {
+        "claim_id": "C01",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "type PositionalArgs func(cmd *Command, args []string) error",
+        "source_lines": [
+          22,
+          22
+        ],
+        "expected_interpretation": {
+          "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+          "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "PositionalArgs is a defined function type, not a callable function declaration. It also omits the error result. Prompt itself incorrectly calls it a function signature: preserve original contradiction and flag task-wording confound rather than attributing solely to model.",
+      "critical": true,
+      "required_reference_coverage": "PARTIAL",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C01",
+          "verdict": "CONTRADICTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C02",
+      "original_generated_pair": {
+        "en": "OnlyValidArgs performs membership checks when the Command has subcommands and there are arguments provided.",
+        "pt-BR": "A função OnlyValidArgs realiza verificações de pertencimento quando o Command tem subcomandos e há argumentos fornecidos."
+      },
+      "pair_verdict": "CONTRADICTED",
+      "reference": {
+        "claim_id": "C02",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+        "source_lines": [
+          51,
+          65
+        ],
+        "expected_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Membership block guard is len(cmd.ValidArgs)>0, not HasSubCommands/argsprovided. Wrong source relationship in both languages.",
+      "critical": true,
+      "required_reference_coverage": "FAILED",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C02",
+          "verdict": "CONTRADICTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C03",
+      "original_generated_pair": {
+        "en": "Descriptions are separated from the allowlist entry by a tab character.",
+        "pt-BR": "As descrições são separadas da entrada de allowlist por um caractere de tabulação."
+      },
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "C03",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}",
+        "source_lines": [
+          55,
+          58
+        ],
+        "expected_interpretation": {
+          "en": "Allowlist entries are projected to the portion before the first tab.",
+          "pt-BR": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Tab-separator statement matches source comment. It does not state actual prefix projection before first tab required by frozen reference; factual support and reference completeness differ. Frozen question asks separator, narrower than reference operation: flag prompt/rubric alignment limit.",
+      "critical": false,
+      "required_reference_coverage": "PARTIAL",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C03",
+          "verdict": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C04",
+      "original_generated_pair": {
+        "en": "ExactArgs(n) returns a callback that rejects arguments of length n.",
+        "pt-BR": "A função ExactArgs(n) retorna uma função de callback que rejeita argumentos de comprimento n."
+      },
+      "pair_verdict": "CONTRADICTED",
+      "reference": {
+        "claim_id": "C04",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}",
+        "source_lines": [
+          107,
+          113
+        ],
+        "expected_interpretation": {
+          "en": "ExactArgs(n) returns a validator function.",
+          "pt-BR": "ExactArgs(n) retorna uma função validadora."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Returns callback supported; added rejection at length n directly reverses !=n guard. Split two independently identifiable generated atoms, oneS/oneC.",
+      "critical": true,
+      "required_reference_coverage": "FAILED",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C04a",
+          "proposition": "ExactArgs returns callback",
+          "verdict": "SUPPORTED"
+        },
+        {
+          "atom_id": "C04b",
+          "proposition": "Returned callback rejects length n",
+          "verdict": "CONTRADICTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C05",
+      "original_generated_pair": {
+        "en": "ExactArgs(n) rejects arguments of length less than n.",
+        "pt-BR": "A função ExactArgs(n) rejeita argumentos de comprimento menos que n."
+      },
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "C05",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil",
+        "source_lines": [
+          108,
+          112
+        ],
+        "expected_interpretation": {
+          "en": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+          "pt-BR": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Length less than n is a true subset of !=n rejection. No only/exactly word makes it false. Incomplete answer: omits greater-than-n rejection and exact !=n condition. Preserve factual support while relevant completeness fails.",
+      "critical": false,
+      "required_reference_coverage": "PARTIAL",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C05",
+          "verdict": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C06",
+      "original_generated_pair": {
+        "en": "MatchAll invokes the supplied validators in order.",
+        "pt-BR": "A função MatchAll invoca os validadores fornecidos em ordem."
+      },
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "C06",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil",
+        "source_lines": [
+          127,
+          134
+        ],
+        "expected_interpretation": {
+          "en": "MatchAll invokes its validators in the order of the supplied slice.",
+          "pt-BR": "MatchAll chama seus validadores na ordem do slice fornecido."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Source slice-order invocation supported, with early-stop condition supplied by nextC07; no universal completion guarantee inferred.",
+      "critical": false,
+      "required_reference_coverage": "CORRECT",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C06",
+          "verdict": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C07",
+      "original_generated_pair": {
+        "en": "When the first non-nil MatchAll validator error occurs, it is returned.",
+        "pt-BR": "Quando ocorre o primeiro erro não nulo da função MatchAll, ele é retornado."
+      },
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "C07",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err",
+        "source_lines": [
+          129,
+          131
+        ],
+        "expected_interpretation": {
+          "en": "MatchAll returns immediately at the first non-nil validator error.",
+          "pt-BR": "MatchAll retorna imediatamente no primeiro erro não nil de um validador."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "First non-nil error returned as source. Ordinary PTnão nulo is prose, not translated code literal.",
+      "critical": false,
+      "required_reference_coverage": "CORRECT",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C07",
+          "verdict": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C08",
+      "original_generated_pair": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": "A função ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+      },
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "C08",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}",
+        "source_lines": [
+          142,
+          144
+        ],
+        "expected_interpretation": {
+          "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+          "pt-BR": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Exact delegation composition preserved.",
+      "critical": false,
+      "required_reference_coverage": "CORRECT",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C08",
+          "verdict": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "C09",
+      "original_generated_pair": {
+        "en": "ExactValidArgs is deprecated and should not be used.",
+        "pt-BR": "ExactValidArgs está deprecado e não deve ser usado."
+      },
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "C09",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+        "source_lines": [
+          141,
+          141
+        ],
+        "expected_interpretation": {
+          "en": "The selected source comment marks ExactValidArgs deprecated.",
+          "pt-BR": "O comentário selecionado da fonte marca ExactValidArgs como deprecated."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Deprecated status supported. Should not be used is read as replacement recommendation from useMatchAll deprecation comment, not claim source prohibits execution. Does not require an invented runtime failure.",
+      "critical": false,
+      "required_reference_coverage": "CORRECT",
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "C09",
+          "verdict": "SUPPORTED"
+        }
+      ]
+    }
+  ],
+  "structural_schema_errors": [],
+  "all_generated_claims_reviewed": true,
+  "all_required_claims_covered": false,
+  "bilingual_semantics_correct": false,
+  "critical_unsupported_claims": 3,
+  "source_only_semantic_admission": false,
+  "required_ids_correct": [
+    "C06",
+    "C07",
+    "C08",
+    "C09"
+  ],
+  "required_pair_coverage": {
+    "present": 9,
+    "required": 9,
+    "supported_pairs": 6,
+    "contradicted_pairs": 3,
+    "fully_correct_required_fact_pairs": 4
+  },
+  "selected_generated_proposition_metrics": {
+    "supported": 7,
+    "contradicted": 3,
+    "insufficient": 0,
+    "total": 10,
+    "supported_precision": 0.7,
+    "unsupported_rate": 0.3,
+    "scope": "C04split returns-callback versus incorrectrejection; trueC05partialcondition remainsS, not silently relabelledC to force an outcome. EN/PTrepeats not independent."
+  },
+  "complete_bounded_note_accepted": false,
+  "task_wording_confounds": [
+    "C01questionmisnamesdefinedtypefunction",
+    "C03questionseparatornarrowerthanreferenceprojection"
+  ],
+  "no_reference_change_after_predictions": true,
+  "reviewer": "Same campaign agent, not independent owner/human",
+  "training_excluded": true,
+  "owner_approved": false,
+  "gold": 0,
+  "optimizer_updates": 0
+}

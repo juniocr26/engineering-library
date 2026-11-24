@@ -1,0 +1,189 @@
+{
+  "at": "2026-11-22T01:33:52.078759+00:00",
+  "task_id": "GO_SHELLWORDS_PARSER_EVAL_01",
+  "upstream_identity": "github.com/mattn/go-shellwords",
+  "source_tag": "v1.0.12",
+  "immutable_revision": null,
+  "status": "PROVISIONAL_FROZEN_NOT_EXECUTABLE_SOURCE_IDENTITY_INCOMPLETE",
+  "role": "EVALUATION_ONLY_EXPOSURE_BOUNDED_NOT_CERTIFIED",
+  "request": "Produce a complete EN then pt-BR maintainer reference for go-shellwords v1.0.12 at an immutable revision that must be resolved before execution. Scope: Parser configuration and state, NewParser, Parse, ParseWithEnvs, package wrappers, replaceEnv/isEnv/isSpace relations, shellRun platform boundary and supplied authored tests. Explain mutable globals versus copied parser settings, empty/quoted/escaped arguments, expansion and reparsing, callback/environment effects, substitution execution conditions, error propagation and Position semantics, leading env extraction versus environment mutation. Include matching examples and FAQs in both languages; preserve exact identifiers, types, literal error text, conditions and negation. Do not execute Parse, shellRun, external commands or upstream tests. Do not promise POSIX compliance, identifier validation or platform execution behavior absent line-preserving source. Lifecycle ADD is isolated documentation only; no upstream changes. Examples are source-derived and unexecuted. Apply unchanged G1-G9 without narrowing scope.",
+  "exposure_audit": "go-shellwords-prospective-exposure-audit-v1.json",
+  "historical_bounded_text_matches": 0,
+  "complete_model_context_frozen": false,
+  "missing_execution_preconditions": [
+    "Resolve immutable commit and authoritative raw source bytes with stable line identity",
+    "Acquire line-preserving util_posix.go/util_windows.go/go.mod instead of flattened web representations",
+    "Complete exact source rights/provenance and related-family review",
+    "Freeze final source envelope/expected reference version before any model execution",
+    "Authorized runtime identity, token/context fit and bounded budget"
+  ],
+  "derived_sources": [
+    {
+      "path": "agent/research/final-intensive-20261121/go-shellwords-browser-derived-v1/LICENSE",
+      "bytes": 1083,
+      "sha256": "791b46d0f7847d65e1252c1432fe240b1394c5202d605d78a76ce07b26c08606",
+      "kind": "Browser-derived line reconstruction or literal flattened presentation; not raw Git blob"
+    },
+    {
+      "path": "agent/research/final-intensive-20261121/go-shellwords-browser-derived-v1/go.mod.flattened-rendering.txt",
+      "bytes": 46,
+      "sha256": "8761e40ced0f190ea407fb40de52267abe26fd5ff425dac11bb4a18a93e858eb",
+      "kind": "Browser-derived line reconstruction or literal flattened presentation; not raw Git blob"
+    },
+    {
+      "path": "agent/research/final-intensive-20261121/go-shellwords-browser-derived-v1/shellwords.go",
+      "bytes": 5912,
+      "sha256": "c8d7c3cd53d1ff2e8a4454c7c7bee088717139db8685f6da28539538a2f6d9ec",
+      "kind": "Browser-derived line reconstruction or literal flattened presentation; not raw Git blob"
+    },
+    {
+      "path": "agent/research/final-intensive-20261121/go-shellwords-browser-derived-v1/shellwords_test.go",
+      "bytes": 11875,
+      "sha256": "69c858a51fd3610a96452b61189ac37542322b02bd06768c09de4bbda4fc408d",
+      "kind": "Browser-derived line reconstruction or literal flattened presentation; not raw Git blob"
+    },
+    {
+      "path": "agent/research/final-intensive-20261121/go-shellwords-browser-derived-v1/util_posix.go.flattened-rendering.txt",
+      "bytes": 475,
+      "sha256": "a902a55d01b8075629df16369e83572da05123552c598150b6af614aa96aace5",
+      "kind": "Browser-derived line reconstruction or literal flattened presentation; not raw Git blob"
+    },
+    {
+      "path": "agent/research/final-intensive-20261121/go-shellwords-browser-derived-v1/util_windows.go.flattened-rendering.txt",
+      "bytes": 472,
+      "sha256": "bddb93425756b90dbc76c2b784013e23e67da20a3607ab93bb707ff62db83cba",
+      "kind": "Browser-derived line reconstruction or literal flattened presentation; not raw Git blob"
+    }
+  ],
+  "reference_propositions": [
+    {
+      "id": "SW01",
+      "start_line": 11,
+      "end_line": 13,
+      "quote": "var (\n\tParseEnv      bool = false\n\tParseBacktick bool = false\n",
+      "quote_sha256": "f93ee0a866686f105ac41afa31d04fc68df05ba53591e119186b906d94b5528b",
+      "reference_proposition": "Package ParseEnv and ParseBacktick variables initially false; do not treat mutable package globals as permanent per-instance state.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW02",
+      "start_line": 95,
+      "end_line": 112,
+      "quote": "type Parser struct {\n\tParseEnv      bool\n\tParseBacktick bool\n\tPosition      int\n\tDir           string\n\n\t// If ParseEnv is true, use this for getenv.\n\t// If nil, use os.Getenv.\n\tGetenv func(string) string\n}\n\nfunc NewParser() *Parser {\n\treturn &Parser{\n\t\tParseEnv:      ParseEnv,\n\t\tParseBacktick: ParseBacktick,\n\t\tPosition:      0,\n\t\tDir:           \"\",\n\t}\n",
+      "quote_sha256": "5034c3842f57a68fe7c087833fa40f5758c1aff2bc16ca4f07f2e4dede91835e",
+      "reference_proposition": "Parser stores ParseEnv/ParseBacktick/Position/Dir/Getenv; NewParser copies current globals, initializes Position0 and empty Dir.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW03",
+      "start_line": 24,
+      "end_line": 27,
+      "quote": "func replaceEnv(getenv func(string) string, s string) string {\n\tif getenv == nil {\n\t\tgetenv = os.Getenv\n\t}\n",
+      "quote_sha256": "ba4cba7b2465381d4f1f45057dea0ff5f899c51e54bae19f3e7519a620bec93e",
+      "reference_proposition": "replaceEnv uses custom Getenv when provided, otherwise os.Getenv. Callback/environment behavior is outside source-only execution observation.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW04",
+      "start_line": 122,
+      "end_line": 139,
+      "quote": "func (p *Parser) Parse(line string) ([]string, error) {\n\targs := []string{}\n\tbuf := \"\"\n\tvar escaped, doubleQuoted, singleQuoted, backQuote, dollarQuote bool\n\tbacktick := \"\"\n\n\tpos := -1\n\tgot := argNo\n\n\ti := -1\nloop:\n\tfor _, r := range line {\n\t\ti++\n\t\tif escaped {\n\t\t\tbuf += string(r)\n\t\t\tescaped = false\n\t\t\tgot = argSingle\n\t\t\tcontinue\n",
+      "quote_sha256": "9d97afbf97f57608b985f4586f9c08710d17d8086abed6e5882f0c3929c33003",
+      "reference_proposition": "Parse maintains distinct escape/quote states, starts pos=-1 and advances an explicit ordinal once per range iteration.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW05",
+      "start_line": 150,
+      "end_line": 171,
+      "quote": "\t\tif isSpace(r) {\n\t\t\tif singleQuoted || doubleQuoted || backQuote || dollarQuote {\n\t\t\t\tbuf += string(r)\n\t\t\t\tbacktick += string(r)\n\t\t\t} else if got != argNo {\n\t\t\t\tif p.ParseEnv {\n\t\t\t\t\tif got == argSingle {\n\t\t\t\t\t\tparser := &Parser{ParseEnv: false, ParseBacktick: false, Position: 0, Dir: p.Dir}\n\t\t\t\t\t\tstrs, err := parser.Parse(replaceEnv(p.Getenv, buf))\n\t\t\t\t\t\tif err != nil {\n\t\t\t\t\t\t\treturn nil, err\n\t\t\t\t\t\t}\n\t\t\t\t\t\targs = append(args, strs...)\n\t\t\t\t\t} else {\n\t\t\t\t\t\targs = append(args, replaceEnv(p.Getenv, buf))\n\t\t\t\t\t}\n\t\t\t\t} else {\n\t\t\t\t\targs = append(args, buf)\n\t\t\t\t}\n\t\t\t\tbuf = \"\"\n\t\t\t\tgot = argNo\n\t\t\t}\n",
+      "quote_sha256": "a9ca4a900bcc034fd96c4036ceb50a481393435b3dc9ee33c0b40d88ea57c7f4",
+      "reference_proposition": "Whitespace is appended while quoted/substitution states apply. Otherwise accumulated tokens may undergo replacement and recursive parsing with both flags disabled.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW06",
+      "start_line": 174,
+      "end_line": 217,
+      "quote": "\t\tswitch r {\n\t\tcase '`':\n\t\t\tif !singleQuoted && !doubleQuoted && !dollarQuote {\n\t\t\t\tif p.ParseBacktick {\n\t\t\t\t\tif backQuote {\n\t\t\t\t\t\tout, err := shellRun(backtick, p.Dir)\n\t\t\t\t\t\tif err != nil {\n\t\t\t\t\t\t\treturn nil, err\n\t\t\t\t\t\t}\n\t\t\t\t\t\tbuf = buf[:len(buf)-len(backtick)] + out\n\t\t\t\t\t}\n\t\t\t\t\tbacktick = \"\"\n\t\t\t\t\tbackQuote = !backQuote\n\t\t\t\t\tcontinue\n\t\t\t\t}\n\t\t\t\tbacktick = \"\"\n\t\t\t\tbackQuote = !backQuote\n\t\t\t}\n\t\tcase ')':\n\t\t\tif !singleQuoted && !doubleQuoted && !backQuote {\n\t\t\t\tif p.ParseBacktick {\n\t\t\t\t\tif dollarQuote {\n\t\t\t\t\t\tout, err := shellRun(backtick, p.Dir)\n\t\t\t\t\t\tif err != nil {\n\t\t\t\t\t\t\treturn nil, err\n\t\t\t\t\t\t}\n\t\t\t\t\t\tbuf = buf[:len(buf)-len(backtick)-2] + out\n\t\t\t\t\t}\n\t\t\t\t\tbacktick = \"\"\n\t\t\t\t\tdollarQuote = !dollarQuote\n\t\t\t\t\tcontinue\n\t\t\t\t}\n\t\t\t\tbacktick = \"\"\n\t\t\t\tdollarQuote = !dollarQuote\n\t\t\t}\n\t\tcase '(':\n\t\t\tif !singleQuoted && !doubleQuoted && !backQuote {\n\t\t\t\tif !dollarQuote && strings.HasSuffix(buf, \"$\") {\n\t\t\t\t\tdollarQuote = true\n\t\t\t\t\tbuf += \"(\"\n\t\t\t\t\tcontinue\n\t\t\t\t} else {\n\t\t\t\t\treturn nil, errors.New(\"invalid command line string\")\n\t\t\t\t}\n",
+      "quote_sha256": "d4334c09edaa0e00456dad9de2a380b2bbdaaac2011d77f1944aec52083455cf",
+      "reference_proposition": "Backtick and dollar substitution branches call shellRun only where their ParseBacktick guard is enabled; invalid parenthesis forms can return invalid command line string. Platform helper source is presently flattened/incomplete.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW07",
+      "start_line": 219,
+      "end_line": 233,
+      "quote": "\t\tcase '\"':\n\t\t\tif !singleQuoted && !dollarQuote {\n\t\t\t\tif doubleQuoted {\n\t\t\t\t\tgot = argQuoted\n\t\t\t\t}\n\t\t\t\tdoubleQuoted = !doubleQuoted\n\t\t\t\tcontinue\n\t\t\t}\n\t\tcase '\\'':\n\t\t\tif !doubleQuoted && !dollarQuote {\n\t\t\t\tif singleQuoted {\n\t\t\t\t\tgot = argQuoted\n\t\t\t\t}\n\t\t\t\tsingleQuoted = !singleQuoted\n\t\t\t\tcontinue\n",
+      "quote_sha256": "09a4f7d6db1efa0a9f9f7f41862da74fb9c6ab0d50ac0d280dee6f823cd8993e",
+      "reference_proposition": "Single/double quote toggles depend on other quote states; closing a quoted token marks argQuoted, allowing empty quoted arguments.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW08",
+      "start_line": 235,
+      "end_line": 244,
+      "quote": "\t\tcase ';', '&', '|', '<', '>':\n\t\t\tif !(escaped || singleQuoted || doubleQuoted || backQuote || dollarQuote) {\n\t\t\t\tif r == '>' && len(buf) > 0 {\n\t\t\t\t\tif c := buf[0]; '0' <= c && c <= '9' {\n\t\t\t\t\t\ti -= 1\n\t\t\t\t\t\tgot = argNo\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tpos = i\n\t\t\t\tbreak loop\n",
+      "quote_sha256": "282a5394ce163f8c65042df38a8fc3810a291820eebc41ec152a89e01d9f6a65",
+      "reference_proposition": "Unquoted control/redirection symbols terminate this parse at Position rather than executing a complete shell pipeline; the digit/redirection adjustment is a selected source condition, not general shell support.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW09",
+      "start_line": 254,
+      "end_line": 275,
+      "quote": "\tif got != argNo {\n\t\tif p.ParseEnv {\n\t\t\tif got == argSingle {\n\t\t\t\tparser := &Parser{ParseEnv: false, ParseBacktick: false, Position: 0, Dir: p.Dir}\n\t\t\t\tstrs, err := parser.Parse(replaceEnv(p.Getenv, buf))\n\t\t\t\tif err != nil {\n\t\t\t\t\treturn nil, err\n\t\t\t\t}\n\t\t\t\targs = append(args, strs...)\n\t\t\t} else {\n\t\t\t\targs = append(args, replaceEnv(p.Getenv, buf))\n\t\t\t}\n\t\t} else {\n\t\t\targs = append(args, buf)\n\t\t}\n\t}\n\tif escaped || singleQuoted || doubleQuoted || backQuote || dollarQuote {\n\t\treturn nil, errors.New(\"invalid command line string\")\n\t}\n\n\tp.Position = pos\n\n",
+      "quote_sha256": "50bca36cfb12aa39df1e8cb57d62f3fb7725477f6f8facc30aa7260f701d1c2f",
+      "reference_proposition": "Final token processing repeats expansion handling; unfinished escape/quote states return nil/error before p.Position assignment. Position is assigned only on successful completion.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW10",
+      "start_line": 278,
+      "end_line": 296,
+      "quote": "func (p *Parser) ParseWithEnvs(line string) (envs []string, args []string, err error) {\n\t_args, err := p.Parse(line)\n\tif err != nil {\n\t\treturn nil, nil, err\n\t}\n\tenvs = []string{}\n\targs = []string{}\n\tparsingEnv := true\n\tfor _, arg := range _args {\n\t\tif parsingEnv && isEnv(arg) {\n\t\t\tenvs = append(envs, arg)\n\t\t} else {\n\t\t\tif parsingEnv {\n\t\t\t\tparsingEnv = false\n\t\t\t}\n\t\t\targs = append(args, arg)\n\t\t}\n\t}\n\treturn envs, args, nil\n",
+      "quote_sha256": "6419ecf3fc47f1e3661b5334515511fb569b5e9502b84a3d781445fe591e566e",
+      "reference_proposition": "ParseWithEnvs calls Parse and propagates errors, then extracts only the leading isEnv tokens until the first non-env; it does not install assignments into the process environment.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW11",
+      "start_line": 299,
+      "end_line": 307,
+      "quote": "func isEnv(arg string) bool {\n\treturn len(strings.Split(arg, \"=\")) == 2\n}\nfunc Parse(line string) ([]string, error) {\n\treturn NewParser().Parse(line)\n}\n\nfunc ParseWithEnvs(line string) (envs []string, args []string, err error) {\n\treturn NewParser().ParseWithEnvs(line)\n",
+      "quote_sha256": "14528c72820d258f3c15ab0b7b95df64ca2354e6453923ba28f294982f5999ce",
+      "reference_proposition": "isEnv checks strings.Split(arg, equals) length2, not POSIX variable-name validity. Package wrappers construct a new Parser for each call.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    },
+    {
+      "id": "SW12",
+      "start_line": 16,
+      "end_line": 21,
+      "quote": "func isSpace(r rune) bool {\n\tswitch r {\n\tcase ' ', '\\t', '\\r', '\\n':\n\t\treturn true\n\t}\n\treturn false\n",
+      "quote_sha256": "8d8e3fa5c89a2fda4161fd801b06dd9ee31a22f0b1b4abc444139122465e95f2",
+      "reference_proposition": "isSpace recognizes four specific whitespace runes; do not claim all Unicode whitespace or full POSIX compliance.",
+      "reference_status": "PROVISIONAL_BROWSER_DERIVED_NOT_RAW_PIN_VERIFIED"
+    }
+  ],
+  "adverse_reference_claims": [
+    "NewParser permanently follows later global flag changes.",
+    "ParseWithEnvs installs extracted assignments into os.Environ.",
+    "isEnv validates shell identifier names.",
+    "Position is a byte offset proven by these tests.",
+    "All quoted environment substitutions always split into multiple args.",
+    "Parsing never calls external shell helpers under any configuration.",
+    "Current authored tests passed on both platforms during this campaign.",
+    "A malformed flattened helper presentation proves upstream API removal."
+  ],
+  "test_reference_status": "479browserlines acquired in second response after first multi-page result stopped at357. Existing native Go parser accepted derived main/test files; upstream tests never executed.",
+  "G1": "INCONCLUSIVE",
+  "G2_to_G9": "NOT_EVALUATED_AS_COMPLETE_DOCUMENT",
+  "complete_technical_acceptance": false,
+  "full_model_readiness": false,
+  "training_eligible": false,
+  "owner_approved": false,
+  "publication_approved": false,
+  "gold": false,
+  "new_model_calls": 0,
+  "target_source_executed": false
+}

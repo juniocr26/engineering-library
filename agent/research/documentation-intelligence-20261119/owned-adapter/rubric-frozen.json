@@ -1,0 +1,129 @@
+{
+  "at": "2026-11-20T00:21:01.399346+00:00",
+  "status": "FROZEN_BEFORE_MODEL_REQUEST",
+  "source_revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+  "claims": [
+    {
+      "id": "caller",
+      "expected": "BalanceService.summary calls its BalancePort dependency read, then builds account/available_minor/currency mapping.",
+      "support": [
+        "service.py",
+        "domain.py"
+      ]
+    },
+    {
+      "id": "structural-interface",
+      "expected": "BalancePort is a Protocol with read(account_id)->Balance; BalanceAdapter supplies this signature structurally; no explicit inheritance or runtime type check is shown.",
+      "support": [
+        "domain.py",
+        "adapter.py"
+      ]
+    },
+    {
+      "id": "path-input",
+      "expected": "read rejects empty identifiers or those containing slash, formats /sandbox/accounts/{account_id}/balance, and passes it to the injected JsonClient.get.",
+      "support": [
+        "adapter.py"
+      ]
+    },
+    {
+      "id": "header-boundary",
+      "expected": "Adapter constructs Authorization Bearer from injected token; actual credential validity, authentication, authorization enforcement, TLS and endpoint host remain unverified.",
+      "support": [
+        "adapter.py",
+        "client.py"
+      ]
+    },
+    {
+      "id": "timeout",
+      "expected": "Constructor timeout defaults to2.0 and is forwarded; concrete transport and timeout enforcement are absent, so actual elapsed deadline cannot be asserted.",
+      "support": [
+        "adapter.py",
+        "client.py"
+      ]
+    },
+    {
+      "id": "mapping",
+      "expected": "Mapping copies payload available_minor/currency and caller account_id into Balance; rejects bool/non-int amount; currency must be str length3, no ISO/uppercase check.",
+      "support": [
+        "mapping.py",
+        "domain.py"
+      ]
+    },
+    {
+      "id": "gateway-error",
+      "expected": "Only GatewayUnavailable from get is caught and converted to BalanceUnavailable with original cause; mapping executes after try.",
+      "support": [
+        "adapter.py"
+      ]
+    },
+    {
+      "id": "other-errors",
+      "expected": "Missing payload keys, mapping ValueError and unrelated client errors propagate; no blanket catch is shown.",
+      "support": [
+        "adapter.py",
+        "mapping.py"
+      ]
+    },
+    {
+      "id": "retry",
+      "expected": "One get call is written per read with no adapter retry; the absent concrete JsonClient could independently retry, so no end-to-end guarantee.",
+      "support": [
+        "adapter.py",
+        "client.py"
+      ]
+    },
+    {
+      "id": "state",
+      "expected": "No persistence/cache write is visible in service/adapter/mapping; absent concrete client implementation prevents global no-side-effect claims.",
+      "support": [
+        "adapter.py",
+        "mapping.py",
+        "service.py",
+        "client.py"
+      ]
+    },
+    {
+      "id": "configuration",
+      "expected": "Client, token and timeout are constructor-injected; no environment/configuration loader or service wiring is supplied.",
+      "support": [
+        "adapter.py",
+        "service.py"
+      ]
+    },
+    {
+      "id": "fake-tests",
+      "expected": "Only owned fake-client tests run; no live API, actual money movement or real external service validation.",
+      "support": [
+        "test_adapter.py"
+      ]
+    }
+  ],
+  "scoring": "Review each factual statement with citations, correct support versus unsupported/omitted; report more evidence and extra input tokens separately from tool orchestration. Two arms share source family; not a certified holdout or causal neural learning experiment.",
+  "arms": {
+    "caller-only": [
+      "domain.py",
+      "adapter.py",
+      "service.py"
+    ],
+    "bounded-helper": [
+      "domain.py",
+      "adapter.py",
+      "service.py",
+      "mapping.py:balance_from_payload via tool",
+      "client.py:JsonClient.get via tool"
+    ]
+  },
+  "model_budget": {
+    "calls": 2,
+    "num_predict": 1600,
+    "num_ctx": 8192,
+    "temperature": 0,
+    "seed": 42,
+    "num_thread": 4,
+    "timeout_seconds_per_call": 900,
+    "retries": 0
+  },
+  "expected_answers_sent_to_model": false,
+  "owner_approved": false
+}

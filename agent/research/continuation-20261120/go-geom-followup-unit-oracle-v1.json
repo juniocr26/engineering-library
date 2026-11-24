@@ -1,0 +1,72 @@
+{
+  "at": "2026-11-20T13:25:49.467393+00:00",
+  "revision": "ccb5701a505df08114edca6b19efaf9d3f01fc8d",
+  "frozen_before_followup_unit_predictions": true,
+  "source_review_expected": {
+    "point.go": {
+      "selectors": [
+        "Point",
+        "NewPoint",
+        "NewPointEmpty",
+        "NewPointFlat",
+        "Point.SetCoords",
+        "Point.MustSetCoords",
+        "Point.Clone",
+        "Point.SetSRID"
+      ],
+      "facts": [
+        "Point embeds geom0",
+        "NewPointFlat assigns supplied flatCoords directly",
+        "SetCoords returns nil,err on delegated error and g,nil on success",
+        "Clone returns deriveClonePoint(g)",
+        "SetSRID writes g.srid"
+      ]
+    },
+    "flat.go": {
+      "selectors": [
+        "geom0",
+        "geom0.FlatCoords",
+        "geom0.Coords",
+        "geom0.setCoords",
+        "deflate0",
+        "inflate0"
+      ],
+      "facts": [
+        "geom0 holds layout,stride,flatCoords,srid",
+        "FlatCoords directly returns g.flatCoords",
+        "Coords calls inflate0",
+        "setCoords assigns both g.flatCoords and err from deflate0(nil,...)",
+        "deflate0 length mismatch returns nil and ErrStrideMismatch",
+        "inflate0 mismatch panics;otherwise make/copy written"
+      ]
+    },
+    "geom.go": {
+      "selectors": [
+        "Layout",
+        "Layout.Stride",
+        "Must",
+        "ErrStrideMismatch"
+      ],
+      "facts": [
+        "Stride written switch has0,2,3,3,4 anddefaultint(l)",
+        "Must helper needs inspection before attributing panic propagation"
+      ]
+    },
+    "derived.gen.go": {
+      "selectors": [
+        "deriveClonePoint",
+        "deriveDeepCopy_6",
+        "deriveDeepCopy_11"
+      ],
+      "facts": [
+        "Clone helper returnsnilfornilsrc;newPointthenDeepCopy6",
+        "DeepCopy6routesembeddedgeom0toDeepCopy11",
+        "DeepCopy11copieslayout,stride,sridandhasmake/copyflatCoordsbranches"
+      ]
+    }
+  },
+  "context_bound": 24576,
+  "quote_bound": 6144,
+  "runtime_type_or_module_verification": false,
+  "training_exclusion": true
+}

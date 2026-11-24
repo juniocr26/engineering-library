@@ -1,0 +1,78 @@
+{
+  "id": "CONT-NIL-BINDING-GUARD",
+  "status": "REJECTED_UNRESOLVED_BINDING",
+  "at": "2026-11-19T14:01:54.037717+00:00",
+  "candidate": "Treat return expressions named nil as proof that an error return is nil and automatically reject non-nil-error prose",
+  "counterexample": "A package variable named nil is a non-nil error value. Selected F still has source return expressions nil,nil, but its error result is non-nil.",
+  "source": "package main\n\ntype syntheticError struct{}\nfunc (syntheticError) Error() string { return \"synthetic\" }\n\nvar nil error = syntheticError{}\n\nfunc F() (any, error) { return nil, nil }\nfunc zeroError() error { var result error; return result }\nfunc main() {\n _, err := F()\n if err != zeroError() { println(\"NON_NIL_ERROR\") }\n}\n",
+  "source_packet": {
+    "go_version": "go1.27.4",
+    "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+    "path": "synthetic/nil_shadow.go",
+    "platform": "darwin/arm64",
+    "profile": "go-standard-parser-declarations-v1",
+    "source_executed": false,
+    "source_sha256": "1915dd0547ce82a88e9f9556fef85203c282793ddfe7bbeff373678844e2fec0",
+    "syntax_only": true,
+    "units": [
+      {
+        "selector": "F",
+        "declaration_kind": "function",
+        "symbol": "main.F",
+        "start_line": 8,
+        "end_line": 8,
+        "quote": "func F() (any, error) { return nil, nil }",
+        "declaration": "func F() (any, error)",
+        "function_type": "func() (any, error)",
+        "return_contract": {
+          "AST_expression_kinds": [
+            "*ast.Ident",
+            "*ast.Ident"
+          ],
+          "expressions": [
+            "nil",
+            "nil"
+          ],
+          "kind": "sole-return-expressions",
+          "runtime_completion_verified": false
+        }
+      }
+    ],
+    "producer": {
+      "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+      "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+      "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+      "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+      "version": "1.5.0"
+    }
+  },
+  "owned_synthetic_probe": {
+    "at": "2026-11-19T14:01:22.282761+00:00",
+    "build_command": [
+      "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+      "build",
+      "-p",
+      "1",
+      "-trimpath",
+      "-buildvcs=false",
+      "-o",
+      "/tmp/el-cont-nil-binding/nil-binding",
+      "/sources/engineering-library/.local-backups/continuation-20261119/nil-shadow-counterexample.go"
+    ],
+    "build_exit": 0,
+    "build_stderr": "",
+    "source_sha256": "1915dd0547ce82a88e9f9556fef85203c282793ddfe7bbeff373678844e2fec0",
+    "owned_synthetic_probe": true,
+    "external_repository_source_executed": false,
+    "model_calls": 0,
+    "run_exit": 0,
+    "stdout": "",
+    "stderr": "NON_NIL_ERROR\n",
+    "non_nil_error_observed": true
+  },
+  "decision": "Do not add this semantic guard or reinterpret the existing syntax renderer as value analysis. Full lexical/package binding evidence is required; imported types and other files may matter. Existing source-only profile correctly says expressions in source order and explicitly leaves binding/type/runtime unverified.",
+  "external_repository_source_executed": false,
+  "neural_calls": 0,
+  "production_changes": false,
+  "training_gold": false
+}

@@ -1,0 +1,38 @@
+Internal Error ()
+citeturn16view0 [wordlim: 200] Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/973b9d5391598d4ee601db46fa32f6e186a356ac/util_posix.go","lineno":null}); 
+Failed to fetch https://raw.githubusercontent.com/mattn/go-shellwords/973b9d5391598d4ee601db46fa32f6e186a356ac/util_posix.go: Cache miss--------------------------------------------------------------------------------
+Internal Error ()
+citeturn16view1 [wordlim: 200] Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/973b9d5391598d4ee601db46fa32f6e186a356ac/util_windows.go","lineno":null}); 
+Failed to fetch https://raw.githubusercontent.com/mattn/go-shellwords/973b9d5391598d4ee601db46fa32f6e186a356ac/util_windows.go: Cache miss--------------------------------------------------------------------------------
+ (https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/util_posix.go)
+citeturn16view2 [wordlim: 200] Crawled: 2 weeks ago; Content type: text/plain; Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/util_posix.go","lineno":null}); Total lines: 29
+L0: //go:build !windows
+L1: // +build !windows
+L2: 
+L3: package shellwords
+L4: 
+L5: import (
+L6: 	"fmt"
+L7: 	"os"
+L8: 	"os/exec"
+L9: 	"strings"
+L10: )
+L11: func shellRun(line, dir string) (string, error) {
+L12: 	var shell string
+L13: 	if shell = os.Getenv("SHELL"); shell == "" {
+L14: 		shell = "/bin/sh"
+L15: 	}
+L16: 	cmd := exec.Command(shell, "-c", line)
+L17: 	if dir != "" {
+L18: 		cmd.Dir = dir
+L19: 	}
+L20: 	b, err := cmd.Output()
+L21: 	if err != nil {
+L22: 		if eerr, ok := err.(*exec.ExitError); ok {
+L23: 			b = eerr.Stderr
+L24: 		}
+L25: 		return "", fmt.Errorf("%s: %w", string(b), err)
+L26: 	}
+L27: 	return strings.TrimSpace(string(b)), nil
+L28: }
+

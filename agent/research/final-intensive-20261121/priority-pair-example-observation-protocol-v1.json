@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-21T23:51:55.424175+00:00",
+  "cases": [
+    {
+      "topic": "fastapi-cache",
+      "language": "en",
+      "path": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+      "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+      "code": "from fastapi import Depends\n\nasync def synthetic_value():\n    return 1\n\nasync def synthetic_endpoint(value: int = Depends(synthetic_value, use_cache=False)):\n    return {\"value\": value}\n",
+      "code_sha256": "fb2d6b08ba302e3eade2eae2778515bde661320765bf13cc3285a3415fcc3421"
+    },
+    {
+      "topic": "fastapi-cache",
+      "language": "pt-BR",
+      "path": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+      "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+      "code": "from fastapi import Depends\n\nasync def synthetic_value():\n    return 1\n\nasync def synthetic_endpoint(value: int = Depends(synthetic_value, use_cache=False)):\n    return {\"value\": value}\n",
+      "code_sha256": "fb2d6b08ba302e3eade2eae2778515bde661320765bf13cc3285a3415fcc3421"
+    },
+    {
+      "topic": "cobra-validation",
+      "language": "en",
+      "path": "agent/research/portfolio-vivabem-20261120/cobra-validation-context-candidate-v2/en.md",
+      "document_sha256": "7a80c02bedc1aafdfab8ec73ef900b59e8f397787e757b324c61690759e6fcc6",
+      "code": "validator := cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs)\ncmd := &cobra.Command{ValidArgs: []string{\"red\", \"blue\"}}\nerr := validator(cmd, []string{\"red\", \"blue\"})\n_ = err\n",
+      "code_sha256": "5e5b98c87c4b1d9f576039c319225f45118d56b5b33d51821538c45d023fe508"
+    },
+    {
+      "topic": "cobra-validation",
+      "language": "pt-BR",
+      "path": "agent/research/portfolio-vivabem-20261120/cobra-validation-context-candidate-v2/pt-BR.md",
+      "document_sha256": "3d24eeaa8186522bcc891ecaa043653d01c0a1f2c6085c1d4d65de8680a26a72",
+      "code": "validator := cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs)\ncmd := &cobra.Command{ValidArgs: []string{\"red\", \"blue\"}}\nerr := validator(cmd, []string{\"red\", \"blue\"})\n_ = err\n",
+      "code_sha256": "5e5b98c87c4b1d9f576039c319225f45118d56b5b33d51821538c45d023fe508"
+    }
+  ],
+  "expected": "Each same-topic EN/PT code fence equal; Python AST parse only, Go parse one owned wrapped function only. Selected solver direct dependency_cache stores [701], with lexical ownership honored; no other direct name assignment.",
+  "negative_control": "Malformed owned Go fragment must refuse and malformed Python fragment must yield SyntaxError. These are syntax controls, not semantic/typing/runtime controls.",
+  "go_dependencies": "Existing verified own Go launcher/manifest/license/Darwin parser already preserved by helper protocol.",
+  "source_programs_executed": false
+}

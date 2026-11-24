@@ -1,0 +1,205 @@
+{
+  "at": "2026-11-22T01:16:04.321494+00:00",
+  "checkpoint": 12,
+  "archive": ".local-backups/final-intensive-20261121/checkpoint-012/research-reports-and-selected-dependencies.tar.gz",
+  "archive_sha256": "f0ea8f284af2e00d82967d39ef1b46a017da4f5f69fa5617ef6c2316c280e0a1",
+  "archive_bytes": 15503845,
+  "input_manifest": ".local-backups/final-intensive-20261121/checkpoint-012/input-manifest.json",
+  "input_manifest_sha256": "522c400974dc703c6a50a5df3e0739a669fbf52fc9239a6abc9ed5e9473aca43",
+  "regular_files_restored_and_hash_verified": 968,
+  "file_modes_verified": true,
+  "restored_root": "/private/tmp/el-final-012-md7803ut",
+  "consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import binding_envelope_v1 as v; a=json.loads((p/\"trusted-binding-anchor-v1.json\").read_text());root=p.parents[2];out={k:v.validate(v.canonical(x),x,root) for k,x in a.items()};print(json.dumps(out));assert all(not r for r in out.values())",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"fastapi\": [], \"cobra\": [], \"zod\": []}\n",
+    "stderr": ""
+  },
+  "exception_scope_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import observe_exception_scope_v2 as v; protocol=json.loads((p/\"exception-scope-protocol-v2.json\").read_text());rows=[v.flags((p/c[\"helper\"]).read_text(),(p/c[\"job\"]).read_text())[0]==c[\"expected\"] for c in protocol[\"cases\"]];print(json.dumps({\"matched\":sum(rows),\"cases\":len(rows)}));assert all(rows)",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"matched\": 8, \"cases\": 8}\n",
+    "stderr": ""
+  },
+  "helper_admission_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);root=p.parents[2];sys.path.insert(0,str(root/\"agent/tools\"));import documentation_retrieval as h; protocol=json.loads((p/\"helper-admission-protocol-v1.json\").read_text());observations=[]\nfor c in protocol[\"tasks\"]:\n raw=(p/\"reacquired-public-sources\"/c[\"task\"]/c[\"path\"]).read_bytes()\n try:\n  unit=h.extract(raw.decode(),c[\"selector\"],c[\"language\"]);h.validate_unit(unit,raw,c[\"selector\"],c[\"language\"]);status=\"ADMITTED_LEXICAL_UNIT\"\n except Exception as error: status=\"REFUSED\"\n observations.append(status==c[\"expected\"])\nprint(json.dumps({\"matched\":sum(observations),\"cases\":len(observations)}));assert all(observations)",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"matched\": 8, \"cases\": 8}\n",
+    "stderr": ""
+  },
+  "zod_jsc_parser_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/observe_zod_jsc_syntax_v1.py",
+      "--root",
+      "/private/tmp/el-final-012-md7803ut",
+      "--stdout-only"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"at\": \"2026-11-22T01:16:03.538983+00:00\", \"protocol_sha256\": \"38ae698f3a43344e1b544ee6fb9d5f94b9f34b3b6db41921b093968b2e90e5c3\", \"parser_sha256\": \"3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675\", \"runtime\": \"/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore\", \"observations\": {\"typescript\": \"5.9.3\", \"cases\": [{\"id\": \"en\", \"source\": \"const result = safeParse(schema, input);\\nif (result.success) {\\n  const data = result.data;\\n  void data;\\n} else {\\n  const error = result.error;\\n  void error;\\n}\\n\", \"document_sha256\": \"07a12eb080c080ff1f17853e32ecf32ccec68e60fffdc3ba7fd26a13e8fe0729\", \"code_sha256\": \"b205d32eba5ccfbd5eaf857608dc7efb82e5bd9d6b324991f3514c1bb0d09b15\", \"expected_zero_diagnostics\": true, \"diagnostics\": [], \"matched\": true}, {\"id\": \"pt-BR\", \"source\": \"const result = safeParse(schema, input);\\nif (result.success) {\\n  const data = result.data;\\n  void data;\\n} else {\\n  const error = result.error;\\n  void error;\\n}\\n\", \"document_sha256\": \"22c42bef28d2f575750c206c43a275c4dabdd186fca615690cfe9bc1fe2eea06\", \"code_sha256\": \"b205d32eba5ccfbd5eaf857608dc7efb82e5bd9d6b324991f3514c1bb0d09b15\", \"expected_zero_diagnostics\": true, \"diagnostics\": [], \"matched\": true}, {\"id\": \"owned-malformed-negative\", \"source\": \"const result = ;\\n\", \"expected_zero_diagnostics\": false, \"diagnostics\": [{\"code\": 1109, \"message\": \"Expression expected.\"}], \"matched\": true}]}, \"node_used\": false, \"target_source_executed\": false, \"typechecked\": false, \"module_resolution\": false, \"new_installations\": false, \"scope\": \"Evaluate existing TypeScript compiler library and owned parser harness only. Parse candidate text as data; no target execution, imports, typecheck, host file access from JS, external network, packages, emit or installations.\"}\n",
+    "stderr": ""
+  },
+  "raylib_owned_fragment_replays": [
+    {
+      "id": "valid-text-api",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/valid-text-api.c"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "matched": true
+    },
+    {
+      "id": "wrong-callback-signature",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/wrong-callback-signature.c"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/wrong-callback-signature.c:4:52: error: incompatible function pointer types passing 'int (int)' to parameter of type 'LoadFileTextCallback' (aka 'char *(*)(const char *)') [-Wincompatible-function-pointer-types]\n    4 | void install_wrong(void) { SetLoadFileTextCallback(wrong_loader); }\n      |                                                    ^~~~~~~~~~~~\n/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src/raylib.h:1140:57: note: passing argument to parameter 'callback' here\n 1140 | RLAPI void SetLoadFileTextCallback(LoadFileTextCallback callback);  // Set custom file text data loader\n      |                                                         ^\n1 error generated.\n",
+      "matched": true
+    },
+    {
+      "id": "invented-text-api",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/invented-text-api.c"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/invented-text-api.c:3:35: error: call to undeclared function 'LoadFileTextGuaranteed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n    3 | void invented(const char *name) { LoadFileTextGuaranteed(name); }\n      |                                   ^\n1 error generated.\n",
+      "matched": true
+    }
+  ],
+  "priority_pair_syntax_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/observe_priority_pair_examples_v1.py",
+      "--root",
+      "/private/tmp/el-final-012-md7803ut",
+      "--stdout-only"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"at\": \"2026-11-22T01:16:03.699159+00:00\", \"protocol_sha256\": \"39c991f872672dc5e6f9844756bb01599500f5e25890b45a78d2d7c00adb9d17\", \"python_example_syntax_valid\": true, \"python_owned_malformed_refused\": true, \"solver_direct_dependency_cache_store_lines\": [701], \"go_owned_wrapped_input\": {\"source\": \"package ownedexample\\nimport cobra \\\"github.com/spf13/cobra\\\"\\nfunc reviewExample() {\\nvalidator := cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs)\\ncmd := &cobra.Command{ValidArgs: []string{\\\"red\\\", \\\"blue\\\"}}\\nerr := validator(cmd, []string{\\\"red\\\", \\\"blue\\\"})\\n_ = err\\n\\n}\\n\", \"path\": \"owned_example.go\", \"selectors\": [\"reviewExample\"]}, \"go_native_result\": {\"go_version\": \"go1.27.4\", \"parser_mode\": \"AllErrors|ParseComments|SkipObjectResolution\", \"path\": \"owned_example.go\", \"platform\": \"darwin/arm64\", \"profile\": \"go-standard-parser-declarations-v1\", \"source_executed\": false, \"source_sha256\": \"4baee4fb8fd0d7d1b858538d5e21b29123e2e9b0b390878314136352636ae105\", \"syntax_only\": true, \"units\": [{\"selector\": \"reviewExample\", \"declaration_kind\": \"function\", \"symbol\": \"ownedexample.reviewExample\", \"start_line\": 3, \"end_line\": 9, \"quote\": \"func reviewExample() {\\nvalidator := cobra.MatchAll(cobra.ExactArgs(2), cobra.OnlyValidArgs)\\ncmd := &cobra.Command{ValidArgs: []string{\\\"red\\\", \\\"blue\\\"}}\\nerr := validator(cmd, []string{\\\"red\\\", \\\"blue\\\"})\\n_ = err\\n\\n}\", \"declaration\": \"func reviewExample()\", \"function_type\": \"func()\"}], \"producer\": {\"source_sha256\": \"5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e\", \"binary_sha256\": \"e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82\", \"manifest_sha256\": \"0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f\", \"launcher_sha256\": \"15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08\", \"version\": \"1.6.1\"}}, \"go_owned_malformed_refusal\": \"Go syntax refused: owned_bad.go:2:21: expected ')', found '{' (and 3 more errors)\", \"target_code_executed\": false, \"typecheck_or_import_resolution\": false, \"neural_calls\": 0, \"scope\": \"Exact candidate examples syntax; one selected lexical store query. Not application suites, semantic model accuracy or whole-function runtime proof.\"}\n",
+    "stderr": ""
+  },
+  "faq_binding_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import faq_question_binding_v1 as v; registry=json.loads((p/\"faq-question-binding-registry-v1.json\").read_text())[\"registry\"];cases=json.loads((p/\"faq-question-binding-controls-v1.json\").read_text())[\"cases\"];rows=[(v.diagnose(c[\"raw\"],registry)[\"status\"]==\"LITERAL_BINDINGS_VALID\")==c[\"expected_binding_valid\"] for c in cases];print(json.dumps({\"matched\":sum(rows),\"cases\":len(rows),\"semantic_acceptance\":False}));assert all(rows)",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"matched\": 14, \"cases\": 14, \"semantic_acceptance\": false}\n",
+    "stderr": ""
+  },
+  "cpp_AST_IR_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/consume_cpp_dispatch_ast_v3.py",
+      "--root",
+      "/private/tmp/el-final-012-md7803ut",
+      "--stdout-only"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"old_owned_controls\": 6, \"partial_compile_errors_refused\": 1, \"same_TU_callee_JSON_equal\": false, \"IR_calls_differ\": true, \"override_virtual_field\": null, \"override_virtual_field_present\": false, \"targets_executed\": false}\n",
+    "stderr": ""
+  },
+  "public_exposure_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/consume_exposure_evidence_v1.py",
+      "--root",
+      "/private/tmp/el-final-012-md7803ut"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"public_archived_snapshots_hash_verified\": 145, \"historical_execution_witnesses_verified\": 6, \"repository_matrix_rows_consistent\": 42, \"new_model_calls\": 0, \"training_eligible\": 0, \"scope\": \"Frozen metadata and actual restored public bytes. Catalog directory presence remains the original recorded observation, not a restored live catalog or clean-clone proof.\"}\n",
+    "stderr": ""
+  },
+  "tokenizer_metadata_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/consume_gguf_metadata_prefix_v1.py",
+      "--root",
+      "/private/tmp/el-final-012-md7803ut"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"metadata_keys_verified\": 30, \"metadata_bytes\": 7822528, \"vocab_count\": 128256, \"declared_tensor_count_not_read\": 255, \"tensor_bytes\": 0, \"tokenizer_executed\": false, \"model_loaded\": false}\n",
+    "stderr": ""
+  },
+  "openshot_case_binding_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/consume_openshot_path_case_v1.py",
+      "--root",
+      "/private/tmp/el-final-012-md7803ut"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"task\": \"OPENSHOT_PATHS_PY_EVAL_01\", \"source_hashes_and_syntax_matched\": 6, \"reference_quote_bindings_matched\": 21, \"semantic_accuracy_measured\": false, \"model_evaluated\": false, \"target_source_executed\": false, \"certified_holdout\": false}\n",
+    "stderr": ""
+  },
+  "chi_revision_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-012-md7803ut/agent/research/final-intensive-20261121/review_chi_revision_context_v1.py",
+      "--root",
+      "/private/tmp/el-final-012-md7803ut",
+      "--replay-native",
+      "--stdout-only"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"one_real_revision_pair\": true, \"lifecycle_views\": {\"historical-note\": \"NO-OP\", \"explicit-current-pin-target\": \"MODIFY_PROVENANCE_AND_CONTEXT\"}, \"unchanged_selected_files\": 8, \"lexical_invocation_sites\": 3, \"native_packets_replayed_exactly\": 4, \"G9\": \"INCONCLUSIVE_PENDING_RECOVERY\", \"new_local_model_calls\": 0}\n",
+    "stderr": ""
+  },
+  "scope": "Local checkpoint and finite binding/syntax/static-data consumer replay only. Not clean clone, model/optimizer, remote backup, Windows, crash durability or semantic correctness.",
+  "self_cut": "This receipt and manifest are outside own archive; later checkpoint can include earlier receipt. No infinite self-hash closure.",
+  "active_campaign": true,
+  "neural_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

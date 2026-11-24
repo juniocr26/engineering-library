@@ -1,0 +1,91 @@
+{
+  "at": "2026-11-20T00:24:55.921033+00:00",
+  "chapter_id": "chi-throttle-workflow",
+  "source_repository": "chi",
+  "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+  "original_status": "REQUIRES_CORRECTION",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "source_git_identity_receipt": "../../chapter-source-reverification.json",
+  "claims": [
+    {
+      "id": "guards",
+      "path": "middleware/throttle.go",
+      "first_line": 47,
+      "last_line": 59,
+      "review": "Limit<1 and backlog<0 panic; zero status gets default."
+    },
+    {
+      "id": "channels",
+      "path": "middleware/throttle.go",
+      "first_line": 60,
+      "last_line": 75,
+      "review": "Processing Limit, admission Limit+BacklogLimit; initialized token budgets."
+    },
+    {
+      "id": "immediate-path",
+      "path": "middleware/throttle.go",
+      "first_line": 77,
+      "last_line": 105,
+      "review": "Backlog defer then processing defer registered before next call; immediate path creates no later timer."
+    },
+    {
+      "id": "waiting-path",
+      "path": "middleware/throttle.go",
+      "first_line": 107,
+      "last_line": 132,
+      "review": "Timer/context/token select; timer stopped in context and acquired-token cleanup."
+    },
+    {
+      "id": "retry-rounding",
+      "path": "middleware/throttle.go",
+      "first_line": 149,
+      "last_line": 163,
+      "review": "Nil callback returns, duration rounds/clamps and decimal Retry-After is set."
+    },
+    {
+      "id": "wrapper-default",
+      "path": "middleware/throttle.go",
+      "first_line": 31,
+      "last_line": 44,
+      "review": "Throttle explicitly provides60s timeout; ThrottleBacklog forwards explicit duration; WithOpts copies field."
+    }
+  ],
+  "bilingual_review": "Both full texts manually compared; all inline technical spans remain equal. Cleanup registration/execution correction made in both languages.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "64d53d94a6df0e2a0aaf5ec0579f55aeacbdffdb6f680e0eba608b9c0eb05009",
+      "after_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -26,7 +26,7 @@\n \n ## Deferred release does not interrupt the next handler\n \n-The processing-token send is written inside a deferred function, while the next-handler invocation is a direct synchronous call. Describing the token as returned before the handler runs reverses the shown order. In the ordinary completed path, deferred processing release is scheduled after the next call and before the earlier backlog release during deferred execution. This is a source-level account of scheduling the cleanup, not a measurement of concurrent request completion.\n+The processing-token send is written inside a deferred function, while the next-handler invocation is a direct synchronous call. Describing the token as returned before the handler runs reverses the shown order. Both cleanup calls are registered before the next-handler call. On its ordinary return, the later-registered processing cleanup runs before the earlier-registered backlog cleanup as the surrounding callback returns. This is a source-level account of scheduling the cleanup, not a measurement of concurrent request completion.\n \n The timer governs waiting for a processing token. The shown timer-select code is no longer running alongside the next handler after that token has been acquired. It therefore does not establish forced interruption of a blocked handler. Likewise, if multiple select cases are ready, this source does not establish a deterministic preference for cancellation over admission. The code contains cancellation branches, not a universal guarantee that every already-cancelled request is rejected before any handler call.\n \n@@ -36,3 +36,33 @@\n \n These operations describe the helper when its calls complete normally; they do not prove that an arbitrary configured callback cannot panic or block. The chapter expands the baseline's useful header observations into the surrounding admission and release workflow, and corrects the zero-backlog boundary. The additional option and state-field excerpts were read for this correction, rather than being falsely attributed to the model's original selected context. This source-reviewed bilingual candidate is pending owner approval and has not been published or promoted to training gold.\n \n+## Configuration at the actual entry point\n+\n+The wrappers and the options constructor do not have identical default behavior. The full frozen file shows that `Throttle` explicitly supplies a 60-second backlog timeout. `ThrottleBacklog` forwards its duration argument. `ThrottleWithOpts` copies `opts.BacklogTimeout` directly; this function does not replace zero with that wrapper default.\n+\n+| Option | Source-backed rule in ThrottleWithOpts |\n+| --- | --- |\n+| Limit | Values below 1 panic before channel creation. |\n+| BacklogLimit | Negative values panic; zero passes this guard. |\n+| BacklogTimeout | Copied directly; no positivity guard is shown. |\n+| StatusCode | Zero becomes the too-many-requests constant; another value is copied. |\n+| RetryAfterFn | Nil skips the retry-header helper body; another value is called on rejection paths. |\n+\n+## Engineer FAQ\n+\n+<!-- reading-section: faq:concurrency-not-per-user-rate -->\n+### Is this a per-user request-rate limit?\n+\n+The captured channels limit concurrent admission and processing for the middleware instance. There is no per-user identifier, map of user buckets or periodic refill in this selected implementation. The timer limits waiting for a processing token.\n+\n+<!-- reading-section: faq:zero-backlog -->\n+### Does zero backlog disable all requests?\n+\n+No. With a valid positive limit, the backlog-token capacity is the sum of that limit and zero. Zero backlog passes the explicit validation guard; admission and processing tokens still have separate roles.\n+\n+<!-- reading-section: faq:retry-header-not-execution -->\n+### Does setting RetryAfterFn automatically retry a request?\n+\n+The helper sets `Retry-After` when its callback completes normally. It does not invoke the next handler again or implement client retry. Negative delays become zero; a positive fractional second is rounded up, while an exact whole second is preserved.\n+\n+The language ordering and ready-case limits follow the [Go defer rules](https://go.dev/ref/spec#Defer_statements) and [select rules](https://go.dev/ref/spec#Select_statements), rechecked during this review. No upstream middleware was executed.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "abe7a9fb0323a6cbe13101485c1a3fecf3af5806973f6b1e250c488b3e7eee6d",
+      "after_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -26,7 +26,7 @@\n \n ## A devolução adiada não interrompe o próximo handler\n \n-O envio do token de processamento está escrito dentro de uma função adiada, enquanto a invocação do próximo handler é uma chamada síncrona direta. Descrever o token como devolvido antes de o handler executar inverte a ordem mostrada. No caminho comum concluído, a liberação adiada de processamento é agendada após a próxima chamada e antes da liberação anterior de backlog durante a execução dos defers. Essa é uma descrição da fonte sobre agendamento da limpeza, não uma medição de conclusão de requisições concorrentes.\n+O envio do token de processamento está escrito dentro de uma função adiada, enquanto a invocação do próximo handler é uma chamada síncrona direta. Descrever o token como devolvido antes de o handler executar inverte a ordem mostrada. As duas chamadas de limpeza são registradas antes da chamada ao próximo handler. No retorno normal dele, a limpeza de processamento registrada depois executa antes da limpeza de backlog registrada antes, quando o callback envolvente retorna. Essa é uma descrição da fonte sobre agendamento da limpeza, não uma medição de conclusão de requisições concorrentes.\n \n O temporizador governa a espera por um token de processamento. O código mostrado do select de temporizador não continua executando ao lado do próximo handler depois que esse token é adquirido. Portanto, não estabelece interrupção forçada de um handler bloqueado. Da mesma forma, se vários casos de select estão prontos, essa fonte não estabelece preferência determinística pelo cancelamento em vez da admissão. O código contém ramos de cancelamento, não garantia universal de que toda requisição já cancelada seja rejeitada antes de qualquer chamada ao handler.\n \n@@ -36,3 +36,33 @@\n \n Essas operações descrevem o helper quando suas chamadas concluem normalmente; não provam que um callback configurado arbitrário não possa entrar em pânico ou bloquear. O capítulo expande as observações úteis do baseline sobre cabeçalho para o fluxo envolvente de admissão e devolução, e corrige a fronteira de backlog zero. Os trechos adicionais de opções e campos de estado foram lidos para esta correção, em vez de serem atribuídos falsamente ao contexto original selecionado do modelo. Este candidato bilíngue revisado contra a fonte aguarda aprovação do proprietário e não foi publicado nem promovido a gold de treinamento.\n \n+## Configuração no ponto de entrada real\n+\n+Os wrappers e o construtor por opções não possuem comportamento padrão idêntico. O arquivo congelado completo mostra que `Throttle` fornece explicitamente um timeout de backlog de 60 segundos. `ThrottleBacklog` encaminha seu argumento de duração. `ThrottleWithOpts` copia `opts.BacklogTimeout` diretamente; essa função não substitui zero pelo padrão daquele wrapper.\n+\n+| Opção | Regra sustentada pela fonte em ThrottleWithOpts |\n+| --- | --- |\n+| Limit | Valores abaixo de 1 executam panic antes da criação dos canais. |\n+| BacklogLimit | Valores negativos executam panic; zero passa por essa guarda. |\n+| BacklogTimeout | Copiado diretamente; não há guarda de positividade mostrada. |\n+| StatusCode | Zero torna-se a constante de excesso de requisições; outro valor é copiado. |\n+| RetryAfterFn | Nil pula o corpo do helper de cabeçalho; outro valor é chamado nos caminhos de rejeição. |\n+\n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:concurrency-not-per-user-rate -->\n+### Este é um limite de taxa de requisições por usuário?\n+\n+Os canais capturados limitam admissão e processamento concorrentes para a instância do middleware. Não há identificador por usuário, mapa de buckets por usuário ou reposição periódica nesta implementação selecionada. O temporizador limita a espera por um token de processamento.\n+\n+<!-- reading-section: faq:zero-backlog -->\n+### Backlog zero desativa todas as requisições?\n+\n+Não. Com um limite positivo válido, a capacidade do canal de backlog é a soma desse limite com zero. Backlog zero passa pela guarda de validação explícita; tokens de admissão e processamento continuam com papéis distintos.\n+\n+<!-- reading-section: faq:retry-header-not-execution -->\n+### Definir RetryAfterFn faz a requisição ser tentada novamente automaticamente?\n+\n+O helper define `Retry-After` quando seu callback conclui normalmente. Não invoca o próximo handler novamente nem implementa retry no cliente. Durações negativas tornam-se zero; uma fração positiva de segundo é arredondada para cima, enquanto um segundo inteiro exato é preservado.\n+\n+A ordem da linguagem e os limites dos casos prontos seguem as [regras de defer de Go](https://go.dev/ref/spec#Defer_statements) e as [regras de select](https://go.dev/ref/spec#Select_statements), reconferidas nesta revisão. Nenhum middleware upstream foi executado.\n"
+    }
+  ],
+  "faq_added": 3,
+  "examples_or_commands_added": 0,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external middleware program/server executed; runtime/client guarantees not established.",
+    "Technical review is Codex source review, not independent human or publication approval."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.289894+00:00",
+    "canonical_question_ids": [
+      "concurrency-not-per-user-rate",
+      "zero-backlog",
+      "retry-header-not-execution"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/chi-throttle-workflow",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

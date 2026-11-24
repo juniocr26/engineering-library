@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-21T18:23:18.963203+00:00",
+  "topic": "opencv-depth-coercion",
+  "family": "opencv",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/opencv-depth-coercion/en.candidate.txt",
+      "sha256": "8ecb5f88917fcc0e3a40afb4b3ec393c7a8f04f3b49957198a19d870c479216a",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/opencv-depth-coercion/pt-br.candidate.txt",
+      "sha256": "bf7baa5ec52c0cc0473fd7fb30c358b67cb3adef5f62ddd181a9544f3cf932f0",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Equality returns first depth before flag branch.",
+    "Outer bitwise both<=CV32S condition contains negated muldiv plus both<=CV8S subcondition selecting16S/32S; no short-circuit conjunction inferred.",
+    "Remaining unequal path chooses64F/32F from macro-size>4 bitwise OR; no numeric macro expansion or arbitrary depth validation claimed.",
+    "Caller invokes twice in selected coercion branches, then operation-specific wtype adjustments; integer helper does not convert arrays or establish final working type.",
+    "Exact historical OPENCV-COERCE baseline and original supplied task confirm misplaced smaller-depth test and omitted negated flag. Both source-correct conceptual content and incorrect old model strings kept distinct."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/opencv/5d0660acfed08650cafec4876b4792a369a20601/modules/core/src/arithm.cpp",
+      "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+      "source_path": "modules/core/src/arithm.cpp",
+      "source_lines": [
+        314,
+        320
+      ],
+      "exact_source_evidence": "static int coerceTypes(int depth1, int depth2, bool muldiv)\n{\n    return depth1 == depth2 ? depth1 :\n        ((depth1 <= CV_32S) & (depth2 <= CV_32S)) != 0 ?\n        (((int)!muldiv & (depth1 <= CV_8S) & (depth2 <= CV_8S)) != 0 ? CV_16S : CV_32S) :\n        ((CV_ELEM_SIZE1(depth1) > 4) | (CV_ELEM_SIZE1(depth2) > 4)) != 0 ? CV_64F : CV_32F;\n}",
+      "reviewed_interpretation": "Complete helper conditional decision tree.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/opencv/5d0660acfed08650cafec4876b4792a369a20601/modules/core/src/arithm.cpp",
+      "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+      "source_path": "modules/core/src/arithm.cpp",
+      "source_lines": [
+        550,
+        571
+      ],
+      "exact_source_evidence": "    if (depth1 == depth2 && dtype == depth1)\n        wtype = dtype;\n    else if (!muldiv)\n    {\n        wtype = coerceTypes(depth1, depth2, false);\n        wtype = coerceTypes(wtype, dtype, false);\n        if (dtype < CV_32F && (depth1 < CV_32F || depth2 < CV_32F))\n            wtype = CV_32S;\n    }\n    else\n    {\n        wtype = coerceTypes(depth1, depth2, true);\n        wtype = coerceTypes(wtype, dtype, true);\n    }\n\n    // The scaled OpenCL kernels (mul/div by a scale, reciprocal, addWeighted) compute in float; the old\n    // same-type fast path forced max(depth, CV_32F). coerceTypes keeps same-type integer, so bump here.\n    if (oclop == OCL_OP_MUL_SCALE || oclop == OCL_OP_DIV_SCALE || oclop == OCL_OP_RDIV_SCALE ||\n        oclop == OCL_OP_RECIP_SCALE || oclop == OCL_OP_ADDW)\n        wtype = std::max(wtype, (int)CV_32F);\n\n    dtype = CV_MAKETYPE(dtype, cn);",
+      "reviewed_interpretation": "Actual caller flag paths and later working-type adjustment.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "OPENCV-COERCE",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/OPENCV-COERCE/raw-response.json",
+      "sha256": "4639126b37db7968cc89d3d058d48c975ad8824757387ac5f1f6ecb64c458bc2",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/OPENCV-COERCE/origin.json",
+      "origin_sha256": "de37f9edea21d05e2a03f92071fdab33b0ffd0c1917fb675141ef49e0ad58190"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

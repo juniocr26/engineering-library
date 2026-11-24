@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-20T00:54:13.863021+00:00",
+  "chapter_id": "redis-ttl-replies",
+  "source_repository": "redis",
+  "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "void-reply",
+      "path": "src/expire.c",
+      "lines": [
+        882,
+        904
+      ],
+      "review": "Void C result; client replies are addReplyLongLong calls, not C return values."
+    },
+    {
+      "id": "sentinels",
+      "path": "src/expire.c",
+      "lines": [
+        883,
+        902
+      ],
+      "review": "NULL lookup replies-2 then bare return; existing no-expire keeps-1 and bypasses division."
+    },
+    {
+      "id": "flags-and-arithmetic",
+      "path": "src/expire.c",
+      "lines": [
+        894,
+        902
+      ],
+      "review": "Absolute/relative selection independent of ms/seconds; negative computed ttl clamps0;500offsetbefore1000division, not500seconds."
+    },
+    {
+      "id": "wrappers",
+      "path": "src/expire.c",
+      "lines": [
+        906,
+        924
+      ],
+      "review": "TTL(0,0),PTTL(1,0),EXPIRETIME(0,1),PEXPIRETIME(1,1)."
+    },
+    {
+      "id": "clock-helper",
+      "path": "src/server.c",
+      "lines": [
+        263,
+        278
+      ],
+      "review": "Helper returns server.cmd_time_snapshot directly; header mstime_t explicitly millisecond type. No fresh clock syscall in helper."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "bc3097e8fda2ee83a33435cf44cd786c31670841eb1288689742398bdb4c9979",
+      "after_sha256": "2a7747ce54c4108de3f81d2ae06fc90756f3beb3aff0afbcbae2a77d27ab134d",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -8,7 +8,7 @@\n \n The selected declaration is `void ttlGenericCommand(client *c, int output_ms, int output_abs)`. Its C result type is void. Calls to `addReplyLongLong` send the values selected by this body through the client reply mechanism. The actual local-agent baseline confused those replies with C return values and described an adjustment by five hundred seconds. Both errors appeared in English and Portuguese. This correction separates control flow, the time basis and the output unit.\n \n-No Redis server was started for this chapter, and no command was sent over the network. The account follows the frozen source and its four immediate wrappers. It does not reconstruct the internal behavior of key lookup, expiration storage or the command-time snapshot helper.\n+No Redis server was started for this chapter, and no command was sent over the network. The account follows the frozen source and its four immediate wrappers. The original selected packet did not include key lookup, expiration storage or the command-time snapshot implementation. This review adds the snapshot helper below while preserving the other dependency boundaries.\n \n ## Missing keys leave before expiry conversion\n \n@@ -28,3 +28,30 @@\n \n The useful baseline observation about missing and non-expiring keys is preserved. The corrected contract adds early exit, the sentinel bypass, the independent flags and the zero clamp. This is a documentary correction against pinned source, not a new inference or proof of model learning. License notices, the original wrong response and review status remain separate, with no automatic approval for training or publication.\n \n+## Wrapper combinations\n+\n+| Wrapper | output_ms | output_abs | Non-sentinel time basis and unit |\n+| --- | --- | --- | --- |\n+| ttlCommand | 0 | 0 | Relative quantity converted to seconds |\n+| pttlCommand | 1 | 0 | Relative quantity in milliseconds |\n+| expiretimeCommand | 0 | 1 | Absolute expiry converted to seconds |\n+| pexpiretimeCommand | 1 | 1 | Absolute expiry in milliseconds |\n+\n+The missing-key and no-expiry sentinels follow their separate branches rather than this conversion table.\n+\n+## Engineer FAQ\n+\n+<!-- reading-section: faq:sentinels-before-rounding -->\n+### Are -2 and -1 rounded or divided by 1000?\n+\n+No. The missing-key path replies with -2 and returns before expiry conversion. The no-expiry path replies with -1 through its own sentinel branch. Neither goes through the ordinary non-sentinel arithmetic.\n+\n+<!-- reading-section: faq:clock-snapshot-refresh -->\n+### Does commandTimeSnapshot read a fresh clock on each call?\n+\n+The added helper implementation directly returns `server.cmd_time_snapshot`. The header declares the millisecond time type and describes this field as the root-execution snapshot. The getter itself contains no clock syscall; full update timing and runtime clock guarantees require their own evidence.\n+\n+<!-- reading-section: faq:reply-versus-key-deletion -->\n+### Does a successful TTL reply delete the key?\n+\n+The selected generic body performs lookup, expiry selection and reply calls. It contains no explicit delete operation. Lookup-helper side effects and the client's actual wire delivery are not established by this excerpt, so this is not a global no-side-effect guarantee.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "4edcb6cdd295357cda63d97205da8966946265cbe61a0154b74981c914971192",
+      "after_sha256": "eb872ed3ed677b1732402bf660328246a4b3b4046dd02072a3269f26932f6c33",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -8,7 +8,7 @@\n \n A declaração selecionada é `void ttlGenericCommand(client *c, int output_ms, int output_abs)`. Seu tipo de resultado C é void. As chamadas a `addReplyLongLong` enviam os valores escolhidos por este corpo pelo mecanismo de resposta do cliente. O baseline real do agente local confundiu essas respostas com valores de retorno C e descreveu um ajuste de quinhentos segundos. Os dois erros apareceram em inglês e português. Esta correção separa fluxo de controle, referência temporal e unidade de saída.\n \n-Nenhum servidor Redis foi iniciado para este capítulo, e nenhum comando foi enviado pela rede. A descrição segue a fonte congelada e seus quatro wrappers imediatos. Não reconstrói o funcionamento interno da busca de chaves, armazenamento de expiração ou helper de instante do comando.\n+Nenhum servidor Redis foi iniciado para este capítulo, e nenhum comando foi enviado pela rede. A descrição segue a fonte congelada e seus quatro wrappers imediatos. O pacote selecionado original não incluía o funcionamento interno da busca de chaves, armazenamento de expiração ou implementação do instante do comando. Esta revisão acrescenta o helper de instante abaixo e preserva os demais limites de dependência.\n \n ## Chaves ausentes saem antes da conversão\n \n@@ -28,3 +28,30 @@\n \n A observação útil do baseline sobre chaves ausentes e sem expiração é preservada. O contrato corrigido acrescenta a saída antecipada, o desvio da sentinela, as flags independentes e o limite zero. Trata-se de correção documental contra fonte fixada, não de nova inferência ou prova de aprendizado do modelo. Avisos de licença, resposta original incorreta e estado de revisão continuam separados, sem aprovação automática para treinamento ou publicação.\n \n+## Combinações dos wrappers\n+\n+| Wrapper | output_ms | output_abs | Referência e unidade sem sentinela |\n+| --- | --- | --- | --- |\n+| ttlCommand | 0 | 0 | Quantidade relativa convertida em segundos |\n+| pttlCommand | 1 | 0 | Quantidade relativa em milissegundos |\n+| expiretimeCommand | 0 | 1 | Expiração absoluta convertida em segundos |\n+| pexpiretimeCommand | 1 | 1 | Expiração absoluta em milissegundos |\n+\n+As sentinelas de chave ausente e sem expiração seguem seus ramos separados em vez dessa tabela de conversão.\n+\n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:sentinels-before-rounding -->\n+### -2 e -1 são arredondados ou divididos por 1000?\n+\n+Não. O caminho de chave ausente responde -2 e retorna antes da conversão da expiração. O caminho sem expiração responde -1 por seu próprio ramo de sentinela. Nenhum passa pela aritmética comum sem sentinela.\n+\n+<!-- reading-section: faq:clock-snapshot-refresh -->\n+### commandTimeSnapshot lê um relógio novo em cada chamada?\n+\n+A implementação acrescentada do helper retorna diretamente `server.cmd_time_snapshot`. O cabeçalho declara o tipo temporal em milissegundos e descreve esse campo como snapshot da execução raiz. O getter em si não contém syscall de relógio; momento completo das atualizações e garantias do relógio em execução exigem sua própria evidência.\n+\n+<!-- reading-section: faq:reply-versus-key-deletion -->\n+### Uma resposta TTL bem-sucedida exclui a chave?\n+\n+O corpo genérico selecionado realiza busca, seleção de expiração e chamadas de resposta. Não contém operação explícita de exclusão. Efeitos colaterais do helper de busca e entrega real pela rede ao cliente não são estabelecidos por esse trecho; portanto, isso não é garantia global de ausência de efeitos.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.326741+00:00",
+    "canonical_question_ids": [
+      "sentinels-before-rounding",
+      "clock-snapshot-refresh",
+      "reply-versus-key-deletion"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/redis-ttl-replies",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

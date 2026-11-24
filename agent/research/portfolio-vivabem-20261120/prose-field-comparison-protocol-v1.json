@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-21T03:07:36.147308+00:00",
+  "hypothesis": "H26: choosing/decoding a numeric answer ID before prose may anchor wrong-topic content. Compare prose with no emitted ID versus prose before the ID using the same frozen reviewed facts/questions.",
+  "requests": [
+    {
+      "method": "prose-no-id",
+      "request": "agent/research/portfolio-vivabem-20261120/prose-field-comparison-v1/prose-no-id/request.json",
+      "sha256": "f9b7117374a4b67b6762066af178fdbe54b305de4e7156c0496cfd19e6e42d74"
+    },
+    {
+      "method": "prose-id-last",
+      "request": "agent/research/portfolio-vivabem-20261120/prose-field-comparison-v1/prose-id-last/request.json",
+      "sha256": "ef8677345ee7e48dea3af88406f50d36720328be79bfa6075cdac3aa7ceaa53c"
+    }
+  ],
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "reference": "answerbank-comparison-v1/answerbank-prose",
+  "source_bank_parent": "answerbank-comparison-protocol-v1.json",
+  "oracle_parent": "answerbank-comparison-oracle-v1.json",
+  "controls": "Same question text/order, all7bank entries/order/content, model/temperature/context/generated-token cap1200; output-field presence/order and necessary schema/instruction wording differ. Record actual emitted property order.",
+  "acceptance": "Each of5answers must completely and truthfully answer the named question in EN/PT, preserve identifiers/conditions and source support. If ID is emitted it must also be correct. No-ID output still requires independent semantic/source review; fixed citations alone cannot make a false answer pass. All5required before any chapter acceptance.",
+  "limits": [
+    "One development family and two frozen conditions, not independent general accuracy.",
+    "This tests observable output-method differences, not a proven internal decoding cause.",
+    "Model only contributes FAQ content; rest of complete chapter remains source-reviewed/deterministic.",
+    "Do not repair rejected model wording or silently supply missing correct answers."
+  ],
+  "no_retries": true,
+  "no_training": true,
+  "owner_approved": false,
+  "training_gold": false
+}

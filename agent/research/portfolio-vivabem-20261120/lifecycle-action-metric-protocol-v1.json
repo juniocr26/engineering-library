@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-21T11:05:26.009750+00:00",
+  "hypothesis": "H98: explicit action-specific denominators expose missing REMOVE/ADD coverage and distinguish false NO-OP, wrong action, and abstention; exact-label agreement alone is insufficient.",
+  "input": "lifecycle-cohort-reconciliation-v2.json",
+  "input_sha256": "a4fbb076d73226196d5a5ed00cd44c3de06b5b2e3c788b52d1de20bc7cd7b415",
+  "matrix_orientation": "reference rows, observed columns; fixed five labels",
+  "definitions": {
+    "exact_label": "diagonal / all observations",
+    "false_modification": "reference!=MODIFY and predicted MODIFY; report both /all predicted MODIFY and /all non-MODIFY references",
+    "unsafe_removal": "reference!=REMOVE and predicted REMOVE; report both /all predicted REMOVE and /all non-REMOVE references",
+    "change_references": [
+      "ADD",
+      "MODIFY",
+      "REMOVE"
+    ],
+    "change_wrong_or_abstained": "reference in change labels and predicted!=reference / all change references; not equivalent to false NO-OP",
+    "missed_change_false_noop": "reference in change labels and predicted NO-OP / all change references",
+    "change_abstention": "reference in change labels and predicted INCONCLUSIVE / all change references",
+    "reference_abstention_recalled": "reference INCONCLUSIVE and predicted INCONCLUSIVE / all reference INCONCLUSIVE",
+    "definitive_reference_abstention": "reference!=INCONCLUSIVE and predicted INCONCLUSIVE / all definitive references",
+    "ADD_REMOVE_coverage": "reference and predicted counts for ADD/REMOVE separately; zero reference means untested, not correct zero rate"
+  },
+  "zero_denominator_policy": "rate=null; no invented0/0success",
+  "exclusions": "H67partialscope2/2safeabstentionsnotnewmatrixcases;H68threeconditionsnotpooled;H74/V2scopeobserverlabelsnotfiveactionplannerlabels",
+  "causal_limit": "Derived metrics inherit original version, exposed/trust/admission caveats; do not convert raw oracle agreement into semantic accuracy.",
+  "new_source_execution": false,
+  "new_model_calls": 0,
+  "training_steps": 0,
+  "production_changes": 0
+}

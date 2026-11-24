@@ -1,0 +1,80 @@
+{
+  "at": "2026-11-21T07:24:28.806456+00:00",
+  "H61_preparation_only": true,
+  "original_results": "guard-domain-observer-results-v1.json",
+  "original_results_sha256": "948bcea2dc85bce80359a433a37e26a31188261828201295db8665decbc96d7d",
+  "before_revision": "3ab43dbec9270483ab1935a7650dbe9cb68f0d5e",
+  "after_revision": "f107302e9b2571ebc44d84b934fa9100a7719540",
+  "source_path": "named.go",
+  "reviewed_fact": "sqlx-values-reviewed-domain-fact-v1.json",
+  "recipes": [
+    {
+      "id": "real-source-pair",
+      "operations": [],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "changed-other-body",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "buffer.WriteString(\",\")",
+          "new": "buffer.WriteString(\";\")"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "changed-producer",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "loc := valuesReg.FindStringIndex(bound)",
+          "new": "loc := differentProducer(bound)"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "stale-domain-hash",
+      "operations": [
+        {
+          "target": "fact_bytes",
+          "kind": "append_utf8",
+          "text": " "
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "missing-guard",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "if len(loc) < 2 {",
+          "new": "if len(loc) <= 2 {"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    },
+    {
+      "id": "noncanonical-decimal-guard",
+      "operations": [
+        {
+          "target": "after_source",
+          "kind": "replace_once",
+          "old": "if len(loc) < 2 {",
+          "new": "if len(loc) < 02 {"
+        }
+      ],
+      "matches_archived_original_input_hashes": true
+    }
+  ],
+  "all6recipes_reconstruct_original_inputs_exactly": true,
+  "observer_not_rerun_here": true,
+  "not_new_semantic_controls": true,
+  "gold": false
+}

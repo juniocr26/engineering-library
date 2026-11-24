@@ -1,0 +1,90 @@
+{
+  "version": "portfolio-documentation-acceptance/1.0",
+  "frozen_at": "2026-11-20T23:48:15.355913+00:00",
+  "lifecycle_labels": [
+    "ADD",
+    "MODIFY",
+    "REMOVE",
+    "NO-OP",
+    "INCONCLUSIVE"
+  ],
+  "document_states": [
+    "REJECTED",
+    "INCONCLUSIVE",
+    "STRUCTURALLY_VALID",
+    "SOURCE_VERIFIED_CANDIDATE",
+    "READY_FOR_OWNER_REVIEW",
+    "OWNER_APPROVED"
+  ],
+  "required_dimensions": [
+    "factual accuracy",
+    "source provenance",
+    "architecture boundaries",
+    "relevant completeness",
+    "API and behavior",
+    "errors and exceptions",
+    "test evidence versus execution",
+    "example validity",
+    "EN/PT-BR equivalence",
+    "FAQ quality",
+    "existing-document preservation",
+    "uncertainty"
+  ],
+  "critical_rejection": [
+    "unsupported runtime guarantee",
+    "false removal from partial selection",
+    "translated identifier",
+    "missing language",
+    "false provenance",
+    "private disclosure"
+  ],
+  "metrics": {
+    "complete_acceptance": "accepted complete task outputs / all completed outputs for same frozen task set; separate model from deterministic methods",
+    "claim_precision": "source-supported claims / reviewed claims",
+    "unsupported_rate": "unsupported claims / reviewed claims",
+    "false_acceptance": "incorrect canaries accepted / incorrect canaries reviewed",
+    "false_rejection": "correct controls rejected / correct controls reviewed",
+    "abstention": "report justified and unjustified separately",
+    "lifecycle": "five-label confusion matrix; manual oracle is not model prediction",
+    "latency": "wall and inference server separately; no fabricated token counts"
+  },
+  "independence_policy": "All development exposure grouped by source family. No neural holdout certification from repository novelty. Family reserved for evaluation-only until first generation or tool tuning; no evaluation material enters training. Generator does not approve gold. Separate evidence reconstruction required before SOURCE_VERIFIED_CANDIDATE. No owner approval inferred.",
+  "selected_static_discovery": [
+    {
+      "family": "fastapi/fastapi",
+      "matches": 0,
+      "head": "05e6df7e906c3decba377c37548019973f40bf15",
+      "initial_role": "discovery-only; evaluation independence undetermined"
+    },
+    {
+      "family": "spf13/cobra",
+      "matches": 0,
+      "head": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "initial_role": "discovery-only; evaluation independence undetermined"
+    },
+    {
+      "family": "colinhacks/zod",
+      "matches": 0,
+      "head": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "initial_role": "discovery-only; evaluation independence undetermined"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "text": "The newly added shallow clones support bounded API/architecture candidates, but cannot establish lifecycle MODIFY from HEAD versus unavailable parent. Measure unavailable-parent abstention separately."
+    },
+    {
+      "id": "H2",
+      "text": "Revision-rich alternatives can support measured architecture-relevant changes; choose by actual diff and exposure, not directory."
+    },
+    {
+      "id": "H3",
+      "text": "Separating declarative schema facts from runtime guarantees reduces false acceptance on bilingual architecture claims."
+    }
+  ],
+  "external_actions": "read-only Git metadata and selected licensed public source; no commands from external projects",
+  "private_policy": "metadata only in shared artifacts; private source stays out of model requests, datasets and public reports",
+  "training_allowed": false,
+  "gold": 0
+}

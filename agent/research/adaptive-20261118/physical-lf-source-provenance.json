@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-PHYSICAL-LF-SOURCE-PROVENANCE",
+  "at": "2026-11-19T06:36:40.459712+00:00",
+  "status": "INTEGRATED_CITATION_AND_SELECTOR_GUARD_FIX",
+  "caller_version": "1.9.32",
+  "concrete_failures": {
+    "Python_async_source_recorder": "Five owned fixtures with U+2028/U+2029/NEL/vertical-tab/form-feed inside a preceding string produced wrong selected quotes because str.splitlines() counted extra lines. Actual source-only workflow failed source provenance before the fix.",
+    "native_definition_selector": "Twelve Unicode separators in a preceding C++ string misaligned the line array used for body checks. A definition containing preprocessor branches bypassed its intended refusal; the LF-based source offsets themselves remained unchanged."
+  },
+  "fix": "Use LF-only physical line assembly, preserving original UTF8/CRLF bytes. Native/Python range CLIs read raw UTF8 instead of universal-newline text normalization. All three producers explicitly refuse bareCR source. Literal Unicode/control data remains supported where the language parser accepts it.",
+  "validation": {
+    "actual_preserved_counterexamples": 6,
+    "actual_old_workflow_regression": "1run failed with source-fact provenance differs from selected source,0models",
+    "Python_source_fact_suite": {
+      "runs": 16,
+      "assertions": 139,
+      "failures": 0
+    },
+    "full_Ruby_suite": {
+      "runs": 219,
+      "assertions": 1354,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    "native_and_Python_range_controls": 29,
+    "real_frozen_source_cases_compared": 17,
+    "real_cases_accepted_IR": 5,
+    "real_cases_safe_refusals": 12,
+    "all_real_IR_ENPT_or_refusals_identical": true,
+    "new_selected_generic_async_guard": "A newer interpreter must refuse nonempty selected-function type_params rather than omit them from declaration syntax; actual Python3.14controlled source confirms refusal. No backend interpreter upgrade."
+  },
+  "private_evidence": "private-research://adaptive-20261118/physical-lines-v1/",
+  "old_producers_and_failure_outputs_preserved": true,
+  "verification_sha256": "db71ea036166c39beb6577c28de958f9850b518a0991070fa2abfab2199977ed",
+  "model_calls": 0,
+  "source_programs_executed": false,
+  "training_runs": 0,
+  "human_review": "pending"
+}

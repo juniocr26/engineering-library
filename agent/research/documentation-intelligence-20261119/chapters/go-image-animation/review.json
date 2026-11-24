@@ -1,0 +1,86 @@
+{
+  "at": "2026-11-20T00:59:01.179597+00:00",
+  "chapter_id": "go-image-animation",
+  "source_repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "static-first",
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "lines": [
+        35,
+        38
+      ],
+      "review": "ValidateImageSizewithnamedstaticdefault; nonnilerrorreturnedbeforeframeguard."
+    },
+    {
+      "id": "positive-frame",
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "lines": [
+        40,
+        42
+      ],
+      "review": "frameCount<=0 invalid beforeaggregate division."
+    },
+    {
+      "id": "aggregate-budget",
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "lines": [
+        44,
+        49
+      ],
+      "review": "Strictwidth>maxPixels/height/frameCount ->animationtooLarge; finalnil. Positive divisors from prior guards."
+    },
+    {
+      "id": "different-defaults",
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "lines": [
+        9,
+        17,
+        35,
+        49
+      ],
+      "review": "Static32million selectedinsidehelpercall; aggregate64million declarationnotautomaticallyselectedparameter."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "11506023d257c425fbbf67ddf43c656a8aa58364c7ccc9e2dbebaf9db1c438b6",
+      "after_sha256": "ae0706c96c4748068640cb9ee36259171e72a6eac083739e9fc73b0ac893c3ba",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -25,3 +25,35 @@\n The file declares `DefaultMaxDecodedPixels` as `32_000_000` and `DefaultMaxAnimatedFramePixels` as `64_000_000`. The first constant is directly selected inside this function for static validation. The second constant is available for callers to pass as the aggregate budget; this function still uses the value of its parameter in the final expression. The two declarations alone do not establish every actual calling configuration.\n \n The caller-only model response contained a critical Portuguese logical error: it described failure only when none of the conditions were met, reversing the source's early-return logic. The helper response improved some positivity coverage but used a strict “less than” description where the source rejects nonpositive values, omitted the exact aggregate expression and included Spanish terminology. The correction preserves “any failing condition,” nonpositive boundaries, distinct errors and final nil in both languages. Successful citation checks do not establish these logical equivalences. This source-reviewed chapter remains a candidate, with no automatic promotion into training gold or published documentation.\n+\n+## Engineer FAQ\n+\n+<!-- reading-section: faq:guard-error-order -->\n+### Which error wins if dimensions and frame count both fail?\n+\n+The static helper runs first and its non-nil result is returned immediately. The frame-count guard is reached only after that helper succeeds. Reordering the checks would change this source contract.\n+\n+<!-- reading-section: faq:aggregate-pixels-not-bytes -->\n+### Is the aggregate limit a byte or exact memory limit?\n+\n+The source describes canvas-sized pixel work across frames. The expression divides the supplied budget by height and frame count before comparing width. It does not measure encoded bytes, decoded object allocation or total process memory.\n+\n+<!-- reading-section: faq:static-versus-aggregate-budget -->\n+### Is the aggregate parameter also used for static validation?\n+\n+The first call uses the named static default. The later expression uses the aggregate parameter. The separately declared aggregate default is available to callers, but this body does not replace its parameter with that constant.\n+\n+## Ordered validation flow\n+\n+This diagram follows only the written guards and normal helper-completion paths; it does not execute a decoder or resolve imported error identities.\n+\n+```mermaid\n+flowchart TD\n+  A[\"ValidateAnimatedDimensions\"] --> B{\"ValidateImageSize returns error?\"}\n+  B -- yes --> C[\"return err\"]\n+  B -- no --> D{\"frameCount <= 0?\"}\n+  D -- yes --> E[\"return ErrInvalidImage\"]\n+  D -- no --> F{\"width > maxPixels/height/frameCount?\"}\n+  F -- yes --> G[\"return ErrAnimationTooLarge\"]\n+  F -- no --> H[\"return nil\"]\n+```\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "8254f1ccdd4a3ce37f0c39bc08505c83f35ceea7c51144f06b1a805096679a86",
+      "after_sha256": "90a14fd6d8a44aedde52258d8c29312409a2fd6bc01a82ca07ca1aea397cec7e",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -25,3 +25,35 @@\n O arquivo declara `DefaultMaxDecodedPixels` como `32_000_000` e `DefaultMaxAnimatedFramePixels` como `64_000_000`. A primeira constante é selecionada diretamente nesta função para validação estática. A segunda fica disponível para que chamadores a passem como orçamento agregado; a função continua usando o valor do parâmetro na expressão final. As duas declarações isoladas não estabelecem todas as configurações efetivamente usadas por chamadores.\n \n A resposta do modelo com somente o chamador continha um erro lógico crítico em português: descrevia falha apenas quando nenhuma condição fosse satisfeita, invertendo a lógica dos retornos antecipados. A resposta com auxiliar ampliou parte da cobertura de positividade, mas usou “menor que” onde a fonte rejeita valores não positivos, omitiu a expressão agregada exata e incluiu terminologia espanhola. A correção preserva “qualquer condição de falha”, limites não positivos, erros distintos e nil final nos dois idiomas. Conferir citações com sucesso não estabelece essas equivalências lógicas. Este capítulo revisado continua como candidato, sem promoção automática a dado de treinamento ou documentação publicada.\n+\n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:guard-error-order -->\n+### Qual erro tem prioridade se dimensões e quantidade de quadros falharem?\n+\n+O helper estático executa primeiro e seu resultado diferente de nil é retornado imediatamente. A guarda de quantidade de quadros só é alcançada após o sucesso desse helper. Reordenar as verificações alteraria esse contrato da fonte.\n+\n+<!-- reading-section: faq:aggregate-pixels-not-bytes -->\n+### O limite agregado é um limite de bytes ou de memória exata?\n+\n+A fonte descreve trabalho em pixels do tamanho do canvas ao longo dos quadros. A expressão divide o orçamento recebido por altura e quantidade de quadros antes de comparar a largura. Não mede bytes codificados, alocação de objetos decodificados ou memória total do processo.\n+\n+<!-- reading-section: faq:static-versus-aggregate-budget -->\n+### O parâmetro agregado também é usado para validação estática?\n+\n+A primeira chamada usa o padrão estático nomeado. A expressão posterior usa o parâmetro agregado. O padrão agregado declarado separadamente está disponível para chamadores, mas esse corpo não substitui seu parâmetro por aquela constante.\n+\n+## Fluxo ordenado de validação\n+\n+Este diagrama segue apenas as guardas escritas e os caminhos de conclusão normal do helper; não executa decodificador ou resolve identidades dos erros importados.\n+\n+```mermaid\n+flowchart TD\n+  A[\"ValidateAnimatedDimensions\"] --> B{\"ValidateImageSize retorna erro?\"}\n+  B -- sim --> C[\"return err\"]\n+  B -- nao --> D{\"frameCount <= 0?\"}\n+  D -- sim --> E[\"return ErrInvalidImage\"]\n+  D -- nao --> F{\"width > maxPixels/height/frameCount?\"}\n+  F -- sim --> G[\"return ErrAnimationTooLarge\"]\n+  F -- nao --> H[\"return nil\"]\n+```\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "diagram_review": "Labels quoted for Mermaid punctuation safety; graph manually compared with ordered source guards and between languages. No renderer execution claimed.",
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.300885+00:00",
+    "canonical_question_ids": [
+      "guard-error-order",
+      "aggregate-pixels-not-bytes",
+      "static-versus-aggregate-budget"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/go-image-animation",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

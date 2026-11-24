@@ -1,0 +1,110 @@
+{
+  "at": "2026-11-20T00:32:58.806792+00:00",
+  "chapter_id": "starlette-server-error-flow",
+  "source_repository": "starlette",
+  "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "protocol-gate",
+      "path": "starlette/middleware/errors.py",
+      "lines": [
+        149,
+        152
+      ],
+      "review": "Non-http delegates app with original sender outside HTTP try and returns."
+    },
+    {
+      "id": "send-marker",
+      "path": "starlette/middleware/errors.py",
+      "lines": [
+        154,
+        161
+      ],
+      "review": "Sets nonlocal flag before awaiting send; does not prove wire delivery."
+    },
+    {
+      "id": "handler-priority",
+      "path": "starlette/middleware/errors.py",
+      "lines": [
+        163,
+        177
+      ],
+      "review": "HTTP app in try; Exception catch builds Request; debug precedes None/default and custom async/sync choice."
+    },
+    {
+      "id": "send-then-raise",
+      "path": "starlette/middleware/errors.py",
+      "lines": [
+        179,
+        186
+      ],
+      "review": "Response construction precedes response_started guard; only send conditional; final raise reached only if prior operations complete."
+    },
+    {
+      "id": "builders",
+      "path": "starlette/middleware/errors.py",
+      "lines": [
+        249,
+        259
+      ],
+      "review": "Debug literal substring text/html decides HTML vs plain; both status500; default Internal Server Error plain500."
+    },
+    {
+      "id": "helper-result",
+      "path": "starlette/concurrency.py",
+      "lines": [
+        32,
+        34
+      ],
+      "review": "Awaited helper result returned; thread implementation/cancellation not proven."
+    },
+    {
+      "id": "predicate",
+      "path": "starlette/_utils.py",
+      "lines": [
+        61,
+        65
+      ],
+      "review": "Partial unwrap and coroutine predicate on object or callable.__call__, not universal returned-awaitable classifier."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "113f6adab7649ab9decf25b62802f04d730ddbed0b0f86eb9ccfdc5d6422d83f",
+      "after_sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -34,3 +34,21 @@\n \n After those operations complete, the explicit `raise exc` propagates the caught exception. The error is not silently swallowed merely because a response was sent. If a handler or response invocation raises first, the final statement may not be reached; the body has no finally forcing that original raise after every possible helper failure. This correction preserves the distinction between error-response work, sending and propagation. It reuses the original completed baseline without another model request and remains pending owner review, with exact source and notices retained, no publication and no training approval.\n \n+## Engineer FAQ\n+\n+<!-- reading-section: faq:debug-handler-precedence -->\n+### Does debug mode also invoke the configured error handler?\n+\n+The debug branch precedes the custom-handler selection. When debug is truthy and its helper completes normally, this source selects the debug response instead. A configured custom handler is not called by that selection path.\n+\n+<!-- reading-section: faq:response-start-not-delivery-proof -->\n+### Is a response-start message proof that the client received headers?\n+\n+The local flag is set before the original sender is awaited. A sender failure can therefore occur after the flag changes. The flag controls the later error-response invocation; it is not a delivery acknowledgment.\n+\n+<!-- reading-section: faq:original-exception-rethrow -->\n+### Is the original exception swallowed after a generated response?\n+\n+The final written operation raises the caught exception after prior selected operations complete. A handler or response failure can prevent reaching that line, because no finally forces it. The separate non-HTTP delegation is outside this HTTP catch block.\n+\n+The selected constructor accepts the application, optional handler and debug flag. This chapter has not verified server configuration, persistence, retry, authentication or an actual ASGI deployment; those responsibilities require their own source and runtime evidence.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "ed94d0d6792478b5481f6075c201763325ce651f61e32a6cf6c830f74f910d4c",
+      "after_sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -34,3 +34,21 @@\n \n Depois que essas operações concluem, o `raise exc` explícito propaga a exceção capturada. O erro não é silenciado apenas porque uma resposta foi enviada. Se um handler ou a invocação da resposta lança erro antes, a instrução final pode não ser alcançada; o corpo não possui finally que force aquele raise original após toda falha possível de helper. Esta correção preserva a distinção entre trabalho de resposta de erro, envio e propagação. Reutiliza o baseline original concluído sem outro pedido ao modelo e continua pendente de revisão do proprietário, com fonte e avisos exatos retidos, sem publicação ou aprovação para treinamento.\n \n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:debug-handler-precedence -->\n+### O modo debug também invoca o handler de erro configurado?\n+\n+O ramo de debug precede a seleção do handler customizado. Quando debug é verdadeiro no teste de truthiness e seu helper conclui normalmente, essa fonte seleciona a resposta de debug. Um handler customizado configurado não é chamado por esse caminho de seleção.\n+\n+<!-- reading-section: faq:response-start-not-delivery-proof -->\n+### Uma mensagem de início de resposta prova que o cliente recebeu os cabeçalhos?\n+\n+A flag local é definida antes de aguardar o emissor original. Uma falha do emissor pode, portanto, ocorrer depois que a flag muda. A flag controla a invocação posterior da resposta de erro; não é uma confirmação de entrega.\n+\n+<!-- reading-section: faq:original-exception-rethrow -->\n+### A exceção original é silenciada depois de uma resposta gerada?\n+\n+A operação final escrita lança a exceção capturada depois que as operações selecionadas anteriores concluem. Uma falha do handler ou da resposta pode impedir chegar a essa linha, pois não há finally que a force. A delegação separada não HTTP fica fora desse bloco de captura HTTP.\n+\n+O construtor selecionado recebe aplicação, handler opcional e flag de debug. Este capítulo não verificou configuração de servidor, persistência, retry, autenticação ou uma implantação ASGI real; essas responsabilidades exigem sua própria fonte e evidência de execução.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.339200+00:00",
+    "canonical_question_ids": [
+      "debug-handler-precedence",
+      "response-start-not-delivery-proof",
+      "original-exception-rethrow"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/starlette-server-error-flow",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

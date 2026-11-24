@@ -1,0 +1,109 @@
+{
+  "at": "2026-11-22T09:10:23.340229+00:00",
+  "role": "CONSERVATIVE_SOURCE_FAMILY_DEPENDENCY_EXCLUSION_NOT_INDEPENDENCE_CERTIFICATION",
+  "batch_identity_audit_sha256": "ad29c4509bd7ab37d698f7ef55c56d68b1f4ea04d3896fffbeb82889210ea169",
+  "public_declared_family_labels": [
+    "astral-sh/ruff",
+    "colinhacks/zod",
+    "duckdb/duckdb",
+    "encode/starlette",
+    "fastapi/fastapi",
+    "fastify/fastify",
+    "go-chi/chi",
+    "jmoiron/sqlx",
+    "juniorosa/go-image-optimizer",
+    "opencv/opencv",
+    "prometheus/prometheus",
+    "rails/actionpack",
+    "redis/redis",
+    "spf13/cobra",
+    "temporalio/sdk-go"
+  ],
+  "observed_dependency_edges": [
+    {
+      "from": "fastapi/fastapi",
+      "to": "encode/starlette",
+      "kind": "STATIC_IMPORT_OF_API_FAMILY",
+      "witnesses": [
+        {
+          "path": "agent/research/final-intensive-20261121/context-topic-sources-v1/fastapi-request-context/05e6df7e906c3decba377c37548019973f40bf15/fastapi/dependencies/utils.py",
+          "sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+          "first_line": 90,
+          "last_line": 101,
+          "quote": "from starlette.background import BackgroundTasks as StarletteBackgroundTasks\nfrom starlette.concurrency import run_in_threadpool\nfrom starlette.datastructures import (\n    FormData,\n    Headers,\n    ImmutableMultiDict,\n    QueryParams,\n    UploadFile,\n)\nfrom starlette.requests import HTTPConnection, Request\nfrom starlette.responses import Response\nfrom starlette.websockets import WebSocket\n",
+          "quote_sha256": "8e4c9b00b020ca756a5fc2fd51efb0c78045a2b66523c794b7ca7a92811d5c6d",
+          "source_revision_from_existing_snapshot_lineage": "05e6df7e906c3decba377c37548019973f40bf15",
+          "new_Git_acquisition": false
+        },
+        {
+          "path": "agent/research/final-intensive-20261121/context-topic-sources-v1/fastapi-request-context/05e6df7e906c3decba377c37548019973f40bf15/fastapi/routing.py",
+          "sha256": "455a7d0dbd42a0626976d2e46f0be12d1d8901fe4d20ef6c27afa659b28bf491",
+          "first_line": 106,
+          "last_line": 132,
+          "quote": "from starlette import routing\nfrom starlette._exception_handler import wrap_app_handling_exceptions\nfrom starlette._utils import get_route_path, is_async_callable\nfrom starlette.concurrency import iterate_in_threadpool, run_in_threadpool\nfrom starlette.datastructures import URL, URLPath\nfrom starlette.exceptions import HTTPException\nfrom starlette.middleware import Middleware\nfrom starlette.middleware.body_limit import MAX_BODY_SIZE_SCOPE_KEY\nfrom starlette.requests import Request\nfrom starlette.responses import (\n    JSONResponse,\n    PlainTextResponse,\n    RedirectResponse,\n    Response,\n    StreamingResponse,\n)\nfrom starlette.routing import (\n    BaseRoute,\n    Match,\n    NoMatchFound,\n    compile_path,\n    get_name,\n)\nfrom starlette.routing import Mount as Mount  # noqa\nfrom starlette.staticfiles import StaticFiles\nfrom starlette.types import AppType, ASGIApp, Lifespan, Receive, Scope, Send\nfrom starlette.websockets import WebSocket\n",
+          "quote_sha256": "a72cca1ee44ba56f90c6e0dcb3975ec1f10fa7e2b752a3f719c6286fe5db8674",
+          "source_revision_from_existing_snapshot_lineage": "05e6df7e906c3decba377c37548019973f40bf15",
+          "new_Git_acquisition": false
+        }
+      ],
+      "must_not_infer": [
+        "Exactresolveddependencyversion",
+        "Identicalselectedsourcebytesacrossrevisions",
+        "Runtimeexecution",
+        "Allpossibledependencyedgesenumerated"
+      ]
+    }
+  ],
+  "connected_components_under_only_this_observed_edge": [
+    [
+      "astral-sh/ruff"
+    ],
+    [
+      "colinhacks/zod"
+    ],
+    [
+      "duckdb/duckdb"
+    ],
+    [
+      "fastify/fastify"
+    ],
+    [
+      "go-chi/chi"
+    ],
+    [
+      "jmoiron/sqlx"
+    ],
+    [
+      "juniorosa/go-image-optimizer"
+    ],
+    [
+      "opencv/opencv"
+    ],
+    [
+      "prometheus/prometheus"
+    ],
+    [
+      "rails/actionpack"
+    ],
+    [
+      "redis/redis"
+    ],
+    [
+      "spf13/cobra"
+    ],
+    [
+      "temporalio/sdk-go"
+    ],
+    [
+      "fastapi/fastapi",
+      "encode/starlette"
+    ]
+  ],
+  "component_count_for_this_incomplete_graph": 14,
+  "certified_independent_components": 0,
+  "policy": "Conservatively exclude related FastAPI/Starlette family tasks and derivatives together during future holdout selection, pending full dependency/family review; neither15labels nor14partialgraphcomponents are independent benchmark sample sizes.",
+  "task_or_document_verdicts_changed": false,
+  "original_files_modified": false,
+  "model_calls": 0,
+  "training_approval": false
+}

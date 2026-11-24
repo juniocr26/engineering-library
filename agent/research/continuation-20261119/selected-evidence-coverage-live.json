@@ -1,0 +1,85 @@
+{
+  "at": "2026-11-19T18:41:38.318713+00:00",
+  "status": "TWO_LIVE_POLICY_ARMS_COMPLETED_AND_SOURCE_REVIEWED",
+  "protocol_sha256": "6a3c5010be52004fae03af6594f629c896f4007a2e813e965739fa6f8b851c35",
+  "new_model_calls": 2,
+  "reused_historical_baselines_not_new_calls": 2,
+  "independent_new_holdout_families": 0,
+  "reviews": [
+    {
+      "id": "own-model-identity",
+      "status": "REJECTED_CRITICAL_FABRICATED_CALLEE",
+      "writer_exit": 0,
+      "baseline_cited_ids": [
+        "S1"
+      ],
+      "treatment_cited_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "selected_card_count": 3,
+      "baseline_coverage": 0.3333333333333333,
+      "treatment_coverage": 1.0,
+      "correct": [
+        "All three selected IDs cited; request/skill checksum checks and installed-tag lookup described at high level."
+      ],
+      "critical": [
+        "Fifth fact invents an installed method used to retrieve tags; installed is a local array variable selected from tags, not a called method."
+      ],
+      "omitted": [
+        "S1 does not distinguish digest-string/metadata validation from actually reading installed weights.",
+        "Exact error branches and fixed three required skills remain underspecified."
+      ],
+      "bilingual": "Coverage changes and factual shortcomings appear in both languages; equivalent errors are not evidence of truth.",
+      "whole_response_approved": false,
+      "training_gold": false,
+      "response_sha256": "3f24fae68f1f11856391383de0f23b181cd112d9100a5ae198f5b386e8acf434",
+      "source_program_executed": false,
+      "case_wall_seconds": 159.62686373900215,
+      "model_server_seconds": 159.480657739,
+      "new_generated_tokens": 462
+    },
+    {
+      "id": "gio-dimensions-helpers",
+      "status": "INCOMPLETE_EXACT_CONTRACT",
+      "writer_exit": 0,
+      "baseline_cited_ids": [
+        "S1"
+      ],
+      "treatment_cited_ids": [
+        "S1",
+        "S2"
+      ],
+      "selected_card_count": 2,
+      "baseline_coverage": 0.5,
+      "treatment_coverage": 1.0,
+      "correct": [
+        "Both selected IDs cited; positive width/height guard, maxPixels/height limit, helper delegation and final nil described.",
+        "Portuguese uses largura and altura rather than the earlier awkward largo/alto."
+      ],
+      "critical": [],
+      "omitted": [
+        "No distinction between written ErrInvalidImage and ErrImageTooLarge results.",
+        "Delegating cfg.Width, cfg.Height and maxPixels argument order is not stated explicitly.",
+        "Repeated generic statements consume fact budget; all-ID coverage is not full contract coverage."
+      ],
+      "bilingual": "Coverage changes and factual shortcomings appear in both languages; equivalent errors are not evidence of truth.",
+      "whole_response_approved": false,
+      "training_gold": false,
+      "response_sha256": "315b419689f42349c713e212fcede78c1216cb577774b6cffd59ff042980e8ba",
+      "source_program_executed": false,
+      "case_wall_seconds": 139.00757614599934,
+      "model_server_seconds": 138.571704145,
+      "new_generated_tokens": 513
+    }
+  ],
+  "whole_response_approvals": 0,
+  "coverage_result": "Own1/3→3/3; GIO1/2→2/2. All selected IDs cited in both new arms.",
+  "truth_result": "Own arm invents installed method; GIO arm omits exact distinct error values. Full coverage does not imply factual correctness or full contract completeness.",
+  "causal_limits": "Small two-case development comparison; old caller versus current version and changed prompt/schema recorded. No randomized repeat, broad accuracy estimate or independent transfer claim.",
+  "protocol_erratum": "Frozen GIO rubric phrase separate maxima was imprecise: source has one maxPixels budget checked by width > maxPixels/height after a separate nonpositive-dimension guard, not independent maximum width/height values. Original protocol preserved; exact source controls review.",
+  "runtime_failure": "Plain ruby first lacked nokogiri and stopped before model calls/root creation. Existing Bundler environment used without install.",
+  "training": false,
+  "production_code_changed": false
+}

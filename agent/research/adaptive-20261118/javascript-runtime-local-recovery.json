@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-JAVASCRIPT-RUNTIME-LOCAL-RECOVERY",
+  "at": "2026-11-19T01:44:51.820767+00:00",
+  "status": "VERIFIED",
+  "actual_consumer": "Explicit optional JavaScript AST CLI and unchanged permanent tests in backend using restored Node/TypeScript artifacts",
+  "integration": "Recovery evidence and private content-addressed runtime archive; no default backend Node dependency installed",
+  "archive": {
+    "uri": "private-research://adaptive-20261118/javascript-runtime-linux-arm64-v1.tar.gz",
+    "sha256": "44038bc0fc8cbdba8d76f548dc696b043d52f4050ae75504a89bb75daa60a3dc",
+    "bytes": 50850246,
+    "remote_persisted": false
+  },
+  "result": {
+    "at": "2026-11-19T01:44:51.820767+00:00",
+    "status": "VERIFIED_LOCAL_OPTIONAL_TOOL_RUNTIME_RECOVERY",
+    "archive": "javascript-runtime-linux-arm64-v1.tar.gz",
+    "archive_sha256": "44038bc0fc8cbdba8d76f548dc696b043d52f4050ae75504a89bb75daa60a3dc",
+    "archive_bytes": 50850246,
+    "restored_content_files": 145,
+    "all_content_hashes_match": true,
+    "architecture": "LinuxARM64",
+    "node": "v24.22.0",
+    "typescript": "5.9.3",
+    "actual_CLI_same_source_ranges": true,
+    "explicit_loader_main_CLI": {
+      "passed": true,
+      "all7dynamic_library_paths_restored": true
+    },
+    "permanent_tests_normal_ELF_entry": {
+      "passed": 20,
+      "failed": 0,
+      "uses": "Restored Node binary and TypeScript with backend base-image ELF loader/shared libraries; no global Node install"
+    },
+    "permanent_tests_explicit_loader_entry": {
+      "passed": 18,
+      "failed": 2,
+      "reason": "Node process.execPath identifies the manually invoked ELF loader; tests spawning process.execPath pass JS as an ELF target. Full unchanged failure retained.",
+      "scope": "This launch limitation affects subprocess tests; the actual nonspawning AST CLI succeeded with bundled loader/libraries."
+    },
+    "source_runtime_modified": false,
+    "global_dependency_install": false,
+    "service_or_environment_file_changes": false,
+    "source_executed": false,
+    "model_calls": 0,
+    "remote_recovery": false,
+    "unverified": [
+      "Windows",
+      "LinuxAMD64",
+      "nativeMacOS",
+      "arbitraryNodeapplications/subprocesslaunchers"
+    ],
+    "safe_resume": "Verify archive and all restored hashes before execution; use normal restored Node entry on this compatible backend for tests. For AST CLI alone, explicit bundled loader/library-path was verified; do not blindly use process.execPath for subprocesses under that launcher."
+  },
+  "evidence": [
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-recovery-protocol.json",
+      "sha256": "31a6aa2588e0b75b6f90782e4c9272276d5b96846336b4eba4b9e3cef387677b"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-archive-validation-v1.json",
+      "sha256": "f3af88a09ccd61a1668f312d3afe4e668a3105ead55f2bafffb6a3167c84ec0f"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-archive-manifest.json",
+      "sha256": "77cb42bdf06761089f05bba6b766d05762ce5bc558eb800ae886ab3d7f87ea4f"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-restored-hashes.json",
+      "sha256": "cb147330ff58f652012d73de3068e14ebcff1b55b13f91f7f81b98018b57c8c4"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-restored-library-resolution.txt",
+      "sha256": "8af2d6d823e7eaad5331b6f7dc6ef6d1f0c5379bdd44518dd1c2086b4cf1a68e"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-restored-controls.tap",
+      "sha256": "b8a685f84d6b13b0311d7072104e8c74f1d81e0257b8f4fdca8a811505d4fe6c"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-restored-normal-entry-controls.tap",
+      "sha256": "9c3710e475030678549507ec014c85c71ba9c7c02866efcc413e8d51fbe2574c"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-restored-cli-result.json",
+      "sha256": "bb6dbc7ce0095e6c31d4cf9f274edec925dd2e76a193b4549f0dc01c459402fd"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-runtime-recovery-receipt.json",
+      "sha256": "3c84aba455c23470d38572d158d4f0b38792568d7dc226177d17d514f089e2be"
+    }
+  ]
+}

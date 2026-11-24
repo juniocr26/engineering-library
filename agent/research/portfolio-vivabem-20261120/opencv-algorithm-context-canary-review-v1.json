@@ -1,0 +1,122 @@
+{
+  "at": "2026-11-21T06:02:54.613464+00:00",
+  "criteria": "opencv-algorithm-context-complete-criteria-v1.json",
+  "fresh_reconstruction": "opencv-algorithm-context-fresh-source-language-review-v1.json",
+  "controls": [
+    {
+      "id": "OCA1",
+      "claim": "All derived Algorithm.empty implementations return false.",
+      "oracle": "UNSUPPORTED_OR_CONTRADICTED_GENERALIZATION",
+      "decision": "REJECT",
+      "source_cards": "OC-BASE",
+      "review": "Base defaults plus virtual declarations do not establish all derived return values.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCA2",
+      "claim": "The named write overload is nonvirtual, so its inner one-argument write cannot dispatch virtually.",
+      "oracle": "CONTRADICTED",
+      "decision": "REJECT",
+      "source_cards": "OC-BASE,OC-WRITE",
+      "review": "Named wrapper declaration nonvirtual; selected inner one-argument declaration virtual.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCA3",
+      "claim": "Selected loadFromString explicitly checks fn.empty before calling create.",
+      "oracle": "CONTRADICTED",
+      "decision": "REJECT",
+      "source_cards": "OC-STRING",
+      "review": "Complete selected function body has no explicit empty-node check before create.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCA4",
+      "claim": "CV_Assert is removed in every release build.",
+      "oracle": "CONTRADICTED",
+      "decision": "REJECT",
+      "source_cards": "OC-ASSERT",
+      "review": "Ordinary assertion checks expression and calls error; static-analysis branch aborts. Not universal release removal.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCA5",
+      "claim": "Save guarantees every parameter is durably and atomically persisted.",
+      "oracle": "UNSUPPORTED_RUNTIME_GUARANTEE",
+      "decision": "REJECT",
+      "source_cards": "OC-SAVE-IMPL",
+      "review": "Delegated storage/writer behavior not established; no supported full durable/atomic persistence guarantee.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCA6",
+      "claim": "The pointer-storage write overload has been globally removed because its definition is absent from selected algorithm.cpp.",
+      "oracle": "UNSUPPORTED_REMOVAL",
+      "decision": "REJECT",
+      "source_cards": "OC-BASE",
+      "review": "Conditional declaration persists; selected implementation absence is not global removal or build configuration proof.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCA7",
+      "claim": "Owned C++ controls prove OpenCV and every derived type were compiled and tested.",
+      "oracle": "FALSE_PROVENANCE",
+      "decision": "REJECT",
+      "source_cards": "owned H54receipts",
+      "review": "Actual sources synthetic, no OpenCV includes/linking; provenance claim false.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCA8",
+      "claim": "The root Apache2 text replaces every selected source-file notice.",
+      "oracle": "UNSUPPORTED_RIGHTS_GENERALIZATION",
+      "decision": "REJECT",
+      "source_cards": "OC-NOTICE + rootnotice",
+      "review": "Distinct selected source notices retained; no blanket rights replacement established.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCP1",
+      "claim": "Selected base empty returns false; derived behavior needs more evidence.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "OC-BASE",
+      "review": "Defaultfalse and derived limitations both preserved.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCP2",
+      "claim": "Selected load has an explicit empty-node early empty Ptr return.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "OC-LOAD",
+      "review": "Explicit fn.empty return Ptr observed.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCP3",
+      "claim": "Selected named-write wrapper calls the one-argument virtual write.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "OC-BASE,OC-WRITE",
+      "review": "Inner selected write call and virtual declaration linked.",
+      "decision_matches_source_review_oracle": true
+    },
+    {
+      "id": "OCP4",
+      "claim": "Selected loadFromString lacks the same explicit open/node guards shown in load; full invalid-input outcomes remain unresolved.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "OC-LOAD,OC-STRING",
+      "review": "Body-level guard difference, full invalid-input behavior unresolved.",
+      "decision_matches_source_review_oracle": true
+    }
+  ],
+  "false_acceptance": {
+    "numerator": 0,
+    "denominator": 8
+  },
+  "false_rejection": {
+    "numerator": 0,
+    "denominator": 4
+  },
+  "reviewer": "Same campaign source reviewer using fresh Git reconstruction; not a neural/automatic/general semantic detector or independent human approval.",
+  "training_gold": false,
+  "upstream_execution": false
+}

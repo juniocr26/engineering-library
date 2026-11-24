@@ -1,0 +1,237 @@
+{
+  "at": "2026-11-21T09:35:46.255069+00:00",
+  "cards": [
+    {
+      "id": "R01",
+      "path": "cmd/prometheus/main.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "c965e55b64ab8102cc0e4642e5f07a05d1c1ffed4503efa1df53a92013ac4548",
+      "first_line": 1019,
+      "last_line": 1069,
+      "quote": "\tif !agentMode {\n\t\tactiveQueryTracker, err := promql.NewActiveQueryTracker(localStoragePath, cfg.queryConcurrency, logger.With(\"component\", \"activeQueryTracker\"))\n\t\tif err != nil {\n\t\t\tlogger.Error(\"failed to initialize active query tracker\", \"err\", err)\n\t\t\tos.Exit(1)\n\t\t}\n\n\t\topts := promql.EngineOpts{\n\t\t\tLogger:                   logger.With(\"component\", \"query engine\"),\n\t\t\tReg:                      prometheus.DefaultRegisterer,\n\t\t\tMaxSamples:               cfg.queryMaxSamples,\n\t\t\tTimeout:                  time.Duration(cfg.queryTimeout),\n\t\t\tActiveQueryTracker:       activeQueryTracker,\n\t\t\tLookbackDelta:            time.Duration(cfg.lookbackDelta),\n\t\t\tNoStepSubqueryIntervalFn: noStepSubqueryInterval.Get,\n\t\t\t// EnableAtModifier and EnableNegativeOffset have to be\n\t\t\t// always on for regular PromQL as of Prometheus v2.33.\n\t\t\tEnableAtModifier:         true,\n\t\t\tEnableNegativeOffset:     true,\n\t\t\tEnablePerStepStats:       cfg.enablePerStepStats,\n\t\t\tEnableDelayedNameRemoval: cfg.promqlEnableDelayedNameRemoval,\n\t\t\tEnableTypeAndUnitLabels:  cfg.scrape.EnableTypeAndUnitLabels,\n\t\t\tUseStartTimestamps:       cfg.useStartTimestamps,\n\t\t\tEnableQueryCost:          cfg.enableQueryCost,\n\t\t\tFeatureRegistry:          features.DefaultRegistry,\n\t\t\tParser:                   promqlParser,\n\t\t}\n\n\t\tqueryEngine = promql.NewEngine(opts)\n\n\t\truleManager = rules.NewManager(&rules.ManagerOptions{\n\t\t\tNameValidationScheme:   cfgFile.GlobalConfig.MetricNameValidationScheme,\n\t\t\tAppendableV2:           fanoutStorage,\n\t\t\tQueryable:              localStorage,\n\t\t\tQueryFunc:              rules.EngineQueryFunc(queryEngine, fanoutStorage),\n\t\t\tNotifyFunc:             rules.SendAlerts(notifierManager, cfg.web.ExternalURL.String()),\n\t\t\tContext:                ctxRule,\n\t\t\tExternalURL:            cfg.web.ExternalURL,\n\t\t\tRegisterer:             prometheus.DefaultRegisterer,\n\t\t\tLogger:                 logger.With(\"component\", \"rule manager\"),\n\t\t\tOutageTolerance:        time.Duration(cfg.outageTolerance),\n\t\t\tForGracePeriod:         time.Duration(cfg.forGracePeriod),\n\t\t\tResendDelay:            time.Duration(cfg.resendDelay),\n\t\t\tMaxConcurrentEvals:     cfg.maxConcurrentEvals,\n\t\t\tConcurrentEvalsEnabled: cfg.enableConcurrentRuleEval,\n\t\t\tDefaultRuleQueryOffset: func() time.Duration {\n\t\t\t\treturn time.Duration(cfgFile.GlobalConfig.RuleQueryOffset)\n\t\t\t},\n\t\t\tFeatureRegistry: features.DefaultRegistry,\n\t\t\tParser:          promqlParser,\n\t\t})\n",
+      "quote_sha256": "d2c7b5c7c50e914965ebdb8ed2c022ad80c1d6c8f86ab3d58a59894b4629a76a",
+      "source_executed": false
+    },
+    {
+      "id": "R02",
+      "path": "cmd/prometheus/main.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "c965e55b64ab8102cc0e4642e5f07a05d1c1ffed4503efa1df53a92013ac4548",
+      "first_line": 1124,
+      "last_line": 1127,
+      "quote": "\t// Captured for the query_engine reloader, whose parameter shadows cfg.\n\tenableQueryCost := cfg.enableQueryCost\n\n\treloaders := []reloader{\n",
+      "quote_sha256": "77bda4e57cf4910c49ddb3b7e3eb35c361cbb884e4b097c7cf5e33e88572b740",
+      "source_executed": false
+    },
+    {
+      "id": "R03",
+      "path": "cmd/prometheus/main.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "c965e55b64ab8102cc0e4642e5f07a05d1c1ffed4503efa1df53a92013ac4548",
+      "first_line": 1159,
+      "last_line": 1174,
+      "quote": "\t\t\tname: \"query_engine\",\n\t\t\treloader: func(cfg *config.Config) error {\n\t\t\t\tif agentMode {\n\t\t\t\t\t// No-op in Agent mode.\n\t\t\t\t\treturn nil\n\t\t\t\t}\n\n\t\t\t\t// Apply the reloadable query-cost limits only when the\n\t\t\t\t// query-cost feature is enabled.\n\t\t\t\tif enableQueryCost {\n\t\t\t\t\tqueryEngine.SetQueryLimits(\n\t\t\t\t\t\tcfg.GlobalConfig.QueryMaxSeries,\n\t\t\t\t\t\tcfg.GlobalConfig.QueryMaxSamplesRead,\n\t\t\t\t\t\ttime.Duration(cfg.GlobalConfig.QueryMaxDuration),\n\t\t\t\t\t)\n\t\t\t\t}\n",
+      "quote_sha256": "2471f3e261fd3397fe332a0cf7deb9acb48f1da2457c302b2cd467e9c9420906",
+      "source_executed": false
+    },
+    {
+      "id": "R04",
+      "path": "rules/manager.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "caebb6a9dc69d6ab84dc47c63aa4f501e218352257f3245cd5a8dd0d9b70dfed",
+      "first_line": 53,
+      "last_line": 78,
+      "quote": "func EngineQueryFunc(engine promql.QueryEngine, q storage.Queryable) QueryFunc {\n\treturn func(ctx context.Context, qs string, t time.Time) (promql.Vector, error) {\n\t\tq, err := engine.NewInstantQuery(ctx, q, nil, qs, t)\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\t\tdefer q.Close()\n\n\t\tres := q.Exec(ctx)\n\t\tif res.Err != nil {\n\t\t\treturn nil, res.Err\n\t\t}\n\t\tswitch v := res.Value.(type) {\n\t\tcase promql.Vector:\n\t\t\treturn v, nil\n\t\tcase promql.Scalar:\n\t\t\treturn promql.Vector{promql.Sample{\n\t\t\t\tT:      v.T,\n\t\t\t\tF:      v.V,\n\t\t\t\tMetric: labels.Labels{},\n\t\t\t}}, nil\n\t\tdefault:\n\t\t\treturn nil, errors.New(\"rule result is not a vector or scalar\")\n\t\t}\n\t}\n}\n",
+      "quote_sha256": "76f289c829e743b3609cce568cdc8f932523b4f8fbd3d6e4955f245810522715",
+      "source_executed": false
+    },
+    {
+      "id": "R05",
+      "path": "rules/manager.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "caebb6a9dc69d6ab84dc47c63aa4f501e218352257f3245cd5a8dd0d9b70dfed",
+      "first_line": 221,
+      "last_line": 230,
+      "quote": "\tm := &Manager{\n\t\tgroups:               map[string]*Group{},\n\t\topts:                 o,\n\t\tblock:                make(chan struct{}),\n\t\tdone:                 make(chan struct{}),\n\t\tlogger:               o.Logger,\n\t\trestoreNewRuleGroups: o.RestoreNewRuleGroups,\n\t}\n\n\treturn m\n",
+      "quote_sha256": "f39d0d7d7225e942af93dc23a7d74f647bbaadfc9ec30fc8fb82a901e5133da7",
+      "source_executed": false
+    },
+    {
+      "id": "R06",
+      "path": "rules/manager.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "caebb6a9dc69d6ab84dc47c63aa4f501e218352257f3245cd5a8dd0d9b70dfed",
+      "first_line": 426,
+      "last_line": 437,
+      "quote": "\t\t\tgroups[GroupKey(fn, rg.Name)] = NewGroup(GroupOptions{\n\t\t\t\tName:              rg.Name,\n\t\t\t\tFile:              fn,\n\t\t\t\tInterval:          itv,\n\t\t\t\tLimit:             rg.Limit,\n\t\t\t\tRules:             rules,\n\t\t\t\tShouldRestore:     shouldRestore,\n\t\t\t\tOpts:              m.opts,\n\t\t\t\tQueryOffset:       (*time.Duration)(rg.QueryOffset),\n\t\t\t\tdone:              m.done,\n\t\t\t\tEvalIterationFunc: groupEvalIterationFunc,\n\t\t\t})\n",
+      "quote_sha256": "117d2845740e4b6a5a8e42658bacd0d1e0e742bf6b8ab722ef99e79fb9aba0c6",
+      "source_executed": false
+    },
+    {
+      "id": "R07",
+      "path": "rules/group.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "b08aafec53fa5ef90d1ddcb69196b95f617172b852cce7be70aaf1683b680af3",
+      "first_line": 99,
+      "last_line": 107,
+      "quote": "func NewGroup(o GroupOptions) *Group {\n\topts := o.Opts\n\tif opts == nil {\n\t\topts = &ManagerOptions{}\n\t}\n\tmetrics := opts.Metrics\n\tif metrics == nil {\n\t\tmetrics = NewGroupMetrics(opts.Registerer)\n\t}\n",
+      "quote_sha256": "19d132fbf0e553af0c97ce519118a11e0b4c4e1b70b7925c9fd27aab5790d631",
+      "source_executed": false
+    },
+    {
+      "id": "R08",
+      "path": "rules/group.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "b08aafec53fa5ef90d1ddcb69196b95f617172b852cce7be70aaf1683b680af3",
+      "first_line": 131,
+      "last_line": 145,
+      "quote": "\t\tname:                 o.Name,\n\t\tfile:                 o.File,\n\t\tinterval:             o.Interval,\n\t\tqueryOffset:          o.QueryOffset,\n\t\tlimit:                o.Limit,\n\t\trules:                o.Rules,\n\t\tshouldRestore:        o.ShouldRestore,\n\t\topts:                 opts,\n\t\tseriesInPreviousEval: make([]map[string]labels.Labels, len(o.Rules)),\n\t\tdone:                 make(chan struct{}),\n\t\tmanagerDone:          o.done,\n\t\tterminated:           make(chan struct{}),\n\t\tlogger:               opts.Logger.With(\"file\", o.File, \"group\", o.Name),\n\t\tmetrics:              metrics,\n\t\tevalIterationFunc:    evalIterationFunc,\n",
+      "quote_sha256": "83bc8f0ea719c3404c18534f10db46d9609439124fc75c1c8aa0f9663cdf23f0",
+      "source_executed": false
+    },
+    {
+      "id": "R09",
+      "path": "rules/group.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "b08aafec53fa5ef90d1ddcb69196b95f617172b852cce7be70aaf1683b680af3",
+      "first_line": 536,
+      "last_line": 551,
+      "quote": "\t\tg.metrics.EvalTotal.WithLabelValues(GroupKey(g.File(), g.Name())).Inc()\n\n\t\tvector, err := rule.Eval(ctx, ruleQueryOffset, ts, g.opts.QueryFunc, g.opts.ExternalURL, g.Limit())\n\t\tif err != nil {\n\t\t\trule.SetHealth(HealthBad)\n\t\t\trule.SetLastError(err)\n\t\t\tsp.SetStatus(codes.Error, err.Error())\n\t\t\tg.metrics.EvalFailures.WithLabelValues(GroupKey(g.File(), g.Name())).Inc()\n\n\t\t\t// Canceled queries are intentional termination of queries. This normally\n\t\t\t// happens on shutdown and thus we skip logging of any errors here.\n\t\t\tif _, ok := errors.AsType[promql.ErrQueryCanceled](err); !ok {\n\t\t\t\tlogger.Warn(\"Evaluating rule failed\", \"rule\", rule, \"err\", err)\n\t\t\t}\n\t\t\treturn\n\t\t}\n",
+      "quote_sha256": "4033a5f982143fcff3dca64b260ce394f3a634b25369812c396169ce3a2fc284",
+      "source_executed": false
+    },
+    {
+      "id": "R10",
+      "path": "rules/recording.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "80202bdb462c7f77772ec382fae2c2de6ae65424f26e9a5b0735356eb5d83677",
+      "first_line": 85,
+      "last_line": 91,
+      "quote": "// Eval evaluates the rule and then overrides the metric names and labels accordingly.\nfunc (rule *RecordingRule) Eval(ctx context.Context, queryOffset time.Duration, ts time.Time, query QueryFunc, _ *url.URL, limit int) (promql.Vector, error) {\n\tctx = NewOriginContext(ctx, NewRuleDetail(rule))\n\tvector, err := query(ctx, rule.vector.String(), ts.Add(-queryOffset))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n",
+      "quote_sha256": "f8141068d9da18c295da002eea9f02e78c10dbec4c68e676fe9a45523afcd0c6",
+      "source_executed": false
+    },
+    {
+      "id": "R11",
+      "path": "rules/alerting.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "8bca9764253c88a6ddb5a32eaf4edd2cfd4ff1f60c85e0d4ceff2dcf233d4a4a",
+      "first_line": 385,
+      "last_line": 392,
+      "quote": "// Eval evaluates the rule expression and then creates pending alerts and fires\n// or removes previously pending alerts accordingly.\nfunc (r *AlertingRule) Eval(ctx context.Context, queryOffset time.Duration, ts time.Time, query QueryFunc, externalURL *url.URL, limit int) (promql.Vector, error) {\n\tctx = NewOriginContext(ctx, NewRuleDetail(r))\n\tres, err := query(ctx, r.vector.String(), ts.Add(-queryOffset))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n",
+      "quote_sha256": "4e4f8401d14f0658997c1a4d12938cd0eec7963f8f7153e9aaea81f406f6d17c",
+      "source_executed": false
+    },
+    {
+      "id": "R12",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 224,
+      "last_line": 235,
+      "quote": "func NewPrometheusQueryOpts(enablePerStepStats bool, lookbackDelta time.Duration, useStartTimestamps *bool) QueryOpts {\n\tvar useStartTimestampsCopy *bool\n\tif useStartTimestamps != nil {\n\t\tval := *useStartTimestamps\n\t\tuseStartTimestampsCopy = &val\n\t}\n\treturn &PrometheusQueryOpts{\n\t\tenablePerStepStats: enablePerStepStats,\n\t\tlookbackDelta:      lookbackDelta,\n\t\tuseStartTimestamps: useStartTimestampsCopy,\n\t}\n}\n",
+      "quote_sha256": "8e4d5c735fdba5776caef3158276535873d698ea66157fb34d3b2ffa734a9a31",
+      "source_executed": false
+    },
+    {
+      "id": "R13",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 539,
+      "last_line": 557,
+      "quote": "// A zero value disables the corresponding limit, except for maxQueryDuration,\n// where zero leaves the -query.timeout flag as the effective query\n// timeout. A non-zero maxQueryDuration replaces that flag as the query timeout\n// and may be longer than it. These limits are only enforced when the query-cost\n// feature is enabled. It is safe to call concurrently with query execution.\nfunc (ng *Engine) SetQueryLimits(maxSeries, maxSamplesRead uint64, maxQueryDuration time.Duration) {\n\tng.queryLimitsLock.Lock()\n\tdefer ng.queryLimitsLock.Unlock()\n\tng.maxSeries = maxSeries\n\tng.maxSamplesRead = maxSamplesRead\n\tng.maxQueryDuration = maxQueryDuration\n}\n\n// queryLimits returns a snapshot of the reloadable query-cost limits.\nfunc (ng *Engine) queryLimits() (maxSeries, maxSamplesRead uint64, maxQueryDuration time.Duration) {\n\tng.queryLimitsLock.RLock()\n\tdefer ng.queryLimitsLock.RUnlock()\n\treturn ng.maxSeries, ng.maxSamplesRead, ng.maxQueryDuration\n}\n",
+      "quote_sha256": "17eb656976dec2c415d80415d241c5fa6dacb554d0b92956dc4279d9a2214c21",
+      "source_executed": false
+    },
+    {
+      "id": "R14",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 877,
+      "last_line": 880,
+      "quote": "func (ng *Engine) newQuery(q storage.Queryable, qs string, opts QueryOpts, start, end time.Time, interval time.Duration) (*parser.Expr, *query, error) {\n\tif opts == nil {\n\t\topts = NewPrometheusQueryOpts(false, 0, nil)\n\t}\n",
+      "quote_sha256": "7a99f11e3b49b34ee2a6cbf75fb59322988d47d110e5baaf74fa2b8c4f88792b",
+      "source_executed": false
+    },
+    {
+      "id": "R15",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 908,
+      "last_line": 950,
+      "quote": "\t// Resolve the effective query-cost limits for this query. A per-query\n\t// override may only lower the operator-set ceiling, never raise it: asking\n\t// for more is an error, not a silent clamp. Zero always means unlimited.\n\tif ng.enableQueryCost {\n\t\tceilSeries, ceilSamplesRead, ceilDuration := ng.queryLimits()\n\n\t\t// The per-query overrides live on an optional interface, so a QueryOpts\n\t\t// implementation that does not carry them simply gets the operator-set\n\t\t// ceilings.\n\t\tvar reqSeries, reqSamplesRead uint64\n\t\tvar requestedDuration time.Duration\n\t\tif costOpts, ok := opts.(QueryCostOpts); ok {\n\t\t\treqSeries = costOpts.MaxSeries()\n\t\t\treqSamplesRead = costOpts.MaxSamplesRead()\n\t\t\trequestedDuration = costOpts.MaxQueryDuration()\n\t\t}\n\n\t\tvar err error\n\t\tif qry.maxSeries, err = resolveUintLimit(\"max_series\", reqSeries, ceilSeries); err != nil {\n\t\t\treturn nil, nil, err\n\t\t}\n\t\tif qry.maxSamplesRead, err = resolveUintLimit(\"max_samples_read\", reqSamplesRead, ceilSamplesRead); err != nil {\n\t\t\treturn nil, nil, err\n\t\t}\n\n\t\t// When query_max_duration is set, it supplies the duration ceiling and\n\t\t// may exceed --query.timeout. Otherwise, the supported startup flag\n\t\t// remains the ceiling, preserving existing behavior.\n\t\tif ceilDuration > 0 || requestedDuration > 0 {\n\t\t\tceiling := ceilDuration\n\t\t\tif ceiling <= 0 {\n\t\t\t\tceiling = ng.timeout\n\t\t\t}\n\t\t\tif qry.maxQueryDuration, err = resolveDurationLimit(\"max_query_duration\", requestedDuration, ceiling); err != nil {\n\t\t\t\treturn nil, nil, err\n\t\t\t}\n\t\t}\n\t\ttimeout := ng.timeout\n\t\tif qry.maxQueryDuration > 0 {\n\t\t\ttimeout = qry.maxQueryDuration\n\t\t}\n\t\tqry.deadline = time.Now().Add(timeout)\n\t}\n",
+      "quote_sha256": "8d882188421789b74e73e370228394b29f021e3348a40c9fbe48976b8052f0da",
+      "source_executed": false
+    },
+    {
+      "id": "R16",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 961,
+      "last_line": 972,
+      "quote": "func resolveUintLimit(name string, requested, ceiling uint64) (uint64, error) {\n\tif requested == 0 {\n\t\treturn ceiling, nil\n\t}\n\tif ceiling == 0 || requested <= ceiling {\n\t\treturn requested, nil\n\t}\n\treturn 0, ErrLimitAboveCeiling{\n\t\tLimit:     name,\n\t\tRequested: strconv.FormatUint(requested, 10),\n\t\tCeiling:   strconv.FormatUint(ceiling, 10),\n\t}\n",
+      "quote_sha256": "b41c6d5509ebf652759230f08303973349213b684a7f21c3e246d02cddf71705",
+      "source_executed": false
+    },
+    {
+      "id": "R17",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 990,
+      "last_line": 1002,
+      "quote": "func resolveDurationLimit(name string, requested, ceiling time.Duration) (time.Duration, error) {\n\tif requested <= 0 {\n\t\treturn ceiling, nil\n\t}\n\tif ceiling <= 0 || requested <= ceiling {\n\t\treturn requested, nil\n\t}\n\treturn 0, ErrLimitAboveCeiling{\n\t\tLimit:     name,\n\t\tRequested: requested.String(),\n\t\tCeiling:   ceiling.String(),\n\t}\n}\n",
+      "quote_sha256": "d692f0ddb1e7c0ef05e32054d6188902981d658438d711e1d9582b0b77bf1a24",
+      "source_executed": false
+    },
+    {
+      "id": "R18",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 397,
+      "last_line": 406,
+      "quote": "func (q *query) executionContext(ctx context.Context) (context.Context, context.CancelFunc) {\n\tif q.deadline.IsZero() {\n\t\treturn context.WithTimeout(ctx, q.ng.timeout)\n\t}\n\tcause := context.DeadlineExceeded\n\tif q.maxQueryDuration > 0 {\n\t\tcause = errQueryCostDuration\n\t}\n\treturn context.WithDeadlineCause(ctx, q.deadline, cause)\n}\n",
+      "quote_sha256": "70cb45beff57efd795e5824d28b0077782a4bc1f6e30a31f3342309f03fabdc0",
+      "source_executed": false
+    },
+    {
+      "id": "R19",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1242,
+      "last_line": 1254,
+      "quote": "func (ng *Engine) execEvalStmt(ctx context.Context, query *query, s *parser.EvalStmt) (parser.Value, annotations.Annotations, error) {\n\tvar budget *queryBudget\n\tif ng.enableQueryCost {\n\t\tbudget = &queryBudget{\n\t\t\tmaxSeries:      uint64ToInt64Limit(query.maxSeries),\n\t\t\tmaxSamplesRead: uint64ToInt64Limit(query.maxSamplesRead),\n\t\t}\n\t\tdefer func() {\n\t\t\t// Preserve costs even when a child aborts before its statistics merge.\n\t\t\tquery.sampleStats.TotalSeries = budget.series\n\t\t\tquery.sampleStats.SamplesRead = budget.samplesRead\n\t\t}()\n\t}\n",
+      "quote_sha256": "ed0f36bc18f6de301f2212cd50b27e4b9a7247e900cb91498c327a60f11b1b6d",
+      "source_executed": false
+    },
+    {
+      "id": "R20",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1280,
+      "last_line": 1296,
+      "quote": "\t// Instant evaluation. This is executed as a range evaluation with one step.\n\tif s.Start.Equal(s.End) && s.Interval == 0 {\n\t\tstart := timeMilliseconds(s.Start)\n\t\tevaluator := &evaluator{\n\t\t\tstartTimestamp:           start,\n\t\t\tendTimestamp:             start,\n\t\t\tinterval:                 1,\n\t\t\tmaxSamples:               ng.maxSamplesPerQuery,\n\t\t\tbudget:                   budget,\n\t\t\tlogger:                   ng.logger,\n\t\t\tlookbackDelta:            s.LookbackDelta,\n\t\t\tsamplesStats:             query.sampleStats,\n\t\t\tnoStepSubqueryIntervalFn: ng.noStepSubqueryIntervalFn,\n\t\t\tenableDelayedNameRemoval: ng.enableDelayedNameRemoval,\n\t\t\tenableTypeAndUnitLabels:  ng.enableTypeAndUnitLabels,\n\t\t\tuseStartTimestamps:       query.useStartTimestamps,\n\t\t\tquerier:                  querier,\n",
+      "quote_sha256": "73c7633b634cfa6d39fb6e9704feabdbe8a06af80c2020be3ab1dfbf5cb5c165",
+      "source_executed": false
+    },
+    {
+      "id": "R21",
+      "path": "promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1653,
+      "last_line": 1670,
+      "quote": "func (ev *evaluator) consumeSeries() {\n\tif ev.budget == nil {\n\t\treturn\n\t}\n\tev.budget.series++\n\tif ev.budget.maxSeries > 0 && ev.budget.series > ev.budget.maxSeries {\n\t\tev.error(ErrTooManySeries(env))\n\t}\n}\n\nfunc (ev *evaluator) consumeSamples(n int64) {\n\tif ev.budget == nil {\n\t\treturn\n\t}\n\tev.budget.samplesRead = addSaturatingInt64(ev.budget.samplesRead, n)\n\tif ev.budget.maxSamplesRead > 0 && ev.budget.samplesRead > ev.budget.maxSamplesRead {\n\t\tev.error(ErrTooManySamplesRead(env))\n\t}\n",
+      "quote_sha256": "63645e633bb97b33dadd3f9491ffa6c234f77cf7110b696f44602ec87313fd04",
+      "source_executed": false
+    }
+  ],
+  "purpose": "Physical exact selected source spans manually reviewed; not general semantic verification"
+}

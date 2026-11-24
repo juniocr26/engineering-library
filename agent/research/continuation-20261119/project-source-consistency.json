@@ -1,0 +1,35 @@
+{
+  "id": "CONT-PROJECT-SOURCE-CONSISTENCY",
+  "status": "VERIFIED_INTEGRATED",
+  "at": "2026-11-19T15:39:28.845145+00:00",
+  "caller": "1.9.39",
+  "project_workflow": "1.0.7",
+  "before": "Three regressions failed: a previously collected source changed during a later distinct section, a repeated path changed between section reads, and the header called observed HEAD a revision without stating working-file provenance. Old coordinator accepted inconsistent assemblies.",
+  "after": [
+    "Retain one collected SHA256 per selected path; refuse a conflicting later read before replacing that section staged source.",
+    "Recheck every collected selected source immediately before final assembly, including sources used only by earlier sections.",
+    "Preserve previous assembled EN/PT files and assembly manifest on refusal; retain successfully generated isolated section drafts/audits.",
+    "Header and manifest distinguish observed Git HEAD from working-file bytes and state committed-tree equivalence was not checked. No clean-tree requirement added."
+  ],
+  "validation": {
+    "before_tests": 3,
+    "before_failures": 3,
+    "after_project_tests": 30,
+    "after_project_assertions": 208,
+    "full_ruby_tests": 252,
+    "full_ruby_assertions": 1679,
+    "failures": 0,
+    "errors": 0,
+    "real_model_calls_in_regressions": 0,
+    "source_program_executed": false
+  },
+  "preservation_proof": "Earlier-source mutation while second section successfully generated retains prior en.md,pt-br.md,assembly.json bytes+mtimes. Repeated-path mutation refuses before replacing existing staged source and before an extra model fixture request.",
+  "scope_limits": [
+    "Rechecks detect observed content changes; this is not an atomic filesystem snapshot or a repository lock. Mutation after the last check is outside this guarantee.",
+    "HEAD is observed at collection start; Git committed-tree equality was not computed. Exact per-section file hashes identify collected working bytes.",
+    "No automatic retrieval, new Harness/MCP/plugin, tool routing, Git writes or remote publication.",
+    "Passing coordinator tests does not establish neural factual comprehension."
+  ],
+  "runtime_entry": "Existing ProjectCommand#process and #assemble; explicit DOCS_WORKFLOW=project entry unchanged.",
+  "private_evidence": "private-research://continuation-20261119/project-source-consistency-candidate/"
+}

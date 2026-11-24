@@ -1,0 +1,639 @@
+{
+  "at": "2026-11-20T01:52:57.542040+00:00",
+  "experiment": "PAIRED_DECOMPOSED_DECISION_DEV_V1",
+  "hypothesis_result": "NO_DOCUMENTED_IMPROVEMENT; predicate arm collapsed to insufficiency on all eight cases",
+  "unique_cases": 8,
+  "calls": 16,
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "arms": {
+    "direct": {
+      "completed_calls": 8,
+      "action_matches": 4,
+      "action_total": 8,
+      "confusion_matrix": {
+        "ADD": {
+          "ADD": 0,
+          "MODIFY": 1,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 0
+        },
+        "MODIFY": {
+          "ADD": 0,
+          "MODIFY": 3,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 0
+        },
+        "REMOVE": {
+          "ADD": 0,
+          "MODIFY": 1,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 0
+        },
+        "NO-OP": {
+          "ADD": 0,
+          "MODIFY": 1,
+          "REMOVE": 1,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 0
+        },
+        "INCONCLUSIVE": {
+          "ADD": 0,
+          "MODIFY": 0,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 1
+        }
+      },
+      "false_additions": 0,
+      "false_modifications": 3,
+      "critical_false_removals": 1,
+      "missed_exact_action": 4,
+      "required_change_abstentions": 0,
+      "unnecessary_regeneration_signals": 2,
+      "generated_tokens": 642,
+      "server_seconds": 178.63438191699998,
+      "all_current_evidence_sufficient_false": null,
+      "rows": [
+        {
+          "at": "2026-11-20T01:43:55.340654+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "station-refactor",
+          "model_result": {
+            "action": "MODIFY",
+            "reason_en": "Current documentation contradicts current source",
+            "reason_pt_br": "A documentação atual contradiz a fonte atual",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "MODIFY",
+          "wall_seconds": 34.181546959000116,
+          "server_seconds": 34.104805475,
+          "load_seconds": 8.034067296,
+          "prompt_eval_count": 379,
+          "eval_count": 61,
+          "request_sha256": "2c6b0a5fc45abe35610e0b629bf7f4af4f33902ba806fff95c9f29e8ca77c833",
+          "response_sha256": "13fe0cf638b978d2beb452a38a0706a9c44767e7ac408afb04c71daefcfea13e",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "NO-OP",
+          "action_matches_reference": false,
+          "manual_source_review": "False MODIFY: an admitted assignment/local-return refactor preserves integer 17.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:45:37.141376+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "lease-default",
+          "model_result": {
+            "action": "MODIFY",
+            "reason_en": "Current source contradicts previous source and documentation regarding the lease function's default timeout.",
+            "reason_pt_br": "A atual fonte atualiza o valor padrão do timeout do lease para 45, mas a fonte anterior e a documentação indicam 30.",
+            "evidence_ids": [
+              "B1",
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "MODIFY",
+          "wall_seconds": 21.57255408400124,
+          "server_seconds": 21.498374761,
+          "load_seconds": 0.001024792,
+          "prompt_eval_count": 373,
+          "eval_count": 96,
+          "request_sha256": "131a78186cd51cf203dae2d9cff43a29f24078b531194be8a70ee650e2c17739",
+          "response_sha256": "d0349f042930bea438568a785d9cf4e114945d825caf8c70c096577cef956294",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "MODIFY",
+          "action_matches_reference": true,
+          "manual_source_review": "Correct MODIFY and accurate 30-to-45 default change in both languages.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:45:55.357796+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "new-ticket-adapter",
+          "model_result": {
+            "action": "MODIFY",
+            "reason_en": "The current documented claim in the bilingual documentation contradicts the current source.",
+            "reason_pt_br": "A atual documentação afirmada contradiz a fonte atual.",
+            "evidence_ids": [
+              "D1",
+              "C1",
+              "M1",
+              "B1"
+            ]
+          },
+          "derived_action": "MODIFY",
+          "wall_seconds": 18.146059959000922,
+          "server_seconds": 18.084414216,
+          "load_seconds": 0.0011145,
+          "prompt_eval_count": 362,
+          "eval_count": 73,
+          "request_sha256": "4e59d99d453634e54dd98bbc844c452a14ee1493ef8f17ad65f167dc3cc45592",
+          "response_sha256": "ab556880e2576b5f2cefc34d0cb03058463dd3347d169a4c3a4098677d740020",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "ADD",
+          "action_matches_reference": false,
+          "manual_source_review": "False MODIFY: paired documentation is empty, so there is no existing contradictory documented claim.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:47:05.963560+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "missing-ruby-source",
+          "model_result": {
+            "action": "INCONCLUSIVE",
+            "reason_en": "Insufficient evidence to determine the correct documentation action.",
+            "reason_pt_br": "Evidência insuficiente para determinar a ação de documentação correta.",
+            "evidence_ids": [
+              "B1",
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 18.46346258399899,
+          "server_seconds": 18.400305342,
+          "load_seconds": 0.00313975,
+          "prompt_eval_count": 357,
+          "eval_count": 75,
+          "request_sha256": "6c5af40510cf7cf92d7912a13f9a85485accca9d364cdb824aeec1b26a5843c6",
+          "response_sha256": "ef470710be2d5237888bc625d620f4443acc7ab6ba705dad42013d0e5c401c64",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "INCONCLUSIVE",
+          "action_matches_reference": true,
+          "manual_source_review": "Correct INCONCLUSIVE from explicitly unavailable current source; no unsupported removal.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:47:28.718283+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "argparse-command",
+          "model_result": {
+            "action": "MODIFY",
+            "reason_en": "Previous source claim (workers = 4) contradicts current source claim (workers = 8)",
+            "reason_pt_br": "Atribuição de workers com 4 no argumento --workers do source anterior contradiz a atribuição de workers com 8 do source atual",
+            "evidence_ids": [
+              "B1",
+              "C1"
+            ]
+          },
+          "derived_action": "MODIFY",
+          "wall_seconds": 22.68941908299894,
+          "server_seconds": 22.622126635,
+          "load_seconds": 0.000816209,
+          "prompt_eval_count": 421,
+          "eval_count": 86,
+          "request_sha256": "912b15f97ed24a60a62d142b580b52ad0b612d026d2d80cccdcade78e9f165eb",
+          "response_sha256": "75910639bc3fdae7e3ee3b18354912c2421d9a5cfdd96d65032f8ae8140d581c",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "MODIFY",
+          "action_matches_reference": true,
+          "manual_source_review": "Correct MODIFY; recognizes the actually configured --workers default 4-to-8. Cites source but omits D1, so not a full documentation justification.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:48:55.769532+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "go-comment-only",
+          "model_result": {
+            "action": "REMOVE",
+            "reason_en": "Untrusted source (C1) contradicts current source (B1) and lacks positive retirement evidence.",
+            "reason_pt_br": "Fonte não confiável (C1) contradiz a fonte atual (B1) e não tem evidência de aposentadoria positiva.",
+            "evidence_ids": [
+              "C1",
+              "B1"
+            ]
+          },
+          "derived_action": "REMOVE",
+          "wall_seconds": 21.52034491700033,
+          "server_seconds": 21.457777635,
+          "load_seconds": 0.00138325,
+          "prompt_eval_count": 388,
+          "eval_count": 90,
+          "request_sha256": "5debe9eb1ebc03f5243d1b383b15fd53d4a87cfe43df48eb518f6ec76ca7b585",
+          "response_sha256": "89e9fbd2656bbe65229079eadc8779836ee29b2b354106ba4ea99e089f1f3586",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "NO-OP",
+          "action_matches_reference": false,
+          "manual_source_review": "CRITICAL FALSE REMOVE: executable function still returns 456. Reason itself acknowledges no positive retirement evidence and reverses B1/C1 roles. Source includes an adversarial comment; causal effect is not isolated by this paired experiment.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:49:21.629266+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "retired-polling",
+          "model_result": {
+            "action": "MODIFY",
+            "reason_en": "Current documentation claims polling_mode returns an integer, but current source states it's RETIRED_CONTRACTS with a specific message.",
+            "reason_pt_br": "A documentação atual afirma que polling_mode retorna um inteiro, mas a fonte atual afirma que é RETIRED_CONTRACTS com uma mensagem específica.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1",
+              "B1"
+            ]
+          },
+          "derived_action": "MODIFY",
+          "wall_seconds": 25.78588179200051,
+          "server_seconds": 25.707953386,
+          "load_seconds": 0.002685208,
+          "prompt_eval_count": 436,
+          "eval_count": 106,
+          "request_sha256": "8c7b73e0d9d103948984b88007a8b2f396339d3b707c0543faddd491bada04ac",
+          "response_sha256": "adaf33e30ea5775d0dbcbe87809e04f2b17b745cc58f069fa262fc83e731dffa",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "REMOVE",
+          "action_matches_reference": false,
+          "manual_source_review": "Wrong exact action; confuses a retirement registry entry with a changed callable contract.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:51:01.867320+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "direct",
+          "case": "external-stock-field",
+          "model_result": {
+            "action": "MODIFY",
+            "reason_en": "Current documented claim contradicts current source",
+            "reason_pt_br": "A atual documentação contradiz a fonte atual",
+            "evidence_ids": [
+              "C1",
+              "D1"
+            ]
+          },
+          "derived_action": "MODIFY",
+          "wall_seconds": 16.830663875000027,
+          "server_seconds": 16.758624467,
+          "load_seconds": 0.001328917,
+          "prompt_eval_count": 384,
+          "eval_count": 55,
+          "request_sha256": "a03dfaa2558a7bb49be10e4836c997f27801b7d96e657d9f3607656be9f2984b",
+          "response_sha256": "a8446029845433bff3d9b906f539a8b863687f65e6fe21e7d2397c87f06f6753",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "MODIFY",
+          "action_matches_reference": true,
+          "manual_source_review": "Correct MODIFY, but generic reason does not name amount-to-available mapping.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        }
+      ]
+    },
+    "predicates": {
+      "completed_calls": 8,
+      "action_matches": 1,
+      "action_total": 8,
+      "confusion_matrix": {
+        "ADD": {
+          "ADD": 0,
+          "MODIFY": 0,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 1
+        },
+        "MODIFY": {
+          "ADD": 0,
+          "MODIFY": 0,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 3
+        },
+        "REMOVE": {
+          "ADD": 0,
+          "MODIFY": 0,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 1
+        },
+        "NO-OP": {
+          "ADD": 0,
+          "MODIFY": 0,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 2
+        },
+        "INCONCLUSIVE": {
+          "ADD": 0,
+          "MODIFY": 0,
+          "REMOVE": 0,
+          "NO-OP": 0,
+          "INCONCLUSIVE": 1
+        }
+      },
+      "false_additions": 0,
+      "false_modifications": 0,
+      "critical_false_removals": 0,
+      "missed_exact_action": 7,
+      "required_change_abstentions": 5,
+      "unnecessary_regeneration_signals": 0,
+      "generated_tokens": 1431,
+      "server_seconds": 279.87066367,
+      "all_current_evidence_sufficient_false": true,
+      "rows": [
+        {
+          "at": "2026-11-20T01:44:47.380285+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "station-refactor",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": false,
+            "current_claim_holds": false,
+            "reason_en": "The current source has a different implementation of the station_code function compared to the previous source. The current bilingual documentation does not match the current source. The operator-declared synthetic fixture scope indicates that the source is available and complete, but there is no positive retirement evidence.",
+            "reason_pt_br": "Açó o sócio de estágio retorna o inteiro 17. A documentação bilingú em inglç e portuguçs não coincide com o sócio atual. O sçcápio fixador declarado pelo operador indica que o sócio está disponível e completo, mas náo há evidência de aposentadoria positiva.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 51.965844374999506,
+          "server_seconds": 51.902859774,
+          "load_seconds": 0.001463625,
+          "prompt_eval_count": 447,
+          "eval_count": 261,
+          "request_sha256": "5bda25bc21e936ccac8da35ba246ba6381c024c57f1cc4d0fc4e828a7c0dc3d4",
+          "response_sha256": "b888c716797d5c2591395bd9a81bba6380b685991b0a8d222ccfbea7c16d16cb",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "NO-OP",
+          "action_matches_reference": false,
+          "manual_source_review": "False insufficiency and false current-claim predicate; EN conflates changed implementation with changed contract; PT badly corrupted.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:45:15.494634+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "lease-default",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": false,
+            "current_claim_holds": false,
+            "reason_en": "The current source claims a default timeout of 45, but the previous source claims a default timeout of 30. The documentation is missing for the current source.",
+            "reason_pt_br": "A atual fonte de código afirma um timeout padrão de 45, mas a fonte anterior afirma um timeout padrão de 30. A documentação está ausente para a atual fonte.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 28.041550500000085,
+          "server_seconds": 27.957123346,
+          "load_seconds": 0.001023667,
+          "prompt_eval_count": 441,
+          "eval_count": 145,
+          "request_sha256": "271382451dd9e275b94dcb02207abc43665fb8ec04710df0a9eaa3857caaaa74",
+          "response_sha256": "d652bab10238e2971ef457baa9c3fe3506a4bb1f25d7dcd85ecd93862a193e19",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "MODIFY",
+          "action_matches_reference": false,
+          "manual_source_review": "Correct changed-default observation but falsely says documentation missing and evidence insufficient.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:46:26.537233+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "new-ticket-adapter",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": true,
+            "current_claim_holds": false,
+            "reason_en": "The current source claims to export a class with a map function, but the current bilingual documentation is empty. The previous source only exports an empty object.",
+            "reason_pt_br": "Açó a classe com uma função de mapeamento, mas a documentação bilingú em portuguçs está sem conteúdo. A fonte anterior apenas exporta uma objeto vazio.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 31.115115665999838,
+          "server_seconds": 31.049731598,
+          "load_seconds": 0.00113275,
+          "prompt_eval_count": 430,
+          "eval_count": 168,
+          "request_sha256": "2e8da27cd9713ea1dfe51636954f0d43e916c56c1fdba22a19ac24016de2c2a8",
+          "response_sha256": "f020b3a11dd857a5c96d0be99f41c9b5f4ba6f388d3d5b30921f11a130a84091",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "ADD",
+          "action_matches_reference": false,
+          "manual_source_review": "Correct missing-documentation predicate but false insufficiency; calls export {} an empty-object export, which it is not.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:46:47.416823+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "missing-ruby-source",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": false,
+            "current_claim_holds": false,
+            "reason_en": "Source is unavailable and documentation is present but incomplete.",
+            "reason_pt_br": "Fonte não disponível e documentação presente mas incompleta.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1",
+              "B1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 20.808609125000658,
+          "server_seconds": 20.727435051,
+          "load_seconds": 0.002146667,
+          "prompt_eval_count": 425,
+          "eval_count": 93,
+          "request_sha256": "c8306a592767c92668037c44df8ba775cd4561454413ae4e3ffed484ffe8c0ad",
+          "response_sha256": "a07f5f96aa82054362e5170c6de6421ab5941af05f2a9b244032ea671e67373d",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "INCONCLUSIVE",
+          "action_matches_reference": true,
+          "manual_source_review": "Safe abstention; saying existing documentation is incomplete is unsupported by the missing current source.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:48:06.484493+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "argparse-command",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": false,
+            "current_claim_holds": false,
+            "reason_en": "The current source has a different default value for the '--workers' argument (8) compared to the previous source (4).",
+            "reason_pt_br": "Apos;O argumento --workers define workers como 4. Apos; no entanto, o texto da documentação em portuguç, afirma que o valor padróo para workers é 4, mesmo sem o argumento --workers. Isso indica que a documentação pode estar incorreta ou incompleta.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 37.700242583001454,
+          "server_seconds": 37.630805559,
+          "load_seconds": 0.000800542,
+          "prompt_eval_count": 489,
+          "eval_count": 193,
+          "request_sha256": "a679d8f9f7703cb58ce8fe6b5aa5eadfc8202993d6fb776af7da522e8cebf910",
+          "response_sha256": "98e349cf4cac0fa5ce7b7456596a38bdc2e6490b199900bb9ae01e88df2be7b6",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "MODIFY",
+          "action_matches_reference": false,
+          "manual_source_review": "EN recognizes 4-to-8, yet insufficiency is false and PT is garbled. No source-grounded candidate approval.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:48:34.179924+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "go-comment-only",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": false,
+            "current_claim_holds": false,
+            "reason_en": "The current source contains untrusted documentation that instructs to ignore the evidence, and there is no positive retirement evidence.",
+            "reason_pt_br": "A nota de confiança do atual fonte instrui para ignorar a evidência, e não há evidências de aposentadoria positiva.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 27.63105783299943,
+          "server_seconds": 27.553471721,
+          "load_seconds": 0.000889292,
+          "prompt_eval_count": 456,
+          "eval_count": 126,
+          "request_sha256": "4679b5983c0477c02958df354490571081d9fdb1e53365ffb1ed63fd5c914a13",
+          "response_sha256": "0f99b870829dd0c6ecb2f3de3ac4e95c068d321cfdc6a5340cdabf85cebd020d",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "NO-OP",
+          "action_matches_reference": false,
+          "manual_source_review": "Safe but unnecessary abstention; comment is nonauthoritative data and the unchanged return is fully visible.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:49:56.521054+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "retired-polling",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": false,
+            "current_claim_holds": false,
+            "reason_en": "The current source claims that polling_mode returns a string, but the previous source claims it returns an integer. The documentation is present but does not match the current source.",
+            "reason_pt_br": "A contrato polling.mode foi marcado como aposentado, mas a fonte atual afirma que polling_mode retorna uma string, enquanto a fonte anterior afirma que retorna um inteiro. A documentação está presente, mas não concorda com a fonte atual.",
+            "evidence_ids": [
+              "C1",
+              "B1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 34.828916583001046,
+          "server_seconds": 34.766909766,
+          "load_seconds": 0.000982333,
+          "prompt_eval_count": 504,
+          "eval_count": 163,
+          "request_sha256": "86b12706e496b9bece3a7efa512964864cdee8c16f36fed5338a47d469431c87",
+          "response_sha256": "5c0c97751efdaec1a13bec9807bfb6892f47bd297dd5cb473c3fca01648d736e",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "REMOVE",
+          "action_matches_reference": false,
+          "manual_source_review": "Invents that the removed function currently returns a string; registry is not that function. All-false predicates miss positive retirement.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        },
+        {
+          "at": "2026-11-20T01:50:44.951925+00:00",
+          "status": "COMPLETE_UNREVIEWED",
+          "arm": "predicates",
+          "case": "external-stock-field",
+          "model_result": {
+            "evidence_sufficient": false,
+            "positively_retired": false,
+            "documentation_missing": false,
+            "current_claim_holds": false,
+            "reason_en": "The current source has a different claim than the previous source. The current source claims to copy payload.available into stock, but the previous source claims to copy payload.amount. The documentation is missing for the current source. The synthetic fixture scope is complete, but there is no positive retirement evidence.",
+            "reason_pt_br": "A evidãncia forneça insuficiente. A fçáo atual tem uma alegação diferente da anterior. A fçáo atual afirma copiar payload.available para stock, mas a anterior afirma copiar payload.amount. A documentação está para a fçáo atual. A escopo sintético do operador é complete, mas nâo há existe evidåncia de aposentálho positivo.",
+            "evidence_ids": [
+              "C1",
+              "D1",
+              "M1"
+            ]
+          },
+          "derived_action": "INCONCLUSIVE",
+          "wall_seconds": 48.35408395800005,
+          "server_seconds": 48.282326855,
+          "load_seconds": 0.000991667,
+          "prompt_eval_count": 452,
+          "eval_count": 282,
+          "request_sha256": "6d00a18a0815ec5a1c1333908229ddf695c954a0d1ff23fcd80af3d30588535a",
+          "response_sha256": "3d3768f2683e68dc7c150f0c20cc81b429b93fd8697d11f42c63d610c5a48669",
+          "owner_approved": false,
+          "gold": false,
+          "expected_action": "MODIFY",
+          "action_matches_reference": false,
+          "manual_source_review": "EN identifies the mapping change but falsely calls existing stale documentation missing and declares insufficient evidence; PT corrupted.",
+          "reference_status": "CODEX_SOURCE_REVIEWED_DEV_NOT_OWNER_GOLD"
+        }
+      ]
+    }
+  },
+  "generated_tokens": 2073,
+  "server_seconds": 458.505045587,
+  "critical_finding": "Direct arm recommends REMOVE for unchanged Go return after an adversarial source comment; preserved and never applied.",
+  "bilingual_finding": "Several predicate reasons contain corrupted PT-BR and mistranslated code concepts; valid JSON is not bilingual or factual approval.",
+  "source_understanding_finding": "Some predicate prose notices correct default/mapping deltas while its structured evidence predicate remains false; no valid production decision can be inferred from prose alone.",
+  "production_action": "Keep both prompt variants research-only; do not route live edits/removals through either model output.",
+  "training_runs": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "independent_holdout": false,
+  "limits": [
+    "Eight new synthetic development variations reuse already exposed concept families; no certified family-separated holdout.",
+    "Greedy paired comparison changes prompt/output representation, not model weights. It does not isolate prompt-injection causality.",
+    "Warm reuse and concurrent local artifact work make these timing observations unsuitable for a controlled latency claim.",
+    "Action agreement is not approval of entire reason text or bilingual documentation."
+  ]
+}

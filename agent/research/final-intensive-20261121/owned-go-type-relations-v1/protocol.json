@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-22T01:46:07.347285+00:00",
+  "hypothesis": "Owned syntax-valid selector forms can denote promoted methods, fields, interface methods or ambiguous/invalid calls. Actual go/types for a closed package adds bounded static relation evidence but cannot prove dynamic dispatch or imports.",
+  "binary_sha256": "fa9c9242ebc5bf917b982de6bf0078df829e680b9b7145e736c96e3d9f92507d",
+  "cases": [
+    {
+      "id": "promoted-method",
+      "source": "package owned\ntype Base struct{}\nfunc (Base) Value() int { return 7 }\ntype Child struct{ Base }\nfunc Read(c Child) int { return c.Value() }\n",
+      "expected_status": "TYPECHECKED_CLOSED_PACKAGE",
+      "expected_kind": "MethodVal",
+      "expected_name": "Value",
+      "expected_index": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "field-shadows-method",
+      "source": "package owned\ntype Base struct{}\nfunc (Base) Value() int { return 7 }\ntype Child struct{ Base; Value int }\nfunc Read(c Child) int { return c.Value() }\n",
+      "expected_status": "INCONCLUSIVE_TYPE_ERRORS",
+      "diagnostic_contains": "cannot call"
+    },
+    {
+      "id": "pointer-value-not-interface",
+      "source": "package owned\ntype Base struct{}\nfunc (*Base) Value() int { return 7 }\ntype Reader interface { Value() int }\nvar _ Reader = Base{}\n",
+      "expected_status": "INCONCLUSIVE_TYPE_ERRORS",
+      "diagnostic_contains": "pointer receiver"
+    },
+    {
+      "id": "addressable-pointer-method",
+      "source": "package owned\ntype Base struct{}\nfunc (*Base) Value() int { return 7 }\nfunc Read(b Base) int { return b.Value() }\n",
+      "expected_status": "TYPECHECKED_CLOSED_PACKAGE",
+      "expected_kind": "MethodVal",
+      "expected_name": "Value"
+    },
+    {
+      "id": "interface-method-not-concrete",
+      "source": "package owned\ntype Reader interface { Value() int }\nfunc Read(r Reader) int { return r.Value() }\n",
+      "expected_status": "TYPECHECKED_CLOSED_PACKAGE",
+      "expected_kind": "MethodVal",
+      "expected_name": "Value",
+      "receiver_contains": "Reader"
+    },
+    {
+      "id": "ambiguous-promotion",
+      "source": "package owned\ntype A struct{}\nfunc(A) Value()int{return 1}\ntype B struct{}\nfunc(B) Value()int{return 2}\ntype Child struct{A;B}\nfunc Read(c Child)int{return c.Value()}\n",
+      "expected_status": "INCONCLUSIVE_TYPE_ERRORS",
+      "diagnostic_contains": "ambiguous selector"
+    },
+    {
+      "id": "method-expression-vs-value",
+      "source": "package owned\ntype Base struct{}\nfunc (Base) Value() int { return 7 }\nvar methodExpression = Base.Value\nvar boundMethod = Base{}.Value\n",
+      "expected_status": "TYPECHECKED_CLOSED_PACKAGE",
+      "expected_kinds": [
+        "MethodExpr",
+        "MethodVal"
+      ]
+    },
+    {
+      "id": "imports-outside-v1-profile",
+      "source": "package owned\nimport \"context\"\nfunc Keep(c context.Context) context.Context{return c}\n",
+      "expected_status": "REFUSED",
+      "diagnostic_contains": "Imports are unsupported"
+    }
+  ],
+  "package_language_version": "go1.24",
+  "host_compiler": "Go1.27.1 darwin/arm64",
+  "scope": "Eight related owned DEVELOPMENT controls. No actual target application/functions/tests executed, imports/network, independent documentation performance or universal semantic verification."
+}

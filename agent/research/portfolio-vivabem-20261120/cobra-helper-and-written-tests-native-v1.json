@@ -1,0 +1,84 @@
+{
+  "at": "2026-11-21T02:23:01.094161+00:00",
+  "helper": {
+    "go_version": "go1.27.4",
+    "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+    "path": "cobra.go",
+    "platform": "darwin/arm64",
+    "profile": "go-standard-parser-declarations-v1",
+    "source_executed": false,
+    "source_sha256": "aae7502e789e42469bcb2fc110af87fd02451d3b509c5b0bed782ada17338c5f",
+    "syntax_only": true,
+    "units": [
+      {
+        "selector": "stringInSlice",
+        "declaration_kind": "function",
+        "symbol": "cobra.stringInSlice",
+        "start_line": 225,
+        "end_line": 232,
+        "quote": "func stringInSlice(a string, list []string) bool {\n\tfor _, b := range list {\n\t\tif b == a {\n\t\t\treturn true\n\t\t}\n\t}\n\treturn false\n}",
+        "declaration": "func stringInSlice(a string, list []string) bool",
+        "function_type": "func(a string, list []string) bool"
+      }
+    ],
+    "producer": {
+      "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+      "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+      "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+      "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+      "version": "1.6.1"
+    }
+  },
+  "written_tests": {
+    "go_version": "go1.27.4",
+    "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+    "path": "args_test.go",
+    "platform": "darwin/arm64",
+    "profile": "go-standard-parser-declarations-v1",
+    "source_executed": false,
+    "source_sha256": "37058f718eb5ffc7d70f917d694c04aa11fc39ba32ad8d1db9766e9d8eb009ae",
+    "syntax_only": true,
+    "units": [
+      {
+        "selector": "TestOnlyValidArgs",
+        "declaration_kind": "function",
+        "symbol": "cobra.TestOnlyValidArgs",
+        "start_line": 155,
+        "end_line": 159,
+        "quote": "func TestOnlyValidArgs(t *testing.T) {\n\tc := getCommand(OnlyValidArgs, true)\n\toutput, err := executeCommand(c, \"one\", \"two\")\n\texpectSuccess(output, err, t)\n}",
+        "declaration": "func TestOnlyValidArgs(t *testing.T)",
+        "function_type": "func(t *testing.T)"
+      },
+      {
+        "selector": "TestOnlyValidArgs_WithInvalidArgs",
+        "declaration_kind": "function",
+        "symbol": "cobra.TestOnlyValidArgs_WithInvalidArgs",
+        "start_line": 161,
+        "end_line": 165,
+        "quote": "func TestOnlyValidArgs_WithInvalidArgs(t *testing.T) {\n\tc := getCommand(OnlyValidArgs, true)\n\t_, err := executeCommand(c, \"a\")\n\tvalidOnlyWithInvalidArgs(err, t)\n}",
+        "declaration": "func TestOnlyValidArgs_WithInvalidArgs(t *testing.T)",
+        "function_type": "func(t *testing.T)"
+      },
+      {
+        "selector": "TestMatchAll",
+        "declaration_kind": "function",
+        "symbol": "cobra.TestMatchAll",
+        "start_line": 477,
+        "end_line": 523,
+        "quote": "func TestMatchAll(t *testing.T) {\n\t// Somewhat contrived example check that ensures there are exactly 3\n\t// arguments, and each argument is exactly 2 bytes long.\n\tpargs := MatchAll(\n\t\tExactArgs(3),\n\t\tfunc(cmd *Command, args []string) error {\n\t\t\tfor _, arg := range args {\n\t\t\t\tif len([]byte(arg)) != 2 {\n\t\t\t\t\treturn fmt.Errorf(\"expected to be exactly 2 bytes long\")\n\t\t\t\t}\n\t\t\t}\n\t\t\treturn nil\n\t\t},\n\t)\n\n\ttestCases := map[string]struct {\n\t\targs []string\n\t\tfail bool\n\t}{\n\t\t\"happy path\": {\n\t\t\t[]string{\"aa\", \"bb\", \"cc\"},\n\t\t\tfalse,\n\t\t},\n\t\t\"incorrect number of args\": {\n\t\t\t[]string{\"aa\", \"bb\", \"cc\", \"dd\"},\n\t\t\ttrue,\n\t\t},\n\t\t\"incorrect number of bytes in one arg\": {\n\t\t\t[]string{\"aa\", \"bb\", \"abc\"},\n\t\t\ttrue,\n\t\t},\n\t}\n\n\trootCmd := &Command{Use: \"root\", Args: pargs, Run: emptyRun}\n\n\tfor name, tc := range testCases {\n\t\tt.Run(name, func(t *testing.T) {\n\t\t\t_, err := executeCommand(rootCmd, tc.args...)\n\t\t\tif err != nil && !tc.fail {\n\t\t\t\tt.Errorf(\"unexpected: %v\\n\", err)\n\t\t\t}\n\t\t\tif err == nil && tc.fail {\n\t\t\t\tt.Errorf(\"expected error\")\n\t\t\t}\n\t\t})\n\t}\n}",
+        "declaration": "func TestMatchAll(t *testing.T)",
+        "function_type": "func(t *testing.T)"
+      }
+    ],
+    "producer": {
+      "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+      "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+      "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+      "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+      "version": "1.6.1"
+    }
+  },
+  "source_executed": false,
+  "tests_executed": false,
+  "typecheck": false
+}

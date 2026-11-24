@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-20T11:26:28.889819+00:00",
+  "upstream_repository": "ml-explore/mlx-lm",
+  "revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "source_executed": false,
+  "framework_installed": false,
+  "inspection_scope": "Four pinned primary files; not every transitive function, serializer or release.",
+  "finding": "The inspected CLI/trainer path explicitly persists adapter parameters; exact optimizer/RNG resume is not demonstrated by these save/load paths. Distinguish adapter warm restart from exact checkpoint recovery.",
+  "source_spans": [
+    {
+      "file": "agent/research/documentation-intelligence-20261120/readiness-primary-sources/mlx-lm/mlx_lm/lora.py",
+      "first_line": 256,
+      "last_line": 265,
+      "quote": "\n    # Resume from weights if provided\n    if args.resume_adapter_file is not None:\n        rprint(f\"Loading fine-tuned weights from {args.resume_adapter_file}\")\n        load_adapter_weights(\n            model,\n            path=args.resume_adapter_file,\n            fine_tune_type=args.fine_tune_type,\n        )\n\n",
+      "sha256": "341dce80747705c9363728823d3f117e96f821fc3b35d35db2f47b3151d3adc5",
+      "finding": "Resume path loads adapter weights into model; no optimizer/RNG restore in this block."
+    },
+    {
+      "file": "agent/research/documentation-intelligence-20261120/readiness-primary-sources/mlx-lm/mlx_lm/tuner/trainer.py",
+      "first_line": 243,
+      "last_line": 250,
+      "quote": "        raise ValueError(\"grad_accumulation_steps must be at least 1\")\n\n    state = [model.state, optimizer.state, mx.random.state]\n\n    @partial(mx.compile, inputs=state, outputs=state)\n    def step(batch, prev_grad, do_update):\n        (lvalue, toks), grad = loss_value_and_grad(model, *batch)\n\n",
+      "sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "finding": "optimizer.state and mx.random.state are in-memory compiled step state; that does not serialize them."
+    },
+    {
+      "file": "agent/research/documentation-intelligence-20261120/readiness-primary-sources/mlx-lm/mlx_lm/tuner/trainer.py",
+      "first_line": 367,
+      "last_line": 381,
+      "quote": "            # Save adapter weights\n            if it % args.steps_per_save == 0 and rank == 0:\n                adapter_weights = dict(tree_flatten(model.trainable_parameters()))\n                mx.save_safetensors(str(args.adapter_file), adapter_weights)\n                checkpoint = (\n                    Path(args.adapter_file).parent / f\"{it:07d}_adapters.safetensors\"\n                )\n                mx.save_safetensors(str(checkpoint), adapter_weights)\n                ui.report_save(checkpoint)\n\n    # Save final weights\n    if rank == 0:\n        adapter_weights = dict(tree_flatten(model.trainable_parameters()))\n        mx.save_safetensors(str(args.adapter_file), adapter_weights)\n",
+      "sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e",
+      "finding": "Periodic and final save paths serialize trainable adapter parameters with mx.save_safetensors."
+    }
+  ],
+  "gate6": "PARTIAL_NOT_MET",
+  "training_runs": 0
+}

@@ -1,0 +1,105 @@
+{
+  "at": "2026-11-21T18:19:46.037952+00:00",
+  "topic": "go-image-configuration",
+  "family": "go-image-optimizer",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-configuration/en.candidate.txt",
+      "sha256": "13acfa8b59fb1fd9b8a4febd96adbae4c75f428730b789e3b3aca83124dbc201",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-configuration/pt-br.candidate.txt",
+      "sha256": "ef0fea507e03890d99a637e72cb87ad103304efc678365d3f0b0da2cda1f3cc0",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Load no-args result tuple, zero Config on validation failure, populated string result only on success.",
+    "getEnv empty-string fallback is not trimming/parsing; Atoi error precedes inclusive1..65535 range, %w cause separate.",
+    "Addr merely delegates JoinHostPort empty host/stored port; manually constructed values bypass loader.",
+    "Added main/server source shows error exit and timeout field choices, not actual socket/deployment guarantees.",
+    "Both original responses match procedural summary; helper arm repeats range fact three occurrences."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/config/config.go",
+      "source_sha256": "fc00f62402fa3ea163eab2f97b1f9b5142aebc1e7cc90e7388a10775a31187cc",
+      "source_path": "backend/internal/config/config.go",
+      "source_lines": [
+        10,
+        49
+      ],
+      "exact_source_evidence": "type Config struct {\n\tPort string\n}\n\nfunc Load() (Config, error) {\n\tcfg := Config{\n\t\tPort: getEnv(\"PORT\", \"8080\"),\n\t}\n\n\tif err := validatePort(cfg.Port); err != nil {\n\t\treturn Config{}, err\n\t}\n\n\treturn cfg, nil\n}\n\nfunc (c Config) Addr() string {\n\treturn net.JoinHostPort(\"\", c.Port)\n}\n\nfunc getEnv(key, fallback string) string {\n\tvalue := os.Getenv(key)\n\tif value == \"\" {\n\t\treturn fallback\n\t}\n\treturn value\n}\n\nfunc validatePort(port string) error {\n\tnumber, err := strconv.Atoi(port)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"PORT must be a number: %w\", err)\n\t}\n\n\tif number < 1 || number > 65535 {\n\t\treturn fmt.Errorf(\"PORT must be between 1 and 65535\")\n\t}\n\n\treturn nil\n}",
+      "reviewed_interpretation": "Exact fields, load results, selection and validation.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/cmd/api/main.go",
+      "source_sha256": "d020f4e4a8e8e8256399e0288c369d198a70340072679a9a1723ad2c61fd4f29",
+      "source_path": "backend/cmd/api/main.go",
+      "source_lines": [
+        17,
+        26
+      ],
+      "exact_source_evidence": "func main() {\n\tlogger := slog.New(slog.NewTextHandler(os.Stdout, nil))\n\n\tcfg, err := config.Load()\n\tif err != nil {\n\t\tlogger.Error(\"failed to load configuration\", \"error\", err)\n\t\tos.Exit(1)\n\t}\n\n\tserver := httpserver.NewServer(cfg, logger)",
+      "reviewed_interpretation": "Loader error exit before server construction.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/http/server.go",
+      "source_sha256": "9c0188db5b0093209a240ad03704932c810c109cf5e67358774e14e4541c2c22",
+      "source_path": "backend/internal/infrastructure/http/server.go",
+      "source_lines": [
+        11,
+        25
+      ],
+      "exact_source_evidence": "const (\n\treadHeaderTimeout     = 5 * time.Second\n\timageRequestTimeout   = 2 * time.Minute\n\tidleConnectionTimeout = 60 * time.Second\n)\n\nfunc NewServer(cfg config.Config, logger *slog.Logger) *http.Server {\n\treturn &http.Server{\n\t\tAddr:              cfg.Addr(),\n\t\tHandler:           NewRouter(logger),\n\t\tReadHeaderTimeout: readHeaderTimeout,\n\t\tReadTimeout:       imageRequestTimeout,\n\t\tWriteTimeout:      imageRequestTimeout,\n\t\tIdleTimeout:       idleConnectionTimeout,\n\t}",
+      "reviewed_interpretation": "Timeout/address/router field configuration.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "gio-configuration-caller",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-configuration-caller/raw-response.json",
+      "sha256": "456307abdd7b832bd57b6aa74fd39342a1ad9f83148ee2021d20a8bb1ebd80c2",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    },
+    {
+      "id": "gio-configuration-helpers",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-configuration-helpers/raw-response.json",
+      "sha256": "4d24d3628e60324f044dd4f92f9b34eebdb71e09162a8da56f605ec1fc0f33c7",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

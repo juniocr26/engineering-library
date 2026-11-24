@@ -1,0 +1,64 @@
+{
+  "at": "2026-11-21T16:28:44.048227+00:00",
+  "protocol": "owned-accessor-language-protocol-v2.json",
+  "source_sha256": "5909aa2f02cc320df83b05766f683bbfdaaaaf2d90ed846254255c4b9a7f2f24",
+  "raw_path": "agent/research/acceptance-calibration-20261121/owned-accessor-language-raw-v1.json",
+  "raw_sha256": "8ec4c2878a59269ccbfb6c51b0f4f2457660a914fb48e007540a583e4aa1676e",
+  "emitted_js_path": "agent/research/acceptance-calibration-20261121/owned-accessor-language-v1.emitted.js",
+  "emitted_js_sha256": "5bc315ecce8ecc776a22939f7f9f965f02704788df218d01e144d984a206dc58",
+  "typescript_version": "5.9.3",
+  "node_version": "v24.22.0",
+  "syntax_option_diagnostics": [],
+  "not_full_typecheck": true,
+  "observations": [
+    {
+      "id": "initial-two-reads",
+      "constructor_calls": 1,
+      "items_cleared": true,
+      "context_cleared": true,
+      "same_identity": true
+    },
+    {
+      "id": "truthy-setter-before-read",
+      "returned_replacement": true,
+      "constructor_calls": 0,
+      "items_cleared": true,
+      "context_cleared": true
+    },
+    {
+      "id": "falsy-setter-before-read",
+      "thrown_name": "TypeError",
+      "constructor_calls": 0,
+      "items_cleared": true,
+      "context_cleared": true
+    },
+    {
+      "id": "constructor-throws",
+      "thrown_name": "Error",
+      "constructor_calls": 1,
+      "items_cleared": false,
+      "context_cleared": false
+    },
+    {
+      "id": "finalizer-throws",
+      "thrown_name": "Error",
+      "constructor_calls": 0,
+      "items_cleared": false,
+      "context_cleared": false
+    },
+    {
+      "id": "falsy-setter-undefined-only-control",
+      "returned_zero": true,
+      "constructor_calls": 0,
+      "items_cleared": true,
+      "context_cleared": true
+    }
+  ],
+  "frozen_expected_observations_all_match": true,
+  "interpretation": "Owned truthiness getter after an untyped zero setter throws TypeError during argument evaluation; owned undefined-only alternative returns0. Throwing construction/finalization prevents later clearing. This illustrates language roles/conditions, not actual Zod runtime behavior, application tests or memory reclamation. TypeScript setter annotation/as-any cast are erased; other TS features can emit runtime code.",
+  "upstream_source_program_execution": false,
+  "permanent_tests_added": false,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

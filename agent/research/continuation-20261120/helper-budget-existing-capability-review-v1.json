@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-20T17:33:38.477518+00:00",
+  "finding": "Existing optional HelperJobBudget0.1.0 already supports durable total budgets, POSIX nonblocking interprocess locks, deadlines, hash-linked reservations and restart/concurrency controls. New read-only legacyjournal audit must not be claimed as a novel global budget/coordinator capability.",
+  "files": {
+    "agent/tools/documentation_job_budget.py": {
+      "sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "anchors": [
+        {
+          "name": "HelperJobBudget",
+          "first_line": 70,
+          "last_line": 281
+        }
+      ]
+    },
+    "agent/test/documentation_job_budget_test.py": {
+      "sha256": "52b651eda6cb1d4cee58fe5bb7210e77822fca4ec669cfb0998d3b86158ac2f2",
+      "anchors": [
+        {
+          "name": "test_restart_cannot_reset_global_step_budget",
+          "first_line": 50,
+          "last_line": 56
+        },
+        {
+          "name": "test_separate_process_resumes_and_does_not_reset_budget",
+          "first_line": 200,
+          "last_line": 205
+        },
+        {
+          "name": "test_separate_concurrent_coordinators_cannot_exceed_job_budget",
+          "first_line": 244,
+          "last_line": 259
+        }
+      ]
+    },
+    "agent/tools/documentation_retrieval.py": {
+      "sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+      "anchors": []
+    },
+    "agent/test/documentation_retrieval_test.py": {
+      "sha256": "4fecd6a492428a0365548684e15b15d48589ce97eba285b3feae783faf9e69ea",
+      "anchors": [
+        {
+          "name": "test_matching_rewritten_receipt_does_not_approve_a_false_source_quote",
+          "first_line": 269,
+          "last_line": 278
+        }
+      ]
+    }
+  },
+  "existing_budget_tests_declared": 26,
+  "fresh_execution_in_this_review": false,
+  "new_audit_distinct_scope": "Read-only reconstruction of four old standalone HelperRetrieval request/result/receipt triples that were not created under a HelperJobBudget job config. No lock/reservation/job-state import is provided.",
+  "decision": "Do not integrate or replace existing coordinator; preserve the narrower audit and all results with honest scope. Prefer existing HelperJobBudget for any future explicit opt-in coordinated job.",
+  "existing_optional_api_has_ruby_routing_consumer": false,
+  "existing_production_files_changed": false
+}

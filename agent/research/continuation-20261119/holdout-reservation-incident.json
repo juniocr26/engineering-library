@@ -1,0 +1,33 @@
+{
+  "id": "CONT-HOLDOUT-CONTAMINATION-AXUM",
+  "status": "RESERVATION_INVALIDATED_BY_DEVELOPMENT_INFERENCE",
+  "at": "2026-11-19T14:40:43.077343+00:00",
+  "prior_manifest": "private-research://adaptive-20261118/dataset-diagnostics-v1/future-holdout-reserve.json",
+  "prior_manifest_sha256": "a2f63dfbe8330c57ad83f1155e60675fe2cb212edfcc7ff934b1b572ed220bd5",
+  "prior_manifest_preserved_unchanged": true,
+  "cause": "Selected unresolved FACT006 from livequeue without first checking later dataset reservation. Axum try_from_uri ranges78..85 overlap HOLDOUT-AXUM-QUERY. Source/rubric frozen before inference does not preserve unused-holdout status.",
+  "observed_generation": "contract-wave3/axum-uri-result",
+  "model_calls": 1,
+  "training_steps": 0,
+  "output_status": "writerrefused; factuallywrong mapping description; diagnostic only",
+  "affected_cases": [
+    "HOLDOUT-AXUM-QUERY",
+    "HOLDOUT-AXUM-STATE"
+  ],
+  "family": "rust-request-extraction-and-rejection",
+  "case_effects": {
+    "query": "Modeloutput nowseen; not untouchedholdout",
+    "state": "No directgeneration, but samefamily exposed; cannot claim independent familyholdout"
+  },
+  "current_intact_reserved_families": 0,
+  "training_approved_rows": 0,
+  "remediation": [
+    "Preserve originaldatedreservation ashistory andappend explicitcurrent invalidation",
+    "Quarantine output in diagnostic_only withentirefamily",
+    "Do not schedule furtherAxum developmentinferences",
+    "Research preflight reads thisreservationlist and refuses reserved family/repository beforeeachfuturebatch",
+    "Freeze a genuinelyseparate unused sourcefamily before any futureapprovedtrain/evalsplit; no pretrainingnoveltyclaim"
+  ],
+  "owner_approval_requested": false,
+  "publication": false
+}

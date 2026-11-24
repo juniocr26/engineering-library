@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-GO-AST-RECEIVER-OWNER-VALIDATION",
+  "at": "2026-11-19T03:53:15.978849+00:00",
+  "status": "INTEGRATED",
+  "consumer": "GoAstCommand.source_units -> existing Command.validate_and_render owner guard",
+  "problem": "Optional Go AST cards lacked enclosing_impl_hint, so a valid receiver.method alias was rejected when the package.receiver.method spelling was expected.",
+  "change": "Set the owner hint from the verified AST-produced qualified symbol. No global guard exception or prose whitelist.",
+  "before_after": {
+    "actual_stored_response_before": "false rejection as different owner",
+    "after": "structural acceptance only; factual response remains rejected",
+    "independent_SQLx_controls": 2,
+    "independent_Prometheus_controls": 2,
+    "wrong_owner_rejections_preserved": 2
+  },
+  "tests": {
+    "Ruby_runs": 206,
+    "Ruby_assertions": 1249,
+    "failures": 0,
+    "new_model_calls": 0
+  },
+  "scope": [
+    "Optional Go AST consumer only; ordinary selector unchanged",
+    "Correct short and full receiver aliases accepted",
+    "Wrong owner remains rejected even when its method exists elsewhere in same source file",
+    "Correction does not certify helper semantics or bilingual factual quality"
+  ],
+  "evidence": [
+    {
+      "artifact": "private-research://adaptive-20261118/go-receiver-owner-protocol.json",
+      "sha256": "e406993a2bca096845e739a4683096703560e08b448aedadee2596ee8859aac4"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-receiver-owner-replay.jsonl",
+      "sha256": "08742bd827af56aa628f4806258edd91c09094794a7a1e1b97c044ebe014bfdf"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-receiver-owner-tests.log",
+      "sha256": "50c1ef0f5550320b03c4fb62bb4b372880ca80e5e4de5cdbf45d75eb0455c84f"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-receiver-owner-all-tests.log",
+      "sha256": "e4a6b894bc487f4322befd01f53d930d2bf3045fd2f83dece72463a454e915b0"
+    }
+  ],
+  "training_gold": false,
+  "owner_review": "pending"
+}

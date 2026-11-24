@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-GO-GUARD-TRANSFER20-LAYOUT",
+  "at": "2026-11-19T08:48:49.419892+00:00",
+  "status": "VERIFIED_15_NEW_SOURCE_CONTRACTS_5_SAFE_REFUSALS_WITH_ONE_EXPECTATION_CORRECTION",
+  "caller": "frozen1.9.35",
+  "GoAST": "1.4.0",
+  "actual_normal_source_only_workflows": 20,
+  "source_program_or_model_calls": 0,
+  "initial_prediction": {
+    "accept": 16,
+    "refuse": 4,
+    "matched_initial_predictions": 19,
+    "total": 20
+  },
+  "actual": {
+    "accepted": 15,
+    "refused": 5,
+    "complete_accepted_ENPT_source_reviews": 15,
+    "new_semantic_behavior_or_type_proof": false
+  },
+  "unexpected_refusal": {
+    "selector": "prometheus/discovery/oci/oci.go:stringVal",
+    "source": "if s == nil return emptystring; return *s",
+    "reason": "Go AST dereference expression is StarExpr, absent from existing bounded return-expression whitelist. Initial prediction wrongly treated it as accepted unary shape.",
+    "decision": "Keep current safe refusal; no producer/renderer expansion and no retroactive20/20claim"
+  },
+  "expected_refusals": [
+    "SQLx Row.Columns directempty-slice composite",
+    "SQLx BitBool.Value directbyte-slice composite",
+    "SDK newProtoPayload multilinepointer/composite expression",
+    "Prometheus clearIfNotNil sliceexpression"
+  ],
+  "verified_cases": [
+    {
+      "repository": "chi",
+      "selector": "Pattern.Match",
+      "source_sha256": "cfd320f1a996ac95e29e25ab8a2ffa9606577996d6e001fb3835ede2795a3f69",
+      "quote_sha256": "a120d42dd4d906c90b140ada136a937226052d040c734e6c1638a9b1f818928a",
+      "condition": "!p.wildcard",
+      "true_expressions": [
+        "p.prefix == v"
+      ],
+      "fallthrough_expressions": [
+        "len(v) >= len(p.prefix+p.suffix) && strings.HasPrefix(v, p.prefix) && strings.HasSuffix(v, p.suffix)"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "chi",
+      "selector": "Mux.MethodNotAllowedHandler",
+      "source_sha256": "cc44c2d620e6306b16d6d80f5f6c70f02b5814b357a4f5823372818f355ae67d",
+      "quote_sha256": "deead9298f3346c1190d3d44cd6080d5edecf5773538a5f88d0f347731d742e8",
+      "condition": "mx.methodNotAllowedHandler != nil",
+      "true_expressions": [
+        "mx.methodNotAllowedHandler"
+      ],
+      "fallthrough_expressions": [
+        "methodNotAllowedHandler(methodsAllowed...)"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sqlx",
+      "selector": "JSONText.MarshalJSON",
+      "source_sha256": "4688a32cd786735734cd520066876e3c48503219fc73fa5ce8224b78a1471412",
+      "quote_sha256": "91fca25f52e924ec5363255ec107f14d8357ab77b94de404910c7cb71311dd74",
+      "condition": "len(j) == 0",
+      "true_expressions": [
+        "emptyJSON",
+        "nil"
+      ],
+      "fallthrough_expressions": [
+        "j",
+        "nil"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sdk-go",
+      "selector": "Plugin.ForceFlush",
+      "source_sha256": "549173176ff4d341332839370b69ba5058578145bb0b3a46b58118abf2ae9c00",
+      "quote_sha256": "d67f245209e8c146e0c51806c42203a84fbb6d3aa5bad91539f2ea10cf2972d6",
+      "condition": "ctx == nil",
+      "true_expressions": [
+        "fmt.Errorf(\"context is required\")"
+      ],
+      "fallthrough_expressions": [
+        "p.forceFlush(ctx)"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sdk-go",
+      "selector": "cGroupInfoImpl.GetLastMemUsage",
+      "source_sha256": "4ab1582ad7ad75c08578f83488c991fd153f3a5f46ec1a332bd03d6678d592a7",
+      "quote_sha256": "de3f835318db8a18a029ee3b33d1541cf9137abdc99b655be59cf25813ab5eed",
+      "condition": "p.lastCGroupMemStat != nil",
+      "true_expressions": [
+        "float64(p.lastCGroupMemStat.Usage) / float64(p.lastCGroupMemStat.UsageLimit)"
+      ],
+      "fallthrough_expressions": [
+        "0"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sdk-go",
+      "selector": "withStartWorkflowOperationImpl.markExecuted",
+      "source_sha256": "5327c30dd2eb10a8e5cfc3149e7cdf48b414ef70fc6668f77b7790e35ad173a7",
+      "quote_sha256": "fe6a5ffab6bc921083355e661dbf373e17a9a3dd68dbd88d6c467763cb3e2d88",
+      "condition": "op.executed.Swap(true)",
+      "true_expressions": [
+        "fmt.Errorf(\"was already executed\")"
+      ],
+      "fallthrough_expressions": [
+        "nil"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sdk-go",
+      "selector": "StorageParameters.MaxOperationsPerMessage",
+      "source_sha256": "38e844f9ed24c28aad0c358dac85ec2911175e02f018edfa3a2478e352bfd5be",
+      "quote_sha256": "9b4ebd6af59e865dfa15038bc15b5219b9011aee1aab10a717245457713dca99",
+      "condition": "p.maxOperationsPerMessage <= 0",
+      "true_expressions": [
+        "defaultMaxOperationsPerMessage"
+      ],
+      "fallthrough_expressions": [
+        "p.maxOperationsPerMessage"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sdk-go",
+      "selector": "getKind",
+      "source_sha256": "b4275b93b7db958a62f6d5b7d580ea917f84658be398147ddf2aa5a1a5d7c9f5",
+      "quote_sha256": "9b980138bf76a15a9e7ee575e70df8cc81eeb925e2eb218d990e06721df5277d",
+      "condition": "fType == nil",
+      "true_expressions": [
+        "reflect.Invalid"
+      ],
+      "fallthrough_expressions": [
+        "fType.Kind()"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sdk-go",
+      "selector": "releaseTarget.releaseBranchName",
+      "source_sha256": "c5cd6ca0a1dc16a11c092c2271f4b0cc930a8a26605c22f82de1d7a6555beba5",
+      "quote_sha256": "782d7e8cba9016dd353d1cde03d5f45135355a597fc2fa82f66e14bcef47fe45",
+      "condition": "t.dir == \"\"",
+      "true_expressions": [
+        "\"chore/release-\" + version.String()"
+      ],
+      "fallthrough_expressions": [
+        "\"chore/release-\" + strings.ReplaceAll(t.dir, \"/\", \"-\") + \"-\" + version.String()"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "sdk-go",
+      "selector": "applicationReader",
+      "source_sha256": "9feaa351aa9c064633baee8aeff0207c00409b192b961541bffb2d641c5f858b",
+      "quote_sha256": "63153dd613dc96c56da231c4ae4c95f52ec50ee5c81767b6ab53270a97cdbfa1",
+      "condition": "workflow.IsReadOnly(ctx)",
+      "true_expressions": [
+        "cryptorand.Reader"
+      ],
+      "fallthrough_expressions": [
+        "workflow.GetRandomStream(ctx, applicationRandomStream+\"/\"+tracerName)"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "prometheus",
+      "selector": "parseCompressionType",
+      "source_sha256": "8dc21346d142a7a9c24bc18efb13db9073edc3e57dfc0a7b653e3951cbd9b7ad",
+      "quote_sha256": "0b3e10eb8c1996d102abe8208e774b362173fbb966155529e54ffc0881acd03e",
+      "condition": "compress",
+      "true_expressions": [
+        "compressType"
+      ],
+      "fallthrough_expressions": [
+        "compression.None"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "prometheus",
+      "selector": "getFormattedTime",
+      "source_sha256": "63ccc931238787a7facc21faf350f92379b778d3208145ce926bc5128f627497",
+      "quote_sha256": "b7f8db6ccc4ef768c694a5de42e9f36822b3e95badecbeb37ff03fcf47c1ed88",
+      "condition": "humanReadable",
+      "true_expressions": [
+        "time.Unix(timestamp/1000, 0).UTC().String()"
+      ],
+      "fallthrough_expressions": [
+        "strconv.FormatInt(timestamp, 10)"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "prometheus",
+      "selector": "Matcher.Prefix",
+      "source_sha256": "db459ef3facccfc7705aba2b7725a030a55922a6ede421acae24c46baa82bd92",
+      "quote_sha256": "8c36318b39e8f178513475570a00ba55fdf0fab3f89a736422fbd30681a00577",
+      "condition": "m.re == nil || m.re.caseInsensitivePrefix",
+      "true_expressions": [
+        "\"\""
+      ],
+      "fallthrough_expressions": [
+        "m.re.prefix"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "prometheus",
+      "selector": "FloatHistogram.checkSchemaAndBounds",
+      "source_sha256": "6ee65ac99884988e0f8a3411d933fcb82b125737e7bcee0258423b33e84f78f8",
+      "quote_sha256": "45ab8b7bd034416a033dc4e141204df8edfe0bb3459678deda43cc8e8aa1fab3",
+      "condition": "h.UsesCustomBuckets() != other.UsesCustomBuckets()",
+      "true_expressions": [
+        "ErrHistogramsIncompatibleSchema"
+      ],
+      "fallthrough_expressions": [
+        "nil"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    },
+    {
+      "repository": "prometheus",
+      "selector": "MonitoringAssignment.GetLabels",
+      "source_sha256": "b8ada73cf8df74d5d55276a947da9f976e601426270998eef50eea472787e9ec",
+      "quote_sha256": "6d1307a1f4eb9f9f5b6b13959b069c6b155fa86cf6387a4b8c0cd0d0b0a08ce3",
+      "condition": "x != nil",
+      "true_expressions": [
+        "x.Labels"
+      ],
+      "fallthrough_expressions": [
+        "nil"
+      ],
+      "whole_quote_and_both_paragraphs_read": true
+    }
+  ],
+  "scope_clarification": {
+    "owned_cases": [
+      "Pointertocompositeliteral &Thing{} and immediatelyinvokedfunctionliteral accepted as bounded outerUnaryExpr/CallExpr when formattingremainsone line",
+      "Directcomposite/functionliteral returnnodes refused"
+    ],
+    "interpretation": "This profile uses outer-expression whitelist plus formatted-text size/newline gates. It does not claim recursively excluding all nested literals or examining their behavior. Only written expression text is rendered; types/sideeffects/runtime remain unverified.",
+    "evidence": "private-research://adaptive-20261118/go-if-return-v1/nested-expression-scope-audit.json"
+  },
+  "runtime_layout": {
+    "normal_backend_workdir": "/app/backend",
+    "agent_mount": "/agent read-only existingComposebind",
+    "regression_runs": 234,
+    "assertions": 1494,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "fixture_fix": "Two new Go source-fact test fixtures now use the same repository-relative agent path then /agent fallback as existing Go tests. Production configuration/runtime unchanged.",
+    "prior_source_tree_run": "Also234/1494; currentnormalmountverificationnotassumedfromearlier/sourcepathrun"
+  },
+  "actual_consumer": "ExplicitGoIfReturnFactCommand; no defaultmodelmode change. Source-supported statements/unknownhelper scope preserved.",
+  "recovery": "Currentoperationalfiles hashes updated; latestindependentcapsule recovery pending atthisrecord cutoff",
+  "private_receipt": "private-research://adaptive-20261118/go-if-return-v1/transfer20-results.jsonl",
+  "private_receipt_sha256": "875675ae28b283ad687c0c0802e182368927e1eccf26c238f9255d05ab23cc2d",
+  "normal_mount_tests_sha256": "9fa3827169bf9f0d89912e460fcf1a2261fd389e2c2fc27213408d9bd9a9da09",
+  "source_programs_executed": false,
+  "new_model_calls": 0,
+  "training_runs": 0,
+  "human_review": "pending"
+}

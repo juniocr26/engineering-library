@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-20T19:20:30.970946+00:00",
+  "results": "humanize-confined-runtime-results-v1.json",
+  "distinct_cases": 36,
+  "per_revision_exact_prediction_matches": 35,
+  "unmatched_owned_prediction": "si-quecto",
+  "observation": "ComputeSI(1e-30) returned float rendering 1.0000000000000002 in both cuts, not exactly 1. Prefix changed from empty to q as source predicts.",
+  "cause_scope": "Owned exact-float expectation was too strong; no claim of upstream defect. No rerun or edited oracle.",
+  "other_verified_contracts": [
+    "ParseBytes uses float64 and rounded 9007199254740993 to 9007199254740992; ParseBigBytes preserved exact integer.",
+    "The decimal spelling of MaxUint64 was rejected as too large after float conversion.",
+    "Only ParseBigBytes acquired R/Q units; ParseBytes rejected Rb in both cuts.",
+    "BigBytes/BigIBytes preserve input big.Int in these cases; BigComma mutates the provided argument to 1 for both signed 1234567 examples.",
+    "ParseSI(1 QB) changed from magnitude 1 and unit QB to magnitude 1e30 and unit B."
+  ],
+  "cross_platform_verified": false,
+  "general_runtime_accuracy": false,
+  "oracle_preserved": true,
+  "retry_required": false,
+  "training_excluded": true
+}

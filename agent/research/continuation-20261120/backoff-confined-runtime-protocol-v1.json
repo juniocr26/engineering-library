@@ -1,0 +1,439 @@
+{
+  "at": "2026-11-20T19:51:38.787951+00:00",
+  "status": "FROZEN_BEFORE_REVIEWED_SOURCE_EXECUTION",
+  "hypothesis": "Composing actual retry/context/permanent-error and exponential policies with owned synchronous timers/clocks will distinguish max retries from attempts, cancellation precedence, notification boundaries, and configurable Stop sentinel from a deadline. New generic/constructor APIs are evaluated separately from shared old/current behavior.",
+  "source_freeze_sha256": "c07954cee718927c55bd5592a7913db75de3c23f02b0521ebc54d93d74eec75f",
+  "source_fetch_sha256": "7c8530e3a7139346397930353f95418107ca11d78fdc2d227385c88cf3fbae3f",
+  "source_review": {
+    "all_selected_root_go_files_and_both_cut_differences_reviewed": true,
+    "imports": [
+      "time",
+      "context",
+      "math/rand",
+      "errors",
+      "sync"
+    ],
+    "external_imports": [],
+    "package_global_initializers": "Only SystemClock = systemClock{} plus literal declarations; no explicit init function or application I/O in selected source.",
+    "allowed_functions": "RetryNotifyWithTimer,Context/MaxRetries/Permanent helpers,ExponentialBackOff methods;current-only generic retry and constructor option helpers.",
+    "forbidden_in_this_observation": [
+      "Ticker constructors/run (no public package goroutines)",
+      "defaultTimer.Start (no actual retry timers)",
+      "time.Sleep",
+      "application/network/filesystem operations from public package",
+      "upstream tests",
+      "package downloads"
+    ],
+    "standard_library_scope": "Go runtime and math/rand may execute ordinary initialization/pseudorandom operations; jitter output is fixed by RandomizationFactor=0, not a claim that rand.Float64 is uncalled. Old default constructor may read the system clock before the owned clock is assigned.",
+    "source_edits": false
+  },
+  "execution": {
+    "allowed": true,
+    "existing_container": "engineering-library-backend-1",
+    "compiler": "Go1.27.4LinuxARM64CGOoff",
+    "offline": true,
+    "owned_timer": "Start records duration and synchronously supplies one buffered channel value, or cancels the owned context;no sleeping or real timer.",
+    "owned_clock": "Mutable time.Time value advanced only by the driver.",
+    "bounded_operations": "At most5ownedoperationcalls;overrun returns Permanent owned failure. At most8timerStartcalls;overrunpanics. Eachbinarytimeout20seconds.",
+    "universal_concurrency_or_liveness_claim": false,
+    "source_initializers_will_execute": true
+  },
+  "cases": [
+    {
+      "id": "stop-error",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 0,
+        "timer_starts": 0,
+        "timer_stops": 1,
+        "error": "operation",
+        "same_operation_error": true
+      },
+      "current_only": false
+    },
+    {
+      "id": "stop-success",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 0,
+        "timer_starts": 0,
+        "timer_stops": 1,
+        "error": "none"
+      },
+      "current_only": false
+    },
+    {
+      "id": "max-retries-zero",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 0,
+        "timer_starts": 0,
+        "error": "operation"
+      },
+      "current_only": false
+    },
+    {
+      "id": "max-retries-two",
+      "expected_fields": {
+        "attempts": 3,
+        "notify": 2,
+        "timer_starts": 2,
+        "error": "operation"
+      },
+      "current_only": false
+    },
+    {
+      "id": "fail-then-success",
+      "expected_fields": {
+        "attempts": 2,
+        "notify": 1,
+        "timer_starts": 1,
+        "error": "none"
+      },
+      "current_only": false
+    },
+    {
+      "id": "permanent-direct",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 0,
+        "timer_starts": 0,
+        "error": "operation",
+        "same_operation_error": true
+      },
+      "current_only": false
+    },
+    {
+      "id": "permanent-wrapped",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 0,
+        "timer_starts": 0,
+        "error": "operation",
+        "same_operation_error": true
+      },
+      "current_only": false
+    },
+    {
+      "id": "permanent-nil",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 0,
+        "timer_starts": 0,
+        "error": "none"
+      },
+      "current_only": false
+    },
+    {
+      "id": "canceled-success",
+      "expected_fields": {
+        "attempts": 1,
+        "error": "none",
+        "timer_starts": 0
+      },
+      "current_only": false
+    },
+    {
+      "id": "canceled-error",
+      "expected_fields": {
+        "attempts": 1,
+        "error": "canceled",
+        "same_operation_error": false,
+        "timer_starts": 0
+      },
+      "current_only": false
+    },
+    {
+      "id": "canceled-permanent",
+      "expected_fields": {
+        "attempts": 1,
+        "error": "operation",
+        "same_operation_error": true,
+        "timer_starts": 0
+      },
+      "current_only": false
+    },
+    {
+      "id": "tries-outside-context",
+      "expected_fields": {
+        "attempts": 1,
+        "error": "canceled",
+        "timer_starts": 0
+      },
+      "current_only": false
+    },
+    {
+      "id": "context-outside-tries",
+      "expected_fields": {
+        "attempts": 1,
+        "error": "canceled",
+        "timer_starts": 0
+      },
+      "current_only": false
+    },
+    {
+      "id": "cancel-during-timer",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 1,
+        "timer_starts": 1,
+        "timer_stops": 1,
+        "error": "canceled"
+      },
+      "current_only": false
+    },
+    {
+      "id": "notify-panic",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 1,
+        "timer_starts": 0,
+        "timer_stops": 1,
+        "panic": "owned-notify"
+      },
+      "current_only": false
+    },
+    {
+      "id": "operation-panic",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 0,
+        "timer_starts": 0,
+        "timer_stops": 1,
+        "panic": "owned-operation"
+      },
+      "current_only": false
+    },
+    {
+      "id": "timer-start-panic",
+      "expected_fields": {
+        "attempts": 1,
+        "notify": 1,
+        "timer_starts": 1,
+        "timer_stops": 1,
+        "panic": "owned-timer"
+      },
+      "current_only": false
+    },
+    {
+      "id": "context-rewrap",
+      "expected_fields": {
+        "new_context_used": true,
+        "next_ns": 0,
+        "new_context_error": "none"
+      },
+      "current_only": false
+    },
+    {
+      "id": "nil-context-panic",
+      "expected_fields": {
+        "panic": "nil context"
+      },
+      "current_only": false
+    },
+    {
+      "id": "permanent-is-class",
+      "expected_fields": {
+        "different_inner_error_wrapper_matches": true,
+        "is_inner": true,
+        "is_other_inner": false
+      },
+      "current_only": false
+    },
+    {
+      "id": "permanent-unwrap",
+      "expected_fields": {
+        "unwrap_same_inner": true,
+        "permanent_nil_is_nil": true
+      },
+      "current_only": false
+    },
+    {
+      "id": "exp-default-stop",
+      "expected_fields": {
+        "next_ns": -1
+      },
+      "current_only": false
+    },
+    {
+      "id": "exp-custom-stop",
+      "expected_fields": {
+        "next_ns": 5000000
+      },
+      "current_only": false
+    },
+    {
+      "id": "exp-initial-over-cap",
+      "expected_fields": {
+        "durations_ns": [
+          100000000,
+          50000000
+        ]
+      },
+      "current_only": false
+    },
+    {
+      "id": "exp-growth",
+      "expected_fields": {
+        "durations_ns": [
+          10000000,
+          20000000,
+          40000000,
+          60000000,
+          60000000
+        ]
+      },
+      "current_only": false
+    },
+    {
+      "id": "exp-elapsed-reset",
+      "expected_fields": {
+        "elapsed_before_reset_ns": 250000000,
+        "elapsed_after_reset_ns": 0
+      },
+      "current_only": false
+    },
+    {
+      "id": "exp-predicted-wait-cutoff",
+      "expected_fields": {
+        "elapsed_ns": 0,
+        "next_ns": -1
+      },
+      "current_only": false
+    },
+    {
+      "id": "notify-order",
+      "expected_fields": {
+        "events": [
+          "reset",
+          "operation1",
+          "next1",
+          "notify1",
+          "timer-start1",
+          "operation2",
+          "timer-stop"
+        ]
+      },
+      "current_only": false
+    },
+    {
+      "id": "default-timer-no-start",
+      "expected_fields": {
+        "attempts": 1,
+        "error": "operation",
+        "notify": 0,
+        "custom_timer_used": false
+      },
+      "current_only": false
+    },
+    {
+      "id": "custom-positive-stop-retry",
+      "expected_fields": {
+        "attempts": 2,
+        "notify": 1,
+        "timer_starts": 1,
+        "delays_ns": [
+          5000000
+        ],
+        "error": "none"
+      },
+      "current_only": false
+    },
+    {
+      "id": "generic-success",
+      "expected_fields": {
+        "data": 42,
+        "error": "none",
+        "attempts": 1,
+        "timer_starts": 0,
+        "timer_stops": 1
+      },
+      "current_only": true
+    },
+    {
+      "id": "generic-final-error",
+      "expected_fields": {
+        "data": 73,
+        "error": "operation",
+        "attempts": 1,
+        "timer_starts": 0,
+        "timer_stops": 1
+      },
+      "current_only": true
+    },
+    {
+      "id": "generic-permanent",
+      "expected_fields": {
+        "data": 91,
+        "error": "operation",
+        "attempts": 1,
+        "timer_starts": 0,
+        "timer_stops": 1
+      },
+      "current_only": true
+    },
+    {
+      "id": "generic-cancel",
+      "expected_fields": {
+        "data": 17,
+        "error": "canceled",
+        "attempts": 1,
+        "timer_starts": 0,
+        "timer_stops": 1
+      },
+      "current_only": true
+    },
+    {
+      "id": "constructor-options",
+      "expected_fields": {
+        "initial_ns": 10000000,
+        "randomization_factor": 0,
+        "multiplier": 2,
+        "max_interval_ns": 60000000,
+        "max_elapsed_ns": 1000000000,
+        "stop_ns": -1,
+        "clock_is_owned": true,
+        "clock_now_calls": 1
+      },
+      "current_only": true
+    },
+    {
+      "id": "constructor-option-order",
+      "expected_fields": {
+        "initial_ns": 9000000,
+        "clock_now_calls": 1
+      },
+      "current_only": true
+    },
+    {
+      "id": "positive-stop-option-retry",
+      "expected_fields": {
+        "attempts": 2,
+        "notify": 1,
+        "timer_starts": 1,
+        "delays_ns": [
+          5000000
+        ],
+        "error": "none"
+      },
+      "current_only": true
+    },
+    {
+      "id": "nil-clock-option-panic",
+      "expected_fields": {
+        "panic_present": true
+      },
+      "current_only": true
+    }
+  ],
+  "shared_cases": 30,
+  "current_only_api_cases": 8,
+  "source_family_groups": 1,
+  "old_and_current_repeats_not_independent_cases": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_excluded": true,
+  "model_calls": 0,
+  "permanent_tests_modified": false,
+  "limits": "Owned predictions are not upstream-maintainer expectations. Same behavior with a newly added option is an API-surface observation, not a newly introduced runtime effect. No actual waiting, retry latency, network guarantee or installed package identity is measured."
+}

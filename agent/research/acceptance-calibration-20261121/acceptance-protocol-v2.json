@@ -1,0 +1,117 @@
+{
+  "version": "documentation-acceptance/2.0-research",
+  "frozen_at": "2026-11-21T13:29:22.554945+00:00",
+  "extends": "../portfolio-vivabem-20261120/acceptance-protocol-v1.json",
+  "status": "FROZEN_BEFORE_NEW_PREDICTIONS",
+  "purpose": "Measure factual support separately from format/citation validity and lifecycle authorization. Historical denominators remain immutable.",
+  "decision_layers": [
+    "source retrieval",
+    "factual correctness",
+    "semantic source support",
+    "relevant context coverage",
+    "lifecycle decision",
+    "bilingual equivalence",
+    "complete-document acceptance",
+    "independent owner approval",
+    "training Gold eligibility"
+  ],
+  "atomic_unit": {
+    "definition": "One independently falsifiable proposition with its own subject, predicate, conditions and source scope. Split conjunctions when either part can be false without the other.",
+    "deduplication": "Same underlying proposition in EN/PT/FAQ/chapter counts once with language/excerpt occurrences; semantic divergence is an error attached to that claim, not extra independent evidence.",
+    "required_fields": [
+      "claim_id",
+      "family",
+      "source_revision",
+      "source_path",
+      "source_file_sha256",
+      "exact_source_evidence",
+      "source_lines",
+      "expected_interpretation",
+      "generated_interpretation",
+      "verdict",
+      "critical",
+      "bilingual_consistency",
+      "reviewer",
+      "provenance"
+    ],
+    "verdicts": [
+      "SUPPORTED",
+      "CONTRADICTED",
+      "INSUFFICIENT"
+    ],
+    "source_scope": "A literal occurrence or AST node is evidence of written syntax; runtime/exceptions/dependencies/negative project-wide assertions require sufficient context. No support from citation membership alone.",
+    "critical": "A false behavior/API/exception/architecture/lifecycle assertion that can change implementation or operation, a translated technical identifier, fabricated source/test execution, private disclosure or missing language blocks acceptance."
+  },
+  "metrics": {
+    "supported_claim_precision": "SUPPORTED generated propositions / all generated factual propositions adjudicated (SUPPORTED+CONTRADICTED+INSUFFICIENT); exclude nonclaims, report unreviewed separately",
+    "unsupported_claim_rate": "(CONTRADICTED+INSUFFICIENT) / all adjudicated generated propositions",
+    "contradicted_rate": "CONTRADICTED / adjudicated generated propositions",
+    "coverage": "unique required reference propositions correctly conveyed / frozen required propositions; precision alone cannot reward omitted facts",
+    "verifier_supported_precision": "true SUPPORTED verdicts / all predicted SUPPORTED verdicts",
+    "false_support_rate": "reference CONTRADICTED or INSUFFICIENT predicted SUPPORTED / reference CONTRADICTED or INSUFFICIENT; also separate reference strata",
+    "false_rejection_rate": "reference SUPPORTED predicted CONTRADICTED / reference SUPPORTED; abstention separate",
+    "justified_abstention": "reference INSUFFICIENT predicted INSUFFICIENT / reference INSUFFICIENT",
+    "unjustified_abstention": "reference SUPPORTED or CONTRADICTED predicted INSUFFICIENT / reference decidable",
+    "bilingual_equivalence": "unique propositions with both correct equivalent language occurrences / propositions requiring bilingual output",
+    "zero_denominators": null,
+    "confidence": "Descriptive fixed-case counts only. No confidence intervals treating correlated claims as independent projects."
+  },
+  "document_level": {
+    "dimensions": [
+      "factual correctness",
+      "relevant completeness",
+      "architecture and dependencies",
+      "API contracts",
+      "errors and exceptions",
+      "existing tests and actual execution status",
+      "examples and commands",
+      "EN/PT-BR equivalence",
+      "FAQ correctness",
+      "citation relevance",
+      "explicit limitations"
+    ],
+    "scores": {
+      "2": "satisfies frozen topic scope, evidence attached",
+      "1": "partially covered or review incomplete",
+      "0": "contradiction/unsupported critical content/missing required dimension",
+      "NA": "not applicable with frozen reason, never used post hoc to hide failure"
+    },
+    "pass_rule": "Every applicable dimension=2, all required propositions covered, both languages, no critical unsupported assertion, no unreviewed factual proposition. Syntax valid or a valid citation cannot override this rule.",
+    "owner_rule": "PASS_RESEARCH_REVIEW is not independent certification, OWNER_APPROVED, publication or training Gold.",
+    "partial_generation": "Sections/claims/FAQ are separate output units. Document outcome only after predeclared assembly and full all-claim review. Failed/missing stages remain in denominator of requested method workflows."
+  },
+  "lifecycle": {
+    "labels": [
+      "ADD",
+      "MODIFY",
+      "REMOVE",
+      "NO-OP",
+      "INCONCLUSIVE"
+    ],
+    "matrix": "reference rows, predicted columns; separate cohorts and same exact cases across conditions; report each label support",
+    "ADD": "Positive source evidence of new relevant supported contract and evidence no equivalent existing documented contract within independently established scope.",
+    "MODIFY": "A changed supported contract in pinned before/after sources plus existing affected documentation.",
+    "REMOVE": "Positive independent source-scope acquisition, no continuing alias/relocation/delegation in that scope, identified existing doc and supported retirement. A generator completeness boolean or selected-file absence never proves removal.",
+    "NO-OP": "Evidence existing documentation is correct for acquired scope; not a fallback for failed source acquisition.",
+    "INCONCLUSIVE": "Missing revisions, ambiguous scope, failed retrieval or incomplete evidence; justified abstention tracked separately.",
+    "action_rates": [
+      "false REMOVE / non-REMOVE references",
+      "missed MODIFY predicted any other label / MODIFY references",
+      "unsupported changes / unsupported-change controls",
+      "justified INCONCLUSIVE / INCONCLUSIVE references"
+    ],
+    "application": "Research decisions only; no documentation deletion or application change."
+  },
+  "review_independence": {
+    "source_reacquisition": "Fresh read-only Git objects checked against frozen hashes using a separate observation path.",
+    "semantic_reviewer": "Codex same campaign agent unless explicitly identified otherwise; no independent-human claim.",
+    "owner_approval": false,
+    "training_gold": false
+  },
+  "data_roles": {
+    "current_three_topics": "DEVELOPMENT_EXPOSED; training-excluded under retained role registry",
+    "evaluation_reserve": "Keep esp-hal metadata-only; do not inspect or tune on it",
+    "private_sources": "Metadata only for shared campaign evidence; no external model transfer or training"
+  },
+  "no_retrospective_rescoring": "New protocol may re-review historical cases in a new labelled audit; it never overwrites original scores, outputs, denominators or reference answers."
+}

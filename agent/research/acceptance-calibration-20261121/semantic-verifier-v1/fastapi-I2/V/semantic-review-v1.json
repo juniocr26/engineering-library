@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-21T16:31:04.391439+00:00",
+  "case": "fastapi-I2",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-I2",
+    "task": "fastapi",
+    "claim": "No two live server requests can ever share a dependency cache.",
+    "expected_verdict": "INSUFFICIENT",
+    "reference_id": "U-F",
+    "reviewer": "Same campaign agent, frozen source interpretation; not independent owner",
+    "critical": true,
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "scope": "Selected cards only; no project-wide runtime truth label"
+  },
+  "reference_anchor": {
+    "claim_id": "U-F",
+    "task": "fastapi",
+    "family": "fastapi/fastapi",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_path": null,
+    "source_file_sha256": null,
+    "exact_source_evidence": "Selected source cards do not establish the requested universal or cross-request runtime contract. No project-wide negative proof claimed.",
+    "source_lines": null,
+    "expected_interpretation": {
+      "en": "Not established by the selected source; abstain from the universal runtime claim.",
+      "pt-BR": "Não; a seleção não estabelece cache único compartilhado entre requisições."
+    },
+    "reference_verdict": "INSUFFICIENT",
+    "critical": true,
+    "reviewer": "Codex same campaign agent",
+    "provenance": "Frozen scope-limitation control, not observed runtime counterexample.",
+    "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+    "not_independent_holdout": true
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "Implementation",
+    "evidence": "The code uses a dependency cache to store the results of dependencies, and it checks if the dependency cache is already populated before solving the dependency. However, it does not explicitly state that no two live server requests can share the dependency cache.",
+    "reason": "The code does not explicitly state that no two live server requests can share the dependency cache, but it does use a cache to store the results of dependencies. This suggests that the cache is used to avoid redundant calculations, but it does not explicitly state that it is used to prevent multiple requests from sharing the cache."
+  },
+  "content_sha256": "29172d5f3e3dc3ba8cafd27cdaa78187e954222ad5d492e62e437ec2666c24a9",
+  "raw_response_sha256": "557974f8ff82926e5873ada31fe895c5bede852f9c63ae68892004363ee1f2b2",
+  "primary_raw_label_agreement": true,
+  "rationale_support_for_requested_claim": "SUPPORTED",
+  "evidence_form": "Accurate scoped paraphrase; ordering wording needs care.",
+  "source_relationship_review": "Correctly declines the no-two-requests-sharing universal. Cache reuse check before the dependency callback is a supported reading; do not extend wording to the earlier recursive child solve.",
+  "diagnostic_note": "Justified abstention retained, with explicit wording caveat instead of inventing a false runtime assertion.",
+  "end_to_end_label_and_rationale_supported": true,
+  "original_label_and_reference_unchanged": true,
+  "reviewer": "Same campaign agent; detailed rationale rubric fixed before reading any V/R outputs, but after some V predictions existed unread. Primary protocol/labels froze before predictions.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

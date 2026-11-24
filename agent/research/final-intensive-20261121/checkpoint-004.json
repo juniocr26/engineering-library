@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-21T23:31:24.524259+00:00",
+  "checkpoint": 4,
+  "archive": ".local-backups/final-intensive-20261121/checkpoint-004/research-reports-and-selected-dependencies.tar.gz",
+  "archive_sha256": "c701c47099852fa92922d494317a00df90c1f586817cf24dbab9bbfbb07e193e",
+  "archive_bytes": 5523619,
+  "input_manifest": ".local-backups/final-intensive-20261121/checkpoint-004/input-manifest.json",
+  "input_manifest_sha256": "be7860bd7dafb6a3da72ebe3257bedb36f089ef6df80f4b5a92a480af5defcaf",
+  "regular_files_restored_and_hash_verified": 415,
+  "file_modes_verified": true,
+  "restored_root": "/private/tmp/el-final-004-bps3je5h",
+  "consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import binding_envelope_v1 as v; a=json.loads((p/\"trusted-binding-anchor-v1.json\").read_text());root=p.parents[2];out={k:v.validate(v.canonical(x),x,root) for k,x in a.items()};print(json.dumps(out));assert all(not r for r in out.values())",
+      "/private/tmp/el-final-004-bps3je5h/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"fastapi\": [], \"cobra\": [], \"zod\": []}\n",
+    "stderr": ""
+  },
+  "exception_scope_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import observe_exception_scope_v2 as v; protocol=json.loads((p/\"exception-scope-protocol-v2.json\").read_text());rows=[v.flags((p/c[\"helper\"]).read_text(),(p/c[\"job\"]).read_text())[0]==c[\"expected\"] for c in protocol[\"cases\"]];print(json.dumps({\"matched\":sum(rows),\"cases\":len(rows)}));assert all(rows)",
+      "/private/tmp/el-final-004-bps3je5h/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"matched\": 8, \"cases\": 8}\n",
+    "stderr": ""
+  },
+  "helper_admission_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);root=p.parents[2];sys.path.insert(0,str(root/\"agent/tools\"));import documentation_retrieval as h; protocol=json.loads((p/\"helper-admission-protocol-v1.json\").read_text());observations=[]\nfor c in protocol[\"tasks\"]:\n raw=(p/\"reacquired-public-sources\"/c[\"task\"]/c[\"path\"]).read_bytes()\n try:\n  unit=h.extract(raw.decode(),c[\"selector\"],c[\"language\"]);h.validate_unit(unit,raw,c[\"selector\"],c[\"language\"]);status=\"ADMITTED_LEXICAL_UNIT\"\n except Exception as error: status=\"REFUSED\"\n observations.append(status==c[\"expected\"])\nprint(json.dumps({\"matched\":sum(observations),\"cases\":len(observations)}));assert all(observations)",
+      "/private/tmp/el-final-004-bps3je5h/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"matched\": 8, \"cases\": 8}\n",
+    "stderr": ""
+  },
+  "scope": "Local checkpoint and finite receipt-integrity consumer replay only. Not clean clone, model/optimizer, remote backup, Windows, crash durability or semantic correctness.",
+  "self_cut": "This receipt and manifest are outside own archive; later checkpoint can include earlier receipt. No infinite self-hash closure.",
+  "active_campaign": true,
+  "neural_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

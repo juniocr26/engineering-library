@@ -1,0 +1,264 @@
+{
+  "version": "bounded-strategy-comparison/1",
+  "frozen_at": "2026-11-21T13:32:05.766232+00:00",
+  "model": "llama3.2:3b",
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "task_freeze": "bounded-task-freeze-v2.json",
+  "reference_ledger": "atomic-reference-ledger-v2.json",
+  "acceptance": "acceptance-protocol-v2.json",
+  "methods": {
+    "A": {
+      "name": "complete-note",
+      "hypothesis": "Direct complete bilingual source-note generation is a baseline for cross-section omission and unsupported assertions.",
+      "instruction": "Produce a complete BOUNDED bilingual source note answering every supplied question. This is not a whole-project chapter. JSON object: {\"en\":{\"scope\":\"...\",\"behavior\":[{\"id\":\"...\",\"text\":\"...\",\"source\":\"path:lines\"}],\"error_boundaries\":\"...\",\"faq\":{\"question\":\"...\",\"answer\":\"...\"},\"limitations\":\"...\"},\"pt-BR\":{same keys and matching IDs}}. Include all factual question answers under behavior and the uncertainty answer in limitations. Include the pinned revision in scope. State external tests were not executed and examples/commands were not verified. No executable examples are required. Keep under 850 words total across both languages."
+    },
+    "B": {
+      "name": "small-sections",
+      "hypothesis": "Smaller fact subsets reduce association/missing-language errors per required proposition, at cost of multiple calls. Deterministic assembly cannot certify semantics.",
+      "instruction": "Generate only the supplied small subset as JSON {\"en\":[{\"id\":\"...\",\"text\":\"...\",\"source\":\"path:lines\"}],\"pt-BR\":[same keys and matching IDs]}. Answer each question and preserve its conditions. Do not create a complete note or unrelated claims."
+    },
+    "C": {
+      "name": "verified-facts-to-prose",
+      "hypothesis": "A pre-reviewed bilingual factual bank reduces source misinterpretation versus raw-source baseline. This changes supplied evidence and is not an isolated prompt-format causal comparison.",
+      "instruction": "Produce a complete BOUNDED bilingual source note answering every supplied question. This is not a whole-project chapter. JSON object: {\"en\":{\"scope\":\"...\",\"behavior\":[{\"id\":\"...\",\"text\":\"...\",\"source\":\"path:lines\"}],\"error_boundaries\":\"...\",\"faq\":{\"question\":\"...\",\"answer\":\"...\"},\"limitations\":\"...\"},\"pt-BR\":{same keys and matching IDs}}. Include all factual question answers under behavior and the uncertainty answer in limitations. Include the pinned revision in scope. State external tests were not executed and examples/commands were not verified. No executable examples are required. Keep under 850 words total across both languages. A human-readable reference bank is supplied; paraphrase only while preserving all conditions. Do not invent behavior."
+    },
+    "D": {
+      "name": "structured-claims-render",
+      "hypothesis": "Structured bilingual claim records plus deterministic rendering reduce missing-sections/language errors; factual support remains separately adjudicated.",
+      "instruction": "Return {\"claims\":[{\"id\":\"...\",\"en\":\"...\",\"pt-BR\":\"...\",\"source\":\"path:lines\"}],\"uncertainty\":{\"id\":\"...\",\"en\":\"...\",\"pt-BR\":\"...\"}}. Answer every fact question as one record. The uncertainty record answers the supplied uncertain contract question. No other fields. A deterministic renderer supplies scope/sections/limitations, not semantic truth."
+    },
+    "E": {
+      "name": "source-backed-faq",
+      "hypothesis": "Question-by-question bilingual FAQ generation may improve source association; a complete FAQ is a different output population from a complete chapter.",
+      "instruction": "Return {\"faq\":[{\"id\":\"...\",\"question_en\":\"...\",\"answer_en\":\"...\",\"question_pt-BR\":\"...\",\"answer_pt-BR\":\"...\",\"source\":\"path:lines\"}]}. Cover every supplied factual and uncertainty question. State source-only limits and do not invent execution or general API guarantees."
+    },
+    "G": {
+      "name": "complete-note-explicit-abstention",
+      "hypothesis": "Explicit abstention instructions improve refusal of unsupported universal claims while preserving required factual coverage. Compare A/G exact same evidence and budgets.",
+      "instruction": "Produce a complete BOUNDED bilingual source note answering every supplied question. This is not a whole-project chapter. JSON object: {\"en\":{\"scope\":\"...\",\"behavior\":[{\"id\":\"...\",\"text\":\"...\",\"source\":\"path:lines\"}],\"error_boundaries\":\"...\",\"faq\":{\"question\":\"...\",\"answer\":\"...\"},\"limitations\":\"...\"},\"pt-BR\":{same keys and matching IDs}}. Include all factual question answers under behavior and the uncertainty answer in limitations. Include the pinned revision in scope. State external tests were not executed and examples/commands were not verified. No executable examples are required. Keep under 850 words total across both languages. For the uncertainty question, explicitly say INSUFFICIENT when the source does not establish the requested contract; do not infer universal runtime facts from a selected file. Preserve known supported facts instead of abstaining from everything."
+    }
+  },
+  "method_F": {
+    "name": "independent-claim-check-before-assembly",
+    "hypothesis": "A separate source reacquisition and semantic adjudication gate blocks unsupported D claims before assembly; rejection/abstention trades off workflow completion.",
+    "input": "Reuse exact D output, not repeated identical inference.",
+    "review": "Fresh Git evidence + same Codex campaign semantic reviewer, distinct from neural generator. No independent human or general automatic verifier claim.",
+    "assembly_rule": "No assembly if any critical unsupported or unreviewed factual record. Never repair rejected text into an accepted neural prediction."
+  },
+  "calls": [
+    {
+      "task": "fastapi",
+      "method": "A",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/A/request.json",
+      "request_sha256": "baf273d7c9c352ab13e9e18e1723d4ab65a4cd3bb99fb3cfb8fb94efa2cdeb56",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "fastapi",
+      "method": "B",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/B-1/request.json",
+      "request_sha256": "b50ebd32fa26a2c1e175774b1ffaf0af210286a01c3d8c94330ca45fcb27297b",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "fastapi",
+      "method": "B",
+      "batch": 2,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/B-2/request.json",
+      "request_sha256": "03e3ec787fa3c67277a6b2a87064de0950717aca74c55a8524aea43f437693e7",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "fastapi",
+      "method": "B",
+      "batch": 3,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/B-3/request.json",
+      "request_sha256": "85136d766fc847b8b3b93f5df772acea767926b9c60917288a427e39f74df3c9",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "fastapi",
+      "method": "C",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/C/request.json",
+      "request_sha256": "5b09bfb524c3c17742947f8a6ae24bbade275ecab36e1f797f7a71ef89b0e0b4",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "fastapi",
+      "method": "D",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/D/request.json",
+      "request_sha256": "6b4b14b698468f9f3b59b892dba8fc311a1d793672d57a598f29693bcfef15a8",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "fastapi",
+      "method": "E",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/E/request.json",
+      "request_sha256": "7ce86593b1e87b12f311de5267293ff0f5073ad147b1fda4242cf5b85253178a",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "fastapi",
+      "method": "G",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/fastapi/G/request.json",
+      "request_sha256": "844e2c21f249d3da3f9f47e750d1d9b4519eddd777ef0ad856a3b9596e4df826",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "cobra",
+      "method": "A",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/A/request.json",
+      "request_sha256": "b87d5022448ddff8f874a233527b937006e6227e28cab089c48e5ec64a9c1d85",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "cobra",
+      "method": "B",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/B-1/request.json",
+      "request_sha256": "fc393988a8fe2b3677459e95f9a73655186f3434a88af4661f0852706352112d",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "cobra",
+      "method": "B",
+      "batch": 2,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/B-2/request.json",
+      "request_sha256": "93c42152a06fc94a4f88a4c1c5e9ab198ae1d4d269a789e68282f5346183f3a1",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "cobra",
+      "method": "B",
+      "batch": 3,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/B-3/request.json",
+      "request_sha256": "1dd6b11aaedd1a904d01fe6a70fd58f513982a8a5e1b52405196252b5f2aa4da",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "cobra",
+      "method": "C",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/C/request.json",
+      "request_sha256": "dcde4e9ca02ac38deb5286a918cd850b5f36d535fccb455b66a5c6482b10f6e7",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "cobra",
+      "method": "D",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/D/request.json",
+      "request_sha256": "9fa2f1011138c627c68d651b58c774ec12b0b066c4b39d609ba030abf3163b18",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "cobra",
+      "method": "E",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/E/request.json",
+      "request_sha256": "198add5e06f53e9c5c4ad8ba9426e3eed03f49f35af07dcea4896e09f91284e5",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "cobra",
+      "method": "G",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/cobra/G/request.json",
+      "request_sha256": "be263ecf668b52d2a0bf31f737a3b071b869d286bc8dad14dc48ba10f1330380",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "zod",
+      "method": "A",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/A/request.json",
+      "request_sha256": "a3419d8f3897b61ee73d2c52bb7b3c5ca37074187c93485d8ca93853b4266cfb",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "zod",
+      "method": "B",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/B-1/request.json",
+      "request_sha256": "707b1e5214619b0e64c594120b0fb33f3252da3fbc9b9efe8918d8a126c0c552",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "zod",
+      "method": "B",
+      "batch": 2,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/B-2/request.json",
+      "request_sha256": "43226cf9dd698482f8be6de711e5ccfeaef9351e7a60a30c0ea9f8b9e7da423f",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "zod",
+      "method": "B",
+      "batch": 3,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/B-3/request.json",
+      "request_sha256": "e9a959131b89e1da0cf7a7b0e1526ddf7f6a1ec9509c7ec1d5137d921ef9ec5f",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "zod",
+      "method": "B",
+      "batch": 4,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/B-4/request.json",
+      "request_sha256": "f7680f70e540f30c550bb16d4e64838a72aa7b6bbf8cb8d80c81ccd368f52371",
+      "generation_ceiling": 550
+    },
+    {
+      "task": "zod",
+      "method": "C",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/C/request.json",
+      "request_sha256": "ba9c46d5a02228ba6ba1a8dd13db570f1bb452ab875b0fbe4cf053ecce1b82a7",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "zod",
+      "method": "D",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/D/request.json",
+      "request_sha256": "d6ab4bbe62a42d85998c06d6f2d475a85ddd988978d6e052f71106a96830b05c",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "zod",
+      "method": "E",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/E/request.json",
+      "request_sha256": "fe1f7b9693bb8e10c1bfdf1a3d05a94fcd8f813ef5618bd546d7691ecc90e64a",
+      "generation_ceiling": 1800
+    },
+    {
+      "task": "zod",
+      "method": "G",
+      "batch": 1,
+      "request": "agent/research/acceptance-calibration-20261121/generation-v1/zod/G/request.json",
+      "request_sha256": "69523a82d5872b3654b0c5a14df35f244c99389eeefa8701070b27c5dbf87c51",
+      "generation_ceiling": 1800
+    }
+  ],
+  "max_calls": 25,
+  "transport_timeout_seconds": 900,
+  "no_automatic_retries": true,
+  "full_workflow_failure": "Any failed/truncated/incomplete request remains in that method workflow denominator. All3tasks per method; B sections separate from assembled document. EFAQ separate. F shares D and is not an independent neural observation.",
+  "comparability_limits": [
+    "B has smaller outputs/multiple requests and a different aggregate token budget.",
+    "C changes supplied evidence.",
+    "D/F use deterministic wrappers; count wrapper facts separately from neural facts.",
+    "Only A/G have matched source/questions/output schema/token budget; one fixed seed is not causal replication.",
+    "All tasks development-exposed; no independent holdout or pretraining independence claim."
+  ],
+  "gold": 0,
+  "optimizer_updates": 0,
+  "private_model_input": false
+}

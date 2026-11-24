@@ -1,0 +1,391 @@
+{
+  "id": "public-research-enter",
+  "original_reference_action": "MODIFY",
+  "typed_input_action": "MODIFY",
+  "matches_original_action": true,
+  "reason": "The written wrapper forwards a caller-supplied parameter rather than a fixed helper; execution of the downstream traversal remains unknown.",
+  "new_input_information": "Operator explicitly maps natural-language claim to a typed written-source predicate. No claim of arbitrary prose entailment or independent post-fix holdout.",
+  "result": {
+    "version": "0.0.1-research",
+    "action": "MODIFY",
+    "source_executed": false,
+    "runtime_bindings_verified": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "publication_authorized": false,
+    "writes": 0,
+    "model_calls": 0,
+    "scope": "EXPLICIT_OPERATOR_MAPPED_WRITTEN_SOURCE_CLAIM_NOT_ARBITRARY_PROSE",
+    "automatic_candidate_applier_supported": false,
+    "evidence": {
+      "previous": {
+        "version": "0.0.2-research",
+        "status": "WRITTEN_CALLABLE_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "model_calls": 0,
+        "writes": 0,
+        "source_card": {
+          "path": "boltons/iterutils.py",
+          "revision": "992a58c1036fcf4d52cbf3313b6217b7c07b11d9",
+          "sha256": "9fe8a7c9f2ae4f089a3daec37d5e869f876691bb794b843907785855b5fbc235"
+        },
+        "selector": "research",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "root",
+            "query",
+            "reraise"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "root": {
+              "kind": "required"
+            },
+            "query": {
+              "kind": "unresolved-expression",
+              "text": "lambda p, k, v: True"
+            },
+            "reraise": {
+              "kind": "literal",
+              "type": "bool",
+              "value": false
+            }
+          },
+          "annotations": {
+            "root": null,
+            "query": null,
+            "reraise": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "direct_return": {
+          "kind": "outside-direct-return-profile"
+        },
+        "returned_local_class": null,
+        "direct_nested_functions": {
+          "enter": {
+            "signature": {
+              "positional_only": [],
+              "positional_or_keyword": [
+                "path",
+                "key",
+                "value"
+              ],
+              "keyword_only": [],
+              "vararg": null,
+              "kwarg": null,
+              "defaults": {
+                "path": {
+                  "kind": "required"
+                },
+                "key": {
+                  "kind": "required"
+                },
+                "value": {
+                  "kind": "required"
+                }
+              },
+              "annotations": {
+                "path": null,
+                "key": null,
+                "value": null
+              },
+              "return_annotation": null,
+              "annotation_or_default_executed": false
+            },
+            "direct_body_return_calls": [
+              "default_enter(path, key, value)"
+            ]
+          }
+        },
+        "direct_statement_calls": [
+          "remap(root, enter=enter)"
+        ],
+        "module_written_binding_names": [
+          "GUIDerator",
+          "ItemsView",
+          "Iterable",
+          "Mapping",
+          "PathAccessError",
+          "Sequence",
+          "SequentialGUIDerator",
+          "Set",
+          "_REMAP_EXIT",
+          "_UNSET",
+          "_orig_default_visit",
+          "_validate_positive_int",
+          "backoff",
+          "backoff_iter",
+          "bucketize",
+          "chunk_ranges",
+          "chunked",
+          "chunked_iter",
+          "codecs",
+          "default_enter",
+          "default_exit",
+          "default_visit",
+          "first",
+          "flatten",
+          "flatten_iter",
+          "frange",
+          "get_path",
+          "guid_iter",
+          "is_collection",
+          "is_iterable",
+          "is_scalar",
+          "itertools",
+          "lstrip",
+          "lstrip_iter",
+          "make_sentinel",
+          "math",
+          "one",
+          "os",
+          "pairwise",
+          "pairwise_iter",
+          "partition",
+          "random",
+          "redundant",
+          "remap",
+          "research",
+          "rstrip",
+          "rstrip_iter",
+          "same",
+          "seq_guid_iter",
+          "soft_sorted",
+          "split",
+          "split_iter",
+          "strip",
+          "strip_iter",
+          "time",
+          "unique",
+          "unique_iter",
+          "untyped_sorted",
+          "windowed",
+          "windowed_iter",
+          "xfrange",
+          "zip_longest"
+        ],
+        "evidence": {
+          "selector": "research",
+          "declaration_kind": "function",
+          "first_line": 1299,
+          "last_line": 1356,
+          "quote": "def research(root, query=lambda p, k, v: True, reraise=False):\n    \"\"\"The :func:`research` function uses :func:`remap` to recurse over\n    any data nested in *root*, and find values which match a given\n    criterion, specified by the *query* callable.\n\n    Results are returned as a list of ``(path, value)`` pairs. The\n    paths are tuples in the same format accepted by\n    :func:`get_path`. This can be useful for comparing values nested\n    in two or more different structures.\n\n    Here's a simple example that finds all integers:\n\n    >>> root = {'a': {'b': 1, 'c': (2, 'd', 3)}, 'e': None}\n    >>> res = research(root, query=lambda p, k, v: isinstance(v, int))\n    >>> print(sorted(res))\n    [(('a', 'b'), 1), (('a', 'c', 0), 2), (('a', 'c', 2), 3)]\n\n    Note how *query* follows the same, familiar ``path, key, value``\n    signature as the ``visit`` and ``enter`` functions on\n    :func:`remap`, and returns a :class:`bool`.\n\n    Args:\n       root: The target object to search. Supports the same types of\n          objects as :func:`remap`, including :class:`list`,\n          :class:`tuple`, :class:`dict`, and :class:`set`.\n       query (callable): The function called on every object to\n          determine whether to include it in the search results. The\n          callable must accept three arguments, *path*, *key*, and\n          *value*, commonly abbreviated *p*, *k*, and *v*, same as\n          *enter* and *visit* from :func:`remap`.\n       reraise (bool): Whether to reraise exceptions raised by *query*\n          or to simply drop the result that caused the error.\n\n\n    With :func:`research` it's easy to inspect the details of a data\n    structure, like finding values that are at a certain depth (using\n    ``len(p)``) and much more. If more advanced functionality is\n    needed, check out the code and make your own :func:`remap`\n    wrapper, and consider `submitting a patch`_!\n\n    .. _submitting a patch: https://github.com/mahmoud/boltons/pulls\n    \"\"\"\n    ret = []\n\n    if not callable(query):\n        raise TypeError('query expected callable, not: %r' % query)\n\n    def enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path + (key,), value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n\n    remap(root, enter=enter)\n    return ret\n",
+          "quote_sha256": "cccd2a8ebb272706c916b76fbf5d79422762645066ffe5262e2bb78e69d17f97",
+          "quote_byte_start": 45890,
+          "quote_byte_end": 48281,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "limitations": [
+          "Written signature, return and local-class declarations only; imports/defaults/annotations are not executed.",
+          "Operator-supplied full source and revision, not authenticated origin or current filesystem proof.",
+          "No arbitrary prose entailment, runtime values, inherited methods or helper binding guarantee.",
+          "Missing declarations never authorize REMOVE. Whole-unit quotation bounds are preserved."
+        ]
+      },
+      "current": {
+        "version": "0.0.2-research",
+        "status": "WRITTEN_CALLABLE_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "model_calls": 0,
+        "writes": 0,
+        "source_card": {
+          "path": "boltons/iterutils.py",
+          "revision": "c23dbdadb6fecdf505eb4231559561913b84c13f",
+          "sha256": "229f0f767aa3ca9fbc0b057dd7191170815bffb43599d3a293a246bd5a75afb6"
+        },
+        "selector": "research",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "root",
+            "query",
+            "reraise",
+            "enter"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "root": {
+              "kind": "required"
+            },
+            "query": {
+              "kind": "unresolved-expression",
+              "text": "lambda p, k, v: True"
+            },
+            "reraise": {
+              "kind": "literal",
+              "type": "bool",
+              "value": false
+            },
+            "enter": {
+              "kind": "written-name",
+              "name": "default_enter",
+              "runtime_binding_verified": false
+            }
+          },
+          "annotations": {
+            "root": null,
+            "query": null,
+            "reraise": null,
+            "enter": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "direct_return": {
+          "kind": "outside-direct-return-profile"
+        },
+        "returned_local_class": null,
+        "direct_nested_functions": {
+          "_enter": {
+            "signature": {
+              "positional_only": [],
+              "positional_or_keyword": [
+                "path",
+                "key",
+                "value"
+              ],
+              "keyword_only": [],
+              "vararg": null,
+              "kwarg": null,
+              "defaults": {
+                "path": {
+                  "kind": "required"
+                },
+                "key": {
+                  "kind": "required"
+                },
+                "value": {
+                  "kind": "required"
+                }
+              },
+              "annotations": {
+                "path": null,
+                "key": null,
+                "value": null
+              },
+              "return_annotation": null,
+              "annotation_or_default_executed": false
+            },
+            "direct_body_return_calls": [
+              "enter(path, key, value)"
+            ]
+          }
+        },
+        "direct_statement_calls": [
+          "remap(root, enter=_enter)"
+        ],
+        "module_written_binding_names": [
+          "GUIDerator",
+          "ItemsView",
+          "Iterable",
+          "Mapping",
+          "PathAccessError",
+          "Sequence",
+          "SequentialGUIDerator",
+          "Set",
+          "_REMAP_EXIT",
+          "_UNSET",
+          "_orig_default_visit",
+          "_validate_positive_int",
+          "backoff",
+          "backoff_iter",
+          "bucketize",
+          "chunk_ranges",
+          "chunked",
+          "chunked_iter",
+          "codecs",
+          "default_enter",
+          "default_exit",
+          "default_visit",
+          "first",
+          "flatten",
+          "flatten_iter",
+          "frange",
+          "get_path",
+          "guid_iter",
+          "is_collection",
+          "is_iterable",
+          "is_scalar",
+          "itertools",
+          "lstrip",
+          "lstrip_iter",
+          "make_sentinel",
+          "math",
+          "one",
+          "os",
+          "pairwise",
+          "pairwise_iter",
+          "partition",
+          "random",
+          "redundant",
+          "remap",
+          "research",
+          "rstrip",
+          "rstrip_iter",
+          "same",
+          "seq_guid_iter",
+          "soft_sorted",
+          "split",
+          "split_iter",
+          "strip",
+          "strip_iter",
+          "time",
+          "unique",
+          "unique_iter",
+          "untyped_sorted",
+          "windowed",
+          "windowed_iter",
+          "xfrange",
+          "zip_longest"
+        ],
+        "evidence": {
+          "selector": "research",
+          "declaration_kind": "function",
+          "first_line": 1335,
+          "last_line": 1392,
+          "quote": "def research(root, query=lambda p, k, v: True, reraise=False, enter=default_enter):\n    \"\"\"The :func:`research` function uses :func:`remap` to recurse over\n    any data nested in *root*, and find values which match a given\n    criterion, specified by the *query* callable.\n\n    Results are returned as a list of ``(path, value)`` pairs. The\n    paths are tuples in the same format accepted by\n    :func:`get_path`. This can be useful for comparing values nested\n    in two or more different structures.\n\n    Here's a simple example that finds all integers:\n\n    >>> root = {'a': {'b': 1, 'c': (2, 'd', 3)}, 'e': None}\n    >>> res = research(root, query=lambda p, k, v: isinstance(v, int))\n    >>> print(sorted(res))\n    [(('a', 'b'), 1), (('a', 'c', 0), 2), (('a', 'c', 2), 3)]\n\n    Note how *query* follows the same, familiar ``path, key, value``\n    signature as the ``visit`` and ``enter`` functions on\n    :func:`remap`, and returns a :class:`bool`.\n\n    Args:\n       root: The target object to search. Supports the same types of\n          objects as :func:`remap`, including :class:`list`,\n          :class:`tuple`, :class:`dict`, and :class:`set`.\n       query (callable): The function called on every object to\n          determine whether to include it in the search results. The\n          callable must accept three arguments, *path*, *key*, and\n          *value*, commonly abbreviated *p*, *k*, and *v*, same as\n          *enter* and *visit* from :func:`remap`.\n       reraise (bool): Whether to reraise exceptions raised by *query*\n          or to simply drop the result that caused the error.\n\n\n    With :func:`research` it's easy to inspect the details of a data\n    structure, like finding values that are at a certain depth (using\n    ``len(p)``) and much more. If more advanced functionality is\n    needed, check out the code and make your own :func:`remap`\n    wrapper, and consider `submitting a patch`_!\n\n    .. _submitting a patch: https://github.com/mahmoud/boltons/pulls\n    \"\"\"\n    ret = []\n\n    if not callable(query):\n        raise TypeError('query expected callable, not: %r' % query)\n\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path + (key,), value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n\n    remap(root, enter=_enter)\n    return ret\n",
+          "quote_sha256": "5d351f8dd2b0d801f1194d94c99fff7b3dec83a0255d72ee5eb4cae9c43c8d6d",
+          "quote_byte_start": 47357,
+          "quote_byte_end": 49763,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "limitations": [
+          "Written signature, return and local-class declarations only; imports/defaults/annotations are not executed.",
+          "Operator-supplied full source and revision, not authenticated origin or current filesystem proof.",
+          "No arbitrary prose entailment, runtime values, inherited methods or helper binding guarantee.",
+          "Missing declarations never authorize REMOVE. Whole-unit quotation bounds are preserved."
+        ]
+      }
+    },
+    "reason": "The written wrapper forwards a caller-supplied parameter rather than a fixed helper; execution of the downstream traversal remains unknown."
+  }
+}

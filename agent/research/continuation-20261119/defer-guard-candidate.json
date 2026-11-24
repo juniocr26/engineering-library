@@ -1,0 +1,48 @@
+{
+  "id": "CONT-DEFER-REGEX-GUARD",
+  "status": "REJECTED_FALSE_POSITIVE",
+  "at": "2026-11-19T12:52:26.355623+00:00",
+  "problem": "Actual neural Recoverer fact reverses deferred-body execution and next handler invocation; existing writer accepts it.",
+  "candidate": "Reject prose matching defer + panic handled before next, when selected Go source contains defer and next.ServeHTTP",
+  "pattern": "defer.*panic.*handled before.*next function",
+  "observed_bad_prose": "The Recoverer function uses a defer statement to ensure that the panic is handled before the next function in the pipeline is called. This prevents the panic from propagating to the next handler in the chain. The Recoverer function also uses a logEntry variable to store the log entry for the current request, and a panic variable to store the panic value. The logEntry variable is used to log the panic, and the panic variable is used to panic with the original panic value.",
+  "counterexample_source": "package sample\nimport \"net/http\"\nfunc Recoverer(next http.Handler) http.Handler {\n return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n  func() {\n   defer func() { _ = recover() }()\n   panic(\"synthetic\")\n  }()\n  next.ServeHTTP(w,r)\n })\n}\n",
+  "counterexample_prose": "The Recoverer function uses a defer statement to ensure that the panic is handled before the next function in the pipeline is called.",
+  "candidate_matches_both": true,
+  "syntax_inspection": {
+    "go_version": "go1.27.4",
+    "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+    "path": "synthetic.go",
+    "platform": "darwin/arm64",
+    "profile": "go-standard-parser-declarations-v1",
+    "source_executed": false,
+    "source_sha256": "122436500fe56a560d00c62f50b79ef20d7100c9901b44ac63e60e7794b93760",
+    "syntax_only": true,
+    "units": [
+      {
+        "selector": "Recoverer",
+        "declaration_kind": "function",
+        "symbol": "sample.Recoverer",
+        "start_line": 3,
+        "end_line": 11,
+        "quote": "func Recoverer(next http.Handler) http.Handler {\n return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n  func() {\n   defer func() { _ = recover() }()\n   panic(\"synthetic\")\n  }()\n  next.ServeHTTP(w,r)\n })\n}",
+        "declaration": "func Recoverer(next http.Handler) http.Handler",
+        "function_type": "func(next http.Handler) http.Handler"
+      }
+    ],
+    "producer": {
+      "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+      "binary_sha256": "5769fe5e8d97dfc18ba861d4d88b9c87642ac6b9d757f91d5542f3e1f54e4124",
+      "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+      "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+      "version": "1.4.0"
+    }
+  },
+  "independent_semantic_review": "In the synthetic source, an immediately invoked INNER function registers a recover closure and panics. Recovery completes before that inner invocation returns; only then does the OUTER handler call next.ServeHTTP. In original chi source, defer and next call are in the same handler body. A keyword/source-presence guard cannot distinguish these scopes. This is source/spec reasoning, not a runtime test.",
+  "primary_rule": "https://go.dev/ref/spec#Defer_statements",
+  "decision": "Do not integrate regex guard or claim general control-flow validation. A future bounded AST proof must identify the exact enclosing callback, defer arguments and subsequent call before refusing observed order contradictions; safe unsupported-case refusal remains necessary.",
+  "source_program_executed": false,
+  "model_calls": 0,
+  "production_changes": false,
+  "training": false
+}

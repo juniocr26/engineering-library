@@ -1,0 +1,101 @@
+{
+  "at": "2026-11-20T15:08:25.676531+00:00",
+  "hypothesis": "The selected historical rotate_file call sequence can remove the just-rotated file for keep1 and retain keep-1 slots for bounded existing-file shapes. Test the reviewed function on owned payloads, rather than asserting runtime behavior from syntax alone.",
+  "source_family": "mahmoud/boltons",
+  "development_exposed": true,
+  "revision": "c23dbdadb6fecdf505eb4231559561913b84c13f",
+  "version": "25.0.0",
+  "source_path": "agent/research/documentation-intelligence-20261120/public-sources/25.0.0/boltons/fileutils.py",
+  "source_sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc",
+  "selector": "rotate_file",
+  "first_line": 694,
+  "last_line": 727,
+  "quote": "def rotate_file(filename, *, keep: int = 5):\n    \"\"\"\n    If *filename.ext* exists, it will be moved to *filename.1.ext*, \n    with all conflicting filenames being moved up by one, dropping any files beyond *keep*.\n\n    After rotation, *filename* will be available for creation as a new file.\n\n    Fails if *filename* is not a file or if *keep* is not > 0.\n    \"\"\"\n    if keep < 1:\n        raise ValueError(f'expected \"keep\" to be >=1, not {keep}')\n    if not os.path.exists(filename):\n        return\n    if not os.path.isfile(filename):\n        raise ValueError(f'expected {filename} to be a file')\n\n    fn_root, fn_ext = os.path.splitext(filename)\n    kept_names = []\n    for i in range(1, keep + 1):\n        if fn_ext:\n            kept_names.append(f'{fn_root}.{i}{fn_ext}')\n        else:\n            kept_names.append(f'{fn_root}.{i}')\n\n    fns = [filename] + kept_names\n    for orig_name, kept_name in reversed(list(zip(fns, fns[1:]))):\n        if not os.path.exists(orig_name):\n            continue\n        os.rename(orig_name, kept_name)\n\n    if os.path.exists(kept_names[-1]):\n        os.remove(kept_names[-1])\n\n    return\n",
+  "quote_sha256": "680545b8ad20c8d70710be46d90d14bb2a23560c24adb1d7abe494267862d813",
+  "written_call_allowlist": [
+    "ValueError",
+    "kept_names.append",
+    "list",
+    "os.path.exists",
+    "os.path.isfile",
+    "os.path.splitext",
+    "os.remove",
+    "os.rename",
+    "range",
+    "reversed",
+    "zip"
+  ],
+  "source_execution_allowed_for_this_protocol_only": true,
+  "execution_scope": "Only the exact reviewed function AST; no module imports/top-level execution. All filesystem methods replaced with descriptor-relative facade admitting only simple leaves in one exclusive owned temporary root; keep bounded-1..5. Original test payloads and all operation logs preserved. No public/source repository file is mutable.",
+  "expected_cases": [
+    {
+      "id": "keep1-existing-original",
+      "filename": "records.log",
+      "keep": 1,
+      "existing_slots": 0,
+      "expected": "ORIGINAL_MOVED_THEN_REMOVED"
+    },
+    {
+      "id": "keep2-existing-chain",
+      "filename": "records.log",
+      "keep": 2,
+      "existing_slots": 2,
+      "expected": "ONE_ROTATED_SLOT_REMAINS"
+    },
+    {
+      "id": "keep5-existing-chain",
+      "filename": "records.log",
+      "keep": 5,
+      "existing_slots": 5,
+      "expected": "FOUR_ROTATED_SLOTS_REMAIN"
+    },
+    {
+      "id": "keep2-no-extension",
+      "filename": "records",
+      "keep": 2,
+      "existing_slots": 2,
+      "expected": "ONE_ROTATED_SLOT_REMAINS"
+    },
+    {
+      "id": "missing-original",
+      "filename": "records.log",
+      "keep": 5,
+      "existing_slots": 1,
+      "missing_original": true,
+      "expected": "NO_MUTATION"
+    },
+    {
+      "id": "invalid-keep-zero",
+      "filename": "records.log",
+      "keep": 0,
+      "existing_slots": 0,
+      "expected": "VALUE_ERROR_NO_MUTATION"
+    },
+    {
+      "id": "invalid-keep-negative",
+      "filename": "records.log",
+      "keep": -1,
+      "existing_slots": 0,
+      "expected": "VALUE_ERROR_NO_MUTATION"
+    },
+    {
+      "id": "original-is-directory",
+      "filename": "records.log",
+      "keep": 2,
+      "existing_slots": 0,
+      "original_directory": true,
+      "expected": "VALUE_ERROR_NO_MUTATION"
+    }
+  ],
+  "frozen_before_predictions": true,
+  "third_party_application_imported": false,
+  "neural_training": false,
+  "model_calls": 0,
+  "upstream_patch_allowed": false,
+  "scope_limits": [
+    "Historical25.0.0 source cut only; no claim about latest release or maintainer intent.",
+    "macOS and existing Linux POSIX filesystem semantics only if actually observed; no Windows overwrite guarantee.",
+    "Facade rejects symlinks, non-leaf paths and unrecognized API calls; unsupported behavior stays inconclusive.",
+    "Documentation claims should distinguish the observed trace from docstring intent; no automatic source fix or catalog publication."
+  ]
+}

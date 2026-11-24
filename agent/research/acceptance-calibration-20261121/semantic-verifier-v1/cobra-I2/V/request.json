@@ -1,0 +1,55 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "properties": {
+      "verdict": {
+        "type": "string",
+        "enum": [
+          "SUPPORTED",
+          "CONTRADICTED",
+          "INSUFFICIENT"
+        ]
+      },
+      "source_path": {
+        "type": "string"
+      },
+      "source_role": {
+        "type": "string"
+      },
+      "evidence": {
+        "type": "string"
+      },
+      "reason": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "verdict",
+      "source_path",
+      "source_role",
+      "evidence",
+      "reason"
+    ],
+    "additionalProperties": false
+  },
+  "keep_alive": "5m",
+  "options": {
+    "temperature": 0,
+    "seed": 11621,
+    "num_ctx": 8192,
+    "num_predict": 350,
+    "num_thread": 4
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Classify the single claim using only the supplied pinned source. SUPPORTED means the source supports the complete claim; CONTRADICTED means the source directly conflicts with it; INSUFFICIENT means the selected source cannot establish it. Return the required JSON, quoting relevant source when available. Do not claim runtime tests ran."
+    },
+    {
+      "role": "user",
+      "content": "{\"claim\": \"Every live command invocation is guaranteed to reach and complete positional validation.\", \"pinned_revision\": \"adbc8813901bba65827259daa8e22ff94ec1f30e\", \"source_cards\": \"args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e\\n22: type PositionalArgs func(cmd *Command, args []string) error\\n23: \\n24: // legacyArgs validation has the following behaviour:\\n25: // - root commands with no subcommands can take arbitrary arguments\\n26: // - root commands with subcommands will do subcommand validity checking\\n27: // - subcommands will always accept arbitrary arguments\\n28: func legacyArgs(cmd *Command, args []string) error {\\n29: \\t// no subcommand, always take args\\n30: \\tif !cmd.HasSubCommands() {\\n31: \\t\\treturn nil\\n32: \\t}\\n33: \\n34: \\t// root command with subcommands, do subcommand checking.\\n35: \\tif !cmd.HasParent() && len(args) > 0 {\\n36: \\t\\treturn fmt.Errorf(\\\"unknown command %q for %q%s\\\", args[0], cmd.CommandPath(), cmd.findSuggestions(args[0]))\\n37: \\t}\\n38: \\treturn nil\\n39: }\\n40: \\n41: // NoArgs returns an error if any args are included.\\n42: func NoArgs(cmd *Command, args []string) error {\\n43: \\tif len(args) > 0 {\\n44: \\t\\treturn fmt.Errorf(\\\"unknown command %q for %q\\\", args[0], cmd.CommandPath())\\n45: \\t}\\n46: \\treturn nil\\n47: }\\n48: \\n49: // OnlyValidArgs returns an error if there are any positional args that are not in\\n50: // the `ValidArgs` field of `Command`\\n51: func OnlyValidArgs(cmd *Command, args []string) error {\\n52: \\tif len(cmd.ValidArgs) > 0 {\\n53: \\t\\t// Remove any description that may be included in ValidArgs.\\n54: \\t\\t// A description is following a tab character.\\n55: \\t\\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\\n56: \\t\\tfor _, v := range cmd.ValidArgs {\\n57: \\t\\t\\tvalidArgs = append(validArgs, strings.SplitN(v, \\\"\\\\t\\\", 2)[0])\\n58: \\t\\t}\\n59: \\t\\tfor _, v := range args {\\n60: \\t\\t\\tif !stringInSlice(v, validArgs) {\\n61: \\t\\t\\t\\treturn fmt.Errorf(\\\"invalid argument %q for %q%s\\\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\\n62: \\t\\t\\t}\\n63: \\t\\t}\\n64: \\t}\\n65: \\treturn nil\\n66: }\\n67: \\n68: // NoDuplicateArgs returns an error if there are any duplicate positional args.\\n69: func NoDuplicateArgs(cmd *Command, args []string) error {\\n70: \\tseen := make(map[string]struct{}, len(args))\\n71: \\tfor _, arg := range args {\\n72: \\t\\tif _, ok := seen[arg]; ok {\\n73: \\t\\t\\treturn fmt.Errorf(\\\"duplicate argument %q for %q\\\", arg, cmd.CommandPath())\\n74: \\t\\t}\\n75: \\t\\tseen[arg] = struct{}{}\\n76: \\t}\\n77: \\n78: \\treturn nil\\n79: }\\n80: \\n81: // ArbitraryArgs never returns an error.\\n82: func ArbitraryArgs(cmd *Command, args []string) error {\\n83: \\treturn nil\\n84: }\\n85: \\n86: // MinimumNArgs returns an error if there is not at least N args.\\n87: func MinimumNArgs(n int) PositionalArgs {\\n88: \\treturn func(cmd *Command, args []string) error {\\n89: \\t\\tif len(args) < n {\\n90: \\t\\t\\treturn fmt.Errorf(\\\"requires at least %d arg(s), only received %d\\\", n, len(args))\\n91: \\t\\t}\\n92: \\t\\treturn nil\\n93: \\t}\\n94: }\\n95: \\n96: // MaximumNArgs returns an error if there are more than N args.\\n97: func MaximumNArgs(n int) PositionalArgs {\\n98: \\treturn func(cmd *Command, args []string) error {\\n99: \\t\\tif len(args) > n {\\n100: \\t\\t\\treturn fmt.Errorf(\\\"accepts at most %d arg(s), received %d\\\", n, len(args))\\n101: \\t\\t}\\n102: \\t\\treturn nil\\n103: \\t}\\n104: }\\n105: \\n106: // ExactArgs returns an error if there are not exactly n args.\\n107: func ExactArgs(n int) PositionalArgs {\\n108: \\treturn func(cmd *Command, args []string) error {\\n109: \\t\\tif len(args) != n {\\n110: \\t\\t\\treturn fmt.Errorf(\\\"accepts %d arg(s), received %d\\\", n, len(args))\\n111: \\t\\t}\\n112: \\t\\treturn nil\\n113: \\t}\\n114: }\\n115: \\n116: // RangeArgs returns an error if the number of args is not within the expected range.\\n117: func RangeArgs(min int, max int) PositionalArgs {\\n118: \\treturn func(cmd *Command, args []string) error {\\n119: \\t\\tif len(args) < min || len(args) > max {\\n120: \\t\\t\\treturn fmt.Errorf(\\\"accepts between %d and %d arg(s), received %d\\\", min, max, len(args))\\n121: \\t\\t}\\n122: \\t\\treturn nil\\n123: \\t}\\n124: }\\n125: \\n126: // MatchAll allows combining several PositionalArgs to work in concert.\\n127: func MatchAll(pargs ...PositionalArgs) PositionalArgs {\\n128: \\treturn func(cmd *Command, args []string) error {\\n129: \\t\\tfor _, parg := range pargs {\\n130: \\t\\t\\tif err := parg(cmd, args); err != nil {\\n131: \\t\\t\\t\\treturn err\\n132: \\t\\t\\t}\\n133: \\t\\t}\\n134: \\t\\treturn nil\\n135: \\t}\\n136: }\\n137: \\n138: // ExactValidArgs returns an error if there are not exactly N positional args OR\\n139: // there are any positional args that are not in the `ValidArgs` field of `Command`\\n140: //\\n141: // Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead\\n142: func ExactValidArgs(n int) PositionalArgs {\\n143: \\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\\n144: }\"}"
+    }
+  ]
+}

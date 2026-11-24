@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-21T14:04:33.429868+00:00",
+  "extends": [
+    "owner-atomic-evidence-span-correction-v1.json",
+    "owner-remaining-source-atoms-v4.json"
+  ],
+  "claim_id": "OWNER-C49",
+  "source_path": "command.go",
+  "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+  "source_sha256": "f79613721ad04c9b438dfb30fe0ac3deca85c487658b0aa04a1ae6e4395bfd90",
+  "complete_ordering_evidence": [
+    {
+      "lines": [
+        984,
+        988
+      ],
+      "exact_quote": "\tfor _, p := range parents {\n\t\tif p.PersistentPreRunE != nil {\n\t\t\tif err := p.PersistentPreRunE(c, argWoFlags); err != nil {\n\t\t\t\treturn err\n\t\t\t}"
+    },
+    {
+      "lines": [
+        1007,
+        1019
+      ],
+      "exact_quote": "\tif err := c.ValidateRequiredFlags(); err != nil {\n\t\treturn err\n\t}\n\tif err := c.ValidateFlagGroups(); err != nil {\n\t\treturn err\n\t}\n\n\tif c.RunE != nil {\n\t\tif err := c.RunE(c, argWoFlags); err != nil {\n\t\t\treturn err\n\t\t}\n\t} else {\n\t\tc.Run(c, argWoFlags)"
+    }
+  ],
+  "reason": "Bind the later destination as well as early persistent-hook return; fullsourcealreadyverified, no text/reference prediction change.",
+  "new_unique_claims": 0,
+  "old_bytes_preserved": true
+}

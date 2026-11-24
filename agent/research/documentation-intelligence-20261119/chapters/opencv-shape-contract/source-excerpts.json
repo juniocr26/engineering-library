@@ -1,0 +1,27 @@
+{
+  "repository": "opencv",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "path": "modules/core/src/arithm.cpp",
+  "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+  "source_program_executed": false,
+  "excerpts": [
+    {
+      "first_line": 613,
+      "last_line": 623,
+      "quote": "static bool shapesBroadcastCompat(InputArray a, int acn, InputArray b, int bcn)\n{\n    int asz[MatShape::MAX_DIMS + 1], bsz[MatShape::MAX_DIMS + 1];\n    int ad = a.sizend(asz), bd = b.sizend(bsz);\n    asz[ad++] = acn;\n    bsz[bd++] = bcn;\n    for (int i1 = ad - 1, i2 = bd - 1; i1 >= 0 && i2 >= 0; i1--, i2--)\n        if (asz[i1] != bsz[i2] && asz[i1] != 1 && bsz[i2] != 1)\n            return false;\n    return true;\n}\n"
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "modules/core/src/arithm.cpp",
+      "full_file_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+      "ranges": [
+        {
+          "first_line": 681,
+          "last_line": 689,
+          "quote": "    if (!s1 && !s2)\n    {\n        bool like1 = isScalarLikeMat(src1, cn2), like2 = isScalarLikeMat(src2, cn1);\n        if ((like1 || like2) && !shapesBroadcastCompat(src1, cn1, src2, cn2))\n        {\n            s1 = like1;             // src1 preferred when both qualify, like the old checkScalar order\n            s2 = like2 && !like1;\n        }\n    }\n"
+        }
+      ]
+    }
+  ]
+}

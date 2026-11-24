@@ -1,0 +1,126 @@
+{
+  "at": "2026-11-21T03:39:44.142260+00:00",
+  "rows": [
+    {
+      "id": "universal-readerfrom",
+      "text": "Every result of NewWrapResponseWriter supports io.ReaderFrom.",
+      "expected_supported": false,
+      "evidence": "S1,S2,S6",
+      "reviewed_supported": false,
+      "review_reason": "Factory15–44 branches and interface46–69 do not give every return a ReaderFrom contract; selected receiver methods cannot establish full repository method sets.",
+      "matches": true
+    },
+    {
+      "id": "double-count",
+      "text": "The tee ReadFrom fallback adds n after io.Copy and counts it again.",
+      "expected_supported": false,
+      "evidence": "S3,S5,T3",
+      "reviewed_supported": false,
+      "review_reason": "ReadFrom211–220 returns directly after io.Copy; only direct path228 adds int(n). Base Write114 adds its own n.",
+      "matches": true
+    },
+    {
+      "id": "unconditional-header",
+      "text": "The direct ReadFrom branch always calls wrapper WriteHeader before delegate reading.",
+      "expected_supported": false,
+      "evidence": "S5",
+      "reviewed_supported": false,
+      "review_reason": "Current direct path223–227 delegates first and updates fields conditionally; it does not call wrapper WriteHeader.",
+      "matches": true
+    },
+    {
+      "id": "missing-delegate",
+      "text": "ReadFrom owns a separate byte counter unrelated to basicWriter.Write.",
+      "expected_supported": false,
+      "evidence": "S3,S5",
+      "reviewed_supported": false,
+      "review_reason": "ReadFrom refers explicitly to f.basicWriter.bytes; Write updates b.bytes on the embedded state.",
+      "matches": true
+    },
+    {
+      "id": "runtime-delivery",
+      "text": "BytesWritten always proves bytes delivered over the client network.",
+      "expected_supported": false,
+      "evidence": "S3,T2,T4",
+      "reviewed_supported": false,
+      "review_reason": "Discard branches bypass original writer yet count returned n; written discard assertions expect consumed bytes, no actual network observation.",
+      "matches": true
+    },
+    {
+      "id": "unsafe-removal",
+      "text": "No selected http2FancyWriter.ReadFrom method proves its documentation should be deleted repository-wide.",
+      "expected_supported": false,
+      "evidence": "S6",
+      "reviewed_supported": false,
+      "review_reason": "Selected-file absence plus stale comment supports qualified correction review only, not whole-repository absence, type proof or deletion authority.",
+      "matches": true
+    },
+    {
+      "id": "conditional-selection",
+      "text": "The non-2 protocol branch selects httpFancyWriter only when fl, hj and rf are true.",
+      "expected_supported": true,
+      "evidence": "S1",
+      "reviewed_supported": true,
+      "review_reason": "Non-2 branch explicitly requires fl && hj && rf for httpFancyWriter.",
+      "matches": true
+    },
+    {
+      "id": "single-account",
+      "text": "The selected tee/discard ReadFrom fallback returns after io.Copy without another count increment.",
+      "expected_supported": true,
+      "evidence": "S5",
+      "reviewed_supported": true,
+      "review_reason": "Tee/discard branch calls io.Copy then returns n,err without a second bytes increment.",
+      "matches": true
+    },
+    {
+      "id": "positive-header",
+      "text": "The direct ReadFrom branch assigns recorded status after the delegate under n > 0 and an unrecorded header.",
+      "expected_supported": true,
+      "evidence": "S5",
+      "reviewed_supported": true,
+      "review_reason": "Delegate ReadFrom precedes n > 0 && !wroteHeader guard assigning code and wroteHeader.",
+      "matches": true
+    },
+    {
+      "id": "base-owner",
+      "text": "Status and BytesWritten return basicWriter code and bytes fields.",
+      "expected_supported": true,
+      "evidence": "S4",
+      "reviewed_supported": true,
+      "review_reason": "Status and BytesWritten directly return b.code and b.bytes.",
+      "matches": true
+    },
+    {
+      "id": "discard-count",
+      "text": "Written discard tests expect consumed bytes while the original body remains empty.",
+      "expected_supported": true,
+      "evidence": "T2,T4",
+      "reviewed_supported": true,
+      "review_reason": "Written tests assert original body empty and wrapper count equal len(input); no test execution inferred.",
+      "matches": true
+    },
+    {
+      "id": "error-precedence",
+      "text": "The underlying Write error takes precedence over the tee error when nonnil.",
+      "expected_supported": true,
+      "evidence": "S3",
+      "reviewed_supported": true,
+      "review_reason": "Underlying error retained unless nil, where tee err2 is assigned.",
+      "matches": true
+    }
+  ],
+  "matches": 12,
+  "total": 12,
+  "false_acceptance": {
+    "numerator": 0,
+    "denominator": 6
+  },
+  "false_rejection": {
+    "numerator": 0,
+    "denominator": 6
+  },
+  "reviewer": "Same campaign reviewer, separate fresh-source pass, not independent human or automatic general semantic classifier",
+  "development_exposed": true,
+  "not_added_to_model_verifier_metrics": true
+}

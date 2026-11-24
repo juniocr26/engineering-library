@@ -1,0 +1,94 @@
+{
+  "at": "2026-11-21T01:54:01.941209+00:00",
+  "cases": [
+    {
+      "id": "missing-current",
+      "packet": {
+        "family": "owned-synthetic-availability",
+        "language": "python",
+        "previous_source": "",
+        "current_source": "",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": true,
+        "source_available": false,
+        "logical_contract_id": "owned.history",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "conflicting_history": true
+        },
+        "id": "availability-v3-missing-current"
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "incomplete-scope",
+      "packet": {
+        "family": "owned-synthetic-availability",
+        "language": "python",
+        "previous_source": "",
+        "current_source": "def answer():\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": false,
+        "source_available": true,
+        "logical_contract_id": "owned.history",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "conflicting_history": true
+        },
+        "id": "availability-v3-incomplete-scope"
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "missing-history-isolated",
+      "packet": {
+        "family": "owned-synthetic-availability",
+        "language": "python",
+        "previous_source": "",
+        "current_source": "def answer():\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.history",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "conflicting_history": true
+        },
+        "id": "availability-v3-missing-history-isolated"
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "no-history-conflict-control",
+      "packet": {
+        "family": "owned-synthetic-availability",
+        "language": "python",
+        "previous_source": "",
+        "current_source": "def answer():\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.history",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "conflicting_history": false
+        },
+        "id": "availability-v3-no-history-conflict-control"
+      },
+      "expected": "ADD"
+    }
+  ],
+  "fixture_scope": "Owned one-function closed module only, no repository completeness assertion."
+}

@@ -1,0 +1,76 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 1300
+  },
+  "format": {
+    "type": "object",
+    "properties": {
+      "judgments": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "R1",
+                "R2",
+                "R3",
+                "R4"
+              ]
+            },
+            "decision": {
+              "type": "string",
+              "enum": [
+                "KEEP",
+                "SOURCE_CHANGE",
+                "UNSUPPORTED"
+              ]
+            },
+            "reason_en": {
+              "type": "string"
+            },
+            "reason_pt": {
+              "type": "string"
+            },
+            "replacement_en": {
+              "type": "string"
+            },
+            "replacement_pt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "decision",
+            "reason_en",
+            "reason_pt",
+            "replacement_en",
+            "replacement_pt"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "judgments"
+    ],
+    "additionalProperties": false
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Use only the supplied licensed public source excerpts. Preserve identifiers and uncertainty. Output the required JSON only."
+    },
+    {
+      "role": "user",
+      "content": "{\"task\": \"Classify the four prior-document statements against the selected before and after source. KEEP means supported in both selected versions. SOURCE_CHANGE means supported before and no longer correct after due to the shown revision. UNSUPPORTED means not established by the selected source even before the revision. For SOURCE_CHANGE provide a precise replacement in both languages; for the other decisions replacement fields must be empty strings. Give a concise reason in both languages, preserving conditions and code identifiers. Return one record per ID in order. Do not invent passing runtime tests.\", \"source\": {\"before\": {\"revision\": \"9b403a0c33f0e2eebba099e9e6aa1c1e9535daec\", \"path\": \"starlette/config.py\", \"selected_lines\": [125, 142], \"source\": \"125:     def _perform_cast(\\n126:         self,\\n127:         key: str,\\n128:         value: Any,\\n129:         cast: Callable[[Any], Any] | None = None,\\n130:     ) -> Any:\\n131:         if cast is None or value is None:\\n132:             return value\\n133:         elif cast is bool and isinstance(value, str):\\n134:             mapping = {\\\"true\\\": True, \\\"1\\\": True, \\\"false\\\": False, \\\"0\\\": False}\\n135:             value = value.lower()\\n136:             if value not in mapping:\\n137:                 raise ValueError(f\\\"Config '{key}' has value '{value}'. Not a valid bool.\\\")\\n138:             return mapping[value]\\n139:         try:\\n140:             return cast(value)\\n141:         except (TypeError, ValueError):\\n142:             raise ValueError(f\\\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\\\")\"}, \"after\": {\"revision\": \"271c277da0ff64e2048a4d46ecc812b9d61db5f6\", \"path\": \"starlette/config.py\", \"selected_lines\": [125, 143], \"source\": \"125:     def _perform_cast(\\n126:         self,\\n127:         key: str,\\n128:         value: Any,\\n129:         cast: Callable[[Any], Any] | None = None,\\n130:     ) -> Any:\\n131:         if cast is None or value is None:\\n132:             return value\\n133:         elif cast is bool and isinstance(value, str):\\n134:             mapping = {\\\"true\\\": True, \\\"1\\\": True, \\\"false\\\": False, \\\"0\\\": False}\\n135:             value = value.lower()\\n136:             if value not in mapping:\\n137:                 raise ValueError(f\\\"Config '{key}' has value '{value}'. Not a valid bool.\\\")\\n138:             return mapping[value]\\n139:         try:\\n140:             return cast(value)\\n141:         except (TypeError, ValueError):\\n142:             cast_name = getattr(cast, \\\"__name__\\\", type(cast).__name__)\\n143:             raise ValueError(f\\\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\\\")\"}}, \"statements\": [{\"id\": \"R1\", \"text\": \"In the selected TypeError/ValueError handler, the error f-string directly evaluates cast.__name__.\"}, {\"id\": \"R2\", \"text\": \"The selected try body returns cast(value).\"}, {\"id\": \"R3\", \"text\": \"The selected except tuple contains TypeError and ValueError.\"}, {\"id\": \"R4\", \"text\": \"For every possible callable, constructing the diagnostic in this handler completes successfully.\"}]}"
+    }
+  ]
+}

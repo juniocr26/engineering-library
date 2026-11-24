@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-GO-CALLBACK-SOURCE-SELECTION",
+  "at": "2026-11-18T23:57:12.389595+00:00",
+  "status": "INTEGRATED",
+  "scope": "Unstaged local source-layout expansion, not a Go parser/compiler or model-quality gain. Owner review before commit.",
+  "runtime_consumer": "Command.source_units -> native_structure.ranges(go=True), used by explicit Go units in both workflows",
+  "problem": "The previous conservative guard refused any func token in Go result syntax, preventing selection of legitimate callback factories.",
+  "intervention": "Recognize one bounded returned function type with balanced parameters and void/simple named/pointer/slice result. Keep anonymous struct/interface, receiver/generic, complex tuple and declaration/body ambiguity refusals.",
+  "before_after": {
+    "real_source_definitions_before_selected": 0,
+    "real_source_definitions_after_exact": 10,
+    "repositories": [
+      "chi",
+      "prometheus",
+      "sdk-go"
+    ],
+    "model_calls_in_selector_comparison": 0,
+    "ruby_regression_tests": 158,
+    "ruby_assertions": 902,
+    "ruby_failures": 0,
+    "native_python_tests": 16,
+    "native_python_failures": 0
+  },
+  "evidence": [
+    {
+      "artifact": "private-research://adaptive-20261118/go-function-return-protocol.json",
+      "sha256": "235891614cc08eec782cab2f282c9f17229db5fe9e59599f89512c711ecdf69e"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-function-return-baseline.jsonl",
+      "sha256": "695d7d335fce36977c0c7e18c4200df25220400e538699160d2a21e30c5adf37"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-function-return-after.jsonl",
+      "sha256": "9193c01973bd04fdb93b62e6c0d8ace1ea849efaf6dacb6baa11b29ea8980a97"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-function-tests-before.stderr",
+      "sha256": "e975a666dff56eec3c4522fb0368937e0c9e349389ed33d38625b54ee9c1d463"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-function-tests-final.stderr",
+      "sha256": "f70474bb9d3d4b78369d133e47904bb1ef43bd0a69dec6649003a49c7b092484"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-function-all-tests.log",
+      "sha256": "ea8191a58dbf696204a249bcdc4d5402abee661783eec8eb7ae13cf86e3cb50f"
+    }
+  ],
+  "regression_file": "backend/test/offline/native_structure_offline.py",
+  "limits": [
+    "Source bounds and lexical identity verified; types and runtime semantics are not compiler-checked.",
+    "No global support for all Go callbacks or return types.",
+    "Enabling evidence does not approve generated prose."
+  ],
+  "training": false
+}

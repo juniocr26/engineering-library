@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-21T23:40:13.478679+00:00",
+  "version": {
+    "command": [
+      "/usr/bin/clang",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+    "stderr": ""
+  },
+  "cases": [
+    {
+      "id": "valid-text-api",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/valid-text-api.c"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "expected_syntax_pass": true,
+      "matched": true
+    },
+    {
+      "id": "wrong-callback-signature",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/wrong-callback-signature.c"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/wrong-callback-signature.c:4:52: error: incompatible function pointer types passing 'int (int)' to parameter of type 'LoadFileTextCallback' (aka 'char *(*)(const char *)') [-Wincompatible-function-pointer-types]\n    4 | void install_wrong(void) { SetLoadFileTextCallback(wrong_loader); }\n      |                                                    ^~~~~~~~~~~~\nagent/research/final-intensive-20261121/raylib-evaluation-source-v1/src/raylib.h:1140:57: note: passing argument to parameter 'callback' here\n 1140 | RLAPI void SetLoadFileTextCallback(LoadFileTextCallback callback);  // Set custom file text data loader\n      |                                                         ^\n1 error generated.\n",
+      "expected_syntax_pass": false,
+      "matched": true
+    },
+    {
+      "id": "invented-text-api",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/invented-text-api.c"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/invented-text-api.c:3:35: error: call to undeclared function 'LoadFileTextGuaranteed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n    3 | void invented(const char *name) { LoadFileTextGuaranteed(name); }\n      |                                   ^\n1 error generated.\n",
+      "expected_syntax_pass": false,
+      "matched": true
+    }
+  ],
+  "protocol_sha256": "2384e5c094d7d53852bde38af6ff1a844e35f3c619beaeed1fd3b1974d62f87b",
+  "source_executed": false,
+  "upstream_implementation_compiled": false,
+  "scope": "Owned fragments compiled for syntax/type declaration compatibility against pinned header only. No target implementation compilation, link, model, window/file access, callback/runtime execution or permanent tests.",
+  "status": "EXPECTED_SYNTAX_OUTCOMES"
+}

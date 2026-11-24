@@ -1,0 +1,261 @@
+{
+  "at": "2026-11-20T20:50:32.473601+00:00",
+  "protocol_sha256": "90133468cde0458b5e4505a0f9a58024ee144b361f6a2b06d3e2a8f4fc56fdd2",
+  "rows": [
+    {
+      "id": "coherent-prefix",
+      "observed": {
+        "offset": 2,
+        "full_length": 4,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": 2
+      },
+      "checks": {
+        "offset": true,
+        "full_length": true,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": true
+      },
+      "pass": true,
+      "source_process_returned_without_admission_error": true,
+      "owned_method_calls": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            },
+            {
+              "role": "assistant",
+              "content": "owned assistant target"
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "return_dict": false
+          }
+        },
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "add_generation_prompt": true,
+            "return_dict": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "different-prefix-same-length",
+      "observed": {
+        "offset": 2,
+        "full_length": 4,
+        "prefix_equal": false,
+        "offset_within_full": true,
+        "raw_target_interval_length": 2
+      },
+      "checks": {
+        "offset": true,
+        "full_length": true,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": true
+      },
+      "pass": true,
+      "source_process_returned_without_admission_error": true,
+      "owned_method_calls": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            },
+            {
+              "role": "assistant",
+              "content": "owned assistant target"
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "return_dict": false
+          }
+        },
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "add_generation_prompt": true,
+            "return_dict": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "prefix-longer-than-full",
+      "observed": {
+        "offset": 5,
+        "full_length": 2,
+        "prefix_equal": false,
+        "offset_within_full": false,
+        "raw_target_interval_length": 0
+      },
+      "checks": {
+        "offset": true,
+        "full_length": true,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": true
+      },
+      "pass": true,
+      "source_process_returned_without_admission_error": true,
+      "owned_method_calls": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            },
+            {
+              "role": "assistant",
+              "content": "owned assistant target"
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "return_dict": false
+          }
+        },
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "add_generation_prompt": true,
+            "return_dict": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "empty-assistant-content",
+      "observed": {
+        "offset": 2,
+        "full_length": 2,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": 0
+      },
+      "checks": {
+        "offset": true,
+        "full_length": true,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": true
+      },
+      "pass": true,
+      "source_process_returned_without_admission_error": true,
+      "owned_method_calls": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            },
+            {
+              "role": "assistant",
+              "content": ""
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "return_dict": false
+          }
+        },
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "owned user input"
+            }
+          ],
+          "kwargs": {
+            "tools": null,
+            "add_generation_prompt": true,
+            "return_dict": false
+          }
+        }
+      ]
+    }
+  ],
+  "passes": 4,
+  "cases": 4,
+  "metadata": {
+    "config_sha256": "c546925585e48f43890d9dc5150df4fec73dd3780d92961c5ace451934cc4cd6",
+    "tokenizer_config_sha256": "022d5ae3df4737998ab97d8f31ac2bcb4c06dd8ebe5a8aba2b4aceef1e5ea7d3",
+    "added_token_count": 256,
+    "minimum_added_id": 128000,
+    "maximum_added_id": 128255,
+    "configured_vocab_size": 128256,
+    "all_added_ids_within_configured_vocab": true,
+    "bos_content": "<|begin_of_text|>",
+    "bos_metadata_id": 128000,
+    "model_bos_id": 128000,
+    "bos_ids_agree": true,
+    "tokenizer_eos_content": "<|eot_id|>",
+    "tokenizer_eos_metadata_id": 128009,
+    "model_eos_ids": [
+      128001,
+      128008,
+      128009
+    ],
+    "tokenizer_eos_is_in_model_eos_set": true,
+    "all_model_eos_metadata_labels": {
+      "128001": "<|end_of_text|>",
+      "128008": "<|eom_id|>",
+      "128009": "<|eot_id|>"
+    },
+    "tokenizer_class_metadata": "PreTrainedTokenizerFast",
+    "template_contains_conditional_date_branch": true,
+    "date_branch_is_potential_not_executed_cause": true,
+    "template_sha256": "5816fce10444e03c2e9ee1ef8a4a1ea61ae7e69e438613f3b17b69d0426223a4",
+    "template_rendered": false,
+    "actual_tokenizer_loaded": false,
+    "full_BPE_vocabulary_or_weights_acquired": false
+  },
+  "selected_pure_ChatDataset_source_executed": true,
+  "real_tokenizer_or_Jinja_or_MLX_Transformers_imported": false,
+  "renderer_status": {
+    "jinja2_discoverable": false,
+    "markupsafe_discoverable": false,
+    "render_not_attempted": "Required templating modules absent; no installation or handwritten substitute renderer. Continue static metadata and owned interface observations."
+  },
+  "training_steps": 0,
+  "loss_or_actual_supervision_measured": false,
+  "frozen305_modified": false,
+  "owner_gold": 0,
+  "launch_allowed": false,
+  "readiness": "NO-GO_UNCHANGED",
+  "findings": [
+    "The source adapter accepted all four owned interface results,including nonprefix,offsetlargerthanfull andemptyassistantcontent. This establishes unchecked interface assumptions,not a real tokenizer defect.",
+    "Static specialtoken metadata alignment is necessary bookkeeping,not actual tokenization/template/checkpoint compatibility.",
+    "Jinja2/MarkupSafe were absent;no template renderer was installed or manually substituted. Optional rendering remains unexecuted.",
+    "A conditional date branch is visible in template metadata but was not executed or identified as any observed failure cause."
+  ],
+  "limits": "Raw interval lengths here are owned source-adapter arithmetic before any trainer shift/padding/loss;not actual supervised-token counts. Metadata token IDs alone do not establish a compatible trainable checkpoint/tokenizer or complete BPE vocabulary."
+}

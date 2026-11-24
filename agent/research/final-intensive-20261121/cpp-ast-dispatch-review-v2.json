@@ -1,0 +1,1260 @@
+{
+  "at": "2026-11-22T00:13:45.052961+00:00",
+  "owned_prior_controls": [
+    {
+      "id": "base-default",
+      "compile_exit": 0,
+      "admission": "STATIC_OWNED_AST_AVAILABLE",
+      "partial_AST_never_promoted_on_error": true,
+      "projection": {
+        "records": [
+          {
+            "name": "Base",
+            "bases": [],
+            "source_quote": "struct Base {\n  virtual ~Base() = default;\n  virtual void clear() {}\n  virtual bool empty() const { return false; }\n  virtual void write(Sink&) const {}\n  void write(Sink& sink, const char*) const { write(sink); }\n}"
+          }
+        ],
+        "methods": [
+          {
+            "label": "Base::clear void ()",
+            "owner": "Base",
+            "name": "clear",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void clear() {}",
+            "offset": 109
+          },
+          {
+            "label": "Base::empty bool () const",
+            "owner": "Base",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual bool empty() const { return false; }",
+            "offset": 135
+          },
+          {
+            "label": "Base::write void (Sink &) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void write(Sink&) const {}",
+            "offset": 182
+          },
+          {
+            "label": "Base::write void (Sink &, const char *) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 2,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "void write(Sink& sink, const char*) const { write(sink); }",
+            "offset": 211
+          }
+        ],
+        "calls": [
+          {
+            "function": "Base::write void (Sink &, const char *) const",
+            "source_quote": "write(sink)",
+            "selected_declaration": "Base::write void (Sink &) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": true,
+              "referencedMemberDecl": "Base::write void (Sink &) const",
+              "inner": [
+                {
+                  "kind": "CXXThisExpr",
+                  "type": {
+                    "qualType": "const Base *"
+                  },
+                  "valueCategory": "prvalue",
+                  "implicit": true
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "base.clear()",
+            "selected_declaration": "Base::clear void ()",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "clear",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::clear void ()",
+              "inner": [
+                {
+                  "kind": "DeclRefExpr",
+                  "type": {
+                    "qualType": "Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "referencedDecl": {
+                    "kind": "VarDecl",
+                    "name": "base",
+                    "type": {
+                      "qualType": "Base"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "base.write(sink)",
+            "selected_declaration": "Base::write void (Sink &) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::write void (Sink &) const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "NoOp",
+                  "inner": [
+                    {
+                      "kind": "DeclRefExpr",
+                      "type": {
+                        "qualType": "Base"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "kind": "VarDecl",
+                        "name": "base",
+                        "type": {
+                          "qualType": "Base"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "base.empty()",
+            "selected_declaration": "Base::empty bool () const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "empty",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::empty bool () const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "NoOp",
+                  "inner": [
+                    {
+                      "kind": "DeclRefExpr",
+                      "type": {
+                        "qualType": "Base"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "kind": "VarDecl",
+                        "name": "base",
+                        "type": {
+                          "qualType": "Base"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "using_declarations": []
+      }
+    },
+    {
+      "id": "compatible-nonderived-template-shape",
+      "compile_exit": 0,
+      "admission": "STATIC_OWNED_AST_AVAILABLE",
+      "partial_AST_never_promoted_on_error": true,
+      "projection": {
+        "records": [
+          {
+            "name": "NotDerived",
+            "bases": [],
+            "source_quote": "struct NotDerived {\n  int reads = 0;\n  static NotDerived* create() { static NotDerived object; return &object; }\n  void read(int) { ++reads; }\n  bool empty() const { return reads == 0; }\n}"
+          }
+        ],
+        "methods": [
+          {
+            "label": "NotDerived::create NotDerived *()",
+            "owner": "NotDerived",
+            "name": "create",
+            "parameter_count": 0,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "static NotDerived* create() { static NotDerived object; return &object; }",
+            "offset": 76
+          },
+          {
+            "label": "NotDerived::read void (int)",
+            "owner": "NotDerived",
+            "name": "read",
+            "parameter_count": 1,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "void read(int) { ++reads; }",
+            "offset": 138
+          },
+          {
+            "label": "NotDerived::empty bool () const",
+            "owner": "NotDerived",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "bool empty() const { return reads == 0; }",
+            "offset": 168
+          }
+        ],
+        "calls": [
+          {
+            "function": "createAndRead NotDerived *(int)",
+            "source_quote": "object->read(value)",
+            "selected_declaration": "NotDerived::read void (int)",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "read",
+              "isArrow": true,
+              "referencedMemberDecl": "NotDerived::read void (int)",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "NotDerived *"
+                  },
+                  "valueCategory": "prvalue",
+                  "castKind": "LValueToRValue",
+                  "inner": [
+                    {
+                      "kind": "DeclRefExpr",
+                      "type": {
+                        "qualType": "NotDerived *"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "kind": "VarDecl",
+                        "name": "object",
+                        "type": {
+                          "qualType": "NotDerived *"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "function": "createAndRead NotDerived *(int)",
+            "source_quote": "object->empty()",
+            "selected_declaration": "NotDerived::empty bool () const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "empty",
+              "isArrow": true,
+              "referencedMemberDecl": "NotDerived::empty bool () const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const NotDerived *"
+                  },
+                  "valueCategory": "prvalue",
+                  "castKind": "NoOp",
+                  "inner": [
+                    {
+                      "kind": "ImplicitCastExpr",
+                      "type": {
+                        "qualType": "NotDerived *"
+                      },
+                      "valueCategory": "prvalue",
+                      "castKind": "LValueToRValue",
+                      "inner": [
+                        {
+                          "kind": "DeclRefExpr",
+                          "type": {
+                            "qualType": "NotDerived *"
+                          },
+                          "valueCategory": "lvalue",
+                          "referencedDecl": {
+                            "kind": "VarDecl",
+                            "name": "object",
+                            "type": {
+                              "qualType": "NotDerived *"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "using_declarations": []
+      }
+    },
+    {
+      "id": "derived-via-base-wrapper",
+      "compile_exit": 0,
+      "admission": "STATIC_OWNED_AST_AVAILABLE",
+      "partial_AST_never_promoted_on_error": true,
+      "projection": {
+        "records": [
+          {
+            "name": "Base",
+            "bases": [],
+            "source_quote": "struct Base {\n  virtual ~Base() = default;\n  virtual void clear() {}\n  virtual bool empty() const { return false; }\n  virtual void write(Sink&) const {}\n  void write(Sink& sink, const char*) const { write(sink); }\n}"
+          },
+          {
+            "name": "Derived",
+            "bases": [
+              {
+                "access": "public",
+                "type": {
+                  "qualType": "Base"
+                },
+                "writtenAccess": "none"
+              }
+            ],
+            "source_quote": "struct Derived : Base {\n  void write(Sink& sink) const override { ++sink.writes; }\n  bool empty() const override { return true; }\n}"
+          }
+        ],
+        "methods": [
+          {
+            "label": "Base::clear void ()",
+            "owner": "Base",
+            "name": "clear",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void clear() {}",
+            "offset": 109
+          },
+          {
+            "label": "Base::empty bool () const",
+            "owner": "Base",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual bool empty() const { return false; }",
+            "offset": 135
+          },
+          {
+            "label": "Base::write void (Sink &) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void write(Sink&) const {}",
+            "offset": 182
+          },
+          {
+            "label": "Base::write void (Sink &, const char *) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 2,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "void write(Sink& sink, const char*) const { write(sink); }",
+            "offset": 211
+          },
+          {
+            "label": "Derived::write void (Sink &) const",
+            "owner": "Derived",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": null,
+            "override_attribute": true,
+            "source_quote": "void write(Sink& sink) const override { ++sink.writes; }",
+            "offset": 299
+          },
+          {
+            "label": "Derived::empty bool () const",
+            "owner": "Derived",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": null,
+            "override_attribute": true,
+            "source_quote": "bool empty() const override { return true; }",
+            "offset": 358
+          }
+        ],
+        "calls": [
+          {
+            "function": "Base::write void (Sink &, const char *) const",
+            "source_quote": "write(sink)",
+            "selected_declaration": "Base::write void (Sink &) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": true,
+              "referencedMemberDecl": "Base::write void (Sink &) const",
+              "inner": [
+                {
+                  "kind": "CXXThisExpr",
+                  "type": {
+                    "qualType": "const Base *"
+                  },
+                  "valueCategory": "prvalue",
+                  "implicit": true
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "base.write(sink, \"node\")",
+            "selected_declaration": "Base::write void (Sink &, const char *) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::write void (Sink &, const char *) const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "NoOp",
+                  "inner": [
+                    {
+                      "kind": "DeclRefExpr",
+                      "type": {
+                        "qualType": "Base"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "kind": "VarDecl",
+                        "name": "base",
+                        "type": {
+                          "qualType": "Base &"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "base.empty()",
+            "selected_declaration": "Base::empty bool () const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "empty",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::empty bool () const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "NoOp",
+                  "inner": [
+                    {
+                      "kind": "DeclRefExpr",
+                      "type": {
+                        "qualType": "Base"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "kind": "VarDecl",
+                        "name": "base",
+                        "type": {
+                          "qualType": "Base &"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "using_declarations": []
+      }
+    },
+    {
+      "id": "hidden-overload",
+      "compile_exit": 1,
+      "admission": "REFUSED_WHOLE_TRANSLATION_UNIT",
+      "partial_AST_never_promoted_on_error": true,
+      "projection": {
+        "records": [
+          {
+            "name": "Base",
+            "bases": [],
+            "source_quote": "struct Base {\n  virtual ~Base() = default;\n  virtual void clear() {}\n  virtual bool empty() const { return false; }\n  virtual void write(Sink&) const {}\n  void write(Sink& sink, const char*) const { write(sink); }\n}"
+          },
+          {
+            "name": "Derived",
+            "bases": [
+              {
+                "access": "public",
+                "type": {
+                  "qualType": "Base"
+                },
+                "writtenAccess": "none"
+              }
+            ],
+            "source_quote": "struct Derived : Base {\n  void write(Sink& sink) const override { ++sink.writes; }\n  bool empty() const override { return true; }\n}"
+          }
+        ],
+        "methods": [
+          {
+            "label": "Base::clear void ()",
+            "owner": "Base",
+            "name": "clear",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void clear() {}",
+            "offset": 109
+          },
+          {
+            "label": "Base::empty bool () const",
+            "owner": "Base",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual bool empty() const { return false; }",
+            "offset": 135
+          },
+          {
+            "label": "Base::write void (Sink &) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void write(Sink&) const {}",
+            "offset": 182
+          },
+          {
+            "label": "Base::write void (Sink &, const char *) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 2,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "void write(Sink& sink, const char*) const { write(sink); }",
+            "offset": 211
+          },
+          {
+            "label": "Derived::write void (Sink &) const",
+            "owner": "Derived",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": null,
+            "override_attribute": true,
+            "source_quote": "void write(Sink& sink) const override { ++sink.writes; }",
+            "offset": 299
+          },
+          {
+            "label": "Derived::empty bool () const",
+            "owner": "Derived",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": null,
+            "override_attribute": true,
+            "source_quote": "bool empty() const override { return true; }",
+            "offset": 358
+          }
+        ],
+        "calls": [
+          {
+            "function": "Base::write void (Sink &, const char *) const",
+            "source_quote": "write(sink)",
+            "selected_declaration": "Base::write void (Sink &) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": true,
+              "referencedMemberDecl": "Base::write void (Sink &) const",
+              "inner": [
+                {
+                  "kind": "CXXThisExpr",
+                  "type": {
+                    "qualType": "const Base *"
+                  },
+                  "valueCategory": "prvalue",
+                  "implicit": true
+                }
+              ]
+            }
+          }
+        ],
+        "using_declarations": []
+      }
+    },
+    {
+      "id": "qualified-base",
+      "compile_exit": 0,
+      "admission": "STATIC_OWNED_AST_AVAILABLE",
+      "partial_AST_never_promoted_on_error": true,
+      "projection": {
+        "records": [
+          {
+            "name": "Base",
+            "bases": [],
+            "source_quote": "struct Base {\n  virtual ~Base() = default;\n  virtual void clear() {}\n  virtual bool empty() const { return false; }\n  virtual void write(Sink&) const {}\n  void write(Sink& sink, const char*) const { write(sink); }\n}"
+          },
+          {
+            "name": "Derived",
+            "bases": [
+              {
+                "access": "public",
+                "type": {
+                  "qualType": "Base"
+                },
+                "writtenAccess": "none"
+              }
+            ],
+            "source_quote": "struct Derived : Base {\n  void write(Sink& sink) const override { ++sink.writes; }\n  bool empty() const override { return true; }\n}"
+          }
+        ],
+        "methods": [
+          {
+            "label": "Base::clear void ()",
+            "owner": "Base",
+            "name": "clear",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void clear() {}",
+            "offset": 109
+          },
+          {
+            "label": "Base::empty bool () const",
+            "owner": "Base",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual bool empty() const { return false; }",
+            "offset": 135
+          },
+          {
+            "label": "Base::write void (Sink &) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void write(Sink&) const {}",
+            "offset": 182
+          },
+          {
+            "label": "Base::write void (Sink &, const char *) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 2,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "void write(Sink& sink, const char*) const { write(sink); }",
+            "offset": 211
+          },
+          {
+            "label": "Derived::write void (Sink &) const",
+            "owner": "Derived",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": null,
+            "override_attribute": true,
+            "source_quote": "void write(Sink& sink) const override { ++sink.writes; }",
+            "offset": 299
+          },
+          {
+            "label": "Derived::empty bool () const",
+            "owner": "Derived",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": null,
+            "override_attribute": true,
+            "source_quote": "bool empty() const override { return true; }",
+            "offset": 358
+          }
+        ],
+        "calls": [
+          {
+            "function": "Base::write void (Sink &, const char *) const",
+            "source_quote": "write(sink)",
+            "selected_declaration": "Base::write void (Sink &) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": true,
+              "referencedMemberDecl": "Base::write void (Sink &) const",
+              "inner": [
+                {
+                  "kind": "CXXThisExpr",
+                  "type": {
+                    "qualType": "const Base *"
+                  },
+                  "valueCategory": "prvalue",
+                  "implicit": true
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "derived.Base::write(sink)",
+            "selected_declaration": "Base::write void (Sink &) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::write void (Sink &) const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "NoOp",
+                  "inner": [
+                    {
+                      "kind": "ImplicitCastExpr",
+                      "type": {
+                        "qualType": "Base"
+                      },
+                      "valueCategory": "lvalue",
+                      "castKind": "UncheckedDerivedToBase",
+                      "path": [
+                        {
+                          "name": "Base"
+                        }
+                      ],
+                      "inner": [
+                        {
+                          "kind": "DeclRefExpr",
+                          "type": {
+                            "qualType": "Derived"
+                          },
+                          "valueCategory": "lvalue",
+                          "referencedDecl": {
+                            "kind": "VarDecl",
+                            "name": "derived",
+                            "type": {
+                              "qualType": "Derived"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "derived.Base::empty()",
+            "selected_declaration": "Base::empty bool () const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "empty",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::empty bool () const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "NoOp",
+                  "inner": [
+                    {
+                      "kind": "ImplicitCastExpr",
+                      "type": {
+                        "qualType": "Base"
+                      },
+                      "valueCategory": "lvalue",
+                      "castKind": "UncheckedDerivedToBase",
+                      "path": [
+                        {
+                          "name": "Base"
+                        }
+                      ],
+                      "inner": [
+                        {
+                          "kind": "DeclRefExpr",
+                          "type": {
+                            "qualType": "Derived"
+                          },
+                          "valueCategory": "lvalue",
+                          "referencedDecl": {
+                            "kind": "VarDecl",
+                            "name": "derived",
+                            "type": {
+                              "qualType": "Derived"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "using_declarations": []
+      }
+    },
+    {
+      "id": "using-unhides-overload",
+      "compile_exit": 0,
+      "admission": "STATIC_OWNED_AST_AVAILABLE",
+      "partial_AST_never_promoted_on_error": true,
+      "projection": {
+        "records": [
+          {
+            "name": "Base",
+            "bases": [],
+            "source_quote": "struct Base {\n  virtual ~Base() = default;\n  virtual void clear() {}\n  virtual bool empty() const { return false; }\n  virtual void write(Sink&) const {}\n  void write(Sink& sink, const char*) const { write(sink); }\n}"
+          },
+          {
+            "name": "Derived",
+            "bases": [
+              {
+                "access": "public",
+                "type": {
+                  "qualType": "Base"
+                },
+                "writtenAccess": "none"
+              }
+            ],
+            "source_quote": "struct Derived : Base {\n  using Base::write;\n  void write(Sink& sink) const override { ++sink.writes; }\n}"
+          }
+        ],
+        "methods": [
+          {
+            "label": "Base::clear void ()",
+            "owner": "Base",
+            "name": "clear",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void clear() {}",
+            "offset": 109
+          },
+          {
+            "label": "Base::empty bool () const",
+            "owner": "Base",
+            "name": "empty",
+            "parameter_count": 0,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual bool empty() const { return false; }",
+            "offset": 135
+          },
+          {
+            "label": "Base::write void (Sink &) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": true,
+            "override_attribute": false,
+            "source_quote": "virtual void write(Sink&) const {}",
+            "offset": 182
+          },
+          {
+            "label": "Base::write void (Sink &, const char *) const",
+            "owner": "Base",
+            "name": "write",
+            "parameter_count": 2,
+            "virtual_JSON_field": null,
+            "override_attribute": false,
+            "source_quote": "void write(Sink& sink, const char*) const { write(sink); }",
+            "offset": 211
+          },
+          {
+            "label": "Derived::write void (Sink &) const",
+            "owner": "Derived",
+            "name": "write",
+            "parameter_count": 1,
+            "virtual_JSON_field": null,
+            "override_attribute": true,
+            "source_quote": "void write(Sink& sink) const override { ++sink.writes; }",
+            "offset": 320
+          }
+        ],
+        "calls": [
+          {
+            "function": "Base::write void (Sink &, const char *) const",
+            "source_quote": "write(sink)",
+            "selected_declaration": "Base::write void (Sink &) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": true,
+              "referencedMemberDecl": "Base::write void (Sink &) const",
+              "inner": [
+                {
+                  "kind": "CXXThisExpr",
+                  "type": {
+                    "qualType": "const Base *"
+                  },
+                  "valueCategory": "prvalue",
+                  "implicit": true
+                }
+              ]
+            }
+          },
+          {
+            "function": "main int ()",
+            "source_quote": "derived.write(sink, \"node\")",
+            "selected_declaration": "Base::write void (Sink &, const char *) const",
+            "callee_JSON_without_locations_or_volatile_IDs": {
+              "kind": "MemberExpr",
+              "type": {
+                "qualType": "<bound member function type>"
+              },
+              "valueCategory": "prvalue",
+              "name": "write",
+              "isArrow": false,
+              "referencedMemberDecl": "Base::write void (Sink &, const char *) const",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "const Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "UncheckedDerivedToBase",
+                  "path": [
+                    {
+                      "name": "Base"
+                    }
+                  ],
+                  "inner": [
+                    {
+                      "kind": "DeclRefExpr",
+                      "type": {
+                        "qualType": "Derived"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "kind": "VarDecl",
+                        "name": "derived",
+                        "type": {
+                          "qualType": "Derived"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "using_declarations": [
+          {
+            "owner": "Derived",
+            "kind": "UsingDecl",
+            "name": "Base::write",
+            "target_type": null
+          },
+          {
+            "owner": "Derived",
+            "kind": "UsingShadowDecl",
+            "name": null,
+            "target_type": {
+              "qualType": "void (Sink &, const char *) const"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "same_TU_pair_projection": {
+    "records": [
+      {
+        "name": "Base",
+        "bases": [],
+        "source_quote": "struct Base {\n    virtual ~Base() = default;\n    virtual int value() const { return 1; }\n}"
+      },
+      {
+        "name": "Derived",
+        "bases": [
+          {
+            "access": "public",
+            "type": {
+              "qualType": "Base"
+            },
+            "writtenAccess": "none"
+          }
+        ],
+        "source_quote": "struct Derived : Base {}"
+      },
+      {
+        "name": "Further",
+        "bases": [
+          {
+            "access": "public",
+            "type": {
+              "qualType": "Derived"
+            },
+            "writtenAccess": "none"
+          }
+        ],
+        "source_quote": "struct Further : Derived {\n    int value() const override { return 2; }\n}"
+      }
+    ],
+    "methods": [
+      {
+        "label": "Base::value int () const",
+        "owner": "Base",
+        "name": "value",
+        "parameter_count": 0,
+        "virtual_JSON_field": true,
+        "override_attribute": false,
+        "source_quote": "virtual int value() const { return 1; }",
+        "offset": 61
+      },
+      {
+        "label": "Further::value int () const",
+        "owner": "Further",
+        "name": "value",
+        "parameter_count": 0,
+        "virtual_JSON_field": null,
+        "override_attribute": true,
+        "source_quote": "int value() const override { return 2; }",
+        "offset": 153
+      }
+    ],
+    "calls": [
+      {
+        "function": "unqualified int (Derived &)",
+        "source_quote": "object.value()",
+        "selected_declaration": "Base::value int () const",
+        "callee_JSON_without_locations_or_volatile_IDs": {
+          "kind": "MemberExpr",
+          "type": {
+            "qualType": "<bound member function type>"
+          },
+          "valueCategory": "prvalue",
+          "name": "value",
+          "isArrow": false,
+          "referencedMemberDecl": "Base::value int () const",
+          "inner": [
+            {
+              "kind": "ImplicitCastExpr",
+              "type": {
+                "qualType": "const Base"
+              },
+              "valueCategory": "lvalue",
+              "castKind": "UncheckedDerivedToBase",
+              "path": [
+                {
+                  "name": "Base"
+                }
+              ],
+              "inner": [
+                {
+                  "kind": "DeclRefExpr",
+                  "type": {
+                    "qualType": "Derived"
+                  },
+                  "valueCategory": "lvalue",
+                  "referencedDecl": {
+                    "kind": "ParmVarDecl",
+                    "name": "object",
+                    "type": {
+                      "qualType": "Derived &"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "function": "qualified int (Derived &)",
+        "source_quote": "object.Base::value()",
+        "selected_declaration": "Base::value int () const",
+        "callee_JSON_without_locations_or_volatile_IDs": {
+          "kind": "MemberExpr",
+          "type": {
+            "qualType": "<bound member function type>"
+          },
+          "valueCategory": "prvalue",
+          "name": "value",
+          "isArrow": false,
+          "referencedMemberDecl": "Base::value int () const",
+          "inner": [
+            {
+              "kind": "ImplicitCastExpr",
+              "type": {
+                "qualType": "const Base"
+              },
+              "valueCategory": "lvalue",
+              "castKind": "NoOp",
+              "inner": [
+                {
+                  "kind": "ImplicitCastExpr",
+                  "type": {
+                    "qualType": "Base"
+                  },
+                  "valueCategory": "lvalue",
+                  "castKind": "UncheckedDerivedToBase",
+                  "path": [
+                    {
+                      "name": "Base"
+                    }
+                  ],
+                  "inner": [
+                    {
+                      "kind": "DeclRefExpr",
+                      "type": {
+                        "qualType": "Derived"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "kind": "ParmVarDecl",
+                        "name": "object",
+                        "type": {
+                          "qualType": "Derived &"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "using_declarations": []
+  },
+  "same_TU_callee_JSON_equal_after_location_and_ID_normalization": false,
+  "IR_evidence": {
+    "unqualified_calls": [
+      "%7 = call i32 %6(ptr noundef %3)"
+    ],
+    "qualified_calls": [
+      "%4 = call i32 @_ZNK4Base5valueEv(ptr noundef %3)"
+    ],
+    "target": "arm64-apple-macosx27.0.0",
+    "optimization": "O0",
+    "program_executed": false
+  },
+  "missing_virtual_field_on_override": {
+    "override_attribute": true,
+    "virtual_JSON_field": null
+  },
+  "finding": "The broad full-subtree equality hypothesis failed. Same selected declaration and own MemberExpr fields do not alone prove dispatch; full AST cast differences, physical qualified source and emitted IR remain distinct evidence. Missing virtual field on an override is not a nonvirtual proof.",
+  "scope": "Exact owned controls, native compiler and options only. No OpenCV/Raylib runtime or full-header compilation, inference, framework installation or generic C++ semantic verifier.",
+  "new_independent_tasks": 0,
+  "neural_calls": 0,
+  "training_eligible": false,
+  "extends": {
+    "path": "agent/research/final-intensive-20261121/cpp-ast-dispatch-review-v1.json",
+    "sha256": "71d1476081e277b40ee2b91a3a731c6a435ec83a6214ffcb29cc926e2148c2b3"
+  },
+  "hypothesis_adjudication": {
+    "full_normalized_callee_subtree_identical": "NOT_SUPPORTED",
+    "observed_difference": "Qualified call has an additional NoOp/derived-to-base cast layer; full AST is not identical. Do not claim the compiler AST cannot distinguish these inputs.",
+    "selected_declaration_equal": true,
+    "callee_node_own_fields_excluding_children_equal": true,
+    "identical_declaration_is_not_identical_dispatch": "Compiler textual IR indirect/direct forms differ under the frozen owned source and O0/native target.",
+    "override_JSON_limit": "Further::value has OverrideAttr but no virtual field; absence must remain unknown, not a false nonvirtual label.",
+    "partial_AST_limit": "Hidden overload emits partial AST with compiler error; it remains refused at whole-TU admission.",
+    "runtime_claim": "No programs executed; no new OpenCV runtime observations.",
+    "no_retroactive_expectation_changes": true
+  }
+}

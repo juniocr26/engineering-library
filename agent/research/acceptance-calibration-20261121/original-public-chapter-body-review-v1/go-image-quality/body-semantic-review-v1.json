@@ -1,0 +1,105 @@
+{
+  "at": "2026-11-21T18:19:46.041273+00:00",
+  "topic": "go-image-quality",
+  "family": "go-image-optimizer",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-quality/en.candidate.txt",
+      "sha256": "eb88234876bcf5e4b290412064416816439085efe80514eb3e276593fa457bca",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-quality/pt-br.candidate.txt",
+      "sha256": "12a06530799f55f4c580b3a11cae4d21d650bd60395269b9f6636a227f76d227",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "First value==0 returns arbitrary fallback before clamping; fallback not minimum.",
+    "Negative values map1; strict >100 maps100; endpoints unchanged; conceptual six-row table source-derived only.",
+    "Actual named defaults JPEG/WebP82 AVIF/HEIF60 and NewCompressor initialization distinguish original context from full file.",
+    "Original helper request source quote omits numeric declaration; raw82 occurrence in line metadata/hashes is not evidence of constant. Original helper response invents80, contains one correct subfact and wrong universal range; writer exit1 retained.",
+    "No codec ratio/visual-quality/runtime guarantee inferred."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "source_path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_lines": [
+        10,
+        37
+      ],
+      "exact_source_evidence": "const (\n\t// DefaultJPEGQuality keeps JPEG output visually close to the source while\n\t// still allowing meaningful size reduction for many camera/exported images.\n\tDefaultJPEGQuality = 82\n\n\tDefaultWebPQuality = 82\n\tDefaultAVIFQuality = 60\n\tDefaultHEIFQuality = 60\n)\n\ntype Compressor struct {\n\tJPEGQuality            int\n\tWebPQuality            int\n\tAVIFQuality            int\n\tHEIFQuality            int\n\tMaxDecodedPixels       int\n\tMaxAnimatedFramePixels int\n}\n\nfunc NewCompressor() Compressor {\n\treturn Compressor{\n\t\tJPEGQuality:            DefaultJPEGQuality,\n\t\tWebPQuality:            DefaultWebPQuality,\n\t\tAVIFQuality:            DefaultAVIFQuality,\n\t\tHEIFQuality:            DefaultHEIFQuality,\n\t\tMaxDecodedPixels:       imaging.DefaultMaxDecodedPixels,\n\t\tMaxAnimatedFramePixels: imaging.DefaultMaxAnimatedFramePixels,\n\t}",
+      "reviewed_interpretation": "Defaults and constructor fields.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "source_path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_lines": [
+        82,
+        95
+      ],
+      "exact_source_evidence": "func (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}\n\nfunc (c Compressor) webpQuality() int {\n\treturn clampQuality(c.WebPQuality, DefaultWebPQuality)\n}\n\nfunc (c Compressor) avifQuality() int {\n\treturn clampQuality(c.AVIFQuality, DefaultAVIFQuality)\n}\n\nfunc (c Compressor) heifQuality() int {\n\treturn clampQuality(c.HEIFQuality, DefaultHEIFQuality)",
+      "reviewed_interpretation": "Codec-specific wrappers.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "source_path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_lines": [
+        114,
+        128
+      ],
+      "exact_source_evidence": "func clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}",
+      "reviewed_interpretation": "Early fallback and exact bound branches.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "gio-quality-caller",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-quality-caller/raw-response.json",
+      "sha256": "1557a2bf976b7d19065dad9fdeb6cafc774844c622ed74dd4ce55b370fd89972",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    },
+    {
+      "id": "gio-quality-helpers",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-quality-helpers/raw-response.json",
+      "sha256": "87672d70b994755cff8695f39edbc7c6237e174127273de830c4853ea2e31930",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

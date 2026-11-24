@@ -1,0 +1,81 @@
+{
+  "at": "2026-11-21T03:38:50.876917+00:00",
+  "population": "12 exposed selected-claim reviewer canaries, not general semantic-verifier accuracy",
+  "review_mode": "Separate fresh-source manual review; not model or automatic prose classifier",
+  "cases": [
+    {
+      "id": "universal-readerfrom",
+      "text": "Every result of NewWrapResponseWriter supports io.ReaderFrom.",
+      "expected_supported": false,
+      "evidence": "S1,S2,S6"
+    },
+    {
+      "id": "double-count",
+      "text": "The tee ReadFrom fallback adds n after io.Copy and counts it again.",
+      "expected_supported": false,
+      "evidence": "S3,S5,T3"
+    },
+    {
+      "id": "unconditional-header",
+      "text": "The direct ReadFrom branch always calls wrapper WriteHeader before delegate reading.",
+      "expected_supported": false,
+      "evidence": "S5"
+    },
+    {
+      "id": "missing-delegate",
+      "text": "ReadFrom owns a separate byte counter unrelated to basicWriter.Write.",
+      "expected_supported": false,
+      "evidence": "S3,S5"
+    },
+    {
+      "id": "runtime-delivery",
+      "text": "BytesWritten always proves bytes delivered over the client network.",
+      "expected_supported": false,
+      "evidence": "S3,T2,T4"
+    },
+    {
+      "id": "unsafe-removal",
+      "text": "No selected http2FancyWriter.ReadFrom method proves its documentation should be deleted repository-wide.",
+      "expected_supported": false,
+      "evidence": "S6"
+    },
+    {
+      "id": "conditional-selection",
+      "text": "The non-2 protocol branch selects httpFancyWriter only when fl, hj and rf are true.",
+      "expected_supported": true,
+      "evidence": "S1"
+    },
+    {
+      "id": "single-account",
+      "text": "The selected tee/discard ReadFrom fallback returns after io.Copy without another count increment.",
+      "expected_supported": true,
+      "evidence": "S5"
+    },
+    {
+      "id": "positive-header",
+      "text": "The direct ReadFrom branch assigns recorded status after the delegate under n > 0 and an unrecorded header.",
+      "expected_supported": true,
+      "evidence": "S5"
+    },
+    {
+      "id": "base-owner",
+      "text": "Status and BytesWritten return basicWriter code and bytes fields.",
+      "expected_supported": true,
+      "evidence": "S4"
+    },
+    {
+      "id": "discard-count",
+      "text": "Written discard tests expect consumed bytes while the original body remains empty.",
+      "expected_supported": true,
+      "evidence": "T2,T4"
+    },
+    {
+      "id": "error-precedence",
+      "text": "The underlying Write error takes precedence over the tee error when nonnil.",
+      "expected_supported": true,
+      "evidence": "S3"
+    }
+  ],
+  "criteria": "Accept source-supported selected statements only; reject invented runtime guarantees, missing delegate, incorrect operator/order/count and unsafe partial-source removal.",
+  "frozen_before_review_outcomes": true
+}

@@ -1,0 +1,179 @@
+{
+  "at": "2026-11-22T06:26:35.900183+00:00",
+  "bindings": [
+    {
+      "topic": "chi-middleware",
+      "path": "middleware/timeout.go",
+      "lines": [
+        32,
+        48
+      ],
+      "source_sha256": "3e83d007ec300b4ea605d97a336351e562ecd84b32c2b26206791d11ce7501c0",
+      "quote_sha256": "f19a037b2616d7e75984474046c98922b1f99577b953d5d86c6e50b3ad44a180",
+      "originalpacketterminalLFomitted": true
+    },
+    {
+      "topic": "chi-middleware",
+      "path": "middleware/recoverer.go",
+      "lines": [
+        22,
+        49
+      ],
+      "source_sha256": "efc38c7b32bfb29ebbe16b199832d1eff13179a34a025c07b53c733c11a2154c",
+      "quote_sha256": "848804bc883f2552786f20577e97804cf6c5c012ecc357a2916132dc2a1088a7",
+      "originalpacketterminalLFomitted": true
+    },
+    {
+      "topic": "chi-throttle-workflow",
+      "path": "middleware/throttle.go",
+      "lines": [
+        9,
+        29
+      ],
+      "source_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "quote_sha256": "81ed76e68fe5b963e970d647253af12ce5f933323b9275c877af55bf3d8b039a",
+      "originalpacketterminalLFomitted": false
+    },
+    {
+      "topic": "chi-throttle-workflow",
+      "path": "middleware/throttle.go",
+      "lines": [
+        47,
+        134
+      ],
+      "source_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "quote_sha256": "cc716803bbf2900180d6788eb2922f4f41fbc8e04d1696b6c8d620901835d4a0",
+      "originalpacketterminalLFomitted": false
+    },
+    {
+      "topic": "chi-throttle-workflow",
+      "path": "middleware/throttle.go",
+      "lines": [
+        139,
+        163
+      ],
+      "source_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "quote_sha256": "89dcd13bb4b41dd1020ecd23fd063a9815ed6a67f7536cccd990b671d11fd834",
+      "originalpacketterminalLFomitted": false
+    },
+    {
+      "topic": "chi-throttle-workflow",
+      "path": "middleware/throttle.go",
+      "lines": [
+        31,
+        44
+      ],
+      "source_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "quote_sha256": "a01b1a3799e55db876445cf7811738ceab4a303d5bd66bef5e930a6be81ef6d4",
+      "originalpacketterminalLFomitted": false
+    }
+  ],
+  "historical_records": [
+    {
+      "name": "chi-timeout",
+      "raw_path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/chi-timeout/raw-response.json",
+      "raw_sha256": "9760e8caf86499e853c270a5ad78fbde2887ae265367f1853613fab726975548",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The Timeout function returns a new handler that wraps the provided handler. It uses a context with a timeout to handle incoming requests. If the request times out, it returns a Gateway Timeout response. The timeout is specified in the context with the time.Duration value.",
+          "pt-br": "A fun\u00e7\u00e3o Timeout retorna um novo handler que envolve o handler fornecido. Ele usa um contexto com um tempo de espera para lidar com as requisi\u00e7\u00f5es entrantes. Se a requisi\u00e7\u00e3o expirar, ele retorna uma resposta de Gateway Timeout. O tempo de espera \u00e9 especificado no contexto com o valor de time.Duration."
+        }
+      ]
+    },
+    {
+      "name": "chi-recoverer",
+      "raw_path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/chi-recoverer/raw-response.json",
+      "raw_sha256": "03b1fb739b87f49d1ba8aa7cc2c9e345700268fb2e4b5ff8d20f3fe81ecbb608",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The Recoverer function is used to handle panics in the http.Handler pipeline. It checks if the panic is an instance of http.ErrAbortHandler, and if so, it panics with the original panic value. Otherwise, it logs the panic using the GetLogEntry function, or prints a pretty stack trace if no log entry is available. If the request is not an upgrade connection, it returns a 500 Internal Server Error.",
+          "pt-br": "A fun\u00e7\u00e3o Recoverer \u00e9 usada para lidar com panics no pipeline do http.Handler. Ela verifica se o panic \u00e9 uma inst\u00e2ncia de http.ErrAbortHandler, e se sim, ela panica com o valor do panic original. Caso contr\u00e1rio, ela grava o panic usando a fun\u00e7\u00e3o GetLogEntry, ou imprime uma stack trace de forma agrad\u00e1vel se n\u00e3o houver log entry dispon\u00edvel. Se a solicita\u00e7\u00e3o n\u00e3o for uma conex\u00e3o de upgrade, ela retorna um erro 500 Interno do Servidor."
+        },
+        {
+          "evidence_id": "S1",
+          "en": "The Recoverer function uses a defer statement to ensure that the panic is handled before the next function in the pipeline is called. This prevents the panic from propagating to the next handler in the chain. The Recoverer function also uses a logEntry variable to store the log entry for the current request, and a panic variable to store the panic value. The logEntry variable is used to log the panic, and the panic variable is used to panic with the original panic value.",
+          "pt-br": "A fun\u00e7\u00e3o Recoverer usa uma declara\u00e7\u00e3o de defer para garantir que o panic seja lidado antes que a pr\u00f3xima fun\u00e7\u00e3o no pipeline seja chamada. Isso impede o panic de propagar para a pr\u00f3xima handler na cadeia. A fun\u00e7\u00e3o Recoverer tamb\u00e9m usa uma vari\u00e1vel logEntry para armazenar a log entry do atual pedido, e uma vari\u00e1vel panic para armazenar o valor do panic. A vari\u00e1vel logEntry \u00e9 usada para gravar o panic, e a vari\u00e1vel panic \u00e9 usada para paniciar com o valor do panic original."
+        },
+        {
+          "evidence_id": "S1",
+          "en": "The Recoverer function returns a new http.HandlerFunc that wraps the original next function. This allows the Recoverer function to handle panics in the pipeline without modifying the original pipeline. The Recoverer function also uses a response writer to write the response to the client. The response writer is used to write the HTTP status code and headers to the response. The Recoverer function also uses a debug.Stack() function to get the stack trace of the panic.",
+          "pt-br": "A fun\u00e7\u00e3o Recoverer retorna uma nova http.HandlerFunc que envolve a fun\u00e7\u00e3o original next. Isso permite que a fun\u00e7\u00e3o Recoverer lidar com panics no pipeline sem modificar o pipeline original. A fun\u00e7\u00e3o Recoverer tamb\u00e9m usa um escritor de resposta para escrever a resposta para o cliente. O escritor de resposta \u00e9 usado para escrever o c\u00f3digo de status HTTP e cabe\u00e7alhos para a resposta. A fun\u00e7\u00e3o Recoverer tamb\u00e9m usa a fun\u00e7\u00e3o debug.Stack() para obter a stack trace do panic."
+        },
+        {
+          "evidence_id": "S1",
+          "en": "The Recoverer function uses a logEntry variable to store the log entry for the current request. The logEntry variable is used to log the panic, and it is also used to log other events in the pipeline. The Recoverer function also uses a panic variable to store the panic value. The panic variable is used to panic with the original panic value. The Recoverer function also uses a debug.Stack() function to get the stack trace of the panic.",
+          "pt-br": "A fun\u00e7\u00e3o Recoverer usa uma vari\u00e1vel logEntry para armazenar a log entry do atual pedido. A vari\u00e1vel logEntry \u00e9 usada para gravar o panic, e tamb\u00e9m \u00e9 usada para gravar outros eventos no pipeline. A fun\u00e7\u00e3o Recoverer tamb\u00e9m usa uma vari\u00e1vel panic para armazenar o valor do panic. A vari\u00e1vel panic \u00e9 usada para paniciar com o valor do panic original. A fun\u00e7\u00e3o Recoverer tamb\u00e9m usa a fun\u00e7\u00e3o debug.Stack() para obter a stack trace do panic."
+        },
+        {
+          "evidence_id": "S1",
+          "en": "The Recoverer function uses a PrintPrettyStack function to print a pretty stack trace if no log entry is available. The PrintPrettyStack function is used to print a stack trace in a human-readable format. The Recoverer function also uses a GetLogEntry function to get the log entry for the current request. The GetLogEntry function is used to get the log entry for the current request. The Recoverer function also uses a panic variable to store the panic value. The panic variable is used to panic with the original panic value.",
+          "pt-br": "A fun\u00e7\u00e3o Recoverer usa a fun\u00e7\u00e3o PrintPrettyStack para imprimir uma stack trace de forma agrad\u00e1vel se n\u00e3o houver log entry dispon\u00edvel. A fun\u00e7\u00e3o PrintPrettyStack \u00e9 usada para imprimir uma stack trace em um formato humano lido. A fun\u00e7\u00e3o Recoverer tamb\u00e9m usa a fun\u00e7\u00e3o GetLogEntry para obter a log entry do atual pedido. A fun\u00e7\u00e3o GetLogEntry \u00e9 usada para obter a log entry do atual pedido. A fun\u00e7\u00e3o Recoverer tamb\u00e9m usa uma vari\u00e1vel panic para armazenar o valor do panic. A vari\u00e1vel panic \u00e9 usada para paniciar com o valor do panic original."
+        }
+      ]
+    },
+    {
+      "name": "chi-throttle-workflow",
+      "raw_path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/chi-throttle-workflow/raw-response.json",
+      "raw_sha256": "407ea268e192c4de3c302acdb44ed753cb0f63f41a9932dbb6c5b3cdc45ab8d2",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The ThrottleWithOpts function expects the limit to be greater than 0.",
+          "pt-br": "A fun\u00e7\u00e3o ThrottleWithOpts espera que o limit seja maior que 0."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The setRetryAfterHeaderIfNeeded method calculates the Retry-After header value by rounding up the delay to the nearest second.",
+          "pt-br": "A fun\u00e7\u00e3o setRetryAfterHeaderIfNeeded calcula o valor do header Retry-After, redondando o delay para o pr\u00f3ximo segundo."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The setRetryAfterHeaderIfNeeded method returns immediately if the retryAfterFn function is nil.",
+          "pt-br": "A fun\u00e7\u00e3o setRetryAfterHeaderIfNeeded retorna imediatamente se a fun\u00e7\u00e3o retryAfterFn for nula."
+        },
+        {
+          "evidence_id": "S1",
+          "en": "The ThrottleWithOpts function expects the backlogLimit to be positive.",
+          "pt-br": "A fun\u00e7\u00e3o ThrottleWithOpts espera que o backlogLimit seja positivo."
+        },
+        {
+          "evidence_id": "S2",
+          "en": "The setRetryAfterHeaderIfNeeded method sets the Retry-After header value to 0 if the delay is negative.",
+          "pt-br": "A fun\u00e7\u00e3o setRetryAfterHeaderIfNeeded define o valor do header Retry-After como 0 se o delay for negativo."
+        }
+      ]
+    }
+  ],
+  "owned_historical_defer_guard": {
+    "path": "agent/research/continuation-20261119/defer-guard-candidate.json",
+    "sha256": "e7ffdedfbba2dc52a3be6218e912a9bdea47597e5437b3e583781cee270da861",
+    "status": "REJECTED_FALSE_POSITIVE",
+    "not_repeated_hypothesis": true
+  },
+  "primary_Go_spec": {
+    "path": "agent/research/final-intensive-20261121/sqlx-installed-go-spec-v1.html",
+    "sha256": "a249c493e0ad58ccfeac8081426d5b0e77f92b9761b95548f85c9e4d23d0a753",
+    "sections": [
+      "Defer_statements",
+      "Select_statements"
+    ],
+    "meaning": "Deferredbodiesrunatlaterfunctionexit/panicunwind, reverseorder. Readycasesinselectdonotguaranteecancellationpriority."
+  },
+  "review_status": "IN_PROGRESS",
+  "preliminary_observations": [
+    "Timeoutfactorycallbacknotsynchronouslyexecutedbyouterreturn; nextServeHTTPsynchronous, deferredcancelbeforeDeadlineExceededstatuscheck",
+    "Recoverer specialErrAbortHandler re-panicsbeforelogging/status, exactUpgradeheaderguard; callbackscope not arbitrarygoroutineprotection",
+    "ThrottlezeroBacklogLimitpassesguard, sharedprocessing+admissionbudgets, timersonlywaitbranch, deferprocessingbeforebacklogrelease onnormalexit",
+    "Headerhelpernilskip, negative0, positivere mainderceil, wholeexactsecondsunchanged; noautomaticretry/clientoutcome guarantee"
+  ],
+  "remaining": [
+    "CompletePTandupstreamtestsource/helpercontext review",
+    "PrimarySDKcontext/httpcontracts ifneeded",
+    "Syntax/adversejudgments andexactrecovery"
+  ],
+  "new_model_calls": 0,
+  "source_program_executed": false,
+  "owner_gold": false
+}

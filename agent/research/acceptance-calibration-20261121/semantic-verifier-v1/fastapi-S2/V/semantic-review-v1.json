@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-21T16:31:04.389275+00:00",
+  "case": "fastapi-S2",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-S2",
+    "task": "fastapi",
+    "claim": "If control reaches the absent-key write branch, its body assigns solved into dependency_cache at sub_dependant_cache_key.",
+    "expected_verdict": "SUPPORTED",
+    "reference_id": "F06",
+    "reviewer": "Same campaign agent, frozen source interpretation; not independent owner",
+    "critical": true,
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "scope": "Selected cards only; no project-wide runtime truth label"
+  },
+  "reference_anchor": {
+    "claim_id": "F06",
+    "task": "fastapi",
+    "family": "fastapi/fastapi",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+    "source_lines": [
+      774,
+      775
+    ],
+    "expected_interpretation": {
+      "en": "If control reaches the write guard with the key absent, it assigns solved into dependency_cache.",
+      "pt-BR": "Se o controle alcança a condição de escrita com a chave ausente, atribui solved em dependency_cache."
+    },
+    "reference_verdict": "SUPPORTED",
+    "critical": true,
+    "reviewer": "Codex same campaign agent; static source semantic review",
+    "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+    "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+    "not_independent_holdout": true
+  },
+  "original_prediction": {
+    "verdict": "SUPPORTED",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "Implementation",
+    "evidence": "line 742: sub_dependant_cache_key = _get_cache_key(\n743:     dependant=sub_dependant,\n744:     uses_scopes_cache=_uses_scopes_cache,\n745: )\n746: if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n747:     solved = dependency_cache[sub_dependant_cache_key]\n748: or if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n749:     solved = dependency_cache[sub_dependant_cache_key]\n750:     # ...",
+    "reason": "The code explicitly checks if `sub_dependant_cache_key` is in `dependency_cache` and assigns `solved` from it if it is."
+  },
+  "content_sha256": "11320802ee8267573c83a4fd36fb2bf812cb901a240e01f365337003e094f75c",
+  "raw_response_sha256": "912ef00679c0c80cab1f031f2c8c57f3bf26b9ac7e02eeeb6158e7c89ddb0689",
+  "primary_raw_label_agreement": true,
+  "rationale_support_for_requested_claim": "INSUFFICIENT",
+  "evidence_form": "Partial literal read-branch evidence plus fabricated or if lines.",
+  "source_relationship_review": "Quotes the present-key read solved=cache[key], not the requested absent-key write cache[key]=solved.",
+  "diagnostic_note": "Fabricated or if source lines and reversed operation association; correct raw label is not sound proof.",
+  "end_to_end_label_and_rationale_supported": false,
+  "original_label_and_reference_unchanged": true,
+  "reviewer": "Same campaign agent; detailed rationale rubric fixed before reading any V/R outputs, but after some V predictions existed unread. Primary protocol/labels froze before predictions.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

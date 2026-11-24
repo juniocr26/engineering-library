@@ -1,0 +1,452 @@
+{
+  "at": "2026-11-20T07:15:54.480664+00:00",
+  "scope": "Sixteen owned development references, manually fixed before API calls; not independent holdout. Only the exact conditional FAQ question kind is admitted.",
+  "implementation": [
+    {
+      "path": "agent/tools/documentation_conditional_faq_revision.py",
+      "sha256": "12fe499d0ba74833ef4d918f10c9a594b82937993ef63a3374ba9c89d388545b"
+    },
+    {
+      "path": "agent/tools/documentation_closed_faq.py",
+      "sha256": "9df0798a114ab90fb9817d9b9e2295edec241e8c2690b805f4aa63bffb8da401"
+    },
+    {
+      "path": "agent/tools/documentation_python_dependencies.py",
+      "sha256": "b80e0413e89196cfefa058f55174b8bf32f123bd748079ab2964eaf2f48abab5"
+    },
+    {
+      "path": "agent/tools/documentation_workspace.py",
+      "sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604"
+    }
+  ],
+  "cases": [
+    {
+      "id": "helper-only-value-change",
+      "expected_action": "MODIFY",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "helper-comment-change-same-integer",
+      "expected_action": "NO-OP",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    # current source changed but answer did not\n    return 1\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "two-import-edges-helper-change",
+      "expected_action": "MODIFY",
+      "previous": {
+        "entry.py": "from bridge import value\ndef result():\n    return value()\n",
+        "bridge.py": "from helper import value\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from bridge import value\ndef result():\n    return value()\n",
+        "bridge.py": "from helper import value\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "already-current-answer",
+      "expected_action": "NO-OP",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `2`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `2`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "9c5a107367f79ca9e25d5c906a0b3b7c1e8b472de9e20afa62ce49fade115e00",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "new-question-existing-feature",
+      "expected_action": "ADD",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": null,
+      "expected_pair_sha256": null,
+      "question_registered": false,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "identical-source-and-answer",
+      "expected_action": "NO-OP",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "missing-helper-registered-current",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "selected-helper-removed-not-retirement",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def another():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "conditional-helper-binding",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "if enabled:\n    def value():\n        return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "duplicate-helper-binding",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\ndef value():\n    return 3\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "stale-existing-pair-hash",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "human-asymmetric-answer",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Texto humano que deve ser preservado."
+        }
+      },
+      "expected_pair_sha256": "a0f9cf2150419d5e487dc13f3a73643e01933387cf7ebd37bbdfaf3fc207bfef",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "incomplete-question-inventory",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": false,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "ownership-not-managed",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": false,
+      "human_authored": false
+    },
+    {
+      "id": "external-import-source",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "from unregistered import value\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    },
+    {
+      "id": "unsupported-required-argument",
+      "expected_action": "INCONCLUSIVE",
+      "previous": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value():\n    return 1\n"
+      },
+      "current": {
+        "entry.py": "from helper import value\ndef result():\n    return value()\n",
+        "helper.py": "def value(required):\n    return 2\n"
+      },
+      "existing_pair": {
+        "en": {
+          "question": "What integer does `entry.result` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.result` returns `1`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.result` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.result` retorna `1`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "expected_pair_sha256": "803e7e96da01f86db1d3be2ad412efeebdcd89b6852b851f891bc31937d76f55",
+      "question_registered": true,
+      "complete_inventory": true,
+      "managed_ownership": true,
+      "human_authored": false
+    }
+  ],
+  "model_calls": 0,
+  "source_execution": false,
+  "training_gold": false,
+  "owner_approved": false
+}

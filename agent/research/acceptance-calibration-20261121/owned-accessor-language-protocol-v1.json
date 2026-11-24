@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-21T16:26:00.547805+00:00",
+  "before_owned_language_execution": true,
+  "purpose": "Resolve the selected owner chapter language claims about typed setters, truthiness, and clearing after potentially throwing construction/finalization without running Zod.",
+  "hypothesis": "A TypeScript setter annotation supplies no runtime guard after erasure; falsy versus undefined-only getter predicates differ after an untyped falsy setter; throwing argument evaluation/construction prevents later capture-clearing statements.",
+  "owned_program": "A new toy closure using cached/items/context names and an owned factory, not imported/copied/executed Zod source. Existing TypeScript5.9.3 compiler only; execute only the emitted owned JS.",
+  "cases": [
+    {
+      "id": "initial-two-reads",
+      "expected": {
+        "constructor_calls": 1,
+        "same_identity": true,
+        "items_cleared": true,
+        "context_cleared": true
+      }
+    },
+    {
+      "id": "truthy-setter-before-read",
+      "expected": {
+        "constructor_calls": 0,
+        "returned_replacement": true,
+        "items_cleared": true,
+        "context_cleared": true
+      }
+    },
+    {
+      "id": "falsy-setter-before-read",
+      "expected": {
+        "constructor_calls": 0,
+        "thrown_name": "TypeError",
+        "items_cleared": true,
+        "context_cleared": true
+      },
+      "scope": "Explicit untyped/as-any caller; not a claim that typed Error input normally equals0."
+    },
+    {
+      "id": "constructor-throws",
+      "expected": {
+        "constructor_calls": 1,
+        "thrown_name": "Error",
+        "items_cleared": false,
+        "context_cleared": false
+      }
+    },
+    {
+      "id": "finalizer-throws",
+      "expected": {
+        "constructor_calls": 0,
+        "thrown_name": "Error",
+        "items_cleared": false,
+        "context_cleared": false
+      }
+    }
+  ],
+  "primary_language_reference": {
+    "url": "https://www.typescriptlang.org/docs/handbook/2/basic-types.html#erased-types",
+    "short_witness": "Type annotations never change the runtime behavior of your program.",
+    "scope": "Annotations only, not all TypeScript features; e.g. no blanket statement about enums."
+  },
+  "no_upstream_source_application_or_tests_executed": true,
+  "no_runtime_Zod_certification": true,
+  "no_memory_reclamation_measurement": true,
+  "no_permanent_tests_or_production_edits": true,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

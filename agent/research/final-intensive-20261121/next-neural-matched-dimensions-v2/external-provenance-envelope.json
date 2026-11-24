@@ -1,0 +1,129 @@
+{
+  "source": {
+    "at": "2026-11-22T04:51:22.046922+00:00",
+    "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+    "source": {
+      "path": "agent/research/final-intensive-20261121/go-image-animation-source-context-v1/backend/internal/infrastructure/imaging/limits.go",
+      "sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8"
+    },
+    "source_acquisition_receipt": "agent/research/final-intensive-20261121/go-image-animation-context-acquisition-v1.json",
+    "method": "ReuseexactpreviouslyGitacquiredlimits.go;completecurrent originalENPT/sourcepacket read; existingcurrentASTproducerunchanged.",
+    "required_scope": "Wrapper2parameterdeclaration/directdelegation, helperpositiveguardOR/divisionstrictcomparison/errorreturns/nil, explicitnamed32Mdefaultvswrapperargument, animationcallselecteddefault; historicalfourparameter/parsermetadataconfusion andhelperomissions; 3FAQs and2linkedanimationarticles. Frontendboundaries separate, no actualintegration/decoding/runtimeclaim.",
+    "observer_binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+    "observer_version": "1.6.1",
+    "selectors": [
+      "ValidateDimensions",
+      "ValidateImageSize",
+      "ValidateAnimatedDimensions"
+    ],
+    "source_program_executed": false,
+    "model_calls": 0,
+    "owner_questions": 0
+  },
+  "all_original_source_cards": {
+    "S1": {
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "line": 19,
+      "quote": "func ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n",
+      "complete_unit": true,
+      "declaration_kind": "function",
+      "symbol": "ValidateDimensions",
+      "qualified_symbol": "imaging.ValidateDimensions",
+      "enclosing_impl_hint": "imaging",
+      "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+      "syntax_producer": {
+        "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+        "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+        "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.4.0"
+      },
+      "syntax_parser_version": "go1.27.4"
+    },
+    "S2": {
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "line": 23,
+      "quote": "func ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n",
+      "complete_unit": true,
+      "declaration_kind": "function",
+      "symbol": "ValidateImageSize",
+      "qualified_symbol": "imaging.ValidateImageSize",
+      "enclosing_impl_hint": "imaging",
+      "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+      "syntax_producer": {
+        "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+        "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+        "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.4.0"
+      },
+      "syntax_parser_version": "go1.27.4"
+    },
+    "S3": {
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "line": 35,
+      "quote": "func ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n",
+      "complete_unit": true,
+      "declaration_kind": "function",
+      "symbol": "ValidateAnimatedDimensions",
+      "qualified_symbol": "imaging.ValidateAnimatedDimensions",
+      "enclosing_impl_hint": "imaging",
+      "preparation": "explicit Go standard-parser declaration; syntax only, not type/import/runtime verification",
+      "syntax_producer": {
+        "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+        "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+        "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.4.0"
+      },
+      "syntax_parser_version": "go1.27.4"
+    },
+    "S4": {
+      "path": "backend/internal/infrastructure/imaging/limits.go",
+      "line": 1,
+      "quote": "package imaging\n\nimport (\n\t\"image\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imageprocessing\"\n)\n\nconst (\n\t// DefaultMaxDecodedPixels limits decoded image memory growth. A 32 MP RGBA\n\t// image needs roughly 128 MiB before encoder overhead.\n\tDefaultMaxDecodedPixels = 32_000_000\n\n\t// DefaultMaxAnimatedFramePixels caps canvas-sized animation work. The limit\n\t// is width * height * frame count, not bytes, so codecs can share it.\n\tDefaultMaxAnimatedFramePixels = 64_000_000\n)\n\nfunc ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n\nfunc ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n\nfunc ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil\n}\n",
+      "complete_unit": false,
+      "declaration_kind": "whole-file-context",
+      "symbol": "imaging",
+      "qualified_symbol": "imaging",
+      "enclosing_impl_hint": null,
+      "preparation": "Exact whole-file source context, not complete package/build/type/runtime verification",
+      "syntax_producer": {
+        "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+        "binary_sha256": "0b58dd73e698ceaa3ba25612ad85a2f51c87e5b3f4c144d2e4e6e493af3942d4",
+        "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.4.0"
+      },
+      "syntax_parser_version": "go1.27.4"
+    }
+  },
+  "removed_model_facing_fields": [
+    "preparation",
+    "syntax_parser_version",
+    "syntax_producer"
+  ],
+  "skills": [
+    {
+      "path": "agent/skills/evidence/SKILL.md",
+      "sha256": "951ed8be12bc9819a4bbe74161822b1199d14c8146a6eb74396773ca21532022"
+    },
+    {
+      "path": "agent/skills/authoring/SKILL.md",
+      "sha256": "175f1b16e71c55528ea70e07c00fe02718cfadd2affd2772981ee4562ebfbef7"
+    },
+    {
+      "path": "agent/skills/review/SKILL.md",
+      "sha256": "d0890206f38f40c1d92ae0cb1bc6bc6678d925e8695e14817f10cb7d4e8d23a2"
+    }
+  ],
+  "historical_caller_request": {
+    "path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-dimensions-caller/recorded-request.json",
+    "sha256": "5aa5ce4501ed50a5d731998296edbc8e2ead16fb865f4a9feae5d57925e04b9b"
+  },
+  "reference_review_excluded_from_model_input": {
+    "review": "agent/research/final-intensive-20261121/go-image-dimensions-complete-review-v2.json",
+    "sha256": "30c7beaf0bbd9af2fec45a5257fa9b448ca9996a66aa53c9768ce2bae522ae11",
+    "never_insert_reference_chapter_or_rubric_answers_in_requests": true
+  }
+}

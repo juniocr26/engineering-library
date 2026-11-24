@@ -1,0 +1,153 @@
+{
+  "at": "2026-11-21T03:50:57.307575+00:00",
+  "hypothesis": "H33",
+  "protocol": "helper-caller-delivery-trace-protocol-v1.json",
+  "sources": [
+    {
+      "path": "backend/lib/documentation/command.rb",
+      "sha256": "086c11b2d10972111cfcfb23c49b70e67f4d30f1d5de39f768c46b23748cdb2b",
+      "line_spans": [
+        {
+          "lines": [
+            18,
+            18
+          ],
+          "span_sha256": "538491dc0099cdb7b6123d8549af20a705d59bfd62b63cd956c084aedb5ed585"
+        },
+        {
+          "lines": [
+            31,
+            49
+          ],
+          "span_sha256": "1ac7e1addebcb113ba8e83577c7ea114cf24fa33b4471bf2fcb92a69b8b409b9"
+        },
+        {
+          "lines": [
+            503,
+            513
+          ],
+          "span_sha256": "f2e7ad5125e6060693c707d1dec4842475bbe5fdf251b03f3901ab441380d276"
+        },
+        {
+          "lines": [
+            958,
+            1009
+          ],
+          "span_sha256": "38afbfb49dbb62704221bf114b2a411dfd6cc4ce75687c9058ac0d9bce713a77"
+        }
+      ],
+      "reviewed_static_relationship": "Selected Ruby command initializes its own model transport and invokes infer/call_model; no HelperRetrieval or JobBoundRetrieval reference in this full file. Static local seam only, not every possible runtime extension.",
+      "source_body_not_republished": true
+    },
+    {
+      "path": "agent/tools/documentation_retrieval.py",
+      "sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+      "line_spans": [
+        {
+          "lines": [
+            341,
+            352
+          ],
+          "span_sha256": "13402d503b992a92a879e7776a274144db975704c084509786a9e252a8c57147"
+        },
+        {
+          "lines": [
+            385,
+            415
+          ],
+          "span_sha256": "019526b0d152ed9ffe6a6cde5411438d0fd7eb6752233db08e03f54916a8e383"
+        },
+        {
+          "lines": [
+            435,
+            478
+          ],
+          "span_sha256": "89b9672632ca08f2676b50c8c21c037896499e873151d0af05c27a3ddc044e22"
+        }
+      ],
+      "reviewed_static_relationship": "Own request lock and cached validation versus fresh inner SubprocessError handler; cached error can escape outer handler.",
+      "source_body_not_republished": true
+    },
+    {
+      "path": "agent/tools/documentation_job_budget.py",
+      "sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+      "line_spans": [
+        {
+          "lines": [
+            26,
+            26
+          ],
+          "span_sha256": "0f64ca908b0a4dfb2ad63ab2444171c7b397698aa397113eea5cba0baa81a310"
+        },
+        {
+          "lines": [
+            200,
+            230
+          ],
+          "span_sha256": "fd2d8ac8749f76e0c334b8a30881eb01793fed93cfabe8dc979d10eb1ab30551"
+        },
+        {
+          "lines": [
+            232,
+            268
+          ],
+          "span_sha256": "b31001a1a5f7452fd0a706e41bf1335a107afb3c4dacb207cff7dfd7f6978eba"
+        },
+        {
+          "lines": [
+            284,
+            316
+          ],
+          "span_sha256": "e215363b129c74c9e0f5573fdf683fec6b1a44ec99969e2094d43e43601269a9"
+        }
+      ],
+      "reviewed_static_relationship": "JobBoundRetrieval optionally supplied helper/budget; helper exception becomes UNKNOWN_COMPLETION without complete call, returned REFUSED/INCONCLUSIVE are allowed completed statuses.",
+      "source_body_not_republished": true
+    },
+    {
+      "path": "agent/tools/documentation_revision_signals.py",
+      "sha256": "53a233c43eab81ce3bcf113a102cdcf704702fdf36d32c4babe479116e28b525",
+      "line_spans": [
+        {
+          "lines": [
+            57,
+            83
+          ],
+          "span_sha256": "297a03d01cb50df90285a8c4be1de13e6750a7ad5d4efed51d364daa45a271a3"
+        },
+        {
+          "lines": [
+            110,
+            131
+          ],
+          "span_sha256": "72ed10cc0fd85a1418bd1076abfab6ef3c519bdf4abda48d5c824a30167f2910"
+        },
+        {
+          "lines": [
+            183,
+            193
+          ],
+          "span_sha256": "ecf312db13196258bde11c01fb73ea379e7d46214c7217dd5fedde06764c2dd5"
+        }
+      ],
+      "reviewed_static_relationship": "Imports retrieval functions for immutable structural observations; does not instantiate HelperRetrieval; no lifecycle action.",
+      "source_body_not_republished": true
+    }
+  ],
+  "bounded_physical_search_scope": [
+    "agent/tools/*.py",
+    "backend/lib/documentation/*.rb"
+  ],
+  "scope_includes_untracked_existing_files": true,
+  "findings": [
+    "No current selected Ruby command helper-adapter seam established; research helper improvements not equivalent to deployed command improvement.",
+    "Optional JobBoundRetrieval is a concrete downstream adapter: escaping exception -> UNKNOWN_COMPLETION/reservation retained; returned REFUSED may complete a job record. Status design affects durability/review semantics.",
+    "Revision signals reuse low-level lexical functions, not helper journal/request workflow."
+  ],
+  "runtime_or_Rails_loaded_identity_verified": false,
+  "repo_wide_absence_proven": false,
+  "production_changed": false,
+  "next_hypothesis": "H34owned integration observation of actual HelperJobBudget and HelperRetrieval using synthetic sources/journals; compare durable downstream completion, no Ruby command or database startup.",
+  "training_excluded": true,
+  "confidentiality": "Engineering Library proprietary implementation metadata. Internal local evidence only, not approved for publication/model training."
+}

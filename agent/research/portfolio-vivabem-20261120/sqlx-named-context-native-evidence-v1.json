@@ -1,0 +1,669 @@
+{
+  "at": "2026-11-21T06:14:41.322626+00:00",
+  "protocol": "sqlx-named-context-protocol-v1.json",
+  "rows": [
+    {
+      "path": "named.go",
+      "selectors": [
+        "Named",
+        "NamedExec",
+        "NamedQuery",
+        "bindNamedMapper"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "named.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "Named",
+            "declaration_kind": "function",
+            "symbol": "sqlx.Named",
+            "start_line": 417,
+            "end_line": 419,
+            "quote": "func Named(query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(QUESTION, query, arg, mapper())\n}",
+            "declaration": "func Named(query string, arg interface{}) (string, []interface{}, error)",
+            "function_type": "func(query string, arg interface{}) (string, []interface{}, error)",
+            "return_contract": {
+              "AST_expression_kinds": [
+                "*ast.CallExpr"
+              ],
+              "expressions": [
+                "bindNamedMapper(QUESTION, query, arg, mapper())"
+              ],
+              "kind": "sole-return-expressions",
+              "runtime_completion_verified": false
+            }
+          },
+          {
+            "selector": "NamedExec",
+            "declaration_kind": "function",
+            "symbol": "sqlx.NamedExec",
+            "start_line": 452,
+            "end_line": 458,
+            "quote": "func NamedExec(e Ext, query string, arg interface{}) (sql.Result, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Exec(q, args...)\n}",
+            "declaration": "func NamedExec(e Ext, query string, arg interface{}) (sql.Result, error)",
+            "function_type": "func(e Ext, query string, arg interface{}) (sql.Result, error)"
+          },
+          {
+            "selector": "NamedQuery",
+            "declaration_kind": "function",
+            "symbol": "sqlx.NamedQuery",
+            "start_line": 441,
+            "end_line": 447,
+            "quote": "func NamedQuery(e Ext, query string, arg interface{}) (*Rows, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Queryx(q, args...)\n}",
+            "declaration": "func NamedQuery(e Ext, query string, arg interface{}) (*Rows, error)",
+            "function_type": "func(e Ext, query string, arg interface{}) (*Rows, error)"
+          },
+          {
+            "selector": "bindNamedMapper",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindNamedMapper",
+            "start_line": 421,
+            "end_line": 436,
+            "quote": "func bindNamedMapper(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tt := reflect.TypeOf(arg)\n\tk := t.Kind()\n\tswitch {\n\tcase k == reflect.Map && t.Key().Kind() == reflect.String:\n\t\tm, ok := convertMapStringInterface(arg)\n\t\tif !ok {\n\t\t\treturn \"\", nil, fmt.Errorf(\"sqlx.bindNamedMapper: unsupported map type: %T\", arg)\n\t\t}\n\t\treturn bindMap(bindType, query, m)\n\tcase k == reflect.Array || k == reflect.Slice:\n\t\treturn bindArray(bindType, query, arg, m)\n\tdefault:\n\t\treturn bindStruct(bindType, query, arg, m)\n\t}\n}",
+            "declaration": "func bindNamedMapper(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)",
+            "function_type": "func(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "named.go",
+      "selectors": [
+        "bindArray",
+        "bindStruct",
+        "bindMap",
+        "compileNamedQuery"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "named.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "bindArray",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindArray",
+            "start_line": 273,
+            "end_line": 301,
+            "quote": "func bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\t// do the initial binding with QUESTION;  if bindType is not question,\n\t// we can rebind it at the end.\n\tbound, names, err := compileNamedQuery([]byte(query), QUESTION)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\tarrayValue := reflect.ValueOf(arg)\n\tarrayLen := arrayValue.Len()\n\tif arrayLen == 0 {\n\t\treturn \"\", []interface{}{}, fmt.Errorf(\"length of array is 0: %#v\", arg)\n\t}\n\tvar arglist = make([]interface{}, 0, len(names)*arrayLen)\n\tfor i := 0; i < arrayLen; i++ {\n\t\telemArglist, err := bindAnyArgs(names, arrayValue.Index(i).Interface(), m)\n\t\tif err != nil {\n\t\t\treturn \"\", []interface{}{}, err\n\t\t}\n\t\targlist = append(arglist, elemArglist...)\n\t}\n\tif arrayLen > 1 {\n\t\tbound = fixBound(bound, arrayLen)\n\t}\n\t// adjust binding type if we weren't on question\n\tif bindType != QUESTION {\n\t\tbound = Rebind(bindType, bound)\n\t}\n\treturn bound, arglist, nil\n}",
+            "declaration": "func bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)",
+            "function_type": "func(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)"
+          },
+          {
+            "selector": "bindStruct",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindStruct",
+            "start_line": 213,
+            "end_line": 225,
+            "quote": "func bindStruct(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindAnyArgs(names, arg, m)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\treturn bound, arglist, nil\n}",
+            "declaration": "func bindStruct(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)",
+            "function_type": "func(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error)"
+          },
+          {
+            "selector": "bindMap",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindMap",
+            "start_line": 304,
+            "end_line": 312,
+            "quote": "func bindMap(bindType int, query string, args map[string]interface{}) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindMapArgs(names, args)\n\treturn bound, arglist, err\n}",
+            "declaration": "func bindMap(bindType int, query string, args map[string]interface{}) (string, []interface{}, error)",
+            "function_type": "func(bindType int, query string, args map[string]interface{}) (string, []interface{}, error)"
+          },
+          {
+            "selector": "compileNamedQuery",
+            "declaration_kind": "function",
+            "symbol": "sqlx.compileNamedQuery",
+            "start_line": 331,
+            "end_line": 406,
+            "quote": "func compileNamedQuery(qs []byte, bindType int) (query string, names []string, err error) {\n\tnames = make([]string, 0, 10)\n\trebound := make([]byte, 0, len(qs))\n\n\tinName := false\n\tlast := len(qs) - 1\n\tcurrentVar := 1\n\tname := make([]byte, 0, 10)\n\n\tfor i, b := range qs {\n\t\t// a ':' while we're in a name is an error\n\t\tif b == ':' {\n\t\t\t// if this is the second ':' in a '::' escape sequence, append a ':'\n\t\t\tif inName && i > 0 && qs[i-1] == ':' {\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\tinName = false\n\t\t\t\tcontinue\n\t\t\t} else if inName {\n\t\t\t\terr = errors.New(\"unexpected `:` while reading named param at \" + strconv.Itoa(i))\n\t\t\t\treturn query, names, err\n\t\t\t}\n\t\t\tinName = true\n\t\t\tname = []byte{}\n\t\t} else if inName && i > 0 && b == '=' && len(name) == 0 {\n\t\t\trebound = append(rebound, ':', '=')\n\t\t\tinName = false\n\t\t\tcontinue\n\t\t\t// if we're in a name, and this is an allowed character, continue\n\t\t} else if inName && (unicode.IsOneOf(allowedBindRunes, rune(b)) || b == '_' || b == '.') && i != last {\n\t\t\t// append the byte to the name if we are in a name and not on the last byte\n\t\t\tname = append(name, b)\n\t\t\t// if we're in a name and it's not an allowed character, the name is done\n\t\t} else if inName {\n\t\t\tinName = false\n\t\t\t// if this is the final byte of the string and it is part of the name, then\n\t\t\t// make sure to add it to the name\n\t\t\tif i == last && unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\tname = append(name, b)\n\t\t\t}\n\t\t\t// add the string representation to the names list\n\t\t\tnames = append(names, string(name))\n\t\t\t// add a proper bindvar for the bindType\n\t\t\tswitch bindType {\n\t\t\t// oracle only supports named type bind vars even for positional\n\t\t\tcase NAMED:\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\trebound = append(rebound, name...)\n\t\t\tcase QUESTION, UNKNOWN:\n\t\t\t\trebound = append(rebound, '?')\n\t\t\tcase DOLLAR:\n\t\t\t\trebound = append(rebound, '$')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\tcase AT:\n\t\t\t\trebound = append(rebound, '@', 'p')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\t}\n\t\t\t// add this byte to string unless it was not part of the name\n\t\t\tif i != last {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t} else if !unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t}\n\t\t} else {\n\t\t\t// this is a normal byte and should just go onto the rebound query\n\t\t\trebound = append(rebound, b)\n\t\t}\n\t}\n\n\treturn string(rebound), names, err\n}",
+            "declaration": "func compileNamedQuery(qs []byte, bindType int) (query string, names []string, err error)",
+            "function_type": "func(qs []byte, bindType int) (query string, names []string, err error)"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "named.go",
+      "selectors": [
+        "bindMapArgs",
+        "bindArgs",
+        "convertMapStringInterface",
+        "findMatchingClosingBracketIndex"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "named.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "bindMapArgs",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindMapArgs",
+            "start_line": 197,
+            "end_line": 208,
+            "quote": "func bindMapArgs(names []string, arg map[string]interface{}) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\tfor _, name := range names {\n\t\tval, ok := arg[name]\n\t\tif !ok {\n\t\t\treturn arglist, fmt.Errorf(\"could not find name %s in %#v\", name, arg)\n\t\t}\n\t\targlist = append(arglist, val)\n\t}\n\treturn arglist, nil\n}",
+            "declaration": "func bindMapArgs(names []string, arg map[string]interface{}) ([]interface{}, error)",
+            "function_type": "func(names []string, arg map[string]interface{}) ([]interface{}, error)"
+          },
+          {
+            "selector": "bindArgs",
+            "declaration_kind": "function",
+            "symbol": "sqlx.bindArgs",
+            "start_line": 173,
+            "end_line": 194,
+            "quote": "func bindArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\t// grab the indirected value of arg\n\tvar v reflect.Value\n\tfor v = reflect.ValueOf(arg); v.Kind() == reflect.Ptr; {\n\t\tv = v.Elem()\n\t}\n\n\terr := m.TraversalsByNameFunc(v.Type(), names, func(i int, t []int) error {\n\t\tif len(t) == 0 {\n\t\t\treturn fmt.Errorf(\"could not find name %s in %#v\", names[i], arg)\n\t\t}\n\n\t\tval := reflectx.FieldByIndexesReadOnly(v, t)\n\t\targlist = append(arglist, val.Interface())\n\n\t\treturn nil\n\t})\n\n\treturn arglist, err\n}",
+            "declaration": "func bindArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error)",
+            "function_type": "func(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error)"
+          },
+          {
+            "selector": "convertMapStringInterface",
+            "declaration_kind": "function",
+            "symbol": "sqlx.convertMapStringInterface",
+            "start_line": 152,
+            "end_line": 161,
+            "quote": "func convertMapStringInterface(v interface{}) (map[string]interface{}, bool) {\n\tvar m map[string]interface{}\n\tmtype := reflect.TypeOf(m)\n\tt := reflect.TypeOf(v)\n\tif !t.ConvertibleTo(mtype) {\n\t\treturn nil, false\n\t}\n\treturn reflect.ValueOf(v).Convert(mtype).Interface().(map[string]interface{}), true\n\n}",
+            "declaration": "func convertMapStringInterface(v interface{}) (map[string]interface{}, bool)",
+            "function_type": "func(v interface{}) (map[string]interface{}, bool)"
+          },
+          {
+            "selector": "findMatchingClosingBracketIndex",
+            "declaration_kind": "function",
+            "symbol": "sqlx.findMatchingClosingBracketIndex",
+            "start_line": 229,
+            "end_line": 243,
+            "quote": "func findMatchingClosingBracketIndex(s string) int {\n\tcount := 0\n\tfor i, ch := range s {\n\t\tif ch == '(' {\n\t\t\tcount++\n\t\t}\n\t\tif ch == ')' {\n\t\t\tcount--\n\t\t\tif count == 0 {\n\t\t\t\treturn i\n\t\t\t}\n\t\t}\n\t}\n\treturn 0\n}",
+            "declaration": "func findMatchingClosingBracketIndex(s string) int",
+            "function_type": "func(s string) int"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "named.go",
+      "selectors": [
+        "fixBound"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "named.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "fixBound",
+            "declaration_kind": "function",
+            "symbol": "sqlx.fixBound",
+            "start_line": 245,
+            "end_line": 269,
+            "quote": "func fixBound(bound string, loop int) string {\n\tloc := valuesReg.FindStringIndex(bound)\n\t// defensive guard when \"VALUES (...)\" not found\n\tif len(loc) < 2 {\n\t\treturn bound\n\t}\n\n\topeningBracketIndex := loc[1] - 1\n\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\n\t// defensive guard. must have closing bracket\n\tif index == 0 {\n\t\treturn bound\n\t}\n\tclosingBracketIndex := openingBracketIndex + index + 1\n\n\tvar buffer bytes.Buffer\n\n\tbuffer.WriteString(bound[0:closingBracketIndex])\n\tfor i := 0; i < loop-1; i++ {\n\t\tbuffer.WriteString(\",\")\n\t\tbuffer.WriteString(bound[openingBracketIndex:closingBracketIndex])\n\t}\n\tbuffer.WriteString(bound[closingBracketIndex:])\n\treturn buffer.String()\n}",
+            "declaration": "func fixBound(bound string, loop int) string",
+            "function_type": "func(bound string, loop int) string"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "named_context.go",
+      "selectors": [
+        "NamedExecContext",
+        "NamedQueryContext"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "named_context.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "b5b18083947538835dc3e130d32038002ab8d5192bdfc56713162693bbc8ccc8",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "NamedExecContext",
+            "declaration_kind": "function",
+            "symbol": "sqlx.NamedExecContext",
+            "start_line": 127,
+            "end_line": 133,
+            "quote": "func NamedExecContext(ctx context.Context, e ExtContext, query string, arg interface{}) (sql.Result, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.ExecContext(ctx, q, args...)\n}",
+            "declaration": "func NamedExecContext(ctx context.Context, e ExtContext, query string, arg interface{}) (sql.Result, error)",
+            "function_type": "func(ctx context.Context, e ExtContext, query string, arg interface{}) (sql.Result, error)"
+          },
+          {
+            "selector": "NamedQueryContext",
+            "declaration_kind": "function",
+            "symbol": "sqlx.NamedQueryContext",
+            "start_line": 116,
+            "end_line": 122,
+            "quote": "func NamedQueryContext(ctx context.Context, e ExtContext, query string, arg interface{}) (*Rows, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.QueryxContext(ctx, q, args...)\n}",
+            "declaration": "func NamedQueryContext(ctx context.Context, e ExtContext, query string, arg interface{}) (*Rows, error)",
+            "function_type": "func(ctx context.Context, e ExtContext, query string, arg interface{}) (*Rows, error)"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "bind.go",
+      "selectors": [
+        "BindType",
+        "BindDriver",
+        "Rebind"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "bind.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "BindType",
+            "declaration_kind": "function",
+            "symbol": "sqlx.BindType",
+            "start_line": 43,
+            "end_line": 49,
+            "quote": "func BindType(driverName string) int {\n\titype, ok := binds.Load(driverName)\n\tif !ok {\n\t\treturn UNKNOWN\n\t}\n\treturn itype.(int)\n}",
+            "declaration": "func BindType(driverName string) int",
+            "function_type": "func(driverName string) int"
+          },
+          {
+            "selector": "BindDriver",
+            "declaration_kind": "function",
+            "symbol": "sqlx.BindDriver",
+            "start_line": 52,
+            "end_line": 54,
+            "quote": "func BindDriver(driverName string, bindType int) {\n\tbinds.Store(driverName, bindType)\n}",
+            "declaration": "func BindDriver(driverName string, bindType int)",
+            "function_type": "func(driverName string, bindType int)"
+          },
+          {
+            "selector": "Rebind",
+            "declaration_kind": "function",
+            "symbol": "sqlx.Rebind",
+            "start_line": 60,
+            "end_line": 90,
+            "quote": "func Rebind(bindType int, query string) string {\n\tswitch bindType {\n\tcase QUESTION, UNKNOWN:\n\t\treturn query\n\t}\n\n\t// Add space enough for 10 params before we have to allocate\n\trqb := make([]byte, 0, len(query)+10)\n\n\tvar i, j int\n\n\tfor i = strings.Index(query, \"?\"); i != -1; i = strings.Index(query, \"?\") {\n\t\trqb = append(rqb, query[:i]...)\n\n\t\tswitch bindType {\n\t\tcase DOLLAR:\n\t\t\trqb = append(rqb, '$')\n\t\tcase NAMED:\n\t\t\trqb = append(rqb, ':', 'a', 'r', 'g')\n\t\tcase AT:\n\t\t\trqb = append(rqb, '@', 'p')\n\t\t}\n\n\t\tj++\n\t\trqb = strconv.AppendInt(rqb, int64(j), 10)\n\n\t\tquery = query[i+1:]\n\t}\n\n\treturn string(append(rqb, query...))\n}",
+            "declaration": "func Rebind(bindType int, query string) string",
+            "function_type": "func(bindType int, query string) string"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "sqlx.go",
+      "selectors": [
+        "mapper",
+        "mapperFor",
+        "binder",
+        "Ext"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "sqlx.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "0d50c94347681cc196487d2c422ed254bfb9eeffacad7462d5219c9297ca5e36",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "mapper",
+            "declaration_kind": "function",
+            "symbol": "sqlx.mapper",
+            "start_line": 37,
+            "end_line": 49,
+            "quote": "func mapper() *reflectx.Mapper {\n\tmprMu.Lock()\n\tdefer mprMu.Unlock()\n\n\tif mpr == nil {\n\t\tmpr = reflectx.NewMapperFunc(\"db\", NameMapper)\n\t} else if origMapper != reflect.ValueOf(NameMapper) {\n\t\t// if NameMapper has changed, create a new mapper\n\t\tmpr = reflectx.NewMapperFunc(\"db\", NameMapper)\n\t\torigMapper = reflect.ValueOf(NameMapper)\n\t}\n\treturn mpr\n}",
+            "declaration": "func mapper() *reflectx.Mapper",
+            "function_type": "func() *reflectx.Mapper"
+          },
+          {
+            "selector": "mapperFor",
+            "declaration_kind": "function",
+            "symbol": "sqlx.mapperFor",
+            "start_line": 146,
+            "end_line": 159,
+            "quote": "func mapperFor(i interface{}) *reflectx.Mapper {\n\tswitch i := i.(type) {\n\tcase DB:\n\t\treturn i.Mapper\n\tcase *DB:\n\t\treturn i.Mapper\n\tcase Tx:\n\t\treturn i.Mapper\n\tcase *Tx:\n\t\treturn i.Mapper\n\tdefault:\n\t\treturn mapper()\n\t}\n}",
+            "declaration": "func mapperFor(i interface{}) *reflectx.Mapper",
+            "function_type": "func(i interface{}) *reflectx.Mapper"
+          },
+          {
+            "selector": "binder",
+            "declaration_kind": "type",
+            "symbol": "sqlx.binder",
+            "start_line": 89,
+            "end_line": 93,
+            "quote": "type binder interface {\n\tDriverName() string\n\tRebind(string) string\n\tBindNamed(string, interface{}) (string, []interface{}, error)\n}",
+            "declaration": "type binder interface {\n\tDriverName() string\n\tRebind(string) string\n\tBindNamed(string, interface{}) (string, []interface{}, error)\n}",
+            "function_type": ""
+          },
+          {
+            "selector": "Ext",
+            "declaration_kind": "type",
+            "symbol": "sqlx.Ext",
+            "start_line": 97,
+            "end_line": 101,
+            "quote": "type Ext interface {\n\tbinder\n\tQueryer\n\tExecer\n}",
+            "declaration": "type Ext interface {\n\tbinder\n\tQueryer\n\tExecer\n}",
+            "function_type": ""
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "sqlx.go",
+      "selectors": [
+        "DB.BindNamed",
+        "DB.NamedExec",
+        "DB.NamedQuery",
+        "DB.Rebind"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "sqlx.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "0d50c94347681cc196487d2c422ed254bfb9eeffacad7462d5219c9297ca5e36",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "DB.BindNamed",
+            "declaration_kind": "method",
+            "symbol": "sqlx.DB.BindNamed",
+            "start_line": 301,
+            "end_line": 303,
+            "quote": "func (db *DB) BindNamed(query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(BindType(db.driverName), query, arg, db.Mapper)\n}",
+            "declaration": "func (db *DB) BindNamed(query string, arg interface{}) (string, []interface{}, error)",
+            "function_type": "func(query string, arg interface{}) (string, []interface{}, error)",
+            "receiver_type": "*DB",
+            "return_contract": {
+              "AST_expression_kinds": [
+                "*ast.CallExpr"
+              ],
+              "expressions": [
+                "bindNamedMapper(BindType(db.driverName), query, arg, db.Mapper)"
+              ],
+              "kind": "sole-return-expressions",
+              "runtime_completion_verified": false
+            }
+          },
+          {
+            "selector": "DB.NamedExec",
+            "declaration_kind": "method",
+            "symbol": "sqlx.DB.NamedExec",
+            "start_line": 313,
+            "end_line": 315,
+            "quote": "func (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error) {\n\treturn NamedExec(db, query, arg)\n}",
+            "declaration": "func (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error)",
+            "function_type": "func(query string, arg interface{}) (sql.Result, error)",
+            "receiver_type": "*DB",
+            "return_contract": {
+              "AST_expression_kinds": [
+                "*ast.CallExpr"
+              ],
+              "expressions": [
+                "NamedExec(db, query, arg)"
+              ],
+              "kind": "sole-return-expressions",
+              "runtime_completion_verified": false
+            }
+          },
+          {
+            "selector": "DB.NamedQuery",
+            "declaration_kind": "method",
+            "symbol": "sqlx.DB.NamedQuery",
+            "start_line": 307,
+            "end_line": 309,
+            "quote": "func (db *DB) NamedQuery(query string, arg interface{}) (*Rows, error) {\n\treturn NamedQuery(db, query, arg)\n}",
+            "declaration": "func (db *DB) NamedQuery(query string, arg interface{}) (*Rows, error)",
+            "function_type": "func(query string, arg interface{}) (*Rows, error)",
+            "receiver_type": "*DB",
+            "return_contract": {
+              "AST_expression_kinds": [
+                "*ast.CallExpr"
+              ],
+              "expressions": [
+                "NamedQuery(db, query, arg)"
+              ],
+              "kind": "sole-return-expressions",
+              "runtime_completion_verified": false
+            }
+          },
+          {
+            "selector": "DB.Rebind",
+            "declaration_kind": "method",
+            "symbol": "sqlx.DB.Rebind",
+            "start_line": 288,
+            "end_line": 290,
+            "quote": "func (db *DB) Rebind(query string) string {\n\treturn Rebind(BindType(db.driverName), query)\n}",
+            "declaration": "func (db *DB) Rebind(query string) string",
+            "function_type": "func(query string) string",
+            "receiver_type": "*DB",
+            "return_contract": {
+              "AST_expression_kinds": [
+                "*ast.CallExpr"
+              ],
+              "expressions": [
+                "Rebind(BindType(db.driverName), query)"
+              ],
+              "kind": "sole-return-expressions",
+              "runtime_completion_verified": false
+            }
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "reflectx/reflect.go",
+      "selectors": [
+        "NewMapperFunc",
+        "Mapper.TraversalsByNameFunc",
+        "FieldByIndexesReadOnly",
+        "mustBe"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "reflectx/reflect.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "3de3b248e6b88566c09becf518b3b3c3e999ff5a9ae86dc170cea425fd01b9db",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "NewMapperFunc",
+            "declaration_kind": "function",
+            "symbol": "reflectx.NewMapperFunc",
+            "start_line": 94,
+            "end_line": 100,
+            "quote": "func NewMapperFunc(tagName string, f func(string) string) *Mapper {\n\treturn &Mapper{\n\t\tcache:   make(map[reflect.Type]*StructMap),\n\t\ttagName: tagName,\n\t\tmapFunc: f,\n\t}\n}",
+            "declaration": "func NewMapperFunc(tagName string, f func(string) string) *Mapper",
+            "function_type": "func(tagName string, f func(string) string) *Mapper"
+          },
+          {
+            "selector": "Mapper.TraversalsByNameFunc",
+            "declaration_kind": "method",
+            "symbol": "reflectx.Mapper.TraversalsByNameFunc",
+            "start_line": 184,
+            "end_line": 201,
+            "quote": "func (m *Mapper) TraversalsByNameFunc(t reflect.Type, names []string, fn func(int, []int) error) error {\n\tt = Deref(t)\n\tmustBe(t, reflect.Struct)\n\ttm := m.TypeMap(t)\n\tfor i, name := range names {\n\t\tfi, ok := tm.Names[name]\n\t\tif !ok {\n\t\t\tif err := fn(i, nil); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t} else {\n\t\t\tif err := fn(i, fi.Index); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t}\n\treturn nil\n}",
+            "declaration": "func (m *Mapper) TraversalsByNameFunc(t reflect.Type, names []string, fn func(int, []int) error) error",
+            "function_type": "func(t reflect.Type, names []string, fn func(int, []int) error) error",
+            "receiver_type": "*Mapper"
+          },
+          {
+            "selector": "FieldByIndexesReadOnly",
+            "declaration_kind": "function",
+            "symbol": "reflectx.FieldByIndexesReadOnly",
+            "start_line": 223,
+            "end_line": 228,
+            "quote": "func FieldByIndexesReadOnly(v reflect.Value, indexes []int) reflect.Value {\n\tfor _, i := range indexes {\n\t\tv = reflect.Indirect(v).Field(i)\n\t}\n\treturn v\n}",
+            "declaration": "func FieldByIndexesReadOnly(v reflect.Value, indexes []int) reflect.Value",
+            "function_type": "func(v reflect.Value, indexes []int) reflect.Value"
+          },
+          {
+            "selector": "mustBe",
+            "declaration_kind": "function",
+            "symbol": "reflectx.mustBe",
+            "start_line": 246,
+            "end_line": 250,
+            "quote": "func mustBe(v kinder, expected reflect.Kind) {\n\tif k := v.Kind(); k != expected {\n\t\tpanic(&reflect.ValueError{Method: methodName(), Kind: k})\n\t}\n}",
+            "declaration": "func mustBe(v kinder, expected reflect.Kind)",
+            "function_type": "func(v kinder, expected reflect.Kind)"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    },
+    {
+      "path": "reflectx/reflect.go",
+      "selectors": [
+        "Deref",
+        "Mapper.TypeMap",
+        "parseName"
+      ],
+      "result": {
+        "go_version": "go1.27.4",
+        "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+        "path": "reflectx/reflect.go",
+        "platform": "darwin/arm64",
+        "profile": "go-standard-parser-declarations-v1",
+        "source_executed": false,
+        "source_sha256": "3de3b248e6b88566c09becf518b3b3c3e999ff5a9ae86dc170cea425fd01b9db",
+        "syntax_only": true,
+        "units": [
+          {
+            "selector": "Deref",
+            "declaration_kind": "function",
+            "symbol": "reflectx.Deref",
+            "start_line": 231,
+            "end_line": 236,
+            "quote": "func Deref(t reflect.Type) reflect.Type {\n\tif t.Kind() == reflect.Ptr {\n\t\tt = t.Elem()\n\t}\n\treturn t\n}",
+            "declaration": "func Deref(t reflect.Type) reflect.Type",
+            "function_type": "func(t reflect.Type) reflect.Type"
+          },
+          {
+            "selector": "Mapper.TypeMap",
+            "declaration_kind": "method",
+            "symbol": "reflectx.Mapper.TypeMap",
+            "start_line": 104,
+            "end_line": 113,
+            "quote": "func (m *Mapper) TypeMap(t reflect.Type) *StructMap {\n\tm.mutex.Lock()\n\tmapping, ok := m.cache[t]\n\tif !ok {\n\t\tmapping = getMapping(t, m.tagName, m.mapFunc, m.tagMapFunc)\n\t\tm.cache[t] = mapping\n\t}\n\tm.mutex.Unlock()\n\treturn mapping\n}",
+            "declaration": "func (m *Mapper) TypeMap(t reflect.Type) *StructMap",
+            "function_type": "func(t reflect.Type) *StructMap",
+            "receiver_type": "*Mapper"
+          },
+          {
+            "selector": "parseName",
+            "declaration_kind": "function",
+            "symbol": "reflectx.parseName",
+            "start_line": 282,
+            "end_line": 320,
+            "quote": "func parseName(field reflect.StructField, tagName string, mapFunc, tagMapFunc mapf) (tag, fieldName string) {\n\t// first, set the fieldName to the field's name\n\tfieldName = field.Name\n\t// if a mapFunc is set, use that to override the fieldName\n\tif mapFunc != nil {\n\t\tfieldName = mapFunc(fieldName)\n\t}\n\n\t// if there's no tag to look for, return the field name\n\tif tagName == \"\" {\n\t\treturn \"\", fieldName\n\t}\n\n\t// if this tag is not set using the normal convention in the tag,\n\t// then return the fieldname..  this check is done because according\n\t// to the reflect documentation:\n\t//    If the tag does not have the conventional format,\n\t//    the value returned by Get is unspecified.\n\t// which doesn't sound great.\n\tif !strings.Contains(string(field.Tag), tagName+\":\") {\n\t\treturn \"\", fieldName\n\t}\n\n\t// at this point we're fairly sure that we have a tag, so lets pull it out\n\ttag = field.Tag.Get(tagName)\n\n\t// if we have a mapper function, call it on the whole tag\n\t// XXX: this is a change from the old version, which pulled out the name\n\t// before the tagMapFunc could be run, but I think this is the right way\n\tif tagMapFunc != nil {\n\t\ttag = tagMapFunc(tag)\n\t}\n\n\t// finally, split the options from the name\n\tparts := strings.Split(tag, \",\")\n\tfieldName = parts[0]\n\n\treturn tag, fieldName\n}",
+            "declaration": "func parseName(field reflect.StructField, tagName string, mapFunc, tagMapFunc mapf) (tag, fieldName string)",
+            "function_type": "func(field reflect.StructField, tagName string, mapFunc, tagMapFunc mapf) (tag, fieldName string)"
+          }
+        ],
+        "producer": {
+          "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+          "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+          "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+          "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+          "version": "1.6.1"
+        }
+      }
+    }
+  ],
+  "declarations": 33,
+  "source_execution": false,
+  "typechecking": false,
+  "upstream_tests_run": false
+}

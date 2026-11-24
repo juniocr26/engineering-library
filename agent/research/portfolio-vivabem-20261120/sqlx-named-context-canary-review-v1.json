@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-21T06:22:53.731468+00:00",
+  "criteria": "sqlx-named-context-complete-criteria-v1.json",
+  "fresh_source_review": "sqlx-named-context-fresh-source-language-review-v1.json",
+  "controls": [
+    {
+      "id": "SQN1",
+      "claim": "Package Named automatically selects the database driver placeholder format.",
+      "decision": "REJECT",
+      "source_cards": "SQ-ENTRY,SQ-DBMETHODS",
+      "basis": "PackageNamedexplicitlyQUESTION;perDBbindingisdistinct."
+    },
+    {
+      "id": "SQN2",
+      "claim": "NamedExec only formats a query and never calls an executor.",
+      "decision": "REJECT",
+      "source_cards": "SQ-ENTRY",
+      "basis": "Normalbindingreturnleads toexplicitExec;notmerelyformatting."
+    },
+    {
+      "id": "SQN3",
+      "claim": "All unsupported argument types are converted to ordinary returned errors without panic.",
+      "decision": "REJECT",
+      "source_cards": "SQ-FIELD-ERROR,SQ-TRAVERSAL,SQ-DISPATCH",
+      "basis": "mustBeexplicitpanic/reflectionassumptions;notallinputshavereturnederrorguard."
+    },
+    {
+      "id": "SQN4",
+      "claim": "A db field tag guarantees the configured name mapper callback is never invoked.",
+      "decision": "REJECT",
+      "source_cards": "SQ-TAG-CALLBACK,SQ-MAPPING-CALL",
+      "basis": "mapFunccalledbeforetaghandlinginselectedparseName."
+    },
+    {
+      "id": "SQN5",
+      "claim": "Every nonempty array expands into valid SQL for arbitrary query syntax.",
+      "decision": "REJECT",
+      "source_cards": "SQ-ARRAY",
+      "basis": "fixBoundcanreturnunchangedtext;notarbitrarySQLvalidation."
+    },
+    {
+      "id": "SQN6",
+      "claim": "A cancelled context always prevents binding work before NamedExecContext returns.",
+      "decision": "REJECT",
+      "source_cards": "SQ-CONTEXT",
+      "basis": "Bindingprecedesctxexecutorcall,nopre-bindingcancelcheckshown;no universalguarantee."
+    },
+    {
+      "id": "SQN7",
+      "claim": "The commented Unicode case and skipped escaped-colon case passed in this campaign.",
+      "decision": "REJECT",
+      "source_cards": "SQ-TEST-COMPILER,SQ-TEST-SKIP",
+      "basis": "Unicodeblockcommentedandescaped-colonexplicitSkip;noupstreamtestsrun."
+    },
+    {
+      "id": "SQN8",
+      "claim": "Named preparation is globally side-effect-free and cannot mutate caches or invoke custom callbacks.",
+      "decision": "REJECT",
+      "source_cards": "SQ-CACHE,SQ-MAPPER,SQ-TAG-CALLBACK",
+      "basis": "Cachedmappingwrites/locksandcallbackinvocationundermineglobalpurityclaim."
+    },
+    {
+      "id": "SQP1",
+      "claim": "PackageNamedselectsQUESTION;DB.BindNamedselectsregistereddriverbindtypeanddb.Mapper.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "SQ-ENTRY,SQ-DBMETHODS",
+      "basis": "Twoactualentrypointbindingselectionslinked."
+    },
+    {
+      "id": "SQP2",
+      "claim": "Selectedmaplookupfollowscompilednameoccurrenceorder,includingrepeatednames.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "SQ-COMPILER,SQ-MAP-ERROR",
+      "basis": "Nameoccurrencesappendinorder,maplookupiteratesnameswithoutdeduplication."
+    },
+    {
+      "id": "SQP3",
+      "claim": "ReturnedbindingerrorstopexplicitExec/Queryxcallinsideselectedwrapper;customcallbacks/interfacesremainoutsideglobalI/Oguarantee.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "SQ-ENTRY",
+      "basis": "Returnedbindingerrorgateprecedesselectedexplicitexecutorcall;globalcallbackeffectqualified."
+    },
+    {
+      "id": "SQP4",
+      "claim": "Zero-lengtharrayreturnserror;VALUESfragmentrewriteisconditionalandnotgeneralSQLvalidation.",
+      "decision": "SUPPORT_WITH_SELECTED_SOURCE_LIMITS",
+      "source_cards": "SQ-ARRAY",
+      "basis": "Zeroarrayerrorandconditionalfragmentrewritepresent."
+    }
+  ],
+  "false_acceptance": {
+    "numerator": 0,
+    "denominator": 8
+  },
+  "false_rejection": {
+    "numerator": 0,
+    "denominator": 4
+  },
+  "reviewer": "Same campaign reviewer with fresh source reconstruction; exposed manual source-review controls, not automatic/neural/general semantic verifier or independent human approval.",
+  "upstream_execution": false,
+  "database_operations": false,
+  "gold": false
+}

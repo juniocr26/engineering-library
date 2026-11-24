@@ -1,0 +1,17 @@
+import argparse,json,hashlib,re,tomllib
+from pathlib import Path
+ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,required=True);a=ap.parse_args();root=a.root.resolve();p=root/'agent/research/final-intensive-20261121';sha=lambda b:hashlib.sha256(b).hexdigest();review=json.loads((p/'ruff-target-complete-review-v2.json').read_text());source=p/'ruff-target-source-context-v1'
+for e in review['external_dependency_edges']:assert sha((root/e['path']).read_bytes())==e['sha256']
+for e in json.loads((p/'ruff-target-source-acquisition-v1.json').read_text())['records']:assert sha((root/e['saved_path']).read_bytes())==e['sha256']
+for e in review['exact_source_range_bindings']:
+ raw=(source/e['path']).read_bytes();assert sha(b''.join(raw.splitlines(keepends=True)[e['lines'][0]-1:e['lines'][1]]))==e['quote_sha256']
+settings=(source/'crates/ruff_workspace/src/settings.rs').read_text();types=(source/'crates/ruff_linter/src/settings/types.rs').read_text();py=(source/'crates/ruff_python_ast/src/python_version.rs').read_text();assert 'use ruff_python_ast::{PySourceType, PythonVersion};' in settings;assert 'pub struct PythonVersion' in py and 'pub major: u8' in py and 'pub minor: u8' in py;assert 'pub fn is_match(&self, path: &Path) -> Option<ast::PythonVersion>' in types;assert 'path.file_name().expect("Unable to parse filename")' in types;assert '.iter_matches(path, "Setting Python version")\n            .next()\n            .copied()' in types
+assert tomllib.loads((source/'rust-toolchain.toml').read_text())['toolchain']['channel']=='1.100.0';assert tomllib.loads((source/'Cargo.toml').read_text())['workspace']['package']['rust-version']=='1.98'
+w=review['historical_witness']
+for key in ['request','raw_response','origin']:assert sha((root/w[key]['path']).read_bytes())==w[key]['sha256']
+r=json.loads((root/w['raw_response']['path']).read_text());assert json.loads(r['message']['content'])['facts']==w['facts'];assert 'Rust project' in w['facts'][0]['en'] and 'projeto Rust' in w['facts'][0]['pt-br'];q=json.loads((root/w['request']['path']).read_text());m=q['messages'][-1]['content'];assert json.loads(m.split('BEGIN SOURCE JSON\n',1)[1].split('\nEND SOURCE JSON',1)[0])==w['selected_evidence']
+docs=[(root/d['path']).read_text() for d in review['documents']];spans=lambda t:re.findall(r'(?<!`)`([^`\n]+)`(?!`)',t);ids=lambda t:re.findall(r'<!-- reading-section: faq:([^ ]+) -->',t);assert spans(docs[0])==spans(docs[1]);assert ids(docs[0])==ids(docs[1])==review['FAQ_ids']
+for e in review['logical_original_document_links']:
+ f=root/e['document'];target=f.parent/e['relative_link'];assert str(target.relative_to(root))==e['target']['path'] and sha(target.read_bytes())==e['target']['sha256']
+assert not review['Rustcompiler_or_parser_or_typecheck_or_macro_execution'] and not review['Ruff_formatter_runtime_executed']
+print(json.dumps({'status':'PASS_EXACT_RUFF_TARGET_ORIGINAL_DOCUMENT_RECOVERY','documents':2,'source_ranges':len(review['exact_source_range_bindings']),'public_source_files_verified':len(json.loads((p/'ruff-target-source-acquisition-v1.json').read_text())['records']),'metadata_TOML_files_parsed':2,'historical_response':1,'logical_links':len(review['logical_original_document_links']),'Rust_parser_or_compiler_or_typecheck':False,'target_Cargo_or_formatter_execution':False,'new_model_calls':0,'general_semantic_verification':False,'scope':'Exact source/document/metadata/response/span recovery; manual meanings notprovedbyhashes, noRustlanguage/compiler/runtime certification.'}))

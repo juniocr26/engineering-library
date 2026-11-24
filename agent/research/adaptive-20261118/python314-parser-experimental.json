@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-PYTHON314-PARSER-COMPATIBILITY",
+  "at": "2026-11-19T06:53:12.339147+00:00",
+  "status": "VERIFIED_EXPERIMENTAL_EXISTING_OPTIONAL_PRODUCER",
+  "production_backend_profile": false,
+  "producer": "backend/lib/documentation/python_async_facts.py executed explicitly with selected existing interpreter",
+  "normal_backend_runtime": "Python3.11.2 unchanged; normal SourceFactCommand still uses its backend interpreter",
+  "newer_runtimes": {
+    "native_macOS": "ExistingPython3.14.7; no install",
+    "Linux_ARM64": "Already cachedpython3.14.10slim",
+    "pinned_image": "python@sha256:9aaa474097d094040649f2162a627c0049b408f52138d980916788d80f04802f"
+  },
+  "real_source_comparison": {
+    "cases": 9,
+    "backend311_accepted": 2,
+    "newer314_accepted": 3,
+    "newer314_safe_refusals": 6,
+    "new_source_eligibility_gains": 1,
+    "new_case": "BraviaTVCoordinator.async_source_start: full module parse no longer blocked by newer Python syntax; exact original source hashes/lines retained",
+    "unchanged_shared_accepted_IR": 2,
+    "nativeMac3147_linux31410_entire_IR_ENPT_or_refusal_equal": true,
+    "important_scope": "Other Bravia methods pass whole-module parsing but remain refused because they are decorated. A runtime version change does not approve every source shape. Selected generic async declarations remain explicitly refused."
+  },
+  "actual_private_backend_consumer": {
+    "bilingual_fact_pairs": 3,
+    "sources": [
+      "AmcrestBinarySensor.async_update",
+      "BraviaTVCoordinator.async_source_start",
+      "BackgroundTask.__call__"
+    ],
+    "frozen_backend_caller": "1.9.32",
+    "backend_parser_rerun": false,
+    "method": "Private checksum-bound precomputed IR adapter through normal SectionCommand writer; not a new production/default fallback",
+    "source_hash_quote_line_parity_verified": true,
+    "complete_ENPT_paragraphs_source_reviewed": true,
+    "automatic_input_and_result_attempts_retained": 3,
+    "model_calls": 0,
+    "source_program_or_import_execution": false
+  },
+  "preservation": {
+    "cached_image_archive_bytes": 46030336,
+    "cached_image_archive_sha256": "938bd854f4510d6ed11aa5c5547adc8c791e51ce24a65f19e7d1703614087955",
+    "content_addressed_blobs_verified": 11,
+    "PSF_license_text_preserved": true,
+    "source_IR_native_and_Linux_outputs_retained": true,
+    "fresh_empty_Docker_daemon_restore": false,
+    "native_runtime_binary_hash_scope": "Existing interpreter executable/version only, not a portable macOS runtime archive"
+  },
+  "primary_reference": "https://docs.python.org/3.14/library/ast.html",
+  "reference_scope": "AST grammar changes across versions; async definitions include type_params. Source parsing does not resolve imports or prove runtime behavior.",
+  "private_evidence": "private-research://adaptive-20261118/python314-parser-v1/",
+  "private_output_tree": "private-research://adaptive-20261118/preserved-python314-source-facts-v1/",
+  "failed_harness_attempt": "A native3.14 parity runner was initially reused on3.11 and correctly failed its equality assertion before emitting a comparison; separate version-comparison runner records the actual differences. Failed log retained;0models.",
+  "backend_global_dependency_install": false,
+  "source_execution": false,
+  "training_runs": 0,
+  "human_review": "pending",
+  "training_gold": false
+}

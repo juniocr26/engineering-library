@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-JAVASCRIPT-AST-RANGE-PREPARER",
+  "at": "2026-11-19T01:23:23.958097+00:00",
+  "status": "INTEGRATED",
+  "integration_kind": "Explicit optional CLI tooling; default backend symbol selection is unchanged",
+  "runtime_consumer": "agent/tools/javascript_ranges.cjs -> operator-reviewed ranges JSON -> existing SectionCommand/ProjectCommand range selection",
+  "baseline": "Backend .js complete unit selection refused before model; manually supplied ranges previously available.",
+  "intervention": "Use installed TypeScript parser in existing frontend to prepare exact bounded declaration ranges. Never import/transpile/evaluate inspected source.",
+  "before_after": {
+    "real_declarations_prepared": 8,
+    "Fastify": 7,
+    "Engineering_Library_TypeScript": 1,
+    "exact_Ruby_consumer_matches": 8,
+    "permanent_Node_tests": 20,
+    "Node_failures": 0,
+    "model_calls": 0,
+    "backend_new_dependencies": 0
+  },
+  "dependencies": {
+    "tested_node": "v24.22.0",
+    "tested_typescript": "5.9.3",
+    "existing_parser_path": "/app/frontend/node_modules/typescript",
+    "installed_by_campaign": false,
+    "portable_fresh_install_or_other_OS": "not yet tested"
+  },
+  "limits": [
+    "Supports only top-level named declarations, a single function/block-arrow variable, or property-assigned function/block-arrow.",
+    "Class/object/nested methods, ambiguous declarations, overload collections and same-line adjacent source refuse.",
+    "Maximum2MiBsource,1900bytesperchunk,fourcards; large functions may refuse.",
+    "Actual parser spans do not establish helper closure, types, runtime behavior or correct generated prose.",
+    "Backend consumes ranges and retains incomplete-unit caveat; no vector retrieval or embeddings implemented."
+  ],
+  "evidence": [
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-protocol.json",
+      "sha256": "085247f0c0a3c72080bc984abfc2178b276f013fe9dc35d98534b022fe2738b2"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-baseline.json",
+      "sha256": "acf35838d0a6211dabe380e2169e5c42a28b299cf1c00ff40691ec4683720c46"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-real-contracts.json",
+      "sha256": "890e75c8a4cf1e4e84bd4caa8c1966c0451c667f3a323c653934ad1f1f3d9a0a"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-typescript-transfer-protocol.json",
+      "sha256": "b3debca3093cc551df9914ec7781b57a48c595f34d7b0271d873697f0da07a3b"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-real-permanent-results.jsonl",
+      "sha256": "1934e3178c6f693d75a9b46ebc4ab611f9287803a36d08e8ddcfe03f3f52ba1c"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-consumer-results.jsonl",
+      "sha256": "a08bd4061713f894da926a414b41a9a9bfba19b4357dd7469d7fbcd66d4a24fa"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-final-parity.json",
+      "sha256": "0c928ceb4053cf92af0e56e5d721d192cea78242f75e3b7e6075b331f57ce173"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-ranges-permanent-controls.tap",
+      "sha256": "a7ab676ceb8922a52357b917279a632030e524ed40c8852720322ceb2e9acbf8"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/javascript-parser-version-preservation.json",
+      "sha256": "92f2ba8ec11173faf2937759802e0aa941fe513e20bb0966dac8f0e3b83a7aac"
+    }
+  ]
+}

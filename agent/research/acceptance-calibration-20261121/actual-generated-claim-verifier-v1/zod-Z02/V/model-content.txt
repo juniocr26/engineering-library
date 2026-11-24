@@ -1,0 +1,6 @@
+{
+  "verdict": "SUPPORTED",
+  "source_path": "packages/zod/src/v4/core/parse.ts",
+  "source_role": "definition",
+  "evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n72:   const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };\n73:   const result = schema._zod.run({ value, issues: [] }, ctx);\n74:   if (result instanceof Promise) {\n75:     throw new core.$ZodAsyncError();\n76:   }\n77: \n78:   return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n79: };\n80: export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);\n",
+  "reason": "The source defines a function `_safeParse` that takes a schema, value, and context, and returns a `SafeParse` result. The function calls `schema._zod.run` with the value and issues, and then checks if the result is a promise. If it is, it throws an error. Otherwise, it returns a `SafeParse` result with the success and data properties. The source also defines a `safeParse` function that calls `_safeParse` with the `errors.$ZodRealError` class. The `safeParse

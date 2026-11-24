@@ -1,0 +1,162 @@
+{
+  "at": "2026-11-21T06:02:02.220419+00:00",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "fresh_git_files": [
+    {
+      "path": "COPYRIGHT",
+      "bytes": 846,
+      "sha256": "5b8559278fabdb2d38e5251facf259e394f5dc2c604c5e91c1b3befb99ecbc11"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "modules/core/include/opencv2/core/base.hpp",
+      "bytes": 19618,
+      "sha256": "15d83c7d2ff03078100313ac928f112e1d05f346ab28f91b49a984552c5263a1"
+    },
+    {
+      "path": "modules/core/include/opencv2/core/cvdef.h",
+      "bytes": 38612,
+      "sha256": "9ff4548335a0e5ef764e39adb7487f44a413d5018995f10c286c3baa532efa73"
+    },
+    {
+      "path": "modules/core/include/opencv2/core/exception.hpp",
+      "bytes": 11098,
+      "sha256": "f3bf12e40d006e40dc374f31bd337e587037d4ee89526f0450ee53cfbfd6816e"
+    },
+    {
+      "path": "modules/core/include/opencv2/core.hpp",
+      "bytes": 167339,
+      "sha256": "2fc8257fc4ed68093df06e6f41bcc544c65c24e93613149e3cca676a21d156fb"
+    },
+    {
+      "path": "modules/core/src/algorithm.cpp",
+      "bytes": 2957,
+      "sha256": "89e80eefada7e6ad9b3fcad274645566dba853d773b1f91990e1065ef135728e"
+    }
+  ],
+  "fresh_source_cards": [
+    {
+      "id": "OC-BASE",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 3333,
+      "line_end": 3362,
+      "source_quote": "class CV_EXPORTS_W Algorithm\n{\npublic:\n    Algorithm();\n    virtual ~Algorithm();\n\n    /** @brief Clears the algorithm state\n    */\n    CV_WRAP virtual void clear() {}\n\n    /** @brief Stores algorithm parameters in a file storage\n    */\n    CV_WRAP virtual void write(FileStorage& fs) const { CV_UNUSED(fs); }\n\n    /**\n    * @overload\n    */\n    CV_WRAP void write(FileStorage& fs, const String& name) const;\n#if CV_VERSION_MAJOR < 5\n    /** @deprecated */\n    void write(const Ptr<FileStorage>& fs, const String& name = String()) const;\n#endif\n\n    /** @brief Reads algorithm parameters from a file storage\n    */\n    CV_WRAP virtual void read(const FileNode& fn) { CV_UNUSED(fn); }\n\n    /** @brief Returns true if the Algorithm is empty (e.g. in the very beginning or after unsuccessful read\n    */\n    CV_WRAP virtual bool empty() const { return false; }",
+      "quote_sha256": "91d98fbe3fbbad3d1e956cf41cef65310f500b24d04772f933ef3c01ba1f59e5"
+    },
+    {
+      "id": "OC-READ",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 3364,
+      "line_end": 3380,
+      "source_quote": "    /** @brief Reads algorithm from the file node\n\n    This is static template method of Algorithm. It's usage is following (in the case of SVM):\n    @code\n    cv::FileStorage fsRead(\"example.xml\", FileStorage::READ);\n    Ptr<SVM> svm = Algorithm::read<SVM>(fsRead.root());\n    @endcode\n    In order to make this method work, the derived class must overwrite Algorithm::read(const\n    FileNode& fn) and also have static create() method without parameters\n    (or with all the optional parameters)\n    */\n    template<typename _Tp> static Ptr<_Tp> read(const FileNode& fn)\n    {\n        Ptr<_Tp> obj = _Tp::create();\n        obj->read(fn);\n        return !obj->empty() ? obj : Ptr<_Tp>();\n    }",
+      "quote_sha256": "84ddaba3a7f9c3ebb3bd0862dc24ca3c6c7792e88b522dcaa3255583174e8b92"
+    },
+    {
+      "id": "OC-LOAD",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 3382,
+      "line_end": 3403,
+      "source_quote": "    /** @brief Loads algorithm from the file\n\n    @param filename Name of the file to read.\n    @param objname The optional name of the node to read (if empty, the first top-level node will be used)\n\n    This is static template method of Algorithm. It's usage is following (in the case of SVM):\n    @code\n    Ptr<SVM> svm = Algorithm::load<SVM>(\"my_svm_model.xml\");\n    @endcode\n    In order to make this method work, the derived class must overwrite Algorithm::read(const\n    FileNode& fn).\n    */\n    template<typename _Tp> static Ptr<_Tp> load(const String& filename, const String& objname=String())\n    {\n        FileStorage fs(filename, FileStorage::READ);\n        CV_Assert(fs.isOpened());\n        FileNode fn = objname.empty() ? fs.getFirstTopLevelNode() : fs[objname];\n        if (fn.empty()) return Ptr<_Tp>();\n        Ptr<_Tp> obj = _Tp::create();\n        obj->read(fn);\n        return !obj->empty() ? obj : Ptr<_Tp>();\n    }",
+      "quote_sha256": "49454f4f9e63d8ce248f1452f668e524aedf382fbd9844e343d00dabc13b2766"
+    },
+    {
+      "id": "OC-STRING",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 3405,
+      "line_end": 3422,
+      "source_quote": "    /** @brief Loads algorithm from a String\n\n    @param strModel The string variable containing the model you want to load.\n    @param objname The optional name of the node to read (if empty, the first top-level node will be used)\n\n    This is static template method of Algorithm. It's usage is following (in the case of SVM):\n    @code\n    Ptr<SVM> svm = Algorithm::loadFromString<SVM>(myStringModel);\n    @endcode\n    */\n    template<typename _Tp> static Ptr<_Tp> loadFromString(const String& strModel, const String& objname=String())\n    {\n        FileStorage fs(strModel, FileStorage::READ + FileStorage::MEMORY);\n        FileNode fn = objname.empty() ? fs.getFirstTopLevelNode() : fs[objname];\n        Ptr<_Tp> obj = _Tp::create();\n        obj->read(fn);\n        return !obj->empty() ? obj : Ptr<_Tp>();\n    }",
+      "quote_sha256": "2170cb688fba81549b3f1f42bf9add5f5e9c961ab327e7d5da6e56587574f280"
+    },
+    {
+      "id": "OC-SAVE-API",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 3424,
+      "line_end": 3434,
+      "source_quote": "    /** Saves the algorithm to a file.\n    In order to make this method work, the derived class must implement Algorithm::write(FileStorage& fs). */\n    CV_WRAP virtual void save(const String& filename) const;\n\n    /** Returns the algorithm string identifier.\n    This string is used as top level xml/yml node tag when the object is saved to a file or string. */\n    CV_WRAP virtual String getDefaultName() const;\n\nprotected:\n    void writeFormat(FileStorage& fs) const;\n};",
+      "quote_sha256": "3ffcd4a44d966d160d8c2ebb704e242b44afff4e734f040197e8c2384423e120"
+    },
+    {
+      "id": "OC-WRITE",
+      "source_path": "modules/core/src/algorithm.cpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 58,
+      "line_end": 69,
+      "source_quote": "void Algorithm::write(FileStorage& fs, const String& name) const\n{\n    CV_TRACE_FUNCTION();\n    if(name.empty())\n    {\n        write(fs);\n        return;\n    }\n    fs << name << \"{\";\n    write(fs);\n    fs << \"}\";\n}",
+      "quote_sha256": "39a54b7802b0de8cf48fe4f883753067929abf1d3cbe5b746cf7e54746107172"
+    },
+    {
+      "id": "OC-SAVE-IMPL",
+      "source_path": "modules/core/src/algorithm.cpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 71,
+      "line_end": 89,
+      "source_quote": "void Algorithm::save(const String& filename) const\n{\n    CV_TRACE_FUNCTION();\n    FileStorage fs(filename, FileStorage::WRITE);\n    fs << getDefaultName() << \"{\";\n    write(fs);\n    fs << \"}\";\n}\n\nString Algorithm::getDefaultName() const\n{\n    CV_TRACE_FUNCTION();\n    return String(\"my_object\");\n}\n\nvoid Algorithm::writeFormat(FileStorage& fs) const\n{\n    CV_TRACE_FUNCTION();\n    fs << \"format\" << (int)3;",
+      "quote_sha256": "7b762da45c44afb0b46c9f119107c7896460ee17ed88b1fc1c4edfc7c68fb440"
+    },
+    {
+      "id": "OC-ASSERT",
+      "source_path": "modules/core/include/opencv2/core/exception.hpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 154,
+      "line_end": 201,
+      "source_quote": "#ifdef CV_STATIC_ANALYSIS\n\n// In practice, some macro are not processed correctly (noreturn is not detected).\n// We need to use simplified definition for them.\n#define CV_Error(code, msg) do { (void)(code); (void)(msg); abort(); } while (0)\n#define CV_Error_(code, args) do { (void)(code); (void)(cv::format args); abort(); } while (0)\n#define CV_Assert( expr ) do { if (!(expr)) abort(); } while (0)\n\n#else // CV_STATIC_ANALYSIS\n\n/** @brief Call the error handler.\n\nCurrently, the error handler prints the error code and the error message to the standard\nerror stream `stderr`. In the Debug configuration, it then provokes memory access violation, so that\nthe execution stack and all the parameters can be analyzed by the debugger. In the Release\nconfiguration, the exception is thrown.\n\n@param code one of Error::Code\n@param msg error message\n*/\n#define CV_Error( code, msg ) cv::error( code, msg, CV_Func, __FILE__, __LINE__ )\n\n/**  @brief Call the error handler.\n\nThis macro can be used to construct an error message on-fly to include some dynamic information,\nfor example:\n@code\n    // note the extra parentheses around the formatted text message\n    CV_Error_(Error::StsOutOfRange,\n    (\"the value at (%d, %d)=%g is out of range\", badPt.x, badPt.y, badValue));\n@endcode\n@param code one of Error::Code\n@param args printf-like formatted error message in parentheses\n*/\n#define CV_Error_( code, args ) cv::error( code, cv::format args, CV_Func, __FILE__, __LINE__ )\n\n/** @brief Checks a condition at runtime and throws exception if it fails\n\nThe macros CV_Assert (and CV_DbgAssert(expr)) evaluate the specified expression. If it is 0, the macros\nraise an error (see cv::error). The macro CV_Assert checks the condition in both Debug and Release\nconfigurations while CV_DbgAssert is only retained in the Debug configuration.\nCV_AssertTerminate is analog of CV_Assert for invariants check in functions with noexcept attribute.\nIt does not throw exception, but terminates the application.\n*/\n#define CV_Assert( expr ) do { if(!!(expr)) ; else cv::error( cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__ ); } while(0)\n#define CV_AssertTerminate( expr ) do { if(!!(expr)) ; else cv::terminate( #expr, CV_Func, __FILE__, __LINE__ ); } while(0)\n\n#endif // CV_STATIC_ANALYSIS",
+      "quote_sha256": "ce80a1308c786f77901d9cf9e8b15f78f8fc5b4d70166dfa680b84616063b5fc"
+    },
+    {
+      "id": "OC-UNUSED",
+      "source_path": "modules/core/include/opencv2/core/cvdef.h",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 147,
+      "line_end": 147,
+      "source_quote": "#define CV_UNUSED(name) (void)name",
+      "quote_sha256": "bab5a7d9a8d18f7abe126d6b14a3cf270e6478c25b1c9e6af8270e6b1bad0c3d"
+    },
+    {
+      "id": "OC-NOTICE",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+      "line_start": 1,
+      "line_end": 43,
+      "source_quote": "/*M///////////////////////////////////////////////////////////////////////////////////////\n//\n//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.\n//\n//  By downloading, copying, installing or using the software you agree to this license.\n//  If you do not agree to this license, do not download, install,\n//  copy or use the software.\n//\n//\n//                           License Agreement\n//                For Open Source Computer Vision Library\n//\n// Copyright (C) 2000-2015, Intel Corporation, all rights reserved.\n// Copyright (C) 2009-2011, Willow Garage Inc., all rights reserved.\n// Copyright (C) 2015, OpenCV Foundation, all rights reserved.\n// Copyright (C) 2015, Itseez Inc., all rights reserved.\n// Third party copyrights are property of their respective owners.\n//\n// Redistribution and use in source and binary forms, with or without modification,\n// are permitted provided that the following conditions are met:\n//\n//   * Redistribution's of source code must retain the above copyright notice,\n//     this list of conditions and the following disclaimer.\n//\n//   * Redistribution's in binary form must reproduce the above copyright notice,\n//     this list of conditions and the following disclaimer in the documentation\n//     and/or other materials provided with the distribution.\n//\n//   * The name of the copyright holders may not be used to endorse or promote products\n//     derived from this software without specific prior written permission.\n//\n// This software is provided by the copyright holders and contributors \"as is\" and\n// any express or implied warranties, including, but not limited to, the implied\n// warranties of merchantability and fitness for a particular purpose are disclaimed.\n// In no event shall the Intel Corporation or contributors be liable for any direct,\n// indirect, incidental, special, exemplary, or consequential damages\n// (including, but not limited to, procurement of substitute goods or services;\n// loss of use, data, or profits; or business interruption) however caused\n// and on any theory of liability, whether in contract, strict liability,\n// or tort (including negligence or otherwise) arising in any way out of\n// the use of this software, even if advised of the possibility of such damage.\n//\n//M*/",
+      "quote_sha256": "47b4a813e84343e5588961ddd60657466f485054f27ca65e5c648fb238d253cd"
+    }
+  ],
+  "actual_documents": [
+    {
+      "language": "en",
+      "path": "agent/research/portfolio-vivabem-20261120/opencv-algorithm-context-candidate-v1/en.md",
+      "sha256": "1280722101c76273d281d061faf6c6e61d333cb8720ddc530c192e008cd3093c",
+      "bytes": 10602,
+      "heading_count": 8,
+      "faq_question_count": 6,
+      "inline_literal_occurrences": 52
+    },
+    {
+      "language": "pt-BR",
+      "path": "agent/research/portfolio-vivabem-20261120/opencv-algorithm-context-candidate-v1/pt-BR.md",
+      "sha256": "ed99463bd43546a2b63f7fd5f7dd186f94cc28ffc04da86b4e900438a01e7637",
+      "bytes": 11905,
+      "heading_count": 8,
+      "faq_question_count": 6,
+      "inline_literal_occurrences": 52
+    }
+  ],
+  "literal_multisets_equal": true,
+  "example_bytes_equal_between_languages_and_executed_owned_case": true,
+  "example_source_sha256": "0f8ffd7b1816a82d6c79196e6d4783ca5f52f794005c4a251fe47c7e7c5938a5",
+  "example_runtime_result": {
+    "empty": 1,
+    "writes": 1
+  },
+  "original_opencv_source_compiled_or_executed": false,
+  "checks_are_not_general_semantic_proof": true
+}

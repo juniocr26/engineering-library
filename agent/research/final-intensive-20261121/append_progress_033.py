@@ -1,0 +1,19 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Final intensive progress 033 — exact source graph recovered without runtime inference
+
+Separate observer v5adds full deterministic tie ordering while preserving v3namespace failures and v4order failures. The same12owned admission/negative controls match, and the exact eight-run one-line fixture now has1packet variant, versus4before with1order-normalized meaning. This is a bounded representation/recovery result, not eight independent accuracy observations or a universal proof. No prior observer/source/binary was replaced.
+
+The actual pinned Go Image imageprocessing and imagecompression production directories each contain exactly the selected non-testGo file. Both full supplied packages typecheck under go1.27with existingGo1.27.1 and SHA-bound frozen SDK exports, yielding29relations/37declarations and2direct export lookups. No application/source initializer/function/test executes. Result/Format are type aliases; ErrInvalidImage is a variable, not a type alias. u.compressor.Compress is an interface method selection; two ctx.Err selections do not establish actual concrete injection, runtime cancellation or whole-codec behavior. Full source branch semantics still require contextual review. No new document acceptance or model gain is inferred.
+
+Checkpoint023 restored3463regularfiles with hashes/modes and24finite consumer groups, including12frozen Go source-graph controls,1determinism fixture and1actual two-package packet under the new graph consumer. All four checkpoint postnote reports reconstructed exactly. Local binary/source/export replay is not SDK rebuild, full-repository compilation, remote/Windows/crash/weights/optimizer recovery or generic semantic verification. `go-source-graph-type-relations-review-v2.json` records these limits and exact typed meanings.
+
+Repository ledger v8retains42blocks and adds58actual command witnesses from selected Chi/Go Image acquisition receipts, including failed queries, plus the three owned observer build receipts. These are commands, not independent experiments. File inventory cut012lists3205files (3117research) with exact paths/bytes/hashes/purposes, including ignored caches/binaries; checkpoint dependency manifests cover their different declared source closures. Later receipts/gate/ledger/inventory/report appends are outside checkpoint023’s cut. No production/permanent-test/external mutation, new local inference, training, Gold or publication approval. Actualapproximately12-hour duration and final consolidation remain outstanding.
+'''
+j=p/'root-report-bundle-progress-033';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v33.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

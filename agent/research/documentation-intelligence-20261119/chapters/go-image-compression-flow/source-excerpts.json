@@ -1,0 +1,107 @@
+{
+  "repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "license": {
+    "id": "MIT",
+    "path": "LICENSE",
+    "sha256": "52b5e2ea72b69e0293b77ab8ca3805404a2b921ea3deb5d433072f144c086446",
+    "retained_private": "private-research://continuation-20261119/sources/go-image-optimizer/LICENSE"
+  },
+  "source_executed": false,
+  "runtime_bindings_verified": false,
+  "sources": [
+    {
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "source_sha256": "2a1bd63b4f617faf4294cdbaeee74935599e9e78032b06df72957419a5f99b1a",
+      "units": [
+        {
+          "selector": "NewUseCase",
+          "declaration_kind": "function",
+          "symbol": "imagecompression.NewUseCase",
+          "start_line": 40,
+          "end_line": 44,
+          "quote": "func NewUseCase(compressor Compressor) UseCase {\n\treturn UseCase{\n\t\tcompressor: compressor,\n\t}\n}",
+          "declaration": "func NewUseCase(compressor Compressor) UseCase",
+          "function_type": "func(compressor Compressor) UseCase"
+        },
+        {
+          "selector": "UseCase.Execute",
+          "declaration_kind": "method",
+          "symbol": "imagecompression.UseCase.Execute",
+          "start_line": 46,
+          "end_line": 65,
+          "quote": "func (u UseCase) Execute(ctx context.Context, input []byte) (Result, error) {\n\tif len(input) == 0 {\n\t\treturn Result{}, ErrEmptyImage\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tresult, err := u.compressor.Compress(input)\n\tif err != nil {\n\t\treturn Result{}, err\n\t}\n\n\tif err := ctx.Err(); err != nil {\n\t\treturn Result{}, err\n\t}\n\n\treturn result, nil\n}",
+          "declaration": "func (u UseCase) Execute(ctx context.Context, input []byte) (Result, error)",
+          "function_type": "func(ctx context.Context, input []byte) (Result, error)",
+          "receiver_type": "UseCase"
+        }
+      ],
+      "producer": {
+        "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+        "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+        "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.5.0"
+      },
+      "bounded_selector_batches": [
+        [
+          "NewUseCase",
+          "UseCase.Execute"
+        ]
+      ]
+    },
+    {
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "units": [
+        {
+          "selector": "Compressor.Compress",
+          "declaration_kind": "method",
+          "symbol": "compress.Compressor.Compress",
+          "start_line": 40,
+          "end_line": 66,
+          "quote": "func (c Compressor) Compress(input []byte) (imagecompression.Result, error) {\n\tdetected, err := imaging.DetectFormat(input)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tswitch detected.Format {\n\tcase imagecompression.FormatJPEG:\n\t\treturn c.compressJPEG(input)\n\tcase imagecompression.FormatPNG:\n\t\treturn c.compressPNG(input)\n\tcase imagecompression.FormatWebP:\n\t\treturn c.compressWebP(input)\n\tcase imagecompression.FormatAVIF:\n\t\treturn c.compressAVIF(input)\n\tcase imagecompression.FormatHEIF:\n\t\treturn c.compressHEIF(input, detected.ContentType)\n\tcase imagecompression.FormatGIF:\n\t\treturn c.compressGIF(input)\n\tcase imagecompression.FormatBMP:\n\t\treturn c.compressBMP(input)\n\tcase imagecompression.FormatTIFF:\n\t\treturn c.compressTIFF(input)\n\tdefault:\n\t\treturn imagecompression.Result{}, imagecompression.ErrUnsupportedFormat\n\t}\n}",
+          "declaration": "func (c Compressor) Compress(input []byte) (imagecompression.Result, error)",
+          "function_type": "func(input []byte) (imagecompression.Result, error)",
+          "receiver_type": "Compressor"
+        }
+      ],
+      "producer": {
+        "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+        "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+        "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.5.0"
+      },
+      "bounded_selector_batches": [
+        [
+          "Compressor.Compress"
+        ]
+      ]
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "backend/internal/infrastructure/http/router.go",
+      "full_file_sha256": "c5beb8243c91065f6c7ca36aeb41fb48160aa4d0aaccd6ae4101b7e1368d0121",
+      "ranges": [
+        {
+          "first_line": 19,
+          "last_line": 36,
+          "quote": "func NewRouter(logger *slog.Logger) http.Handler {\n\tmux := http.NewServeMux()\n\tcompressImage := imagecompression.NewUseCase(compress.NewCompressor())\n\n\tmux.HandleFunc(\"GET /health\", handler.Health(logger))\n\tmux.HandleFunc(\"POST /images/compress\", compressimage.ProcessImage(logger, compressImage))\n\n\tresizeImage := imageresize.NewUseCase(resize.Decoder{})\n\tmux.HandleFunc(\"POST /images/resize/info\", resizeimage.Inspect(logger, resizeImage))\n\tmux.HandleFunc(\"POST /images/resize\", resizeimage.Process(logger, resizeImage))\n\n\tmux.HandleFunc(\"POST /images/preview\", convertimage.Preview(logger, convert.Processor{}))\n\n\tconversion := imageconversion.NewUseCase(convert.Processor{})\n\tmux.HandleFunc(\"POST /images/convert\", convertimage.Process(logger, conversion))\n\tmux.HandleFunc(\"POST /images/convert/info\", convertimage.Inspect(logger, conversion))\n\treturn mux\n}\n"
+        }
+      ]
+    },
+    {
+      "path": "backend/internal/infrastructure/http/handler/compress_image/handler.go",
+      "full_file_sha256": "0068467083cd8150bde7e0c10aa1a88bd184f78e2cc79ee16f548acf518d1fb0",
+      "ranges": [
+        {
+          "first_line": 21,
+          "last_line": 99,
+          "quote": "\tExecute(ctx context.Context, input []byte) (imagecompression.Result, error)\n}\n\nfunc ProcessImage(logger *slog.Logger, useCase compressImageUseCase) http.HandlerFunc {\n\treturn func(w http.ResponseWriter, r *http.Request) {\n\t\tdefer func() {\n\t\t\tif recovered := recover(); recovered != nil {\n\t\t\t\tlogger.Error(\"image compression request panicked\", \"panic\", recovered)\n\t\t\t\twriteJSONError(w, http.StatusInternalServerError, \"image could not be compressed\")\n\t\t\t}\n\t\t}()\n\n\t\tmediaType, _, err := mime.ParseMediaType(r.Header.Get(\"Content-Type\"))\n\t\tif err != nil || mediaType != \"multipart/form-data\" {\n\t\t\twriteJSONError(w, http.StatusBadRequest, \"request must be multipart/form-data\")\n\t\t\treturn\n\t\t}\n\n\t\tr.Body = http.MaxBytesReader(w, r.Body, maxImageUploadBytes)\n\n\t\tif err := r.ParseMultipartForm(maxMultipartMemory); err != nil {\n\t\t\tvar maxBytesError *http.MaxBytesError\n\t\t\tif errors.As(err, &maxBytesError) {\n\t\t\t\twriteJSONError(w, http.StatusRequestEntityTooLarge, \"uploaded image is too large\")\n\t\t\t\treturn\n\t\t\t}\n\n\t\t\twriteJSONError(w, http.StatusBadRequest, \"invalid multipart form\")\n\t\t\treturn\n\t\t}\n\n\t\tif r.MultipartForm != nil {\n\t\t\tdefer r.MultipartForm.RemoveAll()\n\t\t}\n\n\t\tfile, fileHeader, err := r.FormFile(\"image\")\n\t\tif err != nil {\n\t\t\tif errors.Is(err, http.ErrMissingFile) {\n\t\t\t\twriteJSONError(w, http.StatusBadRequest, \"image field is required\")\n\t\t\t\treturn\n\t\t\t}\n\n\t\t\tlogger.Warn(\"failed to read image field\", \"error\", err)\n\t\t\twriteJSONError(w, http.StatusBadRequest, \"invalid image field\")\n\t\t\treturn\n\t\t}\n\t\tdefer file.Close()\n\n\t\timageBytes, err := io.ReadAll(file)\n\t\tif err != nil {\n\t\t\tvar maxBytesError *http.MaxBytesError\n\t\t\tif errors.As(err, &maxBytesError) {\n\t\t\t\twriteJSONError(w, http.StatusRequestEntityTooLarge, \"uploaded image is too large\")\n\t\t\t\treturn\n\t\t\t}\n\n\t\t\tlogger.Warn(\"failed to read uploaded image\", \"error\", err)\n\t\t\twriteJSONError(w, http.StatusBadRequest, \"failed to read uploaded image\")\n\t\t\treturn\n\t\t}\n\n\t\tresult, err := useCase.Execute(r.Context(), imageBytes)\n\t\tif err != nil {\n\t\t\twriteCompressionError(w, logger, err)\n\t\t\treturn\n\t\t}\n\n\t\tw.Header().Set(\"Content-Type\", result.ContentType)\n\t\tw.Header().Set(\"Content-Length\", strconv.Itoa(len(result.Data)))\n\t\tw.Header().Set(\"Content-Disposition\", mime.FormatMediaType(\"attachment\", map[string]string{\n\t\t\t\"filename\": compressedFilename(fileHeader.Filename, result.Format, result.ContentType),\n\t\t}))\n\t\tw.WriteHeader(http.StatusOK)\n\n\t\tif _, err := w.Write(result.Data); err != nil {\n\t\t\tlogger.Warn(\"failed to write image response\", \"error\", err)\n\t\t}\n\t}\n}\n"
+        }
+      ]
+    }
+  ]
+}

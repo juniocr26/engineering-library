@@ -1,0 +1,61 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 240
+  },
+  "format": {
+    "type": "object",
+    "properties": {
+      "faq": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 1,
+        "items": {
+          "type": "object",
+          "properties": {
+            "qid": {
+              "type": "string",
+              "enum": [
+                "Q003"
+              ]
+            },
+            "answer_id": {
+              "type": "string",
+              "enum": [
+                "A04",
+                "A02",
+                "A07",
+                "A01",
+                "A06",
+                "A03",
+                "A05"
+              ]
+            }
+          },
+          "required": [
+            "qid",
+            "answer_id"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "faq"
+    ],
+    "additionalProperties": false
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Use only the supplied licensed public-source facts. Answer selection must match the named question, not merely a related function. Return the required JSON only."
+    },
+    {
+      "role": "user",
+      "content": "{\"instruction\": \"For the one supplied question, choose the one bank answer that directly answers it and emit its answer_id. Emit exactly one qid/answer_id record and no prose. A separate renderer will insert the reviewed answer text. A true answer about another function is incorrect for this question.\", \"revision\": \"adbc8813901bba65827259daa8e22ff94ec1f30e\", \"family\": \"spf13/cobra\", \"scope\": \"Selected written source only; no source/tests executed. Bank entries are pre-reviewed facts, but selecting a true fact about another function does not answer a question. Preserve named method boundaries, conditions and identifiers.\", \"questions\": [{\"qid\": \"Q003\", \"question_en\": \"What does ValidateArgs use when Args is nil?\", \"question_pt\": \"O que ValidateArgs usa quando Args é nil?\"}], \"verified_answer_bank\": [{\"answer_id\": \"A04\", \"answer_en\": \"The selected legacyArgs body returns nil if there are no subcommands. Otherwise its error branch requires both !cmd.HasParent() and len(args) > 0.\", \"answer_pt\": \"O corpo selecionado de legacyArgs retorna nil se não há subcomandos. Caso contrário, seu ramo de erro exige tanto !cmd.HasParent() quanto len(args) > 0.\", \"source\": {\"path\": \"args.go\", \"lines\": [28, 39]}}, {\"answer_id\": \"A02\", \"answer_en\": \"No. The factory returns a validator; its returned function performs the length comparison when called.\", \"answer_pt\": \"Não. A factory retorna um validador; sua função retornada faz a comparação de comprimento quando é chamada.\", \"source\": {\"path\": \"args.go\", \"lines\": [107, 114]}}, {\"answer_id\": \"A07\", \"answer_en\": \"The selected NoDuplicateArgs loop returns at its first repeated-argument error branch.\", \"answer_pt\": \"O laço selecionado de NoDuplicateArgs retorna em seu primeiro ramo de erro de argumento repetido.\", \"source\": {\"path\": \"args.go\", \"lines\": [69, 79]}}, {\"answer_id\": \"A01\", \"answer_en\": \"No. In the selected `OnlyValidArgs` body, membership validation is inside the nonempty-list guard and the subsequent return is `nil`.\", \"answer_pt\": \"Não. No corpo selecionado de `OnlyValidArgs`, a validação de pertencimento fica dentro da condição de lista não vazia, e o retorno seguinte é `nil`.\", \"source\": {\"path\": \"args.go\", \"lines\": [51, 66]}}, {\"answer_id\": \"A06\", \"answer_en\": \"No. The selected required-flag and flag-group checks follow those hook blocks, while earlier flag parsing has its own error path.\", \"answer_pt\": \"Não. As verificações selecionadas de flags obrigatórias e grupos de flags vêm depois desses blocos de hooks, enquanto a análise anterior das flags possui seu próprio caminho de erro.\", \"source\": {\"path\": \"command.go\", \"lines\": [919, 1019]}}, {\"answer_id\": \"A03\", \"answer_en\": \"The selected method calls `ArbitraryArgs`, whose selected body returns `nil`. The `Find` path's `legacyArgs` call is separate.\", \"answer_pt\": \"O método selecionado chama `ArbitraryArgs`, cujo corpo selecionado retorna `nil`. A chamada de `legacyArgs` no caminho de `Find` é separada.\", \"source\": {\"path\": \"command.go\", \"lines\": [1172, 1177]}}, {\"answer_id\": \"A05\", \"answer_en\": \"No. Its loop returns that first error before later loop iterations.\", \"answer_pt\": \"Não. Seu laço retorna esse primeiro erro antes das iterações posteriores.\", \"source\": {\"path\": \"args.go\", \"lines\": [127, 136]}}]}"
+    }
+  ]
+}

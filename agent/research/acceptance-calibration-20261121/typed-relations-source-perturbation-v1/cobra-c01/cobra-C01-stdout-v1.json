@@ -1,0 +1,81 @@
+{
+  "profile": "finite-cobra-AST-role-v1",
+  "relations": [
+    {
+      "id": "C01",
+      "owner": "PositionalArgs",
+      "normalized_relation": "type PositionalArgs func(cmd *Command, args []string) bool",
+      "first_line": 22,
+      "last_line": 22,
+      "exact_ast_source": "PositionalArgs func(cmd *Command, args []string) bool"
+    },
+    {
+      "id": "C02",
+      "owner": "OnlyValidArgs",
+      "normalized_relation": "len(cmd.ValidArgs) \u003e 0",
+      "first_line": 52,
+      "last_line": 52,
+      "exact_ast_source": "len(cmd.ValidArgs) \u003e 0"
+    },
+    {
+      "id": "C03",
+      "owner": "OnlyValidArgs",
+      "normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+      "first_line": 57,
+      "last_line": 57,
+      "exact_ast_source": "strings.SplitN(v, \"\\t\", 2)[0]"
+    },
+    {
+      "id": "C04",
+      "owner": "ExactArgs",
+      "normalized_relation": "VALIDATOR_FUNCTION",
+      "first_line": 108,
+      "last_line": 113,
+      "exact_ast_source": "return func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}"
+    },
+    {
+      "id": "C05",
+      "owner": "ExactArgs",
+      "normalized_relation": "len(args) != n",
+      "first_line": 109,
+      "last_line": 109,
+      "exact_ast_source": "len(args) != n"
+    },
+    {
+      "id": "C06",
+      "owner": "MatchAll",
+      "normalized_relation": "SUPPLIED_SLICE_ORDER",
+      "first_line": 129,
+      "last_line": 133,
+      "exact_ast_source": "for _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}"
+    },
+    {
+      "id": "C07",
+      "owner": "MatchAll",
+      "normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+      "first_line": 130,
+      "last_line": 132,
+      "exact_ast_source": "if err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}"
+    },
+    {
+      "id": "C08",
+      "owner": "ExactValidArgs",
+      "normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+      "first_line": 143,
+      "last_line": 143,
+      "exact_ast_source": "MatchAll(ExactArgs(n), OnlyValidArgs)"
+    },
+    {
+      "id": "C09",
+      "owner": "ExactValidArgs",
+      "normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+      "first_line": 141,
+      "last_line": 141,
+      "exact_ast_source": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead"
+    }
+  ],
+  "runtime_bindings_verified": false,
+  "source_executed": false,
+  "source_sha256": "1918f2afd18319b61cb5dc27068f638f1245f1a8f718182a6fc76554a834ebbb",
+  "typechecked": false
+}

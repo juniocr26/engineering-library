@@ -1,0 +1,178 @@
+{
+  "at": "2026-11-20T21:27:49.484525+00:00",
+  "status": "FROZEN_BEFORE_SINGLE_NEW_MODEL_JUDGMENT_CALL",
+  "repository": "tkem/cachetools",
+  "cases": [
+    {
+      "id": "C01",
+      "claim": "In the info-enabled lock-only wrapper, the user function is called while the cache lock remains held for its whole computation.",
+      "expected_label": "CONTRADICTED",
+      "relevant_evidence_ids": [
+        "new:locked"
+      ]
+    },
+    {
+      "id": "C02",
+      "claim": "The selected func._cache changes from RLock-based memoization to Condition-based memoization between these cuts.",
+      "expected_label": "SUPPORTED",
+      "relevant_evidence_ids": [
+        "old:facade",
+        "new:facade"
+      ]
+    },
+    {
+      "id": "C03",
+      "claim": "The info-enabled condition wrapper waits for its own key to be absent from pending before reading the cache.",
+      "expected_label": "SUPPORTED",
+      "relevant_evidence_ids": [
+        "new:condition"
+      ]
+    },
+    {
+      "id": "C04",
+      "claim": "The info-enabled condition wrapper keeps the lock held while executing the user function.",
+      "expected_label": "CONTRADICTED",
+      "relevant_evidence_ids": [
+        "new:condition"
+      ]
+    },
+    {
+      "id": "C05",
+      "claim": "If an ordinary user function raises ValueError, the info-enabled condition wrapper leaves that key in pending because cleanup only happens after success.",
+      "expected_label": "CONTRADICTED",
+      "relevant_evidence_ids": [
+        "new:condition"
+      ]
+    },
+    {
+      "id": "C06",
+      "claim": "The cache_clear body in the info-enabled condition wrapper explicitly removes pending keys and calls a cancellation operation on the running user function.",
+      "expected_label": "CONTRADICTED",
+      "relevant_evidence_ids": [
+        "new:condition"
+      ]
+    },
+    {
+      "id": "C07",
+      "claim": "With cache=None, the selected info-enabled router chooses the uncached helper even when a condition argument is supplied.",
+      "expected_label": "SUPPORTED",
+      "relevant_evidence_ids": [
+        "new:router",
+        "new:uncached"
+      ]
+    },
+    {
+      "id": "C08",
+      "claim": "Supplying condition=True to current cached selects condition-based synchronization; boolean True is treated as a Condition object.",
+      "expected_label": "CONTRADICTED",
+      "relevant_evidence_ids": [
+        "new:cached"
+      ]
+    },
+    {
+      "id": "C09",
+      "claim": "The supplied source establishes cross-host mutual exclusion for these cache computations.",
+      "expected_label": "INSUFFICIENT",
+      "relevant_evidence_ids": [
+        "new:condition"
+      ]
+    },
+    {
+      "id": "C10",
+      "claim": "With a Cache that rejects the produced value as too large, the condition wrapper still establishes exactly one successful user computation for all repeated calls with that key.",
+      "expected_label": "CONTRADICTED",
+      "relevant_evidence_ids": [
+        "new:condition",
+        "new:store"
+      ]
+    }
+  ],
+  "source_units": {
+    "old:facade": {
+      "path": "src/cachetools/func.py",
+      "revision": "1fcadea96ce67d499965b085f0b0b2253b78bb80",
+      "source_sha256": "2b10b0eda921c3e5a496dbec7e0ce42f85c51b1779e2caeaae82b357764fd8e3",
+      "first_line": 28,
+      "last_line": 35,
+      "quote": "def _cache(cache, maxsize, typed):\n    def decorator(func):\n        key = keys.typedkey if typed else keys.hashkey\n        wrapper = cached(cache=cache, key=key, lock=RLock(), info=True)(func)\n        wrapper.cache_parameters = lambda: {\"maxsize\": maxsize, \"typed\": typed}\n        return wrapper\n\n    return decorator\n",
+      "quote_sha256": "ed3b9908aba4421e2d9ba7d9575de35c0a88ded1e071e138c6a7794af0a99144",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/1fcadea96ce67d499965b085f0b0b2253b78bb80/src/cachetools/func.py"
+    },
+    "new:facade": {
+      "path": "src/cachetools/func.py",
+      "revision": "e497575fcb4d29dfb773824956539215db964059",
+      "source_sha256": "7c3ded9705acb4238f3886c53447345d3c72201f9fd5b149479b50fa7f15d167",
+      "first_line": 25,
+      "last_line": 32,
+      "quote": "def _cache(cache, maxsize, typed):\n    def decorator(func):\n        key = keys.typedkey if typed else keys.hashkey\n        wrapper = cached(cache=cache, key=key, condition=Condition(), info=True)(func)\n        wrapper.cache_parameters = lambda: {\"maxsize\": maxsize, \"typed\": typed}\n        return wrapper\n\n    return decorator\n",
+      "quote_sha256": "e3e7c4aa0e16c2b066734ab7fb79eb62e1a0690c46cb4aaf1f4aca88544a465f",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/e497575fcb4d29dfb773824956539215db964059/src/cachetools/func.py"
+    },
+    "new:cached": {
+      "path": "src/cachetools/__init__.py",
+      "revision": "e497575fcb4d29dfb773824956539215db964059",
+      "source_sha256": "591bb83df5a2763e190631516cffcb5858d54abc8afb206b718a7a05a68ee669",
+      "first_line": 597,
+      "last_line": 636,
+      "quote": "def cached(cache, key=keys.hashkey, lock=None, condition=None, info=False):\n    \"\"\"Decorator to wrap a function with a memoizing callable that saves\n    results in a cache.\n\n    \"\"\"\n    from ._cached import _wrapper\n\n    if isinstance(condition, bool):\n        from warnings import warn\n\n        warn(\n            \"passing `info` as positional parameter is deprecated\",\n            DeprecationWarning,\n            stacklevel=2,\n        )\n        info = condition\n        condition = None\n\n    def decorator(func):\n        if info:\n            if isinstance(cache, Cache):\n\n                def make_info(hits, misses):\n                    return _CacheInfo(hits, misses, cache.maxsize, cache.currsize)\n\n            elif isinstance(cache, collections.abc.Mapping):\n\n                def make_info(hits, misses):\n                    return _CacheInfo(hits, misses, None, len(cache))\n\n            else:\n\n                def make_info(hits, misses):\n                    return _CacheInfo(hits, misses, 0, 0)\n\n            return _wrapper(func, cache, key, lock, condition, info=make_info)\n        else:\n            return _wrapper(func, cache, key, lock, condition)\n\n    return decorator\n",
+      "quote_sha256": "894f999b37a7a8ec27e48319300f98ab0988087c66156a44a3ba62ecb4599449",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/e497575fcb4d29dfb773824956539215db964059/src/cachetools/__init__.py"
+    },
+    "new:condition": {
+      "path": "src/cachetools/_cached.py",
+      "revision": "e497575fcb4d29dfb773824956539215db964059",
+      "source_sha256": "fa2a504c2c705fe98d33f72a3cfe2b1833a83d7d51a4cccc59ac216a99857bb3",
+      "first_line": 6,
+      "last_line": 47,
+      "quote": "def _condition_info(func, cache, key, lock, cond, info):\n    hits = misses = 0\n    pending = set()\n\n    def wrapper(*args, **kwargs):\n        nonlocal hits, misses\n        k = key(*args, **kwargs)\n        with lock:\n            cond.wait_for(lambda: k not in pending)\n            try:\n                result = cache[k]\n                hits += 1\n                return result\n            except KeyError:\n                pending.add(k)\n                misses += 1\n        try:\n            v = func(*args, **kwargs)\n            with lock:\n                try:\n                    cache[k] = v\n                except ValueError:\n                    pass  # value too large\n                return v\n        finally:\n            with lock:\n                pending.remove(k)\n                cond.notify_all()\n\n    def cache_clear():\n        nonlocal hits, misses\n        with lock:\n            cache.clear()\n            hits = misses = 0\n\n    def cache_info():\n        with lock:\n            return info(hits, misses)\n\n    wrapper.cache_clear = cache_clear\n    wrapper.cache_info = cache_info\n    return wrapper\n",
+      "quote_sha256": "d37373eabf60e7b9b1e96d8a28354782930bd05506e67fd6eb0218cd358cfefd",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/e497575fcb4d29dfb773824956539215db964059/src/cachetools/_cached.py"
+    },
+    "new:locked": {
+      "path": "src/cachetools/_cached.py",
+      "revision": "e497575fcb4d29dfb773824956539215db964059",
+      "source_sha256": "fa2a504c2c705fe98d33f72a3cfe2b1833a83d7d51a4cccc59ac216a99857bb3",
+      "first_line": 50,
+      "last_line": 83,
+      "quote": "def _locked_info(func, cache, key, lock, info):\n    hits = misses = 0\n\n    def wrapper(*args, **kwargs):\n        nonlocal hits, misses\n        k = key(*args, **kwargs)\n        with lock:\n            try:\n                result = cache[k]\n                hits += 1\n                return result\n            except KeyError:\n                misses += 1\n        v = func(*args, **kwargs)\n        with lock:\n            try:\n                # in case of a race, prefer the item already in the cache\n                return cache.setdefault(k, v)\n            except ValueError:\n                return v  # value too large\n\n    def cache_clear():\n        nonlocal hits, misses\n        with lock:\n            cache.clear()\n            hits = misses = 0\n\n    def cache_info():\n        with lock:\n            return info(hits, misses)\n\n    wrapper.cache_clear = cache_clear\n    wrapper.cache_info = cache_info\n    return wrapper\n",
+      "quote_sha256": "8938c1d08187d687dc99061d261b86d187ca449967bd27cd83afcd9d2e654344",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/e497575fcb4d29dfb773824956539215db964059/src/cachetools/_cached.py"
+    },
+    "new:router": {
+      "path": "src/cachetools/_cached.py",
+      "revision": "e497575fcb4d29dfb773824956539215db964059",
+      "source_sha256": "fa2a504c2c705fe98d33f72a3cfe2b1833a83d7d51a4cccc59ac216a99857bb3",
+      "first_line": 215,
+      "last_line": 245,
+      "quote": "def _wrapper(func, cache, key, lock=None, cond=None, info=None):\n    if info is not None:\n        if cache is None:\n            wrapper = _uncached_info(func, info)\n        elif cond is not None and lock is not None:\n            wrapper = _condition_info(func, cache, key, lock, cond, info)\n        elif cond is not None:\n            wrapper = _condition_info(func, cache, key, cond, cond, info)\n        elif lock is not None:\n            wrapper = _locked_info(func, cache, key, lock, info)\n        else:\n            wrapper = _unlocked_info(func, cache, key, info)\n    else:\n        if cache is None:\n            wrapper = _uncached(func)\n        elif cond is not None and lock is not None:\n            wrapper = _condition(func, cache, key, lock, cond)\n        elif cond is not None:\n            wrapper = _condition(func, cache, key, cond, cond)\n        elif lock is not None:\n            wrapper = _locked(func, cache, key, lock)\n        else:\n            wrapper = _unlocked(func, cache, key)\n        wrapper.cache_info = None\n\n    wrapper.cache = cache\n    wrapper.cache_key = key\n    wrapper.cache_lock = lock if lock is not None else cond\n    wrapper.cache_condition = cond\n\n    return functools.update_wrapper(wrapper, func)\n",
+      "quote_sha256": "3664b74db6c62697d963db5e50df00e8fa540589ad4458cfe72a468b82b4785d",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/e497575fcb4d29dfb773824956539215db964059/src/cachetools/_cached.py"
+    },
+    "new:uncached": {
+      "path": "src/cachetools/_cached.py",
+      "revision": "e497575fcb4d29dfb773824956539215db964059",
+      "source_sha256": "fa2a504c2c705fe98d33f72a3cfe2b1833a83d7d51a4cccc59ac216a99857bb3",
+      "first_line": 115,
+      "last_line": 129,
+      "quote": "def _uncached_info(func, info):\n    misses = 0\n\n    def wrapper(*args, **kwargs):\n        nonlocal misses\n        misses += 1\n        return func(*args, **kwargs)\n\n    def cache_clear():\n        nonlocal misses\n        misses = 0\n\n    wrapper.cache_clear = cache_clear\n    wrapper.cache_info = lambda: info(0, misses)\n    return wrapper\n",
+      "quote_sha256": "45390788df84c6448922c0f80f4570fc06e715c09a4ba0089204d9efe0d7541b",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/e497575fcb4d29dfb773824956539215db964059/src/cachetools/_cached.py"
+    },
+    "new:store": {
+      "path": "src/cachetools/__init__.py",
+      "revision": "e497575fcb4d29dfb773824956539215db964059",
+      "source_sha256": "591bb83df5a2763e190631516cffcb5858d54abc8afb206b718a7a05a68ee669",
+      "first_line": 70,
+      "last_line": 84,
+      "quote": "    def __setitem__(self, key, value):\n        maxsize = self.__maxsize\n        size = self.getsizeof(value)\n        if size > maxsize:\n            raise ValueError(\"value too large\")\n        if key not in self.__data or self.__size[key] < size:\n            while self.__currsize + size > maxsize:\n                self.popitem()\n        if key in self.__data:\n            diffsize = size - self.__size[key]\n        else:\n            diffsize = size\n        self.__data[key] = value\n        self.__size[key] = size\n        self.__currsize += diffsize\n",
+      "quote_sha256": "038a6c4055d775b78687ee6f93a03193085fadd9fe40a332df12ac5c296c8d08",
+      "local_evidence_path": "agent/research/continuation-20261120/new-public-sources-v1/tkem--cachetools/e497575fcb4d29dfb773824956539215db964059/src/cachetools/__init__.py"
+    }
+  },
+  "scope": "Info-enabled wrappers, plain stable string/tuple keys, owned ordinary functions and standard thread Condition/RLock within one process; source-only judgments. Development-exposed cachetools family, not independent neural holdout.",
+  "model_calls_so_far_on_this_task": 0,
+  "labels_not_to_be_sent": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "publication": false
+}

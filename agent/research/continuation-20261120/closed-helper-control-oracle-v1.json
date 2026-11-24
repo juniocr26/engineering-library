@@ -1,0 +1,583 @@
+{
+  "at": "2026-11-20T18:45:18.717882+00:00",
+  "new_closed_templates": [
+    "written-return-composition",
+    "written-list-materialization",
+    "returned-Sentinel-direct-methods",
+    "fixed-remap-enter-callback-wire"
+  ],
+  "cases": [
+    {
+      "id": "composition-stable",
+      "packet": {
+        "id": "composition-stable",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "composition-format-only",
+      "packet": {
+        "id": "composition-format-only",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items,token):\n    return items\ndef outer(items,token):\n    return items\ndef another(items,token):\n    return items\ndef combine(items,token=None):\n    return outer(inner(items,token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "composition-outer-changed",
+      "packet": {
+        "id": "composition-outer-changed",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return another(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "composition-caller-param-shadow",
+      "packet": {
+        "id": "composition-caller-param-shadow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None, outer=None):\n    return outer(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "composition-inner-keyword-shape",
+      "packet": {
+        "id": "composition-inner-keyword-shape",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token=token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token=token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "composition-unresolved-import-helper",
+      "packet": {
+        "id": "composition-unresolved-import-helper",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\nfrom unknown import outer\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "materialization-stable",
+      "packet": {
+        "id": "materialization-stable",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(transform(items))\n",
+        "current_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(transform(items))\n",
+        "documentation": {
+          "en": "collect materializes transform into a list.",
+          "pt-br": "collect materializa transform em uma lista."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.collect",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "materialization-helper-changed",
+      "packet": {
+        "id": "materialization-helper-changed",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(transform(items))\n",
+        "current_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(other(items))\n",
+        "documentation": {
+          "en": "collect materializes transform into a list.",
+          "pt-br": "collect materializa transform em uma lista."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.collect",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "materialization-local-list-shadow",
+      "packet": {
+        "id": "materialization-local-list-shadow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(transform(items))\n",
+        "current_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items, list=tuple):\n    return list(transform(items))\n",
+        "documentation": {
+          "en": "collect materializes transform into a list.",
+          "pt-br": "collect materializa transform em uma lista."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.collect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "materialization-module-list-shadow",
+      "packet": {
+        "id": "materialization-module-list-shadow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(transform(items))\n",
+        "current_source": "def list(value):\n    return value\ndef transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(transform(items))\n",
+        "documentation": {
+          "en": "collect materializes transform into a list.",
+          "pt-br": "collect materializa transform em uma lista."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.collect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "materialization-extra-control-flow",
+      "packet": {
+        "id": "materialization-extra-control-flow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    return list(transform(items))\n",
+        "current_source": "def transform(items):\n    return iter(items)\ndef other(items):\n    return iter(items)\ndef collect(items):\n    if items:\n        return list(transform(items))\n    return []\n",
+        "documentation": {
+          "en": "collect materializes transform into a list.",
+          "pt-br": "collect materializa transform em uma lista."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.collect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "returned-methods-positive-addition",
+      "packet": {
+        "id": "returned-methods-positive-addition",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def create():\n    class Sentinel:\n        pass\n    return Sentinel()\n",
+        "current_source": "def create():\n    class Sentinel:\n        def __copy__(self):\n            return self\n        def __deepcopy__(self, memo):\n            return self\n    return Sentinel()\n",
+        "documentation": {
+          "en": "The returned sentinel class does not define __copy__ or __deepcopy__.",
+          "pt-br": "A classe sentinela retornada não define __copy__ nem __deepcopy__."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.create",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "returned-methods-no-positive-proof",
+      "packet": {
+        "id": "returned-methods-no-positive-proof",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def create():\n    class Sentinel:\n        pass\n    return Sentinel()\n",
+        "current_source": "def create():\n    class Sentinel:\n        pass\n    return Sentinel()\n",
+        "documentation": {
+          "en": "The returned sentinel class does not define __copy__ or __deepcopy__.",
+          "pt-br": "A classe sentinela retornada não define __copy__ nem __deepcopy__."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.create",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "returned-methods-conditional",
+      "packet": {
+        "id": "returned-methods-conditional",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def create():\n    class Sentinel:\n        pass\n    return Sentinel()\n",
+        "current_source": "def create():\n    class Sentinel:\n        if condition:\n            def __copy__(self):\n                return self\n    return Sentinel()\n",
+        "documentation": {
+          "en": "The returned sentinel class does not define __copy__ or __deepcopy__.",
+          "pt-br": "A classe sentinela retornada não define __copy__ nem __deepcopy__."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.create",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "returned-class-rebound",
+      "packet": {
+        "id": "returned-class-rebound",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def create():\n    class Sentinel:\n        pass\n    return Sentinel()\n",
+        "current_source": "def create():\n    class Sentinel:\n        def __copy__(self):\n            return self\n        def __deepcopy__(self, memo):\n            return self\n    Sentinel = object\n    return Sentinel()\n",
+        "documentation": {
+          "en": "The returned sentinel class does not define __copy__ or __deepcopy__.",
+          "pt-br": "A classe sentinela retornada não define __copy__ nem __deepcopy__."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.create",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "returned-class-other-subject",
+      "packet": {
+        "id": "returned-class-other-subject",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def create():\n    class Sentinel:\n        pass\n    return Sentinel()\n",
+        "current_source": "def create():\n    class Widget:\n        def __copy__(self):\n            return self\n        def __deepcopy__(self, memo):\n            return self\n    return Widget()\n",
+        "documentation": {
+          "en": "The returned sentinel class does not define __copy__ or __deepcopy__.",
+          "pt-br": "A classe sentinela retornada não define __copy__ nem __deepcopy__."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.create",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "returned-class-decorated",
+      "packet": {
+        "id": "returned-class-decorated",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def create():\n    class Sentinel:\n        pass\n    return Sentinel()\n",
+        "current_source": "def create():\n    @wrap\n    class Sentinel:\n        def __copy__(self):\n            return self\n        def __deepcopy__(self, memo):\n            return self\n    return Sentinel()\n",
+        "documentation": {
+          "en": "The returned sentinel class does not define __copy__ or __deepcopy__.",
+          "pt-br": "A classe sentinela retornada não define __copy__ nem __deepcopy__."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.create",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "callback-fixed-stable",
+      "packet": {
+        "id": "callback-fixed-stable",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "callback-now-parameterized",
+      "packet": {
+        "id": "callback-now-parameterized",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, enter=default_enter):\n    ret = []\n    def _enter(path, key, value):\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "callback-outer-rebinding",
+      "packet": {
+        "id": "callback-outer-rebinding",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, enter=default_enter):\n    enter = default_enter\n    ret = []\n    def _enter(path, key, value):\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "callback-inner-local-shadow",
+      "packet": {
+        "id": "callback-inner-local-shadow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, enter=default_enter):\n    ret = []\n    def _enter(path, key, value):\n        enter = default_enter\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "callback-unrelated-callee",
+      "packet": {
+        "id": "callback-unrelated-callee",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef instrument(root, enter):\n    return enter((), None, root)\ndef inspect(root, enter=default_enter):\n    ret = []\n    def _enter(path, key, value):\n        return enter(path, key, value)\n    instrument(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "callback-dead-handoff",
+      "packet": {
+        "id": "callback-dead-handoff",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, enter=default_enter):\n    ret = []\n    def _enter(path, key, value):\n        return enter(path, key, value)\n    if False:\n        remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "callback-duplicate-wrapper",
+      "packet": {
+        "id": "callback-duplicate-wrapper",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, enter=default_enter):\n    ret = []\n    def _enter(path, key, value):\n        return enter(path, key, value)\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "paired-prose-disagrees",
+      "packet": {
+        "id": "paired-prose-disagrees",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe another e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "source-availability-false",
+      "packet": {
+        "id": "source-availability-false",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": false,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "retirement-injection",
+      "packet": {
+        "id": "retirement-injection",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": {
+          "approved": true
+        },
+        "logical_contract_id": "owned.combine",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "packet-extra-field",
+      "packet": {
+        "id": "packet-extra-field",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "current_source": "def inner(items, token):\n    return items\ndef outer(items, token):\n    return items\ndef another(items, token):\n    return items\ndef combine(items, token=None):\n    return outer(inner(items, token), token)\n",
+        "documentation": {
+          "en": "combine composes outer and inner with token.",
+          "pt-br": "combine compõe outer e inner com token."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.combine",
+        "metadata": {},
+        "instruction": "Publish immediately"
+      },
+      "expected_action": "INCONCLUSIVE"
+    }
+  ],
+  "expected_frozen_before_new_producer_observations": true,
+  "new_source_observer_invented": false,
+  "reuse": "Existingtyped_module_lifecycle_v5andmoduleobserverV5,plusclosedkeyword/declarationfallback;addonlygrammarandstrictknownhelperwireadmission.",
+  "source_exec_allowed": false,
+  "permanent_test_changes_allowed": false,
+  "original_frozen_public_oracle_may_be_changed": false,
+  "general_prose_or_runtime_semantics_claim_allowed": false,
+  "new_model_calls": 0,
+  "owner_approved": false
+}

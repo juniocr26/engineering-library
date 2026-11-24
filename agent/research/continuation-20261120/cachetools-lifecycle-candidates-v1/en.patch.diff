@@ -1,0 +1,26 @@
+--- previous/en/condition-faq-add.md
++++ candidate/en/condition-faq-add.md
+@@ -0,0 +1,3 @@
++# What does the newly available `condition` argument coordinate?
++
++With a standard condition and a cache that stores the result, the selected wrapper tracks pending keys and lets a same-key waiter reuse the stored result. The owned different-key computation progressed separately. This is bounded in-process coordination, not a distributed exactly-once guarantee.
+--- previous/en/facade-default-modify.md
++++ candidate/en/facade-default-modify.md
+@@ -1,3 +1,3 @@
+ # Does the selected facade use the same synchronization strategy in both cuts?
+ 
+-The selected `func._cache` supplies `RLock()` and the owned same-key calls computed twice.
++The newer `func._cache` supplies `Condition()`. With the owned storable result, a same-key waiter reused the first result and one computation occurred; the earlier facade computed twice. This does not establish global exactly-once execution or performance.
+--- previous/en/named-mru-api-retirement.md
++++ candidate/en/named-mru-api-retirement.md
+@@ -1,3 +0,0 @@
+-# What supports retiring the obsolete named MRU API entry?
+-
+-The current API provides `MRUCache` and `func.mru_cache`.
+--- previous/en/legacy-info-warning-modify.md
++++ candidate/en/legacy-info-warning-modify.md
+@@ -1,3 +1,3 @@
+ # Is the legacy fourth positional boolean still warning-free?
+ 
+-A fourth positional `True` enables statistics without a deprecation warning.
++The current `cached` recognizes the boolean in the new fourth slot as legacy statistics configuration, clears its condition value and emits `DeprecationWarning`. The owned explicit-warning-filter observation retained statistics; the boolean did not become condition-based synchronization.

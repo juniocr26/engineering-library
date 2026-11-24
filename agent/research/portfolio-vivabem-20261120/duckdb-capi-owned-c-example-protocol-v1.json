@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-21T04:01:48.605349+00:00",
+  "parent": "duckdb-capi-context-chapter-protocol-v1.json",
+  "cases": [
+    {
+      "id": "valid-owned-example",
+      "path": "agent/research/portfolio-vivabem-20261120/duckdb-capi-owned-c-examples-v1/valid-owned-example.c",
+      "sha256": "22344677a113b632f9fefd17bbd3c774197e3b68f24278a805ee8c262652d129",
+      "compiler_expected_accepts": true,
+      "source_semantic_expected_accepts": true,
+      "not_executed": true
+    },
+    {
+      "id": "wrong-pointer-level",
+      "path": "agent/research/portfolio-vivabem-20261120/duckdb-capi-owned-c-examples-v1/wrong-pointer-level.c",
+      "sha256": "b95f68291c7f160a60c1e91856638a17bf973efa62850c3eaaeae1fcc52cb275",
+      "compiler_expected_accepts": false,
+      "source_semantic_expected_accepts": false,
+      "not_executed": true
+    },
+    {
+      "id": "translated-identifier",
+      "path": "agent/research/portfolio-vivabem-20261120/duckdb-capi-owned-c-examples-v1/translated-identifier.c",
+      "sha256": "6ebffcdcc0763ae4b44d2cbacedbd3c34f74b5e0a1bcaaaf5aeb4a3cc7f989d1",
+      "compiler_expected_accepts": false,
+      "source_semantic_expected_accepts": false,
+      "not_executed": true
+    },
+    {
+      "id": "unsafe-free-of-borrowed-error",
+      "path": "agent/research/portfolio-vivabem-20261120/duckdb-capi-owned-c-examples-v1/unsafe-free-of-borrowed-error.c",
+      "sha256": "672e2cce823fad8d6b1c39a47275f6f71ee540277a318ea5c3f72e6d2d969696",
+      "compiler_expected_accepts": true,
+      "source_semantic_expected_accepts": false,
+      "not_executed": true
+    }
+  ],
+  "compiler": "/usr/bin/clang",
+  "flags": [
+    "-x",
+    "c",
+    "-std=c11",
+    "-fsyntax-only",
+    "-Werror=implicit-function-declaration",
+    "-Werror=incompatible-pointer-types"
+  ],
+  "header_snapshot": "agent/research/portfolio-vivabem-20261120/duckdb-capi-source-v1/e41515de6f7efb19b43293ab49cb967cd64ab9f9/src/include/duckdb.h",
+  "purpose": "Check declaration/type-use errors and expose that compiling an unsafe borrowed-pointer free does not make it semantically valid. No link or executable artifact.",
+  "semantic_oracle_basis": "Header error pointer explicitly must not be freed; caller keeps it only before destroy_result. Validity assumes valid existing connection/query; not a runtime guarantee.",
+  "source_and_example_execution": false,
+  "frozen_before_compiler_calls": true
+}

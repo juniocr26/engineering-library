@@ -1,0 +1,222 @@
+** Cobra Positional Validators in args.go**
+=====================================
+
+**Scope**
+--------
+
+The Cobra positional validators are used to validate the arguments passed to a command. They are implemented as functions that take a `Command` and a slice of arguments as input and return an error if the arguments are invalid.
+
+**Callable Contract**
+-------------------
+
+The callable contract for the Cobra positional validators is as follows:
+
+*   `legacyArgs(cmd *Command, args []string) error`: Returns an error if the command has subcommands and the first argument is not a valid subcommand.
+*   `NoArgs(cmd *Command, args []string) error`: Returns an error if there are any arguments.
+*   `OnlyValidArgs(cmd *Command, args []string) error`: Returns an error if there are any positional arguments that are not in the `ValidArgs` field of the `Command`.
+*   `NoDuplicateArgs(cmd *Command, args []string) error`: Returns an error if there are any duplicate positional arguments.
+*   `ArbitraryArgs(cmd *Command, args []string) error`: Never returns an error.
+*   `MinimumNArgs(n int) PositionalArgs`: Returns an error if there is not at least `n` arguments.
+*   `MaximumNArgs(n int) PositionalArgs`: Returns an error if there are more than `n` arguments.
+*   `ExactArgs(n int) PositionalArgs`: Returns an error if there are not exactly `n` arguments.
+*   `RangeArgs(min int, max int) PositionalArgs`: Returns an error if the number of arguments is not within the expected range.
+*   `MatchAll(pargs ...PositionalArgs) PositionalArgs`: Combines several positional arguments to work in concert.
+*   `ExactValidArgs(n int) PositionalArgs`: Returns an error if there are not exactly `n` positional arguments or if there are any positional arguments that are not in the `ValidArgs` field of the `Command`.
+
+**Validator Behavior**
+---------------------
+
+### `legacyArgs`
+
+*   If the command has no subcommands, it always takes arguments.
+*   If the command has subcommands and the first argument is not a valid subcommand, it returns an error.
+
+```go
+func legacyArgs(cmd *Command, args []string) error {
+    if !cmd.HasSubCommands() {
+        return nil
+    }
+    if !cmd.HasParent() && len(args) > 0 {
+        return fmt.Errorf("unknown command %q for %q%s", args[0], cmd.CommandPath(), cmd.findSuggestions(args[0]))
+    }
+    return nil
+}
+```
+
+### `NoArgs`
+
+*   Returns an error if there are any arguments.
+
+```go
+func NoArgs(cmd *Command, args []string) error {
+    if len(args) > 0 {
+        return fmt.Errorf("unknown command %q for %q", args[0], cmd.CommandPath())
+    }
+    return nil
+}
+```
+
+### `OnlyValidArgs`
+
+*   Returns an error if there are any positional arguments that are not in the `ValidArgs` field of the `Command`.
+*   Removes any description that may be included in `ValidArgs`.
+*   A description is following a tab character.
+
+```go
+func OnlyValidArgs(cmd *Command, args []string) error {
+    if len(cmd.ValidArgs) > 0 {
+        validArgs := make([]string, 0, len(cmd.ValidArgs))
+        for _, v := range cmd.ValidArgs {
+            validArgs = append(validArgs, strings.SplitN(v, "\t", 2)[0])
+        }
+        for _, v := range args {
+            if !stringInSlice(v, validArgs) {
+                return fmt.Errorf("invalid argument %q for %q%s", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))
+            }
+        }
+    }
+    return nil
+}
+```
+
+### `NoDuplicateArgs`
+
+*   Returns an error if there are any duplicate positional arguments.
+*   Uses a map to keep track of seen arguments.
+
+```go
+func NoDuplicateArgs(cmd *Command, args []string) error {
+    seen := make(map[string]struct{}, len(args))
+    for _, arg := range args {
+        if _, ok := seen[arg]; ok {
+            return fmt.Errorf("duplicate argument %q for %q", arg, cmd.CommandPath())
+        }
+        seen[arg] = struct{}{}
+    }
+    return nil
+}
+```
+
+### `ArbitraryArgs`
+
+*   Never returns an error.
+
+```go
+func ArbitraryArgs(cmd *Command, args []string) error {
+    return nil
+}
+```
+
+### `MinimumNArgs`
+
+*   Returns an error if there is not at least `n` arguments.
+
+```go
+func MinimumNArgs(n int) PositionalArgs {
+    return func(cmd *Command, args []string) error {
+        if len(args) < n {
+            return fmt.Errorf("requires at least %d arg(s), only received %d", n, len(args))
+        }
+        return nil
+    }
+}
+```
+
+### `MaximumNArgs`
+
+*   Returns an error if there are more than `n` arguments.
+
+```go
+func MaximumNArgs(n int) PositionalArgs {
+    return func(cmd *Command, args []string) error {
+        if len(args) > n {
+            return fmt.Errorf("accepts at most %d arg(s), received %d", n, len(args))
+        }
+        return nil
+    }
+}
+```
+
+### `ExactArgs`
+
+*   Returns an error if there are not exactly `n` arguments.
+
+```go
+func ExactArgs(n int) PositionalArgs {
+    return func(cmd *Command, args []string) error {
+        if len(args) != n {
+            return fmt.Errorf("accepts %d arg(s), received %d", n, len(args))
+        }
+        return nil
+    }
+}
+```
+
+### `RangeArgs`
+
+*   Returns an error if the number of arguments is not within the expected range.
+
+```go
+func RangeArgs(min int, max int) PositionalArgs {
+    return func(cmd *Command, args []string) error {
+        if len(args) < min || len(args) > max {
+            return fmt.Errorf("accepts between %d and %d arg(s), received %d", min, max, len(args))
+        }
+        return nil
+    }
+}
+```
+
+### `MatchAll`
+
+*   Combines several positional arguments to work in concert.
+
+```go
+func MatchAll(pargs ...PositionalArgs) PositionalArgs {
+    return func(cmd *Command, args []string) error {
+        for _, parg := range pargs {
+            if err := parg(cmd, args); err != nil {
+                return err
+            }
+        }
+        return nil
+    }
+}
+```
+
+### `ExactValidArgs`
+
+*   Returns an error if there are not exactly `n` positional arguments or if there are any positional arguments that are not in the `ValidArgs` field of the `Command`.
+*   Deprecated: use `MatchAll(ExactArgs(n), OnlyValidArgs)` instead.
+
+```go
+func ExactValidArgs(n int) PositionalArgs {
+    return MatchAll(ExactArgs(n), OnlyValidArgs)
+}
+```
+
+**Error Propagation**
+--------------------
+
+The Cobra positional validators propagate errors as follows:
+
+*   `legacyArgs` returns an error if the command has subcommands and the first argument is not a valid subcommand.
+*   `NoArgs` returns an error if there are any arguments.
+*   `OnlyValidArgs` returns an error if there are any positional arguments that are not in the `ValidArgs` field of the `Command`.
+*   `NoDuplicateArgs` returns an error if there are any duplicate positional arguments.
+*   `ArbitraryArgs` never returns an error.
+*   `MinimumNArgs` returns an error if there is not at least `n` arguments.
+*   `MaximumNArgs` returns an error if there are more than `n` arguments.
+*   `ExactArgs` returns an error if there are not exactly `n` arguments.
+*   `RangeArgs` returns an error if the number of arguments is not within the expected range.
+*   `MatchAll` returns an error if any of the combined positional arguments return an error.
+*   `ExactValidArgs` returns an error if there are not exactly `n` positional arguments or if there are any positional arguments that are not in the `ValidArgs` field of the `Command`.
+
+**Source-Valid Usage Fragment**
+------------------------------
+
+```go
+func main() {
+    cmd := &cobra.Command{
+        Use:   "example",
+        Short:

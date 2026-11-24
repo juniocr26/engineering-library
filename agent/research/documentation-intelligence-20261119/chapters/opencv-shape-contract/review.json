@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-20T00:52:05.249497+00:00",
+  "chapter_id": "opencv-shape-contract",
+  "source_repository": "opencv",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "shape-construction",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        613,
+        618
+      ],
+      "review": "sizend counts, channel appended with count increment, channels become innermost compared entries."
+    },
+    {
+      "id": "reject-condition",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        619,
+        621
+      ],
+      "review": "Both indices nonnegative, decrement both; mismatch and neither1 ->false; a1 continues not immediate true."
+    },
+    {
+      "id": "normal-success",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        619,
+        623
+      ],
+      "review": "Either side exhausted ends loop; returntrue if no rejection reached, under valid input assumptions."
+    },
+    {
+      "id": "fallback-caller",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        681,
+        689
+      ],
+      "review": "Caller only consults helper after neither operand classified scalar and scalar-like probe hits; incompatibility chooses fallback scalar flags, not immediate blanket arithmetic rejection."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "27aa2559ef7e63c788c81df43d9f0ba3dcf68d1d0a8d3215c8801996d63b0d1b",
+      "after_sha256": "788a8b894c8fa95d9275d2367a6fbf35a842fd5444ca50e6e5f9f33e9b950ffc",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -28,3 +28,21 @@\n \n No performance benchmark was run. Nearby descriptions of this check as cheap cannot establish constant time or a measured speedup. The chapter corrects the preserved model response through source review; it does not demonstrate a changed model, a trained adapter or independent held-out transfer. The exact source and baseline identities remain attached, and the bilingual correction is still pending owner review.\n \n+## Engineer FAQ and fallback context\n+\n+<!-- reading-section: faq:channel-dimension-broadcasting -->\n+### Are channels checked by a separate equality-only rule?\n+\n+The supplied channel counts are appended to the shape arrays and visited first by the same mismatch predicate. A pair containing one continues just like a spatial pair containing one. A later visited mismatch can still reject.\n+\n+<!-- reading-section: faq:trailing-dimension-comparison -->\n+### Must both complete dimension lists have the same length?\n+\n+The loop continues only while both indices remain nonnegative. Unmatched leading dimensions are not visited after either side is exhausted. This describes the selected trailing comparison, not every validation rule in OpenCV.\n+\n+<!-- reading-section: faq:scalar-fallback-consumer -->\n+### Does false here necessarily reject the arithmetic operation immediately?\n+\n+The additional caller excerpt first checks scalar classifications and scalar-like probes. When its condition includes failed shape compatibility, it sets fallback scalar flags, preferring the first operand when both qualify. The helper's Boolean and the caller's later behavior must therefore remain separate contracts.\n+\n+No allocation cost, backend performance, complete InputArray validity rule or actual broadcast result was measured. The source-derived example in the original chapter remains illustrative; it is not relabeled as an executed OpenCV test.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "23b37772f6423d7bdbf10afa6458060ca6bd45bbff440936d9fc0790a4606fb0",
+      "after_sha256": "776be7ed81b8b6ed7d01bea5be2145ac7dc6696819661eaafe63d6d8d9b31e40",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -28,3 +28,21 @@\n \n Nenhum benchmark foi executado. Descrições próximas que chamem a verificação de barata não estabelecem tempo constante ou ganho de velocidade medido. O capítulo corrige a resposta preservada do modelo por revisão da fonte; não demonstra modelo modificado, adaptador treinado ou transferência independente em reserva. As identidades exatas da fonte e do baseline permanecem anexadas, e a correção bilíngue continua pendente de revisão do proprietário.\n \n+## FAQ de engenharia e contexto do fallback\n+\n+<!-- reading-section: faq:channel-dimension-broadcasting -->\n+### Os canais são verificados por uma regra separada que exige apenas igualdade?\n+\n+As contagens de canais recebidas são acrescentadas aos arrays de dimensões e visitadas primeiro pelo mesmo predicado de divergência. Um par contendo um continua assim como um par espacial contendo um. Uma divergência posterior visitada ainda pode rejeitar.\n+\n+<!-- reading-section: faq:trailing-dimension-comparison -->\n+### As duas listas completas de dimensões precisam ter o mesmo comprimento?\n+\n+O laço continua apenas enquanto ambos os índices permanecem não negativos. Dimensões iniciais sem correspondente deixam de ser visitadas quando qualquer lado se esgota. Isso descreve a comparação final selecionada, não toda regra de validação do OpenCV.\n+\n+<!-- reading-section: faq:scalar-fallback-consumer -->\n+### False aqui necessariamente rejeita imediatamente a operação aritmética?\n+\n+O trecho adicional do chamador verifica antes classificações de escalar e sondagens de formato semelhante a escalar. Quando sua condição inclui falha de compatibilidade, define flags de fallback escalar, preferindo o primeiro operando quando ambos se qualificam. O booleano do helper e o comportamento posterior do chamador devem, portanto, continuar contratos separados.\n+\n+Não foram medidos custo de alocação, desempenho de backend, regra completa de validade de InputArray ou resultado real de broadcasting. O exemplo derivado da fonte no capítulo original continua ilustrativo; não é renomeado como teste OpenCV executado.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.314168+00:00",
+    "canonical_question_ids": [
+      "channel-dimension-broadcasting",
+      "trailing-dimension-comparison",
+      "scalar-fallback-consumer"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/opencv-shape-contract",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-20T22:33:45.236217+00:00",
+  "status": "BOTH_EARLY_CLOSEOUT_CONTROL_WRITERS_REFUSED_WITHOUT_MUTATION",
+  "rows": [
+    {
+      "command": [
+        "python3",
+        "agent/research/continuation-20261120/write_root_inventory_v7.py"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Final inventory refused before measured eleven-hour minimum\n",
+      "expected_refusal": "Final inventory refused before measured eleven-hour minimum"
+    },
+    {
+      "command": [
+        "python3",
+        "agent/research/continuation-20261120/finalize_recovery_envelope_v1.py",
+        "reserve"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Final envelope refused before measured eleven-hour minimum\n",
+      "expected_refusal": "Final envelope refused before measured eleven-hour minimum"
+    }
+  ],
+  "root_inventory_unchanged": true,
+  "final_paths_not_created": true,
+  "real_clock_not_mocked": true,
+  "artificial_waits": 0,
+  "optimizer_steps": 0
+}

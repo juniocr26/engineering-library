@@ -1,0 +1,516 @@
+{
+  "at": "2026-11-22T02:50:20.855910+00:00",
+  "hypothesis": "A bounded lexical bilingual guard can flag selected negation/condition/identifier changes but cannot certify action/subject equivalence and can reject valid paraphrases.",
+  "reference_sha256": "ef2a5a34be479b445ff262db1c292ad86ae852d14026d3164f0e04a406ff88b3",
+  "cases": [
+    {
+      "id": "F07-intact",
+      "claim_id": "F07",
+      "en": "The selected write guard does not test use_cache.",
+      "pt-BR": "A condição selecionada de escrita não testa use_cache.",
+      "category": "INTACT",
+      "manual_reference_pair_equivalence": true,
+      "source_bound_reference": {
+        "claim_id": "F07",
+        "task": "fastapi",
+        "family": "fastapi/fastapi",
+        "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+        "source_lines": [
+          774,
+          775
+        ],
+        "expected_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "C02-intact",
+      "claim_id": "C02",
+      "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+      "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0.",
+      "category": "INTACT",
+      "manual_reference_pair_equivalence": true,
+      "source_bound_reference": {
+        "claim_id": "C02",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+        "source_lines": [
+          51,
+          65
+        ],
+        "expected_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "Z03-intact",
+      "claim_id": "Z03",
+      "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+      "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise.",
+      "category": "INTACT",
+      "manual_reference_pair_equivalence": true,
+      "source_bound_reference": {
+        "claim_id": "Z03",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+        "source_lines": [
+          74,
+          76
+        ],
+        "expected_interpretation": {
+          "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+          "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+          "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "F07-negation-drop",
+      "claim_id": "F07",
+      "en": "The selected write guard does not test use_cache.",
+      "pt-BR": "A condição selecionada de escrita testa use_cache.",
+      "category": "NEGATION_CHANGE",
+      "manual_reference_pair_equivalence": false,
+      "source_bound_reference": {
+        "claim_id": "F07",
+        "task": "fastapi",
+        "family": "fastapi/fastapi",
+        "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+        "source_lines": [
+          774,
+          775
+        ],
+        "expected_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "F07-valid-paraphrase",
+      "claim_id": "F07",
+      "en": "The selected write guard does not test use_cache.",
+      "pt-BR": "A condição selecionada de escrita deixa de testar use_cache.",
+      "category": "VALID_PARAPHRASE",
+      "manual_reference_pair_equivalence": true,
+      "source_bound_reference": {
+        "claim_id": "F07",
+        "task": "fastapi",
+        "family": "fastapi/fastapi",
+        "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+        "source_lines": [
+          774,
+          775
+        ],
+        "expected_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "C02-condition-inversion",
+      "claim_id": "C02",
+      "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+      "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) == 0.",
+      "category": "CONDITION_OPERATOR_CHANGE",
+      "manual_reference_pair_equivalence": false,
+      "source_bound_reference": {
+        "claim_id": "C02",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+        "source_lines": [
+          51,
+          65
+        ],
+        "expected_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "C02-identifier-change",
+      "claim_id": "C02",
+      "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+      "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.Args) > 0.",
+      "category": "IDENTIFIER_CHANGE",
+      "manual_reference_pair_equivalence": false,
+      "source_bound_reference": {
+        "claim_id": "C02",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+        "source_lines": [
+          51,
+          65
+        ],
+        "expected_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "C02-condition-erasure",
+      "claim_id": "C02",
+      "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+      "pt-BR": "OnlyValidArgs faz a validação de pertencimento em todas as chamadas, independentemente da configuração.",
+      "category": "CONDITION_ERASURE",
+      "manual_reference_pair_equivalence": false,
+      "source_bound_reference": {
+        "claim_id": "C02",
+        "task": "cobra",
+        "family": "spf13/cobra",
+        "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+        "source_path": "args.go",
+        "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+        "source_lines": [
+          51,
+          65
+        ],
+        "expected_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+          "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "Z03-wrong-action",
+      "claim_id": "Z03",
+      "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+      "pt-BR": "A arrow síncrona retorna explicitamente core.$ZodAsyncError sob result instanceof Promise.",
+      "category": "ACTION_SEMANTIC_BLIND",
+      "manual_reference_pair_equivalence": false,
+      "source_bound_reference": {
+        "claim_id": "Z03",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+        "source_lines": [
+          74,
+          76
+        ],
+        "expected_interpretation": {
+          "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+          "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+          "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "Z03-valid-word-order",
+      "claim_id": "Z03",
+      "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+      "pt-BR": "Sob result instanceof Promise, a arrow síncrona lança explicitamente core.$ZodAsyncError.",
+      "category": "VALID_PARAPHRASE",
+      "manual_reference_pair_equivalence": true,
+      "source_bound_reference": {
+        "claim_id": "Z03",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+        "source_lines": [
+          74,
+          76
+        ],
+        "expected_interpretation": {
+          "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+          "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+          "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    },
+    {
+      "id": "F07-wrong-subject",
+      "claim_id": "F07",
+      "en": "The selected write guard does not test use_cache.",
+      "pt-BR": "A condição selecionada de leitura não testa use_cache.",
+      "category": "SUBJECT_SEMANTIC_BLIND",
+      "manual_reference_pair_equivalence": false,
+      "source_bound_reference": {
+        "claim_id": "F07",
+        "task": "fastapi",
+        "family": "fastapi/fastapi",
+        "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+        "source_path": "fastapi/dependencies/utils.py",
+        "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+        "source_lines": [
+          774,
+          775
+        ],
+        "expected_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true,
+        "reacquired_source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+        "exact_span_matches": true,
+        "whole_file_identity_matches": true,
+        "generated_interpretation": {
+          "en": "The selected write guard does not test use_cache.",
+          "pt-BR": "A condição selecionada de escrita não testa use_cache."
+        },
+        "exact_reviewed_bilingual_pair_matches": true,
+        "current_static_verdict": "SUPPORTED",
+        "current_review_basis": "Source contextual reading and exact scoped proposition, not citation membership. Operational guarantees outside selected conditions remain unknown.",
+        "current_reviewer": "Same Codex campaign agent; fresh Git acquisition; not independent-human review.",
+        "runtime_executed": false
+      },
+      "reference_method": "Same-agent comparison to prior exact source-grounded proposition; not independent human labels."
+    }
+  ],
+  "frozen_policy": {
+    "identifiers": {
+      "F07": [
+        "use_cache"
+      ],
+      "C02": [
+        "OnlyValidArgs",
+        "len(cmd.ValidArgs) > 0"
+      ],
+      "Z03": [
+        "core.$ZodAsyncError",
+        "result instanceof Promise"
+      ]
+    },
+    "en_negation_pattern": "\\b(?:not|never|no)\\b",
+    "pt_negation_pattern": "\\b(?:não|nunca|sem)\\b",
+    "condition_policy": "Exact registered condition expression is an identifier-like protected literal, not a Boolean solver.",
+    "verdict": "FLAG if any protected literal missing from either language or negation-presence differs; otherwise SCREEN_CLEAR, never semantic PASS."
+  },
+  "population": "11 owned, correlated development controls from three previously exposed proposition pairs; never train/eval holdout.",
+  "prohibited_claims": [
+    "No semantic FAR/FRR or independent bilingual accuracy estimate.",
+    "No production integration, Gold, publication or model improvement."
+  ],
+  "model_calls": 0
+}

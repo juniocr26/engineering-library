@@ -1,0 +1,84 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "format": {
+    "type": "object",
+    "properties": {
+      "faq": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "Q001",
+                "Q002",
+                "Q003",
+                "Q004"
+              ]
+            },
+            "question_en": {
+              "type": "string"
+            },
+            "question_pt": {
+              "type": "string"
+            },
+            "answer_en": {
+              "type": "string"
+            },
+            "answer_pt": {
+              "type": "string"
+            },
+            "fact_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "PF01",
+                  "PF02",
+                  "PF03",
+                  "PF04",
+                  "PF05",
+                  "PF06"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 3
+            }
+          },
+          "required": [
+            "id",
+            "question_en",
+            "question_pt",
+            "answer_en",
+            "answer_pt",
+            "fact_ids"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 4,
+        "maxItems": 4
+      }
+    },
+    "required": [
+      "faq"
+    ],
+    "additionalProperties": false
+  },
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 1300
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Write a bilingual technical FAQ grounded only in supplied verified WRITTEN-SOURCE facts. Keep identifiers exact and distinguish source flow from runtime guarantees. Do not approve gold or publication. Return only the required JSON object."
+    },
+    {
+      "role": "user",
+      "content": "Answer each of the four question IDs exactly once in English and Brazilian Portuguese, using no more than two sentences per answer. Preserve all uncertainty. Reference the relevant supplied fact IDs; do not invent facts, runtime tests, global lifetime, exactly-once guarantees, or a ban on writes just because reuse is disabled. The facts were produced and separately verified by a bounded AST tool; they are inputs for faithful prose, not proof that the language model independently understands code.\n\nFACTS:\n[{\"id\": \"PF01\", \"written_fact\": {\"use_cache_declared\": true, \"scope_declared\": null}, \"source_meaning_en\": \"The written Dependant class declares use_cache: bool = True and a scope field whose declared value is None. This records the selected class statements; it is not observation of a live dependency object.\", \"references\": [{\"path\": \"fastapi/dependencies/models.py\", \"first_line\": 53, \"last_line\": 53}, {\"path\": \"fastapi/dependencies/models.py\", \"first_line\": 55, \"last_line\": 55}]}, {\"id\": \"PF02\", \"written_fact\": {\"condition\": \"dependency_cache is None\", \"assignment\": \"dependency_cache = {}\", \"other_local_cache_name_rebindings\": false}, \"source_meaning_en\": \"At the initialization branch, dependency_cache is None guards assignment of an empty dictionary to dependency_cache. The selected function has no other direct assignment to that local name. This does not establish process-wide or cross-request cache lifetime.\", \"references\": [{\"path\": \"fastapi/dependencies/utils.py\", \"first_line\": 700, \"last_line\": 701}]}, {\"id\": \"PF03\", \"written_fact\": {\"call\": \"solve_dependencies\", \"keyword\": \"dependency_cache\", \"value\": \"dependency_cache\", \"placement\": \"direct assignment in selected dependency loop\"}, \"source_meaning_en\": \"Inside the selected loop over dependant.dependencies, the written awaited solve_dependencies call passes dependency_cache=dependency_cache. This connects the local cache variable to subdependency solving in the written data flow; dynamic bindings and actual completion remain unverified.\", \"references\": [{\"path\": \"fastapi/dependencies/utils.py\", \"first_line\": 726, \"last_line\": 737}]}, {\"id\": \"PF04\", \"written_fact\": {\"read_condition\": \"sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache\", \"assignment\": \"solved = dependency_cache[sub_dependant_cache_key]\", \"dynamic_call_completion_verified\": false}, \"source_meaning_en\": \"The selected reuse branch requires sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache. Its body assigns solved = dependency_cache[sub_dependant_cache_key]. The conjunction is a read/reuse condition; it is not a guarantee that every dependency executes exactly once.\", \"references\": [{\"path\": \"fastapi/dependencies/utils.py\", \"first_line\": 746, \"last_line\": 746}, {\"path\": \"fastapi/dependencies/utils.py\", \"first_line\": 747, \"last_line\": 747}]}, {\"id\": \"PF05\", \"written_fact\": {\"write_condition\": \"sub_dependant_cache_key not in dependency_cache\", \"assignment\": \"dependency_cache[sub_dependant_cache_key] = solved\", \"use_cache_in_this_guard\": false, \"applies_only_when_control_reaches_guard\": true}, \"source_meaning_en\": \"When control reaches the later write guard and the key is absent, the written body assigns dependency_cache[sub_dependant_cache_key] = solved. This guard does not mention use_cache. Therefore the selected source does not implement use_cache=False as a general ban on cache writes. Earlier errors, exceptions or control flow can prevent reaching this guard.\", \"references\": [{\"path\": \"fastapi/dependencies/utils.py\", \"first_line\": 774, \"last_line\": 775}]}, {\"id\": \"PF06\", \"written_fact\": {\"written_isinstance_assertions\": [\"request_astack\", \"function_astack\"], \"type_name\": \"AsyncExitStack\", \"assertions_enabled_at_runtime_unverified\": true}, \"source_meaning_en\": \"The selected function contains two written assertions using isinstance with AsyncExitStack: one for request_astack and one for function_astack. These statements do not prove that assertions are enabled in a deployed interpreter, that request composition satisfies them, or that dependency callbacks cannot raise other exceptions.\", \"references\": [{\"path\": \"fastapi/dependencies/utils.py\", \"first_line\": 687, \"last_line\": 689}, {\"path\": \"fastapi/dependencies/utils.py\", \"first_line\": 691, \"last_line\": 693}]}]\n\nQUESTIONS:\n[{\"id\": \"Q001\", \"question_en\": \"Does use_cache=False forbid every cache write?\"}, {\"id\": \"Q002\", \"question_en\": \"Is a global cache lifetime established?\"}, {\"id\": \"Q003\", \"question_en\": \"Does this prove exactly-once dependency execution?\"}, {\"id\": \"Q004\", \"question_en\": \"Do the stack assertions establish complete error handling?\"}]"
+    }
+  ]
+}

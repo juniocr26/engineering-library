@@ -1,0 +1,161 @@
+{
+  "at": "2026-11-20T19:34:17.382048+00:00",
+  "status": "FROZEN_BEFORE_STATIC_READER_EXECUTION",
+  "hypothesis": "Complete-source type checking with explicit compiled standard-library exports can distinguish immutable Go constants from mutable big.Int package variables and bind map-initializer keys to real typed objects without source execution. It does not prove later runtime map contents or global immutability.",
+  "reader_sha256": "410867f82c1cd571d0e6ae61ef9152be4d64a85ce8d3ec520cc8c46cea4a77e2",
+  "source_fetch_sha256": "758c5fe5bc18bbe5726cd57544f308c4135c187be225c466679d646aaa1595e2",
+  "cases": [
+    {
+      "id": "constant-Byte",
+      "kind": "constant",
+      "name": "Byte",
+      "expected": {
+        "v1.0.0": "1",
+        "v1.0.1": "1"
+      }
+    },
+    {
+      "id": "constant-KiByte",
+      "kind": "constant",
+      "name": "KiByte",
+      "expected": {
+        "v1.0.0": "1024",
+        "v1.0.1": "1024"
+      }
+    },
+    {
+      "id": "constant-KByte",
+      "kind": "constant",
+      "name": "KByte",
+      "expected": {
+        "v1.0.0": "1000",
+        "v1.0.1": "1000"
+      }
+    },
+    {
+      "id": "constant-EiByte",
+      "kind": "constant",
+      "name": "EiByte",
+      "expected": {
+        "v1.0.0": "1152921504606846976",
+        "v1.0.1": "1152921504606846976"
+      }
+    },
+    {
+      "id": "constant-EByte",
+      "kind": "constant",
+      "name": "EByte",
+      "expected": {
+        "v1.0.0": "1000000000000000000",
+        "v1.0.1": "1000000000000000000"
+      }
+    },
+    {
+      "id": "variable-BigByte",
+      "kind": "variable-type",
+      "name": "BigByte",
+      "expected": {
+        "v1.0.0": "*big.Int",
+        "v1.0.1": "*big.Int"
+      }
+    },
+    {
+      "id": "variable-BigQiByte",
+      "kind": "variable-type",
+      "name": "BigQiByte",
+      "expected": {
+        "v1.0.0": null,
+        "v1.0.1": "*big.Int"
+      }
+    },
+    {
+      "id": "map-bytesSizeTable-\"qb\"",
+      "kind": "map-initializer",
+      "table": "bytesSizeTable",
+      "key": "\"qb\"",
+      "expected": {
+        "v1.0.0": null,
+        "v1.0.1": null
+      }
+    },
+    {
+      "id": "map-bigBytesSizeTable-\"qb\"",
+      "kind": "map-initializer",
+      "table": "bigBytesSizeTable",
+      "key": "\"qb\"",
+      "expected": {
+        "v1.0.0": null,
+        "v1.0.1": "BigQByte"
+      }
+    },
+    {
+      "id": "map-bigBytesSizeTable-\"qib\"",
+      "kind": "map-initializer",
+      "table": "bigBytesSizeTable",
+      "key": "\"qib\"",
+      "expected": {
+        "v1.0.0": null,
+        "v1.0.1": "BigQiByte"
+      }
+    },
+    {
+      "id": "map-siPrefixTable-30",
+      "kind": "map-initializer",
+      "table": "siPrefixTable",
+      "key": "30",
+      "expected": {
+        "v1.0.0": null,
+        "v1.0.1": "\"Q\""
+      }
+    },
+    {
+      "id": "map-siPrefixTable--30",
+      "kind": "map-initializer",
+      "table": "siPrefixTable",
+      "key": "-30",
+      "expected": {
+        "v1.0.0": null,
+        "v1.0.1": "\"q\""
+      }
+    },
+    {
+      "id": "signature-ParseBytes",
+      "kind": "function-type",
+      "name": "ParseBytes",
+      "expected": {
+        "v1.0.0": "func(s string) (uint64, error)",
+        "v1.0.1": "func(s string) (uint64, error)"
+      }
+    },
+    {
+      "id": "signature-ParseBigBytes",
+      "kind": "function-type",
+      "name": "ParseBigBytes",
+      "expected": {
+        "v1.0.0": "func(s string) (*big.Int, error)",
+        "v1.0.1": "func(s string) (*big.Int, error)"
+      }
+    },
+    {
+      "id": "explicit-init-count",
+      "kind": "init-count",
+      "expected": {
+        "v1.0.0": 1,
+        "v1.0.1": 1
+      }
+    }
+  ],
+  "context": {
+    "go_compiler": "1.27.4",
+    "types_go_version": "go1.16",
+    "sizes": "gc/arm64",
+    "downloads": false,
+    "cgo": false,
+    "whole_selected_non_test_root_package": true
+  },
+  "source_execution_allowed_in_this_static_followup": false,
+  "prior_runtime_observation_exists": true,
+  "not_independent_public_accuracy": true,
+  "training_excluded": true,
+  "owner_approved": false
+}

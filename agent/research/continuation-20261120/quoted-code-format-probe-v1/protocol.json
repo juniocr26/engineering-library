@@ -1,0 +1,106 @@
+{
+  "at": "2026-11-20T20:17:59.017440+00:00",
+  "status": "FROZEN_BEFORE_BOTH_NEW_FORMAT_CONDITIONS",
+  "hypothesis": "The constrained API format might make quoted Go code hard to reproduce. If the small constrained task copies all quoted and Unicode values exactly, a general inability of that format to represent escaped imports is falsified; this does not explain long chapter failure or improve semantic accuracy.",
+  "motivation": "Several prior chapter responses stopped normally at import lines; original outputs/rejections are immutable.",
+  "task": "OWNED_EXACT_CODE_STRING_COPY_NOT_DOCUMENTATION_GENERATION",
+  "conditions_order": [
+    "unconstrained-api-format",
+    "schema-constrained-api-format"
+  ],
+  "maximum_calls": 2,
+  "maximum_calls_per_condition": 1,
+  "no_retries": true,
+  "same_messages_sha256": "64298aa93d0c706e5fec63801ef27501d3e2d34d2852bc8b7f0d9ff41b5c42e4",
+  "same_options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 800,
+    "num_thread": 4
+  },
+  "only_request_factor_changed": "format property absent versus exact schema object; messages/options/model/keep_alive otherwise identical.",
+  "expected_decoded_object": {
+    "en": {
+      "plain": "func Add(a, b int) int { return a + b }\n",
+      "quoted": "package example\n\nimport \"errors\"\n\nfunc Failure() error {\n    return errors.New(\"owned failure\")\n}\n",
+      "unicode": "const label = \"ação\"\n"
+    },
+    "pt-br": {
+      "plain": "func Add(a, b int) int { return a + b }\n",
+      "quoted": "package example\n\nimport \"errors\"\n\nfunc Failure() error {\n    return errors.New(\"owned failure\")\n}\n",
+      "unicode": "const label = \"ação\"\n"
+    }
+  },
+  "schema": {
+    "type": "object",
+    "properties": {
+      "en": {
+        "type": "object",
+        "properties": {
+          "plain": {
+            "type": "string"
+          },
+          "quoted": {
+            "type": "string"
+          },
+          "unicode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "plain",
+          "quoted",
+          "unicode"
+        ],
+        "additionalProperties": false
+      },
+      "pt-br": {
+        "type": "object",
+        "properties": {
+          "plain": {
+            "type": "string"
+          },
+          "quoted": {
+            "type": "string"
+          },
+          "unicode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "plain",
+          "quoted",
+          "unicode"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "en",
+      "pt-br"
+    ],
+    "additionalProperties": false
+  },
+  "model": "llama3.2:3b",
+  "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "resource_budget": {
+    "maximum_output_tokens_per_call": 800,
+    "context_tokens": 4096,
+    "maximum_request_bytes": 8192,
+    "http_timeout_seconds": 900,
+    "num_thread": 4,
+    "keep_alive": 0
+  },
+  "interpretation_limits": [
+    "Two calls in fixed order, no repeat/randomization or independent neural benchmark.",
+    "Exact copying is not source comprehension, semantic translation or factual chapter generation.",
+    "Different task from the rejected chapters; no causal chapter-quality gain claim.",
+    "All code strings are owned synthetic data and will not be executed."
+  ],
+  "owner_approved": false,
+  "training_gold": false,
+  "training_excluded": true,
+  "training_steps": 0,
+  "publication": false
+}

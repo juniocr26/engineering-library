@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-20T18:18:13.753363+00:00",
+  "hypothesis": "A naive exact quoted mapping-pair guard may reject a reversed false return-pair claim but also reject a correct parameter annotation or negative claim with the same code span. Quote shape alone does not establish the asserted relation kind/polarity.",
+  "source_root": "/sources/engineering-library/agent/research/continuation-20261120/mapping-quote-role-owned-v1",
+  "file": "mapping.py",
+  "selector": "build_map",
+  "source_sha256": "256836f1a470f78815fcc4e7b29b1c1a5e46668c890bb2b937ef6fc2f21e8a8d",
+  "cases": [
+    {
+      "id": "correct-returned-pair",
+      "en": "The `build_map` source returns the written pair `AlphaError: BetaError`.",
+      "pt-br": "O código de `build_map` retorna o par escrito `AlphaError: BetaError`.",
+      "expected_status": "RENDERED",
+      "source_reviewed_claim_true": true,
+      "expected_naive_pair_guard": "ALLOW"
+    },
+    {
+      "id": "incorrect-reversed-returned-pair",
+      "en": "The `build_map` source returns the written pair `BetaError: AlphaError`.",
+      "pt-br": "O código de `build_map` retorna o par escrito `BetaError: AlphaError`.",
+      "expected_status": "RENDERED",
+      "source_reviewed_claim_true": false,
+      "expected_naive_pair_guard": "REFUSE"
+    },
+    {
+      "id": "correct-parameter-annotation",
+      "en": "The `build_map` declaration writes the parameter annotation `BetaError: AlphaError`.",
+      "pt-br": "A declaração de `build_map` escreve a anotação de parâmetro `BetaError: AlphaError`.",
+      "expected_status": "RENDERED",
+      "source_reviewed_claim_true": true,
+      "expected_naive_pair_guard": "REFUSE"
+    },
+    {
+      "id": "correct-negative-pair",
+      "en": "The `build_map` source does not return the written pair `BetaError: AlphaError`.",
+      "pt-br": "O código de `build_map` não retorna o par escrito `BetaError: AlphaError`.",
+      "expected_status": "RENDERED",
+      "source_reviewed_claim_true": true,
+      "expected_naive_pair_guard": "REFUSE"
+    }
+  ],
+  "frozen_before_observations": true,
+  "current_guard_scope": "Identifierpresenceonly;RENDEREDisnotfactualacceptance.",
+  "new_guard_deployment_allowed": false,
+  "source_executed": false,
+  "new_permanent_tests": 0,
+  "model_calls": 0,
+  "owner_approved": false
+}

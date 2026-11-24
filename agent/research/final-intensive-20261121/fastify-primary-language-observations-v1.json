@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-22T06:10:48.298611+00:00",
+  "source": "Official ECMAScript2026 specification accessed through webtool; live algorithm read, no whole HTML archived",
+  "observations": [
+    {
+      "url": "https://tc39.es/ecma262/2026/multipage/ordinary-and-exotic-objects-behaviours.html#sec-ordinarycallbindthis",
+      "algorithm": "10.2.1.2 OrdinaryCallBindThis",
+      "paraphrase": "For a strict ordinary function, the supplied thisArgument is kept rather than substituted with a global object."
+    },
+    {
+      "url": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-evaluatecall",
+      "algorithm": "13.3.6.2 EvaluateCall",
+      "paraphrase": "A property reference uses its receiver; other identifier references use the environment WithBaseObject result."
+    },
+    {
+      "url": "https://tc39.es/ecma262/2026/multipage/executable-code-and-execution-contexts.html#sec-declarative-environment-records-withbaseobject",
+      "algorithm": "9.1.1.1.11 WithBaseObject",
+      "paraphrase": "A declarative environment supplies undefined for this implicit call receiver."
+    },
+    {
+      "url": "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-relational-operators-runtime-semantics-evaluation",
+      "algorithm": "13.10.1 relational in evaluation",
+      "paraphrase": "The in operator rejects a nonobject right operand with TypeError before membership lookup."
+    }
+  ],
+  "inference": "Given reached plain call to lexically declared strict checkExistence and falsy name, its this is undefined; reached instance in this throws TypeError. Earlier wrapper property accesses/helpercalls may fail first; not all lookups throw.",
+  "target_executed": false,
+  "new_model_calls": 0,
+  "not_runtime_test_or_global_guarantee": true
+}

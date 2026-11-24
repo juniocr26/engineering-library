@@ -1,0 +1,250 @@
+# Evidence record: closed-return-faq-evaluation.json
+
+This is a dated raw research artifact. Findings and rejected model outputs retain their recorded status. Reading the record does not approve publication or training.
+
+SHA-256: `41be4f8a75ce7d8c369e59671d62a9e792a50d5c46c325a11083e45be6798b37`. Original bytes: `11570`.
+
+Original path: `agent/research/documentation-intelligence-20261119/closed-return-faq-evaluation.json`.
+
+<!-- reading-section:reference:41be4f8a75ce7d8c369e:consumers -->
+## Referenced by
+
+- [Documentation agent: source, identity and ownership contracts](../chapters/documentation-agent-contracts.md)
+
+<!-- reading-section:reference:41be4f8a75ce7d8c369e:artifact -->
+## Original artifact
+
+The fenced contents reproduce the exact UTF-8 artifact; a display-only terminal newline is added if the original lacks one.
+
+<!-- artifact-body:41be4f8a75ce7d8c369e59671d62a9e792a50d5c46c325a11083e45be6798b37:start -->
+````json
+{
+  "at": "2026-11-20T05:05:43.279359+00:00",
+  "status": "PASSED_MECHANICAL_BILINGUAL_CLOSED_RETURN_FAQ_DEVELOPMENT",
+  "renderer_version": "0.1.0",
+  "renderer_sha256": "9df0798a114ab90fb9817d9b9e2295edec241e8c2690b805f4aa63bffb8da401",
+  "producer_version": "0.1.2",
+  "producer_sha256": "b80e0413e89196cfefa058f55174b8bf32f123bd748079ab2964eaf2f48abab5",
+  "reference_cases": 14,
+  "prepared_bilingual_pairs": 8,
+  "safe_no_answer_results": 6,
+  "source_files_bytes_inode_mtime_ctime_unchanged": 23,
+  "same_pair_for_format_only_change": true,
+  "changed_pair_for_helper_value_change": true,
+  "manual_template_review": "EN/PT preserve the explicit registered closed-profile condition, requested entry, integer and unverified runtime-name binding caveat. Imported-entry questions name entry.value rather than the implementing leaf symbol.",
+  "model_calls": 0,
+  "document_writes": 0,
+  "ordinary_ruby_route_changed": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_runs": 0,
+  "records": [
+    {
+      "id": "direct",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": 2,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `2`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `2`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "80e508e59284e85384c9e3eb195969fa1af493bff10fc31a873d45deb7dcebae",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/direct.json",
+      "result_sha256": "4ae7aa7f57f8d223c03b84979f8bc984b9003d80707a6ed4851e1b9005c4fa30"
+    },
+    {
+      "id": "one-helper",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": 2,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `2`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `2`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "80e508e59284e85384c9e3eb195969fa1af493bff10fc31a873d45deb7dcebae",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/one-helper.json",
+      "result_sha256": "cce2b648a1f19dfd237b41ad9b6a376d16c9b96a74f5fc8752e1e296d201a527"
+    },
+    {
+      "id": "helper-only-change",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": 9,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `9`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `9`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "f72e27ccfdb2daa58427654757f8fc796c1f79ccbc68fe922d6758b762c0b48f",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/helper-only-change.json",
+      "result_sha256": "10456dfc4b6694e956afbba292ebc7084b4ed641c0c1a73ed10bd8835ab8a37d"
+    },
+    {
+      "id": "helper-format-only",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": 2,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `2`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `2`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "80e508e59284e85384c9e3eb195969fa1af493bff10fc31a873d45deb7dcebae",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/helper-format-only.json",
+      "result_sha256": "bdf488e4c809241865f25397b581ea33bd6826ba6ab79d94617891df5b5bc8f1"
+    },
+    {
+      "id": "three-module-alias",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": -7,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `-7`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `-7`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "fe177491cb8e05b76043f524db187c9c212f49de8db7ce81dc2b3e19fcc1d7b1",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/three-module-alias.json",
+      "result_sha256": "58ce51f48c2ff7e0cde5b39507fb20b1e58f1139ad861b790d19323483ed830a"
+    },
+    {
+      "id": "missing-helper",
+      "status": "INCONCLUSIVE",
+      "value": null,
+      "faq_pair": null,
+      "pair_sha256": null,
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/missing-helper.json",
+      "result_sha256": "9500bcf3de1a92ff6f344981ff0cd43400daa14923e401483c7362b4f8b369c7"
+    },
+    {
+      "id": "duplicate-binding",
+      "status": "INCONCLUSIVE",
+      "value": null,
+      "faq_pair": null,
+      "pair_sha256": null,
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/duplicate-binding.json",
+      "result_sha256": "7ab37f42e0f98d4ca3df0070ecfa500fc9c56977166270008b9853375f37a107"
+    },
+    {
+      "id": "module-cycle",
+      "status": "INCONCLUSIVE",
+      "value": null,
+      "faq_pair": null,
+      "pair_sha256": null,
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/module-cycle.json",
+      "result_sha256": "aa7f0e3eb21a9ef2edc859b67cb67b442a8d9414d34f1500b0e47b04ed4877c1"
+    },
+    {
+      "id": "dynamic-guard",
+      "status": "INCONCLUSIVE",
+      "value": null,
+      "faq_pair": null,
+      "pair_sha256": null,
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/dynamic-guard.json",
+      "result_sha256": "17e72e871ca38b30f12acf5e1657dbdaa50e62d2abea2bb0d2cc0fecfa691146"
+    },
+    {
+      "id": "external-dependency",
+      "status": "INCONCLUSIVE",
+      "value": null,
+      "faq_pair": null,
+      "pair_sha256": null,
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/external-dependency.json",
+      "result_sha256": "28463041c481fdf974661477398893859d61733cd952ba583a9488bab2b2f3f1"
+    },
+    {
+      "id": "source-instruction-data",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": 2,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `2`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `2`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "80e508e59284e85384c9e3eb195969fa1af493bff10fc31a873d45deb7dcebae",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/source-instruction-data.json",
+      "result_sha256": "618b68f7a45219ab952e3418a4df795c97522be387972fae35bf15c92146d775"
+    },
+    {
+      "id": "top-level-effect",
+      "status": "INCONCLUSIVE",
+      "value": null,
+      "faq_pair": null,
+      "pair_sha256": null,
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/top-level-effect.json",
+      "result_sha256": "76446f8cda7c867d75b1da3722d2395a5f90290ea3aae0d37ad881c29b504358"
+    },
+    {
+      "id": "private-helper",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": 11,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `11`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `11`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "50aa23fabdb689bfb492baf8cb6d4a58b124579497c8dd7496b5e65049ed4f22",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/private-helper.json",
+      "result_sha256": "28bd9418d4c95b89f05337490faa1dd6baca262a6c53375c79b5f745443fb9da"
+    },
+    {
+      "id": "entry-imported-alias",
+      "status": "PREPARED_CONDITIONAL_FAQ_PAIR",
+      "value": 7,
+      "faq_pair": {
+        "en": {
+          "question": "What integer does `entry.value` return under the registered closed profile?",
+          "answer": "Under the registered closed source profile, `entry.value` returns `7`. Runtime name bindings are unverified."
+        },
+        "pt-br": {
+          "question": "Qual valor inteiro `entry.value` retorna sob o perfil fechado registrado?",
+          "answer": "Sob o perfil fechado de fontes registrado, `entry.value` retorna `7`. A resolução dos nomes em execução não foi verificada."
+        }
+      },
+      "pair_sha256": "2c704f8100835b634ac1f30cd5ff2b1ec144756d6a76f1ff410671cc41662a97",
+      "result_path": ".local-backups/documentation-intelligence-20261119/closed-return-faq-v1/entry-imported-alias.json",
+      "result_sha256": "28c582fc79b4a93211a7d821db28a2746ce275e6efd09e17e433bf67bd0b8591"
+    }
+  ],
+  "limits": [
+    "One mechanical question kind from the same exposed synthetic family; no general architecture or free-prose FAQ generation is claimed.",
+    "Eight controlled pairs are diagnostic fixture outputs, not additions to the77reviewed chapter FAQs or independent source families.",
+    "Question IDs are supplied explicitly; no paraphrase deduplication or document installation is performed.",
+    "A fresh trusted observer is required; arbitrary persisted fact JSON cannot authorize a rendered claim.",
+    "All publication, training and document lifecycle decisions remain separate."
+  ]
+}
+````
+<!-- artifact-body:41be4f8a75ce7d8c369e59671d62a9e792a50d5c46c325a11083e45be6798b37:end -->

@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-21T09:46:55.135659+00:00",
+  "hypothesis": "H81",
+  "protocol": "owned-scope-python-compatibility-protocol-v1.json",
+  "baseline": "owned-scope-python-linux-observation-v1.json",
+  "candidate_host": "owned-scope-python-host-observation-v2.json",
+  "candidate_linux": "owned-scope-python-linux-observation-v2.json",
+  "baseline_results": {
+    "python": "3.11.2",
+    "both_observers_returned_INCONCLUSIVE_all12": true,
+    "raw_matches_against_H74frozen_oracles": {
+      "observe_owned_scope_v1.py": 5,
+      "observe_owned_scope_v2.py": 5
+    },
+    "cause": "Direct node.type_params read raises AttributeError on3.11 FunctionDef; caught by observer and collapsed to INCONCLUSIVE."
+  },
+  "candidate": "observe_owned_scope_v3.py uses getattr(node,type_params,()) for optional newer AST field, preserving conservative H75 policy",
+  "candidate_results": {
+    "host_python": "3.14.7",
+    "linux_python": "3.11.2",
+    "original_vectors_identical": true,
+    "original_raw_exact": "11/12",
+    "H75conflict_vectors_identical": true,
+    "H75conflict_raw_exact": "4/4",
+    "original_mismatch": "H74different-body/same-name case remains INCONCLUSIVE versus frozen ABSENCE_NOT_RETIREMENT; no oracle rewriting"
+  },
+  "scope": "Same owned12+4cases replayed, not new independent semantic tests. Supplied literal-function source never executed; owned observer/worker executes only AST inspection. Existing backend container used without application/DB/model/network or container file writes.",
+  "not_verified": [
+    "Generic Python AST/version compatibility",
+    "Production planner fix or integration",
+    "Complete source acquisition/retirement proof",
+    "Windows/coldboot/training-state recovery"
+  ],
+  "owner_approved": false,
+  "gold": false,
+  "training_eligible": false,
+  "neural_calls": 0,
+  "production_or_external_changes": 0
+}

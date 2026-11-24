@@ -1,0 +1,136 @@
+{
+  "at": "2026-11-21T18:31:50.167334+00:00",
+  "topic": "starlette-task-and-iteration",
+  "family": "starlette",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/starlette-task-and-iteration/en.candidate.txt",
+      "sha256": "7499809154d35681c525d7d69fc6c490ea43485f00433335c1152cb08fc10269",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/starlette-task-and-iteration/pt-br.candidate.txt",
+      "sha256": "eea252b07c7eaf0b22251ac03ffbff086931217f83501b8378154a6c98d49f3c",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "BackgroundTask storesargs/kwargs/classificationwithoutcallbackrun; async__call__ awaitsselectedbranch butdoesnotreturncallbackresult.",
+    "BackgroundTasksconstructor/list/addregistration vssequentialawait, no taskgroup/gather/localcatch meanslateriterationsnotguaranteedafterfailure.",
+    "run_in_threadpool assignsPartialthenreturnawait; importsnotpoolsize/performanceproof.",
+    "_next translatesStopIterationtocustomclass; asyncgeneratoriterinitialization/yieldawait, customexceptbreak notreraise; nofinally/universalcleanup.",
+    "Actualoriginalthreadreturnbaselineomitreturn, iterationbaselineinventsreraise; historicaloptionalprofileintegrationreceipt source-/owned-control boundary explicit notindependentrealtransfer.",
+    "Additionalclassifierversionbindingnarrowsuniversalawaitableinference; ordinaryPythonfallthroughNone notStarletteexecution."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/background.py",
+      "source_sha256": "0fe5e952915181406765e035b4783330e82e6dee8809564594e03830bd2ad53f",
+      "source_path": "starlette/background.py",
+      "source_lines": [
+        1,
+        36
+      ],
+      "exact_source_evidence": "from __future__ import annotations\n\nfrom collections.abc import Callable, Sequence\nfrom typing import Any, ParamSpec\n\nfrom starlette._utils import is_async_callable\nfrom starlette.concurrency import run_in_threadpool\n\nP = ParamSpec(\"P\")\n\n\nclass BackgroundTask:\n    def __init__(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        self.func = func\n        self.args = args\n        self.kwargs = kwargs\n        self.is_async = is_async_callable(func)\n\n    async def __call__(self) -> None:\n        if self.is_async:\n            await self.func(*self.args, **self.kwargs)\n        else:\n            await run_in_threadpool(self.func, *self.args, **self.kwargs)\n\n\nclass BackgroundTasks(BackgroundTask):\n    def __init__(self, tasks: Sequence[BackgroundTask] | None = None):\n        self.tasks = list(tasks) if tasks else []\n\n    def add_task(self, func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> None:\n        task = BackgroundTask(func, *args, **kwargs)\n        self.tasks.append(task)\n\n    async def __call__(self) -> None:\n        for task in self.tasks:\n            await task()",
+      "reviewed_interpretation": "Storedtaskarguments, registrationandsequentialcalls.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/concurrency.py",
+      "source_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83",
+      "source_path": "starlette/concurrency.py",
+      "source_lines": [
+        32,
+        59
+      ],
+      "exact_source_evidence": "async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:\n    func = functools.partial(func, *args, **kwargs)\n    return await anyio.to_thread.run_sync(func)\n\n\nclass _StopIteration(Exception):\n    pass\n\n\ndef _next(iterator: Iterator[T]) -> T:\n    # We can't raise `StopIteration` from within the threadpool iterator\n    # and catch it outside that context, so we coerce them into a different\n    # exception type.\n    try:\n        return next(iterator)\n    except StopIteration:\n        raise _StopIteration\n\n\nasync def iterate_in_threadpool(\n    iterator: Iterable[T],\n) -> AsyncIterator[T]:\n    as_iterator = iter(iterator)\n    while True:\n        try:\n            yield await anyio.to_thread.run_sync(_next, as_iterator)\n        except _StopIteration:\n            break",
+      "reviewed_interpretation": "Awaitedreturn, exhaustiontranslation andgeneratorbreak.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/_utils.py",
+      "source_sha256": "413355d540af9e719cefaa92c1ed70af338e263c375cb336644309b1d242a6f4",
+      "source_path": "starlette/_utils.py",
+      "source_lines": [
+        16,
+        22
+      ],
+      "exact_source_evidence": "if sys.version_info >= (3, 13):  # pragma: no cover\n    from inspect import iscoroutinefunction\n    from typing import TypeIs\nelse:  # pragma: no cover\n    from asyncio import iscoroutinefunction\n\n    from typing_extensions import TypeIs",
+      "reviewed_interpretation": "Versionconditionalclassifierbinding.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/_utils.py",
+      "source_sha256": "413355d540af9e719cefaa92c1ed70af338e263c375cb336644309b1d242a6f4",
+      "source_path": "starlette/_utils.py",
+      "source_lines": [
+        61,
+        65
+      ],
+      "exact_source_evidence": "def is_async_callable(obj: Any) -> Any:\n    while isinstance(obj, functools.partial):\n        obj = obj.func\n\n    return iscoroutinefunction(obj) or (callable(obj) and iscoroutinefunction(obj.__call__))",
+      "reviewed_interpretation": "Writtenclassifierpredicate.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "starlette-thread-return",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-thread-return/raw-response.json",
+      "sha256": "8d3a68f72ab783fd27696b2d7f049af210f4ce7c4559d54cb1ed787c48c700f4",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-thread-return/origin.json",
+      "origin_sha256": "4e53130a8b1af2adb661b8e8f7487c69527e9e1e62b44010e57e96ee3ce5305a"
+    },
+    {
+      "id": "starlette-background-caller",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-background-caller/raw-response.json",
+      "sha256": "ae1442638f13619a2126e3e07770fb380887cddc4c1b0231e061714c04b98310",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-background-caller/origin.json",
+      "origin_sha256": "9e81c464632a8cbb6f5f27df676c2e1e14762b29069fbb238b3df9159629a8e8"
+    },
+    {
+      "id": "starlette-background-helpers",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-background-helpers/raw-response.json",
+      "sha256": "4043fefb0d92721891bc33fee68a6c75706804bf4c63bd55accadeb0ae21f532",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-background-helpers/origin.json",
+      "origin_sha256": "74bd89eb61cb555c71c661797890ecab382aac45fb12f836d43b4856b1773a16"
+    },
+    {
+      "id": "starlette-iteration-next-helper",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-iteration-next-helper/raw-response.json",
+      "sha256": "01efeaaa18a09716051c67f3daedbe3a644063d503bd917fb523f998277a405e",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-iteration-next-helper/origin.json",
+      "origin_sha256": "6bc0defdd32e8eb616b54709d8848669a97a02a2908de320355f77f9f7cb3b00"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

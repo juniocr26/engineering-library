@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-20T22:28:06.100191+00:00",
+  "status": "EARLY_FINALIZATION_AND_FINAL_SEAL_REFUSED_WITHOUT_REPORT_MUTATION",
+  "rows": [
+    {
+      "command": [
+        "python3",
+        "agent/research/continuation-20261120/write_campaign_handoff_v3.py",
+        "--phase",
+        "final"
+      ],
+      "exit_code": 1,
+      "expected_refusal": "Finalization refused: measured eleven-hour minimum has not elapsed.",
+      "stdout": "",
+      "stderr": "Finalization refused: measured eleven-hour minimum has not elapsed.\n",
+      "matches": true
+    },
+    {
+      "command": [
+        "python3",
+        "agent/research/continuation-20261120/seal_recovery_delta_v7.py"
+      ],
+      "exit_code": 1,
+      "expected_refusal": "Final source cut refused before measured eleven-hour minimum",
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/continuation-20261120/seal_recovery_delta_v7.py\", line 151, in <module>\n    main()\n    ~~~~^^\n  File \"/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/continuation-20261120/seal_recovery_delta_v7.py\", line 59, in main\n    raise ValueError('Final source cut refused before measured eleven-hour minimum')\nValueError: Final source cut refused before measured eleven-hour minimum\n",
+      "matches": true
+    }
+  ],
+  "before_and_after_root_hashes": {
+    "AI_TRAINING_CAMPAIGN_REPORT.md": "368c0117b4523bd8228cb54d5c0f0e62606411e871c5457325616d4cec03a4d2",
+    "AI_TRAINING_FILE_INVENTORY.md": "d5503218d3a0d69604d50ef26037da7b27525c852143b619f01d0a2c1d09d2b3",
+    "AI_FINE_TUNING_READINESS.md": "112aed505a1c3869fd10789fdfdafad58d670b5ab9b6435e89d420b6923cd533",
+    "AI_TRAINING_RESUME.md": "99ce7226eb2119d90eb18bf108a49ddd4617c2f8fc1f0fc06cbdef9885a3f633"
+  },
+  "reports_unchanged": true,
+  "final_output_paths_not_created": true,
+  "clock_was_not_mocked": true,
+  "artificial_waits": 0,
+  "new_inference_or_training": false,
+  "eleven_hours_claimed": false
+}

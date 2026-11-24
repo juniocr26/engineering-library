@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-21T16:31:04.390337+00:00",
+  "case": "fastapi-C2",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-C2",
+    "task": "fastapi",
+    "claim": "The recursive solve_dependencies call passes _uses_scopes_cache as the value of its dependency_cache keyword.",
+    "expected_verdict": "CONTRADICTED",
+    "reference_id": "F04",
+    "reviewer": "Same campaign agent, frozen source interpretation; not independent owner",
+    "critical": true,
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "scope": "Selected cards only; no project-wide runtime truth label"
+  },
+  "reference_anchor": {
+    "claim_id": "F04",
+    "task": "fastapi",
+    "family": "fastapi/fastapi",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "exact_source_evidence": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )",
+    "source_lines": [
+      726,
+      737
+    ],
+    "expected_interpretation": {
+      "en": "The written recursive solve_dependencies call passes dependency_cache=dependency_cache.",
+      "pt-BR": "A chamada recursiva escrita de solve_dependencies passa dependency_cache=dependency_cache."
+    },
+    "reference_verdict": "SUPPORTED",
+    "critical": true,
+    "reviewer": "Codex same campaign agent; static source semantic review",
+    "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+    "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+    "not_independent_holdout": true
+  },
+  "original_prediction": {
+    "verdict": "SUPPORTED",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "Implementation",
+    "evidence": "line 684: _uses_scopes_cache: _UsesScopesCache | None = None,",
+    "reason": "The code explicitly sets the value of _uses_scopes_cache to None when calling the solve_dependencies function."
+  },
+  "content_sha256": "f4f32decec34850a0eb09a95f31ea95a5f306a9f752321fb59084b20c0cc1d01",
+  "raw_response_sha256": "5f3dab4a7c7690017fca5de1408fd3bb4b01956afbb7fe4539c21415c8c7bad8",
+  "primary_raw_label_agreement": false,
+  "rationale_support_for_requested_claim": "CONTRADICTED",
+  "evidence_form": "A parameter-default line, not recursive call-site evidence.",
+  "source_relationship_review": "Says _uses_scopes_cache is set to None when calling; actual recursive dependency_cache keyword receives dependency_cache and _uses_scopes_cache is a different keyword.",
+  "diagnostic_note": "False SUPPORTED admission from declaration-versus-call-site and cache-variable role confusion.",
+  "end_to_end_label_and_rationale_supported": false,
+  "original_label_and_reference_unchanged": true,
+  "reviewer": "Same campaign agent; detailed rationale rubric fixed before reading any V/R outputs, but after some V predictions existed unread. Primary protocol/labels froze before predictions.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

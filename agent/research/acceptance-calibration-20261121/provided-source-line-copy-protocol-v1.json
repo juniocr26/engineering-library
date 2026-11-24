@@ -1,0 +1,46 @@
+{
+  "at": "2026-11-21T20:09:21.690074+00:00",
+  "before_X_predictions": true,
+  "question": "Do Wexact-copy failures persist when localization is removed and identical correct line strings are supplied directly, including whitespace?",
+  "hypothesis": "If supplied-bank exact copy succeeds while Wline-addressed extraction failed, code-character/JSONescaping inability alone is insufficient to explain W. The changed answer-bearing input removes localization/context selection; no claim of source understanding or native model improvement follows. If it fails, exact-copy/indentation boundary persists.",
+  "model": "llama3.2:3b",
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "calls": [
+    {
+      "task": "fastapi",
+      "method": "X",
+      "request": "agent/research/acceptance-calibration-20261121/provided-source-line-copy-v1/fastapi/X/request.json",
+      "request_sha256": "168b7bccab04cf84968211248bf748b74a1053c1317c4a63a9601d34a2f3a01b",
+      "original_W_request_sha256": "6e393b7b3ce65a6f9cad52dc098b0b0b278cb07235469a51dc3d0de3306c6ab3"
+    },
+    {
+      "task": "cobra",
+      "method": "X",
+      "request": "agent/research/acceptance-calibration-20261121/provided-source-line-copy-v1/cobra/X/request.json",
+      "request_sha256": "4958389adb6cef79e0ef9b78991b2543b7447da7aec2c251f85075e8ffe417ab",
+      "original_W_request_sha256": "260b53b8a4e727f191edd86e03ce5a4eecf930218f9551341e75c327d7966dcd"
+    },
+    {
+      "task": "zod",
+      "method": "X",
+      "request": "agent/research/acceptance-calibration-20261121/provided-source-line-copy-v1/zod/X/request.json",
+      "request_sha256": "89b170b6407a1983d210f69812a842d3c0756f19c1099ddec1261f65eee57b95",
+      "original_W_request_sha256": "12b43260a67c95bba48360cd346dccba95d238d97507aade1814e3ad16399f57"
+    }
+  ],
+  "transport_timeout_seconds": 900,
+  "reference": "line-addressed-source-copy-reference-v1.json",
+  "reference_sha256": "9acf47a8ab5161ee40c9b2a69d77a2a9b6b42712342a227b0dabd25369fc4463",
+  "primary_metric": "Same9exactdecodedsource-line strings asW, with indentation andno newline. Secondarystrippedcodemetricremainsdescriptiveonly.",
+  "fixed": "SameWmodel/options8192ctx500predictseed11621threads4temperature0keep_alive0/schema; onlymessageschange. ExistingWresponse reused, no rerun.",
+  "stop": "Firsttransport/timeout/length/invalidJSONorstrictschemafailure haltsbatch; no retry.",
+  "limits": [
+    "Explicitanswerbank is a different task fromsource localization or semantic extraction, not a generalaccuracy gain.",
+    "No new complete document/FAQ requested; no documentacceptance denominator.",
+    "Same3development-exposedfamilies andsame9relatedsource lines; notindependentholdout.",
+    "Successfulcopywouldnotjustify usinganeuralstage where deterministiccopyalready suffices."
+  ],
+  "owner_approved": false,
+  "gold": 0,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,69 @@
+[
+  {
+    "label": "package-build",
+    "command": [
+      "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+      "build",
+      "-p",
+      "1",
+      "-mod=readonly",
+      "-trimpath",
+      "-buildvcs=false",
+      "-o",
+      "/tmp/el-cont-20261120-go-geom-static-v1/artifacts/geom-package.a",
+      "."
+    ],
+    "exit_code": 0,
+    "seconds": 0.8126008339968394
+  },
+  {
+    "label": "package-export-list",
+    "command": [
+      "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+      "list",
+      "-mod=readonly",
+      "-trimpath",
+      "-buildvcs=false",
+      "-deps",
+      "-export",
+      "-json",
+      "."
+    ],
+    "exit_code": 0,
+    "seconds": 0.526507375005167
+  },
+  {
+    "label": "inspector-format",
+    "command": [
+      "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/gofmt",
+      "/sources/engineering-library/agent/research/continuation-20261120/go-package-method-set-v1/main.go"
+    ],
+    "exit_code": 0,
+    "seconds": 0.01073862499470124
+  },
+  {
+    "label": "inspector-build",
+    "command": [
+      "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+      "build",
+      "-p",
+      "1",
+      "-trimpath",
+      "-buildvcs=false",
+      "-o",
+      "/tmp/el-cont-20261120-go-geom-static-v1/artifacts/method-set-linux-arm64",
+      "/tmp/el-cont-20261120-go-geom-static-v1/artifacts/method-set.formatted.go"
+    ],
+    "exit_code": 0,
+    "seconds": 3.5869274599972414
+  },
+  {
+    "label": "static-method-set",
+    "command": [
+      "/tmp/el-cont-20261120-go-geom-static-v1/artifacts/method-set-linux-arm64",
+      "/tmp/el-cont-20261120-go-geom-static-v1/artifacts/exports-map.json"
+    ],
+    "exit_code": 2,
+    "seconds": 0.007171292003476992
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-JS-PHYSICAL-LINE-SEPARATORS",
+  "at": "2026-11-19T05:47:06.012721+00:00",
+  "status": "INTEGRATED_CITATION_INTEGRITY_FIX",
+  "affected_tools": [
+    "agent/tools/javascript_ranges.cjs",
+    "agent/tools/javascript_leading_guard.cjs"
+  ],
+  "versions_before": "1.0.0",
+  "versions_after": "1.0.1",
+  "concrete_failure": "With a U+2028 or U+2029 before selected f, TypeScript logical line mapping and LF-only quote splitting diverged. Two same-length f/g declarations reproduced selected f with g quotation in both optional tools.",
+  "fix": "Reject literal Unicode line/paragraph separators anywhere in source before parsing. Existing LF and CRLF profiles remain supported; a literal separator within a string is intentionally also outside this bounded profile.",
+  "proof": {
+    "before_actual_counterexamples": 4,
+    "baseline_raw_artifacts": [
+      "private-research://adaptive-20261118/js-unicode-line-separator-baseline.jsonl",
+      "private-research://adaptive-20261118/js-ranges-unicode-line-separator-baseline.jsonl"
+    ],
+    "guard_tests": 33,
+    "range_tests": 23,
+    "failures": 0,
+    "actual_CLI_regressions": 4,
+    "actual_guard_accepted_results_unchanged_except_version": 12,
+    "actual_guard_safe_refusals_unchanged": 3,
+    "actual_range_packets_unchanged_except_version": 7,
+    "verification_artifact": "private-research://adaptive-20261118/js-unicode-separator-fix-verification.json",
+    "verification_sha256": "90c5ce686f59c12612593b382636d06f9f924e9ce63f40aef36f748ae39b32c3",
+    "source_executed": false,
+    "model_calls": 0
+  },
+  "preservation": "Version1.0.0 guard prototype and both tools in the immutable05:27:59Z capsule remain intact. That capsule predates this fix and must not be used as proof of Unicode-separator safety. A later capsule is required for1.0.1.",
+  "default_backend_or_global_dependency_change": false,
+  "training_runs": 0,
+  "human_review": "pending"
+}

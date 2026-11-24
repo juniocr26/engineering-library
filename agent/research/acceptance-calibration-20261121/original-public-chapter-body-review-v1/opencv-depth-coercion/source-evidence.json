@@ -1,0 +1,30 @@
+{
+  "repository": "opencv",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "source_hashes": {
+    "modules/core/src/arithm.cpp": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987"
+  },
+  "source_program_executed": false,
+  "sources": [
+    {
+      "path": "modules/core/src/arithm.cpp",
+      "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+      "first_line": 314,
+      "last_line": 320,
+      "quote": "static int coerceTypes(int depth1, int depth2, bool muldiv)\n{\n    return depth1 == depth2 ? depth1 :\n        ((depth1 <= CV_32S) & (depth2 <= CV_32S)) != 0 ?\n        (((int)!muldiv & (depth1 <= CV_8S) & (depth2 <= CV_8S)) != 0 ? CV_16S : CV_32S) :\n        ((CV_ELEM_SIZE1(depth1) > 4) | (CV_ELEM_SIZE1(depth2) > 4)) != 0 ? CV_64F : CV_32F;\n}\n"
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "modules/core/src/arithm.cpp",
+      "full_file_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+      "ranges": [
+        {
+          "first_line": 550,
+          "last_line": 571,
+          "quote": "    if (depth1 == depth2 && dtype == depth1)\n        wtype = dtype;\n    else if (!muldiv)\n    {\n        wtype = coerceTypes(depth1, depth2, false);\n        wtype = coerceTypes(wtype, dtype, false);\n        if (dtype < CV_32F && (depth1 < CV_32F || depth2 < CV_32F))\n            wtype = CV_32S;\n    }\n    else\n    {\n        wtype = coerceTypes(depth1, depth2, true);\n        wtype = coerceTypes(wtype, dtype, true);\n    }\n\n    // The scaled OpenCL kernels (mul/div by a scale, reciprocal, addWeighted) compute in float; the old\n    // same-type fast path forced max(depth, CV_32F). coerceTypes keeps same-type integer, so bump here.\n    if (oclop == OCL_OP_MUL_SCALE || oclop == OCL_OP_DIV_SCALE || oclop == OCL_OP_RDIV_SCALE ||\n        oclop == OCL_OP_RECIP_SCALE || oclop == OCL_OP_ADDW)\n        wtype = std::max(wtype, (int)CV_32F);\n\n    dtype = CV_MAKETYPE(dtype, cn);\n"
+        }
+      ]
+    }
+  ]
+}

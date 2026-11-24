@@ -1,0 +1,303 @@
+{
+  "at": "2026-11-21T10:10:08.457479+00:00",
+  "cards": [
+    {
+      "id": "Z01",
+      "path": "packages/zod/package.json",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "c2d190d9ee4e0bdb60332aaa2130a6a98d65ddb903fe1d29248b15de57832c45",
+      "first_line": 58,
+      "last_line": 65,
+      "quote": "  \"exports\": {\n    \"./package.json\": \"./package.json\",\n    \".\": {\n      \"@zod/source\": \"./src/index.ts\",\n      \"types\": \"./index.d.cts\",\n      \"import\": \"./index.js\",\n      \"require\": \"./index.cjs\"\n    },\n",
+      "quote_sha256": "bfe21da695ab82646116cb6378fcb309baf6b58622054e8f235b08d49ec88b01",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z02",
+      "path": "packages/zod/package.json",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "c2d190d9ee4e0bdb60332aaa2130a6a98d65ddb903fe1d29248b15de57832c45",
+      "first_line": 89,
+      "last_line": 113,
+      "quote": "    },\n    \"./v4\": {\n      \"@zod/source\": \"./src/v4/index.ts\",\n      \"types\": \"./v4/index.d.cts\",\n      \"import\": \"./v4/index.js\",\n      \"require\": \"./v4/index.cjs\"\n    },\n    \"./v4-mini\": {\n      \"@zod/source\": \"./src/v4-mini/index.ts\",\n      \"types\": \"./v4-mini/index.d.cts\",\n      \"import\": \"./v4-mini/index.js\",\n      \"require\": \"./v4-mini/index.cjs\"\n    },\n    \"./v4/mini\": {\n      \"@zod/source\": \"./src/v4/mini/index.ts\",\n      \"types\": \"./v4/mini/index.d.cts\",\n      \"import\": \"./v4/mini/index.js\",\n      \"require\": \"./v4/mini/index.cjs\"\n    },\n    \"./v4/core\": {\n      \"@zod/source\": \"./src/v4/core/index.ts\",\n      \"types\": \"./v4/core/index.d.cts\",\n      \"import\": \"./v4/core/index.js\",\n      \"require\": \"./v4/core/index.cjs\"\n    },\n",
+      "quote_sha256": "7fa3f52ec2e3ed532608855c6221518dfa04c791c29365948489512188a61d69",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z03",
+      "path": "packages/zod/src/index.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "32e7efd49a94a765f6d10a1a0a3c02c50c246def17c80c6f0225f85525d98505",
+      "first_line": 1,
+      "last_line": 7,
+      "quote": "import * as z from \"./v4/classic/external.js\";\nexport * from \"./v4/classic/external.js\";\n// Aliasing the binding, instead of `export default z`, keeps the default export a\n// re-export of `z` rather than a fresh namespace value. Rollup and Webpack can then\n// shake `import z from \"zod\"` as they already shake `import { z } from \"zod\"` \u2014 without\n// this they pull in every locale. See #6050.\nexport { z, z as default };\n",
+      "quote_sha256": "32e7efd49a94a765f6d10a1a0a3c02c50c246def17c80c6f0225f85525d98505",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z04",
+      "path": "packages/zod/src/v4/classic/index.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "7a336836fdf518f78f89673745c982818d032c4819d40cf226b92c0cde87037f",
+      "first_line": 1,
+      "last_line": 5,
+      "quote": "import * as z from \"./external.js\";\n\nexport * from \"./external.js\";\n// See the note in `src/index.ts` \u2014 aliasing keeps the default export shakable.\nexport { z, z as default };\n",
+      "quote_sha256": "7a336836fdf518f78f89673745c982818d032c4819d40cf226b92c0cde87037f",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z05",
+      "path": "packages/zod/src/v4/classic/external.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "f6e2d95bdbf70bee98dc63481c1b32d5bf61912bc33ab8db6b18c9ba27518f76",
+      "first_line": 1,
+      "last_line": 6,
+      "quote": "export * as core from \"../core/index.js\";\nexport * from \"./schemas.js\";\nexport * from \"./checks.js\";\nexport * from \"./errors.js\";\nexport * from \"./parse.js\";\nexport * from \"./compat.js\";\n",
+      "quote_sha256": "26efdb156f1d14ecfae13e4d62613c8dc7231fcb2cc099d9700612afa707ecb7",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z06",
+      "path": "packages/zod/src/v4/index.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "5ba6cdbd3839d2a9df5c6d91d2121ef680f3d22fd60ee9d2c0b4611b7cb49a65",
+      "first_line": 1,
+      "last_line": 4,
+      "quote": "import * as z4 from \"./classic/external.js\";\nexport * from \"./classic/index.js\";\n// See the note in `src/index.ts` \u2014 aliasing keeps the default export shakable. Aliased from the namespace, not from `./classic/index.js`'s default, so both the tsc and Babel CJS outputs stay a plain `exports.default =` rather than a getter.\nexport { z4 as default };\n",
+      "quote_sha256": "5ba6cdbd3839d2a9df5c6d91d2121ef680f3d22fd60ee9d2c0b4611b7cb49a65",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z07",
+      "path": "packages/zod/src/v4/core/index.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "2a0e452323aa5b75b7d7de4879289e2579b9dd2d6af291c0416ba6806ca2199d",
+      "first_line": 1,
+      "last_line": 15,
+      "quote": "export * from \"./core.js\";\nexport * from \"./parse.js\";\nexport * from \"./errors.js\";\nexport * from \"./schemas.js\";\nexport * from \"./memoizer.js\";\nexport * from \"./checks.js\";\nexport * from \"./versions.js\";\nexport * as util from \"./util.js\";\nexport { toZod } from \"./util.js\";\nexport * as regexes from \"./regexes.js\";\nexport * as locales from \"../locales/index.js\";\nexport * from \"./registries.js\";\nexport * from \"./doc.js\";\nexport * from \"./compile.js\";\nexport * from \"./api.js\";\n",
+      "quote_sha256": "c9c0c87e29eca3c995924604e9c0e627be625ddec239f05ad11ed4487bb1dd1b",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z08",
+      "path": "packages/zod/src/v4/classic/parse.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "e68cc3082aba565ba2b9edb803a094720530f6c3924df841f581da03eccefe19",
+      "first_line": 1,
+      "last_line": 33,
+      "quote": "import * as core from \"../core/index.js\";\nimport { type ZodError, ZodRealError } from \"./errors.js\";\n\nexport type ZodSafeParseResult<T> = ZodSafeParseSuccess<T> | ZodSafeParseError<T>;\nexport type ZodSafeParseSuccess<T> = { success: true; data: T; error?: never };\nexport type ZodSafeParseError<T> = { success: false; data?: never; error: ZodError<T> };\n\nexport const parse: <T extends core.$ZodType>(\n  schema: T,\n  value: unknown,\n  _ctx?: core.ParseContext<core.$ZodIssue>,\n  _params?: { callee?: core.util.AnyFunc; Err?: core.$ZodErrorClass }\n) => core.output<T> = /* @__PURE__ */ core._parse(ZodRealError);\n\nexport const parseAsync: <T extends core.$ZodType>(\n  schema: T,\n  value: unknown,\n  _ctx?: core.ParseContext<core.$ZodIssue>,\n  _params?: { callee?: core.util.AnyFunc; Err?: core.$ZodErrorClass }\n) => Promise<core.output<T>> = /* @__PURE__ */ core._parseAsync(ZodRealError);\n\nexport const safeParse: <T extends core.$ZodType>(\n  schema: T,\n  value: unknown,\n  _ctx?: core.ParseContext<core.$ZodIssue>\n  // _params?: { callee?: core.util.AnyFunc; Err?: core.$ZodErrorClass }\n) => ZodSafeParseResult<core.output<T>> = /* @__PURE__ */ core._safeParse(ZodRealError) as any;\n\nexport const safeParseAsync: <T extends core.$ZodType>(\n  schema: T,\n  value: unknown,\n  _ctx?: core.ParseContext<core.$ZodIssue>\n) => Promise<ZodSafeParseResult<core.output<T>>> = /* @__PURE__ */ core._safeParseAsync(ZodRealError) as any;\n",
+      "quote_sha256": "7ec6615eac7b7abb414d8921a4778684a80d585e5a22039b41b68f0be69228f1",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z09",
+      "path": "packages/zod/src/v4/classic/schemas.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "2bc9f60c0d41c583be348fdbdbea6286020d53cb1a2c9506385506b1a7cd2c80",
+      "first_line": 12,
+      "last_line": 16,
+      "quote": "\n// Register English as the default locale on first ZodType construction. Hooked into the `ZodType` `$constructor` (rather than a top-level `config(en())` in `external.ts`) so bundlers honoring `sideEffects: false` can't tree-shake it out \u2014 see #5953, #5725. An explicit `z.config(z.locales.xx())` call wins regardless of order, since this only sets the default when none is present.\nfunction _ensureDefaultLocale(): void {\n  if (!core.globalConfig.localeError) core.config(en());\n}\n",
+      "quote_sha256": "37369d5fb10429698dc61c9e6a6c4a127b8c0ee89445264654ec6c12fbda47db",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z10",
+      "path": "packages/zod/src/v4/classic/schemas.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "2bc9f60c0d41c583be348fdbdbea6286020d53cb1a2c9506385506b1a7cd2c80",
+      "first_line": 173,
+      "last_line": 184,
+      "quote": "export const ZodType: core.$constructor<ZodType> = /*@__PURE__*/ core.$constructor<ZodType>(\n  \"ZodType\",\n  (inst, def) => {\n    _ensureDefaultLocale();\n    core.$ZodType.init(inst, def);\n\n    inst.def = def;\n    inst.type = def.type;\n\n    return inst;\n  },\n  {\n",
+      "quote_sha256": "435b169339b461aaa49ee7d376e9712a10c13e13c6b7cd8f16d1ce96ce56f725",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z11",
+      "path": "packages/zod/src/v4/classic/schemas.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "2bc9f60c0d41c583be348fdbdbea6286020d53cb1a2c9506385506b1a7cd2c80",
+      "first_line": 297,
+      "last_line": 315,
+      "quote": "    parse: function _parse(data, params) {\n      return parse.parse(this, data, params, { callee: _parse });\n    },\n    parseAsync: async function _parseAsync(data, params) {\n      return await parse.parseAsync(this, data, params, { callee: _parseAsync });\n    },\n    safeParse(data, params) {\n      return parse.safeParse(this, data, params);\n    },\n    async safeParseAsync(data, params) {\n      return parse.safeParseAsync(this, data, params);\n    },\n    // `spa` is an alias: same function object as `safeParseAsync`, as before.\n    get spa(): ZodType[\"safeParseAsync\"] {\n      return this?.safeParseAsync;\n    },\n    set spa(value: ZodType[\"safeParseAsync\"]) {\n      util.own(this, \"spa\", value);\n    },\n",
+      "quote_sha256": "35156bd58832771a674b365c19e1628eaf599b188edd791c3fa9befe388b30b4",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z12",
+      "path": "packages/zod/src/v4/classic/schemas.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "2bc9f60c0d41c583be348fdbdbea6286020d53cb1a2c9506385506b1a7cd2c80",
+      "first_line": 388,
+      "last_line": 395,
+      "quote": "export const _ZodString: core.$constructor<_ZodString> = /*@__PURE__*/ core.$constructor<_ZodString>(\n  \"_ZodString\",\n  (inst, def) => {\n    core.$ZodString.init(inst, def);\n    ZodType.init(inst, def);\n\n    inst._zod.processJSONSchema = (ctx, json, params) => processors.stringProcessor(inst, ctx, json, params);\n  },\n",
+      "quote_sha256": "49b13e25cf7316d3ffd74f4af060787b887d6b9d1f02be3ced13e2e718d44e76",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z13",
+      "path": "packages/zod/src/v4/classic/schemas.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "2bc9f60c0d41c583be348fdbdbea6286020d53cb1a2c9506385506b1a7cd2c80",
+      "first_line": 529,
+      "last_line": 534,
+      "quote": "export const ZodString: core.$constructor<ZodString> = /*@__PURE__*/ core.$constructor<ZodString>(\n  \"ZodString\",\n  (inst, def) => {\n    core.$ZodString.init(inst, def);\n    _ZodString.init(inst, def);\n  },\n",
+      "quote_sha256": "08b7dd97b20751abcababc6acf45a0529dc0cc662092862125d7d696deeeb907",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z14",
+      "path": "packages/zod/src/v4/classic/schemas.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "2bc9f60c0d41c583be348fdbdbea6286020d53cb1a2c9506385506b1a7cd2c80",
+      "first_line": 617,
+      "last_line": 621,
+      "quote": "export function string(params?: string | core.$ZodStringParams): ZodString;\nexport function string<T extends string>(params?: string | core.$ZodStringParams): core.$ZodType<T, T>;\nexport function string(params?: string | core.$ZodStringParams): ZodString {\n  return core._string(ZodString, params);\n}\n",
+      "quote_sha256": "f1f14e6cfdae1e88bdc6c95c4e57ac81a628008e22f127855406e0d4abb4a857",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z15",
+      "path": "packages/zod/src/v4/core/api.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "9ad4da853ced907f2e5764e5a390f087c0bc8633638a993c50699f0827a5bf5d",
+      "first_line": 70,
+      "last_line": 75,
+      "quote": "export function _string<T extends schemas.$ZodString>(\n  Class: util.SchemaClass<T>,\n  params?: string | $ZodStringParams\n): T {\n  return new Class(snapshotChecks({ type: \"string\" as const, ...util.normalizeParams(params) }));\n}\n",
+      "quote_sha256": "4de54555567015842710522351aab1c54f71f4f82b7df2fc6ac09eb74360e8c0",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z16",
+      "path": "packages/zod/src/v4/core/core.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "f3ab5ea2f1e49379b25ee99cecf6dc0a2c02aa77fce87400f010a49f2b670463",
+      "first_line": 51,
+      "last_line": 111,
+      "quote": "export /*@__NO_SIDE_EFFECTS__*/ function $constructor<T extends ZodTrait, D = T[\"_zod\"][\"def\"]>(\n  name: string,\n  initializer: (inst: T, def: D) => void,\n  /** This trait's members, installed once on every prototype that composes it. They cannot be declared in the initializer above: that runs per instance, and the prototype is shared. */\n  proto?: ProtoOf<T>,\n  params?: $constructorParams\n): $constructor<T, D> {\n  // Prototype for this constructor's `_zod` internals. Lazily-derived fields (`values`, `pattern`, `optin`, \u2026) install here once rather than as an accessor on every instance.\n  const zodProto: any = {};\n\n  // Assigning the fields in the constructor body is what gives instances in-object slots; building the object literally and reparenting it costs a second allocation and a generic property copy.\n  function Internals(this: any, def: D) {\n    this.def = def;\n    this.constr = _;\n    this.traits = new Set();\n  }\n  Internals.prototype = zodProto;\n\n  const protoMembers = proto;\n  // One trait's members land on every prototype whose chain composes it, so the answer is per prototype rather than per trait.\n  const initialized = protoMembers && new WeakSet<object>();\n\n  function init(inst: T, def: D) {\n    if (!inst._zod) {\n      _zodDesc.value = new (Internals as any)(def);\n      try {\n        Object.defineProperty(inst, \"_zod\", _zodDesc);\n      } finally {\n        // Cleared even on throw, so the shared descriptor never leaks one instance's internals into the next.\n        _zodDesc.value = undefined;\n      }\n    } else if (inst._zod.traits.has(name)) {\n      return;\n    }\n\n    inst._zod.traits.add(name);\n\n    initializer(inst, def);\n\n    if (initialized) {\n      // `super(def)` from a user subclass gives `this` a prototype the subclass owns, and installing there would overwrite whatever the subclass declared. `constr` built the instance, so its prototype is the one below the subclass's that should carry the members. A receiver whose chain never reaches that prototype installs on its own, which for a plain object handed straight to `init` means `Object.prototype` \u2014 unchanged from before.\n      const own = Object.getPrototypeOf(inst);\n      const ctorProto = inst._zod.constr.prototype;\n      let up: object | null = own;\n      while (up && up !== ctorProto) up = Object.getPrototypeOf(up);\n      const target = up ?? own;\n      if (!initialized.has(target)) {\n        initialized.add(target);\n        installMembers(target, protoMembers!);\n      }\n    }\n\n    // support prototype modifications; for-in avoids the array allocation of Object.keys on the (usually empty) prototype\n    const proto = _.prototype;\n    for (const k in proto) {\n      if (!Object.prototype.hasOwnProperty.call(proto, k)) continue;\n      if (!(k in inst)) {\n        (inst as any)[k] = proto[k].bind(inst);\n      }\n    }\n  }\n",
+      "quote_sha256": "4243721b24f63c120700fde9bdb5210b6f33955f63bf101a603c95bd9cd53767",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z17",
+      "path": "packages/zod/src/v4/core/core.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "f3ab5ea2f1e49379b25ee99cecf6dc0a2c02aa77fce87400f010a49f2b670463",
+      "first_line": 114,
+      "last_line": 145,
+      "quote": "  const Parent = params?.Parent ?? Object;\n  class Definition extends Parent {}\n  Object.defineProperty(Definition, \"name\", { value: name });\n\n  function _(this: any, def: D) {\n    const inst = params?.Parent ? newError(Definition) : this;\n    init(inst, def);\n    const deferred = inst._zod.deferred;\n    if (deferred) {\n      for (const fn of deferred) {\n        fn();\n      }\n      // Released: initializers run once, and the list would otherwise be retained for the schema's lifetime.\n      inst._zod.deferred = undefined;\n    }\n\n    // Global post-processor hook. Internal: installed by `import \"zod/compile\"` to enable AOT compilation for every constructed schema. Runs last, once the instance is fully built, because it hands the instance to compile(). The post-processor is expected to be reentrancy-guarded by its own implementation.\n    const pp = (globalThis as GlobalThisWithConfig).__zod_globalConfig?.postProcessor;\n    if (pp) pp(inst);\n    return inst;\n  }\n\n  Object.defineProperty(_, \"init\", { value: init });\n  Object.defineProperty(_, Symbol.hasInstance, {\n    value: (inst: any) => {\n      if (params?.Parent && inst instanceof params.Parent) return true;\n      return inst?._zod?.traits?.has(name);\n    },\n  });\n  Object.defineProperty(_, \"name\", { value: name });\n  return _ as any;\n}\n",
+      "quote_sha256": "2ad8b4fcca3b2f8c0dfb263301d085308dfe8505d4d1b2a3eb525d609d506045",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z18",
+      "path": "packages/zod/src/v4/core/core.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "f3ab5ea2f1e49379b25ee99cecf6dc0a2c02aa77fce87400f010a49f2b670463",
+      "first_line": 26,
+      "last_line": 48,
+      "quote": "// null where suppressing the capture would be unrecoverable: `parse()` puts the frames back with `captureStackTrace`, so without it the throw would lose its stack. also latched to null once `stackTraceLimit` proves unassignable, which a realm can do at any point by hardening Error\nlet _E: (ErrorConstructor & { stackTraceLimit?: number }) | null = \"captureStackTrace\" in Error ? Error : null;\n\n// v8 captures a stack trace inside the Error constructor, which dominates a failed parse; costs only the frames, and parse() restores those. the constructor must RUN: Object.create is cheaper and passes instanceof, but Error.isError and util.types.isNativeError check an internal slot\nfunction newError(Definition: new () => any): any {\n  const E = _E;\n  if (E) {\n    const saved = E.stackTraceLimit;\n    if (typeof saved === \"number\") {\n      try {\n        E.stackTraceLimit = 0;\n      } catch {\n        _E = null;\n        return new Definition();\n      }\n      try {\n        return new Definition();\n      } finally {\n        E.stackTraceLimit = saved;\n      }\n    }\n  }\n  return new Definition();\n",
+      "quote_sha256": "2080f787ac62c62fc25d81445530169b9ae2ab59c1ef87559de1ab39dc21bead",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z19",
+      "path": "packages/zod/src/v4/core/util.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "08dd3e160148ebec37321dc082bdd0c74581ddb3e8f579654f5fa1ca07cf402d",
+      "first_line": 1169,
+      "last_line": 1188,
+      "quote": "export function members(proto: object, table: object): void {\n  for (const key in table) {\n    const desc = Object.getOwnPropertyDescriptor(table, key)!;\n    // a getter installs as written, so it stays live: `description` reads through to the registry on every access. not enumerable: an object literal's is, and a prototype member never was\n    if (desc.get) Object.defineProperty(proto, key, { ...desc, enumerable: false });\n    // a method materializes bound on first read, which is what keeps a detached member working: `const opt = schema.optional; opt()`\n    else defineBound(proto, key, desc.value);\n  }\n}\n\n/** Shadows a prototype member with an own value, so a getter that builds from the instance runs once. */\nexport function own<T>(inst: object, key: PropertyKey, value: T, enumerable = true): T {\n  Object.defineProperty(inst, key, { configurable: true, writable: true, enumerable, value });\n  return value;\n}\n\n/** Like {@link own}, for a member that was never an own data property and has to stay out of `Object.keys`. */\nexport function hide<T>(inst: object, key: PropertyKey, value: T): T {\n  return own(inst, key, value, false);\n}\n",
+      "quote_sha256": "7a2639e87abaf089f48957eda0e5c98f91ebfae979d195c06d6289bd42fe2e66",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z20",
+      "path": "packages/zod/src/v4/core/util.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "08dd3e160148ebec37321dc082bdd0c74581ddb3e8f579654f5fa1ca07cf402d",
+      "first_line": 1212,
+      "last_line": 1223,
+      "quote": "function defineBound(proto: object, key: PropertyKey, fn: AnyFunc): void {\n  Object.defineProperty(proto, key, {\n    configurable: true,\n    get(this: any) {\n      // vitest's spyOn calls a prototype getter bare to find the function it wraps, so a nullish receiver answers the raw method\n      return this == null ? fn : own(this, key, fn.bind(this));\n    },\n    set(this: any, value: unknown) {\n      own(this, key, value);\n    },\n  });\n}\n",
+      "quote_sha256": "66690dce3518d8edb359d4a29c2032538363ddb2df4bd081009e0f39ff314456",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z21",
+      "path": "packages/zod/src/v4/classic/errors.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "69e92c3ef064c4acf839b694b7c1ec2679440006fa554372f6ff40e35ba47b40",
+      "first_line": 50,
+      "last_line": 84,
+      "quote": "const initializer = (inst: ZodError, issues: core.$ZodIssue[]) => {\n  $ZodError.init(inst, issues);\n  inst.name = \"ZodError\";\n\n  const proto = Object.getPrototypeOf(inst);\n  if (_installedErrorProtos.has(proto)) return;\n  _installedErrorProtos.add(proto);\n\n  _lazyMethod(proto, \"format\", (self) => (mapper: any) => core.formatError(self, mapper));\n  _lazyMethod(proto, \"flatten\", (self) => (mapper: any) => core.flattenError(self, mapper));\n  _lazyMethod(proto, \"addIssue\", (self) => (issue: any) => {\n    self.issues.push(issue);\n    self.message = JSON.stringify(self.issues, util.jsonStringifyReplacer, 2);\n  });\n  _lazyMethod(proto, \"addIssues\", (self) => (issues: any) => {\n    self.issues.push(...issues);\n    self.message = JSON.stringify(self.issues, util.jsonStringifyReplacer, 2);\n  });\n  Object.defineProperty(proto, \"isEmpty\", {\n    configurable: true,\n    enumerable: false,\n    get(this: ZodError) {\n      return this.issues.length === 0;\n    },\n  });\n};\nexport const ZodError: core.$constructor<ZodError> = /*@__PURE__*/ core.$constructor(\"ZodError\", initializer);\nexport const ZodRealError: core.$constructor<ZodError> = /*@__PURE__*/ core.$constructor(\n  \"ZodError\",\n  initializer,\n  undefined,\n  {\n    Parent: Error,\n  }\n);\n",
+      "quote_sha256": "54511811274555ce624dc3e6b3bee5a244889c862aa521b008237877d33a1138",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z22",
+      "path": "packages/zod/src/v4/core/errors.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "ad19a7ec2af7abc5ed11a0ba279a015272adff8d2548ac531fc9216b0a37112a",
+      "first_line": 261,
+      "last_line": 295,
+      "quote": "const initializer = (inst: $ZodError, def: $ZodIssue[]): void => {\n  inst.name = \"$ZodError\";\n  // `_zod` is already non-enumerable: $constructor's init defined it with this same descriptor\n  _issuesDesc.value = def;\n  Object.defineProperty(inst, \"issues\", _issuesDesc);\n  // Clear the shared slot; a retained `value` pins the last error's issues.\n  _issuesDesc.value = undefined;\n  Object.defineProperty(inst, \"message\", _messageDesc);\n\n  /* `toString` lives as a non-enumerable lazy getter on the shared\n   * prototype; on first access it caches a per-instance closure so\n   * detached usage still works. */\n  const proto = Object.getPrototypeOf(inst);\n  if (!_installedToString.has(proto)) {\n    _installedToString.add(proto);\n    Object.defineProperty(proto, \"toString\", {\n      configurable: true,\n      enumerable: false,\n      get(this: $ZodError) {\n        const value = () => this.message;\n        Object.defineProperty(this, \"toString\", { value, configurable: true, writable: true });\n        return value;\n      },\n      set(this: $ZodError, value: unknown) {\n        Object.defineProperty(this, \"toString\", { value, configurable: true, writable: true });\n      },\n    });\n  }\n};\n\nexport const $ZodError: $constructor<$ZodError> = $constructor(\"$ZodError\", initializer);\ninterface $ZodRealError<T = any> extends $ZodError<T> {}\nexport const $ZodRealError: $constructor<$ZodRealError> = $constructor(\"$ZodError\", initializer, undefined, {\n  Parent: Error,\n});\n",
+      "quote_sha256": "26c244895f0eb117366ab4d31cce8777c609c4023cc2a8699b2f4060bb41dc5b",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z23",
+      "path": "packages/zod/src/v4/core/parse.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "first_line": 65,
+      "last_line": 119,
+      "quote": "export type $SafeParse = <T extends schemas.$ZodType>(\n  schema: T,\n  value: unknown,\n  _ctx?: schemas.ParseContext<errors.$ZodIssue>\n) => util.SafeParseResult<core.output<T>>;\n\nexport const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };\n  const result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }\n\n  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n};\nexport const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);\n\n// the error is built on the first read of `error`: finalizing the issues and constructing the instance is most of a failing parse, and a caller that only branches on `success` never pays it. a getter in the literal keeps this small; the alternative, one shared accessor descriptor plus a hidden state slot, reads ~15% faster but costs ~75 B gzipped in every bundle\nfunction failure(Err: $ZodErrorClass, issues: errors.$ZodRawIssue[], ctx: schemas.ParseContextInternal): any {\n  let error: errors.$ZodError | undefined;\n  return {\n    success: false,\n    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));\n        // finalizeIssue drops `input`, so the built error holds nothing; keeping the raw issues past this point pins the parsed value for the life of the result\n        issues = undefined as any;\n        ctx = undefined as any;\n      }\n      return error;\n    },\n    set error(e: errors.$ZodError) {\n      error = e;\n      // a replacement makes the getter's branch unreachable, so the captures have to go here too\n      issues = undefined as any;\n      ctx = undefined as any;\n    },\n  };\n}\n\nexport type $SafeParseAsync = <T extends schemas.$ZodType>(\n  schema: T,\n  value: unknown,\n  _ctx?: schemas.ParseContext<errors.$ZodIssue>\n) => Promise<util.SafeParseResult<core.output<T>>>;\n\nexport const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;\n\n  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n};\n\nexport const safeParseAsync: $SafeParseAsync = /* @__PURE__*/ _safeParseAsync(errors.$ZodRealError);\n",
+      "quote_sha256": "71cc89c79aac78a650f6dd5d01c3a90ec8d99d900b535b10ceb7d430b29f81c4",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z24",
+      "path": "packages/zod/src/v4/classic/tests/detached-methods.test.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "5477808ca68e9e56baa5d91dc381bfa8d33c6b3e3bfd1e9470b1507841ba68c8",
+      "first_line": 54,
+      "last_line": 60,
+      "quote": "test(\"detached parse-family methods work without `this` binding\", () => {\n  const schema = z.string();\n  const { parse, safeParse } = schema;\n\n  expect(parse(\"hello\")).toBe(\"hello\");\n  expect(safeParse(\"hello\").success).toBe(true);\n});\n",
+      "quote_sha256": "8f6f2f988f96a8a671815de7d08556f0ce6059e764fb21fe06ba91a2a12c5003",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z25",
+      "path": "packages/zod/src/v4/classic/tests/detached-methods.test.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "5477808ca68e9e56baa5d91dc381bfa8d33c6b3e3bfd1e9470b1507841ba68c8",
+      "first_line": 199,
+      "last_line": 221,
+      "quote": "test(\"vi.spyOn wraps a prototype method that was never read\", () => {\n  const schema = z.object({ a: z.string() });\n  const spy = vi.spyOn(schema, \"safeParse\").mockReturnValue({ success: true, data: { a: \"mocked\" } });\n\n  expect(schema.safeParse({})).toEqual({ success: true, data: { a: \"mocked\" } });\n  expect(spy).toHaveBeenCalledOnce();\n\n  spy.mockRestore();\n  expect(schema.safeParse({ a: \"x\" })).toEqual({ success: true, data: { a: \"x\" } });\n  expect(schema.safeParse({}).success).toBe(false);\n\n  const json = vi.spyOn(schema, \"toJSONSchema\").mockReturnValue({ type: \"null\" } as any);\n  expect(schema.toJSONSchema()).toEqual({ type: \"null\" });\n  json.mockRestore();\n  expect(schema.toJSONSchema().type).toBe(\"object\");\n});\n\ntest(\"a getter member answers a bare read without a receiver\", () => {\n  const schema = z.string();\n  const get = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(schema), \"spa\")!.get!;\n  expect(get.call(undefined)).toBeUndefined();\n  expect(schema.spa).toBe(schema.safeParseAsync);\n});\n",
+      "quote_sha256": "635f822347514b1e1b40603575261738bae3f2905647fd34021e99141219492c",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z26",
+      "path": "packages/zod/src/v4/classic/tests/error.test.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "13df559513e678f84446052f0f583d2e02cf1d211e61a18027d3e33fc333f470",
+      "first_line": 983,
+      "last_line": 1019,
+      "quote": "describe(\"safeParse builds the error on first read\", () => {\n  class CountingError {\n    static constructed = 0;\n    constructor(public issues: unknown[]) {\n      CountingError.constructed++;\n    }\n  }\n\n  test(\"constructs once, on read\", () => {\n    CountingError.constructed = 0;\n    const result = z.core._safeParse(CountingError as any)(z.string(), 1) as any;\n    expect(result.success).toBe(false);\n    expect(CountingError.constructed).toBe(0);\n    const err = result.error;\n    expect(CountingError.constructed).toBe(1);\n    expect(result.error).toBe(err);\n    expect(CountingError.constructed).toBe(1);\n    expect(err.issues[0].code).toBe(\"invalid_type\");\n  });\n\n  test(\"async variant\", async () => {\n    CountingError.constructed = 0;\n    const result = (await z.core._safeParseAsync(CountingError as any)(z.string(), 1)) as any;\n    expect(CountingError.constructed).toBe(0);\n    expect(result.error).toBeInstanceOf(CountingError);\n    expect(CountingError.constructed).toBe(1);\n  });\n\n  test(\"result stays plain data\", () => {\n    const result = z.string().safeParse(1);\n    expect(Object.keys(result)).toEqual([\"success\", \"error\"]);\n    expect(result).toEqual({ success: false, error: expect.any(z.ZodError) });\n    expect(structuredClone(result).error).toBeInstanceOf(Error);\n    const replaced = new z.ZodError([]);\n    (result as any).error = replaced;\n    expect(result.error).toBe(replaced);\n  });\n",
+      "quote_sha256": "37623d5a06a5201133442424d70ec9ee13a35fd1e7951ecccf06f5bbc2e83644",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    },
+    {
+      "id": "Z27",
+      "path": "packages/zod/src/v4/classic/tests/async-parsing.test.ts",
+      "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_sha256": "5854e0b2712dea24b27f8d0b5dad384e06eaa785539e1388df941fb4fe6ff80b",
+      "first_line": 8,
+      "last_line": 34,
+      "quote": "test(\"string async parse\", async () => {\n  const goodData = \"XXX\";\n  const badData = 12;\n\n  const goodResult = await stringSchema.safeParseAsync(goodData);\n  expect(goodResult.success).toBe(true);\n  if (goodResult.success) expect(goodResult.data).toEqual(goodData);\n\n  const badResult = await stringSchema.safeParseAsync(badData);\n  expect(badResult.success).toBe(false);\n  if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);\n});\n\n/// number\nconst numberSchema = z.number();\ntest(\"number async parse\", async () => {\n  const goodData = 1234.2353;\n  const badData = \"1234\";\n\n  const goodResult = await numberSchema.safeParseAsync(goodData);\n  expect(goodResult.success).toBe(true);\n  if (goodResult.success) expect(goodResult.data).toEqual(goodData);\n\n  const badResult = await numberSchema.safeParseAsync(badData);\n  expect(badResult.success).toBe(false);\n  if (!badResult.success) expect(badResult.error).toBeInstanceOf(z.ZodError);\n});\n",
+      "quote_sha256": "1684f7a21cb9230eb189d28c61f422cbd966b564b9b88a59a9c01fc10f2069d4",
+      "kind": "Manual physical source span,not native full-declaration parsing"
+    }
+  ],
+  "source_executed": false
+}

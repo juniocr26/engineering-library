@@ -1,0 +1,74 @@
+{
+  "schema": "go-build-binding-native-manifest-v1",
+  "version": "0.1.0",
+  "compiler": "go1.27.4",
+  "source_execution": false,
+  "files": [
+    {
+      "path": "GO-LICENSE",
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+      "bytes": 1453
+    },
+    {
+      "path": "bin/go-build-binding-darwin-arm64",
+      "sha256": "8475a3741ef25233aa32cc0eca8b0fbdb1f1b76ae253e0565db1787d9770d216",
+      "bytes": 5525298
+    },
+    {
+      "path": "bin/go-build-binding-linux-arm64",
+      "sha256": "bca14f88bef9ace321d67c42049fe254135f94e0967fa62059833002cbc4af81",
+      "bytes": 5593981
+    },
+    {
+      "path": "main.go",
+      "sha256": "09685f089e6de42a3036f33a81fd4dbbfa91d15d83c3f551039b5c407a0f9700",
+      "bytes": 24613
+    },
+    {
+      "path": "main_test.go",
+      "sha256": "8053291445e5fd48f3c023845fd8641932788cd1f502767f3eafc28bf02fb2b8",
+      "bytes": 13856
+    },
+    {
+      "path": "README.md",
+      "sha256": "7d6c5e7d084a70d49e8565caeb0183ff49638dc2a82b7ce538407ea85577c791",
+      "bytes": 3834
+    }
+  ],
+  "build": {
+    "environment": {
+      "GOENV": "off",
+      "GOTOOLCHAIN": "local",
+      "GO111MODULE": "off",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "CGO_ENABLED": "0"
+    },
+    "arguments": [
+      "go",
+      "build",
+      "-trimpath",
+      "-buildvcs=false",
+      "-o",
+      "<private-output>",
+      "."
+    ],
+    "targets": [
+      "darwin/arm64",
+      "linux/arm64"
+    ],
+    "toolchain_archive_sha256": "54724347d7a015622633daf3e2e31a6f3e8dd88ac4e71d7745f18e5ccb6e14ca",
+    "working_directory": "/tmp/el-doc-intel-go-build-binding-v1",
+    "fresh_cache_rebuild_receipt": "agent/research/documentation-intelligence-20261119/go-build-binding-reproduction.json"
+  },
+  "test_evidence": {
+    "native_test_cases_with_subtests": 34,
+    "failed_events": 0,
+    "consumer_test_methods": 13,
+    "consumer_mocked_transport": true,
+    "actual_sdk_requests_separate": true
+  },
+  "scope": "Optional experiment; ordinary Go AST 1.6.1 and Ruby routing unchanged",
+  "owner_approved": false
+}

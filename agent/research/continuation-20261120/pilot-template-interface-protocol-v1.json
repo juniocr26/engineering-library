@@ -1,0 +1,109 @@
+{
+  "at": "2026-11-20T20:49:45.141479+00:00",
+  "status": "FROZEN_BEFORE_NEW_OWNED_TEMPLATE_INTERFACE_CASES",
+  "hypothesis": "The exact pure ChatDataset.process returns full tokens and a length-only offset without verifying prefix equality,offset range or nonempty assistant content. Owned method results can expose unchecked interface assumptions,not actual tokenizer incompatibility or loss-mask quality.",
+  "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+  "cases": [
+    {
+      "id": "coherent-prefix",
+      "owned_full_result": [
+        10,
+        11,
+        20,
+        21
+      ],
+      "owned_prefix_result": [
+        10,
+        11
+      ],
+      "empty_assistant_content": false,
+      "expected_fields": {
+        "offset": 2,
+        "full_length": 4,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": 2
+      }
+    },
+    {
+      "id": "different-prefix-same-length",
+      "owned_full_result": [
+        10,
+        11,
+        20,
+        21
+      ],
+      "owned_prefix_result": [
+        90,
+        91
+      ],
+      "empty_assistant_content": false,
+      "expected_fields": {
+        "offset": 2,
+        "full_length": 4,
+        "prefix_equal": false,
+        "offset_within_full": true,
+        "raw_target_interval_length": 2
+      }
+    },
+    {
+      "id": "prefix-longer-than-full",
+      "owned_full_result": [
+        10,
+        11
+      ],
+      "owned_prefix_result": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "empty_assistant_content": false,
+      "expected_fields": {
+        "offset": 5,
+        "full_length": 2,
+        "prefix_equal": false,
+        "offset_within_full": false,
+        "raw_target_interval_length": 0
+      }
+    },
+    {
+      "id": "empty-assistant-content",
+      "owned_full_result": [
+        10,
+        11
+      ],
+      "owned_prefix_result": [
+        10,
+        11
+      ],
+      "empty_assistant_content": true,
+      "expected_fields": {
+        "offset": 2,
+        "full_length": 2,
+        "prefix_equal": true,
+        "offset_within_full": true,
+        "raw_target_interval_length": 0
+      }
+    }
+  ],
+  "selected_upstream_source_allowed": "ChatDataset class only in same restricted annotation/stdlib namespace as reviewed adapterprotocol.",
+  "real_tokenizer_or_template_or_MLX_execution_allowed": false,
+  "metadata_files": [
+    "training-primary-sources-v1/community-3b--config.json",
+    "training-primary-sources-v1/community-3b--tokenizer_config.json"
+  ],
+  "metadata_only_template_execution_status": {
+    "jinja2_discoverable": false,
+    "markupsafe_discoverable": false,
+    "render_not_attempted": "Required templating modules absent; no installation or handwritten substitute renderer. Continue static metadata and owned interface observations."
+  },
+  "optimizer_steps": 0,
+  "frozen305_modified": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "launch_allowed": false,
+  "readiness": "NO-GO_UNCHANGED",
+  "limits": "Raw interval lengths here are owned source-adapter arithmetic before any trainer shift/padding/loss;not actual supervised-token counts. Metadata token IDs alone do not establish a compatible trainable checkpoint/tokenizer or complete BPE vocabulary."
+}

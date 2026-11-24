@@ -1,0 +1,115 @@
+{
+  "at": "2026-11-20T22:52:42.958328+00:00",
+  "status": "ISOLATED_ERROR_DELIVERY_METHOD_CANDIDATE_OBSERVED_NOT_APPLIED",
+  "current_source_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+  "current_source_version": "0.1.5",
+  "change": "Add subprocess.SubprocessError to the outer cached-request refusal handler. Research subclass only; no version bump or production file change.",
+  "native_baselines": "Both implementations FOUND then DUPLICATE through existing native Go parser; after each fault series valid cached duplicate still succeeds.",
+  "rows": [
+    {
+      "implementation": "current",
+      "fault": "TimeoutExpired",
+      "observed": {
+        "status": null,
+        "raised": "TimeoutExpired",
+        "quote_exposed": false
+      },
+      "journal_bytes_unchanged": true,
+      "lock_released": true
+    },
+    {
+      "implementation": "current",
+      "fault": "CalledProcessError",
+      "observed": {
+        "status": null,
+        "raised": "CalledProcessError",
+        "quote_exposed": false
+      },
+      "journal_bytes_unchanged": true,
+      "lock_released": true
+    },
+    {
+      "implementation": "candidate",
+      "fault": "TimeoutExpired",
+      "observed": {
+        "status": "REFUSED",
+        "raised": null,
+        "quote_exposed": false
+      },
+      "journal_bytes_unchanged": true,
+      "lock_released": true
+    },
+    {
+      "implementation": "candidate",
+      "fault": "CalledProcessError",
+      "observed": {
+        "status": "REFUSED",
+        "raised": null,
+        "quote_exposed": false
+      },
+      "journal_bytes_unchanged": true,
+      "lock_released": true
+    }
+  ],
+  "scope": "Two injected exception types on the same one owned callable; four observations are not independent accuracy cases. No actual process timeout, hung child, parser outage or source execution.",
+  "candidate_semantics": "REFUSED with no quote and no journal rewrite/retry; adopting this status versus another operational status requires explicit API review.",
+  "owned_root": "/private/tmp/el-helper-timeout-delivery-candidate-v1",
+  "files": [
+    {
+      "path": "candidate/journal/cached.receipt.json",
+      "bytes": 922,
+      "sha256": "af37f2504ee15238168c55e6b8be3849caa7d0cd594a2797587bb3816433126f"
+    },
+    {
+      "path": "candidate/journal/cached.request.json",
+      "bytes": 230,
+      "sha256": "d5a067df8ef94f9b74662deab283bb48333336fe159324ae4f03d4d2b8bb45e8"
+    },
+    {
+      "path": "candidate/journal/cached.result.json",
+      "bytes": 1966,
+      "sha256": "21dbed5e73d1e3737d00124b7fe199b5f3c7fa3606be7b5bb8c0bad20216b143"
+    },
+    {
+      "path": "candidate/source/owned.go",
+      "bytes": 48,
+      "sha256": "20bc83325591106d6562b85a2f690a49cf89d887a117f6db7fa32b032047046e"
+    },
+    {
+      "path": "candidate-method.py",
+      "bytes": 8136,
+      "sha256": "e2970510296cabe63e7e17ea34c4a66f02626600acfbc9f2dfdd04432f0e739b"
+    },
+    {
+      "path": "current/journal/cached.receipt.json",
+      "bytes": 922,
+      "sha256": "ebe113ab9bda4e843ec78b70682232342444d0390ed83a0b81d476a770be6091"
+    },
+    {
+      "path": "current/journal/cached.request.json",
+      "bytes": 230,
+      "sha256": "d5a067df8ef94f9b74662deab283bb48333336fe159324ae4f03d4d2b8bb45e8"
+    },
+    {
+      "path": "current/journal/cached.result.json",
+      "bytes": 1966,
+      "sha256": "01a70275a27028b23d45357bfd2a0034ab6c08cd3f99e0d71979eb8a339f9282"
+    },
+    {
+      "path": "current/source/owned.go",
+      "bytes": 48,
+      "sha256": "20bc83325591106d6562b85a2f690a49cf89d887a117f6db7fa32b032047046e"
+    },
+    {
+      "path": "original-method.py",
+      "bytes": 8108,
+      "sha256": "38accde887e537b24a2b1dd2d3a086345793a4676cb6ab653f9e69d8148b99dd"
+    }
+  ],
+  "production_changed": false,
+  "permanent_tests_changed": false,
+  "model_calls": 0,
+  "optimizer_steps": 0,
+  "owner_gold": 0,
+  "training_excluded": true
+}

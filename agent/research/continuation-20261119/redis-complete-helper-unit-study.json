@@ -1,0 +1,95 @@
+{
+  "at": "2026-11-19T21:10:16.204225+00:00",
+  "status": "EXISTING_COMPLETE_UNIT_SELECTION_EXECUTED_NEURAL_RESPONSE_REJECTED",
+  "protocol": ".local-backups/continuation-20261119/redis-helper-complete-units-v1/protocol.json",
+  "protocol_sha256": "06543fe99b86e7fa1cee6d9ed204988b2b7ed21d8b231a72eccfa470212b9f99",
+  "review": {
+    "at": "2026-11-19T21:10:16.204225+00:00",
+    "id": "redis-active-expiry-complete-helper-units",
+    "status": "REJECTED_CRITICAL_HELPER_OWNERSHIP_PROPAGATION_AND_BRANCH_ERRORS",
+    "response_sha256": "f137094cab0a504eb5340018e74c33244d97239e6b0ca47b6d5506b9bd1b6699",
+    "writer_exit": 1,
+    "writer_error": "prose omits its selected declaration or method name",
+    "critical": [
+      "Claims DEL propagation to other nodes in the cluster; selected bodies only call propagation helpers and do not supply their implementations or cluster semantics. Concrete DEL is not established by a caller comment.",
+      "S2 labels server.stat_expiredkeys_active as behavior although that field is incremented by caller S1; S2 increments expired versus evicted counters by notify_type.",
+      "S3 claims server.stat_evictedkeys is incremented although wrapper supplies NOTIFY_EXPIRED and its selected body contains only the delegated call.",
+      "EN names statistics while corresponding PT descriptions omit exact identifiers and do not preserve ownership; generic translation is not a source-equivalent technical label."
+    ],
+    "omitted": [
+      "Exact now < kvobjGetExpire(kv) early0/equality/final1 contract",
+      "NULL wrapper argument and conditional key_mem_freed behavior",
+      "Static-key copy/refcount branch",
+      "Expire-versus-evict lazy_flag/del_flag/latency/event selection",
+      "Execution-unit and reference-count ordering, unchecked dbGenericDelete result and helper/runtime uncertainty"
+    ],
+    "correct": [
+      "All three selected evidence IDs are cited",
+      "S1 high-level expiry condition is no longer phrased as if-not-expired, unlike caller-only baseline; exact predicate still absent",
+      "S3 names wrapper and delegated helper plus NOTIFY_EXPIRED in both languages"
+    ],
+    "within_paragraph_repetition": "Last fact repeats the same stat_evictedkeys assertion twice; not counted as an exact duplicate bilingual fact pair under existing matrix definition.",
+    "whole_response_approved": false,
+    "source_program_executed": false,
+    "training_gold": false,
+    "owner_approved": false
+  },
+  "review_path": ".local-backups/continuation-20261119/redis-helper-complete-units-v1/review.json",
+  "review_sha256": "2b1a5a58f7616bed245b7735d303777db8b9db81d5fea18434e417c6da2e265e",
+  "source_identity": {
+    "repository": "redis",
+    "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+    "source_hashes": {
+      "src/expire.c": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "src/db.c": "532b26e404da61bdbec2b40ff31e55048bb2693d7cee697a7d95f6fef482035c"
+    }
+  },
+  "complete_source_units": [
+    {
+      "source": "src/expire.c",
+      "selector": "activeExpireCycleTryExpire",
+      "first_line": 40,
+      "last_line": 54,
+      "bytes": 463,
+      "quote_sha256": "8600456fd92d595d80dd63861b377a7f293e2109ef3130986572af9f93d107ad"
+    },
+    {
+      "source": "src/db.c",
+      "selector": "deleteKeyAndPropagate",
+      "first_line": 2980,
+      "last_line": 3028,
+      "bytes": 2357,
+      "quote_sha256": "41e9694056864fe97a9aa83c22e21f2d781e809ba06c81e50e8ec4c14c8b0826"
+    },
+    {
+      "source": "src/db.c",
+      "selector": "deleteExpiredKeyAndPropagate",
+      "first_line": 3031,
+      "last_line": 3033,
+      "bytes": 126,
+      "quote_sha256": "86fc53aa233b44ee2b6c2175e67565f9a350c21cd872d4cc1b43bbc705975141"
+    }
+  ],
+  "selected_source_bytes": 2946,
+  "selected_ids": [
+    "S1",
+    "S2",
+    "S3"
+  ],
+  "all_ids_cited": true,
+  "actual_completed_model_calls": 1,
+  "original_refused_range_arm_remains_preserved": true,
+  "comparison": "Exploratory: model/source question/settings retained but selected-unit metadata and terminal blank differ from caller range baseline. Cannot isolate a causal helper effect. No whole response acceptable.",
+  "bounds": "Existing1900byte explicit-range and6144byte complete-unit limits unchanged; all helper source/comments retained",
+  "model_response_repaired_or_retried": false,
+  "production_code_changed_by_study": false,
+  "new_tool_routing": false,
+  "new_resolver": false,
+  "new_MCP_server_or_harness": false,
+  "independent_transfer_or_holdout": false,
+  "training_runs": 0,
+  "gold_rows": 0,
+  "publication": false,
+  "resource_observation": "redis-helper-complete-units-v1/runtime-stats.jsonl",
+  "private_artifacts": "private-research://continuation-20261119/redis-helper-complete-units-v1/"
+}

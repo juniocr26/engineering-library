@@ -1,0 +1,39 @@
+{
+  "repository": "prometheus",
+  "revision": "b2a602494b65bda38316eabaef7e0d834a6814dd",
+  "source_sha256": "dfd42ba66fe546c3912a3d81caac2d9eb7bee7dc7b98b0932837d94aa86a5870",
+  "source_path": "model/labels/labels_common.go",
+  "producer": {
+    "source_sha256": "268854ae6c20ed4b1c84d8f3d35e6bc5b27fa10f1d702150337549bb09519538",
+    "binary_sha256": "5769fe5e8d97dfc18ba861d4d88b9c87642ac6b9d757f91d5542f3e1f54e4124",
+    "manifest_sha256": "87c57cccd4503255805ddddf60ab212a5080cced06d2b4981308573aa48d9c8e",
+    "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+    "version": "1.4.0"
+  },
+  "units": [
+    {
+      "selector": "Builder.Set",
+      "declaration_kind": "method",
+      "symbol": "labels.Builder.Set",
+      "start_line": 188,
+      "end_line": 202,
+      "quote": "func (b *Builder) Set(n, v string) *Builder {\n\tif v == \"\" {\n\t\t// Empty labels are the same as missing labels.\n\t\treturn b.Del(n)\n\t}\n\tfor i, a := range b.add {\n\t\tif a.Name == n {\n\t\t\tb.add[i].Value = v\n\t\t\treturn b\n\t\t}\n\t}\n\tb.add = append(b.add, Label{Name: n, Value: v})\n\n\treturn b\n}",
+      "declaration": "func (b *Builder) Set(n, v string) *Builder",
+      "function_type": "func(n, v string) *Builder",
+      "receiver_type": "*Builder"
+    },
+    {
+      "selector": "Builder.Del",
+      "declaration_kind": "method",
+      "symbol": "labels.Builder.Del",
+      "start_line": 164,
+      "end_line": 174,
+      "quote": "func (b *Builder) Del(ns ...string) *Builder {\n\tfor _, n := range ns {\n\t\tfor i, a := range b.add {\n\t\t\tif a.Name == n {\n\t\t\t\tb.add = append(b.add[:i], b.add[i+1:]...)\n\t\t\t}\n\t\t}\n\t\tb.del = append(b.del, n)\n\t}\n\treturn b\n}",
+      "declaration": "func (b *Builder) Del(ns ...string) *Builder",
+      "function_type": "func(ns ...string) *Builder",
+      "receiver_type": "*Builder"
+    }
+  ],
+  "syntax_only": true,
+  "source_executed": false
+}

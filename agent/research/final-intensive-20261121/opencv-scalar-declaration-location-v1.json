@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-22T05:52:29.441397+00:00",
+  "command": [
+    "git",
+    "--no-optional-locks",
+    "-C",
+    "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/opencv",
+    "grep",
+    "-n",
+    "-e",
+    "isScalarLikeMat",
+    "-e",
+    "isScalarArg",
+    "5d0660acfed08650cafec4876b4792a369a20601",
+    "--",
+    "modules/core/src",
+    "modules/core/include"
+  ],
+  "exit_code": 0,
+  "stdout": "5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:640:                  (src1.empty() && isScalarArg(src2, src1.channels())) ||\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:641:                  (src2.empty() && isScalarArg(src1, src2.channels())));\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:663:    bool s1 = isScalarArg(src1, src2), s2 = isScalarArg(src2, src1);\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:667:    // A 4x1 CV_64F Mat/UMat pseudo-scalar (see isScalarArg) is hijacked only against a REAL array:\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:670:    else if (s1 && src1.kind() != _InputArray::MATX && isScalarLikeMat(src2, cn1))\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:672:    else if (s2 && src2.kind() != _InputArray::MATX && isScalarLikeMat(src1, cn2))\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:676:    // CV_64F column, a 1xcn/cnx1 vector - see isScalarLikeMat). Those normally ride broadcasting\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/arithm.cpp:683:        bool like1 = isScalarLikeMat(src1, cn2), like2 = isScalarLikeMat(src2, cn1);\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/precomp.hpp:348:// (but see isScalarLikeMat below for the shape-incompatible compat fallback).\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/precomp.hpp:351:inline bool isScalarArg(const _InputArray& sc, const _InputArray& arr)\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/precomp.hpp:391:// or a 1xcn/cnx1 vector (the 4x1 CV_64F column is handled unconditionally by isScalarArg above).\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/precomp.hpp:395:inline bool isScalarLikeMat(const _InputArray& sc, int cn)\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/precomp.hpp:397:    // direct field reads, like isScalarArg: this probe also runs per engine call (see arithm_op's\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/precomp.hpp:477:// Extract a scalar operand's values (see isScalarArg) as up to 4 doubles, straight from its\n5d0660acfed08650cafec4876b4792a369a20601:modules/core/src/precomp.hpp:484:    CV_Assert(n <= 4);                   // Scalar holds 4 slots; isScalarArg admits more only for MATX\n",
+  "stderr": "",
+  "read_only": true
+}

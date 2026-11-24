@@ -1,0 +1,105 @@
+{
+  "at": "2026-11-21T10:10:08.457479+00:00",
+  "hypothesis": "H88",
+  "protocol": "zod-public-safeparse-context-protocol-v1.json",
+  "revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+  "status": "SELECTED_SOURCE_LINKAGE_REVIEWED_NOT_RUNTIME",
+  "source_files": 18,
+  "manual_source_spans": 27,
+  "findings": [
+    {
+      "claim": "Package root export distinguishes @zod/source src/index.ts from import index.js/require index.cjs. Source entry reexports classicexternal; sourcev4/classic entry also reexports external, which reexports classicparse/schemas/errors and core namespace.",
+      "cards": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z07"
+      ],
+      "limit": "Compiled rootindex.js/index.cjs absent inselectedGit tree bycat-file observation,notproofmissinginstalledpackage. No resolver/build/bundle/runtimeparity verified."
+    },
+    {
+      "claim": "classic safeParse/safeParseAsync factories call core._safeParse/core._safeParseAsync with classic ZodRealError. Core module exports its own factories with errors.$ZodRealError. Same core algorithm binding does not justify conflating named error-constructor bindings.",
+      "cards": [
+        "Z08",
+        "Z21",
+        "Z22",
+        "Z23"
+      ]
+    },
+    {
+      "claim": "Classic ZodType member table routes safeParse(this,data,params) through classicparse; async method routes corresponding async wrapper. spa is a live getter reading this?.safeParseAsync with a setter that can shadow spa,not immutable alias underallmutations.",
+      "cards": [
+        "Z10",
+        "Z11"
+      ]
+    },
+    {
+      "claim": "Selected string factory passes ZodString into core._string; core invokes supplied class; selected initializer composes core.$ZodString,_ZodString and ZodType init. This supplies one concrete source path,notall schema types.",
+      "cards": [
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15"
+      ]
+    },
+    {
+      "claim": "$constructor init installs traitmembers perselectedprototype. members copies getter descriptors but method values use defineBound; ordinary receiver reads bind the function and cache own property. Bare/nullish getter read returns rawfunction.",
+      "cards": [
+        "Z16",
+        "Z19",
+        "Z20"
+      ],
+      "limit": "Descriptorinstallation/bind/own canfailorbeoverridden;no arbitraryreceiver/frozenobject/globaldetachmentguarantee."
+    },
+    {
+      "claim": "ZodType init can set default locale through globalconfig; constructorpostProcessor hook runs after init/deferred. Parent Error path calls newError,whichcanadjuststackTraceLimit. No globalpurity/no-side-effect/performanceclaim.",
+      "cards": [
+        "Z09",
+        "Z10",
+        "Z17",
+        "Z18"
+      ]
+    },
+    {
+      "claim": "Classic ZodRealError configures Parent:Error and initializer delegates core.$ZodError.init then sets name. Core$ZodRealError also has Parent:Error; $constructor Symbol.hasInstance includes parent/trait checks,not a nominal exact-constructor identity test.",
+      "cards": [
+        "Z17",
+        "Z21",
+        "Z22"
+      ],
+      "limit": "No actualinstance/prototype/stack or exceptionbehavior executed."
+    },
+    {
+      "claim": "Core synchronous factory retains Promiseguardthrow and lazy failuregetter/setter,asyncfactory awaits underselectedguard. Classic public forwarding doesnotcreateuniversal no-throw or guaranteed-success semantics.",
+      "cards": [
+        "Z08",
+        "Z11",
+        "Z23"
+      ]
+    },
+    {
+      "claim": "Written tests assert detached parse-family use, spyOn/restoration,spa identity,baregetterread and lazy error construction; these statements were read,notexecuted.",
+      "cards": [
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27"
+      ]
+    }
+  ],
+  "preservation": "Existing core-only Zodchapter remains valid underitsoldscope; do notsilentlyupgradetoallpublicpaths. Newlinkagereviewseparatefromneural/wholechapter/lifecyclepopulation.",
+  "remaining_limits": [
+    "No package installation/import/build/typecheck/upstreamtests;no actualparse",
+    "core._string normalization/snapshotChecks/helpercontracts notfullyexpanded;custom postProcessor canchangeinstances",
+    "Notall schema constructors,v3/mini/compileentrypointor arbitraryexternalconfig paths covered",
+    "No generic semantic verifier,independent ownerapproval,trainingrightsorGold"
+  ],
+  "owner_approved": false,
+  "gold": false,
+  "training_eligible": false,
+  "neural_calls": 0,
+  "external_changes": 0
+}

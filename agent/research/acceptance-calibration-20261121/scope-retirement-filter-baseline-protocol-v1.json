@@ -1,0 +1,162 @@
+{
+  "at": "2026-11-21T19:22:31.151500+00:00",
+  "before_observations": true,
+  "cases": [
+    {
+      "id": "class-name-overwrites-registry",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/class-name-overwrites-registry/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/class-name-overwrites-registry/selected-planner-input.json",
+      "packet_sha256": "f7d2c484a0ffb32095ab0bb4c8813498c1d629fae71b0f83095008bdf3e4f297",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Class declaration rebinds module registry name despite no ast.NameStore on its declared name.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 134,
+          "sha256": "2a1fe8aedd9f45f9aaf0fb240fce37b7690173962b8536a0be7a4645fcc00053"
+        }
+      ]
+    },
+    {
+      "id": "tuple-overwrites-registry",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/tuple-overwrites-registry/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/tuple-overwrites-registry/selected-planner-input.json",
+      "packet_sha256": "b26c83d4e1cc446888eea12f7166e3773ac9742c5d21863ae6fa74b01b90c4ed",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Destructuring module assignment overwrites positive registry.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 137,
+          "sha256": "8d4297927f03707f8a09ead77a52149f7c3194c5fde9fbd8549618eea8228eed"
+        }
+      ]
+    },
+    {
+      "id": "namespace-replaces-registry",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/namespace-replaces-registry/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/namespace-replaces-registry/selected-planner-input.json",
+      "packet_sha256": "4dfbeda9e1091097e4612ca5fb050d5097d273c7fa410b53c108e733e580e067",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Function namespace write replaces registry without lexical registry NameLoad/Store.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 168,
+          "sha256": "ef4e5d5df8cd5739e2100544eaef6544cde0a02b3b50b1c635082abad498afbd"
+        }
+      ]
+    },
+    {
+      "id": "namespace-deletes-entry",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/namespace-deletes-entry/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/namespace-deletes-entry/selected-planner-input.json",
+      "packet_sha256": "cfc37a40002c9bc902e824b2e35025e97f10d2a2f032d55306a0b2f37273c7db",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Namespace item deletion removes selected retirement entry.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 188,
+          "sha256": "404b807b51839145ca55e65d6b5f953ff6b90af201b0b3d2e99cb40e8151beb5"
+        }
+      ]
+    },
+    {
+      "id": "annotation-only-retains-value",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/annotation-only-retains-value/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/annotation-only-retains-value/selected-planner-input.json",
+      "packet_sha256": "7881070b71dcd6efd09358262befe3833bc6456ba804abc2848e251040d6f045",
+      "reference_action": "REMOVE",
+      "reference_reason": "Value-less simple module annotation does not replace existing registry value; broad occurrence census may conservatively refuse.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 124,
+          "sha256": "ba094ab3d3a4e8778014a76d0b79b0e758935ba7537133657029f8d497b797c0"
+        }
+      ]
+    },
+    {
+      "id": "unused-helper-readonly",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/unused-helper-readonly/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/unused-helper-readonly/selected-planner-input.json",
+      "packet_sha256": "c244c7ee8ca5eaeb947ccc4890a4c846ac6b8bb50a43504a503627762f4fdf53",
+      "reference_action": "REMOVE",
+      "reference_reason": "Unused helper reads but never mutates registry in this complete owned source snapshot.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 143,
+          "sha256": "1b2fb0af2442fd2a92a129e8715a9bb3868e9fdf2ce37d749e918e9b49606b1f"
+        }
+      ]
+    },
+    {
+      "id": "unrelated-class-globals-attribute",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/unrelated-class-globals-attribute/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/unrelated-class-globals-attribute/selected-planner-input.json",
+      "packet_sha256": "845d187b294e184cc1da925cc1c29dc9ec60c18e101d27b9dbec61bb92c4ba55",
+      "reference_action": "REMOVE",
+      "reference_reason": "Attribute is ordinary class-owned dictionary; no function module namespace mutation. Conservative attribute filter may refuse.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 166,
+          "sha256": "c84c74d784bb7efce9df9be9cf3e6b4236ecccd48c58d988c080ff629aa6c313"
+        }
+      ]
+    },
+    {
+      "id": "plain-with-local-unrelated",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/plain-with-local-unrelated/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-retirement-filter-v7/plain-with-local-unrelated/selected-planner-input.json",
+      "packet_sha256": "10a2bd20bcb5686bc0725373b774eda2213e993c2eb9de8140af17f3e90b8a93",
+      "reference_action": "REMOVE",
+      "reference_reason": "Unique module registry and unrelated local assignment; retirement evidence remains source-only admitted.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 139,
+          "sha256": "03d6c4c780d71b78992c4bdfb7b5f4e03d99b225865c5d54e20f8d727eea1536"
+        }
+      ]
+    }
+  ],
+  "frozen_observers": [
+    {
+      "path": "run_scope_acquisition_v1.py",
+      "sha256": "abebf5dd88282069fd3287959212766fe2e1e60b5c1df7a9ba0cdbf44a1f74e2"
+    },
+    {
+      "path": "compare_scope_binding_owners_v2.py",
+      "sha256": "63f25b90f999de6d37966da2062f3ecc86fddd41a8069b0197cd28635195b89a"
+    },
+    {
+      "path": "observe_scope_continuity_utility_v3.py",
+      "sha256": "c5f79057cfd806785f4a91807a28cd71f6591b224f20212d7ff6728dc6262b0d"
+    },
+    {
+      "path": "observe_scope_binding_census_v4.py",
+      "sha256": "97977469d750155285a169cc40c7a5ba228e0c4a7878b8eb83c3295349cb5a7f"
+    },
+    {
+      "path": "observe_scope_registry_profile_v5.py",
+      "sha256": "db4517a6864d80b0b16d59d1bfe7d6a452037a60065390ac35ab05acce27df7c"
+    },
+    {
+      "path": "observe_scope_namespace_filter_v6.py",
+      "sha256": "9f93c5fa67176f06ab4dcf64a1e6e93161a78c0f41ea0b9e8adbda0656a0b094"
+    }
+  ],
+  "reference_source": "scope-retirement-filter-protocol-v7.json",
+  "reference_sha256": "f738d8eb7db64474cb11dc53366a4d103b3165a6dc23990b6c5e4598dc6e51f5"
+}

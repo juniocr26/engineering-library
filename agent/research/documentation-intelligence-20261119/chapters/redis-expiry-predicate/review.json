@@ -1,0 +1,93 @@
+{
+  "at": "2026-11-20T00:54:13.866529+00:00",
+  "chapter_id": "redis-expiry-predicate",
+  "source_repository": "redis",
+  "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "client-first",
+      "path": "src/expire.c",
+      "lines": [
+        668,
+        675
+      ],
+      "review": "Current client and CLIENT_MASTER flag ->early0 before time helper; no server-master-mode substitution."
+    },
+    {
+      "id": "comparison",
+      "path": "src/expire.c",
+      "lines": [
+        676,
+        677
+      ],
+      "review": "<= includes equality, then short-circuit !loading and!masterhost; C logical result0/1."
+    },
+    {
+      "id": "predicate-not-mutation",
+      "path": "src/expire.c",
+      "lines": [
+        668,
+        677
+      ],
+      "review": "No key insertion/deletion/propagation/wait operation written in this predicate."
+    },
+    {
+      "id": "mutating-caller",
+      "path": "src/expire.c",
+      "lines": [
+        823,
+        858
+      ],
+      "review": "Actual caller uses true branch for dbGenericDelete/dirty/commandrewrite/notifications/reply, else setExpire/rewrite/notifications. These operations are outside predicate."
+    },
+    {
+      "id": "clock-helper",
+      "path": "src/server.c",
+      "lines": [
+        263,
+        278
+      ],
+      "review": "Returns stored server.cmd_time_snapshot, not fresh wall-clock call; field declared millisecond type. Update/concurrency guarantees not proven."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "1e41b190ada9b377145a37cd28d8cde6b0b2be777918031d59c1b6000661ba9f",
+      "after_sha256": "68f50a715fbc985f40092ffeaeeddfa08607efdbb5fe0bc8f99cd87c3b49663c",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -10,9 +10,9 @@\n \n ## Evaluation order and helper uncertainty\n \n-Logical conjunction short-circuits. Once this second statement is reached, the time comparison is evaluated first. A false comparison skips both later operands; a false loading-state operand skips the final operand. The supplied function calls `commandTimeSnapshot()` without showing its implementation. The chapter consequently preserves the exact helper call rather than promising a particular clock, unit, caching policy, thread behavior or wall-clock freshness. Those properties would require additional source or runtime evidence. This restriction does not prevent us from describing the explicit comparison and branch order.\n+Logical conjunction short-circuits. Once this second statement is reached, the time comparison is evaluated first. A false comparison skips both later operands; a false loading-state operand skips the final operand. The original supplied function called `commandTimeSnapshot()` without showing its implementation; this campaign adds that helper separately below. From that original excerpt alone, no clock implementation, unit, caching policy, thread behavior or wall-clock freshness was established. The added helper below identifies a stored snapshot and its documented millisecond type; update timing and runtime clock guarantees still require separate evidence. The explicit comparison and branch order remain directly inspectable.\n \n-The return type is an integer, while the final logical expression supplies a truth value under C's expression rules. The early integer `0` and the false final expression both produce a false result, but they arise from different control paths. The former avoids the time-helper call altogether. A source-grounded explanation should preserve this difference when discussing evaluation, instrumentation or a future controlled test. No claim is made here about callers' interpretation beyond what this function itself returns.\n+The return type is an integer, while the final logical expression supplies a truth value under C's expression rules. The early integer `0` and the false final expression both produce a false result, but they arise from different control paths. The former avoids the time-helper call altogether. A source-grounded explanation should preserve this difference when discussing evaluation, instrumentation or a future controlled test. The original selected predicate did not establish caller behavior; the additional caller excerpt below now separates its mutation branches from the predicate result.\n \n ## Comment rationale and actual operations\n \n@@ -21,3 +21,22 @@\n ## Comparison and review status\n \n The baseline broadly recognized an expiry check but omitted the current-client early return and blurred server roles. It also dropped the exact comparison and final state guard while presenting comment rationale as behavior. This correction restores those conditions without claiming that the local model learned them. Both language versions preserve the same technical expressions and boundaries. Exact source hashes, physical citation lines, original response, historical caller identity and review findings remain available in the accompanying artifacts; these integrity checks support review but do not substitute for owner approval.\n+\n+## Engineer FAQ and actual caller responsibility\n+\n+<!-- reading-section: faq:predicate-versus-key-deletion -->\n+### Does the predicate itself delete an already-expired key?\n+\n+Its body returns a decision. The separately inspected caller tests that decision, then invokes `dbGenericDelete` on the true branch, updates dirty state, rewrites the client command and issues notifications and a reply. The false branch invokes `setExpire` and its own update/notification sequence. Those are caller operations, not hidden operations performed by the predicate.\n+\n+<!-- reading-section: faq:inclusive-expiry-boundary -->\n+### Is an equal timestamp considered past the boundary?\n+\n+The written comparison includes equality, but only after the current-client early-return guard has not fired. The loading and masterhost conditions still participate in the final conjunction. Time comparison alone is insufficient.\n+\n+<!-- reading-section: faq:clock-snapshot-value -->\n+### What time value does the inspected getter provide?\n+\n+The additional implementation directly returns `server.cmd_time_snapshot`; its declaration uses the millisecond time type. It does not read a fresh clock in that body. The exact update schedule, all callers, clock reliability and concurrent access remain outside this bounded review.\n+\n+These added source excerpts resolve the named getter and one actual caller without turning comments about replication or AOF loading into operations inside the predicate. No Redis command, server, key mutation or replication workflow was executed.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "24476bc1c586a50a15d8b8cd6357c1427b76c72d7852b1c50bf7f4235bc4677f",
+      "after_sha256": "2b2eeedcf9dc5d372fd6b7bd0aad4075013155f64d5108ba3f647f0b046af6ff",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -10,9 +10,9 @@\n \n ## Ordem de avaliação e incerteza sobre o helper\n \n-A conjunção lógica usa curto-circuito. Ao alcançar a segunda instrução, a comparação temporal é avaliada primeiro. Uma comparação falsa pula os dois operandos posteriores; um operando falso referente ao carregamento pula o último operando. A função fornecida chama `commandTimeSnapshot()` sem mostrar sua implementação. Assim, o capítulo preserva a chamada exata em vez de prometer relógio, unidade, política de cache, comportamento entre threads ou atualização do horário de parede. Essas propriedades exigiriam código adicional ou evidência de execução. Essa restrição não impede descrever a comparação e a ordem de desvios explícitas.\n+A conjunção lógica usa curto-circuito. Ao alcançar a segunda instrução, a comparação temporal é avaliada primeiro. Uma comparação falsa pula os dois operandos posteriores; um operando falso referente ao carregamento pula o último operando. A função fornecida original chamava `commandTimeSnapshot()` sem mostrar sua implementação; esta campanha acrescenta esse helper separadamente abaixo. Aquele trecho original isolado não estabelecia implementação de relógio, unidade, política de cache, comportamento entre threads ou atualização do horário de parede. O helper acrescentado abaixo identifica um snapshot armazenado e seu tipo documentado em milissegundos; momento de atualização e garantias do relógio em execução ainda exigem evidência separada. A comparação e a ordem explícitas dos desvios continuam diretamente inspecionáveis.\n \n-O tipo de retorno é inteiro, enquanto a expressão lógica final fornece um valor de verdade segundo as regras de expressões de C. O inteiro `0` antecipado e a expressão final falsa produzem resultado falso, mas surgem de caminhos de controle diferentes. O primeiro evita completamente a chamada ao helper temporal. Uma explicação sustentada pelo código deve preservar essa diferença ao discutir avaliação, instrumentação ou um teste controlado futuro. Não se afirma aqui como os chamadores interpretam o resultado além do retorno desta própria função.\n+O tipo de retorno é inteiro, enquanto a expressão lógica final fornece um valor de verdade segundo as regras de expressões de C. O inteiro `0` antecipado e a expressão final falsa produzem resultado falso, mas surgem de caminhos de controle diferentes. O primeiro evita completamente a chamada ao helper temporal. Uma explicação sustentada pelo código deve preservar essa diferença ao discutir avaliação, instrumentação ou um teste controlado futuro. O predicado selecionado original não estabelecia o comportamento do chamador; o trecho adicional abaixo agora separa seus ramos de mutação do resultado do predicado.\n \n ## Justificativa do comentário e operações reais\n \n@@ -21,3 +21,22 @@\n ## Comparação e estado da revisão\n \n O baseline reconheceu em termos gerais uma verificação de expiração, mas omitiu o retorno antecipado do cliente atual e confundiu os papéis do servidor. Também perdeu a comparação exata e a guarda final de estado, apresentando a justificativa do comentário como comportamento. Esta correção restaura essas condições sem afirmar que o modelo local as aprendeu. As duas versões preservam as mesmas expressões técnicas e limites. Hashes exatos, linhas físicas das citações, resposta original, identidade histórica do caller e achados da revisão continuam nos artefatos correspondentes; essas verificações de integridade ajudam a revisão, mas não substituem a aprovação do proprietário.\n+\n+## FAQ de engenharia e responsabilidade real do chamador\n+\n+<!-- reading-section: faq:predicate-versus-key-deletion -->\n+### O próprio predicado exclui uma chave já expirada?\n+\n+Seu corpo retorna uma decisão. O chamador inspecionado separadamente testa essa decisão e então invoca `dbGenericDelete` no ramo verdadeiro, atualiza o estado dirty, reescreve o comando do cliente e emite notificações e uma resposta. O ramo falso invoca `setExpire` e sua própria sequência de atualização e notificação. Essas são operações do chamador, não operações ocultas realizadas pelo predicado.\n+\n+<!-- reading-section: faq:inclusive-expiry-boundary -->\n+### Um instante igual é considerado além da fronteira?\n+\n+A comparação escrita inclui igualdade, mas só depois que a guarda de retorno antecipado do cliente atual não disparou. As condições loading e masterhost ainda participam da conjunção final. A comparação temporal isolada é insuficiente.\n+\n+<!-- reading-section: faq:clock-snapshot-value -->\n+### Qual valor temporal o getter inspecionado fornece?\n+\n+A implementação adicional retorna diretamente `server.cmd_time_snapshot`; sua declaração usa o tipo temporal em milissegundos. Não lê um relógio novo nesse corpo. Cronograma exato de atualização, todos os chamadores, confiabilidade do relógio e acesso concorrente permanecem fora desta revisão delimitada.\n+\n+Esses trechos adicionais resolvem o getter nomeado e um chamador real sem transformar comentários sobre replicação ou carregamento de AOF em operações dentro do predicado. Nenhum comando, servidor, mutação de chave ou fluxo de replicação Redis foi executado.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "scope_refinement": "Separate original missing-helper limit from newly supplied getter/type evidence; no stale blanket unknown claim.",
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.324270+00:00",
+    "canonical_question_ids": [
+      "predicate-versus-key-deletion",
+      "inclusive-expiry-boundary",
+      "clock-snapshot-value"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/redis-expiry-predicate",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

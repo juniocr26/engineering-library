@@ -1,0 +1,85 @@
+{
+  "at": "2026-11-20T00:45:13.475434+00:00",
+  "chapter_id": "ruff-target-version",
+  "source_repository": "ruff",
+  "revision": "0222c19dd8e0c9a927f2e47bf3774a108431da25",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "result-domain",
+      "path": "crates/ruff_workspace/src/settings.rs",
+      "lines": [
+        187,
+        195,
+        264,
+        268
+      ],
+      "review": "Rust implementation resolves PythonVersion from per-file helper and stored fallback; no numeric literal/default proven."
+    },
+    {
+      "id": "helper-return",
+      "path": "crates/ruff_linter/src/settings/types.rs",
+      "lines": [
+        975,
+        997
+      ],
+      "review": "is_match explicitly returns Option<PythonVersion>; empty compiled list returns None; otherwise first yielded match is copied."
+    },
+    {
+      "id": "compiled-order",
+      "path": "crates/ruff_linter/src/settings/types.rs",
+      "lines": [
+        770,
+        884
+      ],
+      "review": "Compiler collects provided iterator in vector order; iter_matches walks that vector, basename then absolute then negated-neither branch. Original config-file textual order not established."
+    },
+    {
+      "id": "missing-filename",
+      "path": "crates/ruff_linter/src/settings/types.rs",
+      "lines": [
+        839,
+        843
+      ],
+      "review": "For nonempty compiled list, helper expects a file_name; missing value can panic via expect, not return Result error. No Ruff runtime executed."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "17ea9011c94972fba35c56ee43272356223e4feda49ed7e67a4a964ebe06d3b1",
+      "after_sha256": "5cc31c9bbb136d62da3f73b943b15f194afdb8e44dbf8f44cc8d292952435dbc",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -14,7 +14,7 @@\n \n The body calls `self.per_file_target_version.is_match(path)` and then applies `unwrap_or(self.unresolved_target_version)`. The spelling is important: there is no local conditional returning a Boolean and no numeric version literal in this method. Under the ordinary Option interpretation of the call chain, a supplied matching value is used; absent that value, the stored unresolved target supplies the fallback.\n \n-That describes the visible selection boundary. It does not reveal the helper's matching algorithm. The selected packet does not include the implementation of `is_match`, so it cannot establish glob precedence, first-versus-last match behavior, path normalization, filesystem access or how overlapping rules are reconciled. A method name suggesting a match is not enough to fill those gaps with an invented algorithm.\n+That describes the visible selection boundary. It does not reveal the helper's matching algorithm. The original selected packet did not include the implementation of `is_match`, so it did not establish glob precedence, first-versus-last match behavior, path normalization, filesystem access or reconciliation of overlapping rules. The additional source reviewed below establishes a narrower compiled-list selection order. A method name suggesting a match is not enough to fill those gaps with an invented algorithm.\n \n ## Stored settings are not numeric defaults\n \n@@ -28,3 +28,21 @@\n \n The correction reuses the original completed model response and its pinned source; it does not rerun a rejected prompt. The whole baseline remains unapproved despite its useful subclaims. Exact source hashes, license notices and bilingual review records accompany these chapters. Code-span parity checks translation consistency, but cannot by itself prove semantic truth, owner approval, training rights or improvement in the local model.\n \n+## Engineer FAQ with the helper implementation\n+\n+<!-- reading-section: faq:optional-version-not-boolean -->\n+### Is the helper returning a Boolean match?\n+\n+Its added declaration returns `Option<ast::PythonVersion>`. An empty compiled list returns `None`. Otherwise it asks the match iterator for its next value and copies that version. The caller then supplies the stored fallback when the option has no value.\n+\n+<!-- reading-section: faq:first-matching-vector-entry -->\n+### Which matching entry is selected?\n+\n+The inspected iterator walks the compiled vector in order. For each entry it checks basename, then absolute matching, with separate negation behavior. The helper chooses the first value yielded by that iterator. This establishes compiled-vector selection order; it does not establish the textual order or precedence of configuration files that created that vector.\n+\n+<!-- reading-section: faq:file-name-expect-panic -->\n+### Can a method returning PythonVersion still fail?\n+\n+For a nonempty compiled list, the match iterator obtains the path filename with `expect(\"Unable to parse filename\")`. A missing filename can therefore reach a panic rather than a returned Result error. The empty-list shortcut returns before entering that iterator. No numeric fallback or actual formatter execution is established by these source observations.\n+\n+The compiled-list constructor can report invalid glob construction through its own Result contract. That configuration-stage error and the resolver's PythonVersion result belong to different functions. Imported glob implementations, broader path normalization and runtime behavior remain outside this review.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "7670d2e319b4a9bdbc32860dc4bed1d6f00f67880fc7e8253e5c2050e91290b2",
+      "after_sha256": "af65fcd22a8889ba7fc34a165660855dac2f6f40b24b0b5036a37af90b973867",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -14,7 +14,7 @@\n \n O corpo chama `self.per_file_target_version.is_match(path)` e então aplica `unwrap_or(self.unresolved_target_version)`. A grafia importa: não há condicional local retornando um booleano nem literal numérico de versão neste método. Sob a interpretação comum de Option na cadeia de chamadas, um valor correspondente fornecido é usado; na ausência desse valor, o alvo não resolvido armazenado fornece o fallback.\n \n-Isso descreve o limite de seleção visível. Não revela o algoritmo de correspondência do helper. O pacote selecionado não inclui a implementação de `is_match`, portanto não estabelece precedência de globs, escolha da primeira ou última correspondência, normalização de caminhos, acesso ao sistema de arquivos ou reconciliação de regras sobrepostas. Um nome de método que sugere correspondência não basta para preencher essas lacunas com um algoritmo inventado.\n+Isso descreve o limite de seleção visível. Não revela o algoritmo de correspondência do helper. O pacote selecionado original não incluía a implementação de `is_match`, portanto não estabelecia precedência de globs, escolha da primeira ou última correspondência, normalização de caminhos, acesso ao sistema de arquivos ou reconciliação de regras sobrepostas. A fonte adicional revisada abaixo estabelece uma ordem de seleção mais restrita na lista compilada. Um nome de método que sugere correspondência não basta para preencher essas lacunas com um algoritmo inventado.\n \n ## Configurações armazenadas não são padrões numéricos\n \n@@ -28,3 +28,21 @@\n \n A correção reutiliza a resposta original concluída do modelo e sua fonte fixada; não repete um prompt rejeitado. O baseline inteiro continua sem aprovação apesar de suas subafirmações úteis. Hashes exatos da fonte, avisos de licença e registros de revisão bilíngue acompanham estes capítulos. Paridade de trechos de código verifica consistência da tradução, mas não prova sozinha verdade semântica, aprovação do proprietário, direitos de treinamento ou melhora do modelo local.\n \n+## FAQ de engenharia com a implementação do helper\n+\n+<!-- reading-section: faq:optional-version-not-boolean -->\n+### O helper retorna uma correspondência booleana?\n+\n+Sua declaração acrescentada retorna `Option<ast::PythonVersion>`. Uma lista compilada vazia retorna `None`. Caso contrário, pede o próximo valor ao iterador de correspondências e copia essa versão. O chamador então fornece o fallback armazenado quando a opção não possui valor.\n+\n+<!-- reading-section: faq:first-matching-vector-entry -->\n+### Qual entrada correspondente é selecionada?\n+\n+O iterador inspecionado percorre o vetor compilado em ordem. Para cada entrada, verifica basename e depois correspondência absoluta, com comportamento separado de negação. O helper escolhe o primeiro valor emitido por esse iterador. Isso estabelece a ordem de seleção no vetor compilado; não estabelece a ordem textual ou precedência dos arquivos de configuração que criaram esse vetor.\n+\n+<!-- reading-section: faq:file-name-expect-panic -->\n+### Um método que retorna PythonVersion ainda pode falhar?\n+\n+Para uma lista compilada não vazia, o iterador de correspondências obtém o nome de arquivo do caminho com `expect(\"Unable to parse filename\")`. A ausência desse nome pode, portanto, alcançar panic em vez de um erro Result retornado. O atalho de lista vazia retorna antes de entrar nesse iterador. Essas observações da fonte não estabelecem fallback numérico ou execução real do formatador.\n+\n+O construtor da lista compilada pode relatar construção inválida de glob por seu próprio contrato Result. Esse erro na etapa de configuração e o resultado PythonVersion do resolvedor pertencem a funções distintas. Implementações importadas de glob, normalização mais ampla de caminhos e comportamento em execução permanecem fora desta revisão.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.328591+00:00",
+    "canonical_question_ids": [
+      "optional-version-not-boolean",
+      "first-matching-vector-entry",
+      "file-name-expect-panic"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/ruff-target-version",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

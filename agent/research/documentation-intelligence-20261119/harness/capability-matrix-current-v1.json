@@ -1,0 +1,618 @@
+{
+  "at": "2026-11-20T10:13:30.471249+00:00",
+  "schema": "current-harness-consolidation-over-same19-capability-ids-v1",
+  "status": "DATED_SOURCE_AND_RECEIPT_CONSOLIDATION_PENDING_OWNER_REVIEW",
+  "baseline_matrix": {
+    "path": "agent/research/documentation-intelligence-20261119/harness/capability-matrix.json",
+    "sha256": "72293ef69f3c43e5671acb8780b65d8ea6e65cec324c013ca9701603cfc7eb07",
+    "bytes": 17786
+  },
+  "prior_supplements": [
+    {
+      "path": "agent/research/documentation-intelligence-20261119/harness/current-supplement-v2.json",
+      "sha256": "a9b8dacede573da478da6cb14c8ba55e965b332076e996946a75374e3a3b2b5c",
+      "bytes": 9426
+    },
+    {
+      "path": "agent/research/documentation-intelligence-20261119/harness/current-supplement-v3.json",
+      "sha256": "26f06c6818ae9cf93a3d91107a1e3f2b40ae10fc6de65fea5666416a1b96b837",
+      "bytes": 7766
+    },
+    {
+      "path": "agent/research/documentation-intelligence-20261119/harness/current-supplement-v4.json",
+      "sha256": "1d1dc614a1163a7585cc165ea628cc181549cc319344c258c1828ada3a4e7f58",
+      "bytes": 7041
+    },
+    {
+      "path": "agent/research/documentation-intelligence-20261119/harness/current-supplement-v5.json",
+      "sha256": "4e4c41ca64bcc8e3bad1c9a553b0f4ffff51d0db9171f7a62404f33f2d6cef0b",
+      "bytes": 7432
+    },
+    {
+      "path": "agent/research/documentation-intelligence-20261119/harness/current-supplement-v6.json",
+      "sha256": "8d1eac5622eb3e59917837bb856b4365c7a7d199d29941e2f40df90b9d9bb80d",
+      "bytes": 9234
+    },
+    {
+      "path": "agent/research/documentation-intelligence-20261119/harness/current-supplement-v7.json",
+      "sha256": "508fee83c77107c9da4f70e3892c0582ba96c1c08af176f1f91c37b23432c2f9",
+      "bytes": 9813
+    }
+  ],
+  "capability_count": 19,
+  "updated_findings": 9,
+  "unchanged_findings": 10,
+  "unchanged_findings_with_reviewed_changed_source": 3,
+  "capability_ids_and_statuses_preserved": true,
+  "additional_independent_capabilities": 0,
+  "rows": [
+    {
+      "id": "application-loop",
+      "status": "CONFIRMED",
+      "capability_en": "Application-directed orchestration",
+      "capability_pt_br": "Orquestração dirigida pela aplicação",
+      "finding_en": "Command.process and ProjectCommand.process control selection, cache/inference, validation and owned output. No model-selected planner is inferred.",
+      "finding_pt_br": "Command.process e ProjectCommand.process controlam seleção, cache/inferência, validação e saída própria. Não se infere planejador escolhido pelo modelo.",
+      "evidence": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "backend/lib/documentation/project_command.rb",
+          "sha256": "f134f6333522145079284d3c1e10599de66605984e1a8ad2fd49bcfaab3cbb73",
+          "bytes": 23407,
+          "prior_dated_source_sha256": "f134f6333522145079284d3c1e10599de66605984e1a8ad2fd49bcfaab3cbb73",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "model-identity",
+      "status": "CONFIRMED",
+      "capability_en": "Model identity before/after inference",
+      "capability_pt_br": "Identidade do modelo antes/depois da inferência",
+      "finding_en": "verify_model_identity checks the named model and active skill hashes against tags; call_model verifies complete envelopes.",
+      "finding_pt_br": "verify_model_identity confere modelo e hashes das skills ativas contra tags; call_model confere envelopes completos.",
+      "evidence": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "model-tools",
+      "status": "ABSENT",
+      "capability_en": "Model-selected tool dispatch in ordinary requests",
+      "capability_pt_br": "Despacho de ferramentas pelo modelo nos pedidos comuns",
+      "finding_en": "source_model_request supplies messages/prompt, schema and options, without a tools dispatch loop. Research helper selection is operator-frozen.",
+      "finding_pt_br": "source_model_request fornece mensagens/prompt, schema e opções, sem loop de despacho tools. Seleção de helpers na pesquisa é congelada pelo operador.",
+      "evidence": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "ABSENT",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "research-helper",
+      "status": "CONFIRMED",
+      "capability_en": "Optional helper API executed in research",
+      "capability_pt_br": "API opcional de helpers executada na pesquisa",
+      "finding_en": "HelperRetrieval0.1.3 is an explicit research API with operation-local registry snapshots and checked receipts. Nine actual-source cases yielded six full quotes and three safe refusals. It remains outside ordinary Ruby inference; no model-selected helper loop was demonstrated.",
+      "finding_pt_br": "HelperRetrieval0.1.3 é uma API explícita de pesquisa com snapshots de registro por operação e recibos conferidos. Nove casos de fonte real produziram seis citações completas e três recusas seguras. Continua fora da inferência Ruby comum; nenhum loop de helpers escolhido pelo modelo foi demonstrado.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_retrieval.py",
+          "sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "bytes": 30196
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/helper-new-families-evaluation.json",
+          "sha256": "ed41d59e2a232403f6190c8605da3877be45bf5d81a8d9cc3be992439aa01428",
+          "bytes": 29622
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/typed-input-snapshot-evaluation-v2.json",
+          "sha256": "c308d92f8d35480973b92b397b8819e2585970ae05daac9492be2f941643f73a",
+          "bytes": 27314
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "source-provenance",
+      "status": "CONFIRMED",
+      "capability_en": "Bounded exact source provenance",
+      "capability_pt_br": "Proveniência exata e limitada de fonte",
+      "finding_en": "Physical file hashes, bounded descriptor reads, exact quotes and native producer identities are checked in declared profiles. Raw lifecycle/specification JSON boundaries refuse ambiguity and special files; candidate NO-OP binds the addressed physical body. These receipts are not signatures or general semantic proofs.",
+      "finding_pt_br": "Hashes físicos de arquivos, leituras limitadas por descritor, citações exatas e identidades de produtores nativos são conferidos nos perfis declarados. Fronteiras JSON brutas de ciclo/especificação recusam ambiguidade e arquivos especiais; NO-OP de candidato vincula o corpo físico endereçado. Esses recibos não são assinaturas ou provas semânticas gerais.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_lifecycle.py",
+          "sha256": "980c98f1d87f4c96254cb6a288e06b867811e029c815f38bf972cd96f5b9ebdd",
+          "bytes": 25546
+        },
+        {
+          "path": "agent/tools/documentation_workspace.py",
+          "sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "bytes": 5765
+        },
+        {
+          "path": "agent/tools/documentation_candidates.py",
+          "sha256": "18299e80481ed2ed3ea7bd96c30d9aaa089c4798c51a1a6ad2b110d8f43f6e3f",
+          "bytes": 10496
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/packet-json-boundary-evaluation.json",
+          "sha256": "21159092f52478ac1f6405c8847143534d5d757ac24a542a41e8cd721039abaa",
+          "bytes": 3981
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/noop-document-binding-evaluation-v1.json",
+          "sha256": "26f3f8406b7da4788dcfb50ea20899d206637305240f2c20b3f3f039d5d9598e",
+          "bytes": 2925
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "semantic-resolution",
+      "status": "PARTIAL",
+      "capability_en": "Dependency/binding comprehension",
+      "capability_pt_br": "Compreensão de dependências e vínculos",
+      "finding_en": "Closed Python dependency facts and build-filtered Go binding proofs cover declared subsets. Twelve closed-dependency cases matched development references; canonical lifecycle actions remain22/24 with two safe JavaScript abstentions. General modules/runtime binding resolution remains unsupported, and fact-consuming model responses did not improve.",
+      "finding_pt_br": "Fatos fechados de dependências Python e provas Go filtradas por build cobrem subconjuntos declarados. Doze casos de dependência fechada corresponderam às referências de desenvolvimento; ações canônicas de ciclo permanecem22/24 com duas abstenções JavaScript seguras. Resolução geral de módulos/vínculos de runtime continua sem suporte, e respostas do modelo com fatos não melhoraram.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_python_dependencies.py",
+          "sha256": "b80e0413e89196cfefa058f55174b8bf32f123bd748079ab2964eaf2f48abab5",
+          "bytes": 21014
+        },
+        {
+          "path": "agent/tools/documentation_lifecycle.py",
+          "sha256": "980c98f1d87f4c96254cb6a288e06b867811e029c815f38bf972cd96f5b9ebdd",
+          "bytes": 25546
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/python-closed-dependency-evaluation-v2.json",
+          "sha256": "24740dfda21cefa343ff61e42240263ea94dee2338fcd289bf380b0c63ee7d77",
+          "bytes": 6929
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/lifecycle-current-regression-v4.json",
+          "sha256": "7194465409f0d131cbf37bb28d24a42f7ec382fe22b7cea96521fd7344168ffb",
+          "bytes": 9107
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/bound-proof-representation-evaluation.json",
+          "sha256": "7e80fe49225020c6960162afdc1091402645ee42c939b1d5aa8234a02ebb0d17",
+          "bytes": 8560
+        }
+      ],
+      "prior_status": "PARTIAL",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "skills-loaded",
+      "status": "CONFIRMED",
+      "capability_en": "Three fixed instruction contexts",
+      "capability_pt_br": "Três contextos fixos de instrução",
+      "finding_en": "skill_context reads exactly evidence, authoring and review English context blocks in skills mode; baseline returns empty context.",
+      "finding_pt_br": "skill_context lê exatamente os blocos ingleses evidence, authoring e review no modo skills; baseline retorna contexto vazio.",
+      "evidence": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "agent/skills/evidence/SKILL.md",
+          "sha256": "951ed8be12bc9819a4bbe74161822b1199d14c8146a6eb74396773ca21532022",
+          "bytes": 571,
+          "prior_dated_source_sha256": "951ed8be12bc9819a4bbe74161822b1199d14c8146a6eb74396773ca21532022",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "agent/skills/authoring/SKILL.md",
+          "sha256": "175f1b16e71c55528ea70e07c00fe02718cfadd2affd2772981ee4562ebfbef7",
+          "bytes": 1542,
+          "prior_dated_source_sha256": "175f1b16e71c55528ea70e07c00fe02718cfadd2affd2772981ee4562ebfbef7",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "agent/skills/review/SKILL.md",
+          "sha256": "d0890206f38f40c1d92ae0cb1bc6bc6678d925e8695e14817f10cb7d4e8d23a2",
+          "bytes": 539,
+          "prior_dated_source_sha256": "d0890206f38f40c1d92ae0cb1bc6bc6678d925e8695e14817f10cb7d4e8d23a2",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "skill-discovery",
+      "status": "PARTIAL",
+      "capability_en": "Portable skill discovery/activation",
+      "capability_pt_br": "Descoberta/ativação de skills portáveis",
+      "finding_en": "Current fixed files lack name/description YAML frontmatter. No metadata discovery/activation path was found in the inspected loader.",
+      "finding_pt_br": "Os arquivos fixos não têm frontmatter YAML name/description. Não foi encontrado caminho de descoberta/ativação por metadados no loader inspecionado.",
+      "evidence": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "agent/skills/evidence/SKILL.md",
+          "sha256": "951ed8be12bc9819a4bbe74161822b1199d14c8146a6eb74396773ca21532022",
+          "bytes": 571,
+          "prior_dated_source_sha256": "951ed8be12bc9819a4bbe74161822b1199d14c8146a6eb74396773ca21532022",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "agent/skills/authoring/SKILL.md",
+          "sha256": "175f1b16e71c55528ea70e07c00fe02718cfadd2affd2772981ee4562ebfbef7",
+          "bytes": 1542,
+          "prior_dated_source_sha256": "175f1b16e71c55528ea70e07c00fe02718cfadd2affd2772981ee4562ebfbef7",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "agent/skills/review/SKILL.md",
+          "sha256": "d0890206f38f40c1d92ae0cb1bc6bc6678d925e8695e14817f10cb7d4e8d23a2",
+          "bytes": 539,
+          "prior_dated_source_sha256": "d0890206f38f40c1d92ae0cb1bc6bc6678d925e8695e14817f10cb7d4e8d23a2",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "PARTIAL",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "mcp",
+      "status": "ABSENT",
+      "capability_en": "MCP in documentation runtime",
+      "capability_pt_br": "MCP no runtime documental",
+      "finding_en": "Inspected paths use Ollama HTTP and verified subprocesses; no MCP dispatcher/server was added. Codex host connectors are a separate environment.",
+      "finding_pt_br": "Os caminhos inspecionados usam HTTP Ollama e subprocessos verificados; nenhum dispatcher/servidor MCP foi adicionado. Conectores do host Codex são outro ambiente.",
+      "evidence": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        },
+        {
+          "path": "agent/tools/documentation_retrieval.py",
+          "sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "bytes": 30196,
+          "prior_dated_source_sha256": "e6fd18dea79eb8320c566c816b7aa7bf34d60cbe06b825a67e2dc9ef89aa326e",
+          "source_bytes_unchanged": false,
+          "changed_source_review": "Current HelperRetrieval0.1.3 read directly; original finding remains scoped to its explicit API. Code identity also matches the278-tested operationalV7cut."
+        }
+      ],
+      "prior_status": "ABSENT",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "plugins",
+      "status": "NOT VERIFIED",
+      "capability_en": "Agent Plugins conformance",
+      "capability_pt_br": "Conformidade com Agent Plugins",
+      "finding_en": "No compatible package/client conformance test was run. A SKILL.md basename alone is not a conformant plugin package.",
+      "finding_pt_br": "Não foi executado teste de conformidade de pacote/cliente compatível. Apenas o nome SKILL.md não caracteriza pacote de plugin conforme.",
+      "evidence": [
+        {
+          "path": "agent/skills/evidence/SKILL.md",
+          "sha256": "951ed8be12bc9819a4bbe74161822b1199d14c8146a6eb74396773ca21532022",
+          "bytes": 571,
+          "prior_dated_source_sha256": "951ed8be12bc9819a4bbe74161822b1199d14c8146a6eb74396773ca21532022",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "NOT VERIFIED",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "budgets",
+      "status": "PARTIAL",
+      "capability_en": "Whole-job budgets",
+      "capability_pt_br": "Orçamentos de job completo",
+      "finding_en": "The optional persistent helper-job layer reserves attempts/quote costs across instances and processes. Six competing processes respected a two-call budget. Direct callers retain per-instance limits. Model tokens, distributed state rollback and remote inference cancellation are not bounded by this layer; ordinary Ruby routing is unchanged.",
+      "finding_pt_br": "A camada opcional persistente por trabalho reserva tentativas/custos de citação entre instâncias e processos. Seis processos concorrentes respeitaram orçamento de duas chamadas. Chamadores diretos mantêm limites por instância. Tokens de modelo, rollback distribuído do estado e cancelamento remoto de inferência não são limitados por essa camada; roteamento Ruby comum não mudou.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_job_budget.py",
+          "sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+          "bytes": 19439
+        },
+        {
+          "path": "agent/tools/documentation_retrieval.py",
+          "sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "bytes": 30196
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/helper-job-budget-evaluation.json",
+          "sha256": "0fa923c4bde4620355b2f3f16b47d82e1a70a0c5a7d0e4d08cc849451abfc65f",
+          "bytes": 2841
+        }
+      ],
+      "prior_status": "PARTIAL",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "timeouts",
+      "status": "PARTIAL",
+      "capability_en": "Cancellation and deadlines",
+      "capability_pt_br": "Cancelamento e deadlines",
+      "finding_en": "Workers use3/20-second subprocess deadlines; transport uses request timeouts. End-to-end remote inference cancellation is not verified.",
+      "finding_pt_br": "Workers usam deadlines de subprocesso de3/20 segundos; transporte tem timeout de pedido. Cancelamento completo da inferência remota não foi verificado.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_retrieval.py",
+          "sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "bytes": 30196,
+          "prior_dated_source_sha256": "e6fd18dea79eb8320c566c816b7aa7bf34d60cbe06b825a67e2dc9ef89aa326e",
+          "source_bytes_unchanged": false,
+          "changed_source_review": "Current HelperRetrieval0.1.3 read directly; original finding remains scoped to its explicit API. Code identity also matches the278-tested operationalV7cut."
+        },
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "PARTIAL",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "duplicates",
+      "status": "CONFIRMED",
+      "capability_en": "Journaled helper duplicate suppression",
+      "capability_pt_br": "Supressão de duplicatas de helpers por journal",
+      "finding_en": "Requests/results/receipts are exclusive; missing receipt or legacy data never triggers automatic extraction retry.",
+      "finding_pt_br": "Pedidos/resultados/recibos são exclusivos; recibo ausente ou dado antigo nunca inicia nova extração automática.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_retrieval.py",
+          "sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "bytes": 30196,
+          "prior_dated_source_sha256": "e6fd18dea79eb8320c566c816b7aa7bf34d60cbe06b825a67e2dc9ef89aa326e",
+          "source_bytes_unchanged": false,
+          "changed_source_review": "Current HelperRetrieval0.1.3 read directly; original finding remains scoped to its explicit API. Code identity also matches the278-tested operationalV7cut."
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "inference-idempotency",
+      "status": "PARTIAL",
+      "capability_en": "Ambiguous inference completion",
+      "capability_pt_br": "Conclusão ambígua de inferência",
+      "finding_en": "Raw requests/responses are retained. A disconnected inference may have completed remotely; no general server reconciliation proof exists.",
+      "finding_pt_br": "Pedidos/respostas brutos são preservados. Uma inferência desconectada pode ter concluído remotamente; não há prova geral de reconciliação do servidor.",
+      "evidence": [
+        {
+          "path": "backend/lib/documentation/command.rb",
+          "sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "bytes": 76992,
+          "prior_dated_source_sha256": "7d046600e87a49a5252d5bfed5562b712a2cff262ea1597f136ea14e9c95804c",
+          "source_bytes_unchanged": true
+        }
+      ],
+      "prior_status": "PARTIAL",
+      "consolidation_kind": "UNCHANGED_FINDING_RECHECKED_SOURCE_HASHES",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "permissions",
+      "status": "PARTIAL",
+      "capability_en": "Tool and output permissions",
+      "capability_pt_br": "Permissões de ferramentas e saída",
+      "finding_en": "Explicit owned synthetic roots, file inventories, no-follow reads and operation-local input snapshots constrain optional research effects. A caller-supplied ownership flag or hash is not independent authority; trusted operator registries and separate owner approval remain required. No multi-user authorization or Python sandbox exists.",
+      "finding_pt_br": "Raízes sintéticas próprias explícitas, inventários, leituras sem seguir links e snapshots de entrada por operação restringem efeitos da pesquisa opcional. Flag de propriedade ou hash fornecido pelo chamador não é autoridade independente; registros confiados do operador e aprovação separada do proprietário continuam necessários. Não existe autorização multiusuário ou sandbox de Python.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_workspace.py",
+          "sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "bytes": 5765
+        },
+        {
+          "path": "agent/tools/documentation_maintenance.py",
+          "sha256": "938a7b8df72f54fd3ae39b5cac93ea097ab2d4279a4d1975b6af6017be74ac0c",
+          "bytes": 21826
+        },
+        {
+          "path": "agent/tools/documentation_retrieval.py",
+          "sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "bytes": 30196
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/typed-input-snapshot-evaluation-v2.json",
+          "sha256": "c308d92f8d35480973b92b397b8819e2585970ae05daac9492be2f941643f73a",
+          "bytes": 27314
+        }
+      ],
+      "prior_status": "PARTIAL",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "injection",
+      "status": "PARTIAL",
+      "capability_en": "Retrieved instructions remain data",
+      "capability_pt_br": "Instruções recuperadas continuam dados",
+      "finding_en": "Twelve owned source-canary controls preserved48source files, emitted no canary in FAQ candidates and did not execute source. They measure only the deterministic closed FAQ profile. The earlier model false REMOVE remains preserved; prompt injection causality and general LLM attack resistance were not established.",
+      "finding_pt_br": "Doze controles próprios com canários preservaram48arquivos de fonte, não emitiram canário em candidatos FAQ e não executaram fontes. Medem somente o perfil determinístico fechado de FAQ. A falsa REMOVE anterior do modelo permanece preservada; causalidade de injeção de prompt e resistência geral de LLM não foram estabelecidas.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/conditional-faq-source-canaries-evaluation-v1.json",
+          "sha256": "879fea0a730b14ad36e74eded399209fddf7f45431b20fdf5298fa8e4472cec9",
+          "bytes": 112957
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/decomposed-decision-evaluation.json",
+          "sha256": "0f79c64ebe5ec16c5113e851738408446764df31918f3266397c6c730f1c2b6f",
+          "bytes": 29256
+        }
+      ],
+      "prior_status": "PARTIAL",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "ownership",
+      "status": "CONFIRMED",
+      "capability_en": "Human-content ownership boundary",
+      "capability_pt_br": "Fronteira de propriedade de conteúdo humano",
+      "finding_en": "Candidates0.1.2 and maintenance0.1.4 bind source/document bytes, archive originals and read back active/history/result outputs before success. Sixteen single-operation CLI cases and eight two-operation batches preserve all original files; stale or inconclusive batches refuse before a candidate root. This is sequential validation, not an atomic transaction or publication approval.",
+      "finding_pt_br": "Candidatos0.1.2 e manutenção0.1.4 vinculam bytes de fonte/documento, arquivam originais e releem saídas ativas/históricas/resultado antes do sucesso. Dezesseis casos de CLI com uma operação e oito lotes de duas operações preservam todos os originais; lotes obsoletos ou inconclusivos são recusados antes de criar raiz. É validação sequencial, não transação atômica ou aprovação de publicação.",
+      "evidence": [
+        {
+          "path": "agent/tools/documentation_candidates.py",
+          "sha256": "18299e80481ed2ed3ea7bd96c30d9aaa089c4798c51a1a6ad2b110d8f43f6e3f",
+          "bytes": 10496
+        },
+        {
+          "path": "agent/tools/documentation_maintenance.py",
+          "sha256": "938a7b8df72f54fd3ae39b5cac93ea097ab2d4279a4d1975b6af6017be74ac0c",
+          "bytes": 21826
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/workspace-candidate-coverage-evaluation-v1.json",
+          "sha256": "52ef3e718cf42c4543253d67ef70076c961abe3947b9176731afff48797ec7a8",
+          "bytes": 82145
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/workspace-batch-coverage-evaluation-v1.json",
+          "sha256": "5d79937c4e4cb1bb743a1a38ca1b092f0b11792d78edb9421c7decfe29832e47",
+          "bytes": 17196
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/candidate-output-closure-evaluation-v1.json",
+          "sha256": "f97e4e4179eb79aeb9a994b13d7fe3200b5b03d52809ff94d5ef8b14421940cf",
+          "bytes": 28232
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "recovery",
+      "status": "CONFIRMED",
+      "capability_en": "Local evidence and recovery",
+      "capability_pt_br": "Evidência e recuperação locais",
+      "finding_en": "OperationalV7 passed278tests on independently restored macOS/Linux copies. Source chainV6 restored8920files and checked current data/body/reader references plus late evidence; the later batch study and closing report postdate that seal. Original/recovered model artifacts and14parts match, but restored model serving, off-host recovery and trainer-state recovery remain unverified.",
+      "finding_pt_br": "OperacionalV7 passou278testes em cópias restauradas independentes macOS/Linux. A cadeia de fontesV6 restaurou8920arquivos e conferiu referências atuais de dados/corpos/leitor e anexos recentes; o estudo posterior de lotes e o relatório final são posteriores ao selo. Artefatos originais/recuperados do modelo e14partes coincidem, mas serving do modelo restaurado, recuperação fora do host e estado de treinador seguem não verificados.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/operational-recovery-current-v7.json",
+          "sha256": "89dd0a097c9f230917c0e2a26bca2a2997f0a939e7f67dbc7e7f4c1e91cdfc48",
+          "bytes": 2254
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/source-evidence-delta-recovery-v6.json",
+          "sha256": "0ca3aa7c7f89bcdb7c5eb63aec9b586d8d0950dda3827bca20ee2314907d644c",
+          "bytes": 27908
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/model-components-closing-v1.json",
+          "sha256": "095efb844d7f9e28ba0a31529bf9e31b3bd26ce4ca494aa1ce0417873db38f48",
+          "bytes": 22605
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/interrupted-workspace-recovery-evaluation-v1.json",
+          "sha256": "fd4329d1ef4c994a6ece75abcaa6a2e420dfca6ef9ff9fb081638fc3264245ba",
+          "bytes": 23179
+        }
+      ],
+      "prior_status": "CONFIRMED",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    },
+    {
+      "id": "training",
+      "status": "ABSENT",
+      "capability_en": "Automatic trainer or archive ingestion",
+      "capability_pt_br": "Treinador automático ou ingestão de arquivo de pesquisa",
+      "finding_en": "No automatic research-archive consumer, optimizer steps or trained adapters were added. DatasetV10 has305quarantined records, zero approved training rows and no certified neural holdout; known overlap is measured without split changes. All nine training gates remain incompletely satisfied. Source/tool changes are software improvements, not neural learning.",
+      "finding_pt_br": "Nenhum consumidor automático do acervo de pesquisa, passo de otimizador ou adaptador treinado foi adicionado. DatasetV10 tem305registros em quarentena, zero linhas aprovadas para treino e nenhum holdout neural certificado; sobreposição conhecida foi medida sem mudar splits. Todos os nove gates de treino permanecem incompletos. Mudanças de fonte/ferramenta são melhorias de software, não aprendizado neural.",
+      "evidence": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/dataset-current-lineage-audit-v10.json",
+          "sha256": "46c0f5897f4781dbe8bdf9bb08dab941f546a09d5c8729140279dc9c53dc72ee",
+          "bytes": 1789
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/dataset-overlap-review-v1.json",
+          "sha256": "480d23b575d1d5463e701c325911107c5ddd139f4de3dba2f24a165fe9a6e8ce",
+          "bytes": 309295
+        },
+        {
+          "path": "agent/research/documentation-intelligence-20261119/training-readiness-current-late-evidence-reconciliation.json",
+          "sha256": "5eb9ac5b0210358a9974ab201c4ce025e85953969533859e952fc49fb6ad5b1d",
+          "bytes": 5961
+        }
+      ],
+      "prior_status": "ABSENT",
+      "consolidation_kind": "UPDATED_WITH_LATER_SOURCE_OR_EVIDENCE",
+      "scope": "Declared documentation path or explicit research API only; status does not grant owner approval."
+    }
+  ],
+  "ordinary_ruby_routing_changed": false,
+  "mcp_server_installed": false,
+  "plugin_packaged": false,
+  "new_model_calls": 0,
+  "new_tests_executed": 0,
+  "new_training_records": 0,
+  "training_runs": 0,
+  "owner_approved": false,
+  "postdates_source_V6_seal": true,
+  "current_readerV8_not_regenerated": true,
+  "limitations": [
+    "Manual capability synthesis with source/receipt hashes, not proof of general semantic completeness.",
+    "Earlier matrices and readerV8 embedded dated views remain intact; this consolidation is a later artifact.",
+    "PARTIAL/ABSENT/NOT VERIFIED states are not converted to deployment promises."
+  ]
+}

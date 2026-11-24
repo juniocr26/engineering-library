@@ -1,0 +1,98 @@
+{
+  "at": "2026-11-21T18:19:45.998402+00:00",
+  "topic": "chi-throttle-workflow",
+  "family": "chi",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/chi-throttle-workflow/en.candidate.txt",
+      "sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/chi-throttle-workflow/pt-br.candidate.txt",
+      "sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "BacklogLimit zero passes actual <0 guard despite panic text; Limit<1 rejected before channels.",
+    "Admission and processing channel budgets differ; immediate acquisition skips timer; waiting paths and deferred release order kept.",
+    "No per-user buckets or forced next-handler interruption; select-ready cancellation has no deterministic priority.",
+    "Retry helper nil bypass, callback condition, negative clamp and positive fractional ceil accurate; wrappers default60s distinct from raw options copy.",
+    "Actual baseline positive-backlog claim and its two evidence IDs match original capture."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/chi/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/throttle.go",
+      "source_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "source_path": "middleware/throttle.go",
+      "source_lines": [
+        16,
+        43
+      ],
+      "exact_source_evidence": "\tdefaultBacklogTimeout = time.Second * 60\n)\n\n// ThrottleOpts represents a set of throttling options.\ntype ThrottleOpts struct {\n\t// RetryAfterFn, if set, enables the Retry-After header on rejected requests.\n\t// The result is rounded up to whole seconds and clamped at 0, because the\n\t// header carries a non-negative integer (RFC 9110 section 10.2.3).\n\tRetryAfterFn   func(ctxDone bool) time.Duration\n\tLimit          int\n\tBacklogLimit   int\n\tBacklogTimeout time.Duration\n\tStatusCode     int\n}\n\n// Throttle is a middleware that limits number of currently processed requests\n// at a time across all users. Note: Throttle is not a rate-limiter per user,\n// instead it just puts a ceiling on the number of current in-flight requests\n// being processed from the point from where the Throttle middleware is mounted.\nfunc Throttle(limit int) func(http.Handler) http.Handler {\n\treturn ThrottleWithOpts(ThrottleOpts{Limit: limit, BacklogTimeout: defaultBacklogTimeout})\n}\n\n// ThrottleBacklog is a middleware that limits number of currently processed\n// requests at a time and provides a backlog for holding a finite number of\n// pending requests.\nfunc ThrottleBacklog(limit, backlogLimit int, backlogTimeout time.Duration) func(http.Handler) http.Handler {\n\treturn ThrottleWithOpts(ThrottleOpts{Limit: limit, BacklogLimit: backlogLimit, BacklogTimeout: backlogTimeout})",
+      "reviewed_interpretation": "Default/wrapper/options declarations.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/chi/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/throttle.go",
+      "source_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "source_path": "middleware/throttle.go",
+      "source_lines": [
+        47,
+        146
+      ],
+      "exact_source_evidence": "func ThrottleWithOpts(opts ThrottleOpts) func(http.Handler) http.Handler {\n\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n\n\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n\n\tstatusCode := opts.StatusCode\n\tif statusCode == 0 {\n\t\tstatusCode = http.StatusTooManyRequests\n\t}\n\n\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n\n\t// Filling tokens.\n\tfor i := 0; i < opts.Limit+opts.BacklogLimit; i++ {\n\t\tif i < opts.Limit {\n\t\t\tt.tokens <- token{}\n\t\t}\n\t\tt.backlogTokens <- token{}\n\t}\n\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx := r.Context()\n\n\t\t\tselect {\n\n\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\treturn\n\n\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n\n\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n\t\t\t\tdefault:\n\t\t\t\t\t// No immediate token available, need to wait with timer\n\t\t\t\t}\n\n\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n\t\t\t\tselect {\n\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n\n\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n\t\t\t\treturn\n\t\t\t}\n\t\t}\n\n\t\treturn http.HandlerFunc(fn)\n\t}\n}\n\n// token represents a request that is being processed.\ntype token struct{}\n\n// throttler limits number of currently processed requests at a time.\ntype throttler struct {\n\ttokens         chan token\n\tbacklogTokens  chan token\n\tretryAfterFn   func(ctxDone bool) time.Duration\n\tbacklogTimeout time.Duration\n\tstatusCode     int\n}",
+      "reviewed_interpretation": "Channel construction, nested selects and deferred token returns.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/chi/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/throttle.go",
+      "source_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "source_path": "middleware/throttle.go",
+      "source_lines": [
+        149,
+        163
+      ],
+      "exact_source_evidence": "func (t throttler) setRetryAfterHeaderIfNeeded(w http.ResponseWriter, ctxDone bool) {\n\tif t.retryAfterFn == nil {\n\t\treturn\n\t}\n\t// delay-seconds is non-negative, and rounding up avoids asking clients to\n\t// retry before the duration returned by RetryAfterFn has elapsed.\n\tdelay := t.retryAfterFn(ctxDone)\n\tseconds := delay / time.Second\n\tif delay < 0 {\n\t\tseconds = 0\n\t} else if delay%time.Second != 0 {\n\t\tseconds++\n\t}\n\tw.Header().Set(\"Retry-After\", strconv.FormatInt(int64(seconds), 10))\n}",
+      "reviewed_interpretation": "Retry callback and integer second calculation.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "chi-throttle-workflow",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/chi-throttle-workflow/raw-response.json",
+      "sha256": "407ea268e192c4de3c302acdb44ed753cb0f63f41a9932dbb6c5b3cdc45ab8d2",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

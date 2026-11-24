@@ -1,0 +1,135 @@
+{
+  "at": "2026-11-22T06:22:14.319590+00:00",
+  "historical_records": [
+    {
+      "name": "sdk-retry-function",
+      "historical_raw_sha256": "a373ba0a8463176252b7fd88dc8998dc5eead9b7ef4ff291fdac2eac13c9b59a",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The createDynamicServiceRetryPolicy function returns a backoff.RetryPolicy with a timeout value calculated based on the ctx Deadline expiration time. The initial interval and maximum interval are calculated based on the timeout value. The function creates a new ExponentialRetryPolicy with the calculated coefficients and intervals, and returns it.",
+          "pt-br": "A fun\u00e7\u00e3o createDynamicServiceRetryPolicy retorna uma pol\u00edtica de retry com um valor de tempo calculado com base no tempo de expira\u00e7\u00e3o do ctx Deadline. Os intervalos iniciais e m\u00e1ximos s\u00e3o calculados com base no valor de tempo. A fun\u00e7\u00e3o cria uma nova pol\u00edtica de retry exponencial com os coeficientes e intervalos calculados e retorna-a."
+        }
+      ],
+      "selected_evidence_ids": [
+        "S1"
+      ],
+      "selected_quote_ranges": [
+        {
+          "path": "internal/internal_retry.go",
+          "first_line": 22,
+          "quote_bytes": 632
+        }
+      ],
+      "original_raw_path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-retry-function/raw-response.json"
+    },
+    {
+      "name": "sdk-retry-with-constants",
+      "historical_raw_sha256": "32cb8e79a03573becf5c268ffd22847e72018b17a8ed498e0bd8c6dbbc592477",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The createDynamicServiceRetryPolicy function creates a dynamic retry policy for a service operation. It takes a context object as input and returns a backoff.RetryPolicy object. The policy is initialized with an initial interval of 200 milliseconds, and the maximum interval is calculated based on the timeout value. The backoff coefficient is set to 2, and the expiration interval is set to 60 seconds. The function also checks if the context object has a deadline and updates the timeout value accordingly.",
+          "pt-br": "A fun\u00e7\u00e3o createDynamicServiceRetryPolicy cria uma pol\u00edtica de reten\u00e7\u00e3o din\u00e2mica para uma opera\u00e7\u00e3o de servi\u00e7o. Ela recebe um objeto de contexto como entrada e retorna um objeto de pol\u00edtica de reten\u00e7\u00e3o backoff.RetryPolicy. A pol\u00edtica \u00e9 inicializada com um intervalo inicial de 200 milissegundos, e o intervalo m\u00e1ximo \u00e9 calculado com base no valor de tempo. O fator de atraso \u00e9 definido em 2, e o intervalo de expira\u00e7\u00e3o \u00e9 definido em 60 segundos. A fun\u00e7\u00e3o tamb\u00e9m verifica se o objeto de contexto tem um prazo e atualiza o valor de tempo de acordo. "
+        }
+      ],
+      "selected_evidence_ids": [
+        "S1",
+        "S2"
+      ],
+      "selected_quote_ranges": [
+        {
+          "path": "internal/internal_retry.go",
+          "first_line": 12,
+          "quote_bytes": 181
+        },
+        {
+          "path": "internal/internal_retry.go",
+          "first_line": 22,
+          "quote_bytes": 632
+        }
+      ],
+      "original_raw_path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-retry-with-constants/raw-response.json"
+    },
+    {
+      "name": "sdk-contiguous-contract",
+      "historical_raw_sha256": "1b12673ce863bc221d804e3d685c3fd7085b33ed68fa559e57e6750faa7df891",
+      "facts": [
+        {
+          "evidence_id": "S1",
+          "en": "The createDynamicServiceRetryPolicy function creates a retry policy with an exponential backoff strategy. The initial interval is set to 200ms, and the maximum interval is capped at 20ms. The expiration interval is set to 60 seconds, or the context deadline if it's earlier. The backoff coefficient is set to 2, and the maximum interval is calculated as the minimum of 1/10th of the context timeout or 20ms. This policy allows retries for deadlines passed in as context, using the context deadline to set the maximum interval.",
+          "pt-br": "A fun\u00e7\u00e3o createDynamicServiceRetryPolicy cria uma pol\u00edtica de reten\u00e7\u00e3o din\u00e2mica com uma estrat\u00e9gia de reten\u00e7\u00e3o exponencial. O intervalo inicial \u00e9 definido em 200ms, e o m\u00e1ximo intervalo \u00e9 limitado em 20ms. A intervalo de expira\u00e7\u00e3o \u00e9 definido em 60 segundos, ou a data limite do contexto se for mais antiga. O fator de reten\u00e7\u00e3o \u00e9 definido em 2, e o m\u00e1ximo intervalo \u00e9 calculado como a menor das 1/10\u00aa do tempo do contexto ou 20ms. Essa pol\u00edtica permite reten\u00e7\u00f5es para prazos passados em contexto, usando a data limite do contexto para definir o m\u00e1ximo intervalo."
+        }
+      ],
+      "selected_evidence_ids": [
+        "S1"
+      ],
+      "selected_quote_ranges": [
+        {
+          "path": "internal/internal_retry.go",
+          "first_line": 12,
+          "quote_bytes": 1136
+        }
+      ],
+      "original_raw_path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-contiguous-contract/raw-response.json"
+    }
+  ],
+  "test_source": {
+    "path": "agent/research/final-intensive-20261121/sdk-retry-target-source-context-v1/internal/common/backoff/retrypolicy_test.go",
+    "sha256": "8f2a422089d2c10a8f1f204449b5c4911056b4dd651696329b3de619b4e5ccb1",
+    "test_declarations": [
+      {
+        "line": 15,
+        "declaration": "func TestExponentialBackoff(t *testing.T) {"
+      },
+      {
+        "line": 34,
+        "declaration": "func TestNumberOfAttempts(t *testing.T) {"
+      },
+      {
+        "line": 49,
+        "declaration": "func TestMaximumInterval(t *testing.T) {"
+      },
+      {
+        "line": 68,
+        "declaration": "func TestBackoffCoefficient(t *testing.T) {"
+      },
+      {
+        "line": 82,
+        "declaration": "func TestExpirationInterval(t *testing.T) {"
+      },
+      {
+        "line": 94,
+        "declaration": "func TestExpirationOverflow(t *testing.T) {"
+      },
+      {
+        "line": 113,
+        "declaration": "func TestDefaultPublishRetryPolicy(t *testing.T) {"
+      },
+      {
+        "line": 150,
+        "declaration": "func TestNoMaxAttempts(t *testing.T) {"
+      },
+      {
+        "line": 164,
+        "declaration": "func TestUnbounded(t *testing.T) {"
+      }
+    ],
+    "tests_executed": false
+  },
+  "language_spec": {
+    "path": "agent/research/final-intensive-20261121/sqlx-installed-go-spec-v1.html",
+    "sha256": "a249c493e0ad58ccfeac8081426d5b0e77f92b9761b95548f85c9e4d23d0a753",
+    "section": "Min_and_max",
+    "interpretation": "Predeclaredmax chooseslarger underlexicalbinding/validtypes; 60seconds/10=6seconds >200ms; forsmallpositivefuturetimeout200msisfloor, not20mscap",
+    "not_whole_typecheck": true
+  },
+  "consumer_observations": [
+    "Policyconstructor/setters fieldconfiguration only, nooperationcallback orsleep",
+    "ComputeNextDelay attempts>=configuredlimit,elapsed>expiration thenpositivecomputedintervalclamps/maxremainingtime/jitter; noexactobservedschedule",
+    "Retryconsumer invokesoperation thenhandleserror/eligibility/NextBackOff/context/sleep; constructionalone doesnotexecuteit",
+    "Historythreeoutputs create/returnpolicy; configurationguardsmissing andlater20msmin/cap/earlierdeadlinewrong, noexplicitexecutionassertion"
+  ],
+  "new_model_calls": 0,
+  "SDK_executed": false
+}

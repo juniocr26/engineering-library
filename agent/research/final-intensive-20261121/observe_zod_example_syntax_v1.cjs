@@ -1,0 +1,7 @@
+const fs=require('node:fs');const crypto=require('node:crypto');const path=require('node:path');
+const root=process.argv[2];const p=path.join(root,'agent/research/final-intensive-20261121');const ts=require(path.join(root,'frontend/node_modules/typescript/lib/typescript.js'));
+const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
+const records=['en','pt-BR'].map(language=>{const file=path.join(p,'zod-provenance-candidate-v3',language+'.md');const raw=fs.readFileSync(file);const fences=[...raw.toString().matchAll(/```typescript\n([\s\S]*?)```/g)];if(fences.length!==1)throw Error('fence count');const code=fences[0][1];const sf=ts.createSourceFile('owned-example.ts',code,ts.ScriptTarget.Latest,true,ts.ScriptKind.TS);return {language,document_sha256:hash(raw),code,code_sha256:hash(code),diagnostics:sf.parseDiagnostics.map(d=>({code:d.code,message:ts.flattenDiagnosticMessageText(d.messageText,' ')}))};});
+if(records[0].code!==records[1].code||records.some(r=>r.diagnostics.length))throw Error('syntax or bilingual example mismatch');
+const result={at:new Date().toISOString(),node:process.version,typescript:ts.version,records,source_executed:false,typechecked:false,module_resolution:false,scope:'Actual isolated candidate example syntax only; supplied bindings and runtime remain unverified.'};
+fs.writeFileSync(path.join(p,'zod-example-syntax-results-v1.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result));

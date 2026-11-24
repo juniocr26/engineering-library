@@ -1,0 +1,349 @@
+ (https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/shellwords.go)
+citeturn17view0 [wordlim: 200] Crawled: 3 days ago; Content type: text/plain; Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/shellwords.go","lineno":null}); Total lines: 337
+L0: package shellwords
+L1: 
+L2: import (
+L3: 	"bytes"
+L4: 	"errors"
+L5: 	"os"
+L6: 	"strings"
+L7: 	"unicode"
+L8: )
+L9: 
+L10: var (
+L11: 	ParseEnv      bool = false
+L12: 	ParseBacktick bool = false
+L13: )
+L14: 
+L15: func isSpace(r rune) bool {
+L16: 	switch r {
+L17: 	case ' ', '\t', '\r', '\n':
+L18: 		return true
+L19: 	}
+L20: 	return false
+L21: }
+L22: 
+L23: func replaceEnv(getenv func(string) string, s string) string {
+L24: 	if getenv == nil {
+L25: 		getenv = os.Getenv
+L26: 	}
+L27: 	var buf bytes.Buffer
+L28: 	rs := []rune(s)
+L29: 	for i := 0; i < len(rs); i++ {
+L30: 		r := rs[i]
+L31: 		if r == '\\' {
+L32: 			i++
+L33: 			if i == len(rs) {
+L34: 				break
+L35: 			}
+L36: 			buf.WriteRune(rs[i])
+L37: 			continue
+L38: 		} else if r == '$' {
+L39: 			i++
+L40: 			if i == len(rs) {
+L41: 				buf.WriteRune(r)
+L42: 				break
+L43: 			}
+L44: 			if rs[i] == 0x7b {
+L45: 				i++
+L46: 				p := i
+L47: 				for ; i < len(rs); i++ {
+L48: 					r = rs[i]
+L49: 					if r == '\\' {
+L50: 						i++
+L51: 						if i == len(rs) {
+L52: 							return s
+L53: 						}
+L54: 						continue
+L55: 					}
+L56: 					if r == 0x7d || (!unicode.IsLetter(r) && r != '_' && !unicode.IsDigit(r)) {
+L57: 						break
+L58: 					}
+L59: 				}
+L60: 				if r != 0x7d {
+L61: 					return s
+L62: 				}
+L63: 				if i > p {
+L64: 					buf.WriteString(getenv(s[p:i]))
+L65: 				}
+L66: 			} else {
+L67: 				p := i
+L68: 				for ; i < len(rs); i++ {
+L69: 					r := rs[i]
+L70: 					if r == '\\' {
+L71: 						i++
+L72: 						if i == len(rs) {
+L73: 							return s
+L74: 						}
+L75: 						continue
+L76: 					}
+L77: 					if !unicode.IsLetter(r) && r != '_' && !unicode.IsDigit(r) {
+L78: 						break
+L79: 					}
+L80: 				}
+L81: 				if i > p {
+L82: 					buf.WriteString(getenv(s[p:i]))
+L83: 					i--
+L84: 				} else {
+L85: 					buf.WriteString(s[p:])
+L86: 				}
+L87: 			}
+L88: 		} else {
+L89: 			buf.WriteRune(r)
+L90: 		}
+L91: 	}
+L92: 	return buf.String()
+L93: }
+L94: type Parser struct {
+L95: 	ParseEnv      bool
+L96: 	ParseBacktick bool
+L97: 	Position      int
+L98: 	Dir           string
+L99: 
+L100: 	// If ParseEnv is true, use this for getenv.
+L101: 	// If nil, use os.Getenv.
+L102: 	Getenv func(string) string
+L103: }
+L104: 
+L105: func NewParser() *Parser {
+L106: 	return &Parser{
+L107: 		ParseEnv:      ParseEnv,
+L108: 		ParseBacktick: ParseBacktick,
+L109: 		Position:      0,
+L110: 		Dir:           "",
+L111: 	}
+L112: }
+L113: 
+L114: type argType int
+L115: 
+L116: const (
+L117: 	argNo argType = iota
+L118: 	argSingle
+L119: 	argQuoted
+L120: )
+L121: func (p *Parser) Parse(line string) ([]string, error) {
+L122: 	args := []string{}
+L123: 	buf := ""
+L124: 	var escaped, doubleQuoted, singleQuoted, backQuote, dollarQuote bool
+L125: 	backtick := ""
+L126: 
+L127: 	pos := -1
+L128: 	got := argNo
+L129: 
+L130: 	i := -1
+L131: loop:
+L132: 	for _, r := range line {
+L133: 		i++
+L134: 		if escaped {
+L135: 			if r == 't' {
+L136: 				r = '\t'
+L137: 			}
+L138: 			if r == 'n' {
+L139: 				r = '\n'
+L140: 			}
+L141: 			buf += string(r)
+L142: 			escaped = false
+L143: 			got = argSingle
+L144: 			continue
+L145: 		}
+L146: 		if r == '\\' {
+L147: 			if singleQuoted {
+L148: 				buf += string(r)
+L149: 			} else {
+L150: 				escaped = true
+L151: 			}
+L152: 			continue
+L153: 		}
+L154: 		if isSpace(r) {
+L155: 			if singleQuoted || doubleQuoted || backQuote || dollarQuote {
+L156: 				buf += string(r)
+L157: 				backtick += string(r)
+L158: 			} else if got != argNo {
+L159: 				if p.ParseEnv {
+L160: 					if got == argSingle {
+L161: 						parser := &Parser{ParseEnv: false, ParseBacktick: false, Position: 0, Dir: p.Dir}
+L162: 						strs, err := parser.Parse(replaceEnv(p.Getenv, buf))
+L163: 						if err != nil {
+L164: 							return nil, err
+L165: 						}
+L166: 						args = append(args, strs...)
+L167: 					} else {
+L168: 						args = append(args, replaceEnv(p.Getenv, buf))
+L169: 					}
+L170: 				} else {
+L171: 					args = append(args, buf)
+L172: 				}
+L173: 				buf = ""
+L174: 				got = argNo
+L175: 			}
+L176: 			continue
+L177: 		}
+L178: 		switch r {
+L179: 		case '`':
+L180: 			if !singleQuoted && !doubleQuoted && !dollarQuote {
+L181: 				if p.ParseBacktick {
+L182: 					if backQuote {
+L183: 						out, err := shellRun(backtick, p.Dir)
+L184: 						if err != nil {
+L185: 							return nil, err
+L186: 						}
+L187: 						buf = buf[:len(buf)-len(backtick)] + out
+L188: 					}
+L189: 					backtick = ""
+L190: 					backQuote = !backQuote
+L191: 					continue
+L192: 				}
+L193: 				backtick = ""
+L194: 				backQuote = !backQuote
+L195: 			}
+L196: 		case ')':
+L197: 			if !singleQuoted && !doubleQuoted && !backQuote {
+L198: 				if p.ParseBacktick {
+L199: 					// Security fix:
+L200: 					// A bare ')' must never open dollarQuote state.
+L201: 					// Preserve prior behavior by rejecting unmatched ')'
+L202: 					// when command substitution parsing is enabled.
+L203: 					if !dollarQuote {
+L204: 						return nil, errors.New("invalid command line string")
+L205: 					}
+L206: 
+L207: 					out, err := shellRun(backtick, p.Dir)
+L208: 					if err != nil {
+L209: 						return nil, err
+L210: 					}
+L211: 					// Defensive guard: valid $(...) implies the buffer must contain
+L212: 					// the "$(" prefix plus the collected command body.
+L213: 					if len(buf) < len(backtick)+2 {
+L214: 						return nil, errors.New("invalid command line string")
+L215: 					}
+L216: 
+L217: 					buf = buf[:len(buf)-len(backtick)-2] + out
+L218: 					backtick = ""
+L219: 					dollarQuote = false
+L220: 					continue
+L221: 				}
+L222: 				// Backtick parsing disabled:
+L223: 				// A bare ')' is a syntax error, consistent with '(' handling.
+L224: 				// Only close an already-open $(...) region.
+L225: 				if !dollarQuote {
+L226: 					return nil, errors.New("invalid command line string")
+L227: 				}
+L228: 
+L229: 				buf += string(r)
+L230: 				backtick = ""
+L231: 				dollarQuote = false
+L232: 				got = argSingle
+L233: 				continue
+L234: 			}
+L235: 		case '(':
+L236: 			if !singleQuoted && !doubleQuoted && !backQuote {
+L237: 				if !dollarQuote && strings.HasSuffix(buf, "$") {
+L238: 					dollarQuote = true
+L239: 					buf += "("
+L240: 					continue
+L241: 				} else {
+L242: 					return nil, errors.New("invalid command line string")
+L243: 				}
+L244: 			}
+L245: 
+L246: 		case '"':
+L247: 			if !singleQuoted && !dollarQuote {
+L248: 				if doubleQuoted {
+L249: 					got = argQuoted
+L250: 				}
+L251: 				doubleQuoted = !doubleQuoted
+L252: 				continue
+L253: 			}
+L254: 		case '\'':
+L255: 			if !doubleQuoted && !dollarQuote {
+L256: 				if singleQuoted {
+L257: 					got = argQuoted
+L258: 				}
+L259: 				singleQuoted = !singleQuoted
+L260: 				continue
+L261: 			}
+L262: 
+L263: 		case ';', '&', '|', '<', '>':
+L264: 			if !(escaped || singleQuoted || doubleQuoted || backQuote || dollarQuote) {
+L265: 				if r == '>' && len(buf) > 0 {
+L266: 					if c := buf[0]; '0' <= c && c <= '9' {
+L267: 						i -= 1
+L268: 						got = argNo
+L269: 					}
+L270: 				}
+L271: 				pos = i
+L272: 				break loop
+L273: 			}
+L274: 		}
+L275: 		got = argSingle
+L276: 		buf += string(r)
+L277: 		if backQuote || dollarQuote {
+L278: 			backtick += string(r)
+L279: 		}
+L280: 	}
+L281: 
+L282: 	if got != argNo {
+L283: 		if p.ParseEnv {
+L284: 			if got == argSingle {
+L285: 				parser := &Parser{ParseEnv: false, ParseBacktick: false, Position: 0, Dir: p.Dir}
+L286: 				strs, err := parser.Parse(replaceEnv(p.Getenv, buf))
+L287: 				if err != nil {
+L288: 					return nil, err
+L289: 				}
+L290: 				args = append(args, strs...)
+L291: 			} else {
+L292: 				args = append(args, replaceEnv(p.Getenv, buf))
+L293: 			}
+L294: 		} else {
+L295: 			args = append(args, buf)
+L296: 		}
+L297: 	}
+L298: 	if escaped || singleQuoted || doubleQuoted || backQuote || dollarQuote {
+L299: 		return nil, errors.New("invalid command line string")
+L300: 	}
+L301: 
+L302: 	p.Position = pos
+L303: 
+L304: 	return args, nil
+L305: }
+L306: func (p *Parser) ParseWithEnvs(line string) (envs []string, args []string, err error) {
+L307: 	_args, err := p.Parse(line)
+L308: 	if err != nil {
+L309: 		return nil, nil, err
+L310: 	}
+L311: 	envs = []string{}
+L312: 	args = []string{}
+L313: 	parsingEnv := true
+L314: 	for _, arg := range _args {
+L315: 		if parsingEnv && isEnv(arg) {
+L316: 			envs = append(envs, arg)
+L317: 		} else {
+L318: 			if parsingEnv {
+L319: 				parsingEnv = false
+L320: 			}
+L321: 			args = append(args, arg)
+L322: 		}
+L323: 	}
+L324: 	return envs, args, nil
+L325: }
+L326: 
+L327: func isEnv(arg string) bool {
+L328: 	return len(strings.Split(arg, "=")) == 2
+L329: }
+L330: func Parse(line string) ([]string, error) {
+L331: 	return NewParser().Parse(line)
+L332: }
+L333: 
+L334: func ParseWithEnvs(line string) (envs []string, args []string, err error) {
+L335: 	return NewParser().ParseWithEnvs(line)
+L336: }
+--------------------------------------------------------------------------------
+Internal Error ()
+citeturn17view1 [wordlim: 200] Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/util_windows.go","lineno":null}); 
+Failed to fetch https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/util_windows.go: Cache miss--------------------------------------------------------------------------------
+Internal Error ()
+citeturn17view2 [wordlim: 200] Source: open({"ref_id":"https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/go.mod","lineno":null}); 
+Failed to fetch https://raw.githubusercontent.com/mattn/go-shellwords/v1.0.13/go.mod: Cache miss--------------------------------------------------------------------------------
+Internal Error ()
+citeturn17view3 [wordlim: 200] Source: open({"ref_id":"https://github.com/mattn/go-shellwords/compare/v1.0.12...v1.0.13.patch","lineno":null}); 
+Failed to fetch https://github.com/mattn/go-shellwords/compare/v1.0.12...v1.0.13.patch: Cache miss

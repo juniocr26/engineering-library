@@ -1,0 +1,736 @@
+# Registro de evidência: chapters / chi-throttle-workflow.json
+
+Este é um artefato bruto de pesquisa de um recorte datado. Resultados e saídas rejeitadas do modelo mantêm o status registrado. Ler o registro não aprova publicação nem treinamento.
+
+SHA-256: `217dac8bca6bd6a934872661f1b116ceb3a587a3b60c58becaa1766c610280c8`. Bytes originais: `56877`.
+
+Caminho original: `agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/chi-throttle-workflow.json`.
+
+<!-- reading-section:reference:217dac8bca6bd6a93487:consumers -->
+## Referenciado por
+
+- [Revisão de evidências por capítulo](../reviews/body-claims.md)
+
+<!-- reading-section:reference:217dac8bca6bd6a93487:artifact -->
+## Artefato original
+
+O bloco reproduz o artefato UTF-8 exato; acrescenta-se uma quebra final apenas para exibição se ela não existir no original.
+
+<!-- artifact-body:217dac8bca6bd6a934872661f1b116ceb3a587a3b60c58becaa1766c610280c8:start -->
+````json
+{
+  "chapter": "chi-throttle-workflow",
+  "derived_review_artifact_not_new_chapter_or_training_example": true,
+  "document_language_spans": 28,
+  "owner_approved": false,
+  "prose_groups": 14,
+  "records": [
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 3,
+          "last_line": 3,
+          "quote": "Codex-authored source-reviewed correction; pending owner approval.\n",
+          "quote_sha256": "b228e9125c040b09060fc695faf978969e2cbf8507b76f91dfef847051b261c5"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 3,
+          "last_line": 3,
+          "quote": "Correção escrita pelo Codex e revisada contra a fonte; pendente de aprovação do proprietário.\n",
+          "quote_sha256": "79dd1ac6dba9cd11a1dde489954bf81fe383ca7b1efb08120266463012474717"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:01",
+      "manual_review_finding": "Authoredcorrection pendingownerapproval.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [],
+      "status": "EDITORIAL_STATUS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 5,
+          "last_line": 5,
+          "quote": "chi revision c64ed7d6635f33a8b2feaff7dcfa55677023ac7d; middleware/throttle.go. Actual local-agent baseline: chi-throttle-workflow. [Exact source evidence](source-excerpts.json).\n",
+          "quote_sha256": "f720e59c0bfbbfe2a8259e2544048fe370b4617a38abbc8bc71db0fd0ad249f9"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 5,
+          "last_line": 5,
+          "quote": "chi revision c64ed7d6635f33a8b2feaff7dcfa55677023ac7d; middleware/throttle.go. Actual local-agent baseline: chi-throttle-workflow. [Exact source evidence](source-excerpts.json).\n",
+          "quote_sha256": "f720e59c0bfbbfe2a8259e2544048fe370b4617a38abbc8bc71db0fd0ad249f9"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/review.json",
+          "role": "Dated review/inspection or historical owned language-probe result, not a new external application execution.",
+          "sha256": "f8a0135ff45dc9aaf30527223f952578e4847f2adc80c33477026b8eb19ad014"
+        }
+      ],
+      "id": "chi-throttle-workflow:body-paragraph:02",
+      "manual_review_finding": "Exactchi revision and baselineidentity.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-113"
+      ],
+      "status": "PROVENANCE",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 9,
+          "last_line": 9,
+          "quote": "The actual local-agent baseline said the processing limit must be greater than zero, which matches the first guard. It also said the backlog limit must be positive. That second statement follows the panic message rather than the condition: the written guard is `opts.BacklogLimit < 0`. Zero is allowed by this guard. This is a critical boundary error repeated in English and Portuguese, despite the response citing both selected evidence IDs.\n",
+          "quote_sha256": "4f4e581baa6188cd4fb7535ca64617442ce086510fed5ba677c41ec308c1dfec"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 9,
+          "last_line": 9,
+          "quote": "O baseline real do agente local disse que o limite de processamento deve ser maior que zero, o que corresponde à primeira guarda. Também disse que o limite de backlog deve ser positivo. Essa segunda afirmação segue a mensagem de pânico, em vez da condição: a guarda escrita é `opts.BacklogLimit < 0`. Zero é permitido por essa guarda. Trata-se de erro crítico de fronteira repetido em inglês e português, embora a resposta cite os dois IDs de evidência selecionados.\n",
+          "quote_sha256": "2c57cc6a675a5f8d8a5962169fafbb0c821d2a109c0bf5efad30e5392cabbfa5"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/review.json",
+          "role": "Dated review/inspection or historical owned language-probe result, not a new external application execution.",
+          "sha256": "f8a0135ff45dc9aaf30527223f952578e4847f2adc80c33477026b8eb19ad014"
+        }
+      ],
+      "id": "chi-throttle-workflow:body-paragraph:03",
+      "manual_review_finding": "Positiveprocessingguard differsfrom negativebacklogguard; zerobacklog allowed despite panicmessagewording.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-114"
+      ],
+      "status": "REVIEW_PROCESS_AND_SOURCE",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 11,
+          "last_line": 11,
+          "quote": "The selected function first panics when `opts.Limit < 1`, then panics on a negative backlog limit. It copies the configured status and substitutes `http.StatusTooManyRequests` only when that status is zero. The shown checks do not validate every conceivable capacity, duration or integer-overflow condition. A caller cannot infer complete configuration validation merely from the two explicit panic branches.\n",
+          "quote_sha256": "258e7802bebc526bc2cf69857e33ff73ba4b6b6c3046017d57942f3d66665554"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 11,
+          "last_line": 11,
+          "quote": "A função selecionada primeiro executa panic quando `opts.Limit < 1` e então executa panic para um limite negativo de backlog. Copia o status configurado e substitui por `http.StatusTooManyRequests` somente quando esse status é zero. As verificações mostradas não validam toda capacidade, duração ou condição de overflow de inteiros concebível. Um chamador não pode inferir validação completa da configuração apenas pelos dois ramos explícitos de pânico.\n",
+          "quote_sha256": "0a1ce27a1cb5cbef51a4cb9a8d57f08374d8c976d0108f71d4df8be647c87907"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:04",
+      "manual_review_finding": "Twoorderedpanicguards thenstatuszero default; no comprehensivecapacity/time/overflowvalidation.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-115"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 15,
+          "last_line": 15,
+          "quote": "The local throttler has a processing-token channel with capacity `opts.Limit` and a backlog-token channel with capacity `opts.Limit+opts.BacklogLimit`. The initialization loop fills the processing channel for the first limit entries and fills the backlog channel for the whole combined count. These channels have different jobs: admission consumes a backlog token, while invoking the next handler additionally requires a processing token.\n",
+          "quote_sha256": "9b2a8837359ec30ebbd1a0bff044c4d80b71b9f5e93ef1b70cfa74cd33053cc5"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 15,
+          "last_line": 15,
+          "quote": "O throttler local possui um canal de tokens de processamento com capacidade `opts.Limit` e um canal de tokens de backlog com capacidade `opts.Limit+opts.BacklogLimit`. O laço de inicialização preenche o canal de processamento para as primeiras entradas correspondentes ao limite e preenche o canal de backlog para toda a contagem combinada. Esses canais têm papéis diferentes: a admissão consome um token de backlog, enquanto invocar o próximo handler também exige um token de processamento.\n",
+          "quote_sha256": "5f9f67a457ba373758624b54ee351fe764ffe5a40d511ebb04e869b9550cc406"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:05",
+      "manual_review_finding": "Processingchannel limit versusbacklog combinedcapacity, initializeddistinctly and consumedatdifferentstages.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-116"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 17,
+          "last_line": 17,
+          "quote": "The outer function returns `func(next http.Handler) http.Handler`. Applying that returned function produces `http.HandlerFunc(fn)`; it does not itself execute a request. The captured throttler and its channels belong to this constructed middleware instance. The selected implementation contains no user identifier or per-user rate bucket. Its waiting timer must not be confused with a fixed request allowance per time window.\n",
+          "quote_sha256": "9b1a7254d732be02d69c310906cd7659b7a9f6d922182ca1a01de1b5331b86f4"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 17,
+          "last_line": 17,
+          "quote": "A função externa retorna `func(next http.Handler) http.Handler`. Aplicar essa função retornada produz `http.HandlerFunc(fn)`; isso não executa por si só uma requisição. O throttler capturado e seus canais pertencem a essa instância construída de middleware. A implementação selecionada não contém identificador de usuário ou bucket de taxa por usuário. Seu temporizador de espera não deve ser confundido com uma cota fixa de requisições por janela de tempo.\n",
+          "quote_sha256": "09cd06c6030155e55beb775e3daabacd558ff66318cfa69d08a1b2f68406f1d2"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:06",
+      "manual_review_finding": "Capturedinstancechannels andfactoryconstruction, not a request, peruserbucket or timewindowratequota.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-117",
+        "source-span-118"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 21,
+          "last_line": 21,
+          "quote": "The request callback obtains `r.Context()` and enters an outer select. Its context-done case calls the retry-header helper with true, then calls `http.Error` with the cancellation text and configured status. Its default case calls the helper with false and reports capacity exceeded. Acquiring a backlog token instead registers a deferred send that returns that token when the callback's deferred work runs.\n",
+          "quote_sha256": "39ab4611abe69b569f188a9d7ffb02a317343db7f8ce835491049db30e6ec8c8"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 21,
+          "last_line": 21,
+          "quote": "O callback de requisição obtém `r.Context()` e entra em um select externo. Seu caso de contexto concluído chama o helper de cabeçalho com true e então chama `http.Error` com o texto de cancelamento e o status configurado. Seu caso default chama o helper com false e relata capacidade excedida. Adquirir um token de backlog, por sua vez, registra um envio adiado que devolve esse token quando o trabalho adiado do callback é executado.\n",
+          "quote_sha256": "2de42c523f6abd41718591f7c28de1faf46ce7b5961c36fb240a4fd63e628214"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:07",
+      "manual_review_finding": "Outercontext/capacity branches callheaderhelperwithdifferentbooleans; successfuladmission registersbacklogreturn.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-119",
+        "source-span-120"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 23,
+          "last_line": 23,
+          "quote": "After admission, an inner select first tries to receive a processing token without waiting. On success, it registers a deferred processing-token return, calls `next.ServeHTTP(w, r)` and returns. This path does not create the later timer. If that immediate receive is unavailable, the default branch proceeds to `time.NewTimer(t.backlogTimeout)` and a separate waiting select.\n",
+          "quote_sha256": "bdbedafa2c3c26373c5eaccf7f5cd797c6ae7d79b4559c03da3b7ce5ff3de49e"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 23,
+          "last_line": 23,
+          "quote": "Após a admissão, um select interno primeiro tenta receber um token de processamento sem esperar. No sucesso, registra uma devolução adiada do token de processamento, chama `next.ServeHTTP(w, r)` e retorna. Esse caminho não cria o temporizador posterior. Se esse recebimento imediato não está disponível, o ramo default prossegue para `time.NewTimer(t.backlogTimeout)` e um select separado de espera.\n",
+          "quote_sha256": "d6d6929b66dd4ed61edf7161fbd57e7e391cd0a829a0578671ae1c150f2024f5"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:08",
+      "manual_review_finding": "Immediateprocessing receive registersreturn andcallsnextwithoutcreatinglatertimer; defaultcontinues towaiting.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-121"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 25,
+          "last_line": 25,
+          "quote": "The waiting select distinguishes timer expiry, context completion and a processing-token receive. Timer expiry reports a timeout with false passed to the header helper. Context completion explicitly stops the timer and reports cancellation with true. Receiving a processing token schedules a defer that stops the timer and returns the processing token, then calls the next handler. The backlog-token defer remains part of the surrounding callback's exit path.\n",
+          "quote_sha256": "d0a2a7f3fb2c98d3136d054c09a93db4bc5ee221f50a46331f18435bc61a708d"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 25,
+          "last_line": 25,
+          "quote": "O select de espera distingue expiração do temporizador, conclusão do contexto e recebimento de token de processamento. A expiração relata timeout com false passado ao helper de cabeçalho. A conclusão do contexto para explicitamente o temporizador e relata cancelamento com true. Receber um token de processamento agenda um defer que para o temporizador e devolve o token de processamento, e então chama o próximo handler. O defer do token de backlog continua fazendo parte do caminho de saída do callback envolvente.\n",
+          "quote_sha256": "6aad3fab27e516e1ec2b218ac706dc61b33a9d3d76de86399dd1aa6586887ee0"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:09",
+      "manual_review_finding": "Waiting timer/context/token branches differ; explicitstop/release and surroundingbacklogdefer preserved.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-122"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 29,
+          "last_line": 29,
+          "quote": "The processing-token send is written inside a deferred function, while the next-handler invocation is a direct synchronous call. Describing the token as returned before the handler runs reverses the shown order. Both cleanup calls are registered before the next-handler call. On its ordinary return, the later-registered processing cleanup runs before the earlier-registered backlog cleanup as the surrounding callback returns. This is a source-level account of scheduling the cleanup, not a measurement of concurrent request completion.\n",
+          "quote_sha256": "18dbd66ba45863ded22aa5d002607324190180bc43a02e2fd36131a3c4bdcbfa"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 29,
+          "last_line": 29,
+          "quote": "O envio do token de processamento está escrito dentro de uma função adiada, enquanto a invocação do próximo handler é uma chamada síncrona direta. Descrever o token como devolvido antes de o handler executar inverte a ordem mostrada. As duas chamadas de limpeza são registradas antes da chamada ao próximo handler. No retorno normal dele, a limpeza de processamento registrada depois executa antes da limpeza de backlog registrada antes, quando o callback envolvente retorna. Essa é uma descrição da fonte sobre agendamento da limpeza, não uma medição de conclusão de requisições concorrentes.\n",
+          "quote_sha256": "7b491a20f239af0c0a1ab081570d8ca710478582b612797bd783f4283f063e93"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:10",
+      "manual_review_finding": "Deferregistration precedesdirecthandler; normalcallbackreturn runs laterprocessingcleanup before earlierbacklogcleanup.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-123",
+        "source-span-124"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 31,
+          "last_line": 31,
+          "quote": "The timer governs waiting for a processing token. The shown timer-select code is no longer running alongside the next handler after that token has been acquired. It therefore does not establish forced interruption of a blocked handler. Likewise, if multiple select cases are ready, this source does not establish a deterministic preference for cancellation over admission. The code contains cancellation branches, not a universal guarantee that every already-cancelled request is rejected before any handler call.\n",
+          "quote_sha256": "b19bf6ad542646687445639a8586ebc6c4baa89d5dee3de1e9a49667cf1a40b6"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 31,
+          "last_line": 31,
+          "quote": "O temporizador governa a espera por um token de processamento. O código mostrado do select de temporizador não continua executando ao lado do próximo handler depois que esse token é adquirido. Portanto, não estabelece interrupção forçada de um handler bloqueado. Da mesma forma, se vários casos de select estão prontos, essa fonte não estabelece preferência determinística pelo cancelamento em vez da admissão. O código contém ramos de cancelamento, não garantia universal de que toda requisição já cancelada seja rejeitada antes de qualquer chamada ao handler.\n",
+          "quote_sha256": "7d555e4d235ed1fe40027928102c184c268ff680cfcced00a3c424c8242f8308"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:11",
+      "manual_review_finding": "Waitingselect doesnot runbesidehandler aftertokenacquisition; multiple-readyselect hasno guaranteedcancellationpriority.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-125"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 35,
+          "last_line": 35,
+          "quote": "The helper first returns when the configured retry callback is nil. Otherwise it calls that callback with the supplied context-done Boolean. It divides the returned duration by `time.Second`, clamps a negative duration to zero seconds and increments a nonnegative result when a fractional second remains. It then sets `Retry-After` using a decimal string. Exact positive whole seconds are not increased by the remainder branch.\n",
+          "quote_sha256": "beaba4897bad6bd368f26ccf3dbb71adbc5ad99b3042446a5ded77dc0a0a7ebc"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 35,
+          "last_line": 35,
+          "quote": "O helper primeiro retorna quando o callback de retry configurado é nulo. Caso contrário, chama esse callback com o booleano de contexto concluído recebido. Divide a duração retornada por `time.Second`, limita uma duração negativa a zero segundos e incrementa um resultado não negativo quando resta uma fração de segundo. Então define `Retry-After` usando uma string decimal. Segundos positivos inteiros exatos não são aumentados pelo ramo de resto.\n",
+          "quote_sha256": "28d43c149442aa1c60e858f1a93558cfbf3da9aa621bdb84bbda38e31709c218"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:12",
+      "manual_review_finding": "Nilcallback skips, otherwise durationdivided/clamped/roundedwithremainder and decimalRetry-After; exactwholesecondsnotincremented.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-126"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 37,
+          "last_line": 37,
+          "quote": "These operations describe the helper when its calls complete normally; they do not prove that an arbitrary configured callback cannot panic or block. The chapter expands the baseline's useful header observations into the surrounding admission and release workflow, and corrects the zero-backlog boundary. The additional option and state-field excerpts were read for this correction, rather than being falsely attributed to the model's original selected context. This source-reviewed bilingual candidate is pending owner approval and has not been published or promoted to training gold.\n",
+          "quote_sha256": "12dd77b0798c6b5f0b80e97d97360472b1f386d70056c7e9eacd0456f685aa06"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 37,
+          "last_line": 37,
+          "quote": "Essas operações descrevem o helper quando suas chamadas concluem normalmente; não provam que um callback configurado arbitrário não possa entrar em pânico ou bloquear. O capítulo expande as observações úteis do baseline sobre cabeçalho para o fluxo envolvente de admissão e devolução, e corrige a fronteira de backlog zero. Os trechos adicionais de opções e campos de estado foram lidos para esta correção, em vez de serem atribuídos falsamente ao contexto original selecionado do modelo. Este candidato bilíngue revisado contra a fonte aguarda aprovação do proprietário e não foi publicado nem promovido a gold de treinamento.\n",
+          "quote_sha256": "b84548f668bdf887d550f2fa1f392bb4d41cf9de2cbd4377912d234da35a660e"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [
+        {
+          "path": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/review.json",
+          "role": "Dated review/inspection or historical owned language-probe result, not a new external application execution.",
+          "sha256": "f8a0135ff45dc9aaf30527223f952578e4847f2adc80c33477026b8eb19ad014"
+        }
+      ],
+      "id": "chi-throttle-workflow:body-paragraph:13",
+      "manual_review_finding": "Arbitrarycallback completionnotguaranteed; addedoptions/statecontext is reviewevidence,not baselinecontext ortraininggold.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-126",
+        "source-span-127",
+        "source-span-128"
+      ],
+      "status": "REVIEW_PROCESS_AND_SOURCE",
+      "training_gold": false
+    },
+    {
+      "bilingual_document_spans": {
+        "en": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/en.md",
+          "document_sha256": "98968829d5f07bbe41fe964b8cbb097897791406246d5be5bc60136819bfddb1",
+          "first_line": 41,
+          "last_line": 41,
+          "quote": "The wrappers and the options constructor do not have identical default behavior. The full frozen file shows that `Throttle` explicitly supplies a 60-second backlog timeout. `ThrottleBacklog` forwards its duration argument. `ThrottleWithOpts` copies `opts.BacklogTimeout` directly; this function does not replace zero with that wrapper default.\n",
+          "quote_sha256": "cfc72277833919f49d31055bd34256667421dce40706d5158c7c0ab7af5b1c5c"
+        },
+        "pt-br": {
+          "document": "agent/research/documentation-intelligence-20261119/chapters/chi-throttle-workflow/pt-br.md",
+          "document_sha256": "76f6977004433f7dd3385c56a2537c3fe6a5fec009fed761fb0925beea450ce6",
+          "first_line": 41,
+          "last_line": 41,
+          "quote": "Os wrappers e o construtor por opções não possuem comportamento padrão idêntico. O arquivo congelado completo mostra que `Throttle` fornece explicitamente um timeout de backlog de 60 segundos. `ThrottleBacklog` encaminha seu argumento de duração. `ThrottleWithOpts` copia `opts.BacklogTimeout` diretamente; essa função não substitui zero pelo padrão daquele wrapper.\n",
+          "quote_sha256": "efaaebc8a7ebae21ad49d9c93ac407d369d05e8f0202e0b202b961b3542dd95e"
+        }
+      },
+      "bilingual_review": "Completepairedprose and physicalsources manuallyread; checked guardboundaries, callback/defer scope, bookkeeping vs materialization, negations and runtime limits; inlineidentifiers match.",
+      "chapter": "chi-throttle-workflow",
+      "execution_or_inspection_receipts": [],
+      "id": "chi-throttle-workflow:body-paragraph:14",
+      "manual_review_finding": "Throttle supplies60secondwrapperdefault, ThrottleBacklog forwardsduration, optionsconstructorcopiesdirectly withoutreplacingzero.",
+      "owner_approved": false,
+      "scope": "Before firstFAQheading; proseparagraphs only. Headings/tables/fences/FAQ excluded.",
+      "source_span_ids": [
+        "source-span-129",
+        "source-span-130",
+        "source-span-131"
+      ],
+      "status": "SOURCE_SUPPORTED_WITH_LIMITS",
+      "training_gold": false
+    }
+  ],
+  "schema": "chapter-specific-body-claim-review-v1",
+  "scope": "Proseparagraphs beforefirstFAQheading only; titles,tables,fences,FAQ/trailingcontext andgenericatomicentailment are separate.",
+  "source_spans": [
+    {
+      "first_line": 47,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-113",
+      "last_line": 134,
+      "quote": "func ThrottleWithOpts(opts ThrottleOpts) func(http.Handler) http.Handler {\n\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n\n\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n\n\tstatusCode := opts.StatusCode\n\tif statusCode == 0 {\n\t\tstatusCode = http.StatusTooManyRequests\n\t}\n\n\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n\n\t// Filling tokens.\n\tfor i := 0; i < opts.Limit+opts.BacklogLimit; i++ {\n\t\tif i < opts.Limit {\n\t\t\tt.tokens <- token{}\n\t\t}\n\t\tt.backlogTokens <- token{}\n\t}\n\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx := r.Context()\n\n\t\t\tselect {\n\n\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\treturn\n\n\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n\n\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n\t\t\t\tdefault:\n\t\t\t\t\t// No immediate token available, need to wait with timer\n\t\t\t\t}\n\n\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n\t\t\t\tselect {\n\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n\n\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n\t\t\t\treturn\n\t\t\t}\n\t\t}\n\n\t\treturn http.HandlerFunc(fn)\n\t}\n}\n",
+      "quote_sha256": "cc716803bbf2900180d6788eb2922f4f41fbc8e04d1696b6c8d620901835d4a0",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 48,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-114",
+      "last_line": 54,
+      "quote": "\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n\n\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n",
+      "quote_sha256": "b093b01eba5a6c63b265692242f6a3f8baa653ee5ed7094c499dc54b689826f2",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 48,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-115",
+      "last_line": 59,
+      "quote": "\tif opts.Limit < 1 {\n\t\tpanic(\"chi/middleware: Throttle expects limit > 0\")\n\t}\n\n\tif opts.BacklogLimit < 0 {\n\t\tpanic(\"chi/middleware: Throttle expects backlogLimit to be positive\")\n\t}\n\n\tstatusCode := opts.StatusCode\n\tif statusCode == 0 {\n\t\tstatusCode = http.StatusTooManyRequests\n\t}\n",
+      "quote_sha256": "dd3f99e406d5dc0c29bb4003e312c4f92526ddd6a03949875bc1c3ea45804f34",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 61,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-116",
+      "last_line": 75,
+      "quote": "\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n\n\t// Filling tokens.\n\tfor i := 0; i < opts.Limit+opts.BacklogLimit; i++ {\n\t\tif i < opts.Limit {\n\t\t\tt.tokens <- token{}\n\t\t}\n\t\tt.backlogTokens <- token{}\n\t}\n",
+      "quote_sha256": "eccc00898bc70f84cb4e65d4ba35a8edd27c822d55131ddca9366cb58e496755",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 61,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-117",
+      "last_line": 79,
+      "quote": "\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n\n\t// Filling tokens.\n\tfor i := 0; i < opts.Limit+opts.BacklogLimit; i++ {\n\t\tif i < opts.Limit {\n\t\t\tt.tokens <- token{}\n\t\t}\n\t\tt.backlogTokens <- token{}\n\t}\n\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx := r.Context()\n",
+      "quote_sha256": "5252f5cc18bf65f8412253533e758f6228d26e1de1e940299b71109810c3fd33",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 132,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-118",
+      "last_line": 134,
+      "quote": "\t\treturn http.HandlerFunc(fn)\n\t}\n}\n",
+      "quote_sha256": "e5ad4ff9fa628577bac5445f0a51decf1b81f7f225e81c9a5c2e14d3fe668f65",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 79,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-119",
+      "last_line": 91,
+      "quote": "\t\t\tctx := r.Context()\n\n\t\t\tselect {\n\n\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\treturn\n\n\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n",
+      "quote_sha256": "22e3cb98633d193fb159e1f2e0634d1fb171ec3ab7b7749dc6d3a631de592624",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 125,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-120",
+      "last_line": 129,
+      "quote": "\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n\t\t\t\treturn\n\t\t\t}\n",
+      "quote_sha256": "3d583bb6ba4107bef8031ca1af7cbfd42088686afcc82e02b83d2a5d15edd493",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 93,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-121",
+      "last_line": 105,
+      "quote": "\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n\t\t\t\tdefault:\n\t\t\t\t\t// No immediate token available, need to wait with timer\n\t\t\t\t}\n\n\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n",
+      "quote_sha256": "bb03e14158c89e91af5b81adaa7ff4e52c2413c72bdf03356724fb563ee17614",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 105,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-122",
+      "last_line": 123,
+      "quote": "\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n\t\t\t\tselect {\n\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n",
+      "quote_sha256": "1af720aa8c4b044b34549d8963ddce10e79533c8eeca86c24819008cefb120ff",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 88,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-123",
+      "last_line": 100,
+      "quote": "\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n\n\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n",
+      "quote_sha256": "89ab48380dee2594d0d3ca9fb7d14f466ae8fd1f93a20fe360639a874aeb9106",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 116,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-124",
+      "last_line": 123,
+      "quote": "\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n",
+      "quote_sha256": "b30c4ec2a027ca39b74382b2f9905ad326be1c54e64b8c25d90a6dd1e2332923",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 81,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-125",
+      "last_line": 129,
+      "quote": "\t\t\tselect {\n\n\t\t\tcase <-ctx.Done():\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\treturn\n\n\t\t\tcase btok := <-t.backlogTokens:\n\t\t\t\tdefer func() {\n\t\t\t\t\tt.backlogTokens <- btok\n\t\t\t\t}()\n\n\t\t\t\t// Try to get a processing token immediately first\n\t\t\t\tselect {\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t\treturn\n\t\t\t\tdefault:\n\t\t\t\t\t// No immediate token available, need to wait with timer\n\t\t\t\t}\n\n\t\t\t\ttimer := time.NewTimer(t.backlogTimeout)\n\t\t\t\tselect {\n\t\t\t\tcase <-timer.C:\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\t\thttp.Error(w, errTimedOut, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\ttimer.Stop()\n\t\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, true)\n\t\t\t\t\thttp.Error(w, errContextCanceled, t.statusCode)\n\t\t\t\t\treturn\n\t\t\t\tcase tok := <-t.tokens:\n\t\t\t\t\tdefer func() {\n\t\t\t\t\t\ttimer.Stop()\n\t\t\t\t\t\tt.tokens <- tok\n\t\t\t\t\t}()\n\t\t\t\t\tnext.ServeHTTP(w, r)\n\t\t\t\t}\n\t\t\t\treturn\n\n\t\t\tdefault:\n\t\t\t\tt.setRetryAfterHeaderIfNeeded(w, false)\n\t\t\t\thttp.Error(w, errCapacityExceeded, t.statusCode)\n\t\t\t\treturn\n\t\t\t}\n",
+      "quote_sha256": "63b87701f20355870e841f555b41aff900c3ed4cb7d1d6f089305897d697252b",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 149,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-126",
+      "last_line": 163,
+      "quote": "func (t throttler) setRetryAfterHeaderIfNeeded(w http.ResponseWriter, ctxDone bool) {\n\tif t.retryAfterFn == nil {\n\t\treturn\n\t}\n\t// delay-seconds is non-negative, and rounding up avoids asking clients to\n\t// retry before the duration returned by RetryAfterFn has elapsed.\n\tdelay := t.retryAfterFn(ctxDone)\n\tseconds := delay / time.Second\n\tif delay < 0 {\n\t\tseconds = 0\n\t} else if delay%time.Second != 0 {\n\t\tseconds++\n\t}\n\tw.Header().Set(\"Retry-After\", strconv.FormatInt(int64(seconds), 10))\n}\n",
+      "quote_sha256": "190bcf708c1653fa4457e03a55af5ab3a8a413e47eca793b0582eadf91d8e60e",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 19,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-127",
+      "last_line": 29,
+      "quote": "// ThrottleOpts represents a set of throttling options.\ntype ThrottleOpts struct {\n\t// RetryAfterFn, if set, enables the Retry-After header on rejected requests.\n\t// The result is rounded up to whole seconds and clamped at 0, because the\n\t// header carries a non-negative integer (RFC 9110 section 10.2.3).\n\tRetryAfterFn   func(ctxDone bool) time.Duration\n\tLimit          int\n\tBacklogLimit   int\n\tBacklogTimeout time.Duration\n\tStatusCode     int\n}\n",
+      "quote_sha256": "a05cbc988c726ed82965989da28270324a26fe9f1722fb953cf55bce477c185c",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 139,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-128",
+      "last_line": 146,
+      "quote": "// throttler limits number of currently processed requests at a time.\ntype throttler struct {\n\ttokens         chan token\n\tbacklogTokens  chan token\n\tretryAfterFn   func(ctxDone bool) time.Duration\n\tbacklogTimeout time.Duration\n\tstatusCode     int\n}\n",
+      "quote_sha256": "6e0a3b0a352cd99c5be4b6030cdb6f6dce54409b5f707febc3a878eca7498eb0",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 15,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-129",
+      "last_line": 17,
+      "quote": "var (\n\tdefaultBacklogTimeout = time.Second * 60\n)\n",
+      "quote_sha256": "740a8201c48eb614e3decd24c375107cdbb02d5a3c3cb41de71d758d31e0608a",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 35,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-130",
+      "last_line": 44,
+      "quote": "func Throttle(limit int) func(http.Handler) http.Handler {\n\treturn ThrottleWithOpts(ThrottleOpts{Limit: limit, BacklogTimeout: defaultBacklogTimeout})\n}\n\n// ThrottleBacklog is a middleware that limits number of currently processed\n// requests at a time and provides a backlog for holding a finite number of\n// pending requests.\nfunc ThrottleBacklog(limit, backlogLimit int, backlogTimeout time.Duration) func(http.Handler) http.Handler {\n\treturn ThrottleWithOpts(ThrottleOpts{Limit: limit, BacklogLimit: backlogLimit, BacklogTimeout: backlogTimeout})\n}\n",
+      "quote_sha256": "3745acc6f20795145c3aa1c73d98b852952b39639314e0048c772a831f807c22",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    },
+    {
+      "first_line": 61,
+      "frozen_source": ".local-backups/documentation-intelligence-20261119/chapter-source-verification-v1/sources/chi/middleware/throttle.go",
+      "full_file_sha256": "6f140f6ac687c9bacc68584c1168dcee5a4f7ed0d2efa4ccc969a622966b5ec1",
+      "id": "source-span-131",
+      "last_line": 67,
+      "quote": "\tt := throttler{\n\t\ttokens:         make(chan token, opts.Limit),\n\t\tbacklogTokens:  make(chan token, opts.Limit+opts.BacklogLimit),\n\t\tbacklogTimeout: opts.BacklogTimeout,\n\t\tstatusCode:     statusCode,\n\t\tretryAfterFn:   opts.RetryAfterFn,\n\t}\n",
+      "quote_sha256": "3f4c78e37ca4f84cd2607434fadf418e4ca0e86e30960f2267cbcf1f126c6b5c",
+      "repository": "chi",
+      "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+      "source_path": "middleware/throttle.go"
+    }
+  ],
+  "status": "CODEX_SOURCE_REVIEW_PENDING_OWNER",
+  "training_gold": false
+}
+````
+<!-- artifact-body:217dac8bca6bd6a934872661f1b116ceb3a587a3b60c58becaa1766c610280c8:end -->

@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-21T11:17:12.174069+00:00",
+  "protocol": "complete-pipeline-fault-admission-protocol-v1.json",
+  "original_worker_sha256": "d0b5dbf5ca5b43ed5682b5d6405cf01f03cf92e76040e9538d5a358cc6ec122f",
+  "cases": [
+    {
+      "id": "archive-digest-mismatch",
+      "path": ".local-backups/portfolio-vivabem-20261120/checkpoint-027-h101-fault-inputs/archive-digest-mismatch.json",
+      "sha256": "5b96b25cdfed764af77613ef1a78139e163a402ac6748820f74f1c55a5173ca5",
+      "bytes": 47232,
+      "expected_guard": "digest(archive)"
+    },
+    {
+      "id": "source-content-mismatch",
+      "path": ".local-backups/portfolio-vivabem-20261120/checkpoint-027-h101-fault-inputs/source-content-mismatch.json",
+      "sha256": "89b6f21b42a8bbe4a869fe2de8fee0491b4529969eec74aa52e8242612d503e3",
+      "bytes": 47184,
+      "expected_guard": "len(data) == row"
+    },
+    {
+      "id": "manifest-digest-mismatch",
+      "path": ".local-backups/portfolio-vivabem-20261120/checkpoint-027-h101-fault-inputs/manifest-digest-mismatch.json",
+      "sha256": "2f865ca953357248871d2df5349fdf28f8918788ac15f1d9c95ed1fff4f9e944",
+      "bytes": 47212,
+      "expected_guard": "digest(members[\"manifest.json\"])"
+    },
+    {
+      "id": "unsafe-parent-member",
+      "path": ".local-backups/portfolio-vivabem-20261120/checkpoint-027-h101-fault-inputs/unsafe-parent-member.json",
+      "sha256": "ec96172f46efc5b2c166b5bbc9ba7f915743af475fd1de7c24fc09404fa7fe0e",
+      "bytes": 47284,
+      "expected_guard": "member.isfile()"
+    },
+    {
+      "id": "duplicate-member",
+      "path": ".local-backups/portfolio-vivabem-20261120/checkpoint-027-h101-fault-inputs/duplicate-member.json",
+      "sha256": "c37bc88304010abce9ba1639954180fa24019edbef1f3314f321cdf0e7d17fd4",
+      "bytes": 48144,
+      "expected_guard": "member.name not in members"
+    },
+    {
+      "id": "symbolic-member",
+      "path": ".local-backups/portfolio-vivabem-20261120/checkpoint-027-h101-fault-inputs/symbolic-member.json",
+      "sha256": "022f874d85458752361a9568b7213d53ecb310c14b354443a5d7a0f3a0000613",
+      "bytes": 47280,
+      "expected_guard": "member.isfile()"
+    }
+  ],
+  "mutated_payloads_restricted_and_separate": true,
+  "no_original_payload_or_source_changed": true,
+  "new_model_calls": 0
+}

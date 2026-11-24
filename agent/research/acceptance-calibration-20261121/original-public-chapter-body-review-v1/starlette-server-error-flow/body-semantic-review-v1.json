@@ -1,0 +1,124 @@
+{
+  "at": "2026-11-21T18:31:50.164618+00:00",
+  "topic": "starlette-server-error-flow",
+  "family": "starlette",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/starlette-server-error-flow/en.candidate.txt",
+      "sha256": "fa0396f42f16a2a2331548c8d4ddbf4f6785b3ddf1ca47177be0a052369accbe",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/starlette-server-error-flow/pt-br.candidate.txt",
+      "sha256": "dd91522da81af1db9100febe1049f6865bbd2671df7bc6902fd9420c7e5e873a",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "NonHTTPdelegatesoriginalappoutsideHTTPtry; HTTPappwrapper capturedstate startsfalse.",
+    "Startflagsetbeforeawaitsend so notwireacknowledgment, errresponse selectioncanoccurafterflagbutlaterinvokeconditional.",
+    "Debug/default/customasync-vs-threadpoolprecedence, defaultconstructorvaluesandconcreteresponsebuilders correctlybounded.",
+    "is_async_callable partialunwrap/coroutinefunctionnotallawaitables; run_in_threadpool awaitresultpropagationnotthreadmeasurement.",
+    "Finalraiseexc onlyafterpreviousnormalcompletion, notfinallyforcingoriginalexception; no deployment/auth/persistence/retryclaims.",
+    "ActualbaselineonlyHTTPclaimandPTidentifiertranslationmatchedraworiginal."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/middleware/errors.py",
+      "source_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "source_path": "starlette/middleware/errors.py",
+      "source_lines": [
+        139,
+        186
+      ],
+      "exact_source_evidence": "    def __init__(\n        self,\n        app: ASGIApp,\n        handler: ExceptionHandler | None = None,\n        debug: bool = False,\n    ) -> None:\n        self.app = app\n        self.handler = handler\n        self.debug = debug\n\n    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:\n        if scope[\"type\"] != \"http\":\n            await self.app(scope, receive, send)\n            return\n\n        response_started = False\n\n        async def _send(message: Message) -> None:\n            nonlocal response_started, send\n\n            if message[\"type\"] == \"http.response.start\":\n                response_started = True\n            await send(message)\n\n        try:\n            await self.app(scope, receive, _send)\n        except Exception as exc:\n            request = Request(scope)\n            if self.debug:\n                # In debug mode, return traceback responses.\n                response = await run_in_threadpool(self.debug_response, request, exc)\n            elif self.handler is None:\n                # Use our default 500 error handler.\n                response = self.error_response(request, exc)\n            else:\n                # Use an installed 500 error handler.\n                if is_async_callable(self.handler):\n                    response = await self.handler(request, exc)  # type: ignore[assignment, arg-type]\n                else:\n                    response = await run_in_threadpool(self.handler, request, exc)  # type: ignore[arg-type]\n\n            if not response_started:\n                await response(scope, receive, send)\n\n            # We always continue to raise the exception.\n            # This allows servers to log the error, or allows test clients\n            # to optionally raise the error within the test case.\n            raise exc",
+      "reviewed_interpretation": "ConstructorandcompleteASGImethod.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/middleware/errors.py",
+      "source_sha256": "135e006618f26dc7d11fbd81ca2690ecc76dd00c27619aa2bfacc6b42d05d313",
+      "source_path": "starlette/middleware/errors.py",
+      "source_lines": [
+        249,
+        259
+      ],
+      "exact_source_evidence": "    def debug_response(self, request: Request, exc: Exception) -> Response:\n        accept = request.headers.get(\"accept\", \"\")\n\n        if \"text/html\" in accept:\n            content = self.generate_html(exc)\n            return HTMLResponse(content, status_code=500)\n        content = self.generate_plain_text(exc)\n        return PlainTextResponse(content, status_code=500)\n\n    def error_response(self, request: Request, exc: Exception) -> Response:\n        return PlainTextResponse(\"Internal Server Error\", status_code=500)",
+      "reviewed_interpretation": "Concrete500responsebuilders.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/concurrency.py",
+      "source_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83",
+      "source_path": "starlette/concurrency.py",
+      "source_lines": [
+        32,
+        34
+      ],
+      "exact_source_evidence": "async def run_in_threadpool(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:\n    func = functools.partial(func, *args, **kwargs)\n    return await anyio.to_thread.run_sync(func)",
+      "reviewed_interpretation": "Partialandawaitedresultreturn.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/_utils.py",
+      "source_sha256": "413355d540af9e719cefaa92c1ed70af338e263c375cb336644309b1d242a6f4",
+      "source_path": "starlette/_utils.py",
+      "source_lines": [
+        16,
+        22
+      ],
+      "exact_source_evidence": "if sys.version_info >= (3, 13):  # pragma: no cover\n    from inspect import iscoroutinefunction\n    from typing import TypeIs\nelse:  # pragma: no cover\n    from asyncio import iscoroutinefunction\n\n    from typing_extensions import TypeIs",
+      "reviewed_interpretation": "Versionconditionalpredicateimport.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/starlette/271c277da0ff64e2048a4d46ecc812b9d61db5f6/starlette/_utils.py",
+      "source_sha256": "413355d540af9e719cefaa92c1ed70af338e263c375cb336644309b1d242a6f4",
+      "source_path": "starlette/_utils.py",
+      "source_lines": [
+        61,
+        65
+      ],
+      "exact_source_evidence": "def is_async_callable(obj: Any) -> Any:\n    while isinstance(obj, functools.partial):\n        obj = obj.func\n\n    return iscoroutinefunction(obj) or (callable(obj) and iscoroutinefunction(obj.__call__))",
+      "reviewed_interpretation": "Classifierpartialunwrapandwrittenpredicate.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "starlette-server-error-contract",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-server-error-contract/raw-response.json",
+      "sha256": "02999176a85704c9a053e0a5ffa548ff76b2bff7165e73f5cb58a6a104183982",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/starlette-server-error-contract/origin.json",
+      "origin_sha256": "206f1de964237020be8f8e7d646355f15d8d11b15a8090c304c02b81f5886e18"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

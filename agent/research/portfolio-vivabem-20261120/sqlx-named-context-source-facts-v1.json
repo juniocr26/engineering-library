@@ -1,0 +1,133 @@
+{
+  "at": "2026-11-21T06:17:09.964111+00:00",
+  "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+  "files": [
+    {
+      "source_path": "LICENSE",
+      "bytes": 1077,
+      "sha256": "a0cc6c18255c47fad558e3a40ab10df927dd914156b267a819e073f8755991b3"
+    },
+    {
+      "source_path": "bind.go",
+      "bytes": 6190,
+      "sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12"
+    },
+    {
+      "source_path": "go.mod",
+      "bytes": 157,
+      "sha256": "4cad583dccc4b0934674db7fc85c9c2c322ee58793366860aaea582f6591994d"
+    },
+    {
+      "source_path": "named.go",
+      "bytes": 14477,
+      "sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0"
+    },
+    {
+      "source_path": "named_context.go",
+      "bytes": 4535,
+      "sha256": "b5b18083947538835dc3e130d32038002ab8d5192bdfc56713162693bbc8ccc8"
+    },
+    {
+      "source_path": "named_test.go",
+      "bytes": 12888,
+      "sha256": "bc69cfd2d06c27ec9e70b19377529e0a9e2a9fca0beaf44494eabcdc1ebe4a04"
+    },
+    {
+      "source_path": "reflectx/reflect.go",
+      "bytes": 12591,
+      "sha256": "3de3b248e6b88566c09becf518b3b3c3e999ff5a9ae86dc170cea425fd01b9db"
+    },
+    {
+      "source_path": "sqlx.go",
+      "bytes": 31526,
+      "sha256": "0d50c94347681cc196487d2c422ed254bfb9eeffacad7462d5219c9297ca5e36"
+    },
+    {
+      "source_path": "sqlx_context.go",
+      "bytes": 16127,
+      "sha256": "f5a60cea20d9f5c34b8f8d2b18c1740bec06ec81505f1a9306491432ba84e1bb"
+    }
+  ],
+  "fact_groups": [
+    {
+      "id": "SQ1",
+      "source": "go.mod",
+      "fact": "Modulegithub.com/jmoiron/sqlxandgo1.10directive are source metadata, not installed runtime/compiler version."
+    },
+    {
+      "id": "SQ2",
+      "source": "named.go:410-435;sqlx.go:300-315",
+      "fact": "PackageNamed usesQUESTIONandglobalmapper;DB.BindNamed usesregistereddriverbindinganddb.Mapper;DB.NamedExec/NamedQuery forwardtopackagewrappers."
+    },
+    {
+      "id": "SQ3",
+      "source": "bind.go:15-54;sqlx.go:89-101;sqlx_context.go:26-48",
+      "fact": "Registrydefaults initializedbyBindDriver;BindTypeunregisteredreturnsUNKNOWN,registrymutable. Ext/ExtContextcomposebinderwithquery/execinterfaces;notconcretedriverbehavior."
+    },
+    {
+      "id": "SQ4",
+      "source": "named.go:152-168,421-435",
+      "fact": "Dispatchstring-keymapconversion,arrays/slices,otherwisebindStruct. Unsupportedmapconversionreturnserror;nil/otherreflectioninputstypesnotuniformlyguarded."
+    },
+    {
+      "id": "SQ5",
+      "source": "named.go:331-405",
+      "fact": "Byte-wisecompileNamedQuerycollectsnameoccurrencesandselectsplaceholderform. No namededuplication. ::escapeand:=specialcases;notfullSQLlexer/parser."
+    },
+    {
+      "id": "SQ6",
+      "source": "named.go:173-207;reflectx/reflect.go:181-200,223-227",
+      "fact": "Map lookup followsnamesorder,missingkeyreturnsformattederrorandpartiallist. Structpathindirects pointers, traversesmappernames,readsfieldindexes;notallinvalidinputsreturnerrors."
+    },
+    {
+      "id": "SQ7",
+      "source": "named.go:213-225,304-312",
+      "fact": "bindStructdiscardsboundquery/partialargsonreturnederror;bindMapreturnsmappedquery/arglist/errorfrombindMapArgs. Caller must not ignore error."
+    },
+    {
+      "id": "SQ8",
+      "source": "sqlx.go:22-49,146-159;reflectx/reflect.go:94-113,282-319,342+",
+      "fact": "Defaultlowercase/dbtagmapperorDB/Txmapper selected; caches/locks and configurablecallbacks exist. parseNameinvokesmapFuncbeforetaghandling. No globalpurity/no-side-effectsguarantee."
+    },
+    {
+      "id": "SQ9",
+      "source": "named.go:227-300",
+      "fact": "ArraypathcompilesQUESTION,zero-lengtherror,flattensper-elementargs;fixBoundfor>1repeatsfirstmatchedVALUESparenthesizedfragmentifregex/balancingfindit,otherwiseleavesSQLtextunchanged. NotgeneralSQLvalidation."
+    },
+    {
+      "id": "SQ10",
+      "source": "bind.go:56-89",
+      "fact": "Rebindscansquestionmarks, leavesQUESTION/UNKNOWNunchanged;doesnotestablishquoted-string/escape/generalSQLsemantics."
+    },
+    {
+      "id": "SQ11",
+      "source": "named.go:441-458",
+      "fact": "NamedExec/NamedQuerybindfirst,returnbindingerrorbeforeselectedExec/Queryxcall;onbindingnormalreturndelegate. Custominterface/callbackeffectsnotresolved."
+    },
+    {
+      "id": "SQ12",
+      "source": "named_context.go:116-133",
+      "fact": "Contextwrappersperformbindingfirstthenpassctx toselectedQueryxContext/ExecContext;noctxcancellationcheckinsidebinding shown,nodrivercancelguarantee."
+    },
+    {
+      "id": "SQ13",
+      "source": "named_test.go:9-121,124-132,305+",
+      "fact": "Writtencompile/bulkrewritecasesexist;Unicodecaseblock-commented,TestEscapedColonsexplicitlyt.Skip. No originaltestsrun;comment saysfails doesnotmean campaign observedfailure."
+    },
+    {
+      "id": "SQ14",
+      "source": "reflectx/reflect.go:104-113,184-200,246-254,282-319",
+      "fact": "TypeMapholdslockaroundgetMappingwithexplicitUnlockaftercall,notdeferred;callbacks/reflectioncanpanic. This is written-source limit, not observed deadlock/fault test."
+    },
+    {
+      "id": "SQ15",
+      "source": "LICENSE;selectedsourcefileheaders",
+      "fact": "MIT root notice retained withattribution;notcomprehensiveusage/trainingrightsapproval. Publiclicensedsourceanalysisonly,development16historicalrows."
+    }
+  ],
+  "native_evidence": "sqlx-named-context-native-evidence-v2.json",
+  "declarations": 37,
+  "original_source_executed": false,
+  "database_operations": false,
+  "training_gold": false
+}

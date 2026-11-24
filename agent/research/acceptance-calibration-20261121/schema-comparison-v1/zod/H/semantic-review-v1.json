@@ -1,0 +1,464 @@
+{
+  "at": "2026-11-21T15:36:08.893071+00:00",
+  "method": "H",
+  "task": "zod",
+  "content_sha256": "e07ffda0d59d98da87c1993a4410fe747cf0d27981780b4877e32e84832a2daf",
+  "schema_subset_validation": {
+    "errors": [],
+    "duplicate_keys": false,
+    "both_language_blocks": true,
+    "behavior_ids_by_language": {
+      "en": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z07",
+        "Z08",
+        "Z09",
+        "Z10"
+      ],
+      "pt-BR": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z07",
+        "Z08",
+        "Z09",
+        "Z10"
+      ]
+    },
+    "not_semantic_validation": true
+  },
+  "claims": [
+    {
+      "id": "H-zod-Z01",
+      "reference_id": "Z01",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+      "source_lines": [
+        71,
+        72
+      ],
+      "expected_interpretation": {
+        "en": "The synchronous returned arrow creates ctx with async: false.",
+        "pt-BR": "A arrow síncrona retornada cria ctx com async: false."
+      },
+      "generated_en": [
+        {
+          "id": "Z01",
+          "text": "The synchronous returned arrow sets the async flag to false.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z01",
+          "text": "A setagem assíncrona do arrow retornado sincrônico é falsa.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "False async flag correct; PT descriptor awkward but flag identity in question context retained.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z02",
+      "reference_id": "Z02",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "  const result = schema._zod.run({ value, issues: [] }, ctx);",
+      "source_lines": [
+        73,
+        73
+      ],
+      "expected_interpretation": {
+        "en": "The synchronous arrow calls schema._zod.run with { value, issues: [] } and ctx.",
+        "pt-BR": "A arrow síncrona chama schema._zod.run com { value, issues: [] } e ctx."
+      },
+      "generated_en": [
+        {
+          "id": "Z02",
+          "text": "The synchronous arrow calls the schema runner with the value and issues.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z02",
+          "text": "O arrow sincrônico chama o runner de esquema com o valor e as issues.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "INSUFFICIENT",
+      "reason": "Payload object plus ctx argument roles not conveyed.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z03",
+      "reference_id": "Z03",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+      "source_lines": [
+        74,
+        76
+      ],
+      "expected_interpretation": {
+        "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+        "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+      },
+      "generated_en": [
+        {
+          "id": "Z03",
+          "text": "The synchronous Promise guard throws a $ZodAsyncError.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z03",
+          "text": "O guardiano de promise sincrônico lança uma $ZodAsyncError.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "Synchronous explicit class correct.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z04",
+      "reference_id": "Z04",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "source_lines": [
+        78,
+        78
+      ],
+      "expected_interpretation": {
+        "en": "At the normal return, truthy result.issues.length selects failure.",
+        "pt-BR": "No retorno normal, result.issues.length truthy seleciona failure."
+      },
+      "generated_en": [
+        {
+          "id": "Z04",
+          "text": "The condition that selects the normal failure branch is when the issues array is not empty.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z04",
+          "text": "A condição que seleciona a branch de falha normal é quando a array de issues não está vazia.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "Nonempty issues failure predicate correct.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z05",
+      "reference_id": "Z05",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "source_lines": [
+        78,
+        78
+      ],
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has success: true.",
+        "pt-BR": "No retorno normal sem issues, o literal tem success: true."
+      },
+      "generated_en": [
+        {
+          "id": "Z05",
+          "text": "The success flag is written in the no-issues literal as `success: true`.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z05",
+          "text": "A flag de sucesso escrita no literal sem issues é `sucesso: true`.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "EN success:true correct; PT changes executable property literal to sucesso:true, a technical identifier error.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z06",
+      "reference_id": "Z06",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));",
+      "source_lines": [
+        87,
+        89
+      ],
+      "expected_interpretation": {
+        "en": "The error getter construction branch is guarded by !error.",
+        "pt-BR": "O ramo de construção no getter de error é condicionado por !error."
+      },
+      "generated_en": [
+        {
+          "id": "Z06",
+          "text": "The error getter guards construction by checking if the error is undefined.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z06",
+          "text": "O getter de erro protege a construção guardando se o erro é indefinido.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "CONTRADICTED",
+      "reason": "Actual guard !closure-local error is truthiness, not an undefined-only test.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z07",
+      "reference_id": "Z07",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "    set error(e: errors.$ZodError) {\n      error = e;",
+      "source_lines": [
+        96,
+        97
+      ],
+      "expected_interpretation": {
+        "en": "The error setter assigns e to the local error.",
+        "pt-BR": "O setter de error atribui e à variável local error."
+      },
+      "generated_en": [
+        {
+          "id": "Z07",
+          "text": "The error setter assigns the local error to the `error` property.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z07",
+          "text": "A atribuição do erro local ao propriedade `error`.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "CONTRADICTED",
+      "reason": "Generated local error->error property is not incoming setter e->closure-local error; assignment direction/ownership wrong.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z08",
+      "reference_id": "Z08",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;",
+      "source_lines": [
+        111,
+        114
+      ],
+      "expected_interpretation": {
+        "en": "The asynchronous arrow awaits result when result instanceof Promise.",
+        "pt-BR": "A arrow assíncrona aguarda result quando result instanceof Promise."
+      },
+      "generated_en": [
+        {
+          "id": "Z08",
+          "text": "The asynchronous arrow waits for the result to resolve when it is a promise.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z08",
+          "text": "O arrow assíncrono espera para a resolução do resultado quando ele é uma promise.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "Await under Promise guard conveyed; no always-fulfills promise inferred.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z09",
+      "reference_id": "Z09",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);",
+      "source_lines": [
+        80,
+        80
+      ],
+      "expected_interpretation": {
+        "en": "The core safeParse binding supplies errors.$ZodRealError to _safeParse.",
+        "pt-BR": "O vínculo safeParse do core fornece errors.$ZodRealError a _safeParse."
+      },
+      "generated_en": [
+        {
+          "id": "Z09",
+          "text": "The core _safeParse factory binding is supplied with the $ZodRealError class.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z09",
+          "text": "A fábrica de _safeParse do core recebe a classe de erro $ZodRealError.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "Core supplied error class correct.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-Z10",
+      "reference_id": "Z10",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "source_lines": [
+        78,
+        78
+      ],
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has data: result.value.",
+        "pt-BR": "No retorno normal sem issues, o literal tem data: result.value."
+      },
+      "generated_en": [
+        {
+          "id": "Z10",
+          "text": "The data property written in the no-issues literal is `data: result.value`.",
+          "source": "path:lines"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "Z10",
+          "text": "A propriedade de dados escrita no literal sem issues é `data: result.value`.",
+          "source": "path:lines"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "Exact data:result.value retained in both languages.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-zod-limit-typed-rejection",
+      "generated_en": "The selected source does not establish that every asynchronous parse always fulfills without rejection. The asynchronous arrow may throw a $ZodAsyncError if the result is a promise that rejects.",
+      "generated_pt_BR": "A fonte selecionada não estabelece que todos os parses assíncronos sempre são realizados sem rejeição. O arrow assíncrono pode lançar uma $ZodAsyncError se o resultado for uma promise que rejeita.",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "exact_source_evidence": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;",
+      "verdict": "INSUFFICIENT",
+      "critical": true,
+      "reason": "No blanket fulfillment guarantee is correctly declined, but an additional specific $ZodAsyncError-on-Promise-rejection association is not established. Await can propagate arbitrary rejection; this code does not show such a translation. Possibility of some arbitrary callback rejecting with that class is not a demonstrated API guarantee."
+    }
+  ],
+  "selected_english_atomic_metrics": {
+    "supported": 7,
+    "contradicted": 2,
+    "insufficient": 2,
+    "denominator": 11,
+    "scope": "Ten selected behavior propositions plus specific typed rejection addition. Two correct FAQ factory-role propositions reviewed separately, not included in this selected metric."
+  },
+  "faq_extra_facts": [
+    {
+      "claim": "_safeParse takes an error class",
+      "verdict": "SUPPORTED",
+      "source_ref": "parse.ts:71, factory (_Err) =>"
+    },
+    {
+      "claim": "It returns an arrow that accepts schema/value",
+      "verdict": "SUPPORTED",
+      "source_ref": "parse.ts:71, returned (schema,value,_ctx) =>"
+    }
+  ],
+  "full_bilingual_precision": null,
+  "dimensions": [
+    {
+      "dimension": "factual correctness",
+      "score": 0,
+      "reason": "Getter/setter claims wrong; additional typed rejection association unsupported."
+    },
+    {
+      "dimension": "relevant completeness",
+      "score": 0,
+      "reason": "Runner argument roles and mandatory execution-status disclaimers missing."
+    },
+    {
+      "dimension": "architecture and dependencies",
+      "score": 0,
+      "reason": "Local variable versus object property and sync/async error roles confused."
+    },
+    {
+      "dimension": "API contracts",
+      "score": 0,
+      "reason": "Accessor predicate/dataflow wrong."
+    },
+    {
+      "dimension": "errors and exceptions",
+      "score": 0,
+      "reason": "error_boundaries None and unsupported error-class association."
+    },
+    {
+      "dimension": "existing tests and actual execution status",
+      "score": 0,
+      "reason": "Required not-executed statement absent."
+    },
+    {
+      "dimension": "examples and commands",
+      "score": 0,
+      "reason": "Required unverified statement absent."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "score": 0,
+      "reason": "PT code literal success renamed sucesso."
+    },
+    {
+      "dimension": "FAQ correctness",
+      "score": 2,
+      "reason": "Both FAQ factory statements (takes error class, returns parsing function) match selected factory; generic purpose is source-level only."
+    },
+    {
+      "dimension": "citation relevance",
+      "score": 0,
+      "reason": "Every behavior source is literal placeholder path:lines."
+    },
+    {
+      "dimension": "explicit limitations",
+      "score": 0,
+      "reason": "Correct initial lack-of-evidence clause followed by unsupported specific rejection class."
+    }
+  ],
+  "whole_note": "REJECTED",
+  "A_H_shape_comparison": "A/Zod only EN; H/Zod both blocks and all ten IDs each. This measured shape completion does not yield correct bilingual meaning or complete acceptance. Same source/options/messages, format only changed.",
+  "reviewer": "Same campaign agent, not independent human/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

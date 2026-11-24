@@ -1,0 +1,77 @@
+{
+  "frozen_at": "2026-11-21T00:06:48.959061+00:00",
+  "hypothesis": "H5: On this bounded source, a separate claim-verification call can distinguish plausible false claims with correct citations from true controls, rather than relying on citation presence or blanket abstention.",
+  "cases": [
+    {
+      "id": "c17",
+      "claim": "OnlyValidArgs returns nil without membership checks when Command.ValidArgs is empty.",
+      "expected": "SUPPORTED",
+      "first_line": 51,
+      "last_line": 65
+    },
+    {
+      "id": "c42",
+      "claim": "MatchAll continues calling all remaining validators after the first non-nil error, then combines errors.",
+      "expected": "REFUTED",
+      "first_line": 126,
+      "last_line": 136
+    },
+    {
+      "id": "c08",
+      "claim": "For min <= max, RangeArgs accepts argument counts equal to min or max.",
+      "expected": "SUPPORTED",
+      "first_line": 117,
+      "last_line": 124
+    },
+    {
+      "id": "c63",
+      "claim": "NoDuplicateArgs silently removes duplicate positional arguments instead of returning an error.",
+      "expected": "REFUTED",
+      "first_line": 68,
+      "last_line": 79
+    },
+    {
+      "id": "c29",
+      "claim": "OnlyValidArgs rejects every nonempty argument list when Command.ValidArgs is empty.",
+      "expected": "REFUTED",
+      "first_line": 51,
+      "last_line": 65
+    },
+    {
+      "id": "c51",
+      "claim": "MatchAll returns immediately when the current validator returns a non-nil error.",
+      "expected": "SUPPORTED",
+      "first_line": 126,
+      "last_line": 136
+    },
+    {
+      "id": "c34",
+      "claim": "RangeArgs rejects argument counts exactly equal to either boundary, even when min <= max.",
+      "expected": "REFUTED",
+      "first_line": 117,
+      "last_line": 124
+    },
+    {
+      "id": "c76",
+      "claim": "NoDuplicateArgs records seen arguments and returns an error for the first repeated argument.",
+      "expected": "SUPPORTED",
+      "first_line": 68,
+      "last_line": 79
+    }
+  ],
+  "positive_controls": 4,
+  "negative_canaries": 4,
+  "source": {
+    "family": "spf13/cobra",
+    "repository": "cobra",
+    "revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+    "path": "args.go",
+    "evidence_path": "agent/research/portfolio-vivabem-20261120/public-source-evidence-v1/cobra/adbc8813901bba65827259daa8e22ff94ec1f30e/args.go",
+    "sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+    "bytes": 4477,
+    "role": "evaluation-only; no training",
+    "license_path": "LICENSE.txt"
+  },
+  "evaluation_only": true,
+  "no_independence_claim": "Same Cobra family and same model; separate request is procedural separation, not an independent epistemic truth oracle."
+}

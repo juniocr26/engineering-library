@@ -1,0 +1,265 @@
+{
+  "at": "2026-11-21T16:11:23.431892+00:00",
+  "task": "cobra",
+  "method": "K",
+  "content_sha256": "1cc8c15467516c56cb5e0728ce51330416ce780dbc1c35fd386ac685af258c84",
+  "schema_subset_errors": [],
+  "claims": [
+    {
+      "claim_id": "K-cobra-C01",
+      "reference_id": "C01",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        22,
+        22
+      ],
+      "exact_source_evidence": "type PositionalArgs func(cmd *Command, args []string) error",
+      "expected_interpretation": {
+        "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+        "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+      },
+      "generated_interpretation": {
+        "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+        "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C02",
+      "reference_id": "C02",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        51,
+        65
+      ],
+      "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+      "expected_interpretation": {
+        "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+        "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+      },
+      "generated_interpretation": {
+        "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+        "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C03",
+      "reference_id": "C03",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        55,
+        58
+      ],
+      "exact_source_evidence": "\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}",
+      "expected_interpretation": {
+        "en": "Allowlist entries are projected to the portion before the first tab.",
+        "pt-BR": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab."
+      },
+      "generated_interpretation": {
+        "en": "Allowlist entries are projected to the portion before the first tab.",
+        "pt-BR": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C04",
+      "reference_id": "C04",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        107,
+        113
+      ],
+      "exact_source_evidence": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}",
+      "expected_interpretation": {
+        "en": "ExactArgs(n) returns a validator function.",
+        "pt-BR": "ExactArgs(n) retorna uma função validadora."
+      },
+      "generated_interpretation": {
+        "en": "ExactArgs(n) returns a validator function.",
+        "pt-BR": "ExactArgs(n) retorna uma função validadora."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C05",
+      "reference_id": "C05",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        108,
+        112
+      ],
+      "exact_source_evidence": "\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil",
+      "expected_interpretation": {
+        "en": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+        "pt-BR": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado."
+      },
+      "generated_interpretation": {
+        "en": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+        "pt-BR": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C06",
+      "reference_id": "C06",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        127,
+        134
+      ],
+      "exact_source_evidence": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil",
+      "expected_interpretation": {
+        "en": "MatchAll invokes its validators in the order of the supplied slice.",
+        "pt-BR": "MatchAll chama seus validadores na ordem do slice fornecido."
+      },
+      "generated_interpretation": {
+        "en": "MatchAll invokes its validators in the order of the supplied slice.",
+        "pt-BR": "MatchAll chama seus validadores na ordem do slice fornecido."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C07",
+      "reference_id": "C07",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        129,
+        131
+      ],
+      "exact_source_evidence": "\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err",
+      "expected_interpretation": {
+        "en": "MatchAll returns immediately at the first non-nil validator error.",
+        "pt-BR": "MatchAll retorna imediatamente no primeiro erro não nil de um validador."
+      },
+      "generated_interpretation": {
+        "en": "MatchAll returns immediately at the first non-nil validator error.",
+        "pt-BR": "MatchAll retorna imediatamente no primeiro erro não nil de um validador."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C08",
+      "reference_id": "C08",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        142,
+        144
+      ],
+      "exact_source_evidence": "func ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}",
+      "expected_interpretation": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+      },
+      "generated_interpretation": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    },
+    {
+      "claim_id": "K-cobra-C09",
+      "reference_id": "C09",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        141,
+        141
+      ],
+      "exact_source_evidence": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+      "expected_interpretation": {
+        "en": "The selected source comment marks ExactValidArgs deprecated.",
+        "pt-BR": "O comentário selecionado da fonte marca ExactValidArgs como deprecated."
+      },
+      "generated_interpretation": {
+        "en": "The selected source comment marks ExactValidArgs deprecated.",
+        "pt-BR": "O comentário selecionado da fonte marca ExactValidArgs como deprecated."
+      },
+      "verdict": "SUPPORTED",
+      "critical_if_false": true,
+      "bilingual_consistency": true,
+      "reviewer": "Same campaign agent; actual output and pinned source context read. Support inherited from exact source-reviewed fact, not citation membership or arbitrary prose matching.",
+      "provenance": "Verbatim supplied bilingual reference copy; no autonomous fact discovery or new paraphrase."
+    }
+  ],
+  "all_generated_claims_reviewed": true,
+  "all_required_claims_covered": true,
+  "bilingual_semantics_correct": true,
+  "critical_unsupported_claims": 0,
+  "source_only_semantic_admission": true,
+  "required_ids_correct": [
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09"
+  ],
+  "unique_required_factual_precision": {
+    "numerator": 9,
+    "denominator": 9
+  },
+  "coverage": {
+    "numerator": 9,
+    "denominator": 9
+  },
+  "verbatim_supplied_reference_fact_pairs": 9,
+  "additional_neural_factual_claims": 0,
+  "frozen_metadata_review": "Both source-only scope/exception/unknown/test/example/owner limits read with the actual language strings. FAQ reuses only the generated exact correct fact at predeclared ID; no added neural FAQ assertion. Final assembled-note dimension review is separate.",
+  "not_general_model_accuracy": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

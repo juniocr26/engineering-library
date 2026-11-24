@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-20T20:20:00.253676+00:00",
+  "status": "DATA_ONLY_FUTURE_PILOT_ADMISSION_SUPPLEMENT_NOT_FRAMEWORK_CONFIG",
+  "extends": "future-pilot-review-contract-v1.json",
+  "extends_sha256": "94b3b40bc0ee530c459624dccafd94271a4b0dc0cba5a590db02dab411e20d7c",
+  "evidence": "pilot-argument-admission-results-v1.json",
+  "evidence_sha256": "a14c18854ec4a5578c243caece7bdc4e2b63cbeeb15f0ed86712811dc8770117",
+  "launch_allowed": false,
+  "training_prohibited_in_current_campaign": true,
+  "all_nine_gates_still_required": true,
+  "new_findings": {
+    "defaults_are_not_pilot": "Absent resolved model/data values, inspected defaults are Qwen/Qwen3-0.6b and mlx-community/WikiSQL, not the owner proposed local trainable model and gold data. Neither was acquired or loaded.",
+    "no_train_is_not_dryrun": "The pinned run function places model and dataset loading before train/test branch checks; never invoke upstream main/run merely to validate future arguments.",
+    "launch_flag_not_framework_enforced": "launch_allowed=false is our documentary gate. The inspected framework run does not check it, and a predecoded config train=true remains true after merge.",
+    "none_only_merge": "Config overrides only namespace entries equal to None. CLI trust_remote_code False and clear_cache_threshold0 therefore prevent corresponding config values from replacing them.",
+    "config_types_not_parser_validated": "Predecoded config iters string and fine_tune_type qlora survive the shown merge. This does not claim downstream trainer acceptance; the shown train_model validates fine_tune_type later.",
+    "lora_parameters": "Nested rank/dropout/scale belong to configuration, not an invented --rank option.",
+    "unknown_converter": "No source/unit claim for _parse_size; use of that flag blocked in this audit.",
+    "mask_prompt": "Admission of mask_prompt=true is not tokenizer/mask correctness; prior unresolved padding/zero-supervision findings remain."
+  },
+  "future_owner_review_requirements": [
+    "Resolve exact approved trainable model/tokenizer/environment/source/data manifests before constructing a real run request.",
+    "Validate the final merged configuration with explicit types,allowed choices and positive bounded budgets;do not rely on argparse for configuration-file values.",
+    "Keep prelaunch authorization/resource/isolation checks outside upstream run and enforce them before any possible model/data loading.",
+    "Separately review unknown converter/YAML/tokenizer semantics and actual memory feasibility.",
+    "Do not emit or execute a launch command until all nine readiness gates and owner-specific training approval are satisfied."
+  ],
+  "executable_command_emitted": false,
+  "framework_config_file_emitted": false,
+  "pure_selected_source_function_executed": "build_parser only,strictly reviewed stdlib argument construction. This is a new scoped follow-up beyond earlier static-only framework review.",
+  "full_mlx_lm_module_imported": false,
+  "mlx_or_numpy_or_yaml_imported": false,
+  "model_or_tokenizer_loaded": false,
+  "optimizer_created": false,
+  "training_steps": 0,
+  "owner_gold": 0,
+  "readiness": "NO-GO_UNCHANGED"
+}

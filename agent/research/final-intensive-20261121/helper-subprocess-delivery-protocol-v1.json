@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-22T01:25:36.758378+00:00",
+  "hypothesis": "Current real helper catches subprocess failures during fresh extraction but equivalent failures during cached Go evidence validation can escape request(), while OSError control returns REFUSED. No production code change.",
+  "implementation": "agent/tools/documentation_retrieval.py",
+  "implementation_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+  "source": "package owned\n\nfunc Value() int { return 7 }\n",
+  "source_sha256": "c31e44c83d73eea476a7ecbd2ad312d2ed8feca43a7c9f5e65346766132ef60a",
+  "cases": [
+    {
+      "id": "fresh-TimeoutExpired",
+      "cached": false,
+      "fault": "TimeoutExpired",
+      "expected_delivery": "RETURNED",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "cached-TimeoutExpired",
+      "cached": true,
+      "fault": "TimeoutExpired",
+      "expected_delivery": "RAISED",
+      "expected_status": null
+    },
+    {
+      "id": "fresh-CalledProcessError",
+      "cached": false,
+      "fault": "CalledProcessError",
+      "expected_delivery": "RETURNED",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "cached-CalledProcessError",
+      "cached": true,
+      "fault": "CalledProcessError",
+      "expected_delivery": "RAISED",
+      "expected_status": null
+    },
+    {
+      "id": "fresh-SubprocessError",
+      "cached": false,
+      "fault": "SubprocessError",
+      "expected_delivery": "RETURNED",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "cached-SubprocessError",
+      "cached": true,
+      "fault": "SubprocessError",
+      "expected_delivery": "RAISED",
+      "expected_status": null
+    },
+    {
+      "id": "fresh-OSError",
+      "cached": false,
+      "fault": "OSError",
+      "expected_delivery": "RETURNED",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "cached-OSError",
+      "cached": true,
+      "fault": "OSError",
+      "expected_delivery": "RETURNED",
+      "expected_status": "REFUSED"
+    }
+  ],
+  "control": "Real native syntax parser creates valid FOUND journal before cached fault injection; intact fresh/duplicate control must pass first.",
+  "injection": "Temporarily replace only subprocess.run in this isolated observer process with an owned raising callable, restore in finally. No actual OS resource fault is induced.",
+  "scope": "Dynamic real HelperRetrieval/request/journal observation with injected transport exceptions. Not actual timeout, target execution, Linux/Windows behavior, caller job execution, generic accuracy or permanent tests."
+}

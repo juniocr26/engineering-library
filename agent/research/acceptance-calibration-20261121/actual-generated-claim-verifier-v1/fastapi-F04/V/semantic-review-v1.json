@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-21T17:21:37.933062+00:00",
+  "case": "fastapi-F04",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-F04",
+    "task": "fastapi",
+    "fact_id": "F04",
+    "original_pair": {
+      "en": "The dependency_cache argument is passed to the recursive solve_dependencies call as an empty dictionary when it is None.",
+      "pt-BR": "O argumento dependency_cache é passado para a chamada recursiva solve_dependencies como uma dictionary vazia quando ela é None."
+    },
+    "expected_verdict": "INSUFFICIENT",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/fastapi/L/semantic-review-v2.json",
+    "source_review_sha256": "f36ec3cec48c2976dfa0f4c0ce928dd74f60d2588446a74f57d9a00d56e6f9cb",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "function implementation",
+    "evidence": "The function solve_dependencies does not explicitly pass an empty dictionary for dependency_cache when it is None. However, the function does initialize dependency_cache as an empty dictionary when it is None. The function also uses dependency_cache to store the results of sub-dependencies, but it does not explicitly pass an empty dictionary for dependency_cache when it is None. Therefore, the source does not provide enough information to determine whether dependency_cache is passed as an empty dictionary when it is None.",
+    "reason": "The source does not explicitly state that dependency_cache is passed as an empty dictionary when it is None. However, the function does initialize dependency_cache as an empty dictionary when it is None. The function also uses dependency_cache to store the results of sub-dependencies, but it does not explicitly pass an empty dictionary for dependency_cache when it is None. Therefore, the source does not provide enough information to determine whether dependency_cache is passed as an empty dictionary when it is None."
+  },
+  "content_sha256": "17fc2a62488ab272a3f5fccdd23b389717515387daa0b34eac6a39aa7685f127",
+  "primary_raw_label_agreement": true,
+  "rationale_support_for_requested_claim": "SUPPORTED_AS_JUSTIFIED_ABSTENTION",
+  "source_relationship_review": "Acknowledges initializationwhenNone andusesofcacheforstores but doesnotproveemptyvalueatrecursivepassage. Correctly leaves extraempty-dictionaryqualification insufficient ratherthan asserting oppositeglobalruntimebehavior. Doesnot quote exactkeywordvalue, so this is narrowjustifiedabstention, not positiveproof of fullcacheflow. EN/PTpair shares the same qualification; no translatedidentifier repair.",
+  "evidence_form": "Accurate bounded source paraphrase, not literal quotation",
+  "end_to_end_label_and_rationale_supported": true,
+  "reviewer": "Samecampaignagent, source-only; frozenrefpredatescritic",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

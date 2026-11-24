@@ -1,0 +1,106 @@
+{
+  "at": "2026-11-21T08:58:12.633273+00:00",
+  "repository": "ml-explore/mlx-lm",
+  "commit": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "status": "CONDITIONAL_PUBLIC_SOURCE_MAPPING_VERIFIED_NOT_LOCAL_TRAINING_READY",
+  "source_files": 11,
+  "successful_source_file_copies": 11,
+  "failed_guessed_path": "mlx_lm/models/llama.py404preserved;packagepathfoundviaAPI,notmodelunsupportedproof",
+  "observations": {
+    "relative_candidate_keys": [
+      "self_attn.q_proj",
+      "self_attn.v_proj"
+    ],
+    "selection": "For positive num_layers=2 the converter iterates last2 entries of model.layers;Llama Model.layers forwards self.model.layers. Explicit keys avoid auto-selected convertible modules. A separate whole-model matching-key pass also exists, so no unrelated global keys should be included.",
+    "matrix_layout": "LoRALinear A shape(input_dims,r),B shape(r,output_dims);scale is stored/applied directly,not automatically alpha/rank. Required scale key;defaults must not silently substitute.",
+    "freeze_boundary": "CLI train_model calls model.freeze before adapterconversion. Actual loaded model trainable inventory/dtypes remain unverified.",
+    "zero_layer_boundary": "Written slice uses -max(num_layers,0);zero yields a full slice, not a zero-layer no-op. CLI documents -1 forall;the proposal uses explicitpositive2 and never invokes CLI here.",
+    "CLI_defaults_not_pilot": [
+      "num_layers16",
+      "batch_size4",
+      "iters1000",
+      "max_seq_length2048",
+      "rank8",
+      "scale20",
+      "defaultmodelanddatasetnotapprovedforcampaign"
+    ],
+    "environment_metadata": {
+      "requires_python": ">=3.11",
+      "dependencies": [
+        "mlx>=0.32.3; platform_system == 'Darwin'",
+        "numpy",
+        "transformers>=5.7.0",
+        "sentencepiece",
+        "pillow",
+        "protobuf",
+        "pyyaml",
+        "jinja2"
+      ],
+      "limit": "Declared minimums are not a locked/installed compatible environment. HostPython3.14isnotcertifiedsupported orunsupported by classifiers alone."
+    }
+  },
+  "conditional_geometry": {
+    "layers": 28,
+    "hidden": 3072,
+    "attention_heads": 24,
+    "kv_heads": 8,
+    "head_dim": 128,
+    "rank": 4
+  },
+  "conditional_adapter_counts": {
+    "q_each": 24576,
+    "v_each": 16384,
+    "layers": 2,
+    "modules": 4,
+    "A_B_matrices": 8,
+    "elements": 81920,
+    "not_measured_peak_memory_or_actual_parameter_inventory": true
+  },
+  "owned_python_slice_arithmetic_not_framework_execution": {
+    "num_layers2": [
+      26,
+      27
+    ],
+    "num_layers0": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ]
+  },
+  "limits": [
+    "NoMLXimport,trainingframeworkinstallation/modelweights/tokenizerload/optimizer/adapterrun occurred.",
+    "ExistingOllamaGGUF geometry is not a verified future trainablecheckpoint/MLXloader/tokenizer/template/rights match.",
+    "Expected relative keys and math require actual model module inventory/dtype/frozenbase validation before any future update.",
+    "No trainingmemory/throughput/resourcepressure/checkpointresume/rollback verified."
+  ],
+  "license": "MITrootlicense/Apple noticesretained;notmodel/data rights authorization.",
+  "owner_gold": 0,
+  "optimizer_steps": 0,
+  "launch_allowed": false,
+  "training_authorized": false
+}

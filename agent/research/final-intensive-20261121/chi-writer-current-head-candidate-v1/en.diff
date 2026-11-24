@@ -1,0 +1,25 @@
+--- historical/en.md
++++ new-local-pin/en.md
+@@ -1,6 +1,6 @@
+ # Chi response wrappers: capabilities and shared accounting
+ 
+-Source-scoped development candidate, not owner approved. Revision `9f8adb1aabaa8a91180a821111d3f8e668d1c0bf`, `middleware/wrap_writer.go` and `middleware/wrap_writer_test.go`. Source was read and parsed; the Chi program and tests were not executed. This chapter describes the selected written implementation, not complete server behavior.
++Source-scoped development candidate, not owner approved. Revision `c64ed7d6635f33a8b2feaff7dcfa55677023ac7d`, `middleware/wrap_writer.go` and `middleware/wrap_writer_test.go`. Source was read and parsed; the Chi program and tests were not executed. This chapter describes the selected written implementation, not complete server behavior.
+ 
+ ## Selection and architecture
+ 
+@@ -50,6 +50,14 @@
+ 
+ **Does direct `ReadFrom` always commit a wrapper header before reading?** No. The selected current method records state after the delegate call only under its positive-count/unrecorded-header guard. This is not a runtime guarantee about the original writer. [S5,H1]
+ 
++## Maintenance across the selected local revisions
++
++The new local target `c64ed7d6635f33a8b2feaff7dcfa55677023ac7d` has `9f8adb1aabaa8a91180a821111d3f8e668d1c0bf` as its direct parent. The complete tree comparison adds only `middleware/request_size_test.go`. The writer implementation, its selected tests, module declaration and license are byte-identical. The selected lexical caller contexts in `middleware/logger.go`, `middleware/middleware_test.go` and `middleware/wrap_writer_readfrom_test.go` are also unchanged. This is a bounded source comparison, not proof that every dynamic caller or runtime behavior is unchanged.
++
++The new test declares four table cases for `RequestSize`: a smaller body, an exactly-at-limit body, a one-byte-over body and an empty body. In that written test, the handler calls `io.ReadAll` and writes `http.StatusRequestEntityTooLarge` on the error path. The `RequestSize` implementation already exists in the parent revision; its selected body assigns `http.MaxBytesReader` to `r.Body` and delegates to the handler, without an explicit `WriteHeader` call. Added assertions are not a newly introduced wrapper capability or passing test observations. Evidence: `middleware/request_size.go:9–17`; `middleware/request_size_test.go:14–61` at the new pin.
++
++The original historical-pinned chapter needs no change to remain valid for its declared revision. This isolated version explicitly targets the new local pin, so its provenance is updated; it does not claim a wrapper behavior change. H1 remains the explicitly selected older `04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9`, not the immediate parent of the new target. No source project tests were executed.
++
+ ## Evidence and limits
+ 
+ S1: source lines 15–44. S2: 46–81. S3: 83–128. S4: 130–148. S5: 211–229. S6: 203–209 and 231–248. T1: test lines 116–134. T2: 136–174. T3: 181–198. T4: 204–220. T5: 21–114. H1: same source path at `04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9`, `httpFancyWriter.ReadFrom`, frozen separately. Snapshots and native syntax selections are preserved beside this candidate. No private data, external changes, upstream execution, owner approval or training-gold promotion.

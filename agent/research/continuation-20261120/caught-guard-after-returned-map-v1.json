@@ -1,0 +1,311 @@
+{
+  "at": "2026-11-20T16:19:24.312694+00:00",
+  "current_caller": "1.9.43",
+  "existing_distinct_case_count": 12,
+  "all_previous_catch_outcomes_preserved": true,
+  "rows": [
+    {
+      "protocol": "ruby-exception-guard-protocol-v1.json",
+      "result": {
+        "caller_version": "1.9.43",
+        "rows": [
+          {
+            "id": "retained-real-model-translated-exceptions",
+            "status": "REFUSED",
+            "reason": "quoted Python exception identifiers differ between languages or their source spelling; factual review required",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 105,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "exceptions.IncompleteExpressionError",
+                "exceptions.LexerError",
+                "exceptions.ParseError"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            }
+          },
+          {
+            "id": "correct-qualified-identifiers",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 105,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "exceptions.IncompleteExpressionError",
+                "exceptions.LexerError",
+                "exceptions.ParseError"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `Parser._do_parse` method catches `exceptions.LexerError` and `exceptions.ParseError`, writes `e.expression = expression` and re-raises; `exceptions.IncompleteExpressionError` uses `e.set_expression(expression)` before re-raising.\n\nSource: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO m\u00e9todo `Parser._do_parse` captura `exceptions.LexerError` e `exceptions.ParseError`, escreve `e.expression = expression` e relan\u00e7a; `exceptions.IncompleteExpressionError` usa `e.set_expression(expression)` antes de relan\u00e7ar.\n\nFonte: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n"
+            }
+          },
+          {
+            "id": "correct-unqualified-source-identifiers",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 105,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "exceptions.IncompleteExpressionError",
+                "exceptions.LexerError",
+                "exceptions.ParseError"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` method catches `LexerError` before re-raising the exception.\n\nSource: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO m\u00e9todo `_do_parse` captura `LexerError` antes de relan\u00e7ar a exce\u00e7\u00e3o.\n\nFonte: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n"
+            }
+          },
+          {
+            "id": "qualified-vs-terminal-same-identifier",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 105,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "exceptions.IncompleteExpressionError",
+                "exceptions.LexerError",
+                "exceptions.ParseError"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` method catches `exceptions.LexerError` before re-raising the exception.\n\nSource: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO m\u00e9todo `_do_parse` captura `LexerError` antes de relan\u00e7ar a exce\u00e7\u00e3o.\n\nFonte: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n"
+            }
+          },
+          {
+            "id": "same-limited-fact-without-identifier-translation",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 105,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "exceptions.IncompleteExpressionError",
+                "exceptions.LexerError",
+                "exceptions.ParseError"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` method adds expression context to selected parser errors; runtime behavior is unverified.\n\nSource: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO m\u00e9todo `_do_parse` acrescenta contexto da express\u00e3o a erros selecionados do parser; o comportamento em execu\u00e7\u00e3o n\u00e3o foi verificado.\n\nFonte: `jmespath/parser.py:105`; SHA-256: `5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137`.\n\n        def _do_parse(self, expression):\n            try:\n                return self._parse(expression)\n            except exceptions.LexerError as e:\n                e.expression = expression\n                raise\n            except exceptions.IncompleteExpressionError as e:\n                e.set_expression(expression)\n                raise\n            except exceptions.ParseError as e:\n                e.expression = expression\n                raise\n\n\n"
+            }
+          }
+        ],
+        "model_calls": 0,
+        "published_files_written": false,
+        "method": "Existing SectionCommand.evidence and Command.validate_and_render; no mocked cards or model output generation."
+      },
+      "stderr": ""
+    },
+    {
+      "protocol": "ruby-exception-guard-ambiguity-protocol-v1.json",
+      "result": {
+        "caller_version": "1.9.43",
+        "rows": [
+          {
+            "id": "different-qualified-catch-same-terminal",
+            "status": "REFUSED",
+            "reason": "quoted Python exception identifiers differ between languages or their source spelling; factual review required",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 2,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return helper(expression)\n        except first.Error:\n            raise\n        except second.Error:\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "first.Error",
+                "second.Error"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            }
+          },
+          {
+            "id": "ambiguous-terminal-shortening",
+            "status": "REFUSED",
+            "reason": "quoted Python exception identifiers differ between languages or their source spelling; factual review required",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 2,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return helper(expression)\n        except first.Error:\n            raise\n        except second.Error:\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "first.Error",
+                "second.Error"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            }
+          },
+          {
+            "id": "same-qualified-catch-preserved",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 2,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return helper(expression)\n        except first.Error:\n            raise\n        except second.Error:\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "first.Error",
+                "second.Error"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` source names `first.Error` in a catch clause.\n\nSource: `jmespath/parser.py:2`; SHA-256: `3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except first.Error:\n                raise\n            except second.Error:\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO c\u00f3digo de `_do_parse` nomeia `first.Error` em uma cl\u00e1usula de captura.\n\nFonte: `jmespath/parser.py:2`; SHA-256: `3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except first.Error:\n                raise\n            except second.Error:\n                raise\n\n\n"
+            }
+          },
+          {
+            "id": "both-known-catches-preserved",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 2,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return helper(expression)\n        except first.Error:\n            raise\n        except second.Error:\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [
+                "first.Error",
+                "second.Error"
+              ],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` source names `first.Error` and `second.Error` in catch clauses.\n\nSource: `jmespath/parser.py:2`; SHA-256: `3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except first.Error:\n                raise\n            except second.Error:\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO c\u00f3digo de `_do_parse` nomeia `first.Error` e `second.Error` em cl\u00e1usulas de captura.\n\nFonte: `jmespath/parser.py:2`; SHA-256: `3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except first.Error:\n                raise\n            except second.Error:\n                raise\n\n\n"
+            }
+          },
+          {
+            "id": "bare-handler-no-invented-type",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 2,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return helper(expression)\n        except:\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 284cf9621ebca4876c96235a0f15fee9a14b51f7ff074b42e13834d10b764de8.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` source contains a bare except clause and re-raises the caught exception.\n\nSource: `jmespath/parser.py:2`; SHA-256: `284cf9621ebca4876c96235a0f15fee9a14b51f7ff074b42e13834d10b764de8`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except:\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 284cf9621ebca4876c96235a0f15fee9a14b51f7ff074b42e13834d10b764de8.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO c\u00f3digo de `_do_parse` cont\u00e9m uma cl\u00e1usula except sem tipo e relan\u00e7a a exce\u00e7\u00e3o capturada.\n\nFonte: `jmespath/parser.py:2`; SHA-256: `284cf9621ebca4876c96235a0f15fee9a14b51f7ff074b42e13834d10b764de8`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except:\n                raise\n\n\n"
+            }
+          },
+          {
+            "id": "comment-is-not-ast-catch",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 2,
+              "quote": "    def _do_parse(self, expression):\n        # except imaginary.MissingError is only a comment.\n        return expression\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: f98369361d14258e29cc204017b1415f34a7f9d6dcff39d0373caefee4b52688.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` source has a comment mentioning an error label and returns expression.\n\nSource: `jmespath/parser.py:2`; SHA-256: `f98369361d14258e29cc204017b1415f34a7f9d6dcff39d0373caefee4b52688`.\n\n        def _do_parse(self, expression):\n            # except imaginary.MissingError is only a comment.\n            return expression\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: f98369361d14258e29cc204017b1415f34a7f9d6dcff39d0373caefee4b52688.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO c\u00f3digo de `_do_parse` cont\u00e9m um coment\u00e1rio com um nome de erro e retorna expression.\n\nFonte: `jmespath/parser.py:2`; SHA-256: `f98369361d14258e29cc204017b1415f34a7f9d6dcff39d0373caefee4b52688`.\n\n        def _do_parse(self, expression):\n            # except imaginary.MissingError is only a comment.\n            return expression\n\n\n"
+            }
+          },
+          {
+            "id": "dynamic-exception-expression-not-static-name",
+            "status": "RENDERED",
+            "card": {
+              "path": "jmespath/parser.py",
+              "line": 2,
+              "quote": "    def _do_parse(self, expression):\n        try:\n            return helper(expression)\n        except factory().Error:\n            raise\n",
+              "complete_unit": true,
+              "symbol": "_do_parse",
+              "enclosing_impl_hint": "Parser",
+              "caught_exception_identifiers": [],
+              "direct_return_mapping_identifiers": [],
+              "complete_function": true,
+              "preparation": "Python AST range; complete source function, not runtime or dependency verification",
+              "qualified_symbol": "Parser._do_parse"
+            },
+            "output": {
+              "en": "# Source summary (generated draft)\n\nModel explanations require factual and bilingual review. Exact quotes were checked; runtime was not executed by this command. This bounded summary does not replace human documentation.\n\nProject: public-cache-renderer-probe. Generation: 1.9.43; model: llama3.2:3b; evidence SHA-256: 6af78f567b43534e5b116d9c277a627e2ff6de67373436e231e4826cf11ccf1d.\n\nCoverage: 1/1 candidate files; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitted.\n\nExplicit source-unit scope for the files listed below; their unselected content was not provided:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nSelected units: 1; cited units: 1.\n\nEvidence preparation uses caller-extracted declarations and source-layout excerpts where supported. These are deterministic assistance, not autonomous model findings or runtime verification.\n\n## 1\n\nThe `_do_parse` source has a dynamic catch expression; its exception type is not resolved here.\n\nSource: `jmespath/parser.py:2`; SHA-256: `6af78f567b43534e5b116d9c277a627e2ff6de67373436e231e4826cf11ccf1d`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except factory().Error:\n                raise\n\n\n",
+              "pt-br": "# Resumo do c\u00f3digo (rascunho gerado)\n\nAs explica\u00e7\u00f5es do modelo exigem revis\u00e3o factual e bil\u00edngue. Cita\u00e7\u00f5es literais foram conferidas; este comando n\u00e3o executou o runtime. Este resumo limitado n\u00e3o substitui documenta\u00e7\u00e3o humana.\n\nProjeto: public-cache-renderer-probe. Gera\u00e7\u00e3o: 1.9.43; modelo: llama3.2:3b; evid\u00eancia SHA-256: 6af78f567b43534e5b116d9c277a627e2ff6de67373436e231e4826cf11ccf1d.\n\nCobertura: 1/1 arquivos candidatos; explicit project section; counts apply only to staged files, not whole repository coverage; 0 omitidos.\n\nEscopo expl\u00edcito de unidades nos arquivos abaixo; o conte\u00fado n\u00e3o selecionado desses arquivos n\u00e3o foi enviado:\n\n    {\"jmespath/parser.py\":[\"Parser._do_parse\"]}\n\nUnidades selecionadas: 1; unidades citadas: 1.\n\nA prepara\u00e7\u00e3o usa declara\u00e7\u00f5es extra\u00eddas pelo chamador e trechos delimitados pelo layout quando suportados. S\u00e3o aux\u00edlio determin\u00edstico, n\u00e3o descobertas aut\u00f4nomas do modelo nem verifica\u00e7\u00e3o de runtime.\n\n## 1\n\nO c\u00f3digo de `_do_parse` cont\u00e9m uma express\u00e3o din\u00e2mica de captura; seu tipo de exce\u00e7\u00e3o n\u00e3o est\u00e1 resolvido aqui.\n\nFonte: `jmespath/parser.py:2`; SHA-256: `6af78f567b43534e5b116d9c277a627e2ff6de67373436e231e4826cf11ccf1d`.\n\n        def _do_parse(self, expression):\n            try:\n                return helper(expression)\n            except factory().Error:\n                raise\n\n\n"
+            }
+          }
+        ],
+        "model_calls": 0,
+        "published_files_written": false,
+        "method": "Existing SectionCommand.evidence and Command.validate_and_render; no mocked cards or model output generation."
+      },
+      "stderr": ""
+    }
+  ],
+  "new_distinct_catch_cases": 0,
+  "model_calls": 0,
+  "source_executed": false,
+  "permanent_tests_modified": false
+}

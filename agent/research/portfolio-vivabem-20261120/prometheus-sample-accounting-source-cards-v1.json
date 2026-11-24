@@ -1,0 +1,136 @@
+{
+  "at": "2026-11-21T09:41:39.487486+00:00",
+  "cards": [
+    {
+      "id": "S01",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1242,
+      "last_line": 1254,
+      "quote": "func (ng *Engine) execEvalStmt(ctx context.Context, query *query, s *parser.EvalStmt) (parser.Value, annotations.Annotations, error) {\n\tvar budget *queryBudget\n\tif ng.enableQueryCost {\n\t\tbudget = &queryBudget{\n\t\t\tmaxSeries:      uint64ToInt64Limit(query.maxSeries),\n\t\t\tmaxSamplesRead: uint64ToInt64Limit(query.maxSamplesRead),\n\t\t}\n\t\tdefer func() {\n\t\t\t// Preserve costs even when a child aborts before its statistics merge.\n\t\t\tquery.sampleStats.TotalSeries = budget.series\n\t\t\tquery.sampleStats.SamplesRead = budget.samplesRead\n\t\t}()\n\t}\n",
+      "quote_sha256": "ed0f36bc18f6de301f2212cd50b27e4b9a7247e900cb91498c327a60f11b1b6d"
+    },
+    {
+      "id": "S02",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 1663,
+      "last_line": 1681,
+      "quote": "func (ev *evaluator) consumeSamples(n int64) {\n\tif ev.budget == nil {\n\t\treturn\n\t}\n\tev.budget.samplesRead = addSaturatingInt64(ev.budget.samplesRead, n)\n\tif ev.budget.maxSamplesRead > 0 && ev.budget.samplesRead > ev.budget.maxSamplesRead {\n\t\tev.error(ErrTooManySamplesRead(env))\n\t}\n}\n\n// Record newly consumed matrix input immediately when cost accounting is enabled.\n// A negative step denotes subquery output whose storage reads were already charged.\nfunc (ev *evaluator) consumeMatrixSamples(n int64, step int) {\n\tif ev.budget == nil || step < 0 {\n\t\treturn\n\t}\n\tev.samplesStats.IncrementSamplesReadAtStep(step, n)\n\tev.consumeSamples(n)\n}\n",
+      "quote_sha256": "72c7f83b348ef9e9c5254c51142ba6ce539e5f5fc790526da3633fcbda145de4"
+    },
+    {
+      "id": "S03",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 2451,
+      "last_line": 2479,
+      "quote": "\t\t\tif h == nil {\n\t\t\t\tev.currentSamples++\n\t\t\t\tev.samplesStats.IncrementSamplesAtStep(step, 1)\n\t\t\t\tev.samplesStats.IncrementSamplesReadAtStep(step, 1)\n\t\t\t\tev.consumeSamples(1)\n\t\t\t\tif ev.currentSamples > ev.maxSamples {\n\t\t\t\t\tev.error(ErrTooManySamples(env))\n\t\t\t\t}\n\t\t\t\tif ss.Floats == nil {\n\t\t\t\t\tss.Floats = reuseOrGetFPointSlices(prevSS, numSteps)\n\t\t\t\t}\n\t\t\t\tif recordOrigT {\n\t\t\t\t\t// This is an info metric, where we want to track the original sample timestamp.\n\t\t\t\t\t// Info metric values should be 1 by convention, therefore we can re-use this\n\t\t\t\t\t// space in the sample.\n\t\t\t\t\tf = float64(origT)\n\t\t\t\t}\n\t\t\t\tss.Floats = append(ss.Floats, FPoint{F: f, T: ts})\n\t\t\t} else {\n\t\t\t\tif recordOrigT {\n\t\t\t\t\tev.error(fmt.Errorf(\"this should be an info metric, with float samples: %s\", ss.Metric))\n\t\t\t\t}\n\n\t\t\t\tpoint := HPoint{H: h, T: ts}\n\t\t\t\thistSize := point.size()\n\t\t\t\tev.currentSamples += histSize\n\t\t\t\tev.samplesStats.IncrementSamplesAtStep(step, int64(histSize))\n\t\t\t\tev.samplesStats.IncrementSamplesReadAtStep(step, int64(histSize))\n\t\t\t\tev.consumeSamples(int64(histSize))\n",
+      "quote_sha256": "acd3709cf31e7c227741532a949a13581dfe79c0a56d0107fc20725e62a03590"
+    },
+    {
+      "id": "S04",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 2543,
+      "last_line": 2578,
+      "quote": "func (ev *evaluator) runSubquery(ctx context.Context, e *parser.SubqueryExpr) (parser.Value, *stats.QuerySamples, annotations.Annotations) {\n\tsubqStart, subqEnd, subqInterval := ev.subqueryTimeRange(e)\n\n\t// Subquery children always track per-step samples (independent of the\n\t// parent's per-step setting) so subquery stats can attribute each subquery\n\t// iteration to a parent step and drop iterations that fall in gaps between\n\t// parent windows. The arrays don't escape this call.\n\tchildStats := stats.NewChildWithStepTracking(subqStart, subqEnd, subqInterval)\n\tnewEv := &evaluator{\n\t\tstartTimestamp:           subqStart,\n\t\tendTimestamp:             subqEnd,\n\t\tinterval:                 subqInterval,\n\t\tcurrentSamples:           ev.currentSamples,\n\t\tmaxSamples:               ev.maxSamples,\n\t\tbudget:                   ev.budget,\n\t\tlogger:                   ev.logger,\n\t\tlookbackDelta:            ev.lookbackDelta,\n\t\tsamplesStats:             childStats,\n\t\tnoStepSubqueryIntervalFn: ev.noStepSubqueryIntervalFn,\n\t\tenableDelayedNameRemoval: ev.enableDelayedNameRemoval,\n\t\tenableTypeAndUnitLabels:  ev.enableTypeAndUnitLabels,\n\t\tuseStartTimestamps:       ev.useStartTimestamps,\n\t\tquerier:                  ev.querier,\n\t}\n\n\tif subqStart != ev.startTimestamp {\n\t\t// Adjust the offset of selectors based on the new start time of\n\t\t// the evaluator since the calculation of the offset with @ happens\n\t\t// w.r.t. the start time.\n\t\tsetOffsetForAtModifier(subqStart, e.Expr)\n\t}\n\n\tres, ws := newEv.eval(ctx, e.Expr)\n\tev.currentSamples = newEv.currentSamples\n\treturn res, childStats, ws\n}\n",
+      "quote_sha256": "561fd6c68c9e1412e2aa0388f2023f324b1cad47e1395cac6231d425d6308ee4"
+    },
+    {
+      "id": "S05",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 2585,
+      "last_line": 2609,
+      "quote": "func (ev *evaluator) evalSubquery(ctx context.Context, subq *parser.SubqueryExpr, outerOffset, outerRange int64) (*parser.MatrixSelector, int, annotations.Annotations) {\n\tval, childStats, ws := ev.runSubquery(ctx, subq)\n\tev.samplesStats.UpdatePeakFromSubquery(childStats)\n\tev.samplesStats.MergeSeriesFromSubquery(childStats)\n\tconsumer := stats.SubqueryConsumer{\n\t\tStart:       ev.startTimestamp,\n\t\tInterval:    ev.interval,\n\t\tNumSteps:    ev.numSteps(),\n\t\tOffset:      outerOffset,\n\t\tRange:       outerRange,\n\t\tAtTimestamp: subq.Timestamp,\n\t}\n\t// Merge underlying consumption, including nested subqueries. The outer\n\t// range-vector function must not count the materialized results again.\n\tev.samplesStats.MergeTotalSamplesFromSubquery(childStats, consumer)\n\tif ev.budget != nil {\n\t\t// Charge all work performed by the child, including steps whose output\n\t\t// falls between the parent's windows. Keep per-step statistics consistent.\n\t\tconsumer.Range = 0\n\t\tif consumer.AtTimestamp != nil {\n\t\t\t// A fixed window is evaluated once and charged to the first parent step.\n\t\t\tconsumer.NumSteps = 1\n\t\t}\n\t}\n\tev.samplesStats.MergeSamplesReadFromSubquery(childStats, consumer)\n",
+      "quote_sha256": "fabcec0bb472127b7f5235d4040f26041fff942b377d81861860ac56fe5a904c"
+    },
+    {
+      "id": "S06",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 2741,
+      "last_line": 2748,
+      "quote": "\t\t\tif subq, ok := a.(*parser.SubqueryExpr); ok {\n\t\t\t\tmatrixArgIndex = i\n\t\t\t\tmatrixArg = true\n\t\t\t\tmatrixFromSubquery = true\n\t\t\t\t// Replacing parser.SubqueryExpr with parser.MatrixSelector.\n\t\t\t\tval, totalSamples, ws := ev.evalSubquery(ctx, subq, durationMilliseconds(subq.OriginalOffset), durationMilliseconds(subq.Range))\n\t\t\t\te.Args[i] = val\n\t\t\t\twarnings.Merge(ws)\n",
+      "quote_sha256": "db77d225605a0362024dc555b0c8cfffb80a05db11a09a083811d86208c83db2"
+    },
+    {
+      "id": "S07",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 2927,
+      "last_line": 2969,
+      "quote": "\t\t\t\t\treadStep := step\n\t\t\t\t\tif matrixFromSubquery {\n\t\t\t\t\t\treadStep = -1\n\t\t\t\t\t}\n\t\t\t\t\tfloats, histograms, startTimestamps = ev.matrixIterSlice(ctx, it, mint, maxt, floats, histograms, startTimestamps, readStep)\n\t\t\t\t}\n\t\t\t\tif len(floats)+len(histograms) == 0 {\n\t\t\t\t\tcontinue\n\t\t\t\t}\n\t\t\t\t// fullWindowCount reflects the matrix window consumed at this\n\t\t\t\t// step. With an @ modifier the same window is reused across all\n\t\t\t\t// steps, so floats/histograms persist from step 0; computing\n\t\t\t\t// this after the conditional re-fetch handles both cases\n\t\t\t\t// uniformly.\n\t\t\t\tfullWindowCount := int64(len(floats) + totalHPointSize(histograms))\n\t\t\t\t// For subquery-derived matrices, SamplesRead was already counted\n\t\t\t\t// inside evalSubquery via MergeSamplesReadFromSubquery; skip here\n\t\t\t\t// to avoid double-counting the storage I/O. On step 0 the full\n\t\t\t\t// window is new; on later steps only points past the previous\n\t\t\t\t// step's cutoff are new.\n\t\t\t\tvar samplesReadCount int64\n\t\t\t\tif ev.budget == nil && refetch && !matrixFromSubquery {\n\t\t\t\t\tif step == 0 {\n\t\t\t\t\t\tsamplesReadCount = fullWindowCount\n\t\t\t\t\t} else {\n\t\t\t\t\t\tsamplesReadCount = countSamplesAfter(floats, histograms, maxt-ev.interval)\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tinMatrix[0].Floats = floats\n\t\t\t\tinMatrix[0].Histograms = histograms\n\t\t\t\tenh.Ts = ts\n\t\t\t\tenh.StartTimestamps = startTimestamps\n\n\t\t\t\t// Make the function call.\n\t\t\t\toutVec, annos := call(vectorVals, inMatrix, e.Args, enh)\n\t\t\t\twarnings.Merge(annos)\n\t\t\t\t// Subquery consumption was already merged in evalSubquery; its\n\t\t\t\t// materialized points do not add underlying sample consumption.\n\t\t\t\tif !matrixFromSubquery {\n\t\t\t\t\tev.samplesStats.IncrementSamplesAtStep(step, fullWindowCount)\n\t\t\t\t}\n\t\t\t\tif samplesReadCount > 0 {\n\t\t\t\t\tev.samplesStats.IncrementSamplesReadAtStep(step, samplesReadCount)\n",
+      "quote_sha256": "2c2532a4c41f25d1925652763a1197a19a710308e210c7a3786cdd6e4044461e"
+    },
+    {
+      "id": "S08",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 3182,
+      "last_line": 3208,
+      "quote": "\tcase *parser.StepInvariantExpr:\n\t\tnewEv := &evaluator{\n\t\t\tstartTimestamp:           ev.startTimestamp,\n\t\t\tendTimestamp:             ev.startTimestamp, // Always a single evaluation.\n\t\t\tinterval:                 ev.interval,\n\t\t\tcurrentSamples:           ev.currentSamples,\n\t\t\tmaxSamples:               ev.maxSamples,\n\t\t\tbudget:                   ev.budget,\n\t\t\tlogger:                   ev.logger,\n\t\t\tlookbackDelta:            ev.lookbackDelta,\n\t\t\tsamplesStats:             ev.samplesStats.NewChild(),\n\t\t\tnoStepSubqueryIntervalFn: ev.noStepSubqueryIntervalFn,\n\t\t\tenableDelayedNameRemoval: ev.enableDelayedNameRemoval,\n\t\t\tenableTypeAndUnitLabels:  ev.enableTypeAndUnitLabels,\n\t\t\tuseStartTimestamps:       ev.useStartTimestamps,\n\t\t\tquerier:                  ev.querier,\n\t\t}\n\t\tres, ws := newEv.eval(ctx, e.Expr)\n\t\tev.currentSamples = newEv.currentSamples\n\t\tev.samplesStats.UpdatePeakFromSubquery(newEv.samplesStats)\n\t\tev.samplesStats.MergeSeriesFromSubquery(newEv.samplesStats)\n\t\tfor ts, step := ev.startTimestamp, -1; ts <= ev.endTimestamp; ts += ev.interval {\n\t\t\tstep++\n\t\t\tev.samplesStats.IncrementSamplesAtStep(step, newEv.samplesStats.TotalSamples)\n\t\t}\n\t\t// Subquery ran once; add SamplesRead once at step 0 (not per outer step).\n\t\tev.samplesStats.IncrementSamplesReadAtStep(0, newEv.samplesStats.SamplesRead)\n",
+      "quote_sha256": "2468842968526aa4d99040d4077a8e48bbcecfcbf46c4284ce84d91b9b24b4f0"
+    },
+    {
+      "id": "S09",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 3677,
+      "last_line": 3700,
+      "quote": "\t\t\t\thistograms[n].T, histograms[n].H = buf.AtFloatHistogram(histograms[n].H)\n\t\t\t\tif value.IsStaleNaN(histograms[n].H.Sum) {\n\t\t\t\t\thistograms = histograms[:n]\n\t\t\t\t\tcontinue loop\n\t\t\t\t}\n\t\t\t\tev.consumeMatrixSamples(int64(histograms[n].size()), readStep)\n\t\t\t\tev.currentSamples += histograms[n].size()\n\t\t\t\tif ev.currentSamples > ev.maxSamples {\n\t\t\t\t\tev.error(ErrTooManySamples(env))\n\t\t\t\t}\n\n\t\t\t\tif startTimestamps != nil {\n\t\t\t\t\tstartTimestamps.Histograms = append(startTimestamps.Histograms, buf.AtST())\n\t\t\t\t}\n\t\t\t}\n\t\tcase chunkenc.ValFloat:\n\t\t\tt, f := buf.At()\n\t\t\tif value.IsStaleNaN(f) {\n\t\t\t\tcontinue loop\n\t\t\t}\n\t\t\t// Values in the buffer are guaranteed to be smaller than maxt.\n\t\t\tif t > mintFloats {\n\t\t\t\tev.consumeMatrixSamples(1, readStep)\n\t\t\t\tev.currentSamples++\n",
+      "quote_sha256": "f6b962acb11a0509e24475a09f0df8d65bc6adb2c8b01cc4775299d743526543"
+    },
+    {
+      "id": "S10",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-rule-limit-source-v1/promql/engine.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "72573049effbf370bc849705b4242ce15104460e736239d61ebab7f7b851d393",
+      "first_line": 3736,
+      "last_line": 3755,
+      "quote": "\t\thistograms[n].T, histograms[n].H = it.AtFloatHistogram(histograms[n].H)\n\t\tif value.IsStaleNaN(histograms[n].H.Sum) {\n\t\t\thistograms = histograms[:n]\n\t\t\tbreak\n\t\t}\n\t\tev.consumeMatrixSamples(int64(histograms[n].size()), readStep)\n\t\tev.currentSamples += histograms[n].size()\n\t\tif ev.currentSamples > ev.maxSamples {\n\t\t\tev.error(ErrTooManySamples(env))\n\t\t}\n\n\t\tif startTimestamps != nil {\n\t\t\tstartTimestamps.Histograms = append(startTimestamps.Histograms, it.AtST())\n\t\t}\n\tcase chunkenc.ValFloat:\n\t\tt, f := it.At()\n\t\tif t == maxt && !value.IsStaleNaN(f) {\n\t\t\tev.consumeMatrixSamples(1, readStep)\n\t\t\tev.currentSamples++\n\t\t\tif ev.currentSamples > ev.maxSamples {\n",
+      "quote_sha256": "160a77c5894c3e9070a09a28a4042136e8facc9435400316935e0e2cf20fef25"
+    },
+    {
+      "id": "S11",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-sample-accounting-source-v1/promql/value.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "165093481bcebb3fe25494ef35ff8785907ada60eb40b77f5ab271531d57aff6",
+      "first_line": 175,
+      "last_line": 189,
+      "quote": "// size returns the size of the HPoint compared to the size of an FPoint.\n// The total size is calculated considering the histogram timestamp (p.T - 8 bytes),\n// and then a number of bytes in the histogram.\n// This sum is divided by 16, as samples are 16 bytes.\nfunc (p HPoint) size() int {\n\treturn (p.H.Size() + 8) / 16\n}\n\n// totalHPointSize returns the total number of samples in the given slice of HPoints.\nfunc totalHPointSize(histograms []HPoint) int {\n\tvar total int\n\tfor _, h := range histograms {\n\t\ttotal += h.size()\n\t}\n\treturn total\n",
+      "quote_sha256": "a70b46fe6e229d15fea3c3340f374426a7382883202165f06eacae6b07b92b26"
+    },
+    {
+      "id": "S12",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-sample-accounting-source-v1/util/stats/query_stats.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "2458365b3b843108b7cb7dd7940c023dc2dabd62f18cd4aa7aeb95b2e895d407",
+      "first_line": 361,
+      "last_line": 384,
+      "quote": "// IncrementSamplesReadAtStep increments the samples-read count.\n// Use this when you know the step index.\nfunc (qs *QuerySamples) IncrementSamplesReadAtStep(i int, n int64) {\n\tif qs == nil {\n\t\treturn\n\t}\n\tqs.SamplesRead += n\n\tif qs.SamplesReadPerStep != nil {\n\t\tqs.SamplesReadPerStep[i] += n\n\t}\n}\n\n// IncrementSamplesReadAtTimestamp increments the samples-read count.\n// Use this when you only have the step timestamp.\nfunc (qs *QuerySamples) IncrementSamplesReadAtTimestamp(t, n int64) {\n\tif qs == nil {\n\t\treturn\n\t}\n\tqs.SamplesRead += n\n\tif qs.SamplesReadPerStep != nil {\n\t\ti := int((t - qs.StartTimestamp) / qs.Interval)\n\t\tqs.SamplesReadPerStep[i] += n\n\t}\n}\n",
+      "quote_sha256": "5140f77f56317caa7be29346625b8bab2d3913d02616fe7d4ecb27900b5397e3"
+    },
+    {
+      "id": "S13",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-sample-accounting-source-v1/util/stats/query_stats.go",
+      "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+      "source_sha256": "2458365b3b843108b7cb7dd7940c023dc2dabd62f18cd4aa7aeb95b2e895d407",
+      "first_line": 512,
+      "last_line": 554,
+      "quote": "// MergeSamplesReadFromSubquery merges the child's SamplesRead into the parent.\n// Each consumed child step is counted once, at the earliest parent step that\n// consumes it. The child must be created with NewChildWithStepTracking.\nfunc (qs *QuerySamples) MergeSamplesReadFromSubquery(child *QuerySamples, c SubqueryConsumer) {\n\tif qs == nil || child == nil {\n\t\treturn\n\t}\n\tswitch {\n\tcase c.NumSteps <= 1:\n\t\tqs.IncrementSamplesReadAtStep(0, child.SamplesRead)\n\tcase c.AtTimestamp != nil && c.Range > 0:\n\t\tqs.IncrementSamplesReadAtStep(0, child.sumInWindow(child.SamplesReadPerStep, c.Offset, *c.AtTimestamp-c.Range, *c.AtTimestamp))\n\tdefault:\n\t\tqs.mergeStepsOnce(child, child.SamplesReadPerStep, c, qs.IncrementSamplesReadAtStep)\n\t}\n}\n\n// mergeStepsOnce increments the earliest parent step consuming each child step.\nfunc (*QuerySamples) mergeStepsOnce(child *QuerySamples, perStep []int64, c SubqueryConsumer, increment func(int, int64)) {\n\tfor k, n := range perStep {\n\t\tif n == 0 {\n\t\t\tcontinue\n\t\t}\n\t\tif step, ok := c.consumingStep(child.stepTimestamp(k) + c.Offset); ok {\n\t\t\tincrement(step, n)\n\t\t}\n\t}\n}\n\n// consumingStep returns the earliest parent step whose window contains tk.\nfunc (c SubqueryConsumer) consumingStep(tk int64) (int, bool) {\n\tstep := 0\n\tif tk > c.Start {\n\t\tstep = int((tk - c.Start + c.Interval - 1) / c.Interval)\n\t}\n\tif c.Range <= 0 {\n\t\treturn min(step, c.NumSteps-1), true\n\t}\n\tif step >= c.NumSteps || tk <= c.stepTimestamp(step)-c.Range {\n\t\treturn 0, false\n\t}\n\treturn step, true\n}\n",
+      "quote_sha256": "b9a31de40b1f26ceee0aa08999c7890cdfc81673a26253710775ed019c5f52d9"
+    }
+  ],
+  "source_executed": false
+}

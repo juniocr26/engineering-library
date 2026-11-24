@@ -1,0 +1,12 @@
+"""Preserve verified public source archive, extract selected text only; never install/import."""
+from pathlib import Path
+import json,urllib.request,hashlib,tarfile,io,datetime
+P=Path(__file__).resolve().parent;metadata=json.loads((P/'native-wheel-metadata-v1/mlx-lm.json').read_text());entry=next(x for x in metadata['urls'] if x['packagetype']=='sdist');assert entry['filename']=='mlx_lm-0.32.2.tar.gz' and entry['size']<2000000
+with urllib.request.urlopen(entry['url'],timeout=45) as response:raw=response.read(2000001)
+assert len(raw)==entry['size'] and hashlib.sha256(raw).hexdigest()==entry['digests']['sha256'];out=P/'native-release-source-v1';out.mkdir(exist_ok=False);(out/entry['filename']).write_bytes(raw);selected=['pyproject.toml','LICENSE','mlx_lm/tuner/trainer.py','mlx_lm/tuner/datasets.py','mlx_lm/tuner/utils.py','mlx_lm/tuner/lora.py','mlx_lm/_version.py'];records=[]
+with tarfile.open(fileobj=io.BytesIO(raw),mode='r:gz') as archive:
+ members=archive.getmembers();prefix='mlx_lm-0.32.2/'
+ for path in selected:
+  matches=[m for m in members if m.name==prefix+path];assert len(matches)==1;member=matches[0];assert member.isfile() and 0<=member.size<=1000000 and '..' not in Path(member.name).parts and not Path(member.name).is_absolute();body=archive.extractfile(member).read();assert len(body)==member.size;target=out/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(body);old=P/'native-framework-source-v1'/path;records.append({'path':path,'sha256':hashlib.sha256(body).hexdigest(),'bytes':len(body),'matches_separately_pinned_Git_source':hashlib.sha256(body).hexdigest()==hashlib.sha256(old.read_bytes()).hexdigest() if old.exists() else None})
+receipt={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'package':'mlx-lm','version':metadata['info']['version'],'source_archive':{'filename':entry['filename'],'URL':entry['url'],'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),'matches_PyPI_declared_sha256':True},'selected_text_files':records,'remaining_archive_members_not_extracted_or_executed':len(members)-len(records),'scope':'Source distribution evidence only. No wheel/binary distribution/model weights downloaded; archive never installed, setup not executed, Python source never imported. Source review is not wheel-code equivalence or native compatibility proof.','framework_installed':False,'weights_downloaded':0,'adapters_created':0,'optimizer_updates':0,'gold':0}
+(P/'native-release-source-freeze-v1.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt,indent=2))

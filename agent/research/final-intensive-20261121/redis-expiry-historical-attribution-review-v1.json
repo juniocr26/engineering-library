@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-22T05:18:05.820578+00:00",
+  "topic": "redis-expiry-predicate",
+  "original_target_verdict": "FAIL_HISTORICAL_ATTRIBUTION",
+  "finding": "Original manual chapter turns baseline policy/rationale wording into an explicit promise that predicate performs insertion/deletion/waiting, and says final state guard dropped despite baseline mentioning loading/master role. Baseline still omits CLIENT_MASTER earlyreturn and exactinclusive/conjunction/negation semantics; source correction remains useful, but attribution must be precise.",
+  "historical_response": {
+    "path": "agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/REDIS-EXPIRED-GUARD/raw-response.json",
+    "sha256": "1ae14f594a7ea2c97331e999c289f710b12eab4443676058fc555168a407be47",
+    "facts": [
+      {
+        "evidence_id": "S1",
+        "en": "The checkAlreadyExpired function checks if a key has expired by comparing the key's expiration time with the current time. It also checks if the server is in a master mode and if the loading process is complete. This function supports the idea that a key should not be deleted immediately after expiration, but instead be added to the database with an expired expiration time and wait for an explicit delete from the master.",
+        "pt-br": "A fun\u00e7\u00e3o checkAlreadyExpired verifica se uma chave expirou comparando o tempo de expira\u00e7\u00e3o da chave com o tempo atual. Al\u00e9m disso, verifica se o servidor est\u00e1 em modo mestre e se o processo de carregamento est\u00e1 completo. Essa fun\u00e7\u00e3o apoia a ideia de que uma chave n\u00e3o deve ser apagada imediatamente ap\u00f3s a expira\u00e7\u00e3o, mas sim ser adicionada \u00e0 base de dados com um tempo de expira\u00e7\u00e3o expirado e esperar por uma apaga\u00e7\u00e3o expl\u00edcita do mestre. "
+      }
+    ]
+  },
+  "records": [
+    {
+      "language": "en",
+      "original": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/redis-expiry-predicate/en.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/68f50a715fbc985f40092ffeaeeddfa08607efdbb5fe0bc8f99cd87c3b49663c",
+        "sha256": "68f50a715fbc985f40092ffeaeeddfa08607efdbb5fe0bc8f99cd87c3b49663c"
+      },
+      "candidate": {
+        "path": "agent/research/final-intensive-20261121/redis-expiry-attribution-candidate-v1/en.md",
+        "sha256": "0c42ad133f05e6951ea01ce724551e71837e40dbe83fd2aed0d096deeeeca03a"
+      },
+      "changed_attribution_clauses": 2,
+      "original_modified": false
+    },
+    {
+      "language": "pt-br",
+      "original": {
+        "immutable_snapshot": true,
+        "original_path": "agent/research/documentation-intelligence-20261119/chapters/redis-expiry-predicate/pt-br.md",
+        "path": ".local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/2b2eeedcf9dc5d372fd6b7bd0aad4075013155f64d5108ba3f647f0b046af6ff",
+        "sha256": "2b2eeedcf9dc5d372fd6b7bd0aad4075013155f64d5108ba3f647f0b046af6ff"
+      },
+      "candidate": {
+        "path": "agent/research/final-intensive-20261121/redis-expiry-attribution-candidate-v1/pt-br.md",
+        "sha256": "61ba65cbbe70e4cca2976e5c0ceb9cb10ccdd8a2a484c002bcbc7d1878764018"
+      },
+      "changed_attribution_clauses": 2,
+      "original_modified": false
+    }
+  ],
+  "scope": "Complete isolated bilingual target versions; two attribution clauses per language changed. Source contract/FAQs/code identifiers unchanged. Neither oldlabels nor model semantic scores are overwritten.",
+  "owner_approved": false,
+  "publication_approved": false,
+  "training_gold": false,
+  "new_model_calls": 0
+}

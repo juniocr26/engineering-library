@@ -1,0 +1,20 @@
+{
+  "arguments": [
+    "git",
+    "-c",
+    "core.fsmonitor=false",
+    "-C",
+    "/Users/juniorosa/Documents/Projetos/Portifo\u0301lio/prometheus",
+    "grep",
+    "-n",
+    "-E",
+    "density sampling|DensitySampling|remote read|RemoteRead|scrapeInterval",
+    "80cd8d97bdfce88014a652d15723559d00a15902",
+    "--",
+    "promql/*cost*",
+    "cmd/prometheus/main.go"
+  ],
+  "returncode": 0,
+  "stdout": "80cd8d97bdfce88014a652d15723559d00a15902:cmd/prometheus/main.go:602:\tserverOnlyFlag(a, \"storage.remote.read-sample-limit\", \"Maximum overall number of samples to return via the remote read interface, in a single query. 0 means no limit. This limit is ignored for streamed response types.\").\n80cd8d97bdfce88014a652d15723559d00a15902:cmd/prometheus/main.go:603:\t\tDefault(\"5e7\").IntVar(&cfg.web.RemoteReadSampleLimit)\n80cd8d97bdfce88014a652d15723559d00a15902:cmd/prometheus/main.go:605:\tserverOnlyFlag(a, \"storage.remote.read-concurrent-limit\", \"Maximum number of concurrent remote read calls. 0 means no limit.\").\n80cd8d97bdfce88014a652d15723559d00a15902:cmd/prometheus/main.go:606:\t\tDefault(\"10\").IntVar(&cfg.web.RemoteReadConcurrencyLimit)\n80cd8d97bdfce88014a652d15723559d00a15902:cmd/prometheus/main.go:608:\tserverOnlyFlag(a, \"storage.remote.read-max-bytes-in-frame\", \"Maximum number of bytes in a single frame for streaming remote read response types before marshalling. Note that client might have limit on frame size as well. 1MB as recommended by protobuf by default.\").\n80cd8d97bdfce88014a652d15723559d00a15902:cmd/prometheus/main.go:609:\t\tDefault(\"1048576\").IntVar(&cfg.web.RemoteReadBytesInFrame)\n",
+  "stderr": ""
+}

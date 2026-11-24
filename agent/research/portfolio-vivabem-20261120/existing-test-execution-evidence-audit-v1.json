@@ -1,0 +1,180 @@
+{
+  "at": "2026-11-21T10:28:57.201940+00:00",
+  "hypothesis": "H93test-evidence deliveryaudit,notnewtestexecution",
+  "observations": [
+    {
+      "receipt": "agent/research/portfolio-vivabem-20261120/existing-tests-v1.json",
+      "receipt_sha256": "8fe2ef63c96b8502da0b83e7ff2056c4731e136add57452b75aeb7f96727051f",
+      "at": "2026-11-20T23:53:08.540414+00:00",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s agent/test -p 'documentation_lifecycle_test.py'",
+      "exit_code": 0,
+      "kind": "Lifecycle test subset",
+      "recorded_counts": {
+        "tests": 42
+      },
+      "raw_log_scope": "Structuredoriginalreceiptpreserved;nosavedrawstdout/stderrfilelocatedforthissubset. Do notreconstructorfabricate historicalrawlog.",
+      "overlap": "Overlaps agent discovery312; do not add42to312",
+      "new_execution": false
+    },
+    {
+      "receipt": "agent/research/portfolio-vivabem-20261120/existing-ruby-command-tests-v1.json",
+      "receipt_sha256": "47f28d2545203eaa5b4fbd705fd7c3054b5d4a7acc289d912a521b80025bae6b",
+      "at": "2026-11-21T00:09:59.221718+00:00",
+      "command": [
+        "docker",
+        "exec",
+        "-w",
+        "/app/backend",
+        "engineering-library-backend-1",
+        "bundle",
+        "exec",
+        "ruby",
+        "test/offline/documentation_command_offline.rb"
+      ],
+      "exit_code": 0,
+      "kind": "Ruby offline command subset",
+      "recorded_counts": {
+        "runs": 89,
+        "assertions": 551,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0
+      },
+      "raw_log_scope": "Structuredoriginalreceiptpreserved;nosavedrawstdout/stderrfilelocatedforthissubset. Do notreconstructorfabricate historicalrawlog.",
+      "overlap": "Named command file included by later documentation glob; do not add89to242",
+      "new_execution": false
+    },
+    {
+      "receipt": "agent/research/portfolio-vivabem-20261120/existing-agent-suite-v1.json",
+      "at": "2026-11-21T00:03:03.019842+00:00",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "agent/test",
+        "-p",
+        "*_test.py"
+      ],
+      "exit_code": 0,
+      "kind": "Existing agent unittest discovery",
+      "counts": {
+        "tests": 312,
+        "result": "OK"
+      },
+      "runner_seconds": 16.076,
+      "wall_seconds": 16.285513709000043,
+      "raw_logs": [
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/existing-agent-suite-v1.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "agent/research/portfolio-vivabem-20261120/existing-agent-suite-v1.stderr",
+          "sha256": "b75f6f80f42b4a190b200f67cee192246ee686fda3120905c810c6f04068ad3c"
+        }
+      ],
+      "scope": "Existingagenttests,notallapplicationtests;noexternalprojectsuites",
+      "new_execution": false
+    },
+    {
+      "receipt": "agent/research/portfolio-vivabem-20261120/ruby-existing-documentation-suite-v1.json",
+      "at": "2026-11-21T01:36:20.093691+00:00",
+      "command": [
+        "docker",
+        "exec",
+        "-w",
+        "/app/backend",
+        "engineering-library-backend-1",
+        "bundle",
+        "exec",
+        "ruby",
+        "-e",
+        "Dir.glob(\"test/offline/documentation*_offline.rb\").sort.each { |f| require File.expand_path(f) }"
+      ],
+      "exit_code": 0,
+      "kind": "ExistingRubyoffline documentation subset",
+      "counts": {
+        "runs": 242,
+        "assertions": 1699,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0
+      },
+      "raw_summary_reparsed_and_matches_receipt": true,
+      "scope": "Documentationofflineglobonly,notallRails/Rubytests;overlaps89commandruns",
+      "new_execution": false
+    },
+    {
+      "receipt": "agent/research/portfolio-vivabem-20261120/frontend-existing-suite-v1.json",
+      "at": "2026-11-21T01:12:43.519351+00:00",
+      "command": [
+        "docker",
+        "exec",
+        "-w",
+        "/app/frontend",
+        "engineering-library-frontend-1",
+        "npm",
+        "test"
+      ],
+      "exit_code": 1,
+      "kind": "Existingfrontendnpmtest",
+      "counts": {
+        "tests": 102,
+        "pass": 100,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "raw_summary_reparsed_and_matches_V3": true,
+      "scope": "ExistingNodefrontendtests;2failuresretained,noassertionweakening/testUIchanges",
+      "new_execution": false
+    }
+  ],
+  "private_raw_log_bindings": [
+    {
+      "kind": "ruby",
+      "stream": "stdout.log",
+      "path": ".local-backups/portfolio-vivabem-20261120/ruby-documentation-suite-v1/stdout.log",
+      "archive_member": "ruby-documentation-suite-v1/stdout.log",
+      "sha256": "8eb1173e0f37d8df568f64bb62de08c4c260c245982bf3c3ca80918a1008b8ec",
+      "archive_and_disk_bytes_equal": true
+    },
+    {
+      "kind": "ruby",
+      "stream": "stderr.log",
+      "path": ".local-backups/portfolio-vivabem-20261120/ruby-documentation-suite-v1/stderr.log",
+      "archive_member": "ruby-documentation-suite-v1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_and_disk_bytes_equal": true
+    },
+    {
+      "kind": "frontend",
+      "stream": "stdout.log",
+      "path": ".local-backups/portfolio-vivabem-20261120/frontend-existing-suite-v1/stdout.log",
+      "archive_member": "frontend-existing-suite-v1/stdout.log",
+      "sha256": "771b2da9396fec3aeb3b09359ae2eed7010b7ad373cf5c0b4e09d7cce655923b",
+      "archive_and_disk_bytes_equal": true
+    },
+    {
+      "kind": "frontend",
+      "stream": "stderr.log",
+      "path": ".local-backups/portfolio-vivabem-20261120/frontend-existing-suite-v1/stderr.log",
+      "archive_member": "frontend-existing-suite-v1/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_and_disk_bytes_equal": true
+    }
+  ],
+  "separate_restricted_archive": ".local-backups/portfolio-vivabem-20261120/checkpoint-005/private-local-screen-and-test-logs.tar.gz",
+  "separate_archive_sha256": "3be3aab13a4966a41c3a8fefdc03d926ff5c3a3ad122ab2e7b98d2945e2ad005",
+  "private_raw_body_reproduced_in_common_report": false,
+  "not_pooled": "42/312and89/242overlap;do notsumasindependenttests. Frontend100/102notallgreen. Ownedresearchcontrols/nativeparsing/replayseparate.",
+  "preservation_limit": "Originalsubsetstructuredreceipts42and89remainvalidobservationsbutarenotfullrawlogrecovery. No historicalstdoutfabricationorroutinebaseline rerun.",
+  "external_project_tests_executed": "Nenhum",
+  "new_tests_created_or_changed": 0,
+  "model_calls": 0,
+  "training_steps": 0
+}

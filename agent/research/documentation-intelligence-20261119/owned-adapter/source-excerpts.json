@@ -1,0 +1,54 @@
+{
+  "revision": "a3c9e83f4f8708cf9c0b164fc227ad0ff54aaf93831ef699582ebc10055acd96",
+  "revision_kind": "synthetic-content-manifest-sha256-not-git",
+  "files": [
+    {
+      "path": "source/domain.py",
+      "full_file_sha256": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+      "first_line": 1,
+      "last_line": 15,
+      "quote": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+      "quote_sha256": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164"
+    },
+    {
+      "path": "source/client.py",
+      "full_file_sha256": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+      "first_line": 1,
+      "last_line": 8,
+      "quote": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+      "quote_sha256": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa"
+    },
+    {
+      "path": "source/mapping.py",
+      "full_file_sha256": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+      "first_line": 1,
+      "last_line": 11,
+      "quote": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+      "quote_sha256": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b"
+    },
+    {
+      "path": "source/adapter.py",
+      "full_file_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+      "first_line": 1,
+      "last_line": 22,
+      "quote": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n    def __init__(self, client: JsonClient, token: str, timeout: float = 2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n            )\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable(\"gateway unavailable\") from error\n        return balance_from_payload(account_id, payload)\n",
+      "quote_sha256": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389"
+    },
+    {
+      "path": "source/service.py",
+      "full_file_sha256": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523",
+      "first_line": 1,
+      "last_line": 9,
+      "quote": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n",
+      "quote_sha256": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+    },
+    {
+      "path": "source/test_adapter.py",
+      "full_file_sha256": "5d74e3294b1c67e7b14466d81d33b90610b0adddecd2ab62755da8da4ea4ce41",
+      "first_line": 1,
+      "last_line": 53,
+      "quote": "import unittest\nfrom adapter import BalanceAdapter\nfrom client import GatewayUnavailable\nfrom domain import BalanceUnavailable\nfrom service import BalanceService\n\nclass FakeClient:\n    def __init__(self, payload=None, error=None):\n        self.payload = {\"available_minor\": 7, \"currency\": \"TST\"} if payload is None else payload\n        self.error = error\n        self.calls = []\n    def get(self, path, *, headers, timeout):\n        self.calls.append((path, headers, timeout))\n        if self.error:\n            raise self.error\n        return self.payload\n\nclass AdapterTest(unittest.TestCase):\n    def test_service_consumes_adapter_and_exact_request_mapping(self):\n        client = FakeClient()\n        result = BalanceService(BalanceAdapter(client, \"SYNTHETIC-NOT-A-CREDENTIAL\")).summary(\"fixture-account\")\n        self.assertEqual({\"account\": \"fixture-account\", \"available_minor\": 7, \"currency\": \"TST\"}, result)\n        self.assertEqual([(\"/sandbox/accounts/fixture-account/balance\", {\"Authorization\": \"Bearer SYNTHETIC-NOT-A-CREDENTIAL\"}, 2.0)], client.calls)\n    def test_gateway_error_translates_once_with_cause(self):\n        original = GatewayUnavailable(\"fixture failure\")\n        client = FakeClient(error=original)\n        with self.assertRaises(BalanceUnavailable) as raised:\n            BalanceAdapter(client, \"SYNTHETIC\").read(\"fixture-account\")\n        self.assertIs(original, raised.exception.__cause__)\n        self.assertEqual(1, len(client.calls))\n    def test_mapping_rejects_boolean_amount(self):\n        client = FakeClient({\"available_minor\": True, \"currency\": \"TST\"})\n        with self.assertRaisesRegex(ValueError, \"integer\"):\n            BalanceAdapter(client, \"SYNTHETIC\").read(\"fixture-account\")\n    def test_unhandled_missing_payload_key_propagates(self):\n        with self.assertRaises(KeyError):\n            BalanceAdapter(FakeClient({}), \"SYNTHETIC\").read(\"fixture-account\")\n    def test_unrelated_client_error_is_not_relabelled(self):\n        with self.assertRaisesRegex(TimeoutError, \"fixture timeout\"):\n            BalanceAdapter(FakeClient(error=TimeoutError(\"fixture timeout\")), \"SYNTHETIC\").read(\"fixture-account\")\n    def test_invalid_account_does_not_call_client(self):\n        client = FakeClient()\n        for account in (\"\", \"a/b\"):\n            with self.assertRaises(ValueError):\n                BalanceAdapter(client, \"SYNTHETIC\").read(account)\n        self.assertEqual([], client.calls)\n    def test_timeout_override_is_only_forwarded(self):\n        client = FakeClient()\n        BalanceAdapter(client, \"SYNTHETIC\", timeout=0.25).read(\"fixture-account\")\n        self.assertEqual(0.25, client.calls[0][2])\n    def test_currency_validation_is_length_not_iso_or_uppercase(self):\n        client = FakeClient({\"available_minor\": 7, \"currency\": \"abc\"})\n        self.assertEqual(\"abc\", BalanceAdapter(client, \"SYNTHETIC\").read(\"fixture-account\").currency)\n",
+      "quote_sha256": "5d74e3294b1c67e7b14466d81d33b90610b0adddecd2ab62755da8da4ea4ce41"
+    }
+  ]
+}

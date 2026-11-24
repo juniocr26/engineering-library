@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-21T02:56:20.480632+00:00",
+  "sources": [
+    {
+      "phase": "before",
+      "source": "def _perform_cast(self, key, value, cast=None):\n    if cast is None or value is None:\n        return value\n    elif cast is bool and isinstance(value, str):\n        mapping = {'true': True, '1': True, 'false': False, '0': False}\n        value = value.lower()\n        if value not in mapping:\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n        return mapping[value]\n    try:\n        return cast(value)\n    except (TypeError, ValueError):\n        raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast.__name__}.\")",
+      "body_ast_sha256": "2c73390562f4cfdc2398c7c5f88cc978d5f157a78e39dac1ef1784b697966b04"
+    },
+    {
+      "phase": "after",
+      "source": "def _perform_cast(self, key, value, cast=None):\n    if cast is None or value is None:\n        return value\n    elif cast is bool and isinstance(value, str):\n        mapping = {'true': True, '1': True, 'false': False, '0': False}\n        value = value.lower()\n        if value not in mapping:\n            raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid bool.\")\n        return mapping[value]\n    try:\n        return cast(value)\n    except (TypeError, ValueError):\n        cast_name = getattr(cast, '__name__', type(cast).__name__)\n        raise ValueError(f\"Config '{key}' has value '{value}'. Not a valid {cast_name}.\")",
+      "body_ast_sha256": "53cf754458613398b7d5e7ae93624c88c0e5b73416db3317a170c68a6dd6b771"
+    }
+  ],
+  "safety_review_complete_before_exec": true
+}

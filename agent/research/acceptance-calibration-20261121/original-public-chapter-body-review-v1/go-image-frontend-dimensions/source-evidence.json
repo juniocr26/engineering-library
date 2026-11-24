@@ -1,0 +1,103 @@
+{
+  "repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "source_executed": false,
+  "sources": [
+    {
+      "path": "frontend/app/components/image-resize/resize-options.ts",
+      "source_sha256": "881252126b6b188cecb0d4c71cd9457edd01afc595e806f1a538d27cd767a33a",
+      "start_line": 1,
+      "end_line": 53,
+      "quote": "export type ImageInfo = {\n  width: number;\n  height: number;\n  contentType: string;\n  format: string;\n  frameCount: number;\n};\n\nexport type ResizeOptions = {\n  mode: \"pixels\" | \"percentage\";\n  width: string;\n  height: string;\n  axis: \"width\" | \"height\";\n  reduction: number;\n  keepAspectRatio: boolean;\n};\n\nexport function targetDimensions(info: ImageInfo, options: ResizeOptions) {\n  let width = Number(options.width);\n  let height = Number(options.height);\n  if (\n    options.mode === \"pixels\" &&\n    (![width, height].every(Number.isSafeInteger) ||\n      width < 1 ||\n      height < 1 ||\n      width > 32_000_000 ||\n      height > 32_000_000)\n  ) {\n    return null;\n  }\n  if (options.mode === \"percentage\" || options.keepAspectRatio) {\n    let scale = (100 - options.reduction) / 100;\n    if (options.mode === \"pixels\") {\n      scale =\n        options.axis === \"height\" ? height / info.height : width / info.width;\n    }\n    width = Math.max(1, Math.round(info.width * scale));\n    height = Math.max(1, Math.round(info.height * scale));\n  }\n  return { width, height };\n}\n\nexport function dimensionError(\n  info: ImageInfo,\n  target: ReturnType<typeof targetDimensions>,\n) {\n  if (!target) return \"Enter a positive whole number for each dimension.\";\n  if (target.width * target.height > 32_000_000)\n    return \"The output must not exceed 32 million pixels.\";\n  if (target.width * target.height * info.frameCount > 64_000_000)\n    return \"This animation exceeds the output frame pixel limit.\";\n  return null;\n}\n",
+      "role": "Expanded correction evidence; not all of this full file was supplied to the original model baseline."
+    }
+  ],
+  "source_producer_results": [
+    {
+      "schema_version": 1,
+      "producer": "javascript-leading-guard-1.1.0",
+      "parser_version": "5.9.3",
+      "source_path": "frontend/app/components/image-resize/resize-options.ts",
+      "source_sha256": "881252126b6b188cecb0d4c71cd9457edd01afc595e806f1a538d27cd767a33a",
+      "ir": {
+        "kind": "source-derived-leading-guard",
+        "lexical_selector": "dimensionError",
+        "declaration_kind": "function",
+        "start_line": 43,
+        "end_line": 53,
+        "guard_line": 47,
+        "condition": "!target",
+        "return_expression": "\"Enter a positive whole number for each dimension.\"",
+        "directive_statements": 0,
+        "remaining_body_statements_unanalyzed": 3,
+        "quote": "export function dimensionError(\n  info: ImageInfo,\n  target: ReturnType<typeof targetDimensions>,\n) {\n  if (!target) return \"Enter a positive whole number for each dimension.\";\n  if (target.width * target.height > 32_000_000)\n    return \"The output must not exceed 32 million pixels.\";\n  if (target.width * target.height * info.frameCount > 64_000_000)\n    return \"This animation exceeds the output frame pixel limit.\";\n  return null;\n}\n",
+        "quote_sha256": "665a5cdae4a59d309084bec439e6bf35775d9d31a8931bc960323e574d4c90a6",
+        "source_sha256": "881252126b6b188cecb0d4c71cd9457edd01afc595e806f1a538d27cd767a33a",
+        "source_executed": false
+      },
+      "explanations": {
+        "en": "Lexical source selector `dimensionError`: after any string directives, the first body statement tests `!target`. Its true branch contains a return with expression `\"Enter a positive whole number for each dimension.\"`. The guard has no else branch. This records written synchronous-body syntax only. Remaining statements, parameter initialization, helper/getter effects, runtime ownership and normal completion are unverified.",
+        "pt-br": "Seletor lexical da fonte `dimensionError`: após eventuais diretivas de string, a primeira instrução do corpo testa `!target`. Seu ramo verdadeiro contém um retorno com a expressão `\"Enter a positive whole number for each dimension.\"`. A guarda não tem ramo else. O registro se limita à sintaxe escrita do corpo síncrono. As instruções restantes, inicialização de parâmetros, efeitos de auxiliares/getters, vínculo em execução e conclusão normal não foram verificados."
+      },
+      "model_inference": false,
+      "source_executed": false,
+      "scope": "Leading guard syntax only; lexical owner is not generated/runtime binding; no type/helper/runtime verification",
+      "ordered_guard_chain": {
+        "profile": "ordered-synchronous-guard-chain-v1",
+        "lexical_selector": "dimensionError",
+        "scope": "Ordered synchronous guard/return syntax; bindings, types, helpers, parameter effects and runtime completion unverified",
+        "source_path": "frontend/app/components/image-resize/resize-options.ts",
+        "source_sha256": "881252126b6b188cecb0d4c71cd9457edd01afc595e806f1a538d27cd767a33a",
+        "quote_sha256": "665a5cdae4a59d309084bec439e6bf35775d9d31a8931bc960323e574d4c90a6",
+        "start_line": 43,
+        "end_line": 53,
+        "guards": [
+          {
+            "condition": "!target",
+            "return_expression": "\"Enter a positive whole number for each dimension.\"",
+            "line": 47
+          },
+          {
+            "condition": "target.width * target.height > 32_000_000",
+            "return_expression": "\"The output must not exceed 32 million pixels.\"",
+            "line": 48
+          },
+          {
+            "condition": "target.width * target.height * info.frameCount > 64_000_000",
+            "return_expression": "\"This animation exceeds the output frame pixel limit.\"",
+            "line": 50
+          }
+        ],
+        "final_return_expression": "null",
+        "source_statement_order": [
+          "if-return",
+          "if-return",
+          "if-return",
+          "return"
+        ],
+        "parameter_initialization_analyzed": false,
+        "called_operations_analyzed": false,
+        "runtime_ownership_verified": false,
+        "source_executed": false,
+        "model_inference": false,
+        "explanations": {
+          "en": "Lexical source selector `dimensionError`: after any string directives, the body contains ordered if-return guards and one final return. First, the source tests `!target`; its truthy branch contains a return with written expression `\"Enter a positive whole number for each dimension.\"`. Only if preceding tests complete falsy, the source tests `target.width * target.height > 32_000_000`; its truthy branch contains a return with written expression `\"The output must not exceed 32 million pixels.\"`. Only if preceding tests complete falsy, the source tests `target.width * target.height * info.frameCount > 64_000_000`; its truthy branch contains a return with written expression `\"This animation exceeds the output frame pixel limit.\"`. If all tests complete falsy, the final statement contains a return with written expression `null`. No guard has an else. This is written synchronous-body syntax only; parameter initialization, name bindings, helper/getter effects, runtime ownership and normal completion remain unverified.",
+          "pt-br": "Seletor lexical da fonte `dimensionError`: após eventuais diretivas de string, o corpo contém guardas if-return ordenadas e um retorno final. Primeiro, a fonte testa `!target`; seu ramo de valor lógico verdadeiro contém um retorno com a expressão escrita `\"Enter a positive whole number for each dimension.\"`. Somente se os testes anteriores terminarem com valor lógico falso, a fonte testa `target.width * target.height > 32_000_000`; seu ramo de valor lógico verdadeiro contém um retorno com a expressão escrita `\"The output must not exceed 32 million pixels.\"`. Somente se os testes anteriores terminarem com valor lógico falso, a fonte testa `target.width * target.height * info.frameCount > 64_000_000`; seu ramo de valor lógico verdadeiro contém um retorno com a expressão escrita `\"This animation exceeds the output frame pixel limit.\"`. Se todos os testes terminarem com valor lógico falso, a instrução final contém um retorno com a expressão escrita `null`. Nenhuma guarda tem else. Trata-se apenas da sintaxe escrita do corpo síncrono; inicialização de parâmetros, vínculos de nomes, efeitos de auxiliares/getters, vínculo em execução e conclusão normal permanecem sem verificação."
+        }
+      },
+      "identity": {
+        "node": "v24.22.0",
+        "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+        "producer_sha256": "9869a790fa9fd6e8e07d792433a93cc4c02b0ad0a29deff82bd5f7b909b23b24"
+      }
+    }
+  ],
+  "source_producer_scope": "Syntax-only optional packets; helper bodies and combined language semantics manually reviewed separately.",
+  "license": {
+    "notice_file": "agent/research/continuation-20261119/source-licenses/go-image-optimizer.LICENSE",
+    "sha256": "52b5e2ea72b69e0293b77ab8ca3805404a2b921ea3deb5d433072f144c086446",
+    "local_research_access_authorized": true,
+    "training_approved": false,
+    "publication_approved": false
+  }
+}

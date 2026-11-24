@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-21T00:38:01.013245+00:00",
+  "hypothesis": "H9",
+  "status": "REJECTED",
+  "json_and_ids_valid": true,
+  "pairs": [
+    {
+      "id": "Q001",
+      "yes_no_conclusion": "SUPPORTED",
+      "complete_pair": "REJECTED",
+      "reasons": [
+        "Portuguese question omits use_cache=False and changes the question framing.",
+        "Other types of writes are not established by the supplied selected guard. Precise control-reaches-guard qualification is absent."
+      ]
+    },
+    {
+      "id": "Q002",
+      "yes_no_conclusion": "SUPPORTED",
+      "complete_pair": "REJECTED",
+      "reasons": [
+        "Cites PF02 but claims a particular key is absent. PF02 describes dependency_cache is None initialization, not key membership.",
+        "Portuguese adds an incoherent key-not-present-for-a-specific-key statement."
+      ]
+    },
+    {
+      "id": "Q003",
+      "yes_no_conclusion": "SUPPORTED",
+      "complete_pair": "REJECTED",
+      "reasons": [
+        "PF04 explicitly reads a key that is present; the rationale says the fact guarantees a key is not present, reversing membership."
+      ]
+    },
+    {
+      "id": "Q004",
+      "yes_no_conclusion": "SUPPORTED",
+      "complete_pair": "REJECTED_CRITICAL_RUNTIME_GUARANTEE",
+      "reasons": [
+        "Claims source guarantees assertions are enabled at runtime, directly reversing supplied PF06 uncertainty.",
+        "Both languages preserve that unsupported guarantee."
+      ]
+    }
+  ],
+  "correct_yes_no_conclusions": 4,
+  "yes_no_denominator": 4,
+  "complete_faq_pairs_accepted": 0,
+  "faq_pair_denominator": 4,
+  "critical_runtime_guarantees": 1,
+  "complete_hybrid_document_acceptance": {
+    "numerator": 0,
+    "denominator": 1
+  },
+  "documents": [
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/python-cache-hybrid-rejected-v1/en.md",
+      "language": "en",
+      "sha256": "5853e43bc75908861001ec9de9cd1f5ec13948f159d73326d659dc09f54980f7"
+    },
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/python-cache-hybrid-rejected-v1/pt-BR.md",
+      "language": "pt-BR",
+      "sha256": "8bc7a276c1128fcc9298d4f74e2dd29a905a718eb3aeacc3127a3490829107fe"
+    }
+  ],
+  "source_inputs": "Six separately AST-verified written facts plus curated English meanings, not raw code alone",
+  "model_copy_or_source_discovery_claim": false,
+  "model_weights_changed": false,
+  "owner_gold": 0,
+  "limits": "Same development-exposed FastAPI/Starlette family; four coarse No conclusions are not full factual or translation correctness. Do not repair prose and count the original model response accepted."
+}

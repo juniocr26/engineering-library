@@ -1,0 +1,281 @@
+{
+  "at": "2026-11-20T14:45:54.136872+00:00",
+  "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+  "previous_revision": "193f6476c04804dba24f02a6e1fa0f509b205be9",
+  "evidence": {
+    "T1": {
+      "path": "new-public-sources-v1/lukeed--totalist/4b071d3e54d466a4059de89006c752da782c8b02/package.json",
+      "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+      "source_sha256": "0623891e622ac83bd53ef5a81987338da75697112e2386ffbd77676c1ef7e9df",
+      "first_line": 1,
+      "last_line": 55,
+      "quote": "{\n  \"name\": \"totalist\",\n  \"version\": \"3.0.1\",\n  \"repository\": \"lukeed/totalist\",\n  \"description\": \"A tiny (195B to 220B) utility to recursively list all (total) files in a directory\",\n  \"module\": \"dist/index.mjs\",\n  \"main\": \"dist/index.js\",\n  \"types\": \"index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./index.d.ts\",\n      \"import\": \"./dist/index.mjs\",\n      \"require\": \"./dist/index.js\"\n    },\n    \"./sync\": {\n      \"types\": \"./sync/index.d.ts\",\n      \"import\": \"./sync/index.mjs\",\n      \"require\": \"./sync/index.js\"\n    }\n  },\n  \"license\": \"MIT\",\n  \"files\": [\n    \"index.d.ts\",\n    \"dist\",\n    \"sync\"\n  ],\n  \"author\": {\n    \"name\": \"Luke Edwards\",\n    \"email\": \"luke.edwards05@gmail.com\",\n    \"url\": \"https://lukeed.com\"\n  },\n  \"engines\": {\n    \"node\": \">=6\"\n  },\n  \"keywords\": [\n    \"list\",\n    \"recursive\",\n    \"files\",\n    \"glob\",\n    \"tree\"\n  ],\n  \"scripts\": {\n    \"build\": \"bundt\",\n    \"test\": \"uvu -r esm test -i fixtures\"\n  },\n  \"modes\": {\n    \"sync\": \"src/sync.js\",\n    \"default\": \"src/async.js\"\n  },\n  \"devDependencies\": {\n    \"bundt\": \"1.1.1\",\n    \"esm\": \"3.2.25\",\n    \"uvu\": \"0.3.3\"\n  }\n}\n",
+      "quote_sha256": "0623891e622ac83bd53ef5a81987338da75697112e2386ffbd77676c1ef7e9df",
+      "scope": "Complete bounded file; not an executed module or published registry artifact."
+    },
+    "T2": {
+      "path": "new-public-sources-v1/lukeed--totalist/4b071d3e54d466a4059de89006c752da782c8b02/src/async.js",
+      "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+      "source_sha256": "70a998ce6b3da13e242332e704d9b64ee88c23520ee260663d178206a57ae14d",
+      "first_line": 1,
+      "last_line": 22,
+      "quote": "import { join, resolve } from 'path';\nimport { readdir, stat } from 'fs';\nimport { promisify } from 'util';\n\nconst toStats = promisify(stat);\nconst toRead = promisify(readdir);\n\nexport async function totalist(dir, callback, pre='') {\n\tdir = resolve('.', dir);\n\tawait toRead(dir).then(arr => {\n\t\treturn Promise.all(\n\t\t\tarr.map(str => {\n\t\t\t\tlet abs = join(dir, str);\n\t\t\t\treturn toStats(abs).then(stats => {\n\t\t\t\t\treturn stats.isDirectory()\n\t\t\t\t\t\t? totalist(abs, callback, join(pre, str))\n\t\t\t\t\t\t: callback(join(pre, str), abs, stats)\n\t\t\t\t});\n\t\t\t})\n\t\t);\n\t});\n}\n",
+      "quote_sha256": "70a998ce6b3da13e242332e704d9b64ee88c23520ee260663d178206a57ae14d",
+      "scope": "Complete bounded file; not an executed module or published registry artifact."
+    },
+    "T3": {
+      "path": "new-public-sources-v1/lukeed--totalist/4b071d3e54d466a4059de89006c752da782c8b02/src/sync.js",
+      "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+      "source_sha256": "0d911e865ba4c7e860a1ebb8e6fd7b25e5113967bea3e799bca690c48fdd41c0",
+      "first_line": 1,
+      "last_line": 15,
+      "quote": "import { join, resolve } from 'path';\nimport { readdirSync, statSync } from 'fs';\n\nexport function totalist(dir, callback, pre='') {\n\tdir = resolve('.', dir);\n\tlet arr = readdirSync(dir);\n\tlet i=0, abs, stats;\n\tfor (; i < arr.length; i++) {\n\t\tabs = join(dir, arr[i]);\n\t\tstats = statSync(abs);\n\t\tstats.isDirectory()\n\t\t\t? totalist(abs, callback, join(pre, arr[i]))\n\t\t\t: callback(join(pre, arr[i]), abs, stats);\n\t}\n}\n",
+      "quote_sha256": "0d911e865ba4c7e860a1ebb8e6fd7b25e5113967bea3e799bca690c48fdd41c0",
+      "scope": "Complete bounded file; not an executed module or published registry artifact."
+    },
+    "T4": {
+      "path": "new-public-sources-v1/lukeed--totalist/4b071d3e54d466a4059de89006c752da782c8b02/src/async.d.ts",
+      "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+      "source_sha256": "9f78bd6e43202253f0af72af9978cda3399b5a1ae9cd28593976f42cf6a1f4ee",
+      "first_line": 1,
+      "last_line": 3,
+      "quote": "import { Stats } from 'fs';\nexport type Caller = (relPath: string, absPath: string, stats: Stats) => any;\nexport function totalist(dir: string, callback: Caller, prefix?: string): Promise<void>;\n",
+      "quote_sha256": "9f78bd6e43202253f0af72af9978cda3399b5a1ae9cd28593976f42cf6a1f4ee",
+      "scope": "Complete bounded file; not an executed module or published registry artifact."
+    },
+    "T5": {
+      "path": "new-public-sources-v1/lukeed--totalist/4b071d3e54d466a4059de89006c752da782c8b02/src/sync.d.ts",
+      "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+      "source_sha256": "4cdaa2f28b917cc3fb61454657fed974968a66557ef23c2858997565d3b9559c",
+      "first_line": 1,
+      "last_line": 3,
+      "quote": "import { Stats } from 'fs';\nexport type Caller = (relPath: string, absPath: string, stats: Stats) => any;\nexport function totalist(dir: string, callback: Caller, prefix?: string): void;\n",
+      "quote_sha256": "4cdaa2f28b917cc3fb61454657fed974968a66557ef23c2858997565d3b9559c",
+      "scope": "Complete bounded file; not an executed module or published registry artifact."
+    },
+    "T6": {
+      "path": "new-public-sources-v1/lukeed--totalist/4b071d3e54d466a4059de89006c752da782c8b02/readme.md",
+      "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+      "source_sha256": "fb37c2d537fe6d81bb653a447a192348f373577be88f2a1aa66696e751c6bf7d",
+      "first_line": 1,
+      "last_line": 109,
+      "quote": "# totalist [![build status](https://badgen.now.sh/github/status/lukeed/totalist)](https://github.com/lukeed/totalist/actions) [![codecov](https://badgen.now.sh/codecov/c/github/lukeed/totalist)](https://codecov.io/gh/lukeed/totalist)\n\n> A tiny (195B to 224B) utility to recursively list all (total) files in a directory\n\nTraverse a directory recursively, running a function for **every file** found.\n\nWith this module, you easily apply custom logic to decide which file(s) to process without worrying about accidentally accessing a directory or making repeat `fs.Stats` requests.\n\n## Install\n\n```\n$ npm install --save totalist\n```\n\n\n## Modes\n\nThere are two \"versions\" of `totalist` available:\n\n#### \"async\"\n> **Node.js:** >= 8.x<br>\n> **Size (gzip):** 220 bytes<br>\n> **Availability:** [CommonJS](https://unpkg.com/totalist/dist/index.js), [ES Module](https://unpkg.com/totalist/dist/index.mjs)\n\nThis is the primary/default mode. It makes use of `async`/`await` and [`util.promisify`](https://nodejs.org/api/util.html#util_util_promisify_original).\n\n#### \"sync\"\n> **Node.js:** >= 6.x<br>\n> **Size (gzip):** 195 bytes<br>\n> **Availability:** [CommonJS](https://unpkg.com/totalist/sync/index.js), [ES Module](https://unpkg.com/totalist/sync/index.mjs)\n\nThis is the opt-in mode, ideal for scenarios where `async` usage cannot be supported.\n\n\n## Usage\n\n***Selecting a Mode***\n\n```js\n// import via npm module\nimport { totalist } from 'totalist';\nimport { totalist } from 'totalist/sync';\n```\n\n***Example Usage***\n\n```js\nimport { totalist } from 'totalist/sync';\n\nconst styles = new Set();\nconst scripts = new Set();\n\ntotalist('src', (name, abs, stats) => {\n  if (/\\.js$/.test(name)) {\n    scripts.add(abs);\n    if (stats.size >= 100e3) {\n      console.warn(`[WARN] \"${name}\" might cause performance issues (${stats.size})`);\n    }\n  } else if (/\\.css$/.test(name)) {\n    styles.add(abs);\n  }\n});\n\nconsole.log([...scripts]);\n//=> [..., '/Users/lukeed/.../src/path/to/example.css', ...]\n```\n\n\n## API\n\n### totalist(dir, callback)\nReturns: `void`\n\n> **Important:** The \"async\" usage must be `await`ed or included within a Promise chain.\n\n#### dir\nType: `string`<br>\nRequired: `true`\n\nThe directory to traverse.\n\nThis may be a relative _or_ an absolute path.\n\n> **Note**: Node.js will assume a relative path is meant to be resolved from the current location (`process.cwd()`).\n\n#### callback\nType: `Function`<br>\nRequired: `true`\n\nThe callback function to run for _every_ file.\n\nThe function receives three parameters:\n\n##### relPath\nType: `String`<br>\nThe path _relative to_ the initial `dir` value you provided.\n\n##### absPath\nType: `String`<br>\nThe absolute path of the file.\n\n##### stats\nType: `fs.Stats`<br>\nThe [`fs.Stats`](https://nodejs.org/api/fs.html#fs_class_fs_stats) object for the file.\n\n\n## License\n\nMIT © [Luke Edwards](https://lukeed.com)\n",
+      "quote_sha256": "fb37c2d537fe6d81bb653a447a192348f373577be88f2a1aa66696e751c6bf7d",
+      "scope": "Complete bounded file; not an executed module or published registry artifact."
+    },
+    "T7": {
+      "path": "new-public-sources-v1/lukeed--totalist/4b071d3e54d466a4059de89006c752da782c8b02/license",
+      "revision": "4b071d3e54d466a4059de89006c752da782c8b02",
+      "source_sha256": "306fa513e39b23a6e8747520de761809d206b99800ef41907b530226574c59ae",
+      "first_line": 1,
+      "last_line": 21,
+      "quote": "The MIT License (MIT)\n\nCopyright (c) Luke Edwards <luke.edwards05@gmail.com> (lukeed.com)\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n",
+      "quote_sha256": "306fa513e39b23a6e8747520de761809d206b99800ef41907b530226574c59ae",
+      "scope": "Complete bounded file; not an executed module or published registry artifact."
+    }
+  },
+  "claims": [
+    {
+      "id": "C1",
+      "evidence": [
+        "T1"
+      ],
+      "en": "The pinned manifest names `totalist` version `3.0.1`; its `modes` maps `default` to `src/async.js` and `sync` to `src/sync.js`.",
+      "pt-br": "O manifesto fixado nomeia `totalist` versão `3.0.1`; seu campo `modes` mapeia `default` para `src/async.js` e `sync` para `src/sync.js`.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C2",
+      "evidence": [
+        "T2",
+        "T3"
+      ],
+      "en": "Both selected source modules declare the named export `totalist(dir, callback, pre='')`; the asynchronous declaration has the `async` modifier and the synchronous declaration does not.",
+      "pt-br": "Ambos os módulos selecionados declaram a exportação nomeada `totalist(dir, callback, pre='')`; a declaração assíncrona tem o modificador `async` e a declaração síncrona não tem.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C3",
+      "evidence": [
+        "T2",
+        "T3"
+      ],
+      "en": "Both bodies assign `dir = resolve('.', dir)`, obtain directory entries, form `abs` with `join`, and branch on `stats.isDirectory()` between recursion and a callback call. The callback expression receives the joined relative name, `abs`, and `stats`.",
+      "pt-br": "Ambos os corpos atribuem `dir = resolve('.', dir)`, obtêm entradas do diretório, formam `abs` com `join` e usam `stats.isDirectory()` para escolher entre recursão e chamada do callback. A expressão de callback recebe o nome relativo unido, `abs` e `stats`.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C4",
+      "evidence": [
+        "T2"
+      ],
+      "en": "The asynchronous source wraps `stat` and `readdir` with `promisify`, uses `arr.map`, and supplies its results to `Promise.all`. Its inner callback returns either the recursive call or the user callback expression.",
+      "pt-br": "O código assíncrono envolve `stat` e `readdir` com `promisify`, usa `arr.map` e fornece os resultados a `Promise.all`. Seu callback interno retorna a chamada recursiva ou a expressão de callback do usuário.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C5",
+      "evidence": [
+        "T3"
+      ],
+      "en": "The synchronous source calls `readdirSync` and `statSync` inside an indexed loop. Its callback expression is a statement rather than a returned or awaited value; the selected function has no written return statement.",
+      "pt-br": "O código síncrono chama `readdirSync` e `statSync` em um laço indexado. Sua expressão de callback é uma instrução, em vez de um valor retornado ou aguardado; a função selecionada não tem instrução de retorno escrita.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C6",
+      "evidence": [
+        "T4",
+        "T5"
+      ],
+      "en": "The source declarations type `Caller` as `(relPath: string, absPath: string, stats: Stats) => any`. The asynchronous return annotation is `Promise<void>` and the synchronous annotation is `void`; both declarations call the optional third argument `prefix`, while implementation source calls it `pre`.",
+      "pt-br": "As declarações de código tipam `Caller` como `(relPath: string, absPath: string, stats: Stats) => any`. A anotação de retorno assíncrona é `Promise<void>` e a síncrona é `void`; ambas as declarações chamam o terceiro argumento opcional de `prefix`, enquanto a implementação o chama de `pre`.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C7",
+      "evidence": [
+        "T1"
+      ],
+      "en": "The manifest exports `.` and `./sync`, each with `types`, `import`, and `require` targets. Those targets address generated distribution paths, not the two selected JavaScript source files directly.",
+      "pt-br": "O manifesto exporta `.` e `./sync`, cada um com destinos `types`, `import` e `require`. Esses destinos apontam para caminhos de distribuição gerados, em vez de apontarem diretamente para os dois arquivos JavaScript selecionados.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C8",
+      "evidence": [
+        "T1",
+        "T6"
+      ],
+      "en": "The manifest declares `engines.node` as `>=6`, while the pinned README labels asynchronous mode `>= 8.x` and synchronous mode `>= 6.x`. This snapshot does not justify a single tested minimum Node version for both modes.",
+      "pt-br": "O manifesto declara `engines.node` como `>=6`, enquanto o README fixado identifica o modo assíncrono como `>= 8.x` e o síncrono como `>= 6.x`. Este recorte não justifica uma única versão mínima testada do Node para ambos os modos.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C9",
+      "evidence": [
+        "T2",
+        "T3"
+      ],
+      "en": "The selected bodies contain no written catch clause, explicit sort, traversal-depth limit, concurrency limiter, or explicit cycle registry. This is a bounded source inspection, not a guarantee about imported filesystem behavior or all possible runtime errors.",
+      "pt-br": "Os corpos selecionados não contêm cláusula de captura escrita, ordenação explícita, limite de profundidade de percurso, limitador de concorrência ou registro explícito de ciclos. Esta é uma inspeção delimitada do código, sem garantir o comportamento do sistema de arquivos importado ou todos os erros possíveis em execução.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    },
+    {
+      "id": "C10",
+      "evidence": [
+        "T7"
+      ],
+      "en": "The preserved license is MIT. License presence alone does not approve a future training target, and this chapter remains excluded from training.",
+      "pt-br": "A licença preservada é MIT. A presença da licença por si só não aprova um futuro alvo de treinamento, e este capítulo permanece excluído do treinamento.",
+      "review_status": "CODEX_SOURCE_REVIEWED_NOT_OWNER_APPROVED"
+    }
+  ],
+  "faq": [
+    {
+      "id": "Q1",
+      "claims": [
+        "C7"
+      ],
+      "question": {
+        "en": "Can this snapshot certify the published package?",
+        "pt-br": "Este recorte pode certificar o pacote publicado?"
+      },
+      "answer": {
+        "en": "No. The complete pinned Git tree contains no `dist/` or `sync/` distribution files, and no registry tarball was authenticated or build executed. Manifest targets and source declarations are different evidence layers.",
+        "pt-br": "Não. A árvore Git completa e fixada não contém arquivos de distribuição em `dist/` ou `sync/`, e nenhum arquivo de pacote de registro foi autenticado nem build executado. Destinos do manifesto e declarações de código são camadas distintas de evidência."
+      }
+    },
+    {
+      "id": "Q2",
+      "claims": [
+        "C3"
+      ],
+      "question": {
+        "en": "Does the callback prove that each entry is a regular file?",
+        "pt-br": "O callback prova que cada entrada é um arquivo regular?"
+      },
+      "answer": {
+        "en": "No. The written condition tests `stats.isDirectory()` and otherwise invokes the callback; it does not test `stats.isFile()`. Symlink behavior, access races and cycle safety were not exercised.",
+        "pt-br": "Não. A condição escrita testa `stats.isDirectory()` e, no outro ramo, chama o callback; ela não testa `stats.isFile()`. Comportamento de links simbólicos, disputas de acesso e segurança contra ciclos não foram exercitados."
+      }
+    },
+    {
+      "id": "Q3",
+      "claims": [
+        "C5",
+        "C6"
+      ],
+      "question": {
+        "en": "Does synchronous mode wait for a Promise returned by the callback?",
+        "pt-br": "O modo síncrono aguarda uma Promise retornada pelo callback?"
+      },
+      "answer": {
+        "en": "The synchronous body contains no `await` and does not return or inspect the callback value. The declaration still accepts a `Caller` returning `any`; it supplies no static guarantee of asynchronous callback completion.",
+        "pt-br": "O corpo síncrono não contém `await` e não retorna nem inspeciona o valor do callback. A declaração ainda aceita um `Caller` que retorna `any`; ela não fornece garantia estática de conclusão de callback assíncrono."
+      }
+    },
+    {
+      "id": "Q4",
+      "claims": [
+        "C8"
+      ],
+      "question": {
+        "en": "Which Node minimum should documentation state?",
+        "pt-br": "Qual versão mínima do Node a documentação deve informar?"
+      },
+      "answer": {
+        "en": "State the disagreement explicitly: manifest `>=6`, README asynchronous `>= 8.x`, README synchronous `>= 6.x`. No version compatibility execution was performed.",
+        "pt-br": "Informe a divergência explicitamente: manifesto `>=6`, README assíncrono `>= 8.x`, README síncrono `>= 6.x`. Nenhuma execução de compatibilidade entre versões foi realizada."
+      }
+    },
+    {
+      "id": "Q5",
+      "claims": [
+        "C4",
+        "C9"
+      ],
+      "question": {
+        "en": "Are output order and bounded parallelism guaranteed?",
+        "pt-br": "Ordem de saída e paralelismo limitado estão garantidos?"
+      },
+      "answer": {
+        "en": "No. The async source uses `arr.map` with `Promise.all`; neither selected body explicitly sorts or implements a concurrency limiter. This observation does not establish runtime scheduling or filesystem ordering.",
+        "pt-br": "Não. O código assíncrono usa `arr.map` com `Promise.all`; nenhum corpo selecionado ordena explicitamente nem implementa um limitador de concorrência. Esta observação não estabelece escalonamento em execução nem ordenação do sistema de arquivos."
+      }
+    },
+    {
+      "id": "Q6",
+      "claims": [
+        "C2",
+        "C7"
+      ],
+      "question": {
+        "en": "Can unchanged parameter names justify a package-wide NO-OP?",
+        "pt-br": "Nomes de parâmetros inalterados justificam NO-OP do pacote inteiro?"
+      },
+      "answer": {
+        "en": "No. Earlier source used a default export named `list`; this revision uses the named export `totalist`. Package metadata also adds an `exports` map. A signature-only observation cannot certify unchanged import examples or the whole chapter.",
+        "pt-br": "Não. O código anterior usava uma exportação padrão chamada `list`; esta revisão usa a exportação nomeada `totalist`. Os metadados do pacote também acrescentam um mapa `exports`. Uma observação apenas da assinatura não pode certificar exemplos de importação inalterados nem o capítulo inteiro."
+      }
+    }
+  ],
+  "source_executed": false,
+  "model_calls": 0,
+  "training_gold": false,
+  "training_use_approved": false,
+  "evaluation_only": true,
+  "published": false,
+  "owner_approved": false,
+  "independence": "Totalist is development-exposed after the earlier frozen source-signature evaluation; no new independent lifecycle score.",
+  "limitations": [
+    "Git blobs match the pinned API tree; no upstream signature verification, registry tarball proof, build or runtime execution.",
+    "Source absence statements concern only the complete two selected function bodies.",
+    "No physical published catalog or broad semantic bilingual certification."
+  ],
+  "candidate_hashes": {
+    "totalist-chapter-candidates-v1/en.md": "877c1c00344aa760fbbcac044c317699485ee127ece9f482a57b935c490de23f",
+    "totalist-chapter-candidates-v1/pt-br.md": "263e4ec16b3cc1ed23bb1dd84c8d88313f228835e60684ef1197cd2520c3b56e",
+    "totalist-chapter-candidates-v1/totalist-example.mjs": "d92c4a09747ab071bc6e9211a87f9024cd3e2fcb9e97be2c17a08979d1538487"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-21T16:31:04.388457+00:00",
+  "case": "fastapi-S1",
+  "method": "V",
+  "frozen_reference": {
+    "id": "fastapi-S1",
+    "task": "fastapi",
+    "claim": "The selected Dependant.scope class field has the declared default None.",
+    "expected_verdict": "SUPPORTED",
+    "reference_id": "F02",
+    "reviewer": "Same campaign agent, frozen source interpretation; not independent owner",
+    "critical": true,
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "scope": "Selected cards only; no project-wide runtime truth label"
+  },
+  "reference_anchor": {
+    "claim_id": "F02",
+    "task": "fastapi",
+    "family": "fastapi/fastapi",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_path": "fastapi/dependencies/models.py",
+    "source_file_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+    "exact_source_evidence": "    scope: Literal[\"function\", \"request\"] | None = None",
+    "source_lines": [
+      55,
+      55
+    ],
+    "expected_interpretation": {
+      "en": "The selected scope declaration has default None.",
+      "pt-BR": "A declaração selecionada de scope tem valor padrão None."
+    },
+    "reference_verdict": "SUPPORTED",
+    "critical": true,
+    "reviewer": "Codex same campaign agent; static source semantic review",
+    "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+    "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+    "not_independent_holdout": true
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "Implementation",
+    "evidence": "The variable `scope` is declared as `Literal[\"function\", \"request\"] | None = None` in `fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15`.\n\nHowever, in `fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15`, the variable `scope` is used with values \"function\" and \"request\" in the `solve_dependencies` function.\n\nThis suggests that the `scope` variable is not always `None`, but the implementation does not explicitly declare it as anything other than `None` in the `models.py` file. Therefore, the source does not provide sufficient evidence to support the claim that the `scope` variable is always `None`.",
+    "reason": "The source code in `models.py` declares the `scope` variable as `Literal[\"function\", \"request\"] | None = None`, but the implementation in `utils.py` uses the `scope` variable with values \"function\" and \"request\". This suggests that the `scope` variable is not always `None`, but the implementation does not explicitly declare it as anything other than `None` in the `models.py` file."
+  },
+  "content_sha256": "6a3727e5e9f9e71dae2daebffa30d39522395981ff49a9cec049a94d7395efc7",
+  "raw_response_sha256": "c1d30b5329092c21e7e11808a51af10146b22a24291bc334e1f3ab1c293ebc9a",
+  "primary_raw_label_agreement": false,
+  "rationale_support_for_requested_claim": "INSUFFICIENT",
+  "evidence_form": "Literal declaration is partly quoted but field owner/path is misassociated.",
+  "source_relationship_review": "Changes declared default None into always-None runtime invariant; evidence does not answer the frozen claim.",
+  "diagnostic_note": "Wrong-proposition/default-versus-runtime reasoning; quote itself acknowledges =None.",
+  "end_to_end_label_and_rationale_supported": false,
+  "original_label_and_reference_unchanged": true,
+  "reviewer": "Same campaign agent; detailed rationale rubric fixed before reading any V/R outputs, but after some V predictions existed unread. Primary protocol/labels froze before predictions.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

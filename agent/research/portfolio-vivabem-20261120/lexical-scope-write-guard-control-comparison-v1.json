@@ -1,0 +1,327 @@
+{
+  "results": [
+    {
+      "observer_version": 1,
+      "passed": 9,
+      "total": 18,
+      "rows": [
+        {
+          "case": "function-var-reassignment",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "function-var-uninitialized",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "duplicate-function-declarations",
+          "expected": "ABSTAIN",
+          "actual": "UNRESOLVED",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "separate-inner-declaration",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "named-function-expression",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "catch-parameter-shadow",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "block-local-function",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "function-parameter-target",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "direct-write-after-call",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "nested-closure-write",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "unrelated-inner-var",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "unrelated-inner-parameter-write",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "property-call-write",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "computed-property-write",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "shadowed-block-let",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "direct-clean-nested-call",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "dynamic-eval",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "identifier-update",
+          "expected": "ABSTAIN",
+          "actual": "REFERENCE",
+          "pass": false,
+          "hazards": []
+        }
+      ]
+    },
+    {
+      "observer_version": 2,
+      "passed": 17,
+      "total": 18,
+      "rows": [
+        {
+          "case": "function-var-reassignment",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "SAME_SCOPE_DECLARATION_COLLISION",
+              "kind": "VariableDeclaration",
+              "line": 3,
+              "end_line": 3
+            }
+          ]
+        },
+        {
+          "case": "function-var-uninitialized",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "SAME_SCOPE_DECLARATION_COLLISION",
+              "kind": "VariableDeclaration",
+              "line": 3,
+              "end_line": 3
+            }
+          ]
+        },
+        {
+          "case": "duplicate-function-declarations",
+          "expected": "ABSTAIN",
+          "actual": "UNRESOLVED",
+          "pass": false,
+          "hazards": []
+        },
+        {
+          "case": "separate-inner-declaration",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "named-function-expression",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "catch-parameter-shadow",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "block-local-function",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "function-parameter-target",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "direct-write-after-call",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "DIRECT_BINDING_WRITE",
+              "line": 4,
+              "end_line": 4
+            }
+          ]
+        },
+        {
+          "case": "nested-closure-write",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "DIRECT_BINDING_WRITE",
+              "line": 3,
+              "end_line": 3
+            }
+          ]
+        },
+        {
+          "case": "unrelated-inner-var",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "unrelated-inner-parameter-write",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "property-call-write",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "PROPERTY_WRITE_ON_BINDING",
+              "line": 3,
+              "end_line": 3
+            }
+          ]
+        },
+        {
+          "case": "computed-property-write",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "PROPERTY_WRITE_ON_BINDING",
+              "line": 3,
+              "end_line": 3
+            }
+          ]
+        },
+        {
+          "case": "shadowed-block-let",
+          "expected": "UNRESOLVED",
+          "actual": "UNRESOLVED",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "direct-clean-nested-call",
+          "expected": "REFERENCE",
+          "actual": "REFERENCE",
+          "pass": true,
+          "hazards": []
+        },
+        {
+          "case": "dynamic-eval",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "DYNAMIC_SCOPE_INDICATOR",
+              "locations": [
+                {
+                  "line": 3,
+                  "end_line": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case": "identifier-update",
+          "expected": "ABSTAIN",
+          "actual": "ABSTAIN",
+          "pass": true,
+          "hazards": [
+            {
+              "reason": "DIRECT_BINDING_WRITE",
+              "line": 3,
+              "end_line": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scope": "18 exposed owned strict-JS controls only, not general runtime/semantic accuracy.",
+  "production_integrated": false,
+  "gold": false
+}

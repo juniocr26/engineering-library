@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-21T03:45:07.510705+00:00",
+  "hypothesis": "H31: actual OS subprocess timeout/nonzero-exit errors from an owned replacement extractor preserve the cached/fresh delivery distinction and durable bytes previously observed with synthetic exception injection.",
+  "baseline_sha256": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+  "implementations": [
+    "unchanged0.1.5",
+    "prior-research-only-outer-handler-candidate"
+  ],
+  "phases": [
+    "cached",
+    "fresh"
+  ],
+  "modes": [
+    "owned-timeout",
+    "owned-nonzero-exit"
+  ],
+  "scenario_count": 8,
+  "owned_child_policy": {
+    "python_flags": [
+      "-I",
+      "-S"
+    ],
+    "environment": "Explicit minimal PATH/PYTHONDONTWRITEBYTECODE; no inherited private environment values",
+    "code": "Only stdlib os/sys/json/time; emit own PID and requested mode, then deliberate bounded wait for timeout or exit7. No file reads/writes, network or descendants.",
+    "parent_timeout_seconds": 0.25,
+    "child_timeout_wait_seconds": 5,
+    "purpose": "Meaningful bounded OS timeout/cancellation experiment, not campaign-duration filler",
+    "verification": "Parse own child PID from captured stdout; immediately check absent via os.kill(pid,0). No external process is signaled."
+  },
+  "criteria": [
+    "Actual subprocess.run returns completed checked exit7 or raises TimeoutExpired with owned PID stdout.",
+    "Child PID absent after subprocess.run cleanup/error; no descendants created by owned code.",
+    "Cached failure leaves successful request/result/receipt bytes and budgets unchanged. Unchanged helper raises; isolated prior candidate REFUSED/no quote.",
+    "Fresh failure durably records INCONCLUSIVE; duplicate same ID returns original INCONCLUSIVE without launching child again.",
+    "Normal native parser recovery succeeds under cached ID or a fresh distinct request ID as appropriate; locks released."
+  ],
+  "limits": [
+    "Replacement extraction function launches owned Python child, not a hung native Go parser or full real outage.",
+    "No cross-process lock, Windows, application source execution or general cancellation certification."
+  ],
+  "production_changed": false,
+  "permanent_tests_changed": false,
+  "training_gold": false
+}

@@ -1,0 +1,64 @@
+"""Per-file purpose/hash inventory of the authorized campaign cut."""
+import argparse,collections,datetime,hashlib,json,os
+from pathlib import Path
+P=Path(__file__).resolve().parent;ROOT=P.parents[2]
+parser=argparse.ArgumentParser();parser.add_argument('--version',required=True,type=int);args=parser.parse_args()
+def sha(path):
+    h=hashlib.sha256()
+    with path.open('rb') as f:
+        for b in iter(lambda:f.read(1024*1024),b''):h.update(b)
+    return h.hexdigest()
+def purpose(path):
+    parts=path.parts;name=path.name
+    if 'root-report-preimages' in str(path) or name.endswith(('.prior.bin','preimage-v1.bin')):return 'Exact historical root-report bytes retained before authorized append'
+    if 'foundation-input-capsule-v1' in str(path):return 'Restricted opaque preservation capsule/manifest of original7datasets,398directrefs and15selectedunchangeddependencies; no semantic use/private-eval promotion'
+    if 'atomic-publication-process-v1' in parts:return 'Owned single-file publication/process-stop/race evidence; partial/staged/collision bodies retained, not production or neural recovery'
+    if 'job-process-interruption-v1' in parts:return 'Owned abrupt-process-stop journal/payload/rawoutput or non-destructive missing/tampered fork; preserve partial bytes, never auto replay'
+    if 'original-remaining-candidate-reference-review-v1' in parts and name.endswith('.candidate.txt'):return 'Exact unchanged original bilingual candidate body copy for source-only review; not human-facing campaign report or Gold'
+    if 'typed-source-deterministic-notes-v1' in parts:return 'Machine-readable bounded manual-template candidate, finite AST gate or complete-note review; zero neural authorship'
+    if name in ['cobra-typed-relations-observer-v1','go-owner-capsule-observer-v1']:return 'Owned compiled finite Go AST observer executable, go1.27.1; parses public source text without executing upstream programs'
+    if 'checkpoint-' in str(path):return 'Point-in-time archive, member manifest or redundant verified recovery receipt'
+    if any(part in parts for part in ['frozen-public-sources','chapter-context-source-v1','original-faq-source-reacquisition-v1','original-faq-expansion-sources-v1','owner-error-context-source-v2','native-framework-source-v1','public-notice-snapshots-v1','original-faq-remaining-public-sources-v1','native-framework-model-class-source-v2','native-candidate-metadata-v1','native-wheel-metadata-v1','native-release-source-v1','public-dependency-metadata-v1']):return 'Pinned public source/license/metadata or source archive; never installed or executed'
+    if any(part in parts for part in ['scope-acquisition-v1','scope-acquisition-v2','scope-acquisition-v3','scope-binding-deletion-v1','scope-object-mutation-v1','scope-registry-profile-v1','scope-function-namespace-v1','scope-namespace-filter-v6','scope-retirement-authority-v1','scope-retirement-filter-v7','typed-relations-source-perturbation-v1','typed-template-semantic-boundary-v1','owner-capsule-identity-v1','owner-capsule-dependency-boundary-v1']):return 'Owned lexical source-scope control or its observation; source text never executed'
+    if 'cached-helper-job-seam-v1' in parts and 'source' in parts:return 'Owned Go source text for native-parser observation; program never executed'
+    if name=='request.json':return 'Frozen bounded public-source inference request; not a training example'
+    if name=='raw-response.json':return 'Original local model HTTP response bytes, including failures; no correction'
+    if name=='model-content.txt':return 'Exact original generated model text; not a human-facing campaign report or correct target'
+    if name in ['outcome.json','started.json','process.json']:return 'Worker identity, attempt status, timing/digest and terminal boundary evidence'
+    if name.startswith('semantic-review'):return 'Source-grounded same-agent judgments over unchanged original output; not owner approval'
+    if name.endswith('.pyc'):return 'Derived local research bytecode cache; not an upstream execution or permanent implementation change'
+    if name.endswith(('.go','.cjs')):return 'Versioned owned research AST observer source using existing Go/TypeScript parser; no production/permanent test or upstream program execution'
+    if name.endswith('.py'):return 'Versioned isolated research observer/renderer/annotation/recovery script; not production or permanent test'
+    if name.endswith(('.log','.stderr','.stdout','.jsonl')):return 'Preserved restricted runtime/test/event observation; no public upload'
+    if 'snapshot' in name or 'sources' in str(path) or 'source-v1' in str(path):return 'Pinned public source bytes or owned source-only control; not upstream execution'
+    if 'cached-helper-job-seam-v1' in parts:return 'Owned isolated helper/job journal, immutable delivery body, seed/preimage or case observation'
+    if 'scope-acquisition' in str(path):return 'Owned finite source-scope control and lifecycle observation; no real code removal'
+    if 'protocol' in name or 'freeze' in name:return 'Preregistered question/reference/decision boundary or implementation hash freeze'
+    if 'inventory' in name:return 'Earlier retained file/hash/purpose inventory with explicit cut'
+    if 'recovery' in name:return 'Actual archive/restore/hash receipt or recovery-cut policy evidence'
+    if name.endswith('.bin'):return 'Exact preserved preimage bytes; no active model weights or adapter'
+    if name.endswith('.json'):return 'Machine-readable source/claim/dataset/resource/acceptance state or versioned result'
+    if name=='authorized-request.txt':return 'Exact copied owner campaign instruction attachment'
+    return 'Preserved technical campaign evidence; not a production or active-catalog change'
+entries=[];pending=[]
+roots=[P,ROOT/'.local-backups/acceptance-calibration-20261121']
+for base in roots:
+    for f in sorted(base.rglob('*')):
+        rel=f.relative_to(ROOT).as_posix()
+        if f.is_symlink():entries.append({'path':rel,'kind':'symlink','target':os.readlink(f),'target_text_sha256':hashlib.sha256(os.readlink(f).encode()).hexdigest(),'purpose':('Owned existing-final symlink refusal control; published leaf never followed' if 'atomic-publication-process-v1' in f.parts else 'Owned dangling-link acquisition control; target never followed'),'stable_at_cut':True,'verification_command_ref':'inventory_cut_sha256'});continue
+        if not f.is_file():continue
+        terminal=True
+        if (f.parent/'started.json').exists():
+            try:terminal='ended_at' in json.loads((f.parent/'outcome.json').read_text())
+            except (OSError,ValueError):terminal=False
+        stable=terminal or f.name in ['request.json','started.json','process.json']
+        row={'path':rel,'kind':'file','bytes':f.stat().st_size,'purpose':purpose(f),'stable_at_cut':stable,'verification_command_ref':'inventory_cut_sha256'}
+        if stable:row['sha256']=sha(f)
+        else:pending.append(rel);row['hash_deferred_until_terminal']=True
+        entries.append(row)
+reports=[]
+for name in ['AI_TRAINING_CAMPAIGN_REPORT.md','AI_TRAINING_FILE_INVENTORY.md','AI_FINE_TUNING_READINESS.md','AI_TRAINING_RESUME.md']:
+ f=ROOT/name;reports.append({'path':name,'bytes':f.stat().st_size,'sha256':sha(f),'purpose':'Canonical authorized human-facing root report; prior bytes preserved before each append','verification_command_ref':'inventory_cut_sha256'})
+result={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'version':args.version,'verification_commands':{'inventory_cut_sha256':{'command':'/opt/homebrew/bin/python3 -B '+str(Path(__file__).relative_to(ROOT))+' --version '+str(args.version),'scope':'Every stable regular file byte length/SHA256 and symlink target text without following; hashrecording is not semantic/executable readiness. Exactcut excludes its own newfile andsubsequentwrites.','outcome':'Recorded hashes for stable members; any active rawworkerfiles explicitly deferred'}},'entries':entries,'technical_file_count':sum(e['kind']=='file' for e in entries),'technical_symlink_count':sum(e['kind']=='symlink' for e in entries),'technical_regular_bytes':sum(e.get('bytes',0) for e in entries),'canonical_root_reports':reports,'open_worker_files':pending,'self_cut':'This new inventory excludes itself and any subsequent report append/checkpoint/state file. Root hashes are exact at this cut, not future final-report hashes. Open worker raw/stderr have no stable hash until terminal. Historical inventory files remain unchanged.','classification':'RESTRICTED_INTERNAL_LOCAL_ONLY; contains local paths and proprietary own-repository proposal source quotes; no public upload/training transfer','preexisting_production_test_or_internal_doc_changes':0,'deleted_historical_files':0,'gold':0,'optimizer_updates':0}
+with (P/('file-inventory-v%d.json'%args.version)).open('x') as f:json.dump(result,f,indent=2,ensure_ascii=False);f.write('\n')
+print(json.dumps({k:v for k,v in result.items() if k not in ['entries','canonical_root_reports']},indent=2))

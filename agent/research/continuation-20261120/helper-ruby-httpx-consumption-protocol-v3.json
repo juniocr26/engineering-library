@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-20T19:37:47.125839+00:00",
+  "status": "FROZEN_BEFORE_HELPER_RENDERER_CONSUMPTION",
+  "hypothesis": "A real current HelperRetrieval result can be checked against independently extracted Ruby evidence before a narrowly mapped fact reaches the actual renderer; FOUND is neither semantic fact correctness nor arbitrary evidence-ID admission.",
+  "registry": {
+    "httpx-current": {
+      "root": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/continuation-20261120/new-public-sources-v1/encode--httpx/26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+      "files": {
+        "httpx/_transports/default.py": {
+          "sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79",
+          "language": "python",
+          "selectors": [
+            "map_httpcore_exceptions"
+          ]
+        }
+      }
+    }
+  },
+  "request": {
+    "request_id": "mapper-source",
+    "source_id": "httpx-current",
+    "revision": "26d48e0634e6ee9cdc0533996db289ce4b430177",
+    "path": "httpx/_transports/default.py",
+    "qualified_symbol": "map_httpcore_exceptions",
+    "expected_sha256": "03379a454c95c0271c4f2c8d25ec437f49f57457f3cf2769748420bf0ecf2e79"
+  },
+  "cases": [
+    {
+      "id": "translated-caught-name",
+      "en": "The `map_httpcore_exceptions` mapper catches `Exception`.",
+      "pt-br": "O mapeador `map_httpcore_exceptions` captura `Excecao`.",
+      "evidence_id": "S1",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "correct-caught-name",
+      "en": "The `map_httpcore_exceptions` mapper catches `Exception` in the written handler.",
+      "pt-br": "O mapeador `map_httpcore_exceptions` captura `Exception` no tratador escrito.",
+      "evidence_id": "S1",
+      "expected_status": "RENDERED"
+    },
+    {
+      "id": "unknown-qualified-owner",
+      "en": "The `map_httpcore_exceptions` mapper catches `httpcore.Exception`.",
+      "pt-br": "O mapeador `map_httpcore_exceptions` captura `Exception`.",
+      "evidence_id": "S1",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "wrong-semantics-same-name",
+      "en": "The `map_httpcore_exceptions` mapper suppresses every `Exception` and never re-raises.",
+      "pt-br": "O mapeador `map_httpcore_exceptions` suprime toda `Exception` e nunca relança.",
+      "evidence_id": "S1",
+      "expected_status": "RENDERED"
+    },
+    {
+      "id": "correct-cause",
+      "en": "The `map_httpcore_exceptions` mapper writes `raise mapped_exc(message) from exc` after obtaining the message.",
+      "pt-br": "O mapeador `map_httpcore_exceptions` escreve `raise mapped_exc(message) from exc` depois de obter a mensagem.",
+      "evidence_id": "S1",
+      "expected_status": "RENDERED"
+    },
+    {
+      "id": "unmapped-evidence-identity",
+      "en": "The `map_httpcore_exceptions` mapper catches `Exception` in the written handler.",
+      "pt-br": "O mapeador `map_httpcore_exceptions` captura `Exception` no tratador escrito.",
+      "evidence_id": "H1",
+      "expected_status": "REFUSED"
+    }
+  ],
+  "source_execution_allowed": false,
+  "maximum_helper_steps": 1,
+  "maximum_quote_bytes": 6144,
+  "model_calls": 0,
+  "publication_authorized": false,
+  "owner_approved": false,
+  "training_excluded": true,
+  "expected_limit": "Wrong semantic assertion with unchanged exact identifier remains renderable: lexical reference guard is not full prose entailment.",
+  "permanent_tests_modified": false,
+  "preflight_schema_correction": "Existing registry field is selectors, not symbols. V1 was preserved and no helper request was dispatched with that invalid registry.",
+  "previous_first_boundary": "V1 renderer refused five facts before reference checks because prose omitted selected declaration map_httpcore_exceptions. Sixth unknown evidence ID refused. V1 raw outcomes remain preserved;3/6 expectation matches are not semantic success."
+}

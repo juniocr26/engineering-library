@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+ENV["RAILS_ENV"] = "test"
+require "bundler/setup"
+files = Dir[File.expand_path("../test/offline/*_offline.rb", __dir__)].sort
+abort "Nenhum teste offline encontrado" if files.empty?
+files.each { |file| require file }

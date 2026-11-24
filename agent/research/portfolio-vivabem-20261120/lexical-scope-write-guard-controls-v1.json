@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "name": "function-var-reassignment.js",
+      "source": "'use strict';\nfunction target() {}\nvar target = () => 0;\ntarget();"
+    },
+    {
+      "name": "function-var-uninitialized.js",
+      "source": "'use strict';\nfunction target() {}\nvar target;\ntarget();"
+    },
+    {
+      "name": "duplicate-function-declarations.js",
+      "source": "'use strict';\nfunction target() {}\nfunction target() {}\ntarget();"
+    },
+    {
+      "name": "separate-inner-declaration.js",
+      "source": "'use strict';\nfunction target() {}\nfunction outer() { function target() {} target(); }"
+    },
+    {
+      "name": "named-function-expression.js",
+      "source": "'use strict';\nconst outer = function target() { target(); };"
+    },
+    {
+      "name": "catch-parameter-shadow.js",
+      "source": "'use strict';\nfunction target() {}\ntry {} catch (target) { target(); }"
+    },
+    {
+      "name": "block-local-function.js",
+      "source": "'use strict';\n{ function target() {} target(); }"
+    },
+    {
+      "name": "function-parameter-target.js",
+      "source": "'use strict';\nfunction outer(target) { target(); }"
+    },
+    {
+      "name": "direct-write-after-call.js",
+      "source": "'use strict';\nfunction target() {}\ntarget();\ntarget = () => 0;"
+    },
+    {
+      "name": "nested-closure-write.js",
+      "source": "'use strict';\nfunction target() {}\nfunction inner() { target = () => 0; }\ntarget();"
+    },
+    {
+      "name": "unrelated-inner-var.js",
+      "source": "'use strict';\nfunction target() {}\nfunction inner() { var target; }\ntarget();"
+    },
+    {
+      "name": "unrelated-inner-parameter-write.js",
+      "source": "'use strict';\nfunction target() {}\nfunction inner(target) { target = () => 0; }\ntarget();"
+    },
+    {
+      "name": "property-call-write.js",
+      "source": "'use strict';\nfunction target() {}\ntarget.call = () => 0;\ntarget.call(this);"
+    },
+    {
+      "name": "computed-property-write.js",
+      "source": "'use strict';\nfunction target() {}\ntarget['apply'] = () => 0;\ntarget.apply(this, []);"
+    },
+    {
+      "name": "shadowed-block-let.js",
+      "source": "'use strict';\nfunction target() {}\n{ let target = () => 0; target(); }"
+    },
+    {
+      "name": "direct-clean-nested-call.js",
+      "source": "'use strict';\nfunction target() {}\nfunction inner() { target(); }"
+    },
+    {
+      "name": "dynamic-eval.js",
+      "source": "'use strict';\nfunction target() {}\neval('target = () => 0');\ntarget();"
+    },
+    {
+      "name": "identifier-update.js",
+      "source": "'use strict';\nfunction target() {}\ntarget++;\ntarget();"
+    }
+  ]
+}

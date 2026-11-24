@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-21T11:16:50.757742+00:00",
+  "hypothesis": "H101: selected trusted recovery worker rejects corrupted archive/content/manifest or invalid tar membership before writing recovered source files or producing a candidate. Integrity admission, not authenticity/security sandbox/general correctness.",
+  "worker": "agent/research/portfolio-vivabem-20261120/complete_candidate_pipeline_replay_worker_v1.py",
+  "worker_sha256": "d0b5dbf5ca5b43ed5682b5d6405cf01f03cf92e76040e9538d5a358cc6ec122f",
+  "original_payload": ".local-backups/portfolio-vivabem-20261120/checkpoint-026/h95-replay-payload-v1.json",
+  "original_payload_sha256": "a260d8230881dca9428819dada9f0c21d098521cd252fd616a8744a33190e5b3",
+  "original_archive_sha256": "32a79b4cae53adbefbb061600929346790077b2fa5fe1855c5c62b3afcd42e24",
+  "selected_guard_lines": {
+    "assert digest(archive) == payload[\"archive_sha256\"]": 21,
+    "assert digest(members[\"manifest.json\"]) == payload[\"manifest_sha256\"]": 31,
+    "assert len(data) == row[\"bytes\"] and digest(data) == row[\"sha256\"]": 36,
+    "assert member.isfile() and not path.is_absolute() and \"..\" not in path.parts": 28,
+    "assert member.name not in members": 29
+  },
+  "cases": [
+    {
+      "id": "archive-digest-mismatch",
+      "mutation": "Replace claimed outer digest with allzero digest, archive unchanged",
+      "expected_guard": "digest(archive)"
+    },
+    {
+      "id": "source-content-mismatch",
+      "mutation": "Append newline to one selected public source member, recompute outer archive digest but retain original manifest/hash",
+      "expected_guard": "len(data) == row"
+    },
+    {
+      "id": "manifest-digest-mismatch",
+      "mutation": "Change manifest metadata, recompute outer archive digest but retain trusted original manifest digest",
+      "expected_guard": "digest(members[\"manifest.json\"])"
+    },
+    {
+      "id": "unsafe-parent-member",
+      "mutation": "Add ../H101_OUTSIDE_CAPSULE_SENTINEL.txt regular member; recompute outer archive digest",
+      "expected_guard": "member.isfile()"
+    },
+    {
+      "id": "duplicate-member",
+      "mutation": "Add exact second source/LICENSE member; recompute outer archive digest",
+      "expected_guard": "member.name not in members"
+    },
+    {
+      "id": "symbolic-member",
+      "mutation": "Add synthetic symlink member to ../H101_OUTSIDE_CAPSULE_SENTINEL.txt; recompute outer archive digest",
+      "expected_guard": "member.isfile()"
+    }
+  ],
+  "execution": "Host python3 -I -B frozen trusted worker; JSONstdin from preserved mutated local payload; timeout30s/case; private TMPDIR inside unique owned case directory; no network/model/upstream imports",
+  "observations": [
+    "exitcode",
+    "stdout_empty",
+    "exact frozen admission guard line in traceback",
+    "count regularfiles under owned TMPDIR",
+    "sentinel not created",
+    "no candidate output"
+  ],
+  "scope_limit": [
+    "Six mutations of same exposed13memberFastAPIcapsule, not six independent projects/platforms.",
+    "Assertions require normal optimize0 recipe; -I ignores PYTHONOPTIMIZE. No -O allowed.",
+    "Hashes are integrity pins, not proof of source truth or resistance to hostile operator changing all trusted pins/worker.",
+    "Only bounded controlled paths monitored, not systemwide forensic proof."
+  ],
+  "new_model_calls": 0,
+  "training_steps": 0,
+  "external_repo_execution": false,
+  "gold": false
+}

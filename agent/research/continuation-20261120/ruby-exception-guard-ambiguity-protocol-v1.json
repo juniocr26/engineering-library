@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-20T13:17:16.972351+00:00",
+  "hypothesis": "Terminal-name matching can conflate two distinct qualified catch references that share Error; require exact qualified mention sets when terminal spelling is ambiguous. Preserve bare/comment/dynamic-handler limits.",
+  "frozen_before_predictions": true,
+  "cases": [
+    {
+      "id": "different-qualified-catch-same-terminal",
+      "source_root": "/sources/engineering-library/agent/research/continuation-20261120/exception-guard-owned-sources-v1/ambiguous-terminal",
+      "source_sha256": "3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965",
+      "en": "The `_do_parse` source names `first.Error` in a catch clause.",
+      "pt-br": "O código de `_do_parse` nomeia `second.Error` em uma cláusula de captura.",
+      "expected_status": "REFUSED",
+      "source_scope": "OWNED_CONTROL_NOT_PUBLIC_REPOSITORY_CONTENT"
+    },
+    {
+      "id": "ambiguous-terminal-shortening",
+      "source_root": "/sources/engineering-library/agent/research/continuation-20261120/exception-guard-owned-sources-v1/ambiguous-terminal",
+      "source_sha256": "3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965",
+      "en": "The `_do_parse` source names `first.Error` in a catch clause.",
+      "pt-br": "O código de `_do_parse` nomeia `Error` em uma cláusula de captura.",
+      "expected_status": "REFUSED",
+      "source_scope": "OWNED_CONTROL_NOT_PUBLIC_REPOSITORY_CONTENT"
+    },
+    {
+      "id": "same-qualified-catch-preserved",
+      "source_root": "/sources/engineering-library/agent/research/continuation-20261120/exception-guard-owned-sources-v1/ambiguous-terminal",
+      "source_sha256": "3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965",
+      "en": "The `_do_parse` source names `first.Error` in a catch clause.",
+      "pt-br": "O código de `_do_parse` nomeia `first.Error` em uma cláusula de captura.",
+      "expected_status": "RENDERED",
+      "source_scope": "OWNED_CONTROL_NOT_PUBLIC_REPOSITORY_CONTENT"
+    },
+    {
+      "id": "both-known-catches-preserved",
+      "source_root": "/sources/engineering-library/agent/research/continuation-20261120/exception-guard-owned-sources-v1/ambiguous-terminal",
+      "source_sha256": "3f3d37782c215626bf371134f810e20f567fea4e54130c10cc2a035a5f304965",
+      "en": "The `_do_parse` source names `first.Error` and `second.Error` in catch clauses.",
+      "pt-br": "O código de `_do_parse` nomeia `first.Error` e `second.Error` em cláusulas de captura.",
+      "expected_status": "RENDERED",
+      "source_scope": "OWNED_CONTROL_NOT_PUBLIC_REPOSITORY_CONTENT"
+    },
+    {
+      "id": "bare-handler-no-invented-type",
+      "source_root": "/sources/engineering-library/agent/research/continuation-20261120/exception-guard-owned-sources-v1/bare-handler",
+      "source_sha256": "284cf9621ebca4876c96235a0f15fee9a14b51f7ff074b42e13834d10b764de8",
+      "en": "The `_do_parse` source contains a bare except clause and re-raises the caught exception.",
+      "pt-br": "O código de `_do_parse` contém uma cláusula except sem tipo e relança a exceção capturada.",
+      "expected_status": "RENDERED",
+      "source_scope": "OWNED_CONTROL_NOT_PUBLIC_REPOSITORY_CONTENT"
+    },
+    {
+      "id": "comment-is-not-ast-catch",
+      "source_root": "/sources/engineering-library/agent/research/continuation-20261120/exception-guard-owned-sources-v1/comment-not-handler",
+      "source_sha256": "f98369361d14258e29cc204017b1415f34a7f9d6dcff39d0373caefee4b52688",
+      "en": "The `_do_parse` source has a comment mentioning an error label and returns expression.",
+      "pt-br": "O código de `_do_parse` contém um comentário com um nome de erro e retorna expression.",
+      "expected_status": "RENDERED",
+      "source_scope": "OWNED_CONTROL_NOT_PUBLIC_REPOSITORY_CONTENT"
+    },
+    {
+      "id": "dynamic-exception-expression-not-static-name",
+      "source_root": "/sources/engineering-library/agent/research/continuation-20261120/exception-guard-owned-sources-v1/dynamic-handler",
+      "source_sha256": "6af78f567b43534e5b116d9c277a627e2ff6de67373436e231e4826cf11ccf1d",
+      "en": "The `_do_parse` source has a dynamic catch expression; its exception type is not resolved here.",
+      "pt-br": "O código de `_do_parse` contém uma expressão dinâmica de captura; seu tipo de exceção não está resolvido aqui.",
+      "expected_status": "RENDERED",
+      "source_scope": "OWNED_CONTROL_NOT_PUBLIC_REPOSITORY_CONTENT"
+    }
+  ],
+  "model_calls": 0,
+  "permanent_tests_changed": false,
+  "source_execution_allowed": false
+}

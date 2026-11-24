@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "original": {
+    "path": "agent/research/final-intensive-20261121/temporary-replay-file-inventory-records-v2.jsonl",
+    "bytes": 72599493,
+    "sha256": "2b23746b5312d431e27044c3689999cde1b5ac2e9af95ceb0e2781485533b8fa",
+    "git_blob_oid": "9d4d77c723126be1079c5ef70cf43e1aca5d3f7c",
+    "git_object_format": "sha1",
+    "mode": "0644",
+    "encoding": "UTF-8",
+    "records": 124549,
+    "ends_with_lf": true
+  },
+  "partition": {
+    "method": "greedy whole original binary lines; no rewriting",
+    "max_part_bytes": 31457280,
+    "parts": [
+      {
+        "sequence": 1,
+        "file": "temporary-replay-file-inventory-records-v2.part-0001.jsonl",
+        "bytes": 31456786,
+        "sha256": "64f98add715899e75b99aee6c2e478f122dffd41e436b4a4c2863639c30d2ac2",
+        "records": 54213
+      },
+      {
+        "sequence": 2,
+        "file": "temporary-replay-file-inventory-records-v2.part-0002.jsonl",
+        "bytes": 31456718,
+        "sha256": "361b565a43b081f9eaa0f72aa78fb29f474a9ab56f6536005a057493d4a8b606",
+        "records": 53749
+      },
+      {
+        "sequence": 3,
+        "file": "temporary-replay-file-inventory-records-v2.part-0003.jsonl",
+        "bytes": 9685989,
+        "sha256": "a530fd2ae2ce74577338df42221ba2a718b56156881c6c0dec6d258ed7aff0b3",
+        "records": 16587
+      }
+    ]
+  },
+  "reconstruction": {
+    "method": "binary concatenation",
+    "order": "partition.parts array order",
+    "parts_relative_to": "manifest directory",
+    "destination": "original.path relative to repository root",
+    "overwrite_existing": false,
+    "verify": [
+      "each part bytes and sha256",
+      "original bytes, sha256, git_blob_oid, records and mode"
+    ],
+    "requires_reconstruction_before_existing_consumers": true,
+    "existing_recovery_scripts_read_partition_manifests": true,
+    "migration_status": "PARTITIONED_ORIGINAL_IS_LOCAL_DERIVED",
+    "command": "python3 -B agent/research/final-intensive-20261121/restore_jsonl_partitions_v1.py"
+  }
+}

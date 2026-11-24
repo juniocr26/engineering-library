@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-21T09:14:04.929047+00:00",
+  "status": "OWNED_INDEX_PROJECTION_VERIFIED",
+  "observations": "owned-loss-mask-index-observations-v1.json",
+  "observations_sha256": "3ef6160425176abf250fa7382e48541b61b9eafc27a51c5bde3364fb817f3a68",
+  "source_reference": "public-framework-mask-state-source-cards-v1.json",
+  "checks": "6/6source-indexandreal-targetprojections matchfrozenhandoracles;notframeworkaccuracy.",
+  "examples": {
+    "masked-short": "sourceindices4..8 versusrealtarget4..7;index8iszero-filledpadding",
+    "exact-cap-control": "indices500..511matchvalidtargetswhenwidth=retainedlength512",
+    "entire-target-truncated": "zero projectedntoks;8originaltargetpositionslost",
+    "partial-target-truncated": "positive2realpositionsstillloses8originaltargetpositions",
+    "padding-only-count-positive": "sourcecount1butrealcompletioncount0"
+  },
+  "inference_limit": "Do not inferactualMLXNaN,trainingcrashorpopulationfailurerate;noMLX/model/tokenizer/functionexecution.",
+  "future_guard_not_implemented": "Lossmaskmustexcludeallprompt/padding,includecompleteapprovedtarget,andhavepositivevalidtargetcount. Existingstockmaskflagalone doesnotprove it.",
+  "training_eligible": false,
+  "owner_approved": false
+}

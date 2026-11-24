@@ -1,0 +1,91 @@
+{
+  "at": "2026-11-20T16:06:12.713238+00:00",
+  "frozen_before_predictions": true,
+  "rows": [
+    {
+      "id": "scope-original",
+      "expected": "WRITTEN_MAPPING_FACTS",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "caught-binding-shadows-str",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as str:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(str, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(str)\n        raise mapped_exc(message) from str\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "loop-target-shadows-issubclass",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, issubclass in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(issubclass, mapped_exc):\n                mapped_exc = issubclass\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "loop-source-shadows-isinstance",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for isinstance, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, isinstance):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "accumulator-shadows-caught-exception-type",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        Exception = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if Exception is None or issubclass(to_exc, Exception):\n                Exception = to_exc\n        if Exception is None:\n            raise\n        message = str(exc)\n        raise Exception(message) from exc\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "message-binding-shadows-str",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        str = str(exc)\n        raise mapped_exc(str) from exc\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "loop-target-shadows-module-map",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, HTTPCORE_EXC_MAP in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(HTTPCORE_EXC_MAP, mapped_exc):\n                mapped_exc = HTTPCORE_EXC_MAP\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "loader-local-import-shadows-target-class",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nfrom .._exceptions import NetworkError, ConnectError\nHTTPCORE_EXC_MAP = {}\n\ndef _load_httpcore_exceptions():\n    import httpcore as NetworkError\n    return {NetworkError.NetworkError: NetworkError, NetworkError.ConnectError: ConnectError}\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    global HTTPCORE_EXC_MAP\n    if len(HTTPCORE_EXC_MAP) == 0:\n        HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        message = str(exc)\n        raise mapped_exc(message) from exc\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "lazy-message-binding-shadows-loader",
+      "expected": "INCONCLUSIVE",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nfrom .._exceptions import NetworkError, ConnectError\nHTTPCORE_EXC_MAP = {}\n\ndef _load_httpcore_exceptions():\n    import httpcore\n    return {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    global HTTPCORE_EXC_MAP\n    if len(HTTPCORE_EXC_MAP) == 0:\n        HTTPCORE_EXC_MAP = _load_httpcore_exceptions()\n    try:\n        yield\n    except Exception as exc:\n        mapped_exc = None\n        for from_exc, to_exc in HTTPCORE_EXC_MAP.items():\n            if not isinstance(exc, from_exc):\n                continue\n            if mapped_exc is None or issubclass(to_exc, mapped_exc):\n                mapped_exc = to_exc\n        if mapped_exc is None:\n            raise\n        _load_httpcore_exceptions = str(exc)\n        raise mapped_exc(_load_httpcore_exceptions) from exc\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    },
+    {
+      "id": "unambiguous-renamed-local-bindings",
+      "expected": "WRITTEN_MAPPING_FACTS",
+      "sources": {
+        "httpx/_transports/default.py": "import contextlib\nimport typing\nimport httpcore\nfrom .._exceptions import NetworkError, ConnectError\n\n@contextlib.contextmanager\ndef map_httpcore_exceptions() -> typing.Iterator[None]:\n    try:\n        yield\n    except Exception as caught_err:\n        selected_cls = None\n        for source_cls, target_cls in HTTPCORE_EXC_MAP.items():\n            if not isinstance(caught_err, source_cls):\n                continue\n            if selected_cls is None or issubclass(target_cls, selected_cls):\n                selected_cls = target_cls\n        if selected_cls is None:\n            raise\n        error_message = str(caught_err)\n        raise selected_cls(error_message) from caught_err\nHTTPCORE_EXC_MAP = {httpcore.NetworkError: NetworkError, httpcore.ConnectError: ConnectError}\n",
+        "httpx/_exceptions.py": "class HTTPError(Exception):\n    pass\nclass RequestError(HTTPError):\n    pass\nclass NetworkError(RequestError):\n    pass\nclass ConnectError(NetworkError):\n    pass\n"
+      }
+    }
+  ],
+  "scope": "Owned scope-binding follow-up after16structural controls; targets lexical local shadowing, not actual HTTPX defects.",
+  "source_executed": false,
+  "model_calls": 0,
+  "permanent_tests_changed": false,
+  "new_public_family_or_independent_holdout": false
+}

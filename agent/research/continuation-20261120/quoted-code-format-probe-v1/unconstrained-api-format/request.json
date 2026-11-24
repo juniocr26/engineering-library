@@ -1,0 +1,22 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "keep_alive": 0,
+  "options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 4096,
+    "num_predict": 800,
+    "num_thread": 4
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Perform exact copying only. Return the exact JSON object supplied by the user, without Markdown fences or explanation. Preserve every character inside each string value, including quotes, newlines, indentation and Unicode. Code values intentionally remain identical under en and pt-br; do not translate, correct or execute any code. JSON encoding may escape characters, but decoded string values must be exact."
+    },
+    {
+      "role": "user",
+      "content": "{\"en\": {\"plain\": \"func Add(a, b int) int { return a + b }\\n\", \"quoted\": \"package example\\n\\nimport \\\"errors\\\"\\n\\nfunc Failure() error {\\n    return errors.New(\\\"owned failure\\\")\\n}\\n\", \"unicode\": \"const label = \\\"ação\\\"\\n\"}, \"pt-br\": {\"plain\": \"func Add(a, b int) int { return a + b }\\n\", \"quoted\": \"package example\\n\\nimport \\\"errors\\\"\\n\\nfunc Failure() error {\\n    return errors.New(\\\"owned failure\\\")\\n}\\n\", \"unicode\": \"const label = \\\"ação\\\"\\n\"}}"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-21T00:11:38.921738+00:00",
+  "method": "structured-claims",
+  "complete_status": "REJECTED",
+  "content_sha256": "f250bfb6b04b548a9305e7b3036060c4333bbac6e166a3e2d90009e42621807c",
+  "raw_response_sha256": "a73e75a0d910ec6325c12f4807d26374cb7f1306ea707fbffce173121bb630df",
+  "json_parse_error": {
+    "type": "JSONDecodeError",
+    "message": "Unterminated string starting at: line 113 column 20 (char 7032)",
+    "position": 7032
+  },
+  "rejection_reasons": [
+    "1800-token length stop with unterminated string",
+    "Repeated question_pt/answer_pt keys in the partial FAQ object",
+    "Source line fields contain symbol names rather than numeric ranges",
+    "Invented OnlyArgs instead of source NoArgs",
+    "OnlyValidArgs empty-list behavior omitted",
+    "PositionalArgs identifier replaced by translated prose in Portuguese",
+    "Usage is an unspecified CLI command, not a demonstrated positional-validator fragment",
+    "No complete three-pair FAQ or required historical/uncertainty limitations"
+  ],
+  "diagnostics": [
+    {
+      "claim": "OnlyArgs returns an error if there are any positional args.",
+      "outcome": "UNSUPPORTED_IDENTIFIER",
+      "source": "args.go:41-47 declares NoArgs, not OnlyArgs."
+    },
+    {
+      "claim": "OnlyValidArgs rejects any positional argument outside ValidArgs.",
+      "outcome": "REFUTED_UNQUALIFIED",
+      "source": "args.go:51-65 bypasses checks for empty ValidArgs."
+    },
+    {
+      "claim": "ExactValidArgs is deprecated and should be used instead.",
+      "outcome": "INCORRECT_OR_AMBIGUOUS_RECOMMENDATION",
+      "source": "args.go:138-144 recommends MatchAll(ExactArgs(n), OnlyValidArgs)."
+    }
+  ],
+  "duplicate_question_pt_occurrences": 12,
+  "repaired_output_accepted": false,
+  "per_claim_accuracy": "Not an exhaustive diagnostic review; no sample precision invented for this malformed partial output.",
+  "owner_approved": false,
+  "training_gold": false,
+  "new_prompt_retry": false
+}

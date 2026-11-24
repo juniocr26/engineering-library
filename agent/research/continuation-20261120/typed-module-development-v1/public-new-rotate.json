@@ -1,0 +1,153 @@
+{
+  "id": "public-new-rotate",
+  "original_reference_action": "ADD",
+  "typed_input_action": "ADD",
+  "matches_original_action": true,
+  "reason": "Positive current written declaration and no prior written binding under the explicit empty-documentation mapping; document only observed facts.",
+  "new_input_information": "Operator explicitly maps natural-language claim to a typed written-source predicate. No claim of arbitrary prose entailment or independent post-fix holdout.",
+  "result": {
+    "version": "0.0.1-research",
+    "action": "ADD",
+    "source_executed": false,
+    "runtime_bindings_verified": false,
+    "owner_approved": false,
+    "training_gold": false,
+    "publication_authorized": false,
+    "writes": 0,
+    "model_calls": 0,
+    "scope": "EXPLICIT_OPERATOR_MAPPED_WRITTEN_SOURCE_CLAIM_NOT_ARBITRARY_PROSE",
+    "automatic_candidate_applier_supported": false,
+    "evidence": {
+      "previous": {
+        "version": "0.0.2-research",
+        "status": "NO_WRITTEN_MODULE_BINDING",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "model_calls": 0,
+        "writes": 0,
+        "source_card": {
+          "path": "boltons/fileutils.py",
+          "revision": "992a58c1036fcf4d52cbf3313b6217b7c07b11d9",
+          "sha256": "6fc6db8a372b2548c0203cf505fe1fb098f15e600f4361ccbcdc8be8b6263887"
+        },
+        "selector": "rotate_file",
+        "reason": "No written binding in the complete supplied module; this is never retirement evidence."
+      },
+      "current": {
+        "version": "0.0.2-research",
+        "status": "WRITTEN_CALLABLE_FACTS",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "model_calls": 0,
+        "writes": 0,
+        "source_card": {
+          "path": "boltons/fileutils.py",
+          "revision": "c23dbdadb6fecdf505eb4231559561913b84c13f",
+          "sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc"
+        },
+        "selector": "rotate_file",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "filename"
+          ],
+          "keyword_only": [
+            "keep"
+          ],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "filename": {
+              "kind": "required"
+            },
+            "keep": {
+              "kind": "literal",
+              "type": "int",
+              "value": 5
+            }
+          },
+          "annotations": {
+            "filename": null,
+            "keep": "int"
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "direct_return": {
+          "kind": "outside-direct-return-profile"
+        },
+        "returned_local_class": null,
+        "direct_nested_functions": {},
+        "direct_statement_calls": [],
+        "module_written_binding_names": [
+          "AtomicSaver",
+          "DWORD",
+          "DummyFile",
+          "Error",
+          "FULL_PERMS",
+          "FilePerms",
+          "LPVOID",
+          "RW_PERMS",
+          "_BIN_OPENFLAGS",
+          "_ReplaceFile",
+          "_SINGLE_FULL_PERM",
+          "_TEXT_OPENFLAGS",
+          "__all__",
+          "_atomic_rename",
+          "atomic_rename",
+          "atomic_save",
+          "c_wchar_p",
+          "copy2",
+          "copy_tree",
+          "copystat",
+          "copytree",
+          "ctypes",
+          "errno",
+          "fcntl",
+          "fnmatch",
+          "iter_find_files",
+          "mkdir_p",
+          "os",
+          "path_to_unicode",
+          "re",
+          "replace",
+          "rotate_file",
+          "set_cloexec",
+          "stat",
+          "sys"
+        ],
+        "evidence": {
+          "selector": "rotate_file",
+          "declaration_kind": "function",
+          "first_line": 694,
+          "last_line": 727,
+          "quote": "def rotate_file(filename, *, keep: int = 5):\n    \"\"\"\n    If *filename.ext* exists, it will be moved to *filename.1.ext*, \n    with all conflicting filenames being moved up by one, dropping any files beyond *keep*.\n\n    After rotation, *filename* will be available for creation as a new file.\n\n    Fails if *filename* is not a file or if *keep* is not > 0.\n    \"\"\"\n    if keep < 1:\n        raise ValueError(f'expected \"keep\" to be >=1, not {keep}')\n    if not os.path.exists(filename):\n        return\n    if not os.path.isfile(filename):\n        raise ValueError(f'expected {filename} to be a file')\n\n    fn_root, fn_ext = os.path.splitext(filename)\n    kept_names = []\n    for i in range(1, keep + 1):\n        if fn_ext:\n            kept_names.append(f'{fn_root}.{i}{fn_ext}')\n        else:\n            kept_names.append(f'{fn_root}.{i}')\n\n    fns = [filename] + kept_names\n    for orig_name, kept_name in reversed(list(zip(fns, fns[1:]))):\n        if not os.path.exists(orig_name):\n            continue\n        os.rename(orig_name, kept_name)\n\n    if os.path.exists(kept_names[-1]):\n        os.remove(kept_names[-1])\n\n    return\n",
+          "quote_sha256": "680545b8ad20c8d70710be46d90d14bb2a23560c24adb1d7abe494267862d813",
+          "quote_byte_start": 24356,
+          "quote_byte_end": 25486,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "limitations": [
+          "Written signature, return and local-class declarations only; imports/defaults/annotations are not executed.",
+          "Operator-supplied full source and revision, not authenticated origin or current filesystem proof.",
+          "No arbitrary prose entailment, runtime values, inherited methods or helper binding guarantee.",
+          "Missing declarations never authorize REMOVE. Whole-unit quotation bounds are preserved."
+        ]
+      }
+    },
+    "reason": "Positive current written declaration and no prior written binding under the explicit empty-documentation mapping; document only observed facts."
+  }
+}

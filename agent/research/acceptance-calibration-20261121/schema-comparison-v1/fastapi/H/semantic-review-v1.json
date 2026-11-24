@@ -1,0 +1,420 @@
+{
+  "at": "2026-11-21T15:35:03.180157+00:00",
+  "task": "fastapi",
+  "method": "H",
+  "content_sha256": "d5ae135af1a18701c214ebad2a6517556dff9365291267a2874936cdc44dccdb",
+  "schema_subset_validation": {
+    "errors": [],
+    "duplicate_keys": false,
+    "both_languages_present": true,
+    "ids_each_language": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09"
+    ],
+    "shape_does_not_verify_meaning": true
+  },
+  "claims": [
+    {
+      "id": "H-fastapi-F01",
+      "reference_id": "F01",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/models.py",
+      "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "exact_source_evidence": "    use_cache: bool = True",
+      "source_lines": [
+        53,
+        53
+      ],
+      "expected_interpretation": {
+        "en": "The selected class declares use_cache: bool = True.",
+        "pt-BR": "A classe selecionada declara use_cache: bool = True."
+      },
+      "generated_en": [
+        {
+          "id": "F01",
+          "text": "The default value of use_cache is True.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F01",
+          "text": "O valor padrão de use_cache é True.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "True default correct.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F02",
+      "reference_id": "F02",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/models.py",
+      "source_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "exact_source_evidence": "    scope: Literal[\"function\", \"request\"] | None = None",
+      "source_lines": [
+        55,
+        55
+      ],
+      "expected_interpretation": {
+        "en": "The selected scope declaration has default None.",
+        "pt-BR": "A declaração selecionada de scope tem valor padrão None."
+      },
+      "generated_en": [
+        {
+          "id": "F02",
+          "text": "The default value of scope is None.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F02",
+          "text": "O valor padrão de scope é None.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "None default correct.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F03",
+      "reference_id": "F03",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "    if dependency_cache is None:\n        dependency_cache = {}",
+      "source_lines": [
+        700,
+        701
+      ],
+      "expected_interpretation": {
+        "en": "When dependency_cache is None the local is assigned an empty dictionary.",
+        "pt-BR": "Quando dependency_cache é None, a variável local recebe um dicionário vazio."
+      },
+      "generated_en": [
+        {
+          "id": "F03",
+          "text": "dependency_cache is initialized as an empty dictionary when it is None.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F03",
+          "text": "O dicionário dependency_cache é inicializado como uma ão vãria quando ele é None.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "EN empty dictionary under None correct; PT uma ão vária does not preserve meaning.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F04",
+      "reference_id": "F04",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )",
+      "source_lines": [
+        726,
+        737
+      ],
+      "expected_interpretation": {
+        "en": "The written recursive solve_dependencies call passes dependency_cache=dependency_cache.",
+        "pt-BR": "A chamada recursiva escrita de solve_dependencies passa dependency_cache=dependency_cache."
+      },
+      "generated_en": [
+        {
+          "id": "F04",
+          "text": "The cache argument passed to the recursive solve_dependencies call is _uses_scopes_cache.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F04",
+          "text": "O argumento de cache passado para a chamada recursiva solve_dependencies é _uses_scopes_cache.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "CONTRADICTED",
+      "reason": "dependency_cache keyword actually receives dependency_cache, not _uses_scopes_cache.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F05",
+      "reference_id": "F05",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]",
+      "source_lines": [
+        746,
+        747
+      ],
+      "expected_interpretation": {
+        "en": "The reuse branch requires both use_cache and membership of the key in dependency_cache.",
+        "pt-BR": "O ramo de reutilização exige use_cache e a presença da chave em dependency_cache."
+      },
+      "generated_en": [
+        {
+          "id": "F05",
+          "text": "The two requirements in the cache read/reuse guard are that the sub-dependency must use_cache be True and the sub-dependency's cache key must be in the dependency_cache.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F05",
+          "text": "Os dois requisitos na çafra de leitura/reuso do cache ço que o sub-dependção use_cache seja True e o sub-dependção's cache key esteja no dependency_cache.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "EN conjunction correct under selected Boolean API context; PT malformed and cannot be certified.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F06",
+      "reference_id": "F06",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+      "source_lines": [
+        774,
+        775
+      ],
+      "expected_interpretation": {
+        "en": "If control reaches the write guard with the key absent, it assigns solved into dependency_cache.",
+        "pt-BR": "Se o controle alcança a condição de escrita com a chave ausente, atribui solved em dependency_cache."
+      },
+      "generated_en": [
+        {
+          "id": "F06",
+          "text": "If the sub-dependency's cache key is not in the dependency_cache, the later absent-key write branch assigns the result of the recursive call to the cache.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F06",
+          "text": "Se o sub-dependção's cache key não está no dependency_cache, a çaga de chave ausente escreve, condicionalmente, o resultado da chamada recursiva.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "CONTRADICTED",
+      "reason": "Source writes solved (obtained by later reuse/generator/coroutine/threadpool branches), not the recursive solve_dependencies return object solved_result.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F07",
+      "reference_id": "F07",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+      "source_lines": [
+        774,
+        775
+      ],
+      "expected_interpretation": {
+        "en": "The selected write guard does not test use_cache.",
+        "pt-BR": "A condição selecionada de escrita não testa use_cache."
+      },
+      "generated_en": [
+        {
+          "id": "F07",
+          "text": "The later absent-key write guard does not test use_cache.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F07",
+          "text": "A çaga de chave ausente escreve ço que use_cache.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "EN no-use_cache write guard correct; PT loses the negative predicate.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F08",
+      "reference_id": "F08",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "    assert isinstance(request_astack, AsyncExitStack), (\n        \"fastapi_inner_astack not found in request scope\"\n    )",
+      "source_lines": [
+        687,
+        689
+      ],
+      "expected_interpretation": {
+        "en": "The selected source asserts isinstance(request_astack, AsyncExitStack).",
+        "pt-BR": "A fonte selecionada contém assert isinstance(request_astack, AsyncExitStack)."
+      },
+      "generated_en": [
+        {
+          "id": "F08",
+          "text": "The isinstance assertion for request_astack is that it must be an instance of AsyncExitStack.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F08",
+          "text": "A çafra de çastack para request_astack é que ela seja uma instáncia de AsyncExitStack.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "Selected written assertion correct in EN; no runtime enabled-assertion guarantee inferred.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-F09",
+      "reference_id": "F09",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "    assert isinstance(function_astack, AsyncExitStack), (\n        \"fastapi_function_astack not found in request scope\"\n    )",
+      "source_lines": [
+        691,
+        693
+      ],
+      "expected_interpretation": {
+        "en": "The selected source asserts isinstance(function_astack, AsyncExitStack).",
+        "pt-BR": "A fonte selecionada contém assert isinstance(function_astack, AsyncExitStack)."
+      },
+      "generated_en": [
+        {
+          "id": "F09",
+          "text": "The isinstance assertion for function_astack is that it must be an instance of AsyncExitStack.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "generated_pt_BR": [
+        {
+          "id": "F09",
+          "text": "A çafra de çastack para function_astack é que ela seja uma instçção de AsyncExitStack.",
+          "source": "fastapi/dependencies/models.py @ 05e6df7e906c3decba377c37548019973f40bf15"
+        }
+      ],
+      "verdict_en": "SUPPORTED",
+      "reason": "Second selected assertion correct in EN; PT malformed.",
+      "critical_if_false": true
+    },
+    {
+      "id": "H-fastapi-U-F-negative",
+      "reference_id": "U-F",
+      "generated_en": "The dependency_cache is not shared across all server requests. The cache argument passed to the recursive solve_dependencies call is _uses_scopes_cache, which is not guaranteed to be a single cache shared across all server requests.",
+      "generated_pt_BR": "O dependency_cache é não compartilhado entre todas as solicitaçãos do servidor. O argumento de cache passado para a chamada recursiva solve_dependencies é _uses_scopes_cache, que é não garantido ser uma çafra compartilhada entre todas as solicitaçãos do servidor.",
+      "verdict": "INSUFFICIENT",
+      "critical": true,
+      "reason": "Not shared across all requests is also a categorical global statement unestablished by selected local cache source. Missing evidence is not a proof of its negation."
+    }
+  ],
+  "additional_unchanged_source_context_for_F06": [
+    {
+      "lines": [
+        726,
+        737
+      ],
+      "exact_quote": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )"
+    },
+    {
+      "lines": [
+        746,
+        775
+      ],
+      "exact_quote": "        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved"
+    }
+  ],
+  "selected_english_atomic_metrics": {
+    "supported": 7,
+    "contradicted": 2,
+    "insufficient": 1,
+    "denominator": 10,
+    "scope": "Nine behavior propositions plus independent global-negative limitation; generic FAQ repetitions not extra independent successes."
+  },
+  "full_bilingual_precision": null,
+  "dimensions": [
+    {
+      "dimension": "factual correctness",
+      "score": 0,
+      "reason": "F04/F06 dataflow wrong and unsupported global negative."
+    },
+    {
+      "dimension": "relevant completeness",
+      "score": 0,
+      "reason": "Mandatory execution disclaimers absent; malformed PT content."
+    },
+    {
+      "dimension": "architecture and dependencies",
+      "score": 0,
+      "reason": "Recursive cache variable/result roles confused."
+    },
+    {
+      "dimension": "API contracts",
+      "score": 0,
+      "reason": "Wrong keyword value and cached object/dataflow."
+    },
+    {
+      "dimension": "errors and exceptions",
+      "score": 1,
+      "reason": "Assertions listed but error_boundaries says None."
+    },
+    {
+      "dimension": "existing tests and actual execution status",
+      "score": 0,
+      "reason": "External-tests-not-executed statement absent."
+    },
+    {
+      "dimension": "examples and commands",
+      "score": 0,
+      "reason": "Examples/commands-unverified statement absent."
+    },
+    {
+      "dimension": "EN/PT-BR equivalence",
+      "score": 0,
+      "reason": "Both blocks present, but PT semantic meaning is lost in multiple fields."
+    },
+    {
+      "dimension": "FAQ correctness",
+      "score": 1,
+      "reason": "Generic cache-purpose FAQ partly source-related; no full scoped API FAQ demonstrated."
+    },
+    {
+      "dimension": "citation relevance",
+      "score": 0,
+      "reason": "All solver behaviors cite models.py instead of utils.py and omit line associations."
+    },
+    {
+      "dimension": "explicit limitations",
+      "score": 0,
+      "reason": "Categorical no-sharing assertion and missing required execution boundaries."
+    }
+  ],
+  "complete_note": "REJECTED",
+  "reviewer": "Same campaign agent; not independent owner/human",
+  "confirmed": "Strict schema produced both language blocks and all nine IDs but did not fix source roles or meaning. PT strings are valid decoded JSON strings with nonsensical/ambiguous words.",
+  "hypothesis_only": "Constrained decoding may affect lexical quality; no root cause or causal grammar/encoding fault established.",
+  "A_comparison_limit": "A/FastAPI HTTP500 has no paired semantic output; do not claim a measured same-task semantic gain.",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

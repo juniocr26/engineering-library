@@ -1,0 +1,58 @@
+{
+  "at": "2026-11-20T11:40:05.067177+00:00",
+  "status": "ISOLATED_BILINGUAL_ADDENDUM_AND_PATCH_PENDING_OWNER_REVIEW",
+  "records": [
+    {
+      "language": "en",
+      "original_path": "agent/research/documentation-intelligence-20261119/chapters/documentation-agent-contracts/en.md",
+      "original_sha256": "8216286c90b5ab68fc6340602e3a169eeb60120a0343d7ccbc59a662f85d425f",
+      "candidate_sha256_if_patch_applied": "b703438a912f56f1553571c23392245527f1cc4e9461c7851a78bf62e38c61e8",
+      "insert_before_heading": "## Engineer FAQ",
+      "original_prefix_preserved": true,
+      "original_suffix_preserved": true,
+      "original_file_modified": false
+    },
+    {
+      "language": "pt-br",
+      "original_path": "agent/research/documentation-intelligence-20261119/chapters/documentation-agent-contracts/pt-br.md",
+      "original_sha256": "bc0e4f63854e99f30b0f6040b1a2c480d27a3c50dd4db98e5598ee53da5f2a43",
+      "candidate_sha256_if_patch_applied": "3f59cbe866ddcdbe923f00a65da75d88b7b832dd7cb6adc846efa9e92e6c388f",
+      "insert_before_heading": "## FAQ de engenharia",
+      "original_prefix_preserved": true,
+      "original_suffix_preserved": true,
+      "original_file_modified": false
+    }
+  ],
+  "source_spans": [
+    {
+      "path": "agent/tools/documentation_lifecycle.py",
+      "sha256": "fe6ef693fdbfe0f793960cc10430cb012ff44a00a10efdcfa0d6c803902ed2ee",
+      "first_line": 106,
+      "last_line": 119,
+      "quote": "def declared_source_path(value):\n    \"\"\"Validate a canonical operator-declared repository-relative identity.\n\n    This does not read the path or prove that it exists in a Git revision.\n    \"\"\"\n    if not isinstance(value, str) or not value or len(value) > 1024:\n        raise Unsupported(\"missing or invalid declared source path\")\n    parts = value.split(\"/\")\n    if any(part in (\"\", \".\", \"..\") or not re.fullmatch(r\"[A-Za-z0-9_.-]+\", part)\n           for part in parts):\n        raise Unsupported(\"source path must be a canonical repository-relative identity\")\n    return value\n\n\n",
+      "quote_sha256": "eb4b3949ec8e26c9ad15194361cb794abc01729c0efdb300ec9f6e5f855c28be"
+    },
+    {
+      "path": "agent/tools/documentation_lifecycle.py",
+      "sha256": "fe6ef693fdbfe0f793960cc10430cb012ff44a00a10efdcfa0d6c803902ed2ee",
+      "first_line": 460,
+      "last_line": 469,
+      "quote": "        if en[\"kind\"] == \"source-link\":\n            current_path = declared_source_path(metadata.get(\"current_path\"))\n            previous_path = metadata.get(\"previous_path\")\n            if previous_path is not None:\n                previous_path = declared_source_path(previous_path)\n            if en[\"path\"] == current_path:\n                return finish(\"NO-OP\", \"Both source references already match the explicit fixture-declared current identity; preserve bytes/mtime.\")\n            if previous_path and en[\"path\"] == previous_path and previous_path != current_path:\n                return finish(\"MODIFY\", \"Explicit fixture-declared source relocation affects this exact reference.\")\n            raise Unsupported(\"source link target not established\")\n",
+      "quote_sha256": "013fb643983137fcf7d11e5dbe91693adeb022c3c3cf8074f28cedf17e862d3a"
+    },
+    {
+      "path": "agent/tools/documentation_maintenance.py",
+      "sha256": "23ace94042542517b2a01e03e43cb0e6dfcb90ebb19814a0e8804ae69753f6ed",
+      "first_line": 212,
+      "last_line": 220,
+      "quote": "            metadata = packet.get(\"metadata\")\n            if isinstance(metadata, dict):\n                # Identical source bytes can exist at several paths. Bind the\n                # declared link identity to this operation's registered files\n                # before certifying a NO-OP or preparing a relocation patch.\n                for field, registered in ((\"current_path\", source_name),\n                                          (\"previous_path\", previous_name)):\n                    if field in metadata and metadata[field] != registered:\n                        raise WorkspaceRefused(\"declared source path differs from pinned operation file: \" + field)\n",
+      "quote_sha256": "fb9aa720c8caaa1636caf106490a99c6e9b58293d83f4570b52904e4c9f635e5"
+    }
+  ],
+  "purpose": "Update the affected self-documentation only, preserving original chapter/FAQ bytes and historical version cuts.",
+  "faq_pairs_added": 0,
+  "dataset_rows_added": 0,
+  "training_use_approved": false,
+  "published": false,
+  "model_calls": 0
+}

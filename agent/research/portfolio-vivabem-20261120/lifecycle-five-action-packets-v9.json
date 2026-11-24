@@ -1,0 +1,260 @@
+{
+  "at": "2026-11-21T02:18:01.053380+00:00",
+  "cases": [
+    {
+      "id": "explicit-new-definition",
+      "expected": "ADD",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "",
+        "current_source": "def answer():\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-explicit-new-definition"
+      }
+    },
+    {
+      "id": "changed-literal-contract",
+      "expected": "MODIFY",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "def answer():\n    return 2\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-changed-literal-contract"
+      }
+    },
+    {
+      "id": "unchanged-literal-contract",
+      "expected": "NO-OP",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "def answer():\n    return 1\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-unchanged-literal-contract"
+      }
+    },
+    {
+      "id": "explicit-retirement",
+      "expected": "REMOVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "RETIRED_CONTRACTS = {\"owned.answer\": \"retired-in-owned-control\"}\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": {
+          "contract_id": "owned.answer",
+          "source": "current module RETIRED_CONTRACTS",
+          "reason": "retired-in-owned-control",
+          "aliases_checked": true,
+          "relocations_checked": true
+        },
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-explicit-retirement"
+      }
+    },
+    {
+      "id": "partial-source-disappearance",
+      "expected": "INCONCLUSIVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "RETIRED_CONTRACTS = {\"owned.answer\": \"retired-in-owned-control\"}\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": false,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": {
+          "contract_id": "owned.answer",
+          "source": "current module RETIRED_CONTRACTS",
+          "reason": "retired-in-owned-control",
+          "aliases_checked": true,
+          "relocations_checked": true
+        },
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-partial-source-disappearance"
+      }
+    },
+    {
+      "id": "no-positive-retirement",
+      "expected": "INCONCLUSIVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": null,
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-no-positive-retirement"
+      }
+    },
+    {
+      "id": "retirement-invalid-reason",
+      "expected": "INCONCLUSIVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "RETIRED_CONTRACTS = {\"owned.answer\": \"retired-in-owned-control\"}\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": {
+          "contract_id": "owned.answer",
+          "source": "current module RETIRED_CONTRACTS",
+          "reason": "unmatched-reason",
+          "aliases_checked": true,
+          "relocations_checked": true
+        },
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-retirement-invalid-reason"
+      }
+    },
+    {
+      "id": "retirement-invalid-aliases_checked",
+      "expected": "INCONCLUSIVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "RETIRED_CONTRACTS = {\"owned.answer\": \"retired-in-owned-control\"}\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": {
+          "contract_id": "owned.answer",
+          "source": "current module RETIRED_CONTRACTS",
+          "reason": "retired-in-owned-control",
+          "aliases_checked": false,
+          "relocations_checked": true
+        },
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-retirement-invalid-aliases_checked"
+      }
+    },
+    {
+      "id": "retirement-invalid-relocations_checked",
+      "expected": "INCONCLUSIVE",
+      "packet": {
+        "family": "owned-synthetic-five-action",
+        "language": "python",
+        "previous_source": "def answer():\n    return 1\n",
+        "current_source": "RETIRED_CONTRACTS = {\"owned.answer\": \"retired-in-owned-control\"}\n",
+        "documentation": {
+          "en": "answer returns 1.",
+          "pt-br": "answer retorna 1."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "logical_contract_id": "owned.answer",
+        "positive_retirement_evidence": {
+          "contract_id": "owned.answer",
+          "source": "current module RETIRED_CONTRACTS",
+          "reason": "retired-in-owned-control",
+          "aliases_checked": true,
+          "relocations_checked": false
+        },
+        "metadata": {
+          "selector": "answer",
+          "human_authored": false,
+          "managed_ownership": true,
+          "conflicting_history": false
+        },
+        "id": "owned-action-v9-retirement-invalid-relocations_checked"
+      }
+    }
+  ]
+}

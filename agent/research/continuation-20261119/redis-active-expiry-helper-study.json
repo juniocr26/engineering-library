@@ -1,0 +1,71 @@
+{
+  "at": "2026-11-19T21:04:27.734266+00:00",
+  "status": "CALLER_REJECTED_HELPER_ARM_REFUSED_BEFORE_INFERENCE",
+  "protocol": ".local-backups/continuation-20261119/redis-helper-contract-v1/protocol.json",
+  "protocol_sha256": "284f87de97b72d2557184762dd8d0ea653a03dcbeb72469aaf36f6cbcf8a74f0",
+  "source_identity": {
+    "repository": "redis",
+    "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+    "source_hashes": {
+      "src/expire.c": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d",
+      "src/db.c": "532b26e404da61bdbec2b40ff31e55048bb2693d7cee697a7d95f6fef482035c"
+    }
+  },
+  "review": {
+    "at": "2026-11-19T21:04:27.734266+00:00",
+    "id": "redis-active-expiry-caller",
+    "status": "REJECTED_CRITICAL_GUARD_RETURN_AND_COUNTER_NAME",
+    "response_sha256": "e957787fbc625aee0112531ef0096a09a0c778290072e07f1c09e10d9033de82",
+    "writer_exit": 0,
+    "critical": [
+      "Both languages say propagation occurs if the key has not expired, reversing the guarded workflow. Source now < kvobjGetExpire(kv) returns0 before remaining calls.",
+      "Both languages say return1 means not expired and0 otherwise; source returns0 on strict future-expiry guard and1 after the remaining operations. Equality proceeds.",
+      "Both languages invent active_expiredkeys_active; actual source field increment is server.stat_expiredkeys_active."
+    ],
+    "omitted": [
+      "Exact strict comparison and equality boundary",
+      "Execution-unit entry and exit, key/object creation, helper-call ownership and ordering",
+      "Reference-count decrease and postExecutionUnitOperations ordering",
+      "Missing-helper uncertainty and absence of checked deletion-success result"
+    ],
+    "bilingual": "Same critical inversions and invented field in both languages; PT also has grammatical/terminology defects. No whole-language approval.",
+    "correct": [
+      "Recognizes broad expiry-related purpose and input structure",
+      "Mentions a statistic increment, but names the field incorrectly"
+    ],
+    "whole_response_approved": false,
+    "source_program_executed": false,
+    "training_gold": false,
+    "owner_approved": false
+  },
+  "review_path": ".local-backups/continuation-20261119/redis-helper-contract-v1/review.json",
+  "review_sha256": "9edc73ba5eff4164015b1c349cd5edcf1e7016cda80ef30055e23390cb3f00ae",
+  "actual_completed_model_calls": 1,
+  "unexecuted_helper_arm": {
+    "id": "redis-active-expiry-with-helpers",
+    "status": "REFUSED_PREFLIGHT",
+    "model_calls": 0,
+    "error": "source range exceeds bounded quotation",
+    "helper_complete_original_lines": [
+      2980,
+      3028
+    ],
+    "helper_bytes": 2357,
+    "explicit_range_max_bytes": 1900,
+    "constraint_source": "backend/lib/documentation/project_command.rb:47",
+    "complete_unit_profile_byte_cap_distinct": 6144
+  },
+  "diagnosis": "Existing explicit-line-range profile safely refuses the complete helper. Splitting, removing comments, increasing its limit or introducing another extractor would be distinct interventions requiring their own preflight. No such intervention was performed.",
+  "comparison_result": "No measured helper-context improvement: helper arm did not infer. Caller alone has critical errors.",
+  "no_inference_retries": true,
+  "existing_selected_coverage_policy": true,
+  "selected_id_coverage_is_not_factual_approval": true,
+  "independent_transfer_or_holdout": false,
+  "production_code_changed_by_study": false,
+  "new_tool_routing": false,
+  "source_programs_executed": false,
+  "training_runs": 0,
+  "gold_rows": 0,
+  "publication": false,
+  "private_artifacts": "private-research://continuation-20261119/redis-helper-contract-v1/"
+}

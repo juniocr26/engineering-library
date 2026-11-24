@@ -1,0 +1,1195 @@
+{
+  "at": "2026-11-21T18:25:12.295279+00:00",
+  "candidate": {
+    "repo": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+    "revision": "7f0dc925e0d0afb0322d96f9255cfddf2ba5636e",
+    "selected_or_approved": false
+  },
+  "findings": [
+    {
+      "id": "NCM01",
+      "fact": "One public MLX-format candidate is now pinned by repo revision, config and declared LFS payload identity. This is a possible future candidate, not owner selection or local compatibility proof.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/model-api-pinned-blobs.json",
+          "sha256": "aa0ae682774126cca39e6d1567ae79ec91d173e31cfb2fd2f9db271199c1bf54"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/config.json",
+          "sha256": "c546925585e48f43890d9dc5150df4fec73dd3780d92961c5ace451934cc4cd6"
+        }
+      ],
+      "declared_weight_files": [
+        {
+          "rfilename": "model.safetensors",
+          "blobId": "c89c1c30ada0888c24ce0ae11e41344e2c026482",
+          "size": 1807496278,
+          "lfs": {
+            "sha256": "d75e1ee0ea653cc5b76191ec934c7c0d568e94d4e47846619f1f4bc715b7b265",
+            "size": 1807496278,
+            "pointerSize": 135
+          }
+        }
+      ],
+      "actual_weight_bytes_fetched": 0,
+      "actual_weight_hash_verified": false
+    },
+    {
+      "id": "NCM02",
+      "fact": "Config declares llama,28layers,hidden3072,24queryheads,8KVheads,head128,4bit/group64,tiedembeddings. Pinned class constructs corresponding q/v Linear dimensions; index names match56Q/V modules. Actual tensor headers, loaded module shapes and quantized compatibility remain unverified.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/config.json",
+          "sha256": "c546925585e48f43890d9dc5150df4fec73dd3780d92961c5ace451934cc4cd6"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-model-class-source-v2/mlx_lm/models/llama/layers.py",
+          "sha256": "e1369f2450337cb479b6ec6bb99fe126f6a1a9bf2dd9848e6f67a85e994baad0",
+          "source_lines": [
+            20,
+            39
+          ],
+          "exact_source_evidence": "class Attention(nn.Module):\n    def __init__(self, args: ModelArgs):\n        super().__init__()\n\n        dim = args.hidden_size\n        self.n_heads = n_heads = args.num_attention_heads\n        self.n_kv_heads = n_kv_heads = args.num_key_value_heads\n\n        self.head_dim = head_dim = args.head_dim or args.hidden_size // n_heads\n\n        self.scale = head_dim**-0.5\n        if hasattr(args, \"attention_bias\"):\n            attention_bias = args.attention_bias\n        else:\n            attention_bias = False\n\n        self.q_proj = nn.Linear(dim, n_heads * head_dim, bias=attention_bias)\n        self.k_proj = nn.Linear(dim, n_kv_heads * head_dim, bias=attention_bias)\n        self.v_proj = nn.Linear(dim, n_kv_heads * head_dim, bias=attention_bias)\n        self.o_proj = nn.Linear(n_heads * head_dim, dim, bias=attention_bias)"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-model-class-source-v2/mlx_lm/models/llama/model.py",
+          "sha256": "6624a934fe75ec5627305029367e92a3245ef2c4650d86730601fe4ee44e64d9",
+          "source_lines": [
+            103,
+            110
+          ],
+          "exact_source_evidence": "class Model(nn.Module):\n    def __init__(self, args: ModelArgs):\n        super().__init__()\n        self.args = args\n        self.model_type = args.model_type\n        self.model = LlamaModel(args)\n        if not args.tie_word_embeddings:\n            self.lm_head = nn.Linear(args.hidden_size, args.vocab_size, bias=False)"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/model.safetensors.index.json",
+          "sha256": "2ef31fa0b9dcda01f87835851d5e1d5a39ab6258ae618af6ea864c3747e556e4"
+        }
+      ]
+    },
+    {
+      "id": "NCM03",
+      "fact": "Target keys should be exact layer-relative self_attn.q_proj/self_attn.v_proj plus explicit layer count/list. Full checkpoint names differ from converter layer-relative keys. Do not default to all linear/embedding modules, infer target completeness from matching substrings, or use num_layers=0 to mean none. Actual post-conversion trainable inventory is still mandatory.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/utils.py",
+          "sha256": "e1260940a0e974ed573ae59f348254b46628be8633347e10818f28b76d7809da",
+          "source_lines": [
+            46,
+            126
+          ],
+          "exact_source_evidence": "def linear_to_lora_layers(\n    model: nn.Module,\n    num_layers: int,\n    config: Dict,\n    use_dora: bool = False,\n):\n    \"\"\"\n    Convert some of the models linear layers to lora layers.\n\n    Args:\n        model (nn.Module): The neural network model.\n        num_layers (int): The number of blocks to convert to lora layers\n        starting from the last layer.\n        config (dict): More configuration parameters for LoRA, including the\n          rank, scale, and optional layer keys.\n        use_dora (bool): If True, uses DoRA instead of LoRA.\n          Default: ``False``\n    \"\"\"\n    if \"scale\" not in config:\n        hint = \"\"\n        if \"alpha\" in config:\n            hint = (\n                \" Found 'alpha' instead — mlx-lm's LoRA config uses 'scale', \"\n                \"not 'alpha' (unlike some other LoRA frameworks). See LORA.md.\"\n            )\n        raise KeyError(f\"LoRA config is missing required key 'scale'.{hint}\")\n\n    def to_lora(layer):\n        if not use_dora and hasattr(layer, \"to_lora\"):\n            return layer.to_lora(\n                r=config[\"rank\"],\n                scale=config[\"scale\"],\n                dropout=config[\"dropout\"],\n            )\n\n        if isinstance(layer, (nn.Linear, nn.QuantizedLinear)):\n            LoRALayer = DoRALinear if use_dora else LoRALinear\n        elif isinstance(layer, (SwitchLinear, QuantizedSwitchLinear)):\n            if use_dora:\n                raise ValueError(f\"{type(layer).__name__} doesn't support DoRA yet.\")\n            LoRALayer = LoRASwitchLinear\n        elif isinstance(layer, (nn.Embedding, nn.QuantizedEmbedding)):\n            LoRALayer = DoRAEmbedding if use_dora else LoRAEmbedding\n        else:\n            raise ValueError(\n                f\"Can't convert layer of type {type(layer).__name__} to LoRA\"\n            )\n\n        return LoRALayer.from_base(\n            layer,\n            r=config[\"rank\"],\n            scale=config[\"scale\"],\n            dropout=config[\"dropout\"],\n        )\n\n    if (keys := config.get(\"keys\", None)) is None:\n        keys = set()\n\n        def get_keys_for_lora(p, m):\n            types = (\n                nn.Linear,\n                nn.QuantizedLinear,\n                SwitchLinear,\n                QuantizedSwitchLinear,\n                nn.Embedding,\n                nn.QuantizedEmbedding,\n            )\n            if hasattr(m, \"to_lora\") or isinstance(m, types):\n                keys.add(p)\n\n        for l in model.layers:\n            l.apply_to_modules(get_keys_for_lora)\n\n    for l in model.layers[-max(num_layers, 0) :]:\n        lora_layers = [(k, to_lora(m)) for k, m in l.named_modules() if k in keys]\n        if lora_layers:\n            l.update_modules(tree_unflatten(lora_layers))\n\n    lora_modules = [(k, to_lora(m)) for k, m in model.named_modules() if k in keys]\n    if lora_modules:\n        model.update_modules(tree_unflatten(lora_modules))"
+        }
+      ]
+    },
+    {
+      "id": "NCM04",
+      "fact": "Owned scalar shape arithmetic yields40960rank4Q/V parameters per layer (q24576,v16384); all28hypotheticallayers1146880. Scenarios are not selected settings, created adapters, measured memory or feasibility. Values derive config plus class/LoRA shape source, not actual loaded tensors.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-model-class-source-v2/mlx_lm/models/llama/layers.py",
+          "sha256": "e1369f2450337cb479b6ec6bb99fe126f6a1a9bf2dd9848e6f67a85e994baad0",
+          "source_lines": [
+            24,
+            39
+          ],
+          "exact_source_evidence": "        dim = args.hidden_size\n        self.n_heads = n_heads = args.num_attention_heads\n        self.n_kv_heads = n_kv_heads = args.num_key_value_heads\n\n        self.head_dim = head_dim = args.head_dim or args.hidden_size // n_heads\n\n        self.scale = head_dim**-0.5\n        if hasattr(args, \"attention_bias\"):\n            attention_bias = args.attention_bias\n        else:\n            attention_bias = False\n\n        self.q_proj = nn.Linear(dim, n_heads * head_dim, bias=attention_bias)\n        self.k_proj = nn.Linear(dim, n_kv_heads * head_dim, bias=attention_bias)\n        self.v_proj = nn.Linear(dim, n_kv_heads * head_dim, bias=attention_bias)\n        self.o_proj = nn.Linear(n_heads * head_dim, dim, bias=attention_bias)"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/lora.py",
+          "sha256": "b9bfcad99c2934cad484f73a21ec9b912756751531efd7aa4c0fa3fd4357f407",
+          "source_lines": [
+            11,
+            31
+          ],
+          "exact_source_evidence": "class LoRALinear(nn.Module):\n    @staticmethod\n    def from_base(\n        linear: nn.Linear,\n        r: int = 8,\n        dropout: float = 0.0,\n        scale: float = 20.0,\n    ):\n        # TODO remove when input_dims and output_dims are attributes\n        # on linear and quantized linear\n        output_dims, input_dims = linear.weight.shape\n        if isinstance(linear, nn.QuantizedLinear):\n            input_dims = input_dims * 32 // linear.bits\n        lora_lin = LoRALinear(\n            input_dims=input_dims,\n            output_dims=output_dims,\n            r=r,\n            dropout=dropout,\n            scale=scale,\n        )\n        lora_lin.linear = linear"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/lora.py",
+          "sha256": "b9bfcad99c2934cad484f73a21ec9b912756751531efd7aa4c0fa3fd4357f407",
+          "source_lines": [
+            75,
+            98
+          ],
+          "exact_source_evidence": "    ):\n        super().__init__()\n\n        # Regular linear layer weights\n        self.linear = nn.Linear(input_dims, output_dims, bias=bias)\n\n        self.dropout = nn.Dropout(p=dropout)\n\n        # Scale for low-rank update\n        self.scale = scale\n\n        # Low rank lora weights\n        scale = 1 / math.sqrt(input_dims)\n        self.lora_a = mx.random.uniform(\n            low=-scale,\n            high=scale,\n            shape=(input_dims, r),\n        )\n        self.lora_b = mx.zeros(shape=(r, output_dims))\n\n    def __call__(self, x):\n        y = self.linear(x)\n        z = (self.dropout(x) @ self.lora_a) @ self.lora_b\n        return y + (self.scale * z).astype(x.dtype)"
+        }
+      ],
+      "per_layer": 40960,
+      "hypothetical_layer_counts": [
+        {
+          "layers": 1,
+          "rank4_QV_parameters": 40960,
+          "only_parameter_storage_bytes_if_float32": 163840,
+          "not_total_memory": true
+        },
+        {
+          "layers": 2,
+          "rank4_QV_parameters": 81920,
+          "only_parameter_storage_bytes_if_float32": 327680,
+          "not_total_memory": true
+        },
+        {
+          "layers": 4,
+          "rank4_QV_parameters": 163840,
+          "only_parameter_storage_bytes_if_float32": 655360,
+          "not_total_memory": true
+        },
+        {
+          "layers": 28,
+          "rank4_QV_parameters": 1146880,
+          "only_parameter_storage_bytes_if_float32": 4587520,
+          "not_total_memory": true
+        }
+      ]
+    },
+    {
+      "id": "NCM05",
+      "fact": "Index payload metadata total_size1807423488 differs from declared complete safetensors file1807496278 (includes additional file encoding/header bytes). Neither is peak training RAM or proof of fit on16GiB. Existing Docker inference timings/oom events cannot benchmark this native stack.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/model.safetensors.index.json",
+          "sha256": "2ef31fa0b9dcda01f87835851d5e1d5a39ab6258ae618af6ea864c3747e556e4"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/model-api-pinned-blobs.json",
+          "sha256": "aa0ae682774126cca39e6d1567ae79ec91d173e31cfb2fd2f9db271199c1bf54"
+        }
+      ]
+    },
+    {
+      "id": "NCM06",
+      "fact": "Tokenizer config identifies BOS128000,eot128009 and model EOS list128001/128008/128009; added-token declaration also has finetune_right_pad128004 but no pad_token configured. Declaring that token is not proof trainer uses it; current batch padding scalar0 is separate and inclusive mask behavior requires verification. No tokenizer model or native tokenization was downloaded/executed.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/tokenizer_config.json",
+          "sha256": "022d5ae3df4737998ab97d8f31ac2bcb4c06dd8ebe5a8aba2b4aceef1e5ea7d3"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/special_tokens_map.json",
+          "sha256": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/config.json",
+          "sha256": "c546925585e48f43890d9dc5150df4fec73dd3780d92961c5ace451934cc4cd6"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/trainer.py",
+          "sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e"
+        }
+      ]
+    },
+    {
+      "id": "NCM07",
+      "fact": "The Jinja chat template inserts a system header, knowledge-date text and Today Date. If date_string absent it calls strftime_now when available, else fixed fallback26Jul2024. Future paired baseline/adapted inference and supervision must bind actual rendered bytes, template kwargs and date rather than assuming template identity alone fixes prompts. This conditional source observation is not execution of Jinja or Transformers.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/tokenizer_config.json",
+          "sha256": "022d5ae3df4737998ab97d8f31ac2bcb4c06dd8ebe5a8aba2b4aceef1e5ea7d3"
+        }
+      ],
+      "template_sha256": "5816fce10444e03c2e9ee1ef8a4a1ea61ae7e69e438613f3b17b69d0426223a4"
+    },
+    {
+      "id": "NCM08",
+      "fact": "Ordinary message branch trims message content and adds eot; generation prompt appends assistant header. Future supervision must approve exact completion canonicalization and verify completed-token prefix equals prompt tokens, include assistant/eot targets, exclude prompt/padding, and reject truncated/empty targets. Same string prefix does not establish BPE token-prefix equality.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/tokenizer_config.json",
+          "sha256": "022d5ae3df4737998ab97d8f31ac2bcb4c06dd8ebe5a8aba2b4aceef1e5ea7d3"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/datasets.py",
+          "sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+          "source_lines": [
+            59,
+            79
+          ],
+          "exact_source_evidence": "    def process(self, d):\n        messages = d[self.chat_key]\n        tools = d.get(\"tools\", None)\n        tokens = self.tokenizer.apply_chat_template(\n            messages,\n            tools=tools,\n            return_dict=False,\n        )\n        if self.mask_prompt:\n            add_generation_prompt = messages[-1].get(\"role\") == \"assistant\"\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=add_generation_prompt,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n        else:\n            return (tokens, 0)"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/datasets.py",
+          "sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+          "source_lines": [
+            109,
+            129
+          ],
+          "exact_source_evidence": "    def process(self, d):\n        tools = d.get(\"tools\", None)\n        messages = [\n            {\"role\": \"user\", \"content\": d[self.prompt_key]},\n            {\"role\": \"assistant\", \"content\": d[self.completion_key]},\n        ]\n        tokens = self.tokenizer.apply_chat_template(\n            messages, tools=tools, return_dict=False\n        )\n        if self.mask_prompt:\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=True,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n\n        return (tokens, 0)"
+        }
+      ]
+    },
+    {
+      "id": "NCM09",
+      "fact": "Current ChatDataset/CompletionsDataset call apply_chat_template with tools and generation kwargs, not explicit date_string. Merely writing date_string in a future manifest does not ensure the native dataset passes it. An approved wrapper/template preflight must show actual invocation and tokens. No such wrapper was installed or created as training infrastructure.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/datasets.py",
+          "sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+          "source_lines": [
+            59,
+            79
+          ],
+          "exact_source_evidence": "    def process(self, d):\n        messages = d[self.chat_key]\n        tools = d.get(\"tools\", None)\n        tokens = self.tokenizer.apply_chat_template(\n            messages,\n            tools=tools,\n            return_dict=False,\n        )\n        if self.mask_prompt:\n            add_generation_prompt = messages[-1].get(\"role\") == \"assistant\"\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=add_generation_prompt,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n        else:\n            return (tokens, 0)"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-source-v1/mlx_lm/tuner/datasets.py",
+          "sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+          "source_lines": [
+            109,
+            129
+          ],
+          "exact_source_evidence": "    def process(self, d):\n        tools = d.get(\"tools\", None)\n        messages = [\n            {\"role\": \"user\", \"content\": d[self.prompt_key]},\n            {\"role\": \"assistant\", \"content\": d[self.completion_key]},\n        ]\n        tokens = self.tokenizer.apply_chat_template(\n            messages, tools=tools, return_dict=False\n        )\n        if self.mask_prompt:\n            offset = len(\n                self.tokenizer.apply_chat_template(\n                    messages[:-1],\n                    tools=tools,\n                    add_generation_prompt=True,\n                    return_dict=False,\n                )\n            )\n            return (tokens, offset)\n\n        return (tokens, 0)"
+        }
+      ]
+    },
+    {
+      "id": "NCM10",
+      "fact": "Model card says conversion from mlx-community/Llama-3.2-3B-Instruct with mlx-lm0.21.5; framework source reviewed now is a different pinned version. Public card includes llama3.2 license metadata and embedded terms, with no separate LICENSE/USE_POLICY listed. This records provenance only: rights, authorized license acceptance and downstream training/publication approval remain unverified. No legal clearance inferred.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/README.md",
+          "sha256": "0e0634c181c7ce3bb40c98d533e3c633025725a66fddf084fa3abbdd08607d13"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/model-api-pinned-blobs.json",
+          "sha256": "aa0ae682774126cca39e6d1567ae79ec91d173e31cfb2fd2f9db271199c1bf54"
+        }
+      ]
+    },
+    {
+      "id": "NCM11",
+      "fact": "Future comparison must use this exact unadapted trainable native base before/after adaptation with identical weights hash, tokenizer, template, sampling and frozen tasks. Existing OllamaQ4_K_M GGUF is a different serialization/quantization and is not that paired baseline. No comparison result or neural gain is claimed.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/config.json",
+          "sha256": "c546925585e48f43890d9dc5150df4fec73dd3780d92961c5ace451934cc4cd6"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-candidate-metadata-v1/model-api-pinned-blobs.json",
+          "sha256": "aa0ae682774126cca39e6d1567ae79ec91d173e31cfb2fd2f9db271199c1bf54"
+        }
+      ]
+    },
+    {
+      "id": "NCM12",
+      "fact": "Initial old assumed mlx_lm/models/llama.py path returned404; pinned tree proves current package layout. Corrected7sourcefiles were Git-blob-hash verified. No fetched Python source imported or executed; no training/model/tokenizer packages installed.",
+      "evidence": [
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-model-class-first-path-failure-v1.json",
+          "sha256": "18cf8f60db7b9b835cfb7bd626889d7ac7feccae79a438da22b0403a819e37bb"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-pinned-tree-v1.json",
+          "sha256": "90cbb843918ddf58d51259c0ecfc7772863e3b801a0a6e301b3bfc05b17d1c9e"
+        },
+        {
+          "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/native-framework-model-class-source-freeze-v2.json",
+          "sha256": "f9974bf7a2c0b067eb7e63a05270e5ceea182c6c670f9c0fb0cc189936645588"
+        }
+      ]
+    }
+  ],
+  "hypothetical_QV_modules": [
+    {
+      "native_module_path": "model.layers.0.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.0.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.1.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.1.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.2.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.2.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.3.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.3.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.4.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.4.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.5.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.5.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.6.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.6.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.7.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.7.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.8.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.8.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.9.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.9.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.10.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.10.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.11.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.11.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.12.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.12.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.13.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.13.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.14.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.14.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.15.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.15.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.16.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.16.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.17.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.17.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.18.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.18.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.19.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.19.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.20.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.20.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.21.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.21.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.22.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.22.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.23.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.23.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.24.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.24.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.25.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.25.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.26.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.26.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.27.self_attn.q_proj",
+      "layer_relative_key": "self_attn.q_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 3072,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        3072
+      ],
+      "rank4_scalar_count": 24576,
+      "not_instantiated": true
+    },
+    {
+      "native_module_path": "model.layers.27.self_attn.v_proj",
+      "layer_relative_key": "self_attn.v_proj",
+      "input_dims_inferred_from_config_and_class": 3072,
+      "output_dims_inferred_from_config_and_class": 1024,
+      "rank4_A_shape": [
+        3072,
+        4
+      ],
+      "rank4_B_shape": [
+        4,
+        1024
+      ],
+      "rank4_scalar_count": 16384,
+      "not_instantiated": true
+    }
+  ],
+  "no_actual_native_load_or_tokenization": true,
+  "weights_downloaded": 0,
+  "adapters_created": 0,
+  "optimizer_updates": 0,
+  "all_nine_readiness_gates_remain_NO_GO": true,
+  "owner_approved_Gold": 0,
+  "not_a_training_launcher_or_training_pair_export": true
+}

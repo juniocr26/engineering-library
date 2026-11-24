@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-20T20:16:53.495565+00:00",
+  "status": "REJECTED_INCOMPLETE_CHAPTER_AND_INVENTED_API_SEMANTICS",
+  "response_sha256": "3efd2d18d207b2a826a96f5468b02d8b2791b5c6451e0315684e54abca61c164",
+  "envelope_valid_json": true,
+  "message_content_valid_json": true,
+  "unique_language_keys": [
+    "en",
+    "pt-br"
+  ],
+  "schema_structure_did_not_prove_task_completion": true,
+  "requested_chapter_pairs": 1,
+  "accepted_complete_chapter_pairs": 0,
+  "rubric": [
+    {
+      "criterion": "complete-chapters",
+      "status": "FAIL",
+      "reason": "Both required language keys present, but both chapter strings stop at an import line; no complete example, command, table, FAQs, citations or limits."
+    },
+    {
+      "criterion": "attempt-count-and-context",
+      "status": "FAIL",
+      "reason": "Omits max0->1/max2->3 and initial-success/permanent-error/canceled-error precedence."
+    },
+    {
+      "criterion": "dependency-and-option-identity",
+      "status": "FAIL",
+      "reason": "Invents operation,notify,timer as dependency packages and backoffPolicy as a configuration/API name; selected root imports are standard libraries."
+    },
+    {
+      "criterion": "error-identity",
+      "status": "FAIL",
+      "reason": "Invents CanceledError and OperationError return types and describes PermanentError as the returned wrapper, omitting inner-error unwrapping."
+    },
+    {
+      "criterion": "notification-and-cleanup",
+      "status": "FAIL",
+      "reason": "Omits exact notification/stop boundary and deferred timer cleanup; no evidence-specific explanation."
+    },
+    {
+      "criterion": "generic-data",
+      "status": "FAIL",
+      "reason": "No nonzero data-on-final-error examples or generic API distinction."
+    },
+    {
+      "criterion": "stop-and-factory-contract",
+      "status": "FAIL",
+      "reason": "No Stop-field versus MaxElapsedTime/package-1 or constructor invocation/function-type distinction."
+    },
+    {
+      "criterion": "bilingual-exactness",
+      "status": "FAIL",
+      "reason": "Portuguese translates identifiers backoffPolicy->pol\u00edticaDeAtraso,result->resultado,error->erro,PermanentError->ErroPermanente and other invented symbols; malformed Portuguese also changes retry meaning."
+    },
+    {
+      "criterion": "source-and-execution-scope",
+      "status": "FAIL",
+      "reason": "No supplied source citations, pinned versions/OS/clock/timer limits or honest unexecuted example/command scope."
+    }
+  ],
+  "rubric_is_not_independent_test_count": true,
+  "code_fence_counts": {
+    "en": 1,
+    "pt-br": 1
+  },
+  "observed_tail": {
+    "en": "nError`: an error that occurred during the operation\n\n### Example\n\n```go\nimport ",
+    "pt-br": "peracional`: um erro que ocorreu durante a opera\u00e7\u00e3o\n\n### Exemplo\n\n```go\nimport \""
+  },
+  "done_reason": "stop",
+  "model_seconds": 624.174517327,
+  "generated_tokens": 1313,
+  "prompt_tokens": 3763,
+  "no_generation_ceiling_reached": true,
+  "code_fragments_not_executed": true,
+  "retry": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "publication_authorized": false,
+  "neural_improvement": false,
+  "certified_neural_holdout": false,
+  "followup_hypothesis_not_yet_proved": "Several source-chapter tasks stop normally at a quoted import line. A small new controlled exact-copy task could distinguish inability of the constrained format to represent escaped code quotes from broader task/context/model failure; this is not grounds to retry or accept this rejected chapter."
+}

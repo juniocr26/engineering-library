@@ -1,0 +1,72 @@
+{
+  "at": "2026-11-20T17:16:08.942880+00:00",
+  "cases": [
+    {
+      "id": "class-static-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nclass Other { static { value = () => 2; } }\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"b0f610825a41b6bc965f206a0779c1e4b183f0da9406a92ff88bb9db0a6ae910\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "class-static-field-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nclass Other { static field = (value = () => 2); }\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"849c1ec0623f076214b504a8070844df218738132452e831df1b20310a3c3460\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "class-heritage-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nclass Other extends (value = class {}) {}\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"8c7662728d7dd2572c3a542b920174e1cf28a45ea3ee7fd8f959ea456e5aa7ce\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "class-computed-method-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nclass Other { [(value = () => 2)]() {} }\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"20b415772c109437db5e3db4f5405dedaaddf4d17949d3ebddffe9603fabf857\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "object-computed-method-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nconst other = { [(value = () => 2)]() {} };\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"a1f986ee769ebcf0d7b9bb55f074007b00e97c6b61207b9a3d5267106c7b0c63\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "object-computed-getter-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nconst other = { get [(value = () => 2)]() { return 1; } };\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"77d20cbec3e0d7f73e7b6ad22ecebe89995e735bf95f0816397ede546f13e868\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "immediate-arrow-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\n(() => { value = () => 2; })();\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"69dc511425d50e98d5953c74cf5de265f54bdc88fd3ab44c1bdca82e9fb7c9ee\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "immediate-function-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\n(function () { value = () => 2; })();\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"74f13b4d9ef2758452fe23efd95675e31b6d96d9fd8d7d4afc80f5a81bb0f316\"}",
+      "expected_status": "INCONCLUSIVE"
+    },
+    {
+      "id": "class-method-deferred-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nclass Other { later() { value = () => 2; } }\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"ea474d4e40bb5eea3e93a77dc6223f098ff9d434be162f549acb3c8157883522\"}",
+      "expected_status": "WRITTEN_EXPORTED_CALLABLE_FACTS"
+    },
+    {
+      "id": "class-instance-field-deferred-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nclass Other { field = (value = () => 2); }\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"7bb818af6bc9b78e440fd324540730581ce558e6c13ef41a69f11d192d00a93a\"}",
+      "expected_status": "WRITTEN_EXPORTED_CALLABLE_FACTS"
+    },
+    {
+      "id": "uninvoked-arrow-deferred-write",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nconst later = () => { value = () => 2; };\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"a152ba6bab27d3b0709821e507d0d55fa3248834e02f3d08d16b6c60828a2dbe\"}",
+      "expected_status": "WRITTEN_EXPORTED_CALLABLE_FACTS"
+    },
+    {
+      "id": "class-static-unrelated-value",
+      "raw_request": "{\"source\": \"export function value(input=1) { return input; }\\nclass Other { static field = 2; }\\n\", \"path\": \"owned.js\", \"selector\": \"value\", \"source_sha256\": \"9687180b1cbf884dc6179ea4fb20621102c5a844dd7a6a7c44981084d486ef76\"}",
+      "expected_status": "WRITTEN_EXPORTED_CALLABLE_FACTS"
+    }
+  ],
+  "hypothesis": "Known declaration-time writes in class headers/computed keys/static fields/blocks or immediate inline calls must not be silently omitted by the same unique-written-binding policy that rejects direct assignment. Deferred bodies stay outside this known-immediate-write profile.",
+  "expected_actions_frozen_before_observations": true,
+  "owned_development_controls": true,
+  "source_execution_allowed": false,
+  "runtime_binding_certification_allowed": false,
+  "existing_producer": "javascript_module_observer_v2.cjs",
+  "existing_producer_sha256": "126ee7c1ec9ab211bf68817542b41a27c8a81a720fc6cffdf61f39f3b9eb741e"
+}

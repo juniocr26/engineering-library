@@ -1,0 +1,153 @@
+{
+  "repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "license": {
+    "id": "MIT",
+    "path": "LICENSE",
+    "sha256": "52b5e2ea72b69e0293b77ab8ca3805404a2b921ea3deb5d433072f144c086446",
+    "retained_private": "private-research://continuation-20261119/sources/go-image-optimizer/LICENSE"
+  },
+  "source_executed": false,
+  "runtime_bindings_verified": false,
+  "sources": [
+    {
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "units": [
+        {
+          "selector": "NewCompressor",
+          "declaration_kind": "function",
+          "symbol": "compress.NewCompressor",
+          "start_line": 29,
+          "end_line": 38,
+          "quote": "func NewCompressor() Compressor {\n\treturn Compressor{\n\t\tJPEGQuality:            DefaultJPEGQuality,\n\t\tWebPQuality:            DefaultWebPQuality,\n\t\tAVIFQuality:            DefaultAVIFQuality,\n\t\tHEIFQuality:            DefaultHEIFQuality,\n\t\tMaxDecodedPixels:       imaging.DefaultMaxDecodedPixels,\n\t\tMaxAnimatedFramePixels: imaging.DefaultMaxAnimatedFramePixels,\n\t}\n}",
+          "declaration": "func NewCompressor() Compressor",
+          "function_type": "func() Compressor"
+        },
+        {
+          "selector": "Compressor.jpegQuality",
+          "declaration_kind": "method",
+          "symbol": "compress.Compressor.jpegQuality",
+          "start_line": 82,
+          "end_line": 84,
+          "quote": "func (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}",
+          "declaration": "func (c Compressor) jpegQuality() int",
+          "function_type": "func() int",
+          "receiver_type": "Compressor",
+          "return_contract": {
+            "AST_expression_kinds": [
+              "*ast.CallExpr"
+            ],
+            "expressions": [
+              "clampQuality(c.JPEGQuality, DefaultJPEGQuality)"
+            ],
+            "kind": "sole-return-expressions",
+            "runtime_completion_verified": false
+          }
+        },
+        {
+          "selector": "Compressor.webpQuality",
+          "declaration_kind": "method",
+          "symbol": "compress.Compressor.webpQuality",
+          "start_line": 86,
+          "end_line": 88,
+          "quote": "func (c Compressor) webpQuality() int {\n\treturn clampQuality(c.WebPQuality, DefaultWebPQuality)\n}",
+          "declaration": "func (c Compressor) webpQuality() int",
+          "function_type": "func() int",
+          "receiver_type": "Compressor",
+          "return_contract": {
+            "AST_expression_kinds": [
+              "*ast.CallExpr"
+            ],
+            "expressions": [
+              "clampQuality(c.WebPQuality, DefaultWebPQuality)"
+            ],
+            "kind": "sole-return-expressions",
+            "runtime_completion_verified": false
+          }
+        },
+        {
+          "selector": "Compressor.avifQuality",
+          "declaration_kind": "method",
+          "symbol": "compress.Compressor.avifQuality",
+          "start_line": 90,
+          "end_line": 92,
+          "quote": "func (c Compressor) avifQuality() int {\n\treturn clampQuality(c.AVIFQuality, DefaultAVIFQuality)\n}",
+          "declaration": "func (c Compressor) avifQuality() int",
+          "function_type": "func() int",
+          "receiver_type": "Compressor",
+          "return_contract": {
+            "AST_expression_kinds": [
+              "*ast.CallExpr"
+            ],
+            "expressions": [
+              "clampQuality(c.AVIFQuality, DefaultAVIFQuality)"
+            ],
+            "kind": "sole-return-expressions",
+            "runtime_completion_verified": false
+          }
+        },
+        {
+          "selector": "Compressor.heifQuality",
+          "declaration_kind": "method",
+          "symbol": "compress.Compressor.heifQuality",
+          "start_line": 94,
+          "end_line": 96,
+          "quote": "func (c Compressor) heifQuality() int {\n\treturn clampQuality(c.HEIFQuality, DefaultHEIFQuality)\n}",
+          "declaration": "func (c Compressor) heifQuality() int",
+          "function_type": "func() int",
+          "receiver_type": "Compressor",
+          "return_contract": {
+            "AST_expression_kinds": [
+              "*ast.CallExpr"
+            ],
+            "expressions": [
+              "clampQuality(c.HEIFQuality, DefaultHEIFQuality)"
+            ],
+            "kind": "sole-return-expressions",
+            "runtime_completion_verified": false
+          }
+        },
+        {
+          "selector": "clampQuality",
+          "declaration_kind": "function",
+          "symbol": "compress.clampQuality",
+          "start_line": 114,
+          "end_line": 128,
+          "quote": "func clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}",
+          "declaration": "func clampQuality(value, fallback int) int",
+          "function_type": "func(value, fallback int) int"
+        }
+      ],
+      "producer": {
+        "source_sha256": "2cd212892cbfa867adf647158cc05f575b19c486d448ee24207c21f4a5a426a7",
+        "binary_sha256": "b26976877f8e22eda173e1a11d7bba66df1e99c42a9d24e096db9e16b76bcfe0",
+        "manifest_sha256": "ed7bb2b8dbc7ef8c30b1a6b7763d2143e7be3143db6cbdd46f37ce7d7e70c5d2",
+        "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+        "version": "1.5.0"
+      },
+      "bounded_selector_batches": [
+        [
+          "NewCompressor",
+          "Compressor.jpegQuality",
+          "Compressor.webpQuality",
+          "Compressor.avifQuality"
+        ],
+        [
+          "Compressor.heifQuality",
+          "clampQuality"
+        ]
+      ]
+    }
+  ],
+  "expanded_source_files": [
+    {
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+      "quote": "package compress\n\nimport (\n\t\"image\"\n\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/application/imagecompression\"\n\t\"github.com/juniorosa/go-image-optimizer/backend/internal/infrastructure/imaging\"\n)\n\nconst (\n\t// DefaultJPEGQuality keeps JPEG output visually close to the source while\n\t// still allowing meaningful size reduction for many camera/exported images.\n\tDefaultJPEGQuality = 82\n\n\tDefaultWebPQuality = 82\n\tDefaultAVIFQuality = 60\n\tDefaultHEIFQuality = 60\n)\n\ntype Compressor struct {\n\tJPEGQuality            int\n\tWebPQuality            int\n\tAVIFQuality            int\n\tHEIFQuality            int\n\tMaxDecodedPixels       int\n\tMaxAnimatedFramePixels int\n}\n\nfunc NewCompressor() Compressor {\n\treturn Compressor{\n\t\tJPEGQuality:            DefaultJPEGQuality,\n\t\tWebPQuality:            DefaultWebPQuality,\n\t\tAVIFQuality:            DefaultAVIFQuality,\n\t\tHEIFQuality:            DefaultHEIFQuality,\n\t\tMaxDecodedPixels:       imaging.DefaultMaxDecodedPixels,\n\t\tMaxAnimatedFramePixels: imaging.DefaultMaxAnimatedFramePixels,\n\t}\n}\n\nfunc (c Compressor) Compress(input []byte) (imagecompression.Result, error) {\n\tdetected, err := imaging.DetectFormat(input)\n\tif err != nil {\n\t\treturn imagecompression.Result{}, err\n\t}\n\n\tswitch detected.Format {\n\tcase imagecompression.FormatJPEG:\n\t\treturn c.compressJPEG(input)\n\tcase imagecompression.FormatPNG:\n\t\treturn c.compressPNG(input)\n\tcase imagecompression.FormatWebP:\n\t\treturn c.compressWebP(input)\n\tcase imagecompression.FormatAVIF:\n\t\treturn c.compressAVIF(input)\n\tcase imagecompression.FormatHEIF:\n\t\treturn c.compressHEIF(input, detected.ContentType)\n\tcase imagecompression.FormatGIF:\n\t\treturn c.compressGIF(input)\n\tcase imagecompression.FormatBMP:\n\t\treturn c.compressBMP(input)\n\tcase imagecompression.FormatTIFF:\n\t\treturn c.compressTIFF(input)\n\tdefault:\n\t\treturn imagecompression.Result{}, imagecompression.ErrUnsupportedFormat\n\t}\n}\n\nfunc staticResult(data []byte, format imagecompression.Format, contentType string, img image.Image) imagecompression.Result {\n\tbounds := img.Bounds()\n\n\treturn imagecompression.Result{\n\t\tData:        data,\n\t\tFormat:      format,\n\t\tContentType: contentType,\n\t\tWidth:       bounds.Dx(),\n\t\tHeight:      bounds.Dy(),\n\t\tAnimated:    false,\n\t\tFrameCount:  1,\n\t}\n}\n\nfunc (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}\n\nfunc (c Compressor) webpQuality() int {\n\treturn clampQuality(c.WebPQuality, DefaultWebPQuality)\n}\n\nfunc (c Compressor) avifQuality() int {\n\treturn clampQuality(c.AVIFQuality, DefaultAVIFQuality)\n}\n\nfunc (c Compressor) heifQuality() int {\n\treturn clampQuality(c.HEIFQuality, DefaultHEIFQuality)\n}\n\nfunc (c Compressor) maxDecodedPixels() int {\n\tif c.MaxDecodedPixels <= 0 {\n\t\treturn imaging.DefaultMaxDecodedPixels\n\t}\n\n\treturn c.MaxDecodedPixels\n}\n\nfunc (c Compressor) maxAnimatedFramePixels() int {\n\tif c.MaxAnimatedFramePixels <= 0 {\n\t\treturn imaging.DefaultMaxAnimatedFramePixels\n\t}\n\n\treturn c.MaxAnimatedFramePixels\n}\n\nfunc clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}\n",
+      "start_line": 1,
+      "end_line": 128,
+      "role": "Expanded correction evidence; not claimed supplied in baseline"
+    }
+  ]
+}

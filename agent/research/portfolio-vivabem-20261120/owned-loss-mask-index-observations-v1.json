@@ -1,0 +1,256 @@
+{
+  "at": "2026-11-21T09:11:34.809124+00:00",
+  "protocol_sha256": "3dc10d4551db6b7ad219d817c06aa746adaba265ea1a097ffa7bdd95d4526be7",
+  "method": "Owned Python integer/index projection only;source batching/loss functions,MLX,model,tokenizer and optimizer not executed.",
+  "cases": [
+    {
+      "id": "unmasked-short",
+      "original_length": 8,
+      "offset": 0,
+      "max_sequence": 512,
+      "projected_batch_width": 33,
+      "retained_length": 8,
+      "source_mask_positions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "real_valid_target_positions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "padding_positions_admitted_by_source_predicate": [
+        8
+      ],
+      "selected_target_token_ids": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        0
+      ],
+      "projected_ntoks": 8,
+      "real_supervised_token_count": 7,
+      "original_target_positions_lost": [],
+      "whole_original_target_preserved": true,
+      "positive_count_but_only_padding": false,
+      "zero_denominator_possible_if_this_shape_reaches_selected_default_loss": false,
+      "matches_frozen_hand_oracles": true,
+      "not_actual_tokenizer_or_framework_result": true
+    },
+    {
+      "id": "masked-short",
+      "original_length": 8,
+      "offset": 4,
+      "max_sequence": 512,
+      "projected_batch_width": 33,
+      "retained_length": 8,
+      "source_mask_positions": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "real_valid_target_positions": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "padding_positions_admitted_by_source_predicate": [
+        8
+      ],
+      "selected_target_token_ids": [
+        104,
+        105,
+        106,
+        107,
+        0
+      ],
+      "projected_ntoks": 5,
+      "real_supervised_token_count": 4,
+      "original_target_positions_lost": [],
+      "whole_original_target_preserved": true,
+      "positive_count_but_only_padding": false,
+      "zero_denominator_possible_if_this_shape_reaches_selected_default_loss": false,
+      "matches_frozen_hand_oracles": true,
+      "not_actual_tokenizer_or_framework_result": true
+    },
+    {
+      "id": "exact-cap-control",
+      "original_length": 512,
+      "offset": 500,
+      "max_sequence": 512,
+      "projected_batch_width": 512,
+      "retained_length": 512,
+      "source_mask_positions": [
+        500,
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511
+      ],
+      "real_valid_target_positions": [
+        500,
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511
+      ],
+      "padding_positions_admitted_by_source_predicate": [],
+      "selected_target_token_ids": [
+        600,
+        601,
+        602,
+        603,
+        604,
+        605,
+        606,
+        607,
+        608,
+        609,
+        610,
+        611
+      ],
+      "projected_ntoks": 12,
+      "real_supervised_token_count": 12,
+      "original_target_positions_lost": [],
+      "whole_original_target_preserved": true,
+      "positive_count_but_only_padding": false,
+      "zero_denominator_possible_if_this_shape_reaches_selected_default_loss": false,
+      "matches_frozen_hand_oracles": true,
+      "not_actual_tokenizer_or_framework_result": true
+    },
+    {
+      "id": "entire-target-truncated",
+      "original_length": 520,
+      "offset": 512,
+      "max_sequence": 512,
+      "projected_batch_width": 512,
+      "retained_length": 512,
+      "source_mask_positions": [],
+      "real_valid_target_positions": [],
+      "padding_positions_admitted_by_source_predicate": [],
+      "selected_target_token_ids": [],
+      "projected_ntoks": 0,
+      "real_supervised_token_count": 0,
+      "original_target_positions_lost": [
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519
+      ],
+      "whole_original_target_preserved": false,
+      "positive_count_but_only_padding": false,
+      "zero_denominator_possible_if_this_shape_reaches_selected_default_loss": true,
+      "matches_frozen_hand_oracles": true,
+      "not_actual_tokenizer_or_framework_result": true
+    },
+    {
+      "id": "partial-target-truncated",
+      "original_length": 520,
+      "offset": 510,
+      "max_sequence": 512,
+      "projected_batch_width": 512,
+      "retained_length": 512,
+      "source_mask_positions": [
+        510,
+        511
+      ],
+      "real_valid_target_positions": [
+        510,
+        511
+      ],
+      "padding_positions_admitted_by_source_predicate": [],
+      "selected_target_token_ids": [
+        610,
+        611
+      ],
+      "projected_ntoks": 2,
+      "real_supervised_token_count": 2,
+      "original_target_positions_lost": [
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519
+      ],
+      "whole_original_target_preserved": false,
+      "positive_count_but_only_padding": false,
+      "zero_denominator_possible_if_this_shape_reaches_selected_default_loss": false,
+      "matches_frozen_hand_oracles": true,
+      "not_actual_tokenizer_or_framework_result": true
+    },
+    {
+      "id": "padding-only-count-positive",
+      "original_length": 8,
+      "offset": 8,
+      "max_sequence": 512,
+      "projected_batch_width": 33,
+      "retained_length": 8,
+      "source_mask_positions": [
+        8
+      ],
+      "real_valid_target_positions": [],
+      "padding_positions_admitted_by_source_predicate": [
+        8
+      ],
+      "selected_target_token_ids": [
+        0
+      ],
+      "projected_ntoks": 1,
+      "real_supervised_token_count": 0,
+      "original_target_positions_lost": [],
+      "whole_original_target_preserved": true,
+      "positive_count_but_only_padding": true,
+      "zero_denominator_possible_if_this_shape_reaches_selected_default_loss": false,
+      "matches_frozen_hand_oracles": true,
+      "not_actual_tokenizer_or_framework_result": true
+    }
+  ],
+  "scope": "Six handpicked conditions,not a framework failure rate or actual training/NaN observation. Source predicate versus real-token target oracle are kept distinct.",
+  "projection_checks": {
+    "numerator": 6,
+    "denominator": 6
+  },
+  "framework_imports": 0,
+  "framework_functions_executed": 0,
+  "optimizer_steps": 0,
+  "owner_approved": false,
+  "training_eligible": false
+}

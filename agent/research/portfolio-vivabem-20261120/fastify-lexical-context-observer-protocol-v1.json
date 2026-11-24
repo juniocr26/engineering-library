@@ -1,0 +1,24 @@
+{
+  "hypothesis": "H50: syntax extraction supplemented with TypeScript identifier binding can distinguish selected lexical local-function references from shadowed callback parameters, property calls and aliases; callback ownership prevents attributing nested registration work to the outer function directly. This is static context evidence, not runtime call graph or generic architectural proof.",
+  "derived_from": "H49/H28 development-exposed Fastify context gap, no independent evaluation-family material",
+  "algorithm_plan": [
+    "TypeScript createProgram in-memory allowJs, no emit, no default libraries, no filesystem module resolution; parse diagnostics reported.",
+    "Inspect direct identifier call or identifier.call/apply reference; checker symbol declarations must be a function declaration in same input file.",
+    "Property/computed/import/alias/parameter/variable targets remain unresolved under this deliberately narrow observer. Binding to local declaration is not proof of immutable runtime target or standard call/apply behavior.",
+    "Each call belongs to nearest enclosing function/callback, not automatically outer declaration. Record line spans, source hash, reference syntax and local declaration if present."
+  ],
+  "owned_controls": [
+    "direct declaration reference",
+    "same-name shadowing parameter remains unresolved",
+    "nested callback owner retained",
+    "identifier alias remains unresolved",
+    "object property named same as local function unresolved",
+    "call/apply reference local declaration flagged as reference only",
+    "computed property unresolved",
+    "syntax diagnostic does not silently pass"
+  ],
+  "acceptance": "All preregistered owned controls must hold before application to frozen public Fastify files; output used only for locating source review, not automatic semantic acceptance. No new permanent tests or upstream execution.",
+  "external_writes": 0,
+  "production_changes": false,
+  "training": false
+}

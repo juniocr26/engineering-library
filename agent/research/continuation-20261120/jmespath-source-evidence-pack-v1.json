@@ -1,0 +1,246 @@
+{
+  "at": "2026-11-20T12:45:27.345073+00:00",
+  "repository": "jmespath/jmespath.py",
+  "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+  "units": {
+    "Parser._MAX_SIZE": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "direct-written-class-member",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L74-L74",
+      "evidence": {
+        "first_line": 74,
+        "last_line": 74,
+        "quote": "    _MAX_SIZE = 512\n",
+        "quote_sha256": "c7c6ea155d80df80a06dbc31c85e41f5aee2284b3041452ffc92a24aea1341d3",
+        "quote_byte_start": 2227,
+        "quote_byte_end": 2247,
+        "complete_member": true
+      }
+    },
+    "Parser.parse": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "direct-written-class-member",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L82-L103",
+      "evidence": {
+        "first_line": 82,
+        "last_line": 103,
+        "quote": "    def parse(self, expression):\n        try:\n            return self._CACHE[expression]\n        except KeyError:\n            pass\n        parsed_result = self._do_parse(expression)\n        if len(self._CACHE) >= self._MAX_SIZE:\n            try:\n                del self._CACHE[next(iter(self._CACHE))]\n            except (KeyError, StopIteration, RuntimeError):\n                # KeyError - Another thread else already deleted the key.\n                # RuntimeError - Another modified the cache.\n                # StopIteration - (Unlikely) Cache is empty.\n                #\n                # If we encounter an error we should NOT be adding to the\n                # cache.  To ensure we do not exceed self._MAX_SIZE, we\n                # can only add to the cache if we successfully removed\n                # an element from the cache, otherwise this can grow\n                # unbounded.\n                return parsed_result\n        self._CACHE[expression] = parsed_result\n        return parsed_result\n",
+        "quote_sha256": "174478eb4aa062f8e25958a5aac3877f9aaaf2fd94f486537aa10492940be6ab",
+        "quote_byte_start": 2420,
+        "quote_byte_end": 3426,
+        "complete_member": true
+      }
+    },
+    "Parser._do_parse": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "direct-written-class-member",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L105-L116",
+      "evidence": {
+        "first_line": 105,
+        "last_line": 116,
+        "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+        "quote_sha256": "143372f69faa7c59bff832aabc1b52d5b59fd3b3243a02daf92a3fafaf863a59",
+        "quote_byte_start": 3427,
+        "quote_byte_end": 3835,
+        "complete_member": true
+      }
+    },
+    "ParsedResult.search": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "direct-written-class-member",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L514-L517",
+      "evidence": {
+        "first_line": 514,
+        "last_line": 517,
+        "quote": "    def search(self, value, options=None):\n        interpreter = visitor.TreeInterpreter(options)\n        result = interpreter.visit(self.parsed, value)\n        return result\n",
+        "quote_sha256": "490893ffceaea59c0c065e292d343b5c80361b99cde72c6d04278f29750f3586",
+        "quote_byte_start": 18816,
+        "quote_byte_end": 18991,
+        "complete_member": true
+      }
+    },
+    "compile": {
+      "source_path": "jmespath/__init__.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "1bdefe3427441afe5dd173812b95de18db16731294a4c114e392e1ef949cd8a3",
+      "kind": "module-callable",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/__init__.py#L7-L8",
+      "evidence": {
+        "selector": "compile",
+        "declaration_kind": "function",
+        "first_line": 7,
+        "last_line": 8,
+        "quote": "def compile(expression):\n    return parser.Parser().parse(expression)\n",
+        "quote_sha256": "0af279aff2a8b4049a4776e7e95e4c9d727120fd993a0a632c05bb9ac334e5e3",
+        "quote_byte_start": 90,
+        "quote_byte_end": 160,
+        "decorated": false,
+        "syntax_only": true,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "limitations": [
+          "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+          "Lexical class membership is not proof of a runtime interface or inheritance contract."
+        ]
+      }
+    },
+    "search": {
+      "source_path": "jmespath/__init__.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "1bdefe3427441afe5dd173812b95de18db16731294a4c114e392e1ef949cd8a3",
+      "kind": "module-callable",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/__init__.py#L11-L12",
+      "evidence": {
+        "selector": "search",
+        "declaration_kind": "function",
+        "first_line": 11,
+        "last_line": 12,
+        "quote": "def search(expression, data, options=None):\n    return parser.Parser().parse(expression).search(data, options=options)\n",
+        "quote_sha256": "deb6fb635719afc2f067c3b5c3aeca3800a87ce3c20c801c8ce881a023e1aa30",
+        "quote_byte_start": 162,
+        "quote_byte_end": 281,
+        "decorated": false,
+        "syntax_only": true,
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "limitations": [
+          "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+          "Lexical class membership is not proof of a runtime interface or inheritance contract."
+        ]
+      }
+    },
+    "jmespath/__init__.py:import:1": {
+      "source_path": "jmespath/__init__.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "1bdefe3427441afe5dd173812b95de18db16731294a4c114e392e1ef949cd8a3",
+      "kind": "written-import",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/__init__.py#L1-L1",
+      "evidence": {
+        "first_line": 1,
+        "last_line": 1,
+        "quote": "from jmespath import parser\n",
+        "quote_sha256": "ffc615e1dd1005c3184e69d39d5f3e50f932161d754dc2cd332c00f8fa67ea37"
+      }
+    },
+    "jmespath/__init__.py:import:2": {
+      "source_path": "jmespath/__init__.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "1bdefe3427441afe5dd173812b95de18db16731294a4c114e392e1ef949cd8a3",
+      "kind": "written-import",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/__init__.py#L2-L2",
+      "evidence": {
+        "first_line": 2,
+        "last_line": 2,
+        "quote": "from jmespath.visitor import Options\n",
+        "quote_sha256": "78229dc43d6eba4a546c2fa00da881a532c334f7f36fd3bac39840bed1390e2e"
+      }
+    },
+    "jmespath/parser.py:import:28": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "written-import",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L28-L28",
+      "evidence": {
+        "first_line": 28,
+        "last_line": 28,
+        "quote": "from jmespath import lexer\n",
+        "quote_sha256": "8dcd4930a3853f4b7615ba8c901aee71a8b4219ac2bf44fc9653ec5c3fdcb5b7"
+      }
+    },
+    "jmespath/parser.py:import:29": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "written-import",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L29-L29",
+      "evidence": {
+        "first_line": 29,
+        "last_line": 29,
+        "quote": "from jmespath.compat import with_repr_method\n",
+        "quote_sha256": "6b9fb1f70ed6d138d6a3b0654718ea64a6b97df9424bd0a9cd6a081b24045b85"
+      }
+    },
+    "jmespath/parser.py:import:30": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "written-import",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L30-L30",
+      "evidence": {
+        "first_line": 30,
+        "last_line": 30,
+        "quote": "from jmespath import ast\n",
+        "quote_sha256": "206ba299ec4beeff69bc0260d31e954b7aefa0dfd53c2607af786166ba3ade2f"
+      }
+    },
+    "jmespath/parser.py:import:31": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "written-import",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L31-L31",
+      "evidence": {
+        "first_line": 31,
+        "last_line": 31,
+        "quote": "from jmespath import exceptions\n",
+        "quote_sha256": "1b6558d3997da76806b88d4930561418e5b716c1d1252213c7908e02ad8287e5"
+      }
+    },
+    "jmespath/parser.py:import:32": {
+      "source_path": "jmespath/parser.py",
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+      "kind": "written-import",
+      "source_executed": false,
+      "runtime_bindings_verified": false,
+      "url": "https://github.com/jmespath/jmespath.py/blob/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/jmespath/parser.py#L32-L32",
+      "evidence": {
+        "first_line": 32,
+        "last_line": 32,
+        "quote": "from jmespath import visitor\n",
+        "quote_sha256": "7381f2662a50ceed3c5e2a4d50809fd271c862078b84ab7c52078b5aaa2832ee"
+      }
+    }
+  },
+  "quote_bytes": 2021,
+  "context_bound": 24576,
+  "training_exclusion": true,
+  "owner_approved": false,
+  "license_path": "new-public-sources-v1/jmespath--jmespath.py/6ff419a8b171d055a9bfc6904605bceb8b7a80ef/LICENSE",
+  "license_sha256": "6eefacfa4d71b82d08408c751470ac8d9854538da2142cb27be0287fb13d0ab9",
+  "runtime_import_resolution_verified": false,
+  "relationship_scope": "Written imports and spelled calls between pinned local files, not verified Python import-loader/runtime identity."
+}

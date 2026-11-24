@@ -1,0 +1,59 @@
+--- unqualified-normalized-callee
+
++++ qualified-normalized-callee
+
+@@ -1,29 +1,39 @@
+
+ {
+   "inner": [
+     {
+-      "castKind": "UncheckedDerivedToBase",
++      "castKind": "NoOp",
+       "inner": [
+         {
+-          "kind": "DeclRefExpr",
+-          "referencedDecl": {
+-            "kind": "ParmVarDecl",
+-            "name": "object",
+-            "type": {
+-              "qualType": "Derived &"
++          "castKind": "UncheckedDerivedToBase",
++          "inner": [
++            {
++              "kind": "DeclRefExpr",
++              "referencedDecl": {
++                "kind": "ParmVarDecl",
++                "name": "object",
++                "type": {
++                  "qualType": "Derived &"
++                }
++              },
++              "type": {
++                "qualType": "Derived"
++              },
++              "valueCategory": "lvalue"
+             }
+-          },
++          ],
++          "kind": "ImplicitCastExpr",
++          "path": [
++            {
++              "name": "Base"
++            }
++          ],
+           "type": {
+-            "qualType": "Derived"
++            "qualType": "Base"
+           },
+           "valueCategory": "lvalue"
+         }
+       ],
+       "kind": "ImplicitCastExpr",
+-      "path": [
+-        {
+-          "name": "Base"
+-        }
+-      ],
+       "type": {
+         "qualType": "const Base"
+       },

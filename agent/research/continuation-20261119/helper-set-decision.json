@@ -1,0 +1,64 @@
+{
+  "id": "CONT-HELPER-PROMETHEUS-SET",
+  "status": "INCONCLUSIVE_PARTIAL_CONTRACT",
+  "at": "2026-11-19T12:34:43.671912+00:00",
+  "protocol_sha256": "b0764ea41629ef713c04574797f48b8bfa6e48a48777e383143fb9a4bbfa538d",
+  "caller": "frozen1.9.35",
+  "calls": 2,
+  "families": 1,
+  "results": [
+    {
+      "arm": "set-only",
+      "exit": 1,
+      "wall_seconds": 194.834353255,
+      "response_done_reason": "stop"
+    },
+    {
+      "arm": "set-and-del",
+      "exit": 0,
+      "wall_seconds": 275.024860708,
+      "response_done_reason": "stop"
+    }
+  ],
+  "review": [
+    {
+      "criterion": "Name actual selected method",
+      "baseline": "omitted; caller refused",
+      "with_helper": "Set named; formal acceptance passed"
+    },
+    {
+      "criterion": "Empty VALUE condition delegates b.Del(n) and returns its result",
+      "baseline": "Ambiguous label-is-empty description; callee and return omitted",
+      "with_helper": "Empty-label statement retained, exact guard/delegation/return omitted"
+    },
+    {
+      "criterion": "Only b.add entries are searched and first match replaced",
+      "baseline": "Generic existing-label update; collection scope not stated",
+      "with_helper": "Generic existing-label update; collection scope not stated"
+    },
+    {
+      "criterion": "Nonempty missing addition appends Label{Name:n,Value:v} then returns b",
+      "baseline": "High-level addition/return present; exact construction and collection absent",
+      "with_helper": "High-level addition present; return omitted"
+    },
+    {
+      "criterion": "Del removes matching additions, appends deletion names, returns b",
+      "baseline": "Helper absent; implementation must remain unknown",
+      "with_helper": "Entire selected helper explanation omitted; no fact cites S2"
+    },
+    {
+      "criterion": "Preserve correct baseline return fact",
+      "baseline": "Updated Builder instance returned",
+      "with_helper": "Not preserved: return omitted"
+    },
+    {
+      "criterion": "EN/PT equivalence",
+      "baseline": "High-level statements equivalent with identifier translated/omitted",
+      "with_helper": "High-level statements equivalent; shared omissions persist"
+    }
+  ],
+  "decision": "Do not integrate prompt or model changes. Formal writer acceptance is not factual completeness. Extra helper context alone did not establish an acceptable complete contract and lost a correct return statement. Not a new semantic analyzer, tool-driven retrieval or training result.",
+  "source_program_executed": false,
+  "training_runs": 0,
+  "artifacts": "private-research://continuation-20261119/helper-set-workspace/"
+}

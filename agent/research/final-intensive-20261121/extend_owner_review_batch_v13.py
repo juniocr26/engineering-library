@@ -1,0 +1,12 @@
+from pathlib import Path
+import json,hashlib,datetime,copy
+p=Path(__file__).resolve().parent;root=p.parents[2];sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest();old=p/'owner-review-batch-v12.json';d=json.loads(old.read_text());key='supplemental_technically_accepted_pairs';template=next(x for x in d[key] if x['id']=='go-image-configuration:original_dataset_target')
+for name in ['ruff-target-complete-review-v3.json']:
+ f=p/name;r=json.loads(f.read_text());rec=copy.deepcopy(template);rec.update(id=r['topic']+':'+r['version'],source_family='astral-sh/ruff',source_revision='0222c19dd8e0c9a927f2e47bf3774a108431da25',documents=r['documents'],gate_receipt={'path':str(f.relative_to(root)),'sha256':sha(f)},technical_status=r['technical_status'],authorship=r['authorship'],license_notice={'path':str((p/'ruff-target-source-context-v1/LICENSE').relative_to(root)),'sha256':sha(p/'ruff-target-source-context-v1/LICENSE'),'identified_notice':'MIT notice','license_choice_made':False,'not_legal_clearance':True},syntax_profile='Static source/API review only; no Rust parser/compiler/Cargo/Ruff execution',outstanding=['Owner/editorial review, including literal provenance metadata localization where relevant','Separate rights/confidentiality/publication decision; license notice retained, no legal clearance','Explicit owner Gold and approved pilot gates before training']);d[key].append(rec)
+d.update(at=datetime.datetime.now(datetime.timezone.utc).isoformat(),extends={'path':str(old.relative_to(root)),'sha256':sha(old)},selection_reason='Primary three retained; supplemental fourteen adds unchanged original Ruff target-version pair after checkpoint035 recovery. Original Redis expiry failure remains separate, not relabelled or selected.',supplemental_pair_count=14,new_supplemental_pair_count=1,total_public_pair_count=17,preserved_failed_original_targets=[{'path':str((p/name).relative_to(root)),'sha256':sha(p/name)} for name in ['go-image-animation-original-target-review-v2.json','go-image-compression-original-target-review-v1.json','redis-expiry-original-target-review-v1.json']])
+assert len(d[key])+len(d['public_manual_pairs'])==17
+for item in d[key]+d['public_manual_pairs']:
+ for doc in item['documents']:assert sha(root/doc['path'])==doc['sha256']
+ assert sha(root/item['gate_receipt']['path'])==item['gate_receipt']['sha256']
+with (p/'owner-review-batch-v13.json').open('x') as f:json.dump(d,f,indent=2);f.write('\n')
+print(json.dumps({'primary':3,'supplemental':14,'total_public':17,'failed_originals_not_selected':3,'Gold':0}))

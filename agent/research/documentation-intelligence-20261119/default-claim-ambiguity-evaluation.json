@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-20T01:59:37.525179+00:00",
+  "issue": "Legacy concatenated parameter/default grammar can approve a different valid parameter when identifiers contain trailing digits.",
+  "before": {
+    "version": "0.3.1",
+    "action": "NO-OP",
+    "input": {
+      "id": "ambiguous-legacy",
+      "family": "default-grammar-diagnostic",
+      "language": "python",
+      "previous_source": "def value(limit=12, limit1=2):\n    return 1\n",
+      "current_source": "def value(limit=12, limit1=2):\n    return 1\n",
+      "documentation": {
+        "en": "value uses default limit12.",
+        "pt-br": "value usa limit12 como padrão."
+      },
+      "complete_scope": true,
+      "source_available": true,
+      "positive_retirement_evidence": null,
+      "logical_contract_id": "sample.value",
+      "metadata": {}
+    }
+  },
+  "after": {
+    "version": "0.3.2",
+    "ambiguous_action": "INCONCLUSIVE",
+    "reason": "ambiguous legacy default token; use an explicit parameter = value delimiter",
+    "unambiguous_input": {
+      "id": "ambiguous-legacy",
+      "family": "default-grammar-diagnostic",
+      "language": "python",
+      "previous_source": "def value(limit=12, limit1=2):\n    return 1\n",
+      "current_source": "def value(limit=12, limit1=2):\n    return 1\n",
+      "documentation": {
+        "en": "value uses default limit1 = 2.",
+        "pt-br": "value usa limit1 = 2 como padrão."
+      },
+      "complete_scope": true,
+      "source_available": true,
+      "positive_retirement_evidence": null,
+      "logical_contract_id": "sample.value",
+      "metadata": {}
+    },
+    "unambiguous_action": "NO-OP"
+  },
+  "improvements": [
+    "Explicit parameter = integer syntax in EN/PT preserves trailing digits.",
+    "Ambiguous legacy concatenations refused using the actual selected signature.",
+    "Current keyword-only defaults included in supported exact claims.",
+    "A positively declared parameter whose default was removed contradicts the default claim; absent/renamed parameter stays INCONCLUSIVE."
+  ],
+  "new_regression_methods": 8,
+  "source_executed": false,
+  "model_calls": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "production_ruby_routing_changed": false,
+  "limitations": [
+    "Closed integer-default source/claim profile; arbitrary configuration, CLI, annotations and runtime binding remain outside scope.",
+    "This is an authored parser/protocol improvement, not neural learning."
+  ]
+}

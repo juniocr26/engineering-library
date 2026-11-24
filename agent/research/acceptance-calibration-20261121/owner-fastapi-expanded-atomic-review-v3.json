@@ -1,0 +1,401 @@
+{
+  "at": "2026-11-21T13:57:30.276965+00:00",
+  "extends": [
+    "owner-selected-atomic-review-v1.json",
+    "owner-expanded-atomic-review-v2.json",
+    "owner-atomic-evidence-span-correction-v1.json"
+  ],
+  "new_unique_claims": 8,
+  "total_selected_unique_claims": 105,
+  "claims": [
+    {
+      "claim_id": "OWNER-F10",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/frozen-public-sources/fastapi/fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        671,
+        829
+      ],
+      "exact_source_evidence": "async def solve_dependencies(\n    *,\n    request: Request | WebSocket,\n    dependant: Dependant,\n    body: Any = Undefined,\n    background_tasks: StarletteBackgroundTasks | None = None,\n    response: Response | None = None,\n    dependency_overrides_provider: Any | None = None,\n    dependency_cache: dict[DependencyCacheKey, Any] | None = None,\n    # TODO: remove this parameter later, no longer used, not removing it yet as some\n    # people might be monkey patching this function (although that's not supported)\n    async_exit_stack: AsyncExitStack,\n    embed_body_fields: bool,\n    _uses_scopes_cache: _UsesScopesCache | None = None,\n) -> SolvedDependency:\n    request_astack = request.scope.get(\"fastapi_inner_astack\")\n    assert isinstance(request_astack, AsyncExitStack), (\n        \"fastapi_inner_astack not found in request scope\"\n    )\n    function_astack = request.scope.get(\"fastapi_function_astack\")\n    assert isinstance(function_astack, AsyncExitStack), (\n        \"fastapi_function_astack not found in request scope\"\n    )\n    values: dict[str, Any] = {}\n    errors: list[Any] = []\n    if response is None:\n        response = Response()\n        del response.headers[\"content-length\"]\n        response.status_code = None  # type: ignore\n    if dependency_cache is None:\n        dependency_cache = {}\n    if _uses_scopes_cache is None:\n        _uses_scopes_cache = {}\n    for sub_dependant in dependant.dependencies:\n        sub_dependant.call = cast(Callable[..., Any], sub_dependant.call)\n        call = sub_dependant.call\n        use_sub_dependant = sub_dependant\n        if (\n            dependency_overrides_provider\n            and dependency_overrides_provider.dependency_overrides\n        ):\n            original_call = sub_dependant.call\n            call = getattr(\n                dependency_overrides_provider, \"dependency_overrides\", {}\n            ).get(original_call, original_call)\n            use_path: str = sub_dependant.path  # type: ignore\n            use_sub_dependant = get_dependant(\n                path=use_path,\n                call=call,\n                name=sub_dependant.name,\n                parent_oauth_scopes=_get_oauth_scopes(dependant=sub_dependant),\n                scope=sub_dependant.scope,\n                concurrency=sub_dependant.concurrency,\n            )\n\n        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved\n    path_values, path_errors = request_params_to_args(\n        dependant.path_params, request.path_params\n    )\n    query_values, query_errors = request_params_to_args(\n        dependant.query_params,\n        request.query_params,\n    )\n    header_values, header_errors = request_params_to_args(\n        dependant.header_params,\n        request.headers,\n    )\n    cookie_values, cookie_errors = request_params_to_args(\n        dependant.cookie_params,\n        request.cookies,\n    )\n    values.update(path_values)\n    values.update(query_values)\n    values.update(header_values)\n    values.update(cookie_values)\n    errors += path_errors + query_errors + header_errors + cookie_errors\n    if dependant.body_params:\n        (\n            body_values,\n            body_errors,\n        ) = await request_body_to_args(  # body_params checked above\n            body_fields=dependant.body_params,\n            received_body=body,\n            embed_body_fields=embed_body_fields,\n        )\n        values.update(body_values)\n        errors.extend(body_errors)\n    if dependant.http_connection_param_name:\n        values[dependant.http_connection_param_name] = request\n    if dependant.request_param_name and isinstance(request, Request):\n        values[dependant.request_param_name] = request\n    elif dependant.websocket_param_name and isinstance(request, WebSocket):\n        values[dependant.websocket_param_name] = request\n    if dependant.background_tasks_param_name:\n        if background_tasks is None:\n            background_tasks = BackgroundTasks()\n        values[dependant.background_tasks_param_name] = background_tasks\n    if dependant.response_param_name:\n        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )",
+      "expected_interpretation": "The selected solve_dependencies function has no other direct store binding of the local dependency_cache name besides line701.",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            19,
+            19
+          ],
+          "exact_paragraph": "At the initialization branch, dependency_cache is None guards assignment of an empty dictionary to dependency_cache. The selected function has no other direct assignment to that local name. This does not establish process-wide or cross-request cache lifetime."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            19,
+            19
+          ],
+          "exact_paragraph": "No ramo de inicialização, dependency_cache is None condiciona a atribuição de um dicionário vazio a dependency_cache. A função selecionada não possui outra atribuição direta a esse nome local. Isso não estabelece duração do cache no processo inteiro ou entre requisições."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    },
+    {
+      "claim_id": "OWNER-F11",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/frozen-public-sources/fastapi/fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        746,
+        747
+      ],
+      "exact_source_evidence": "        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]",
+      "expected_interpretation": "The reuse branch assigns solved=dependency_cache[sub_dependant_cache_key].",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            31,
+            31
+          ],
+          "exact_paragraph": "The selected reuse branch requires sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache. Its body assigns solved = dependency_cache[sub_dependant_cache_key]. The conjunction is a read/reuse condition; it is not a guarantee that every dependency executes exactly once."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            31,
+            31
+          ],
+          "exact_paragraph": "O ramo selecionado de reutilização exige sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache. Seu corpo atribui solved = dependency_cache[sub_dependant_cache_key]. A conjunção é uma condição de leitura/reutilização; não é garantia de que cada dependência execute exatamente uma vez."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    },
+    {
+      "claim_id": "OWNER-F12",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/frozen-public-sources/fastapi/fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        739,
+        775
+      ],
+      "exact_source_evidence": "        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+      "expected_interpretation": "When solved_result.errors is truthy, the written continue occurs before the later cache write guard.",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            37,
+            37
+          ],
+          "exact_paragraph": "When control reaches the later write guard and the key is absent, the written body assigns dependency_cache[sub_dependant_cache_key] = solved. This guard does not mention use_cache. Therefore the selected source does not implement use_cache=False as a general ban on cache writes. Earlier errors, exceptions or control flow can prevent reaching this guard."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            37,
+            37
+          ],
+          "exact_paragraph": "Quando o controle alcança a condição posterior de escrita e a chave está ausente, o corpo escrito atribui dependency_cache[sub_dependant_cache_key] = solved. Essa condição não menciona use_cache. Portanto, a fonte selecionada não implementa use_cache=False como proibição geral de escritas no cache. Erros, exceções ou fluxo de controle anteriores podem impedir que essa condição seja alcançada."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    },
+    {
+      "claim_id": "OWNER-F13",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/frozen-public-sources/fastapi/fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "source_lines": [
+        671,
+        829
+      ],
+      "exact_source_evidence": "async def solve_dependencies(\n    *,\n    request: Request | WebSocket,\n    dependant: Dependant,\n    body: Any = Undefined,\n    background_tasks: StarletteBackgroundTasks | None = None,\n    response: Response | None = None,\n    dependency_overrides_provider: Any | None = None,\n    dependency_cache: dict[DependencyCacheKey, Any] | None = None,\n    # TODO: remove this parameter later, no longer used, not removing it yet as some\n    # people might be monkey patching this function (although that's not supported)\n    async_exit_stack: AsyncExitStack,\n    embed_body_fields: bool,\n    _uses_scopes_cache: _UsesScopesCache | None = None,\n) -> SolvedDependency:\n    request_astack = request.scope.get(\"fastapi_inner_astack\")\n    assert isinstance(request_astack, AsyncExitStack), (\n        \"fastapi_inner_astack not found in request scope\"\n    )\n    function_astack = request.scope.get(\"fastapi_function_astack\")\n    assert isinstance(function_astack, AsyncExitStack), (\n        \"fastapi_function_astack not found in request scope\"\n    )\n    values: dict[str, Any] = {}\n    errors: list[Any] = []\n    if response is None:\n        response = Response()\n        del response.headers[\"content-length\"]\n        response.status_code = None  # type: ignore\n    if dependency_cache is None:\n        dependency_cache = {}\n    if _uses_scopes_cache is None:\n        _uses_scopes_cache = {}\n    for sub_dependant in dependant.dependencies:\n        sub_dependant.call = cast(Callable[..., Any], sub_dependant.call)\n        call = sub_dependant.call\n        use_sub_dependant = sub_dependant\n        if (\n            dependency_overrides_provider\n            and dependency_overrides_provider.dependency_overrides\n        ):\n            original_call = sub_dependant.call\n            call = getattr(\n                dependency_overrides_provider, \"dependency_overrides\", {}\n            ).get(original_call, original_call)\n            use_path: str = sub_dependant.path  # type: ignore\n            use_sub_dependant = get_dependant(\n                path=use_path,\n                call=call,\n                name=sub_dependant.name,\n                parent_oauth_scopes=_get_oauth_scopes(dependant=sub_dependant),\n                scope=sub_dependant.scope,\n                concurrency=sub_dependant.concurrency,\n            )\n\n        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )\n        background_tasks = solved_result.background_tasks\n        if solved_result.errors:\n            errors.extend(solved_result.errors)\n            continue\n        sub_dependant_cache_key = _get_cache_key(\n            dependant=sub_dependant,\n            uses_scopes_cache=_uses_scopes_cache,\n        )\n        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]\n        elif _is_gen_callable(use_sub_dependant.call) or _is_async_gen_callable(\n            use_sub_dependant.call\n        ):\n            use_astack = request_astack\n            if sub_dependant.scope == \"function\":\n                use_astack = function_astack\n            solved = await _solve_generator(\n                request=request,\n                dependant=use_sub_dependant,\n                stack=use_astack,\n                sub_values=solved_result.values,\n            )\n        elif _is_coroutine_callable(use_sub_dependant.call):\n            if use_sub_dependant.concurrency is None:\n                solved = await call(**solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await call(**solved_result.values)\n        else:\n            if use_sub_dependant.concurrency is None:\n                solved = await run_in_threadpool(call, **solved_result.values)\n            else:\n                async with use_sub_dependant.concurrency.get_semaphore():\n                    solved = await run_in_threadpool(call, **solved_result.values)\n        if sub_dependant.name is not None:\n            values[sub_dependant.name] = solved\n        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved\n    path_values, path_errors = request_params_to_args(\n        dependant.path_params, request.path_params\n    )\n    query_values, query_errors = request_params_to_args(\n        dependant.query_params,\n        request.query_params,\n    )\n    header_values, header_errors = request_params_to_args(\n        dependant.header_params,\n        request.headers,\n    )\n    cookie_values, cookie_errors = request_params_to_args(\n        dependant.cookie_params,\n        request.cookies,\n    )\n    values.update(path_values)\n    values.update(query_values)\n    values.update(header_values)\n    values.update(cookie_values)\n    errors += path_errors + query_errors + header_errors + cookie_errors\n    if dependant.body_params:\n        (\n            body_values,\n            body_errors,\n        ) = await request_body_to_args(  # body_params checked above\n            body_fields=dependant.body_params,\n            received_body=body,\n            embed_body_fields=embed_body_fields,\n        )\n        values.update(body_values)\n        errors.extend(body_errors)\n    if dependant.http_connection_param_name:\n        values[dependant.http_connection_param_name] = request\n    if dependant.request_param_name and isinstance(request, Request):\n        values[dependant.request_param_name] = request\n    elif dependant.websocket_param_name and isinstance(request, WebSocket):\n        values[dependant.websocket_param_name] = request\n    if dependant.background_tasks_param_name:\n        if background_tasks is None:\n            background_tasks = BackgroundTasks()\n        values[dependant.background_tasks_param_name] = background_tasks\n    if dependant.response_param_name:\n        values[dependant.response_param_name] = response\n    if dependant.security_scopes_param_name:\n        values[dependant.security_scopes_param_name] = SecurityScopes(\n            scopes=_get_oauth_scopes(dependant=dependant)\n        )\n    return SolvedDependency(\n        values=values,\n        errors=errors,\n        background_tasks=background_tasks,\n        response=response,\n        dependency_cache=dependency_cache,\n    )",
+      "expected_interpretation": "The selected function contains exactly two written assert statements.",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            43,
+            43
+          ],
+          "exact_paragraph": "The selected function contains two written assertions using isinstance with AsyncExitStack: one for request_astack and one for function_astack. These statements do not prove that assertions are enabled in a deployed interpreter, that request composition satisfies them, or that dependency callbacks cannot raise other exceptions."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            43,
+            43
+          ],
+          "exact_paragraph": "A função selecionada contém duas asserções escritas que usam isinstance com AsyncExitStack: uma para request_astack e outra para function_astack. Essas instruções não comprovam que as asserções estejam habilitadas no interpretador implantado, que a composição da requisição as satisfaça ou que callbacks de dependências não possam lançar outras exceções."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": false,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    },
+    {
+      "claim_id": "OWNER-F14",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "tests/test_dependency_cache.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/chapter-context-source-v1/fastapi/tests/test_dependency_cache.py",
+      "source_file_sha256": "480df7b33fa74cc709dbd67d65ffcdb69565a04de01186f0750776fcde533601",
+      "source_lines": [
+        30,
+        35
+      ],
+      "exact_source_evidence": "@app.get(\"/sub-counter-no-cache/\")\nasync def get_sub_counter_no_cache(\n    subcount: int = Depends(super_dep),\n    count: int = Depends(dep_counter, use_cache=False),\n):\n    return {\"counter\": count, \"subcounter\": subcount}",
+      "expected_interpretation": "The pinned test source contains the Depends(...,use_cache=False) call pattern used by the owned illustration.",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            49,
+            49
+          ],
+          "exact_paragraph": "Synthetic dependency-declaration fragment, not a running service. It follows the written use_cache=False call pattern in tests/test_dependency_cache.py:30-35. Its Python syntax was parsed; imports, dependency resolution, type compatibility and execution were not tested. No route is registered here."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            49,
+            49
+          ],
+          "exact_paragraph": "Fragmento sintético de declaração de dependência, não um serviço em execução. Ele segue o padrão escrito de chamada com use_cache=False em tests/test_dependency_cache.py:30-35. Sua sintaxe Python foi analisada; imports, resolução de dependências, compatibilidade de tipos e execução não foram testados. Nenhuma rota está registrada aqui."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": true,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    },
+    {
+      "claim_id": "OWNER-F15",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "tests/test_dependency_cache.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/chapter-context-source-v1/fastapi/tests/test_dependency_cache.py",
+      "source_file_sha256": "480df7b33fa74cc709dbd67d65ffcdb69565a04de01186f0750776fcde533601",
+      "source_lines": [
+        54,
+        61
+      ],
+      "exact_source_evidence": "def test_normal_counter():\n    counter_holder[\"counter\"] = 0\n    response = client.get(\"/counter/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 1}\n    response = client.get(\"/counter/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 2}",
+      "expected_interpretation": "The pinned normal-counter test contains assertions around two written client requests.",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            61,
+            61
+          ],
+          "exact_paragraph": "The pinned tests/test_dependency_cache.py contains written assertions for repeated requests, nested dependencies and disabled reuse. These external project tests were not executed. Assertions in a file are not passing results or production acceptance. No installer/startup/test command is certified by this chapter."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            61,
+            61
+          ],
+          "exact_paragraph": "O arquivo fixado tests/test_dependency_cache.py contém asserções escritas sobre requisições repetidas, dependências aninhadas e reutilização desabilitada. Esses testes do projeto externo não foram executados. Asserções em um arquivo não são resultados aprovados nem aceite de produção. Nenhum comando de instalação, inicialização ou teste é certificado por este capítulo."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": false,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    },
+    {
+      "claim_id": "OWNER-F16",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "tests/test_dependency_cache.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/chapter-context-source-v1/fastapi/tests/test_dependency_cache.py",
+      "source_file_sha256": "480df7b33fa74cc709dbd67d65ffcdb69565a04de01186f0750776fcde533601",
+      "source_lines": [
+        64,
+        71
+      ],
+      "exact_source_evidence": "def test_sub_counter():\n    counter_holder[\"counter\"] = 0\n    response = client.get(\"/sub-counter/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 1, \"subcounter\": 1}\n    response = client.get(\"/sub-counter/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 2, \"subcounter\": 2}",
+      "expected_interpretation": "The pinned sub-counter test contains nested-dependency assertions.",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            61,
+            61
+          ],
+          "exact_paragraph": "The pinned tests/test_dependency_cache.py contains written assertions for repeated requests, nested dependencies and disabled reuse. These external project tests were not executed. Assertions in a file are not passing results or production acceptance. No installer/startup/test command is certified by this chapter."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            61,
+            61
+          ],
+          "exact_paragraph": "O arquivo fixado tests/test_dependency_cache.py contém asserções escritas sobre requisições repetidas, dependências aninhadas e reutilização desabilitada. Esses testes do projeto externo não foram executados. Asserções em um arquivo não são resultados aprovados nem aceite de produção. Nenhum comando de instalação, inicialização ou teste é certificado por este capítulo."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": false,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    },
+    {
+      "claim_id": "OWNER-F17",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "tests/test_dependency_cache.py",
+      "source_snapshot": "agent/research/acceptance-calibration-20261121/chapter-context-source-v1/fastapi/tests/test_dependency_cache.py",
+      "source_file_sha256": "480df7b33fa74cc709dbd67d65ffcdb69565a04de01186f0750776fcde533601",
+      "source_lines": [
+        74,
+        81
+      ],
+      "exact_source_evidence": "def test_sub_counter_no_cache():\n    counter_holder[\"counter\"] = 0\n    response = client.get(\"/sub-counter-no-cache/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 2, \"subcounter\": 1}\n    response = client.get(\"/sub-counter-no-cache/\")\n    assert response.status_code == 200, response.text\n    assert response.json() == {\"counter\": 4, \"subcounter\": 3}",
+      "expected_interpretation": "The pinned no-cache sub-counter test contains assertions for disabled reuse.",
+      "generated_interpretation": [
+        {
+          "language": "en",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/en.md",
+          "document_sha256": "93178aa8cd2f0c1d74b745e30454173a3737682f5c5dcfc34b69b95637d7d768",
+          "lines": [
+            61,
+            61
+          ],
+          "exact_paragraph": "The pinned tests/test_dependency_cache.py contains written assertions for repeated requests, nested dependencies and disabled reuse. These external project tests were not executed. Assertions in a file are not passing results or production acceptance. No installer/startup/test command is certified by this chapter."
+        },
+        {
+          "language": "pt-BR",
+          "document": "agent/research/portfolio-vivabem-20261120/python-cache-flow-candidate-v2/pt-BR.md",
+          "document_sha256": "afba286d21da78c22cd646c0d13d6e9b8d183e497b9cdeb818b3c1ffcac243ce",
+          "lines": [
+            61,
+            61
+          ],
+          "exact_paragraph": "O arquivo fixado tests/test_dependency_cache.py contém asserções escritas sobre requisições repetidas, dependências aninhadas e reutilização desabilitada. Esses testes do projeto externo não foram executados. Asserções em um arquivo não são resultados aprovados nem aceite de produção. Nenhum comando de instalação, inicialização ou teste é certificado por este capítulo."
+        }
+      ],
+      "verdict": "SUPPORTED",
+      "critical": false,
+      "bilingual_consistency": "CONSISTENT_WITH_STATED_SOURCE_CONDITIONS",
+      "reviewer": "sameCodexcampaignagent; staticmanualsource/EN/PTreview; notowner",
+      "provenance": "FreshpinnedGitfile,completefunctionASTscanwhereabsence/countisasserted,notarbitraryprojectabsence",
+      "candidate_authorship": "manual/source-first",
+      "training_excluded": true
+    }
+  ],
+  "mechanical_observations": {
+    "dependency_cache_store_line_numbers": [
+      701
+    ],
+    "selected_function_assert_line_numbers": [
+      687,
+      691
+    ],
+    "function_source_range": [
+      671,
+      829
+    ],
+    "python_examples": [
+      {
+        "language": "en",
+        "snippet_sha256": "fb2d6b08ba302e3eade2eae2778515bde661320765bf13cc3285a3415fcc3421",
+        "syntax_only": "Python3.14.7ast.parsepassed",
+        "imports_resolved": false,
+        "typecheck": false,
+        "source_or_app_executed": false
+      },
+      {
+        "language": "pt-BR",
+        "snippet_sha256": "fb2d6b08ba302e3eade2eae2778515bde661320765bf13cc3285a3415fcc3421",
+        "syntax_only": "Python3.14.7ast.parsepassed",
+        "imports_resolved": false,
+        "typecheck": false,
+        "source_or_app_executed": false
+      }
+    ]
+  },
+  "counting": "Additional source propositions, not a count of every caveat/policy/metadata sentence. SamefactrepeatedinFAQ/PTcountsonce.",
+  "full_document_atomic_precision": null,
+  "remaining": "Finish paragraph-classification/provenance/rights/examples review before finalprotocol2outcome.",
+  "external_tests_executed": false,
+  "training_gold": false,
+  "owner_approved": false
+}

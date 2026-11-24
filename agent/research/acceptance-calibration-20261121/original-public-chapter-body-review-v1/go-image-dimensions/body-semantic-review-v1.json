@@ -1,0 +1,81 @@
+{
+  "at": "2026-11-21T18:19:46.043132+00:00",
+  "topic": "go-image-dimensions",
+  "family": "go-image-optimizer",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-dimensions/en.candidate.txt",
+      "sha256": "d9a51a95346d9830f93b1bf84a9b96e26012d72a1b766bbfd37840b5c44f1a83",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-dimensions/pt-br.candidate.txt",
+      "sha256": "cc712a850fdf110599a3b75de5633712abb4308069e7ce9d77add569d5830e06",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Wrapper parameters cfg and maxPixels only; extracted fields are arguments, not extra parameters.",
+    "Helper either nonpositive dimension exits first, height positive on later division path; strict quotient equality allowed.",
+    "Zero budget rejects positive dimensions; absence of separate positivity check does not mean all budgets succeed.",
+    "Named default32M not automatically used by wrapper; related animation call explicitly uses it.",
+    "Actual baseline four-argument and parser-metadata errors, helper one-fact coverage/association limit match captures."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/backend/internal/infrastructure/imaging/limits.go",
+      "source_sha256": "b1b23e6c4721e843b93864a1109900d27217c58792a8e9def4fe9bb181044cb8",
+      "source_path": "backend/internal/infrastructure/imaging/limits.go",
+      "source_lines": [
+        9,
+        48
+      ],
+      "exact_source_evidence": "const (\n\t// DefaultMaxDecodedPixels limits decoded image memory growth. A 32 MP RGBA\n\t// image needs roughly 128 MiB before encoder overhead.\n\tDefaultMaxDecodedPixels = 32_000_000\n\n\t// DefaultMaxAnimatedFramePixels caps canvas-sized animation work. The limit\n\t// is width * height * frame count, not bytes, so codecs can share it.\n\tDefaultMaxAnimatedFramePixels = 64_000_000\n)\n\nfunc ValidateDimensions(cfg image.Config, maxPixels int) error {\n\treturn ValidateImageSize(cfg.Width, cfg.Height, maxPixels)\n}\n\nfunc ValidateImageSize(width, height, maxPixels int) error {\n\tif width <= 0 || height <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height {\n\t\treturn imageprocessing.ErrImageTooLarge\n\t}\n\n\treturn nil\n}\n\nfunc ValidateAnimatedDimensions(width, height, frameCount, maxPixels int) error {\n\tif err := ValidateImageSize(width, height, DefaultMaxDecodedPixels); err != nil {\n\t\treturn err\n\t}\n\n\tif frameCount <= 0 {\n\t\treturn imageprocessing.ErrInvalidImage\n\t}\n\n\tif width > maxPixels/height/frameCount {\n\t\treturn imageprocessing.ErrAnimationTooLarge\n\t}\n\n\treturn nil",
+      "reviewed_interpretation": "Default, forwarding wrapper, static guards and explicit animation choice.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "gio-dimensions-caller",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-dimensions-caller/raw-response.json",
+      "sha256": "312fc26099f68d6834a516d5c88be68daba8a5d9dbc1eb616e1d558383fdb855",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    },
+    {
+      "id": "gio-dimensions-helpers",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/gio-dimensions-helpers/raw-response.json",
+      "sha256": "cbd60f9663b0eeecd8f94a4ebe0dd84b5257f4b01ce5631e605a5787d7abb14d",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

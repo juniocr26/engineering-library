@@ -1,0 +1,5 @@
+{
+  "verdict": "INSUFFICIENT",
+  "source_path": "packages/zod/src/v4/core/parse.ts @ 2a343ed2a4ffbea73fb83862ee1e317662292481",
+  "source_role": "pinned_revision",
+  "evidence": "The synchronous returned arrow sets the async flag to false.\nA setura retornado sincrônica configura a flag async para falso.\n\nexport const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };\n  const result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }\n\n  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);\n}\n\nexport const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);\n\nexport const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({

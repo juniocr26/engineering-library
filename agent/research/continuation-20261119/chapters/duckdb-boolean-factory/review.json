@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-19T18:30:41.936222+00:00",
+  "status": "CODEX_SOURCE_REVIEWED_PENDING_OWNER_APPROVAL",
+  "repository": "duckdb",
+  "revision": "e41515de6f7efb19b43293ab49cb967cd64ab9f9",
+  "baseline": "duckdb-boolean-factory",
+  "baseline_response_sha256": "e458763e588aad5198f929e168e0dfba3f93a25f3f7fefe2cc8d277a0c5b1354",
+  "baseline_review": {
+    "id": "duckdb-boolean-factory",
+    "queue_task": "FACT-008",
+    "family": "duckdb-value-construction",
+    "status": "REJECTED_DECLARATION_ROLE_AND_PARTIAL_CONTRACT",
+    "critical": [
+      "Calls Value::BOOLEAN a constructor despite explicit Value return type; it is a factory function"
+    ],
+    "correct": [
+      "Stores provided boolean and sets nullfalse at high level",
+      "Selected LogicalType constructor initially sets nulltrue"
+    ],
+    "omitted": [
+      "exact LogicalType::BOOLEAN construction",
+      "field value_.boolean and explicit returnresult",
+      "type_(std::move(type)) constructor initialization"
+    ],
+    "bilingual": "Same role error/omissions in EN/PT. S2 repeated four times in raw output; writer deduplication does not create more evidence.",
+    "writer_exit": 0,
+    "seconds": 73.50283865799975,
+    "raw_fact_count": 5,
+    "response_sha256": "e458763e588aad5198f929e168e0dfba3f93a25f3f7fefe2cc8d277a0c5b1354",
+    "source": {
+      "repository": "duckdb",
+      "revision": "e41515de6f7efb19b43293ab49cb967cd64ab9f9",
+      "path": "src/common/types/value.cpp",
+      "source_sha256": "554a9a9eeb7d79a7a5ecad6b4cec611203eb24f70ee5ffb616016296d492701c"
+    },
+    "reviewer": "Codex source review, not owner approval",
+    "training_gold": false,
+    "publication": false
+  },
+  "source_excerpts_sha256": "fb93fc04354c7e723f69ce7eeb22f0238724ce1952bfe5b6cfbaf461fe86a64e",
+  "inline_code_span_sequences_equal": true,
+  "inline_spans_per_language": 13,
+  "license_notices": [
+    {
+      "path": "agent/research/continuation-20261119/source-licenses/duckdb.LICENSE",
+      "sha256": "075c33400ffcb0c586dd106a029d3e733e9da3693f8fcb9cebfc651c8a2f14e3"
+    }
+  ],
+  "source_program_executed": false,
+  "training_gold": false,
+  "publication": false,
+  "chapters": {
+    "en": {
+      "sha256": "c6b15b9373a9b48edee88c58a8700d691eb7281251dc0b8a705044ea427d3515",
+      "words": 564
+    },
+    "pt-br": {
+      "sha256": "51d9011e19a9bd4df110be7ad5a4e8dcd10d775fc80b0866607f215f42015592",
+      "words": 580
+    }
+  }
+}

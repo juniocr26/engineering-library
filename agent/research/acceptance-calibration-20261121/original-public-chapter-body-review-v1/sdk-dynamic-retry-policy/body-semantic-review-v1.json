@@ -1,0 +1,127 @@
+{
+  "at": "2026-11-21T18:30:18.196690+00:00",
+  "topic": "sdk-dynamic-retry-policy",
+  "family": "sdk-go",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/sdk-dynamic-retry-policy/en.candidate.txt",
+      "sha256": "347f1c25991522f0894cecd6457f5efbf4bc47062f83f982a467c79682396c25",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/sdk-dynamic-retry-policy/pt-br.candidate.txt",
+      "sha256": "505fd0992b01f5c34dc51eb5bc99e866b13faaee129a18428f519142ed9d61e8",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Constant200mscontradicts20mscomment, default60secondsandcoefficient2 distinct.",
+    "ctxnil/default andstrictfuturedeadlineguard; no min with60s; typednil/arbitrarymethodcompletion notguaranteed.",
+    "Conditionalpredeclaredmax givesfloor notcap; existing207files/157SDKimmediate/78active two-profile bindingreceipt reverified earlier inthiscampaign; notnativeSDKrun/fulltypeproof.",
+    "Constructor/setter sequence onlystoresconfiguration; ComputeNextDelay separateattempt/expiry/clamp/jitter, no service/sleep guarantee.",
+    "Actualthreebaselinecaptures show initialconstantreasoning omission, fixed60soverstatement, thenmin/max/deadline/cap errors; no historicalrerun."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sdk-go/7e0d845246d36fc7f62ade2af885554f94c29db9/internal/internal_retry.go",
+      "source_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e",
+      "source_path": "internal/internal_retry.go",
+      "source_lines": [
+        12,
+        38
+      ],
+      "exact_source_evidence": "const (\n\tretryServiceOperationInitialInterval    = 200 * time.Millisecond\n\tretryServiceOperationExpirationInterval = 60 * time.Second\n\tretryServiceOperationBackoff            = 2\n)\n\n// Creates a retry policy which allows appropriate retries for the deadline passed in as context.\n// It uses the context deadline to set MaxInterval as 1/10th of context timeout\n// MaxInterval = Max(context_timeout/10, 20ms)\n// defaults to ExpirationInterval of 60 seconds, or uses context deadline as expiration interval\nfunc createDynamicServiceRetryPolicy(ctx context.Context) backoff.RetryPolicy {\n\ttimeout := retryServiceOperationExpirationInterval\n\tif ctx != nil {\n\t\tnow := time.Now()\n\t\tif expiration, ok := ctx.Deadline(); ok && expiration.After(now) {\n\t\t\ttimeout = expiration.Sub(now)\n\t\t}\n\t}\n\tinitialInterval := retryServiceOperationInitialInterval\n\tmaximumInterval := max(timeout/10, retryServiceOperationInitialInterval)\n\n\tpolicy := backoff.NewExponentialRetryPolicy(initialInterval)\n\tpolicy.SetBackoffCoefficient(retryServiceOperationBackoff)\n\tpolicy.SetMaximumInterval(maximumInterval)\n\tpolicy.SetExpirationInterval(timeout)\n\treturn policy\n}",
+      "reviewed_interpretation": "Constants/comment, default/deadline and configurationhandoff.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sdk-go/7e0d845246d36fc7f62ade2af885554f94c29db9/internal/common/backoff/retrypolicy.go",
+      "source_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "source_lines": [
+        57,
+        68
+      ],
+      "exact_source_evidence": "// NewExponentialRetryPolicy returns an instance of ExponentialRetryPolicy using the provided initialInterval\nfunc NewExponentialRetryPolicy(initialInterval time.Duration) *ExponentialRetryPolicy {\n\tp := &ExponentialRetryPolicy{\n\t\tinitialInterval:    initialInterval,\n\t\tbackoffCoefficient: retry.DefaultBackoffCoefficient,\n\t\tmaximumInterval:    retry.DefaultMaximumInterval,\n\t\texpirationInterval: retry.DefaultExpirationInterval,\n\t\tmaximumAttempts:    retry.DefaultMaximumAttempts,\n\t}\n\n\treturn p\n}",
+      "reviewed_interpretation": "Policyconstructor fields.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sdk-go/7e0d845246d36fc7f62ade2af885554f94c29db9/internal/common/backoff/retrypolicy.go",
+      "source_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "source_lines": [
+        87,
+        102
+      ],
+      "exact_source_evidence": "// SetBackoffCoefficient sets the coefficient used by ExponentialRetryPolicy to compute next delay for each retry\n// All retries are computed using the following formula:\n// initialInterval * math.Pow(backoffCoefficient, currentAttempt)\nfunc (p *ExponentialRetryPolicy) SetBackoffCoefficient(backoffCoefficient float64) {\n\tp.backoffCoefficient = backoffCoefficient\n}\n\n// SetMaximumInterval sets the maximum interval for each retry\nfunc (p *ExponentialRetryPolicy) SetMaximumInterval(maximumInterval time.Duration) {\n\tp.maximumInterval = maximumInterval\n}\n\n// SetExpirationInterval sets the absolute expiration interval for all retries\nfunc (p *ExponentialRetryPolicy) SetExpirationInterval(expirationInterval time.Duration) {\n\tp.expirationInterval = expirationInterval\n}",
+      "reviewed_interpretation": "Three setters store suppliedvalues.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sdk-go/7e0d845246d36fc7f62ade2af885554f94c29db9/internal/common/backoff/retrypolicy.go",
+      "source_sha256": "f81a5122a13642c32afb7c4b1670c2d5c0fcaa7e26fe2da72825fd9969568fc8",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "source_lines": [
+        109,
+        148
+      ],
+      "exact_source_evidence": "// ComputeNextDelay returns the next delay interval.  This is used by Retrier to delay calling the operation again\nfunc (p *ExponentialRetryPolicy) ComputeNextDelay(elapsedTime time.Duration, attempt int) time.Duration {\n\t// Check to see if we ran out of maximum number of attempts\n\tif p.maximumAttempts != retry.UnlimitedMaximumAttempts && attempt >= p.maximumAttempts {\n\t\treturn done\n\t}\n\n\t// Stop retrying after expiration interval is elapsed\n\tif p.expirationInterval != retry.UnlimitedInterval && elapsedTime > p.expirationInterval {\n\t\treturn done\n\t}\n\n\tnextInterval := float64(p.initialInterval) * math.Pow(p.backoffCoefficient, float64(attempt-1))\n\t// Disallow retries if initialInterval is negative or nextInterval overflows\n\tif nextInterval <= 0 {\n\t\treturn done\n\t}\n\tif p.maximumInterval != retry.UnlimitedInterval {\n\t\tnextInterval = math.Min(nextInterval, float64(p.maximumInterval))\n\t}\n\n\tif p.expirationInterval != retry.UnlimitedInterval {\n\t\tremainingTime := math.Max(0, float64(p.expirationInterval-elapsedTime))\n\t\tnextInterval = math.Min(remainingTime, nextInterval)\n\t}\n\n\t// Bail out if the next interval is smaller than initial retry interval\n\tnextDuration := time.Duration(nextInterval)\n\tif nextDuration < p.initialInterval {\n\t\treturn done\n\t}\n\n\t// add jitter to avoid global synchronization\n\tjitterPortion := max(\n\t\t// Prevent overflow\n\t\tint(retry.DefaultJitter*nextInterval), 1)\n\tnextInterval = nextInterval*(1-retry.DefaultJitter) + float64(rand.Intn(jitterPortion))\n\n\treturn time.Duration(nextInterval)\n}",
+      "reviewed_interpretation": "Separate delayconsumer with guards/clamps/jitter.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "sdk-retry-function",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-retry-function/raw-response.json",
+      "sha256": "a373ba0a8463176252b7fd88dc8998dc5eead9b7ef4ff291fdac2eac13c9b59a",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-retry-function/origin.json",
+      "origin_sha256": "ccfae16279c6b6ab431000debce534d5915a16d3948aa83086f4d34bfa5f7cdb"
+    },
+    {
+      "id": "sdk-retry-with-constants",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-retry-with-constants/raw-response.json",
+      "sha256": "32cb8e79a03573becf5c268ffd22847e72018b17a8ed498e0bd8c6dbbc592477",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-retry-with-constants/origin.json",
+      "origin_sha256": "0595916fbadbab30b087b6e160d7b26c95eda8fcb2a0b062d8392885d391abb5"
+    },
+    {
+      "id": "sdk-contiguous-contract",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-contiguous-contract/raw-response.json",
+      "sha256": "1b12673ce863bc221d804e3d685c3fd7085b33ed68fa559e57e6750faa7df891",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sdk-contiguous-contract/origin.json",
+      "origin_sha256": "d98ba16527877afd8d96a9a01ac3fb3397c4795fd51a102e07fe93d8837c48ab"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,66 @@
+{
+  "at": "2026-11-20T11:36:32.767294+00:00",
+  "cases": [
+    {
+      "id": "helper-as-default",
+      "v1_units": [
+        "entry"
+      ],
+      "v2_units": [
+        "entry",
+        "helper"
+      ],
+      "expected_units": [
+        "entry",
+        "helper"
+      ],
+      "v2_shadowing": [
+        "fn"
+      ],
+      "expected_shadowing": [],
+      "v2_matches": false,
+      "runtime_binding_inferred": false
+    },
+    {
+      "id": "parameter-shadowing",
+      "v1_units": [
+        "entry",
+        "helper"
+      ],
+      "v2_units": [
+        "entry",
+        "helper"
+      ],
+      "expected_units": [
+        "entry",
+        "helper"
+      ],
+      "v2_shadowing": [
+        "helper"
+      ],
+      "expected_shadowing": [
+        "helper"
+      ],
+      "v2_matches": true,
+      "runtime_binding_inferred": false
+    }
+  ],
+  "real_public_source_correction": {
+    "id": "public-research-enter",
+    "v1_changed_closure_units": [
+      "default_enter",
+      "remap",
+      "research"
+    ],
+    "v2_changed_closure_units": [
+      "remap",
+      "research"
+    ],
+    "reason": "The default_enter callable is unchanged. Its default-value reference must participate in the candidate dependency closure after research adds enter=default_enter. Closure membership is not declaration retirement."
+  },
+  "default_planner_modified": false,
+  "independent_score_revised": false,
+  "source_executed": false,
+  "model_calls": 0,
+  "scope": "Isolated research observations only; shadowing, attributes, dynamic registry mutation and external imports remain unresolved."
+}

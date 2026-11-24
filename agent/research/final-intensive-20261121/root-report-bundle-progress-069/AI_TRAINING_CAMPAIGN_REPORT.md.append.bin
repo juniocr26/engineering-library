@@ -1,0 +1,9 @@
+
+
+### Progresso intensivo 069 — preservação de falhas no consumidor de retomada
+
+A inspeção do novo consumidor v1encontrou uma lacuna confirmada no fluxo de exceção: TimeoutExpired seria registrado sem copiar stdout/stderr parciais do subprocesso; text=Truetambém poderia falhar antes do recibo ao receber bytes não UTF-8. Não houve timeout real no consumo048bem-sucedido. A versão1e seus recibos foram preservados.
+
+O consumidor v2registra bytes em base64, hashes e texto com substituição para leitura. Quatro controles próprios verificaram sucesso com bytes não UTF-8, exit7com stderr, timeout com ambos os streams parciais e falha de lançamento. O timeout de0,5sfoi um controle técnico pontual, não preenchimento do relógio da campanha. Outros quatro controles de CLI verificaram pins errados de recibo/pós-registro, limite de bytes e resultado já existente: três recibos de falha preservados, zero raízes extraídas e nenhum overwrite do arquivo existente. Os13controles de admissão anteriores não foram reexecutados: suas funções têm AST idêntica na v2. Essas populações distintas não foram convertidas em taxa de segurança geral.
+
+A restauração completa v2também passou em raiz nova:5.710arquivos, quatro relatórios reconstruídos, quatro consumidores de dados,3,599smedidos, zero modelo/framework/otimizador. O inventário separado v3conferiu5.706inputs mais quatro relatórios finais por hash/tamanho/modo. O consumidor de recibos v2deriva cada expectativa do manifesto pinado e dos afterhashes do pós-registro, exigindo conjunto único/exaustivo de caminhos; a versão inicial mais fraca foi preservada. A receita v2passa a ser a recomendada. Os novos scripts, controles e recibos ainda precisam do próximo checkpoint.

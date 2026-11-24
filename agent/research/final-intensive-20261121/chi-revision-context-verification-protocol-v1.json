@@ -1,0 +1,86 @@
+{
+  "at": "2026-11-22T00:49:41.269608+00:00",
+  "parent_protocol_sha256": "4471381ac0a7c1aa75f68056f649cafd41e2ced8b949343e27c8a948e5a74816",
+  "negative_claims": [
+    {
+      "id": "CHI-N01",
+      "claim": "RequestSize was introduced by the selected new commit.",
+      "expected": "CONTRADICTED",
+      "basis": "Existing RequestSize implementation is present before and byte-identical after."
+    },
+    {
+      "id": "CHI-N02",
+      "claim": "The selected RequestSize body explicitly calls WriteHeader(413).",
+      "expected": "CONTRADICTED",
+      "basis": "It assigns MaxBytesReader to r.Body and delegates; explicit status writes occur in new test handler."
+    },
+    {
+      "id": "CHI-N03",
+      "claim": "New assertions prove tests passed in this campaign.",
+      "expected": "INSUFFICIENT",
+      "basis": "Only source acquisition/static analysis authorized and performed."
+    },
+    {
+      "id": "CHI-N04",
+      "claim": "An unchanged selected writer file proves every Chi runtime behavior unchanged.",
+      "expected": "INSUFFICIENT",
+      "basis": "Selected scope and source-only evidence, not all runtime/configuration/callers."
+    },
+    {
+      "id": "CHI-N05",
+      "claim": "The 9f8adb1a to c64ed7d change modifies ReadFrom positive-count guard.",
+      "expected": "CONTRADICTED",
+      "basis": "Writer bytes identical; direct parent changed only added request_size_test.go."
+    },
+    {
+      "id": "CHI-N06",
+      "claim": "A new current-pin target can retain only the old revision ID and pass G1.",
+      "expected": "CONTRADICTED_BY_FROZEN_CONTRACT",
+      "basis": "Historical-note contract remains valid separately; current-pin target requires correct new identity."
+    },
+    {
+      "id": "CHI-N07",
+      "claim": "H1 in the chapter names the immediate parent of c64ed7d.",
+      "expected": "CONTRADICTED",
+      "basis": "H1 is explicit04f7 ancestor; immediate parent is9f8."
+    },
+    {
+      "id": "CHI-N08",
+      "claim": "Lexical references establish every dynamic or external caller.",
+      "expected": "INSUFFICIENT",
+      "basis": "Repository string search is bounded lexical coverage, not alias/runtime binding proof."
+    }
+  ],
+  "method": "Separate read-only Git acquisitions plus exact bytes/native Go syntax owners and manual contextual adjudication; not automated general semantic classification.",
+  "frozen_before_candidate": true,
+  "native_requests": [
+    {
+      "path": "middleware/logger.go",
+      "selectors": [
+        "RequestLogger"
+      ]
+    },
+    {
+      "path": "middleware/request_size.go",
+      "selectors": [
+        "RequestSize"
+      ]
+    },
+    {
+      "path": "middleware/request_size_test.go",
+      "selectors": [
+        "TestRequestSize"
+      ]
+    },
+    {
+      "path": "middleware/wrap_writer_readfrom_test.go",
+      "selectors": [
+        "TestWrapResponseWriterReadFromStatus"
+      ]
+    }
+  ],
+  "expected_native": "All selected complete functions admitted as syntax-only units at new local HEAD; no target import/typecheck/runtime.",
+  "candidate_policy": "Preserve existing chapter unchanged; new isolated full EN/PT version may update pin and add exact maintenance context, with a human-reviewable diff. Not automatic production modification.",
+  "source_programs_executed": false,
+  "training_eligible": false
+}

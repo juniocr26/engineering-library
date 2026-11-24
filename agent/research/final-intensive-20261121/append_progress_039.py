@@ -1,0 +1,19 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Final intensive progress 039 — unchanged original Starlette task/iteration pair reviewed
+
+Exact original dataset rows47/48 resolve the complete Starlette task-and-iteration EN/PT documents, sourcepacket and historical review. Fresh readonly Git acquisition at271c277da0ff64e2048a4d46ecc812b9d61db5f6 preserved8files;6Pythonfiles parsed without importing/executing target code or running upstream tests. Both complete chapter languages and3FAQs were read against full background/concurrency bodies, classifier/versionimports and selected response/test context. Four sourcepacket ranges and2logical local links match exact bytes.
+
+Four actual prior request/rawresponse witnesses confirm that the run_in_threadpool answer omitted its return-await relationship and the iteration answer falsely described outer exhaustion handling as reraising original StopIteration. The source instead shows a translated helper exception and an outer break; normal callback-result return versus task-method fallthrough remain distinct. Other original baseline content is not blanket-labelled false. The unchanged manual chapter preserves these conditions, ordered task awaits, constructor/add/invocation separation, lack of universal cleanup, classifier and imported-runtime limits. Its past deterministic integration receipt is historical evidence, not fresh test execution or neural improvement. Twelve composite source groups and10adverse claim adjudications are same-agent review, not independent atomic accuracy.
+
+All G1-G8pass within the frozen scope;G9remainsINCONCLUSIVEuntil actual checkpoint restoration. The current local consumer verifies exact sources/ranges/AST/links/fourresponses/bilingual identifiers/FAQ IDs without semantic generalization. No document/dataset/production/UI/permanent-test changes or localmodel calls. Population remains17accepted/20relatedversions until recovery promotion. A fresh checkpoint adds this closure and a postnote procedure that explicitly validates all current consumer groups rather than only the earlier legacy subset.
+
+Dataset correspondencev3 now compares34accepted-document hashes to297nonprivate preserved rows:24exactdirectdocumentreferences,172differentreferences,101withoutselecteddirectrefs;8private rows excluded. Seven original files verified unchanged; exact parent-reference match grants no row/FAQ/publication/Gold/training approval. Campaign active; approximately12actualhours still pending.
+'''
+j=p/'root-report-bundle-progress-039';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v39.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

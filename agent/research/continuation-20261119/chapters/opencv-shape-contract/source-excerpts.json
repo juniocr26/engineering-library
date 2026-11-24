@@ -1,0 +1,14 @@
+{
+  "repository": "opencv",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "path": "modules/core/src/arithm.cpp",
+  "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987",
+  "source_program_executed": false,
+  "excerpts": [
+    {
+      "first_line": 613,
+      "last_line": 623,
+      "quote": "static bool shapesBroadcastCompat(InputArray a, int acn, InputArray b, int bcn)\n{\n    int asz[MatShape::MAX_DIMS + 1], bsz[MatShape::MAX_DIMS + 1];\n    int ad = a.sizend(asz), bd = b.sizend(bsz);\n    asz[ad++] = acn;\n    bsz[bd++] = bcn;\n    for (int i1 = ad - 1, i2 = bd - 1; i1 >= 0 && i2 >= 0; i1--, i2--)\n        if (asz[i1] != bsz[i2] && asz[i1] != 1 && bsz[i2] != 1)\n            return false;\n    return true;\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "at": "2026-11-21T18:19:29.840889+00:00",
+  "topic": "chi-middleware",
+  "family": "chi",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/chi-middleware/en.candidate.txt",
+      "sha256": "8586f3445191b6a04469809b5b20fef20c990c4fd335ccc8a39c6ded74c2db26",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/chi-middleware/pt-br.candidate.txt",
+      "sha256": "c769cbf927c79b2ee3356e7c701c740ca5a7e855d2f93f3b0bcf113c038734bd",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Outer Timeout returns a middleware function; returned wrapper constructs handler; Recoverer directly takes next.",
+    "Deferred cancellation precedes equality DeadlineExceeded check; normal next call is synchronous.",
+    "Recoverer abort sentinel re-panics before logging; getter and log method distinct; exact Connection comparison; no arbitrary goroutine/client guarantees.",
+    "Actual Recoverer baseline in both languages reverses defer order and invents panic variable/other logging; rejected keyword guard counterexample explicitly retained."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/chi/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/timeout.go",
+      "source_sha256": "3e83d007ec300b4ea605d97a336351e562ecd84b32c2b26206791d11ce7501c0",
+      "source_path": "middleware/timeout.go",
+      "source_lines": [
+        32,
+        48
+      ],
+      "exact_source_evidence": "func Timeout(timeout time.Duration) func(next http.Handler) http.Handler {\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tctx, cancel := context.WithTimeout(r.Context(), timeout)\n\t\t\tdefer func() {\n\t\t\t\tcancel()\n\t\t\t\tif ctx.Err() == context.DeadlineExceeded {\n\t\t\t\t\tw.WriteHeader(http.StatusGatewayTimeout)\n\t\t\t\t}\n\t\t\t}()\n\n\t\t\tr = r.WithContext(ctx)\n\t\t\tnext.ServeHTTP(w, r)\n\t\t}\n\t\treturn http.HandlerFunc(fn)\n\t}\n}",
+      "reviewed_interpretation": "Factory/closure/defer/next ordering and specific condition, not runtime interruption.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/chi/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/recoverer.go",
+      "source_sha256": "efc38c7b32bfb29ebbe16b199832d1eff13179a34a025c07b53c733c11a2154c",
+      "source_path": "middleware/recoverer.go",
+      "source_lines": [
+        22,
+        49
+      ],
+      "exact_source_evidence": "func Recoverer(next http.Handler) http.Handler {\n\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\tdefer func() {\n\t\t\tif rvr := recover(); rvr != nil {\n\t\t\t\tif rvr == http.ErrAbortHandler {\n\t\t\t\t\t// we don't recover http.ErrAbortHandler so the response\n\t\t\t\t\t// to the client is aborted, this should not be logged\n\t\t\t\t\tpanic(rvr)\n\t\t\t\t}\n\n\t\t\t\tlogEntry := GetLogEntry(r)\n\t\t\t\tif logEntry != nil {\n\t\t\t\t\tlogEntry.Panic(rvr, debug.Stack())\n\t\t\t\t} else {\n\t\t\t\t\tPrintPrettyStack(rvr)\n\t\t\t\t}\n\n\t\t\t\tif r.Header.Get(\"Connection\") != \"Upgrade\" {\n\t\t\t\t\tw.WriteHeader(http.StatusInternalServerError)\n\t\t\t\t}\n\t\t\t}\n\t\t}()\n\n\t\tnext.ServeHTTP(w, r)\n\t}\n\n\treturn http.HandlerFunc(fn)\n}",
+      "reviewed_interpretation": "Recovery branch, sentinel, log selection and exact status guard.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "chi-timeout",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/chi-timeout/raw-response.json",
+      "sha256": "9760e8caf86499e853c270a5ad78fbde2887ae265367f1853613fab726975548",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    },
+    {
+      "id": "chi-recoverer",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/chi-recoverer/raw-response.json",
+      "sha256": "03b1fb739b87f49d1ba8aa7cc2c9e345700268fb2e4b5ff8d20f3fe81ecbb608",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0,
+  "at_v2": "2026-11-21T18:33:17.729223+00:00",
+  "extends_exact_v1_sha256": "6cae024950466ae3b9609075e699600d79de0508536c974a8e6405328d02bef0",
+  "procedural_gap_resolution": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-procedural-gap-resolution-v1.json",
+  "procedural_gap_resolution_sha256": "b66a50175b08c330c442e14d161455034f5552ef1f0575bab33e0ad1f0868b57"
+}

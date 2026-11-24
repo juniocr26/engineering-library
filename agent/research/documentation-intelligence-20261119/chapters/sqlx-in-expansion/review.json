@@ -1,0 +1,101 @@
+{
+  "at": "2026-11-20T00:29:51.277587+00:00",
+  "chapter_id": "sqlx-in-expansion",
+  "source_repository": "sqlx",
+  "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "allocation",
+      "path": "bind.go",
+      "lines": [
+        142,
+        162
+      ],
+      "review": "32-entry stack optimization falls back to allocation, not an argument-count error."
+    },
+    {
+      "id": "valuer-prepass",
+      "path": "bind.go",
+      "lines": [
+        163,
+        192
+      ],
+      "review": "Valuer called before classification; errors return empty/nil/error; no-slice fast path returns original args."
+    },
+    {
+      "id": "slice-kind",
+      "path": "bind.go",
+      "lines": [
+        117,
+        137
+      ],
+      "review": "Exact []byte type excluded; type Deref leaves reflect.Value unchanged."
+    },
+    {
+      "id": "deref-once",
+      "path": "reflectx/reflect.go",
+      "lines": [
+        231,
+        236
+      ],
+      "review": "Single pointer-kind if strips one type level; no loop or value dereference."
+    },
+    {
+      "id": "rewrite",
+      "path": "bind.go",
+      "lines": [
+        194,
+        244
+      ],
+      "review": "IndexByte question-mark scan, ordered scalar/slice handling, distinct mismatch errors, successful buf.String/newArgs/nil."
+    },
+    {
+      "id": "append-helper",
+      "path": "bind.go",
+      "lines": [
+        246,
+        265
+      ],
+      "review": "Interface slice append, ordered int/string loops, indexed reflection fallback; no SQL execution."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "9c1676aee2a098da836300d43f84bcc4c036777c2df2c1b37a602a49dd2c7b52",
+      "after_sha256": "83416fddb29eb4c1cee6a9e12b82faa3ea2cc2c840ec1e535131bbeb016599cf",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -40,3 +40,19 @@\n \n The successful final statement returns `buf.String(), newArgs, nil`. Describing that last result merely as “an error” loses the explicitly written nil success value. The whole corrected contract remains conditional on ordinary completion of invoked helpers and reflection operations. No SQLx application or database was executed, and no model weights changed. Exact source, retained license notices and bilingual code-span parity support review; owner approval and training rights remain separate gates.\n \n+## Engineer FAQ\n+\n+<!-- reading-section: faq:metadata-array-not-argument-cap -->\n+### Are more than 32 arguments rejected?\n+\n+No such rejection is written in the allocation branch. Larger input allocates metadata sized to the argument count. Normal allocation and helper completion remain assumptions; the stack-buffer size is not the public limit claimed by the historical baseline.\n+\n+<!-- reading-section: faq:valuer-before-no-slice-fast-path -->\n+### Does the no-slice path skip every helper and validate placeholder counts?\n+\n+The preparation loop has already run, including any applicable Valuer call. When no expandable slice is found, the function returns the original query and argument slice before the rewriting mismatch checks. It does not substitute all transformed local values into that original slice.\n+\n+<!-- reading-section: faq:byte-scan-not-sql-parser -->\n+### Does question-mark scanning understand SQL quotes and comments?\n+\n+The selected implementation searches bytes with `strings.IndexByte`; no SQL quoting or comment state is shown. Likewise, the exact byte-slice exclusion should not be generalized to every separately defined slice type without its own evidence. The result still requires appropriate downstream placeholder handling and database execution elsewhere.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "5fbe1b12660a8fda19166f148d3d1efddf897d5115bb90a05db4d1f48047cedb",
+      "after_sha256": "a8742f8d6dc4be4f3bc0f70296351322d3fc16ae84f3b15a8690b996a2a1264b",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -40,3 +40,19 @@\n \n A instrução final de sucesso retorna `buf.String(), newArgs, nil`. Descrever esse último resultado apenas como “um erro” perde o valor nulo de sucesso escrito explicitamente. Todo o contrato corrigido continua condicionado à conclusão comum dos helpers invocados e das operações de reflexão. Nenhuma aplicação SQLx ou banco foi executado, e nenhum peso do modelo mudou. Fonte exata, avisos de licença retidos e paridade bilíngue de trechos de código apoiam a revisão; aprovação do proprietário e direitos de treinamento continuam sendo gates separados.\n \n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:metadata-array-not-argument-cap -->\n+### Mais de 32 argumentos são rejeitados?\n+\n+Não há essa rejeição escrita no ramo de alocação. Uma entrada maior aloca metadados do tamanho da contagem de argumentos. Conclusão normal da alocação e dos helpers continua sendo premissa; o tamanho do buffer local não é o limite público afirmado pelo baseline histórico.\n+\n+<!-- reading-section: faq:valuer-before-no-slice-fast-path -->\n+### O caminho sem fatias pula todos os helpers e valida a contagem de placeholders?\n+\n+O laço preparatório já executou, incluindo qualquer chamada aplicável a Valuer. Quando não encontra fatia expansível, a função retorna a consulta e a fatia de argumentos originais antes das verificações de divergência da reescrita. Não substitui todos os valores locais transformados nessa fatia original.\n+\n+<!-- reading-section: faq:byte-scan-not-sql-parser -->\n+### A busca de pontos de interrogação entende aspas e comentários SQL?\n+\n+A implementação selecionada procura bytes com `strings.IndexByte`; não mostra estado de aspas ou comentários SQL. Da mesma forma, a exclusão do tipo exato de fatia de bytes não deve ser generalizada a todo tipo de fatia definido separadamente sem sua própria evidência. O resultado ainda exige tratamento posterior apropriado de placeholders e execução de banco em outro componente.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.334657+00:00",
+    "canonical_question_ids": [
+      "metadata-array-not-argument-cap",
+      "valuer-before-no-slice-fast-path",
+      "byte-scan-not-sql-parser"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/sqlx-in-expansion",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

@@ -1,0 +1,19 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common="""
+
+### Progresso intensivo 059 — candidato interno integral v2 e população esclarecida
+
+O checkpoint043 restaurou5.214arquivos,153.530.604bytes compactados e44grupos finitos, incluindo o novo consumidor interno. As quatro notas dos relatórios foram reconstruídas exatamente, com relatórios quiescentes durante a execução. Esse corte recupera o candidato v1 e seus15arquivos opcionais/36cartões/54links/6logs históricos: o consumidor daquele corte verificou esses6logs; os2logs adicionais244/264foram acrescentados depois, portanto ainda não pertencem ao consumidor043. Não reclassificar a evidência posterior como já restaurada.
+
+A leitura integral EN/PT identificou ambiguidade adicional: cinco tarefas de seletores sobre dois caminhos de fonte eram descritas como cinco módulos completos. O recibo efetivo contém dois resultados por arquivo e cinco seletores. O candidato v2 mantém todo o capítulo e altera uma frase por idioma para explicitar cinco tarefas e dois caminhos nas revisões comparadas. Originais e v1 permanecem inconclusivos quanto à clareza temporal/população, preservados integralmente; isso não é uma sexta falha pública de atribuição histórica.
+
+O fechamento adicional conferiu seis citações físicas helper e oito cachetools contra fontes preservadas, o classificador histórico22/24com duas abstenções JavaScript, o log Ruby262runs/1787assertions/zero falhas e os dois logs244/264. O produtor JavaScript standalone1.1.0 tem hash9869a790fa9fd6e8e07d792433a93cc4c02b0ad0a29deff82bd5f7b909b23b24igual ao recibo histórico e emite o pacote filho opcional de guardas ordenadas; não foi confundido com o parser opcional de mapeamento nem com nova rota Ruby. O recibo project-source-consistency foi lido para os caminhos históricos de mistura de fonte. Nenhuma suíte histórica, aplicação ou nova inferência foi executada por essas conferências.
+
+A revisão agent-contracts-dated-complete-review-v1.json registra37grupos compostos de parágrafos/tabela, três FAQs e oito questões de contestação em passagem separada do mesmo agente. G1–G8 foram avaliados sob o escopo estático datado, sem alegar37fatos atômicos independentes ou revisão humana. G9 permanece pendente para v2, pois a frase corrigida e19dependências adicionais vieram após043. O consumidor v2 passou preflight no workspace e vincula242dependências; recuperação independente dessa versão ainda é necessária. Nenhuma aprovação de proprietário, publicação, Gold ou treino decorre da revisão.
+"""
+j=p/'root-report-bundle-progress-059';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v59.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

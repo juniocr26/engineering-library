@@ -1,0 +1,19 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Final intensive progress 041 — original JPEG-quality target source and baseline audit
+
+The complete original GoImagequality EN/PT pair at immutable datasetrows21/22 was reread, including3FAQs and6staticnumericexamples. The already preserved exactGit source at48476de6e4450294b7769ab7af90805100bb21b5/sourceSHA2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e was reused with its actual acquisition receipt, avoiding unnecessary repeated acquisition of identical objects. Fullfile constants/fields/constructor/fourqualitywrappers/clampQuality were read; codec success, ratios, visual quality, import/type/runtimebehavior remain explicitly outside the chapter’s proof.
+
+The unchanged existingGoAST1.6.1producer parsed6declarations in2boundedbatches and matched all six older sourcepacket quotes/ranges. Its written three-guard return chain preserves value==0 ->fallback before value<1 ->1 and value>100 ->100, then unchangedvalue. Fallback140atvalue0 defeats a universal1..100 genericresult claim; the JPEGwrapper’s82 is a caller-specific in-range default. Six original table rows are static branch illustrations, not executed target tests.
+
+Exact historicalrequests/responses and writerreceipts confirm mixed results: caller response falselymadefallbackalowerbound; helper responseinvented80 andovergeneralizedrange, yetitssecondfactcorrectlydescribesthefourcases. The numericconstantwasabsentfromselectedmodelrequestquotes even though the trace’s fullacquisitionsnapshot contained82; acquisition context must notbeconfusedwithmodeldelivery. Helperwriterexit1reportednamedtypeabsentitscitedexcerpt;callerexit0writtenunreviewedwasnotfactualacceptance. No oldsemanticlabels were rescored.
+
+Fullpair/source/bilingual/FAQ/table review and10adversecaseadjudications supportG1-G8 withinfrozen scope; G9stillINCONCLUSIVEpendingactualcheckpoint030restore. No originaltextchange needed. Currentlocalconsumerchecksdocument/source/AST/historicalresponse/range/table identities, notgeneralsemanticaccuracy. No newmodelcalls/training/publication/Gold; externalrepos/production/UI/permanenttests unchanged. Campaign active, final12hour duration notyetmet.
+'''
+j=p/'root-report-bundle-progress-041';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v41.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

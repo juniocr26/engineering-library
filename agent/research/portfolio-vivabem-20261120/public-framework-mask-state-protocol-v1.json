@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-21T08:59:54.549735+00:00",
+  "commit": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "repository": "ml-explore/mlx-lm",
+  "hypothesis": "The future pilot needs exact source-grounded prompt/padding mask and checkpoint semantics; resume_adapter_file and saved adapter weights alone must not be called exact optimizer/RNG/data-cursor resume. Inspect actual trainer/dataset paths before closing those gates.",
+  "selected_body_trace_not_yet_performed": true,
+  "known_source_leads": [
+    "mlx_lm/lora.py imports CacheDataset/load_dataset fromtuner.datasets and TrainingArgs/train fromtuner.trainer",
+    "CLI defaults mask_promptFalse andresume_adapter_fileNone;thisdoesnotaloneestablishactualmask/checkpointbehavior."
+  ],
+  "required_questions": [
+    "How are chat/completion examples tokenized and prompt-target boundaries represented?",
+    "How does batching truncate/pad and which positions receive loss?",
+    "Are zero supervised tokens guarded or can zero denominators occur?",
+    "What does resume_adapter_file restore and when is optimizer initialized?",
+    "Which exactstate is saved at adapter checkpoints;is optimizer/RNG/dataposition saved/restored anywhere inselectedcallchain?"
+  ],
+  "scope": "Read pinned official publicsourceonly,no framework/model imports, tokenization, training, installation, weights or external data requests. No newdatasetrecords or ownerGold.",
+  "readiness_rule": "Sourcefindingscanrefineblockedpreflight,notcertifyloadedtokenizer/maskfit/trainingstate/resourcefeasibility. Preservepriorproposals,no launchauthorization."
+}

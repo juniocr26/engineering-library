@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-20T20:53:36.421608+00:00",
+  "status": "FROZEN_BEFORE_METADATA_ONLY_PARTITION_DIAGNOSTIC",
+  "hypothesis": "Row-level hashing can split bilingual/derived chapter-FAQ tasks;lineage-level hashing may still split one source family. Whole-family grouping should preserve these declared groups but does not certify independent evaluation.",
+  "dataset_manifest_sha256": "e7259a8282a46207e4970c9443e01eeb5485483ce1bfca80629b191b9698e3ab",
+  "schemes": [
+    "row-identity-hash",
+    "lineage-group-hash",
+    "declared-source-family-hash"
+  ],
+  "partition_rule": "SHA256 UTF8canonicalkey modulo5:0->B,others->A;labels are hypothetical A/B only,nottrain/validation assignments.",
+  "expected_relations": [
+    "Row scheme has some bilingual/task and sourcefamily crosspartition overlap.",
+    "Lineage scheme has no split bilingual/task groups but some split sourcefamilies.",
+    "Declared-family scheme has no split declaredbilingual/lineage/sourcefamilygroups;allother ancestry/context overlap remains unproven."
+  ],
+  "source_reference_metrics": "Known source_evidence_ref/document_ref hashes measured separately;sharedartifact is an overlap signal,not automatic proof all semantics/ancestry identical.",
+  "output": "Metadata rowIDs/file+lineSHA/groupIDs only;no exampletext or trainingexport.",
+  "owner_gold_required_for_actual_training": true,
+  "current_owner_gold": 0,
+  "actual_training_or_evaluation_split_created": false,
+  "frozen_records_modified": false,
+  "training_steps": 0,
+  "launch_allowed": false,
+  "owner_approved": false,
+  "training_excluded": true
+}

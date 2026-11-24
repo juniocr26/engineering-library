@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-20T19:45:22.519381+00:00",
+  "status": "FROZEN_BEFORE_PROCESS_INTERRUPTION",
+  "task": "F3",
+  "hypothesis": "A real worker termination immediately after the first language active file is durably written should leave a partial isolated candidate without success receipt. The existing CLI must refuse reuse of that root, preserve originals and partial bytes, and accept only an explicitly separate fresh candidate request.",
+  "interruption": "The owned child worker sends SIGKILL only to its own PID after the real write_new(active/en/guide.md) returns. Parent/session/container are not killed.",
+  "expected": [
+    "Child returncode -9",
+    "Partial candidate active/en/guide.md present and result.json absent",
+    "Original source/docs bytes,mode,mtime unchanged",
+    "Same request CLI exit2 with existing candidate root refusal;partial bytes unchanged",
+    "New explicit candidate_root with otherwise same frozen input succeeds;oldpartial remains unchanged"
+  ],
+  "scope": "Owned synthetic literal-return Python project, current production planner0.3.6/maintenance0.1.5/candidates0.1.2; no public-source execution or active catalog writes.",
+  "new_distinct_fault_scenarios": 1,
+  "permanent_tests_modified": false,
+  "model_calls": 0,
+  "owner_approved": false,
+  "publication_authorized": false,
+  "training_excluded": true,
+  "campaign_host_termination_claim": false
+}

@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-21T05:53:37.287746+00:00",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "files": [
+    {
+      "source_path": "COPYRIGHT",
+      "bytes": 846,
+      "sha256": "5b8559278fabdb2d38e5251facf259e394f5dc2c604c5e91c1b3befb99ecbc11"
+    },
+    {
+      "source_path": "LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "source_path": "modules/core/include/opencv2/core/base.hpp",
+      "bytes": 19618,
+      "sha256": "15d83c7d2ff03078100313ac928f112e1d05f346ab28f91b49a984552c5263a1"
+    },
+    {
+      "source_path": "modules/core/include/opencv2/core/cvdef.h",
+      "bytes": 38612,
+      "sha256": "9ff4548335a0e5ef764e39adb7487f44a413d5018995f10c286c3baa532efa73"
+    },
+    {
+      "source_path": "modules/core/include/opencv2/core/exception.hpp",
+      "bytes": 11098,
+      "sha256": "f3bf12e40d006e40dc374f31bd337e587037d4ee89526f0450ee53cfbfd6816e"
+    },
+    {
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "bytes": 167339,
+      "sha256": "2fc8257fc4ed68093df06e6f41bcc544c65c24e93613149e3cca676a21d156fb"
+    },
+    {
+      "source_path": "modules/core/src/algorithm.cpp",
+      "bytes": 2957,
+      "sha256": "89e80eefada7e6ad9b3fcad274645566dba853d773b1f91990e1065ef135728e"
+    }
+  ],
+  "fact_groups": [
+    {
+      "id": "OC1",
+      "source": "core.hpp:3333-3362;cvdef.h:147",
+      "fact": "Algorithm has virtual destructor/clear/write(single storage)/read(node)/empty; base clear is empty, write/read use CV_UNUSED which expands to void cast, base empty returns false. Base defaults do not prove behavior of all derived overrides."
+    },
+    {
+      "id": "OC2",
+      "source": "core.hpp:3350;algorithm.cpp:58-69",
+      "fact": "Two-argument storage/name write overload is not declared virtual; selected body calls one-argument virtual write, with empty-name early return versus wrapping a named mapping. A nonvirtual wrapper can contain a virtual dispatch site."
+    },
+    {
+      "id": "OC3",
+      "source": "core.hpp:3375-3380",
+      "fact": "Static read template calls _Tp::create(), obj->read(fn), then returns object if !obj->empty(), otherwise default Ptr. No selected node-empty or explicit null-create guard. Expression compatibility and Ptr requirements matter; actual instantiation not compiled."
+    },
+    {
+      "id": "OC4",
+      "source": "core.hpp:3394-3403",
+      "fact": "load uses FileStorage READ, CV_Assert(isOpened), first top-level node or named lookup, explicit node-empty early empty Ptr, create/read/empty predicate. No universal successful deserialization guarantee."
+    },
+    {
+      "id": "OC5",
+      "source": "core.hpp:3415-3422",
+      "fact": "loadFromString uses READ+MEMORY and selects node then create/read/empty predicate; unlike selected load body, no explicit isOpened assertion or node-empty early return. That syntactic difference does not prove all invalid input behavior without FileStorage/FileNode/derived source/runtime."
+    },
+    {
+      "id": "OC6",
+      "source": "core.hpp:3424-3433;algorithm.cpp:71-89",
+      "fact": "save/getDefaultName virtual declarations; selected save opens WRITE storage, writes getDefaultName node, calls one-arg write and closes mapping. Base getDefaultName returns my_object; protected writeFormat emits format integer3. No complete/successful file transaction guarantee."
+    },
+    {
+      "id": "OC7",
+      "source": "exception.hpp:154-201",
+      "fact": "CV_STATIC_ANALYSIS alternative CV_Assert aborts on false; ordinary branch calls cv::error(StsAssert,...). Do not confuse CV_Assert with debug-only CV_DbgAssert or promise one universal exception/termination mode across builds."
+    },
+    {
+      "id": "OC8",
+      "source": "core.hpp:3351-3354",
+      "fact": "Deprecated pointer-storage overload declaration is conditional on CV_VERSION_MAJOR <5. Selected algorithm.cpp absence does not prove global removal/unavailability or active build version."
+    },
+    {
+      "id": "OC9",
+      "source": "LICENSE plus selected core.hpp/algorithm.cpp notices",
+      "fact": "Root Apache2 text and selected file BSD-style three-condition notices coexist; preserve actual notices and attribution. Root license alone does not certify all files/uses."
+    }
+  ],
+  "stage": "SOURCE_REVIEW_NOT_COMPLETE_DOCUMENT_ACCEPTANCE",
+  "source_execution": false,
+  "training_gold": false,
+  "licensing_limit": "File-specific notices retained; not comprehensive legal/applicability or training-rights approval."
+}

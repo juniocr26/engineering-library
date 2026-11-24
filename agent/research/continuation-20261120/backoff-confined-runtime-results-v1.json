@@ -1,0 +1,2020 @@
+{
+  "at": "2026-11-20T19:53:55.345800+00:00",
+  "results": [
+    {
+      "tag": "v4.1.3",
+      "revision": "6b0e4ad0cd65431b217393bff47d1dff727b264b",
+      "rows": [
+        {
+          "id": "stop-error",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "error": "operation",
+            "same_operation_error": true
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "error": true,
+            "same_operation_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "stop-success",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "max-retries-zero",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "operation"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "max-retries-two",
+          "observed": {
+            "attempts": 3,
+            "delays_ns": [
+              0,
+              0
+            ],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "next2",
+              "notify2",
+              "timer-start2",
+              "operation3",
+              "timer-stop"
+            ],
+            "notify": 2,
+            "owned_policy_next_calls": 2,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 2,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 3,
+            "notify": 2,
+            "timer_starts": 2,
+            "error": "operation"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "fail-then-success",
+          "observed": {
+            "attempts": 2,
+            "delays_ns": [
+              0
+            ],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 2,
+            "notify": 1,
+            "timer_starts": 1,
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-direct",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "operation",
+            "same_operation_error": true
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true,
+            "same_operation_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-wrapped",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "operation",
+            "same_operation_error": true
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true,
+            "same_operation_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-nil",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "canceled-success",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "none",
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "canceled-error",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "canceled",
+            "same_operation_error": false,
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "same_operation_error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "canceled-permanent",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "operation",
+            "same_operation_error": true,
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "same_operation_error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "tries-outside-context",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "canceled",
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "context-outside-tries",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "canceled",
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "cancel-during-timer",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [
+              0
+            ],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 1,
+            "timer_starts": 1,
+            "timer_stops": 1,
+            "error": "canceled"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "notify-panic",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "panic": "owned-notify",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 1,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "panic": "owned-notify"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "operation-panic",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "panic": "owned-operation",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "panic": "owned-operation"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "timer-start-panic",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [
+              0
+            ],
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "panic": "owned-timer",
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 1,
+            "timer_starts": 1,
+            "timer_stops": 1,
+            "panic": "owned-timer"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "context-rewrap",
+          "observed": {
+            "new_context_error": "none",
+            "new_context_used": true,
+            "next_ns": 0
+          },
+          "expected_fields": {
+            "new_context_used": true,
+            "next_ns": 0,
+            "new_context_error": "none"
+          },
+          "field_checks": {
+            "new_context_used": true,
+            "next_ns": true,
+            "new_context_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "nil-context-panic",
+          "observed": {
+            "panic": "nil context"
+          },
+          "expected_fields": {
+            "panic": "nil context"
+          },
+          "field_checks": {
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-is-class",
+          "observed": {
+            "different_inner_error_wrapper_matches": true,
+            "is_inner": true,
+            "is_other_inner": false
+          },
+          "expected_fields": {
+            "different_inner_error_wrapper_matches": true,
+            "is_inner": true,
+            "is_other_inner": false
+          },
+          "field_checks": {
+            "different_inner_error_wrapper_matches": true,
+            "is_inner": true,
+            "is_other_inner": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-unwrap",
+          "observed": {
+            "permanent_nil_is_nil": true,
+            "unwrap_same_inner": true
+          },
+          "expected_fields": {
+            "unwrap_same_inner": true,
+            "permanent_nil_is_nil": true
+          },
+          "field_checks": {
+            "unwrap_same_inner": true,
+            "permanent_nil_is_nil": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-default-stop",
+          "observed": {
+            "next_ns": -1
+          },
+          "expected_fields": {
+            "next_ns": -1
+          },
+          "field_checks": {
+            "next_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-custom-stop",
+          "observed": {
+            "next_ns": 5000000
+          },
+          "expected_fields": {
+            "next_ns": 5000000
+          },
+          "field_checks": {
+            "next_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-initial-over-cap",
+          "observed": {
+            "durations_ns": [
+              100000000,
+              50000000
+            ]
+          },
+          "expected_fields": {
+            "durations_ns": [
+              100000000,
+              50000000
+            ]
+          },
+          "field_checks": {
+            "durations_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-growth",
+          "observed": {
+            "durations_ns": [
+              10000000,
+              20000000,
+              40000000,
+              60000000,
+              60000000
+            ]
+          },
+          "expected_fields": {
+            "durations_ns": [
+              10000000,
+              20000000,
+              40000000,
+              60000000,
+              60000000
+            ]
+          },
+          "field_checks": {
+            "durations_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-elapsed-reset",
+          "observed": {
+            "elapsed_after_reset_ns": 0,
+            "elapsed_before_reset_ns": 250000000
+          },
+          "expected_fields": {
+            "elapsed_before_reset_ns": 250000000,
+            "elapsed_after_reset_ns": 0
+          },
+          "field_checks": {
+            "elapsed_before_reset_ns": true,
+            "elapsed_after_reset_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-predicted-wait-cutoff",
+          "observed": {
+            "elapsed_ns": 0,
+            "next_ns": -1
+          },
+          "expected_fields": {
+            "elapsed_ns": 0,
+            "next_ns": -1
+          },
+          "field_checks": {
+            "elapsed_ns": true,
+            "next_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "notify-order",
+          "observed": {
+            "attempts": 2,
+            "delays_ns": [
+              0
+            ],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ]
+          },
+          "field_checks": {
+            "events": true
+          },
+          "pass": true
+        },
+        {
+          "id": "default-timer-no-start",
+          "observed": {
+            "attempts": 1,
+            "custom_timer_used": false,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "next1"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 0
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "operation",
+            "notify": 0,
+            "custom_timer_used": false
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "notify": true,
+            "custom_timer_used": true
+          },
+          "pass": true
+        },
+        {
+          "id": "custom-positive-stop-retry",
+          "observed": {
+            "attempts": 2,
+            "delays_ns": [
+              5000000
+            ],
+            "error": "none",
+            "events": [
+              "operation1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 0,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 2,
+            "notify": 1,
+            "timer_starts": 1,
+            "delays_ns": [
+              5000000
+            ],
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "delays_ns": true,
+            "error": true
+          },
+          "pass": true
+        }
+      ],
+      "passes": 30,
+      "cases": 30,
+      "source_originals_and_copies_unchanged": true,
+      "binary_sha256": "d2537fcb012270ac5e44ef3a588c0153f913fbd132f31d2c5bd8e642c25f1dc4"
+    },
+    {
+      "tag": "v4.3.0",
+      "revision": "720b78985a65c0452fd37bb155c7cac4157a7c45",
+      "rows": [
+        {
+          "id": "stop-error",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "error": "operation",
+            "same_operation_error": true
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "error": true,
+            "same_operation_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "stop-success",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "max-retries-zero",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "operation"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "max-retries-two",
+          "observed": {
+            "attempts": 3,
+            "delays_ns": [
+              0,
+              0
+            ],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "next2",
+              "notify2",
+              "timer-start2",
+              "operation3",
+              "timer-stop"
+            ],
+            "notify": 2,
+            "owned_policy_next_calls": 2,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 2,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 3,
+            "notify": 2,
+            "timer_starts": 2,
+            "error": "operation"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "fail-then-success",
+          "observed": {
+            "attempts": 2,
+            "delays_ns": [
+              0
+            ],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 2,
+            "notify": 1,
+            "timer_starts": 1,
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-direct",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "operation",
+            "same_operation_error": true
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true,
+            "same_operation_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-wrapped",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "operation",
+            "same_operation_error": true
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true,
+            "same_operation_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-nil",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "canceled-success",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "none",
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "canceled-error",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "canceled",
+            "same_operation_error": false,
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "same_operation_error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "canceled-permanent",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "operation",
+            "same_operation_error": true,
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "same_operation_error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "tries-outside-context",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "canceled",
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "context-outside-tries",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "canceled",
+            "timer_starts": 0
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "timer_starts": true
+          },
+          "pass": true
+        },
+        {
+          "id": "cancel-during-timer",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [
+              0
+            ],
+            "error": "canceled",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 1,
+            "timer_starts": 1,
+            "timer_stops": 1,
+            "error": "canceled"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "notify-panic",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "panic": "owned-notify",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 1,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "panic": "owned-notify"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "operation-panic",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [],
+            "events": [
+              "reset",
+              "operation1",
+              "timer-stop"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 1,
+            "panic": "owned-operation",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 0,
+            "timer_starts": 0,
+            "timer_stops": 1,
+            "panic": "owned-operation"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "timer-start-panic",
+          "observed": {
+            "attempts": 1,
+            "delays_ns": [
+              0
+            ],
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "panic": "owned-timer",
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "notify": 1,
+            "timer_starts": 1,
+            "timer_stops": 1,
+            "panic": "owned-timer"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "timer_stops": true,
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "context-rewrap",
+          "observed": {
+            "new_context_error": "none",
+            "new_context_used": true,
+            "next_ns": 0
+          },
+          "expected_fields": {
+            "new_context_used": true,
+            "next_ns": 0,
+            "new_context_error": "none"
+          },
+          "field_checks": {
+            "new_context_used": true,
+            "next_ns": true,
+            "new_context_error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "nil-context-panic",
+          "observed": {
+            "panic": "nil context"
+          },
+          "expected_fields": {
+            "panic": "nil context"
+          },
+          "field_checks": {
+            "panic": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-is-class",
+          "observed": {
+            "different_inner_error_wrapper_matches": true,
+            "is_inner": true,
+            "is_other_inner": false
+          },
+          "expected_fields": {
+            "different_inner_error_wrapper_matches": true,
+            "is_inner": true,
+            "is_other_inner": false
+          },
+          "field_checks": {
+            "different_inner_error_wrapper_matches": true,
+            "is_inner": true,
+            "is_other_inner": true
+          },
+          "pass": true
+        },
+        {
+          "id": "permanent-unwrap",
+          "observed": {
+            "permanent_nil_is_nil": true,
+            "unwrap_same_inner": true
+          },
+          "expected_fields": {
+            "unwrap_same_inner": true,
+            "permanent_nil_is_nil": true
+          },
+          "field_checks": {
+            "unwrap_same_inner": true,
+            "permanent_nil_is_nil": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-default-stop",
+          "observed": {
+            "next_ns": -1
+          },
+          "expected_fields": {
+            "next_ns": -1
+          },
+          "field_checks": {
+            "next_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-custom-stop",
+          "observed": {
+            "next_ns": 5000000
+          },
+          "expected_fields": {
+            "next_ns": 5000000
+          },
+          "field_checks": {
+            "next_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-initial-over-cap",
+          "observed": {
+            "durations_ns": [
+              100000000,
+              50000000
+            ]
+          },
+          "expected_fields": {
+            "durations_ns": [
+              100000000,
+              50000000
+            ]
+          },
+          "field_checks": {
+            "durations_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-growth",
+          "observed": {
+            "durations_ns": [
+              10000000,
+              20000000,
+              40000000,
+              60000000,
+              60000000
+            ]
+          },
+          "expected_fields": {
+            "durations_ns": [
+              10000000,
+              20000000,
+              40000000,
+              60000000,
+              60000000
+            ]
+          },
+          "field_checks": {
+            "durations_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-elapsed-reset",
+          "observed": {
+            "elapsed_after_reset_ns": 0,
+            "elapsed_before_reset_ns": 250000000
+          },
+          "expected_fields": {
+            "elapsed_before_reset_ns": 250000000,
+            "elapsed_after_reset_ns": 0
+          },
+          "field_checks": {
+            "elapsed_before_reset_ns": true,
+            "elapsed_after_reset_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "exp-predicted-wait-cutoff",
+          "observed": {
+            "elapsed_ns": 0,
+            "next_ns": -1
+          },
+          "expected_fields": {
+            "elapsed_ns": 0,
+            "next_ns": -1
+          },
+          "field_checks": {
+            "elapsed_ns": true,
+            "next_ns": true
+          },
+          "pass": true
+        },
+        {
+          "id": "notify-order",
+          "observed": {
+            "attempts": 2,
+            "delays_ns": [
+              0
+            ],
+            "error": "none",
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "events": [
+              "reset",
+              "operation1",
+              "next1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ]
+          },
+          "field_checks": {
+            "events": true
+          },
+          "pass": true
+        },
+        {
+          "id": "default-timer-no-start",
+          "observed": {
+            "attempts": 1,
+            "custom_timer_used": false,
+            "delays_ns": [],
+            "error": "operation",
+            "events": [
+              "reset",
+              "operation1",
+              "next1"
+            ],
+            "notify": 0,
+            "owned_policy_next_calls": 1,
+            "owned_policy_resets": 1,
+            "same_operation_error": true,
+            "timer_starts": 0,
+            "timer_stops": 0
+          },
+          "expected_fields": {
+            "attempts": 1,
+            "error": "operation",
+            "notify": 0,
+            "custom_timer_used": false
+          },
+          "field_checks": {
+            "attempts": true,
+            "error": true,
+            "notify": true,
+            "custom_timer_used": true
+          },
+          "pass": true
+        },
+        {
+          "id": "custom-positive-stop-retry",
+          "observed": {
+            "attempts": 2,
+            "delays_ns": [
+              5000000
+            ],
+            "error": "none",
+            "events": [
+              "operation1",
+              "notify1",
+              "timer-start1",
+              "operation2",
+              "timer-stop"
+            ],
+            "notify": 1,
+            "owned_policy_next_calls": 0,
+            "owned_policy_resets": 0,
+            "same_operation_error": false,
+            "timer_starts": 1,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "attempts": 2,
+            "notify": 1,
+            "timer_starts": 1,
+            "delays_ns": [
+              5000000
+            ],
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "delays_ns": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "generic-success",
+          "observed": {
+            "attempts": 1,
+            "data": 42,
+            "error": "none",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "data": 42,
+            "error": "none",
+            "attempts": 1,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "field_checks": {
+            "data": true,
+            "error": true,
+            "attempts": true,
+            "timer_starts": true,
+            "timer_stops": true
+          },
+          "pass": true
+        },
+        {
+          "id": "generic-final-error",
+          "observed": {
+            "attempts": 1,
+            "data": 73,
+            "error": "operation",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "data": 73,
+            "error": "operation",
+            "attempts": 1,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "field_checks": {
+            "data": true,
+            "error": true,
+            "attempts": true,
+            "timer_starts": true,
+            "timer_stops": true
+          },
+          "pass": true
+        },
+        {
+          "id": "generic-permanent",
+          "observed": {
+            "attempts": 1,
+            "data": 91,
+            "error": "operation",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "data": 91,
+            "error": "operation",
+            "attempts": 1,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "field_checks": {
+            "data": true,
+            "error": true,
+            "attempts": true,
+            "timer_starts": true,
+            "timer_stops": true
+          },
+          "pass": true
+        },
+        {
+          "id": "generic-cancel",
+          "observed": {
+            "attempts": 1,
+            "data": 17,
+            "error": "canceled",
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "expected_fields": {
+            "data": 17,
+            "error": "canceled",
+            "attempts": 1,
+            "timer_starts": 0,
+            "timer_stops": 1
+          },
+          "field_checks": {
+            "data": true,
+            "error": true,
+            "attempts": true,
+            "timer_starts": true,
+            "timer_stops": true
+          },
+          "pass": true
+        },
+        {
+          "id": "constructor-options",
+          "observed": {
+            "clock_is_owned": true,
+            "clock_now_calls": 1,
+            "initial_ns": 10000000,
+            "max_elapsed_ns": 1000000000,
+            "max_interval_ns": 60000000,
+            "multiplier": 2,
+            "randomization_factor": 0,
+            "stop_ns": -1
+          },
+          "expected_fields": {
+            "initial_ns": 10000000,
+            "randomization_factor": 0,
+            "multiplier": 2,
+            "max_interval_ns": 60000000,
+            "max_elapsed_ns": 1000000000,
+            "stop_ns": -1,
+            "clock_is_owned": true,
+            "clock_now_calls": 1
+          },
+          "field_checks": {
+            "initial_ns": true,
+            "randomization_factor": true,
+            "multiplier": true,
+            "max_interval_ns": true,
+            "max_elapsed_ns": true,
+            "stop_ns": true,
+            "clock_is_owned": true,
+            "clock_now_calls": true
+          },
+          "pass": true
+        },
+        {
+          "id": "constructor-option-order",
+          "observed": {
+            "clock_now_calls": 1,
+            "initial_ns": 9000000
+          },
+          "expected_fields": {
+            "initial_ns": 9000000,
+            "clock_now_calls": 1
+          },
+          "field_checks": {
+            "initial_ns": true,
+            "clock_now_calls": true
+          },
+          "pass": true
+        },
+        {
+          "id": "positive-stop-option-retry",
+          "observed": {
+            "attempts": 2,
+            "delays_ns": [
+              5000000
+            ],
+            "error": "none",
+            "notify": 1,
+            "timer_starts": 1
+          },
+          "expected_fields": {
+            "attempts": 2,
+            "notify": 1,
+            "timer_starts": 1,
+            "delays_ns": [
+              5000000
+            ],
+            "error": "none"
+          },
+          "field_checks": {
+            "attempts": true,
+            "notify": true,
+            "timer_starts": true,
+            "delays_ns": true,
+            "error": true
+          },
+          "pass": true
+        },
+        {
+          "id": "nil-clock-option-panic",
+          "observed": {
+            "panic": "runtime error: invalid memory address or nil pointer dereference",
+            "panic_present": true
+          },
+          "expected_fields": {
+            "panic_present": true
+          },
+          "field_checks": {
+            "panic_present": true
+          },
+          "pass": true
+        }
+      ],
+      "passes": 38,
+      "cases": 38,
+      "source_originals_and_copies_unchanged": true,
+      "binary_sha256": "5e4c5c50b532750d1e7f83433fde91ad3439bf69963626e32b3d651d06bd79ab"
+    }
+  ],
+  "commands": [
+    {
+      "label": "v4.1.3-build",
+      "command": [
+        "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+        "build",
+        "-p",
+        "1",
+        "-trimpath",
+        "-buildvcs=false",
+        "-o",
+        "/tmp/el-backoff-confined-runtime-20261120-v1/artifacts/backoff-v4.1.3",
+        "/sources/engineering-library/agent/research/continuation-20261120/backoff-runtime-driver-v1/main.go",
+        "/sources/engineering-library/agent/research/continuation-20261120/backoff-runtime-driver-v1/previous.go"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8444444589986233
+    },
+    {
+      "label": "v4.1.3-observe",
+      "command": [
+        "/tmp/el-backoff-confined-runtime-20261120-v1/artifacts/backoff-v4.1.3"
+      ],
+      "exit_code": 0,
+      "seconds": 0.002060124999843538
+    },
+    {
+      "label": "v4.3.0-build",
+      "command": [
+        "/sources/engineering-library/.local-backups/continuation-20261119/cached-go-toolchain/bin/go",
+        "build",
+        "-p",
+        "1",
+        "-trimpath",
+        "-buildvcs=false",
+        "-o",
+        "/tmp/el-backoff-confined-runtime-20261120-v1/artifacts/backoff-v4.3.0",
+        "/sources/engineering-library/agent/research/continuation-20261120/backoff-runtime-driver-v1/main.go",
+        "/sources/engineering-library/agent/research/continuation-20261120/backoff-runtime-driver-v1/current.go"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6614564170013182
+    },
+    {
+      "label": "v4.3.0-observe",
+      "command": [
+        "/tmp/el-backoff-confined-runtime-20261120-v1/artifacts/backoff-v4.3.0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0030845000001136214
+    }
+  ],
+  "context": {
+    "go": "1.27.4",
+    "os": "linux",
+    "arch": "arm64",
+    "cgo": false,
+    "module_mode": false
+  },
+  "source_initializers_and_reviewed_functions_executed": true,
+  "owned_timer_and_clock": true,
+  "real_retry_timers_or_sleep_used": false,
+  "public_ticker_or_goroutine_api_called": false,
+  "network_or_application_io": false,
+  "package_downloads": false,
+  "shared_frozen_cases": 30,
+  "current_only_api_cases": 8,
+  "repeated_old_current_cases_not_independent": true,
+  "training_excluded": true,
+  "owner_approved": false,
+  "model_calls": 0,
+  "limits": "Owned predictions are not upstream-maintainer expectations. Same behavior with a newly added option is an API-surface observation, not a newly introduced runtime effect. No actual waiting, retry latency, network guarantee or installed package identity is measured."
+}

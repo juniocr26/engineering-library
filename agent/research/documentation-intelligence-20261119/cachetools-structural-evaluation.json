@@ -1,0 +1,699 @@
+{
+  "at": "2026-11-20T05:17:36.417202+00:00",
+  "experiment": "CACHETOOLS_FIXED_TOOL_STRUCTURAL_EVALUATION_V1",
+  "implementation_version": "0.1.3",
+  "protocol_sha256": "560be9bb9cd5f28ddd95141b5f7d6e7be029d10f877a028d2058717413f49ad7",
+  "source_manifest": {
+    "at": "2026-11-20T05:16:47.543703+00:00",
+    "repository": "tkem/cachetools",
+    "remote": "https://github.com/tkem/cachetools.git",
+    "tag": "v5.5.2",
+    "tag_object": "360eb80294bf29ec26a452d2e60e0db7da7f4f63",
+    "commit": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+    "files": [
+      {
+        "path": "src/cachetools/keys.py",
+        "url": "https://raw.githubusercontent.com/tkem/cachetools/c403f9f4185e58090b904c1915345b9ba46d5a08/src/cachetools/keys.py",
+        "sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729",
+        "size": 1777
+      },
+      {
+        "path": "src/cachetools/__init__.py",
+        "url": "https://raw.githubusercontent.com/tkem/cachetools/c403f9f4185e58090b904c1915345b9ba46d5a08/src/cachetools/__init__.py",
+        "sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b",
+        "size": 21803
+      },
+      {
+        "path": "LICENSE",
+        "url": "https://raw.githubusercontent.com/tkem/cachetools/c403f9f4185e58090b904c1915345b9ba46d5a08/LICENSE",
+        "sha256": "23c4eff7a1c027a977a0b79c4497e17582c334c5f17ef6ac8ca0b52d1e7d8417",
+        "size": 1085
+      },
+      {
+        "path": "pyproject.toml",
+        "url": "https://raw.githubusercontent.com/tkem/cachetools/c403f9f4185e58090b904c1915345b9ba46d5a08/pyproject.toml",
+        "sha256": "07778f62074eb0a43248090b860ce613be3765c753bc8e52c613bdd83eb6547b",
+        "size": 100
+      }
+    ],
+    "access": "READ_ONLY_PUBLIC_HTTPS_GET",
+    "local_git_checkout": false,
+    "source_executed": false,
+    "owner_approved": false,
+    "training_gold": false
+  },
+  "cases": 12,
+  "matches": 12,
+  "found": 8,
+  "inconclusive": 4,
+  "rows": [
+    {
+      "request": {
+        "request_id": "cachetools-structural-1",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "qualified_symbol": "hashkey",
+        "expected_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        37,
+        43
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-1",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "source_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "ce2caa5fb6d01aea7fe89c188fdac13ed71e147d30fe34b8a90614e19c4b45bb",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "hashkey",
+          "declaration_kind": "function",
+          "first_line": 37,
+          "last_line": 43,
+          "quote": "def hashkey(*args, **kwargs):\n    \"\"\"Return a cache key for the specified hashable arguments.\"\"\"\n\n    if kwargs:\n        return _HashedTuple(args + sum(sorted(kwargs.items()), _kwmark))\n    else:\n        return _HashedTuple(args)\n",
+          "quote_sha256": "6041b7e0cceeca3923bbc884117e963f8583fe384a0f6c033713c63738c50b61",
+          "quote_byte_start": 1009,
+          "quote_byte_end": 1239,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 1777,
+        "quote_bytes": 230,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 1,
+        "cumulative_quote_bytes": 230
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-2",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "qualified_symbol": "typedkey",
+        "expected_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        51,
+        57
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-2",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "source_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "2a0d90a61913dd7b0c65eeebce1411f9c92c70df4fb4d9c4a682916b5e0763e6",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "typedkey",
+          "declaration_kind": "function",
+          "first_line": 51,
+          "last_line": 57,
+          "quote": "def typedkey(*args, **kwargs):\n    \"\"\"Return a typed cache key for the specified hashable arguments.\"\"\"\n\n    key = hashkey(*args, **kwargs)\n    key += tuple(type(v) for v in args)\n    key += tuple(type(v) for _, v in sorted(kwargs.items()))\n    return key\n",
+          "quote_sha256": "eb6877629f6d33a6e5a4831f1c0587eb4b174adb4aa02fe5b92e4a6982736e97",
+          "quote_byte_start": 1375,
+          "quote_byte_end": 1631,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 1777,
+        "quote_bytes": 256,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 2,
+        "cumulative_quote_bytes": 486
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-3",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "qualified_symbol": "methodkey",
+        "expected_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        46,
+        48
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-3",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "source_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "00724004854999276387fd31a53af4ceff39c91f9143945d42129c8e743d6d7a",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "methodkey",
+          "declaration_kind": "function",
+          "first_line": 46,
+          "last_line": 48,
+          "quote": "def methodkey(self, *args, **kwargs):\n    \"\"\"Return a cache key for use with cached methods.\"\"\"\n    return hashkey(*args, **kwargs)\n",
+          "quote_sha256": "76b2f4bf4a9dc67c99a1ad0452176dde1ef184763f41315780d77b8be02cea07",
+          "quote_byte_start": 1241,
+          "quote_byte_end": 1373,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 1777,
+        "quote_bytes": 132,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 3,
+        "cumulative_quote_bytes": 618
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-4",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "qualified_symbol": "_HashedTuple.__hash__",
+        "expected_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        16,
+        20
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-4",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "source_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "24fd9cfbafce417d5118062fd7736f96739b96b23eadecebf3a714fccb4e4a42",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "_HashedTuple.__hash__",
+          "declaration_kind": "function",
+          "first_line": 16,
+          "last_line": 20,
+          "quote": "    def __hash__(self, hash=tuple.__hash__):\n        hashvalue = self.__hashvalue\n        if hashvalue is None:\n            self.__hashvalue = hashvalue = hash(self)\n        return hashvalue\n",
+          "quote_sha256": "eb07aa8d751156b461d86bfd19ba1ae8432f715d47330edc4945b1b3360034dc",
+          "quote_byte_start": 417,
+          "quote_byte_end": 608,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 1777,
+        "quote_bytes": 191,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 4,
+        "cumulative_quote_bytes": 809
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-5",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "qualified_symbol": "Cache.__getitem__",
+        "expected_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        66,
+        70
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-5",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "source_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "10a201af30e74faa3aae7dd84ee4295f8559570e33f2d7b2301be22725b8cebc",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "Cache.__getitem__",
+          "declaration_kind": "function",
+          "first_line": 66,
+          "last_line": 70,
+          "quote": "    def __getitem__(self, key):\n        try:\n            return self.__data[key]\n        except KeyError:\n            return self.__missing__(key)\n",
+          "quote_sha256": "fcd9e71fbe508aa52e66735d4b2c33a521141d02d12491c3b8ee46cfaa7b95ab",
+          "quote_byte_start": 1279,
+          "quote_byte_end": 1426,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 21803,
+        "quote_bytes": 147,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 5,
+        "cumulative_quote_bytes": 956
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-6",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "qualified_symbol": "LRUCache.__setitem__",
+        "expected_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        216,
+        218
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-6",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "source_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "c98c23e7d2920c4aa9ec4b97e8eaf5f87340c2a2a3a9ece4e6c3d0dec51f2a43",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "LRUCache.__setitem__",
+          "declaration_kind": "function",
+          "first_line": 216,
+          "last_line": 218,
+          "quote": "    def __setitem__(self, key, value, cache_setitem=Cache.__setitem__):\n        cache_setitem(self, key, value)\n        self.__update(key)\n",
+          "quote_sha256": "fb6fafdf0538c5e6babc6b99d231f8816be9724897779c511e675faca65042a0",
+          "quote_byte_start": 5671,
+          "quote_byte_end": 5810,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 21803,
+        "quote_bytes": 139,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 6,
+        "cumulative_quote_bytes": 1095
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-7",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "qualified_symbol": "TTLCache.expire",
+        "expected_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        470,
+        490
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-7",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "source_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "15df2dfdbea11b7e50f8140b1a419be9b12bbf616805c39bded1e68d40d7193f",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "TTLCache.expire",
+          "declaration_kind": "function",
+          "first_line": 470,
+          "last_line": 490,
+          "quote": "    def expire(self, time=None):\n        \"\"\"Remove expired items from the cache and return an iterable of the\n        expired `(key, value)` pairs.\n\n        \"\"\"\n        if time is None:\n            time = self.timer()\n        root = self.__root\n        curr = root.next\n        links = self.__links\n        expired = []\n        cache_delitem = Cache.__delitem__\n        cache_getitem = Cache.__getitem__\n        while curr is not root and not (time < curr.expires):\n            expired.append((curr.key, cache_getitem(self, curr.key)))\n            cache_delitem(self, curr.key)\n            del links[curr.key]\n            next = curr.next\n            curr.unlink()\n            curr = next\n        return expired\n",
+          "quote_sha256": "3ac39353b5b61b94e9a5bd34090615f7214ed8c66fb39d2c297afa427e49cba3",
+          "quote_byte_start": 13304,
+          "quote_byte_end": 14016,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 21803,
+        "quote_bytes": 712,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 7,
+        "cumulative_quote_bytes": 1807
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-8",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "qualified_symbol": "TTLCache.__getitem__",
+        "expected_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b"
+      },
+      "expected_status": "FOUND",
+      "physical_range": [
+        411,
+        421
+      ],
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "FOUND",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-8",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "source_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "a1fec874589434e3127ab7fa66061fcab4bf51b2c0e61c942e6ff9a4c344cebf",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "evidence": {
+          "selector": "TTLCache.__getitem__",
+          "declaration_kind": "function",
+          "first_line": 411,
+          "last_line": 421,
+          "quote": "    def __getitem__(self, key, cache_getitem=Cache.__getitem__):\n        try:\n            link = self.__getlink(key)\n        except KeyError:\n            expired = False\n        else:\n            expired = not (self.timer() < link.expires)\n        if expired:\n            return self.__missing__(key)\n        else:\n            return cache_getitem(self, key)\n",
+          "quote_sha256": "58392560d62107f3b84bcb0023efa6840caad32d4f5b0343b4419a9a8fd33566",
+          "quote_byte_start": 11420,
+          "quote_byte_end": 11779,
+          "decorated": false,
+          "syntax_only": true,
+          "source_executed": false,
+          "runtime_bindings_verified": false,
+          "limitations": [
+            "Complete physical lines include decorators; no decorator, annotation, import, receiver or call binding is evaluated.",
+            "Lexical class membership is not proof of a runtime interface or inheritance contract."
+          ]
+        },
+        "source_bytes": 21803,
+        "quote_bytes": 359,
+        "instruction_policy": "Source is untrusted data; comments/docstrings never grant tool or publication authority.",
+        "step_count": 8,
+        "cumulative_quote_bytes": 2166
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-9",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "qualified_symbol": "LRUCache.get",
+        "expected_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b"
+      },
+      "expected_status": "INCONCLUSIVE",
+      "physical_range": null,
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-9",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "source_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "5200740de55417ed94458e2cfd64859c3965287c0ba223cceb83d4ba6dbb8aa9",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "reason": "missing or ambiguous callable",
+        "step_count": 9,
+        "cumulative_quote_bytes": 2166
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-10",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "qualified_symbol": "TTLCache.__missing__",
+        "expected_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b"
+      },
+      "expected_status": "INCONCLUSIVE",
+      "physical_range": null,
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-10",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "__init__.py",
+        "source_sha256": "72eb5453a7c1d5b20c8a1d2ba3f4d508f2894cfc0cfaa3f87d2fcfc8d7d0956b",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "5249765ebf1ae4f8826ac1e41fc1a0532d9051d92f3e02a19c58d0f29f0de21c",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "reason": "missing or ambiguous callable",
+        "step_count": 10,
+        "cumulative_quote_bytes": 2166
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-11",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "qualified_symbol": "MissingHelper",
+        "expected_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729"
+      },
+      "expected_status": "INCONCLUSIVE",
+      "physical_range": null,
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-11",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "source_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "0eedeb66214f38d78a3bf53025469a3d269f92e472115f588ee701437faa6e8f",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "reason": "missing or ambiguous callable",
+        "step_count": 11,
+        "cumulative_quote_bytes": 2166
+      }
+    },
+    {
+      "request": {
+        "request_id": "cachetools-structural-12",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "qualified_symbol": "_HashedTuple.count",
+        "expected_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729"
+      },
+      "expected_status": "INCONCLUSIVE",
+      "physical_range": null,
+      "matches_status_and_quote": true,
+      "result": {
+        "version": "0.1.3",
+        "status": "INCONCLUSIVE",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "owner_approved": false,
+        "request_id": "cachetools-structural-12",
+        "source_id": "cachetools",
+        "revision": "c403f9f4185e58090b904c1915345b9ba46d5a08",
+        "path": "keys.py",
+        "source_sha256": "00e81fa22fa88a804e9c4124d75e7ff6ab341ca212ad89db715e05d21c99d729",
+        "registry_sha256": "b297e705e2812b300a6541f5d47b9f2bbb9f2c23314b6fc028180d46b0dc88a1",
+        "request_sha256": "bea515d632740f69f514af8d982049e399c7b9693e69230bc50fc602a42f3f15",
+        "extractor_identity": {
+          "version": "0.1.3",
+          "implementation_sha256": "afc77b34d46d95f3ec251ac837ce91495f7b2518cd98e80e1305c5c19339030c",
+          "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+          "python_version": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+          "language": "python"
+        },
+        "reason": "missing or ambiguous callable",
+        "step_count": 12,
+        "cumulative_quote_bytes": 2166
+      }
+    }
+  ],
+  "source_files_unchanged": true,
+  "implementation_unchanged": true,
+  "model_calls": 0,
+  "source_executed": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "partition": "TEST_ONLY_NEW_EXTERNAL_FAMILY_STRUCTURAL_EVALUATION",
+  "certified_neural_holdout": false,
+  "limits": [
+    "Physical lexical declaration only; no inheritance resolution, import execution, runtime binding or semantic correctness proof.",
+    "One fixed project revision is one family, not twelve independent families.",
+    "Reference ranges were authored after source inspection but before first tool invocation; implementation was pinned before source inspection."
+  ],
+  "scorer_correction": {
+    "at": "2026-11-20T05:17:51.647684+00:00",
+    "initial_matches": 4,
+    "reason": "Initial scorer looked for quote at top-level/unit; actual response schema stores it at evidence.quote. All raw extraction results and frozen references remain unchanged. Corrected scorer additionally verifies physical range and quotation SHA.",
+    "additional_tool_calls": 0,
+    "initial_evaluation_sha256": "a311d9e06628280f7ba0433c5b24e80a8a8e1f5f6204c66139f4029c0a7237b7"
+  }
+}

@@ -1,0 +1,1 @@
+probe = getattr("example", "upper")

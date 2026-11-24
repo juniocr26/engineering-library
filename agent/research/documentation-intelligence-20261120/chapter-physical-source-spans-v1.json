@@ -1,0 +1,49 @@
+{
+  "spans": [
+    {
+      "tag": "24.0.0",
+      "file": "agent/research/documentation-intelligence-20261120/public-sources/24.0.0/boltons/fileutils.py",
+      "selector": "AtomicSaver.__exit__",
+      "first_line": 466,
+      "last_line": 486,
+      "file_sha256": "6fc6db8a372b2548c0203cf505fe1fb098f15e600f4361ccbcdc8be8b6263887",
+      "quote": "    def __exit__(self, exc_type, exc_val, exc_tb):\n        if self.part_file:\n            self.part_file.close()\n        if exc_type:\n            if self.rm_part_on_exc:\n                try:\n                    os.unlink(self.part_path)\n                except Exception:\n                    pass  # avoid masking original error\n            return\n        try:\n            atomic_rename(self.part_path, self.dest_path,\n                          overwrite=self.overwrite)\n        except OSError:\n            if self.rm_part_on_exc:\n                try:\n                    os.unlink(self.part_path)\n                except Exception:\n                    pass  # avoid masking original error\n            raise  # could not save destination file\n        return\n"
+    },
+    {
+      "tag": "24.0.0",
+      "file": "agent/research/documentation-intelligence-20261120/public-sources/24.0.0/boltons/fileutils.py",
+      "selector": "iter_find_files",
+      "first_line": 489,
+      "last_line": 542,
+      "file_sha256": "6fc6db8a372b2548c0203cf505fe1fb098f15e600f4361ccbcdc8be8b6263887",
+      "quote": "def iter_find_files(directory, patterns, ignored=None, include_dirs=False):\n    \"\"\"Returns a generator that yields file paths under a *directory*,\n    matching *patterns* using `glob`_ syntax (e.g., ``*.txt``). Also\n    supports *ignored* patterns.\n\n    Args:\n        directory (str): Path that serves as the root of the\n            search. Yielded paths will include this as a prefix.\n        patterns (str or list): A single pattern or list of\n            glob-formatted patterns to find under *directory*.\n        ignored (str or list): A single pattern or list of\n            glob-formatted patterns to ignore.\n        include_dirs (bool): Whether to include directories that match\n           patterns, as well. Defaults to ``False``.\n\n    For example, finding Python files in the current directory:\n\n    >>> _CUR_DIR = os.path.dirname(os.path.abspath(__file__))\n    >>> filenames = sorted(iter_find_files(_CUR_DIR, '*.py'))\n    >>> os.path.basename(filenames[-1])\n    'urlutils.py'\n\n    Or, Python files while ignoring emacs lockfiles:\n\n    >>> filenames = iter_find_files(_CUR_DIR, '*.py', ignored='.#*')\n\n    .. _glob: https://en.wikipedia.org/wiki/Glob_%28programming%29\n\n    \"\"\"\n    if isinstance(patterns, str):\n        patterns = [patterns]\n    pats_re = re.compile('|'.join([fnmatch.translate(p) for p in patterns]))\n\n    if not ignored:\n        ignored = []\n    elif isinstance(ignored, str):\n        ignored = [ignored]\n    ign_re = re.compile('|'.join([fnmatch.translate(p) for p in ignored]))\n    for root, dirs, files in os.walk(directory):\n        if include_dirs:\n            for basename in dirs:\n                if pats_re.match(basename):\n                    if ignored and ign_re.match(basename):\n                        continue\n                    filename = os.path.join(root, basename)\n                    yield filename\n\n        for basename in files:\n            if pats_re.match(basename):\n                if ignored and ign_re.match(basename):\n                    continue\n                filename = os.path.join(root, basename)\n                yield filename\n    return\n"
+    },
+    {
+      "tag": "25.0.0",
+      "file": "agent/research/documentation-intelligence-20261120/public-sources/25.0.0/boltons/fileutils.py",
+      "selector": "AtomicSaver.__exit__",
+      "first_line": 466,
+      "last_line": 489,
+      "file_sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc",
+      "quote": "    def __exit__(self, exc_type, exc_val, exc_tb):\n        if self.part_file:\n            # Ensure data is flushed and synced to disk before closing\n            self.part_file.flush()\n            os.fsync(self.part_file.fileno())\n            self.part_file.close()\n        if exc_type:\n            if self.rm_part_on_exc:\n                try:\n                    os.unlink(self.part_path)\n                except Exception:\n                    pass  # avoid masking original error\n            return\n        try:\n            atomic_rename(self.part_path, self.dest_path,\n                          overwrite=self.overwrite)\n        except OSError:\n            if self.rm_part_on_exc:\n                try:\n                    os.unlink(self.part_path)\n                except Exception:\n                    pass  # avoid masking original error\n            raise  # could not save destination file\n        return\n"
+    },
+    {
+      "tag": "25.0.0",
+      "file": "agent/research/documentation-intelligence-20261120/public-sources/25.0.0/boltons/fileutils.py",
+      "selector": "iter_find_files",
+      "first_line": 492,
+      "last_line": 551,
+      "file_sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc",
+      "quote": "def iter_find_files(directory, patterns, ignored=None, include_dirs=False, max_depth=None):\n    \"\"\"Returns a generator that yields file paths under a *directory*,\n    matching *patterns* using `glob`_ syntax (e.g., ``*.txt``). Also\n    supports *ignored* patterns.\n\n    Args:\n        directory (str): Path that serves as the root of the\n            search. Yielded paths will include this as a prefix.\n        patterns (str or list): A single pattern or list of\n            glob-formatted patterns to find under *directory*.\n        ignored (str or list): A single pattern or list of\n            glob-formatted patterns to ignore.\n        include_dirs (bool): Whether to include directories that match\n           patterns, as well. Defaults to ``False``.\n        max_depth (int): traverse up to this level of subdirectory.\n           I.e., 0 for the specified *directory* only, 1 for *directory* \n           and one level of subdirectory.\n\n    For example, finding Python files in the current directory:\n\n    >>> _CUR_DIR = os.path.dirname(os.path.abspath(__file__))\n    >>> filenames = sorted(iter_find_files(_CUR_DIR, '*.py'))\n    >>> os.path.basename(filenames[-1])\n    'urlutils.py'\n\n    Or, Python files while ignoring emacs lockfiles:\n\n    >>> filenames = iter_find_files(_CUR_DIR, '*.py', ignored='.#*')\n\n    .. _glob: https://en.wikipedia.org/wiki/Glob_%28programming%29\n\n    \"\"\"\n    if isinstance(patterns, str):\n        patterns = [patterns]\n    pats_re = re.compile('|'.join([fnmatch.translate(p) for p in patterns]))\n\n    if not ignored:\n        ignored = []\n    elif isinstance(ignored, str):\n        ignored = [ignored]\n    ign_re = re.compile('|'.join([fnmatch.translate(p) for p in ignored]))\n    start_depth = len(directory.split(os.path.sep))\n    for root, dirs, files in os.walk(directory):\n        if max_depth is not None and (len(root.split(os.path.sep)) - start_depth) > max_depth:\n            continue\n        if include_dirs:\n            for basename in dirs:\n                if pats_re.match(basename):\n                    if ignored and ign_re.match(basename):\n                        continue\n                    filename = os.path.join(root, basename)\n                    yield filename\n\n        for basename in files:\n            if pats_re.match(basename):\n                if ignored and ign_re.match(basename):\n                    continue\n                filename = os.path.join(root, basename)\n                yield filename\n    return\n"
+    },
+    {
+      "tag": "25.0.0",
+      "file": "agent/research/documentation-intelligence-20261120/public-sources/25.0.0/boltons/fileutils.py",
+      "selector": "rotate_file",
+      "first_line": 694,
+      "last_line": 727,
+      "file_sha256": "3cf65e04eaedb63d71e5a4bfe6974194802ae203439cfd8f3f87f2807fc731fc",
+      "quote": "def rotate_file(filename, *, keep: int = 5):\n    \"\"\"\n    If *filename.ext* exists, it will be moved to *filename.1.ext*, \n    with all conflicting filenames being moved up by one, dropping any files beyond *keep*.\n\n    After rotation, *filename* will be available for creation as a new file.\n\n    Fails if *filename* is not a file or if *keep* is not > 0.\n    \"\"\"\n    if keep < 1:\n        raise ValueError(f'expected \"keep\" to be >=1, not {keep}')\n    if not os.path.exists(filename):\n        return\n    if not os.path.isfile(filename):\n        raise ValueError(f'expected {filename} to be a file')\n\n    fn_root, fn_ext = os.path.splitext(filename)\n    kept_names = []\n    for i in range(1, keep + 1):\n        if fn_ext:\n            kept_names.append(f'{fn_root}.{i}{fn_ext}')\n        else:\n            kept_names.append(f'{fn_root}.{i}')\n\n    fns = [filename] + kept_names\n    for orig_name, kept_name in reversed(list(zip(fns, fns[1:]))):\n        if not os.path.exists(orig_name):\n            continue\n        os.rename(orig_name, kept_name)\n\n    if os.path.exists(kept_names[-1]):\n        os.remove(kept_names[-1])\n\n    return\n"
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "at": "2026-11-20T18:55:56.568346+00:00",
+  "cases": [
+    {
+      "id": "outer-unreachable-after-return",
+      "packet": {
+        "id": "outer-unreachable-after-return",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    return ret\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    return ret\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "outer-unreachable-after-raise",
+      "packet": {
+        "id": "outer-unreachable-after-raise",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    raise RuntimeError('owned static-only')\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    raise RuntimeError('owned static-only')\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "outer-conditional-early-return",
+      "packet": {
+        "id": "outer-conditional-early-return",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    if root:\n        return ret\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    if root:\n        return ret\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "outer-nonterminating-prefix",
+      "packet": {
+        "id": "outer-nonterminating-prefix",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    while True:\n        pass\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    while True:\n        pass\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "wrapper-unreachable-after-raise",
+      "packet": {
+        "id": "wrapper-unreachable-after-raise",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        raise RuntimeError('owned static-only')\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        raise RuntimeError('owned static-only')\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "wrapper-conditional-early-return",
+      "packet": {
+        "id": "wrapper-conditional-early-return",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        if value:\n            return False\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        if value:\n            return False\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "wrapper-nonterminating-prefix",
+      "packet": {
+        "id": "wrapper-nonterminating-prefix",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        while True:\n            pass\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        while True:\n            pass\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "added-unused-callback-parameter",
+      "packet": {
+        "id": "added-unused-callback-parameter",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, enter=default_enter):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "callback-unpacked-handoff",
+      "packet": {
+        "id": "callback-unpacked-handoff",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter, **options)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        return default_enter(path, key, value)\n    remap(root, enter=_enter, **options)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "normal-query-exception-prefix",
+      "packet": {
+        "id": "normal-query-exception-prefix",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "deferred-nested-loop-not-executed-prefix",
+      "packet": {
+        "id": "deferred-nested-loop-not-executed-prefix",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        def unused():\n            while True:\n                pass\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root):\n    ret = []\n    def _enter(path, key, value):\n        def unused():\n            while True:\n                pass\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    }
+  ],
+  "hypothesis": "A direct syntactic handoff can be unreachable or bypassed by known prefix control flow. Conservatively reject known stopping/loop flow before handoff/return while retaining deferred nested bodies and the normal query-exception prefix.",
+  "expected_frozen_before_observations": true,
+  "current_producer": "closed_helper_lifecycle_v1.py",
+  "current_producer_sha256": "64c67bb63e775aacc07e372d54efc21b8be426081fbc09f70e9776ee6b0a3256",
+  "static_source_only": "Sourcecontainsintentionalraises/infinite-loopsyntaxfornonexecutingASTanalysis;neverexec/importthesecontrolledsources.",
+  "source_execution_allowed": false,
+  "permanent_tests_changed": false,
+  "model_calls": 0,
+  "independent_neural_holdout": false
+}

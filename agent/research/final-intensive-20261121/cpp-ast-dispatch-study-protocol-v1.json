@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-22T00:09:25.523968+00:00",
+  "hypothesis": "New Clang JSON AST observations over preserved owned C++ controls can bind static call declarations/overloads and expose limits of inferring runtime dispatch from declaration identity alone. This is a new representation-sufficiency question, not a rerun of prior dynamic observations.",
+  "cases": [
+    {
+      "id": "base-default",
+      "path": "agent/research/portfolio-vivabem-20261120/cpp-owned-dispatch-observations-v1/base-default/source.cpp",
+      "sha256": "70bcdf6e39eaea35c3d0699c2e149426c6a596bddd92f9ef0e063512223ac376",
+      "expected_compile_success": true,
+      "expected_source_fact": "Main selects Base one-argument write; explicit virtual declaration is distinct from actual dispatch target."
+    },
+    {
+      "id": "compatible-nonderived-template-shape",
+      "path": "agent/research/portfolio-vivabem-20261120/cpp-owned-dispatch-observations-v1/compatible-nonderived-template-shape/source.cpp",
+      "sha256": "0bc4edbf0ca9ffc52516cc6255eb05b9bb6a7c18f90c89fc7b6fdff1235cf2b0",
+      "expected_compile_success": true,
+      "expected_source_fact": "Selected instantiated template accepts structurally compatible NotDerived; no Base inheritance requirement in owned example."
+    },
+    {
+      "id": "derived-via-base-wrapper",
+      "path": "agent/research/portfolio-vivabem-20261120/cpp-owned-dispatch-observations-v1/derived-via-base-wrapper/source.cpp",
+      "sha256": "0f8ffd7b1816a82d6c79196e6d4783ca5f52f794005c4a251fe47c7e7c5938a5",
+      "expected_compile_success": true,
+      "expected_source_fact": "Main selects nonvirtual Base two-argument write; its inner call selects virtual one-argument declaration."
+    },
+    {
+      "id": "hidden-overload",
+      "path": "agent/research/portfolio-vivabem-20261120/cpp-owned-dispatch-observations-v1/hidden-overload/source.cpp",
+      "sha256": "0c5128aa2c6b81a9d3eec9e7f50163d268282a4e58acfd89a07382779ada6a96",
+      "expected_compile_success": false,
+      "expected_source_fact": "Derived one-argument name hides Base two-argument overload; whole translation unit must be refused despite partial AST."
+    },
+    {
+      "id": "qualified-base",
+      "path": "agent/research/portfolio-vivabem-20261120/cpp-owned-dispatch-observations-v1/qualified-base/source.cpp",
+      "sha256": "a717f8d8ae160caee7d3cf577db35a518372132a094c11e8479c29cb931467af",
+      "expected_compile_success": true,
+      "expected_source_fact": "Main uses explicit Base qualification, which must not be conflated with ordinary virtual call solely because referenced declaration is identical."
+    },
+    {
+      "id": "using-unhides-overload",
+      "path": "agent/research/portfolio-vivabem-20261120/cpp-owned-dispatch-observations-v1/using-unhides-overload/source.cpp",
+      "sha256": "5365d3c3fd2a0a852c28cfb60d0f574dc3c645f6fffc55458413c7521e655bdf",
+      "expected_compile_success": true,
+      "expected_source_fact": "Derived using declaration restores Base overload visibility; main selects Base two-argument wrapper."
+    }
+  ],
+  "compiler": "/usr/bin/clang++",
+  "command_flags": [
+    "-std=c++17",
+    "-fsyntax-only",
+    "-Xclang",
+    "-ast-dump=json"
+  ],
+  "output_bound_bytes": 16777216,
+  "procedure": "Save raw AST/stdout/stderr and compiler status. Extract actual complete record/method/call nodes and physical source ranges; preserve qualification evidence from source when JSON omits it. Failed TU never admitted because partial AST exists.",
+  "roles": "DEVELOPMENT_EXPOSED_OWNED_CPP_CONTROLS, related to prior OpenCV development topic. Not Raylib evaluation data or independent model benchmark.",
+  "exclusions": [
+    "No program execution",
+    "No emitted executable/object",
+    "No OpenCV headers/runtime compilation",
+    "No new frameworks",
+    "No optimizer or inference",
+    "No permanent tests/source modifications"
+  ],
+  "prior_dynamic_results": "Historical only, unchanged; refer original compile/run receipts with original dates.",
+  "unknown_policy": "Missing AST field is unknown, not proof a semantic property is absent. Normalize volatile declaration IDs before any replay comparison.",
+  "frozen_before_execution": true
+}

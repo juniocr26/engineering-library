@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-21T09:49:25.358418+00:00",
+  "hypothesis": "H82",
+  "question": "Does a separately computed two-iteration map-key counterexample help the local3b model distinguish loop Add count from distinct warning cardinality? New exposed Prometheus topic, not a retry of old SQLX packets.",
+  "source_revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+  "claims_with_frozen_oracles": [
+    {
+      "id": "W1",
+      "claim": "With sampler=nil, exactly two selectors each having series>0, no other annotations, and successful return, the returned annotations contain two distinct fallback warning entries.",
+      "expected": "CONTRADICTED",
+      "reason": "Both iterations add same error string key, so one unique fallback entry."
+    },
+    {
+      "id": "W2",
+      "claim": "In that two-positive-selector scenario the loop reaches annos.Add(errCostSamplingFallback) once per positive selector.",
+      "expected": "SUPPORTED",
+      "reason": "The sampler-nil positive-series branch is reached on both iterations."
+    },
+    {
+      "id": "W3",
+      "claim": "When sampler=nil and series=0 for a selector, this branch still adds errCostSamplingFallback for that selector.",
+      "expected": "CONTRADICTED",
+      "reason": "The selected else-if requires series>0."
+    },
+    {
+      "id": "W4",
+      "claim": "Under the two-positive-selector and no-other-annotation assumptions, deduplication leaves one fallback message key in the returned annotation map.",
+      "expected": "SUPPORTED",
+      "reason": "Annotations.Add indexes by identical err.Error() string."
+    }
+  ],
+  "requests": [
+    {
+      "condition": "source-only",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-warning-judgment-v1/source-only/request.json",
+      "sha256": "cb1b0d1972e613a632525910fee15b83f2535cf1393f2df97b19903dc72b0ac0"
+    },
+    {
+      "condition": "source-plus-counterexample",
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-warning-judgment-v1/source-plus-counterexample/request.json",
+      "sha256": "3cc68506c1747e15ffe5c32f1fee9da59b1de340265e8928301819c8f3c430b2"
+    }
+  ],
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "source_scope": "Public Apache-2.0Prometheus sourcecards only plusownedmathtrace; no privateEL/VivaBem source/modelinput. LocalOllama only.",
+  "scoring": [
+    "Per-claim verdict; grounded specific reason in both EN/PT; valid supporting sourceIDs separately",
+    "Complete judgment packet requires all4strict records; not a whole architecture chapter or neural-method population",
+    "Conditioncomparisonon same4claims; not independent8cases or general accuracy",
+    "No blind retry/manual repair; preserve truncation/transport uncertainty"
+  ],
+  "new_generation_requests_max": 2,
+  "output_tokens_max_each": 900,
+  "transport_timeout_seconds": 660,
+  "training_eligible": false,
+  "owner_approved": false
+}

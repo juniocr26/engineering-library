@@ -1,0 +1,22 @@
+{
+  "frozen_at": "2026-11-20T04:49:44.511006+00:00",
+  "status": "FROZEN_BEFORE_REGISTRY_GUARD_FIX",
+  "finding": "Deep-copying the constructor input protects against mutations of the original dictionary, but the public instance registry remains mutable. A changed path can be read under the old module label.",
+  "hypothesis": "Pin the initial canonical registry and operation configuration; use an operation-local snapshot, reject in-place drift before or during observation, and preserve the exact initial path-to-source binding.",
+  "scope": [
+    "ClosedDependencyObserver",
+    "Direct HelperRetrieval registry integrity; JobBoundRetrieval already checks its helper registry at entry."
+  ],
+  "controls": [
+    "In-place source hash/path mutation before call",
+    "Source registry mutation during worker",
+    "Journal/root or budget configuration drift",
+    "Duplicate cache lookup under mutated registry",
+    "Original constructor dictionary mutation remains harmless",
+    "Explicit newly constructed valid registry still works"
+  ],
+  "not_a_claim": "No protection against arbitrary trusted Python code that can rewrite private state, monkeypatch executors or falsify the journal.",
+  "owner_approved": false,
+  "model_calls": 0,
+  "training_runs": 0
+}

@@ -1,0 +1,252 @@
+{
+  "at": "2026-11-20T18:59:45.927609+00:00",
+  "cases": [
+    {
+      "id": "query-validation-fixed-stable",
+      "packet": {
+        "id": "query-validation-fixed-stable",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "query-validation-parameterized",
+      "packet": {
+        "id": "query-validation-parameterized",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "query-guard-callable-module-shadow",
+      "packet": {
+        "id": "query-guard-callable-module-shadow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def callable(value):\n    return False\ndef default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-callable-parameter-shadow",
+      "packet": {
+        "id": "query-guard-callable-parameter-shadow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter, callable=lambda value: False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-parameter-rebound",
+      "packet": {
+        "id": "query-guard-parameter-rebound",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    query = None\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-unconditional-true",
+      "packet": {
+        "id": "query-guard-unconditional-true",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if True:\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-returns-instead-of-raising",
+      "packet": {
+        "id": "query-guard-returns-instead-of-raising",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(query):\n        return ret\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-forced-condition",
+      "packet": {
+        "id": "query-guard-forced-condition",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(query) or True:\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-else-early-return",
+      "packet": {
+        "id": "query-guard-else-early-return",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    else:\n        return ret\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-error-class-shadow",
+      "packet": {
+        "id": "query-guard-error-class-shadow",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "class TypeError(Exception):\n    pass\ndef default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-global-not-parameter",
+      "packet": {
+        "id": "query-guard-global-not-parameter",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(default_enter):\n        raise TypeError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "query-guard-valueerror",
+      "packet": {
+        "id": "query-guard-valueerror",
+        "family": "codex-owned-helper-contracts",
+        "language": "python",
+        "previous_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False):\n    ret = []\n    if not callable(query):\n        raise ValueError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return default_enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "current_source": "def default_enter(path, key, value):\n    return False\ndef remap(root, enter):\n    return enter((), None, root)\ndef inspect(root, query=lambda *args: False, reraise=False, enter=default_enter):\n    ret = []\n    if not callable(query):\n        raise ValueError('query must be callable')\n    def _enter(path, key, value):\n        try:\n            if query(path, key, value):\n                ret.append((path, key, value))\n        except Exception:\n            if reraise:\n                raise\n        return enter(path, key, value)\n    remap(root, enter=_enter)\n    return ret\n",
+        "documentation": {
+          "en": "inspect always delegates traversal to default_enter.",
+          "pt-br": "inspect sempre delega a travessia a default_enter."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.inspect",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    }
+  ],
+  "hypothesis": "Admit only an unshadowed if-not-callable(parameter) then direct builtin TypeError/ValueError guard without else and parameter rebinding; preserve previous stopping/loop refusals.",
+  "expected_frozen_before_observations": true,
+  "v2_false_refusal_evidence": "closed-helper-boltons-development-v2.json",
+  "source_executed": false,
+  "model_calls": 0,
+  "permanent_tests_changed": false,
+  "original_oracle_changed": false
+}

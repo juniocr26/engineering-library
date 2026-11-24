@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-21T22:49:03.874012+00:00",
+  "checkpoint": 1,
+  "archive": ".local-backups/final-intensive-20261121/checkpoint-001/research-reports-and-selected-dependencies.tar.gz",
+  "archive_sha256": "f299661266b9c96c380b73d36f8438a8d832ba0d4114b69083d1a203e75e0d7e",
+  "archive_bytes": 808995,
+  "input_manifest": ".local-backups/final-intensive-20261121/checkpoint-001/input-manifest.json",
+  "input_manifest_sha256": "07bdb2a18019a315aa1064e075353ee8c694ecda7bd05426883b91c558885ad7",
+  "regular_files_restored_and_hash_verified": 67,
+  "file_modes_verified": true,
+  "restored_root": "/private/tmp/el-final-001-fht9lwhv",
+  "consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import binding_envelope_v1 as v; a=json.loads((p/\"trusted-binding-anchor-v1.json\").read_text());root=p.parents[2];out={k:v.validate(v.canonical(x),x,root) for k,x in a.items()};print(json.dumps(out));assert all(not r for r in out.values())",
+      "/private/tmp/el-final-001-fht9lwhv/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"fastapi\": [], \"cobra\": [], \"zod\": []}\n",
+    "stderr": ""
+  },
+  "scope": "Local checkpoint and finite receipt-integrity consumer replay only. Not clean clone, model/optimizer, remote backup, Windows, crash durability or semantic correctness.",
+  "self_cut": "This receipt and manifest are outside own archive; later checkpoint can include earlier receipt. No infinite self-hash closure.",
+  "active_campaign": true,
+  "neural_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

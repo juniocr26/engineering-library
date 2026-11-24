@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-20T12:26:01.582665+00:00",
+  "cases": [
+    {
+      "id": "empty-parameter",
+      "source": "def value(x=1):\n    return x\n",
+      "claim": {
+        "kind": "no-explicit-parameter",
+        "parameter": ""
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "invalid-parameter",
+      "source": "def value(x=1):\n    return x\n",
+      "claim": {
+        "kind": "no-explicit-parameter",
+        "parameter": "../not-a-name"
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "nonidentifier-tuple-element",
+      "source": "def value(x):\n    return (x,)\n",
+      "claim": {
+        "kind": "written-tuple-return",
+        "elements": [
+          123
+        ]
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "nonidentifier-materialization-callee",
+      "source": "def value(x):\n    return list(helper(x))\n",
+      "claim": {
+        "kind": "written-list-materialization",
+        "callee": null
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "nonidentifier-composition-name",
+      "source": "def value(x, flag):\n    return outer(inner(x,flag),flag)\n",
+      "claim": {
+        "kind": "written-return-composition",
+        "outer": 42,
+        "inner": "inner",
+        "shared_argument": "flag"
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "vararg-parameter-presence",
+      "source": "def value(*extras):\n    return extras\n",
+      "claim": {
+        "kind": "no-explicit-parameter",
+        "parameter": "extras"
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "kwarg-parameter-presence",
+      "source": "def value(**extras):\n    return extras\n",
+      "claim": {
+        "kind": "no-explicit-parameter",
+        "parameter": "extras"
+      },
+      "expected": "MODIFY"
+    }
+  ],
+  "scope": "Malformed typed claim admission and vararg identity controls;source-written scope only. No inference or permanent tests."
+}

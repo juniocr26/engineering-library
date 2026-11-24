@@ -1,0 +1,84 @@
+{
+  "at": "2026-11-20T01:04:27.990304+00:00",
+  "chapter_id": "go-image-frontend-dimensions",
+  "source_repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "types-not-runtime",
+      "path": "frontend/app/components/image-resize/resize-options.ts",
+      "lines": [
+        1,
+        16
+      ],
+      "review": "Info/Optionsstaticdeclaredshapesnotruntimevalidation."
+    },
+    {
+      "id": "mode-guard",
+      "path": "frontend/app/components/image-resize/resize-options.ts",
+      "lines": [
+        18,
+        30
+      ],
+      "review": "Numberconversionsfirst; pixelmodecheckbothsafeintsand1..32million; nullonfailure."
+    },
+    {
+      "id": "scaling",
+      "path": "frontend/app/components/image-resize/resize-options.ts",
+      "lines": [
+        31,
+        41
+      ],
+      "review": "Percentageoraspect triggersscale; pixelmodeoverridesbyaxis; Math.roundthenMath.max1; noallinputfiniteguarantee."
+    },
+    {
+      "id": "messages",
+      "path": "frontend/app/components/image-resize/resize-options.ts",
+      "lines": [
+        43,
+        53
+      ],
+      "review": "Falsy candidate message, strictstaticproduct32millionthenframeproduct64million, finalnull; notthrow/inputparser."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "2c3c9ff92d36b191b3d589a638f6861aa85b3e34a94c5b15ce5c5a10ffd7ee28",
+      "after_sha256": "9f0e40863f1702fe9fd0d38df52a10fb32eef32ad7178493688601f370c6315f",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -31,3 +31,22 @@\n ## What changed in this correction\n \n The neural baseline recognized the two numeric thresholds and final null, but attributed positive-integer validation directly to the message function. The standalone syntax producer now adds an optional packet that preserves all three conditions and their exact returned expressions, while keeping its earlier first-guard paragraph unchanged. This is deterministic source evidence, not a model-weight improvement or a new production JavaScript writer. The expanded chapter separates calculation, mode-specific validation and error reporting. Its source, bilingual review and approval status remain explicit; no output was published or promoted into training gold.\n+\n+## Engineer FAQ\n+\n+<!-- reading-section: faq:error-message-versus-validation -->\n+### Does dimensionError itself parse and validate both entered strings?\n+\n+It receives a candidate and first checks its falsiness. The positive-whole-number message is not a separate dimension-validation algorithm. String conversion and the pixel-mode safe-integer guard belong to the calculation function.\n+\n+<!-- reading-section: faq:aspect-ratio-validation-order -->\n+### Can aspect-ratio mode ignore an invalid entered dimension before validation?\n+\n+In pixel mode, both entered dimensions pass through the initial guard before the later axis-specific scale calculation. That ordering remains relevant even when one final dimension will be derived from the other.\n+\n+<!-- reading-section: faq:pixel-boundary-and-message-return -->\n+### Are equal pixel limits rejected or messages thrown as exceptions?\n+\n+Both product checks use strictly greater than. Equality alone does not take those branches. The function returns its message strings or null; no throw appears in this selected body. Full runtime input validity and backend enforcement require separate evidence.\n+\n+The [backend dimension validator](../go-image-dimensions/en.md) and [animation validator](../go-image-animation/en.md) are separate contracts. Matching threshold numbers do not prove identical arithmetic, validation order or a complete frontend-to-server integration.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "6712204b2091b943fefb7d3aee77e05d89d5d4e56c60349297a7728aee8865f9",
+      "after_sha256": "07aef9de572c0785af4a475e8aca23b7389176a462a70bd04cc0e2df7e66d48c",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -31,3 +31,22 @@\n ## O que mudou nesta correção\n \n O baseline neural reconheceu os dois limites numéricos e o null final, mas atribuiu validação de inteiros positivos diretamente à função de mensagens. O produtor sintático independente agora acrescenta um pacote opcional que preserva as três condições e suas expressões exatas de retorno, mantendo inalterado o parágrafo anterior da primeira guarda. Isso é evidência determinística da fonte, não melhoria de pesos nem um novo gravador JavaScript de produção. O capítulo ampliado separa cálculo, validação específica de modo e apresentação de erros. A fonte, a revisão bilíngue e o estado de aprovação continuam explícitos; nenhuma saída foi publicada ou promovida a dado de treinamento aprovado.\n+\n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:error-message-versus-validation -->\n+### O próprio dimensionError converte e valida as duas strings informadas?\n+\n+Ele recebe um candidato e primeiro verifica seu valor lógico falso. A mensagem de números inteiros positivos não é um algoritmo separado de validação de dimensões. Conversão de strings e guarda de inteiro seguro no modo em pixels pertencem à função de cálculo.\n+\n+<!-- reading-section: faq:aspect-ratio-validation-order -->\n+### O modo de proporção pode ignorar uma dimensão informada inválida antes da validação?\n+\n+No modo em pixels, as duas dimensões informadas passam pela guarda inicial antes do cálculo posterior de escala por eixo. Essa ordem continua relevante mesmo quando uma dimensão final será derivada da outra.\n+\n+<!-- reading-section: faq:pixel-boundary-and-message-return -->\n+### Limites de pixels iguais são rejeitados ou mensagens são lançadas como exceções?\n+\n+As duas verificações de produto usam estritamente maior que. Igualdade isolada não segue esses ramos. A função retorna suas strings de mensagem ou null; não aparece throw neste corpo selecionado. Validade completa das entradas em execução e aplicação dos limites no backend exigem evidências separadas.\n+\n+O [validador de dimensões do backend](../go-image-dimensions/pt-br.md) e o [validador de animação](../go-image-animation/pt-br.md) são contratos separados. Números de limite correspondentes não provam aritmética idêntica, ordem de validação ou integração completa do frontend ao servidor.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "citation_refinement": "Use exact complete physical function boundaries from the53line source; earlier review retained.",
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.308624+00:00",
+    "canonical_question_ids": [
+      "error-message-versus-validation",
+      "aspect-ratio-validation-order",
+      "pixel-boundary-and-message-return"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/go-image-frontend-dimensions",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "at": "2026-11-20T17:41:55.203324+00:00",
+  "cases": [
+    {
+      "id": "sync-task-inference",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(2); const value: Promise<number>=limit((n:number)=>n+1,7);\n",
+      "expected_diagnostic_codes": [],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "async-task-inference",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(2); const value: Promise<string>=limit(async (n:number)=>String(n),7);\n",
+      "expected_diagnostic_codes": [],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "factory-is-not-promise",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst value: Promise<number>=pLimit(2);\n",
+      "expected_diagnostic_codes": [
+        2739
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "wrong-forwarded-argument",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(2); limit((n:number)=>n+1,'wrong');\n",
+      "expected_diagnostic_codes": [
+        2345
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "active-count-readonly",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(2); limit.activeCount=3;\n",
+      "expected_diagnostic_codes": [
+        2540
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "pending-count-readonly",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(2); limit.pendingCount=3;\n",
+      "expected_diagnostic_codes": [
+        2540
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "clear-is-void",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(2); const value: Promise<void>=limit.clearQueue();\n",
+      "expected_diagnostic_codes": [
+        2322
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "string-concurrency",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit('2');\n",
+      "expected_diagnostic_codes": [
+        2345
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "zero-number-static-admitted",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(0);\n",
+      "expected_diagnostic_codes": [],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "fraction-number-static-admitted",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(1.5);\n",
+      "expected_diagnostic_codes": [],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "infinity-number-static-admitted",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(Infinity);\n",
+      "expected_diagnostic_codes": [],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "queue-undefined-needs-narrowing",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst queue=new Queue<number>(); const value: number=queue.dequeue();\n",
+      "expected_diagnostic_codes": [
+        2322
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "queue-undefined-as-value",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst queue=new Queue<number|undefined>(); queue.enqueue(undefined); const value:number|undefined=queue.dequeue();\n",
+      "expected_diagnostic_codes": [],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "queue-wrong-value-type",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst queue=new Queue<number>(); queue.enqueue('wrong');\n",
+      "expected_diagnostic_codes": [
+        2345
+      ],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "queue-iteration-preserves-type",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst queue=new Queue<number>(); queue.enqueue(7); const values:number[]=[...queue];\n",
+      "expected_diagnostic_codes": [],
+      "runtime_execution_allowed": false
+    },
+    {
+      "id": "limit-map-not-declared",
+      "source": "import pLimit from 'p-limit';\nimport Queue from 'yocto-queue';\nconst limit=pLimit(2); limit.map([1,2],(n:number)=>n);\n",
+      "expected_diagnostic_codes": [
+        2339
+      ],
+      "runtime_execution_allowed": false
+    }
+  ],
+  "declaration_and_manifest_sources": [
+    {
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "path": "new-public-sources-v1/sindresorhus--p-limit/38a6773e552d24f4c9eb2d79d57b6cff017c587d/index.d.ts",
+      "git_blob": "caae030938fe9542988958c1206fb574adb59910",
+      "sha256": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+      "bytes": 1426
+    },
+    {
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "path": "new-public-sources-v1/sindresorhus--p-limit/38a6773e552d24f4c9eb2d79d57b6cff017c587d/package.json",
+      "git_blob": "2e41e6e172c99235b59e6cf5c9bd6592741c19d3",
+      "sha256": "71b014415b5b254af73a26d5ffdb0757f919587de66b7984567aff2167c1d5d6",
+      "bytes": 1002
+    },
+    {
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "path": "new-public-sources-v1/sindresorhus--yocto-queue/2e57f8c95e5e1f40379c6f85d18aee962662eb22/index.d.ts",
+      "git_blob": "dca842a5e71aa895d4ed73619ed19361f39e0995",
+      "sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "bytes": 1124
+    },
+    {
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "path": "new-public-sources-v1/sindresorhus--yocto-queue/2e57f8c95e5e1f40379c6f85d18aee962662eb22/package.json",
+      "git_blob": "7d50eb0a3ff624db1a499da92d5b3f49712438d9",
+      "sha256": "22a9628bb56b9f0ffc23d1dcfafeb04c01da4208ab20d782b4934db7ed0d9cc3",
+      "bytes": 800
+    }
+  ],
+  "expected_frozen_before_compiler_execution": true,
+  "compiler": "ExistingTypeScript5.9.3,strict,noEmit,ESNext/Bundler,ES2022lib,types[];explicitpathstoexactpinneddeclarations. Virtualownedconsumerfilesonly.",
+  "hypothesis": "Compiler checks may verify declaration-level API separation but cannot substitute for runtime guards: number-typedzero/fraction are expected to typecheck despite frozenruntime rejection.",
+  "no_package_install_or_build": true,
+  "no_application_source_execution": true,
+  "training_excluded": true,
+  "owner_approved": false,
+  "model_calls": 0,
+  "independent_from_runtime_case_count": false
+}

@@ -1,0 +1,7 @@
+{
+  "before": "47a28e3a2e2cfcc711f6f68eb7267731478e4a81",
+  "after": "0e1bf0d2f6bf100ec93f164efcd98514fb12b348",
+  "path": "crates/ruff_linter/src/registry.rs",
+  "returncode": 0,
+  "diff": "diff --git a/crates/ruff_linter/src/registry.rs b/crates/ruff_linter/src/registry.rs\nindex cf529e4e0a..128906741c 100644\n--- a/crates/ruff_linter/src/registry.rs\n+++ b/crates/ruff_linter/src/registry.rs\n@@ -351,15 +351,15 @@ impl Rule {\n         }\n     }\n \n-    /// Return the URL for the rule documentation, if it exists.\n-    pub fn url(&self) -> Option<String> {\n-        self.explanation().is_some().then(|| {\n-            format!(\n-                \"{}/rules/{name}\",\n-                env!(\"CARGO_PKG_HOMEPAGE\"),\n-                name = self.name()\n-            )\n-        })\n+    /// Return the URL for the rule documentation.\n+    pub fn url(&self) -> String {\n+        // Every rule has documentation. Calling `explanation()` here would retain all\n+        // documentation strings in binaries that only need the URLs.\n+        format!(\n+            \"{}/rules/{name}\",\n+            env!(\"CARGO_PKG_HOMEPAGE\"),\n+            name = self.name()\n+        )\n     }\n \n     pub fn name(&self) -> LintName {\n@@ -485,7 +485,7 @@ mod tests {\n     fn documentation() {\n         for rule in Rule::iter() {\n             assert!(\n-                rule.explanation().is_some(),\n+                !rule.explanation().trim().is_empty(),\n                 \"Rule {} is missing documentation\",\n                 rule.name()\n             );\n"
+}

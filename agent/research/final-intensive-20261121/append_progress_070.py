@@ -1,0 +1,17 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common="""
+
+### Progresso intensivo 070 — limite de proveniência do replay049 e correção preservada
+
+O checkpoint049 restaurou 5.787 arquivos com hash/modo, arquivo de357.481.508bytes e50grupos com exit0, mais os três resultados negativos C esperados. Seu pós-registro reconstruiu os quatro relatórios. O novo grupo de recibos de fim de semana, porém, usou a versão2do consumidor, que podia abrir três recibos por caminhos absolutos do workspace original. Assim, esse exit0não comprova independência do workspace para essas três leituras. A verificação dos bytes restaurados e os demais resultados têm escopos distintos; nenhum recibo antigo foi reescrito.
+
+Uma primeira correção v3recusou o preflight porque interpretava o working_directory portátil ponto da receita como âncora absoluta de proveniência. A falha foi preservada. A versão4usa original_root do plano067, cujo hash é confrontado com o manifesto pinado do capsule048, para mapear os caminhos gravados à raiz selecionada. Não usa o diretório de execução atual como prova da origem.
+
+O suplemento de consumo executou a versão4sobre os dados restaurados do049e comprovou que os três caminhos efetivamente abertos ficam sob sua raiz temporária. A versão4é suplemento posterior, ausente do arquivo049: o arquivo049sozinho não prova esse consumidor corrigido. O produtor51foi preparado para incluir a versão4no próximo checkpoint, mantendo50grupos e preservando a versão anterior. Esse próximo corte ainda precisa ser executado. Não houve alteração de produção, dataset original, modelo, framework ou autorização de Gold/treino.
+"""
+j=p/'root-report-bundle-progress-070';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v70.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

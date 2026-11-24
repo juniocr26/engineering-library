@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-22T03:12:27.937697+00:00",
+  "hypothesis": "The frozen stdlib-only Go type observer cannot resolve a real declared interface/type alias dependency across supplied local packages. A separate bounded source-graph observer can typecheck exact two-package application sources without stubs, imports from disk/network, codec execution or runtime-binding claims.",
+  "existing_tools_unchanged": [
+    "offline-go-type-observer-v1",
+    "offline-go-type-observer-v2"
+  ],
+  "new_scope": "Isolated owned research observer v3; no production integration/permanent tests.",
+  "language_profile": "go1.27 with existing Go1.27.1 SDK; actual inspected backend/go.mod declares go1.27, unlike frozen v2go1.24 profile.",
+  "frozen_limits": {
+    "packet_bytes": 131072,
+    "packages": 8,
+    "total_files": 16,
+    "individual_source_bytes": 65536,
+    "json_depth": 64
+  },
+  "required_behavior": [
+    "Reject unknown/trailing/duplicate JSON keys before decoding source graph.",
+    "Require unique supplied source package paths; forbid replacing frozen stdlib/unsafe.",
+    "Recursively resolve only supplied source packages or existing SHA-verified frozen standard exports.",
+    "Reject missing source package, cycles, type errors in any supplied package including unreferenced ones; emit no admitted partial relation data.",
+    "Bind exact input file SHA and source graph; compute method/field/qualified relations with go/types, not name matching.",
+    "Do not execute source, package init, codecs, tests, model, network or installs."
+  ],
+  "owned_development_controls": [
+    "Valid two-package interface and type-alias relation",
+    "Interface method selection not concrete runtime target",
+    "Missing dependency refusal",
+    "Error in dependency prevents all admitted relations",
+    "Cycle refusal",
+    "Stdlib name shadow collision refusal",
+    "Unreferenced erroneous package still fails whole provided graph",
+    "Source hash mismatch refusal",
+    "Duplicate JSON key refusal"
+  ],
+  "real_source_probe": "Unchanged Go Image Optimizer imageprocessing/image.go + imagecompression/usecase.go only. Actual compressor/router closure has codecs/external dependencies and remains outside this typecheck; no synthesized stubs.",
+  "not_independent_evaluation": true,
+  "new_model_calls": 0,
+  "training_gold": false,
+  "owner_questions": 0
+}

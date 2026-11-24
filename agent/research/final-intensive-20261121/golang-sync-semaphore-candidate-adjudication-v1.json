@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-22T01:23:00.920753+00:00",
+  "candidate_family": "golang.org/x/sync/semaphore",
+  "candidate_tag": "v0.16.0",
+  "observed_tag_commit": "7fad2c9213e0821bd78435a9c106806f2fc383f1",
+  "tag_primary_url": "https://go.googlesource.com/sync/+/refs/tags/v0.16.0?format=JSON",
+  "source_primary_url": "https://raw.githubusercontent.com/golang/sync/v0.16.0/semaphore/semaphore.go",
+  "candidate_source_packet": "golang-sync-browser-line-reconstruction-v1.go",
+  "source_packet_kind": "Derived browser line transcription; not raw upstream blob identity. Full response retained, formatting/final-newline identity not established.",
+  "status": "NOT_CERTIFIED_INDEPENDENT_DO_NOT_EXECUTE_AS_HOLDOUT",
+  "exposure_basis": {
+    "historical_request": "agent/research/continuation-20261120/go-build-context-real-v1/request.json",
+    "file": "internal/tuning.go",
+    "source_sha256": "922c5f7d285232faf919f12c35028e25dc976ca4977724d00c74e9482754e699",
+    "start_line": 264,
+    "end_line": 300,
+    "excerpt": "type FixedSizeSlotSupplier struct {\n\tnumSlots int\n\tsem      *semaphore.Weighted\n}\n\n// NewFixedSizeSlotSupplier creates a new FixedSizeSlotSupplier with the given number of slots.\n//\n// Exposed as: [go.temporal.io/sdk/worker.NewFixedSizeSlotSupplier]\nfunc NewFixedSizeSlotSupplier(numSlots int) (*FixedSizeSlotSupplier, error) {\n\tif numSlots <= 0 {\n\t\treturn nil, fmt.Errorf(\"NumSlots must be positive\")\n\t}\n\treturn &FixedSizeSlotSupplier{\n\t\tnumSlots: numSlots,\n\t\tsem:      semaphore.NewWeighted(int64(numSlots)),\n\t}, nil\n}\n\nfunc (f *FixedSizeSlotSupplier) ReserveSlot(ctx context.Context, _ SlotReservationInfo) (\n\t*SlotPermit, error) {\n\terr := f.sem.Acquire(ctx, 1)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"failed to acquire slot: %w\", err)\n\t}\n\n\treturn &SlotPermit{}, nil\n}\nfunc (f *FixedSizeSlotSupplier) TryReserveSlot(SlotReservationInfo) *SlotPermit {\n\tif f.sem.TryAcquire(1) {\n\t\treturn &SlotPermit{}\n\t}\n\treturn nil\n}\nfunc (f *FixedSizeSlotSupplier) MarkSlotUsed(SlotMarkUsedInfo) {}\nfunc (f *FixedSizeSlotSupplier) ReleaseSlot(SlotReleaseInfo) {\n\tf.sem.Release(1)\n}\n",
+    "exposed_API": [
+      "semaphore.Weighted",
+      "semaphore.NewWeighted",
+      "Acquire",
+      "TryAcquire",
+      "Release"
+    ],
+    "limitation": "Request preparation/tool evidence establishes development exposure, not new proof of neural execution or source implementation exposure."
+  },
+  "separate_false_lead": "The panic-text substring in internal_workflow.go belongs to Temporal own semaphoreImpl; does not prove x/sync code copying.",
+  "network_limits": "Direct shell raw access DNS failure, GitHub contents API and Gitiles exact blob cache misses preserved. No escalation, network override, Git fetch or new checkout.",
+  "decision": "Reject independence certification for this candidate; retain implementation observation as prospective/related-development evidence only. No model request/scoring or benchmark-count promotion.",
+  "training_eligible": false,
+  "gold": false,
+  "new_model_calls": 0
+}

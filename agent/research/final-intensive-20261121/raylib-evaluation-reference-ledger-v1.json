@@ -1,0 +1,281 @@
+{
+  "at": "2026-11-21T23:39:35.378394+00:00",
+  "task_id": "RAYLIB_TEXT_IO_EVAL_01",
+  "source_family": "raysan5/raylib",
+  "revision": "bcb85817b5d3da2594ff138df90e1faddb73b8f6",
+  "reference_only_not_model_prompt": true,
+  "role": "EVALUATION_ONLY_NEVER_TRAIN",
+  "claims": [
+    {
+      "id": "R01",
+      "path": "src/rcore.c",
+      "lines": [
+        2103,
+        2111
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "6dceab83b57b75bc5d10b0820132481bf4f1e473fd793051be9f93cb25008e74",
+      "quote": "char *LoadFileText(const char *fileName)\n{\n    char *text = NULL;\n\n    if (fileName != NULL)\n    {\n        if (loadFileText != NULL) return loadFileText(fileName);\n\n        FILE *file = fopen(fileName, \"rt\");",
+      "expected_written_meaning": "A nonnull filename is checked before callback dispatch. If loadFileText is nonnull its result returns directly, bypassing the shown fopen/allocator/termination path.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R02",
+      "path": "src/rcore.c",
+      "lines": [
+        2111,
+        2149
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "382dbc39f49ea10973cfc632bcc61b1c9f13dcfd5598f73fbf6c9c06aee4dd3c",
+      "quote": "        FILE *file = fopen(fileName, \"rt\");\n\n        if (file != NULL)\n        {\n            // WARNING: When reading a file as 'text' file,\n            // text mode causes carriage return-linefeed translation...\n            // ...but using fseek() should return correct byte-offset\n            fseek(file, 0, SEEK_END);\n            unsigned int size = (unsigned int)ftell(file);\n            fseek(file, 0, SEEK_SET);\n\n            if (size > 0)\n            {\n                text = (char *)RL_CALLOC(size + 1, sizeof(char));\n\n                if (text != NULL)\n                {\n                    unsigned int count = (unsigned int)fread(text, sizeof(char), size, file);\n\n                    // WARNING: \\r\\n is converted to \\n on reading, so,\n                    // read bytes count gets reduced by the number of lines\n                    if (count < size) text = (char *)RL_REALLOC(text, count + 1);\n\n                    // Zero-terminate the string\n                    text[count] = '\\0';\n\n                    TRACELOG(LOG_INFO, \"FILEIO: [%s] Text file loaded successfully\", fileName);\n                }\n                else TRACELOG(LOG_WARNING, \"FILEIO: [%s] Failed to allocated memory for file reading\", fileName);\n            }\n            else TRACELOG(LOG_WARNING, \"FILEIO: [%s] Failed to read text file\", fileName);\n\n            fclose(file);\n        }\n        else TRACELOG(LOG_WARNING, \"FILEIO: [%s] Failed to open text file\", fileName);\n    }\n    else TRACELOG(LOG_WARNING, \"FILEIO: File name provided is not valid\");\n\n    return text;",
+      "expected_written_meaning": "Default load initializes text NULL, uses fopen rt, seeks/ftell and casts unsigned size without explicit return checks; size zero does not allocate. fopen failure/nonpositive unsigned size path returns initial NULL if logging completes.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R03",
+      "path": "src/rcore.c",
+      "lines": [
+        2122,
+        2139
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "705d980e3d750b18a4ee57cc27735430ad905b6a49b282f0d5dad1ee839d5c19",
+      "quote": "            if (size > 0)\n            {\n                text = (char *)RL_CALLOC(size + 1, sizeof(char));\n\n                if (text != NULL)\n                {\n                    unsigned int count = (unsigned int)fread(text, sizeof(char), size, file);\n\n                    // WARNING: \\r\\n is converted to \\n on reading, so,\n                    // read bytes count gets reduced by the number of lines\n                    if (count < size) text = (char *)RL_REALLOC(text, count + 1);\n\n                    // Zero-terminate the string\n                    text[count] = '\\0';\n\n                    TRACELOG(LOG_INFO, \"FILEIO: [%s] Text file loaded successfully\", fileName);\n                }\n                else TRACELOG(LOG_WARNING, \"FILEIO: [%s] Failed to allocated memory for file reading\", fileName);",
+      "expected_written_meaning": "Default positive-size load allocates size+1 zeroed chars; after nonnull allocation reads count, reassigns RL_REALLOC result when count<size, then writes text[count]=zero with no explicit realloc-null guard. No universal allocation-failure safety guarantee.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R04",
+      "path": "src/rcore.c",
+      "lines": [
+        2143,
+        2156
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "aeecf56109aa3406a6fd2a592d07ef0b6efc9b2ffb7217b2928aa936b2ef97ee",
+      "quote": "            fclose(file);\n        }\n        else TRACELOG(LOG_WARNING, \"FILEIO: [%s] Failed to open text file\", fileName);\n    }\n    else TRACELOG(LOG_WARNING, \"FILEIO: File name provided is not valid\");\n\n    return text;\n}\n\n// Unload file text data allocated by LoadFileText()\nvoid UnloadFileText(char *text)\n{\n    RL_FREE(text);\n}",
+      "expected_written_meaning": "Default opened-file normal path calls fclose without checking return; UnloadFileText simply delegates RL_FREE(text). A custom callback allocation must be compatible with the caller release scheme; selected code does not enforce allocator compatibility.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R05",
+      "path": "src/rcore.c",
+      "lines": [
+        2159,
+        2171
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "e38f756870e1d9338a195a890a7ab1d397f4877562202b94f8e52e04f938a665",
+      "quote": "bool SaveFileText(const char *fileName, const char *text)\n{\n    bool result = false;\n\n    if (fileName != NULL)\n    {\n        if (saveFileText != NULL) return saveFileText(fileName, text);\n\n        FILE *file = fopen(fileName, \"wt\");\n\n        if (file != NULL)\n        {\n            int count = fprintf(file, \"%s\", text);",
+      "expected_written_meaning": "Save initializes false; checks filename before custom save callback direct return or default fopen wt and fprintf %s of text. No explicit text NULL guard here.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R06",
+      "path": "src/rcore.c",
+      "lines": [
+        2171,
+        2183
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "74b2c8fb7706fc78685d150b0db991418368eba8af244e869f4a214d13502621",
+      "quote": "            int count = fprintf(file, \"%s\", text);\n\n            if (count < 0) TRACELOG(LOG_WARNING, \"FILEIO: [%s] Failed to write text file\", fileName);\n            else TRACELOG(LOG_INFO, \"FILEIO: [%s] Text file saved successfully\", fileName);\n\n            int closed = fclose(file);\n            if (closed == 0) result = true;\n        }\n        else TRACELOG(LOG_WARNING, \"FILEIO: [%s] Failed to open text file\", fileName);\n    }\n    else TRACELOG(LOG_WARNING, \"FILEIO: File name provided is not valid\");\n\n    return result;",
+      "expected_written_meaning": "fprintf negative return selects warning but does not gate later result=true; fclose()==0 alone sets true in shown default path, assuming earlier operations return. Therefore true is not a written conjunction of nonnegative fprintf and successful fclose, nor durability proof.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R07",
+      "path": "src/rcore.c",
+      "lines": [
+        2201,
+        2211
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "5782ffc5e6f05f90824c11c5bbbbb9eac5179fe04968d032fa2606f34cee04c8",
+      "quote": "// Set custom file text data loader\nvoid SetLoadFileTextCallback(LoadFileTextCallback callback)\n{\n    loadFileText = callback;\n}\n\n// Set custom file text data saver\nvoid SetSaveFileTextCallback(SaveFileTextCallback callback)\n{\n    saveFileText = callback;\n}",
+      "expected_written_meaning": "Text callback setters assign shared static function pointers, without visible synchronization or lifetime/return validation. NULL assignment follows same setter body, restoring default dispatch for subsequent nonnull filename calls.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R08",
+      "path": "src/rcore.c",
+      "lines": [
+        409,
+        413
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "d336eea230d28b12988e711ecb37428b19c39297cc8b66289a1808c5ccc339d5",
+      "quote": "static TraceLogCallback traceLog = NULL;            // TraceLog callback function pointer\nstatic LoadFileDataCallback loadFileData = NULL;    // LoadFileData callback function pointer\nstatic SaveFileDataCallback saveFileData = NULL;    // SaveFileText callback function pointer\nstatic LoadFileTextCallback loadFileText = NULL;    // LoadFileText callback function pointer\nstatic SaveFileTextCallback saveFileText = NULL;    // SaveFileText callback function pointer",
+      "expected_written_meaning": "loadFileText and saveFileText are static file-scope variables initialized NULL. No per-thread instance state established.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R09",
+      "path": "src/raylib.h",
+      "lines": [
+        129,
+        142
+      ],
+      "source_sha256": "a6e372321b15c62bc20c96b4b77666ec27d367f5b7186fbfc6dd6181fd00c0af",
+      "quote_sha256": "eeb5e4429e2ce33ed8774cff1d6f4ed05a9048b3e8bdb0b21e5d3178554c5c3e",
+      "quote": "// Allow custom memory allocators\n// NOTE: Require recompiling raylib sources\n#ifndef RL_MALLOC\n    #define RL_MALLOC(sz)       malloc(sz)\n#endif\n#ifndef RL_CALLOC\n    #define RL_CALLOC(n,sz)     calloc(n,sz)\n#endif\n#ifndef RL_REALLOC\n    #define RL_REALLOC(ptr,sz)  realloc(ptr,sz)\n#endif\n#ifndef RL_FREE\n    #define RL_FREE(ptr)        free(ptr)\n#endif",
+      "expected_written_meaning": "RL_CALLOC/RL_REALLOC/RL_FREE defaults are guarded by ifndef and can be supplied at compilation; changing application macros alone does not prove existing binary uses them.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R10",
+      "path": "src/raylib.h",
+      "lines": [
+        966,
+        972
+      ],
+      "source_sha256": "a6e372321b15c62bc20c96b4b77666ec27d367f5b7186fbfc6dd6181fd00c0af",
+      "quote_sha256": "17c62636588ab00ca8e621f9437468655019c569a27c0a45d750bcbf7e8e5461",
+      "quote": "// Callbacks to hook some internal functions\n// WARNING: These callbacks are intended for advanced users\ntypedef void (*TraceLogCallback)(int logLevel, const char *text, va_list args); // Logging: Redirect trace log messages\ntypedef unsigned char *(*LoadFileDataCallback)(const char *fileName, int *dataSize); // FileIO: Load binary data\ntypedef bool (*SaveFileDataCallback)(const char *fileName, const void *data, int dataSize); // FileIO: Save binary data\ntypedef char *(*LoadFileTextCallback)(const char *fileName);                  // FileIO: Load text data\ntypedef bool (*SaveFileTextCallback)(const char *fileName, const char *text); // FileIO: Save text data",
+      "expected_written_meaning": "Public callback types are char* loader(const char*) and bool saver(const char*,const char*); no user-data argument in selected signatures.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R11",
+      "path": "src/raylib.h",
+      "lines": [
+        1127,
+        1141
+      ],
+      "source_sha256": "a6e372321b15c62bc20c96b4b77666ec27d367f5b7186fbfc6dd6181fd00c0af",
+      "quote_sha256": "7c019fe6d0c2f27595aebfbd777f58b3976f125c4f740b1fa9ff993ee3db5406",
+      "quote": "// File system management functions\nRLAPI unsigned char *LoadFileData(const char *fileName, int *dataSize); // Load file data as byte array (read)\nRLAPI void UnloadFileData(unsigned char *data);                     // Unload file data allocated by LoadFileData()\nRLAPI bool SaveFileData(const char *fileName, const void *data, int dataSize); // Save data to file from byte array (write), returns true on success\nRLAPI bool ExportDataAsCode(const unsigned char *data, int dataSize, const char *fileName); // Export data to code (.h), returns true on success\nRLAPI char *LoadFileText(const char *fileName);                     // Load text data from file (read), returns a '\\0' terminated string\nRLAPI void UnloadFileText(char *text);                              // Unload file text data allocated by LoadFileText()\nRLAPI bool SaveFileText(const char *fileName, const char *text);    // Save text data to file (write), string must be '\\0' terminated, returns true on success\n\n// File access custom callbacks\n// WARNING: Callbacks setup is intended for advanced users\nRLAPI void SetLoadFileDataCallback(LoadFileDataCallback callback);  // Set custom file binary data loader\nRLAPI void SetSaveFileDataCallback(SaveFileDataCallback callback);  // Set custom file binary data saver\nRLAPI void SetLoadFileTextCallback(LoadFileTextCallback callback);  // Set custom file text data loader\nRLAPI void SetSaveFileTextCallback(SaveFileTextCallback callback);  // Set custom file text data saver",
+      "expected_written_meaning": "Public API declares loader, unloader, saver, setters; header promises text strings but does not validate arbitrary callback behavior.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R12",
+      "path": "examples/core/core_text_file_loading.c",
+      "lines": [
+        44,
+        50
+      ],
+      "source_sha256": "d87ca93a07600a732436d13207cd336789d2310ae1a14bec71ba05e1873eb9b9",
+      "quote_sha256": "c347738378f20ab32bc8ba270e455467cfc677ac58f52ac495d152e1883a810a",
+      "quote": "    // Loading text file from resources/text_file.txt\n    const char *fileName = \"resources/text_file.txt\";\n    char *text = LoadFileText(fileName);\n\n    // Loading all the text lines\n    int lineCount = 0;\n    char **lines = LoadTextLines(text, &lineCount);",
+      "expected_written_meaning": "Written example loads resources/text_file.txt then passes text to LoadTextLines; no load NULL guard in selected span. Example not executed and does not prove resource success.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R13",
+      "path": "examples/core/core_text_file_loading.c",
+      "lines": [
+        166,
+        169
+      ],
+      "source_sha256": "d87ca93a07600a732436d13207cd336789d2310ae1a14bec71ba05e1873eb9b9",
+      "quote_sha256": "bd5ef3db096e9e5278ef5da93792081c5b70202afc339a2786d430b636535a51",
+      "quote": "    UnloadTextLines(lines, lineCount);\n    UnloadFileText(text);\n\n    CloseWindow();        // Close window and OpenGL context",
+      "expected_written_meaning": "Written example releases split lines before original text and then closes window; no measured cleanup safety/runtime success.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R14",
+      "path": "src/rcore.c",
+      "lines": [
+        2292,
+        2318
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "a1b6cfbe0960381b81676fbbd24e315acf9981cc603bad825decf9a1492d31fa",
+      "quote": "// Replace text in an existing file\n// WARNING: DEPENDENCY: [rtext] module\nint FileTextReplace(const char *fileName, const char *search, const char *replacement)\n{\n    int result = -1;\n\n#if SUPPORT_MODULE_RTEXT\n    char *fileText = NULL;\n    char *fileTextUpdated = { 0 };\n\n    if (FileExists(fileName))\n    {\n        fileText = LoadFileText(fileName);\n        fileTextUpdated = TextReplaceAlloc(fileText, search, replacement);\n        if (fileTextUpdated != NULL)\n        {\n            bool saved = SaveFileText(fileName, fileTextUpdated);\n            if (saved) result = 0;\n            MemFree(fileTextUpdated);\n        }\n        UnloadFileText(fileText);\n    }\n#else\n    TRACELOG(LOG_WARNING, \"FILE: File text replace requires [rtext] module\");\n#endif\n\n    return result;",
+      "expected_written_meaning": "FileTextReplace caller under SUPPORT_MODULE_RTEXT loads text, conditionally saves replacement and frees replacement/text. This guard belongs to caller, not a SUPPORT_STANDARD_FILEIO guard on core LoadFileText.",
+      "runtime_executed": false
+    },
+    {
+      "id": "R15",
+      "path": "src/rcore.c",
+      "lines": [
+        2321,
+        2338
+      ],
+      "source_sha256": "25f60ed0e681e4565adb045870819d0eaed345aa975f8c609b73d8f691b6c42b",
+      "quote_sha256": "11304651d80aec16cabd29777fc32a92b744773bcae8d007e261562ccecdd2e6",
+      "quote": "// Find text index position in existing file\n// WARNING: DEPENDENCY: [rtext] module\nint FileTextFindIndex(const char *fileName, const char *search)\n{\n    int result = -1;\n\n    if (FileExists(fileName))\n    {\n        char *fileText = LoadFileText(fileName);\n        if (fileText != NULL)\n        {\n            char *ptr = strstr(fileText, search);\n            if (ptr != NULL) result = (int)(ptr - fileText);\n            UnloadFileText(fileText);\n        }\n    }\n\n    return result;",
+      "expected_written_meaning": "FileTextFindIndex checks loaded text nonnull before strstr, unloads it in that branch, returns initial -1 otherwise; no full caller/runtime safety proof.",
+      "runtime_executed": false
+    }
+  ],
+  "negative_controls": [
+    {
+      "id": "N01",
+      "claim": "safe text loading never invokes custom callbacks",
+      "expected": "REFUTED",
+      "reference_ids": [
+        "R01",
+        "R08"
+      ]
+    },
+    {
+      "id": "N02",
+      "claim": "Every custom load callback result is copied and zero-terminated by LoadFileText before return",
+      "expected": "REFUTED",
+      "reference_ids": [
+        "R01"
+      ]
+    },
+    {
+      "id": "N03",
+      "claim": "The default saver only returns true when fprintf is nonnegative AND fclose is zero",
+      "expected": "REFUTED",
+      "reference_ids": [
+        "R06"
+      ]
+    },
+    {
+      "id": "N04",
+      "claim": "The default loader explicitly checks reallocation failure before writing terminator",
+      "expected": "REFUTED",
+      "reference_ids": [
+        "R03"
+      ]
+    },
+    {
+      "id": "N05",
+      "claim": "The source proves all custom allocations can safely be released by any RL_FREE",
+      "expected": "INSUFFICIENT",
+      "reference_ids": [
+        "R04",
+        "R09"
+      ]
+    },
+    {
+      "id": "N06",
+      "claim": "The text file example ran and passed in this campaign",
+      "expected": "INSUFFICIENT",
+      "reference_ids": [
+        "R12",
+        "R13"
+      ]
+    },
+    {
+      "id": "N07",
+      "claim": "The selected file-local callback state proves thread-safe per-instance dispatch",
+      "expected": "INSUFFICIENT",
+      "reference_ids": [
+        "R07",
+        "R08"
+      ]
+    },
+    {
+      "id": "N08",
+      "claim": "Missing src/utils.c proves text APIs were removed repository-wide",
+      "expected": "REFUTED",
+      "reference_ids": [
+        "R01",
+        "R05",
+        "R11"
+      ]
+    }
+  ],
+  "claim_count": 15,
+  "independent_task_count": 1,
+  "atomic_claim_precision_not_yet_measured": true,
+  "limitations": "Reference entries often contain multiple propositions;15is reference-unit count, not independent atomic factual claim denominator. Source meaning reviewed manually, not proved by hashes."
+}

@@ -1,0 +1,188 @@
+{
+  "at": "2026-11-21T07:53:46.242575+00:00",
+  "units": [
+    {
+      "role": "before",
+      "path": "crates/ruff_linter/src/violation.rs",
+      "needle": "fn explain()",
+      "start": 35,
+      "end": 56,
+      "file_sha256": "b6f5db43d4216c6c2d6ab525ed7ebb624078bfe07b3fc63e2e3efc8d3ccd1f74",
+      "excerpt": "    /// Returns an explanation of what this violation catches,\n    /// why it's bad, and what users should do instead.\n    fn explain() -> Option<&'static str>;\n\n    /// Returns the rule status for this violation.\n    fn status() -> RuleStatus;\n\n    /// Returns the category for this violation.\n    fn category() -> Category;\n\n    /// Returns the file where the violation is declared.\n    fn file() -> &'static str;\n\n    /// Returns the 1-based line where the violation is declared.\n    fn line() -> u32;\n}\n\npub trait Violation: ViolationMetadata + Sized {\n    /// `None` in the case a fix is never available or otherwise Some\n    /// [`FixAvailability`] describing the available fix.\n    const FIX_AVAILABILITY: FixAvailability = FixAvailability::None;\n\n",
+      "excerpt_sha256": "1b8f1c1fdf3b2d9f66c9a6cfc98d96d7159ca7817ca43c2b264ca7ddf66917b2"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_linter/src/violation.rs",
+      "needle": "pub trait AlwaysFixableViolation",
+      "start": 88,
+      "end": 109,
+      "file_sha256": "b6f5db43d4216c6c2d6ab525ed7ebb624078bfe07b3fc63e2e3efc8d3ccd1f74",
+      "excerpt": "/// This trait exists just to make implementing the [`Violation`] trait more\n/// convenient for violations that can always be fixed.\npub trait AlwaysFixableViolation: ViolationMetadata {\n    /// The message used to describe the violation.\n    fn message(&self) -> String;\n\n    /// The title displayed for the available fix.\n    fn fix_title(&self) -> String;\n\n    /// Returns the format strings used by\n    /// [`message`](AlwaysFixableViolation::message).\n    fn message_formats() -> &'static [&'static str];\n}\n\n/// A blanket implementation.\nimpl<V: AlwaysFixableViolation> Violation for V {\n    const FIX_AVAILABILITY: FixAvailability = FixAvailability::Always;\n\n    fn message(&self) -> String {\n        <Self as AlwaysFixableViolation>::message(self)\n    }\n\n",
+      "excerpt_sha256": "e89ade8749c87e7a96457430d3f95c2f2dcdb13d6b1b24805f09bf154125bd6f"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_linter/src/violation.rs",
+      "needle": "impl<V: AlwaysFixableViolation>",
+      "start": 101,
+      "end": 117,
+      "file_sha256": "b6f5db43d4216c6c2d6ab525ed7ebb624078bfe07b3fc63e2e3efc8d3ccd1f74",
+      "excerpt": "\n/// A blanket implementation.\nimpl<V: AlwaysFixableViolation> Violation for V {\n    const FIX_AVAILABILITY: FixAvailability = FixAvailability::Always;\n\n    fn message(&self) -> String {\n        <Self as AlwaysFixableViolation>::message(self)\n    }\n\n    fn fix_title(&self) -> Option<String> {\n        Some(<Self as AlwaysFixableViolation>::fix_title(self))\n    }\n\n    fn message_formats() -> &'static [&'static str] {\n        <Self as AlwaysFixableViolation>::message_formats()\n    }\n}\n",
+      "excerpt_sha256": "b09154d2bfb703c93cd35c96d5dc2a4bbff488213a42ff4b31fef0cd5998b4a7"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_macros/src/violation_metadata.rs",
+      "needle": "fn explain()",
+      "start": 37,
+      "end": 58,
+      "file_sha256": "2e5e4f5229c34bf880cf1bc3e6914f53a18b4bdb43cde264da267739d8b7307a",
+      "excerpt": "            }\n\n            fn explain() -> Option<&'static str> {\n                Some(#docs)\n            }\n\n            fn status() -> crate::codes::RuleStatus {\n                crate::codes::#status\n            }\n\n            fn category() -> crate::codes::Category {\n                #category\n            }\n\n            fn file() -> &'static str {\n                file!()\n            }\n\n            fn line() -> u32 {\n                line!()\n            }\n        }\n",
+      "excerpt_sha256": "4ed50f218e5ddd3eb654b6767612be7db5bf056ae8fef5ec44ba6bcd62254dcb"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_macros/src/violation_metadata.rs",
+      "needle": "fn get_docs(",
+      "start": 61,
+      "end": 82,
+      "file_sha256": "2e5e4f5229c34bf880cf1bc3e6914f53a18b4bdb43cde264da267739d8b7307a",
+      "excerpt": "\n/// Collect all doc comment attributes into a string\nfn get_docs(attrs: &[Attribute]) -> syn::Result<String> {\n    let mut explanation = String::new();\n    for attr in attrs {\n        if attr.path().is_ident(\"doc\") {\n            if let Some(lit) = parse_attr([\"doc\"], attr) {\n                let value = lit.value();\n                // `/// ` adds\n                let line = value.strip_prefix(' ').unwrap_or(&value);\n                explanation.push_str(line);\n                explanation.push('\\n');\n            } else {\n                return Err(Error::new_spanned(attr, \"unimplemented doc comment style\"));\n            }\n        }\n    }\n    Ok(explanation)\n}\n\n/// Extract the rule metadata attributes.\n///\n",
+      "excerpt_sha256": "e19c816d78cc1cb687dfee1f17214627c49608d5c9652cd0515fa297cacc553d"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_linter/src/registry.rs",
+      "needle": "pub fn url(",
+      "start": 353,
+      "end": 374,
+      "file_sha256": "1054472a203b7668b3de7cdbd896b203e3585ca8d854a498c19767123d0cecaa",
+      "excerpt": "\n    /// Return the URL for the rule documentation, if it exists.\n    pub fn url(&self) -> Option<String> {\n        self.explanation().is_some().then(|| {\n            format!(\n                \"{}/rules/{name}\",\n                env!(\"CARGO_PKG_HOMEPAGE\"),\n                name = self.name()\n            )\n        })\n    }\n\n    pub fn name(&self) -> LintName {\n        let name: &'static str = self.into();\n        LintName::of(name)\n    }\n\n    /// Return the rule's name, followed by its code in parentheses when available.\n    ///\n    /// For example:\n    ///\n    /// ```text\n",
+      "excerpt_sha256": "c56d22a698288c500ac5231ac636e21640786d03f398aba22944b464a8be0fff"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_linter/src/registry.rs",
+      "needle": "fn documentation()",
+      "start": 483,
+      "end": 504,
+      "file_sha256": "1054472a203b7668b3de7cdbd896b203e3585ca8d854a498c19767123d0cecaa",
+      "excerpt": "\n    #[test]\n    fn documentation() {\n        for rule in Rule::iter() {\n            assert!(\n                rule.explanation().is_some(),\n                \"Rule {} is missing documentation\",\n                rule.name()\n            );\n        }\n    }\n\n    #[test]\n    fn rule_naming_convention() {\n        // The disallowed rule names are defined in a separate file so that they can also be picked up by add_rule.py.\n        let patterns: Vec<_> = include_str!(\"../resources/test/disallowed_rule_names.txt\")\n            .trim()\n            .split('\\n')\n            .map(|line| {\n                glob::Pattern::new(line).expect(\"malformed pattern in disallowed_rule_names.txt\")\n            })\n            .collect();\n",
+      "excerpt_sha256": "e24655b921b45c3ae5b67330f1389ec18166ccf0bb329145ad56007f8622a9e3"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_macros/src/map_codes.rs",
+      "needle": "pub fn explanation(",
+      "start": 485,
+      "end": 506,
+      "file_sha256": "0ea3d03b7443e1853fbd41d984ca1cbe59156a7dc3cdd92655362386e4d464a0",
+      "excerpt": "\n            /// Returns the documentation for this rule.\n            pub fn explanation(&self) -> Option<&'static str> {\n                use crate::ViolationMetadata;\n                match self { #rule_explanation_match_arms }\n            }\n\n            /// Returns the fix status of this rule.\n            pub const fn fixable(&self) -> crate::FixAvailability {\n                match self { #rule_fixable_match_arms }\n            }\n\n            pub fn status(&self) -> crate::codes::RuleStatus {\n                match self { #rule_status_match_arms }\n            }\n\n            pub fn category(&self) -> crate::codes::Category {\n                match self { #rule_category_match_arms }\n            }\n\n            pub fn file(&self) -> &'static str {\n                match self { #rule_file_match_arms }\n",
+      "excerpt_sha256": "152c3ffa3dc9f8355b418dc849f82f95cdcff77ae143797278f953363c23b3e3"
+    },
+    {
+      "role": "before",
+      "path": "crates/ruff_linter/src/message/mod.rs",
+      "needle": "diagnostic.set_documentation_url",
+      "start": 129,
+      "end": 150,
+      "file_sha256": "f2462e776f1b5a24e75fb48b050db064426cfeb17ddf8b22faec8cdf9c306c4a",
+      "excerpt": "        diagnostic.set_secondary_code(SecondaryCode::new(code.to_string()));\n    }\n    diagnostic.set_documentation_url(rule.url());\n\n    diagnostic\n}\n\nimpl FileResolver for EmitterContext<'_> {\n    fn path(&self, _file: File) -> &str {\n        unimplemented!(\"Expected a Ruff file for rendering a Ruff diagnostic\");\n    }\n\n    fn input(&self, _file: File) -> Input {\n        unimplemented!(\"Expected a Ruff file for rendering a Ruff diagnostic\");\n    }\n\n    fn notebook_index(&self, file: &UnifiedFile) -> Option<NotebookIndex> {\n        match file {\n            UnifiedFile::Ty(_) => {\n                unimplemented!(\"Expected a Ruff file for rendering a Ruff diagnostic\")\n            }\n            UnifiedFile::Ruff(file) => self.notebook_indexes.get(file.name()).cloned(),\n",
+      "excerpt_sha256": "c31e93d631797c9661b57b9e69246123b38ebcd84d7db97c16dc36de271a37f4"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_linter/src/violation.rs",
+      "needle": "fn explain()",
+      "start": 35,
+      "end": 56,
+      "file_sha256": "45bc7e366198d241fe2456573acc8d68972d5b0c584f3b75c447f55c070f4f55",
+      "excerpt": "    /// Returns an explanation of what this violation catches,\n    /// why it's bad, and what users should do instead.\n    fn explain() -> &'static str;\n\n    /// Returns the rule status for this violation.\n    fn status() -> RuleStatus;\n\n    /// Returns the category for this violation.\n    fn category() -> Category;\n\n    /// Returns the file where the violation is declared.\n    fn file() -> &'static str;\n\n    /// Returns the 1-based line where the violation is declared.\n    fn line() -> u32;\n}\n\npub trait Violation: ViolationMetadata + Sized {\n    /// `None` in the case a fix is never available or otherwise Some\n    /// [`FixAvailability`] describing the available fix.\n    const FIX_AVAILABILITY: FixAvailability = FixAvailability::None;\n\n",
+      "excerpt_sha256": "bb8d0fb7909d27d59167a7288bcd5e5e30dd87d0d989dc03406a716a32688c66"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_linter/src/violation.rs",
+      "needle": "pub trait AlwaysFixableViolation",
+      "start": 88,
+      "end": 109,
+      "file_sha256": "45bc7e366198d241fe2456573acc8d68972d5b0c584f3b75c447f55c070f4f55",
+      "excerpt": "/// This trait exists just to make implementing the [`Violation`] trait more\n/// convenient for violations that can always be fixed.\npub trait AlwaysFixableViolation: ViolationMetadata {\n    /// The message used to describe the violation.\n    fn message(&self) -> String;\n\n    /// The title displayed for the available fix.\n    fn fix_title(&self) -> String;\n\n    /// Returns the format strings used by\n    /// [`message`](AlwaysFixableViolation::message).\n    fn message_formats() -> &'static [&'static str];\n}\n\n/// A blanket implementation.\nimpl<V: AlwaysFixableViolation> Violation for V {\n    const FIX_AVAILABILITY: FixAvailability = FixAvailability::Always;\n\n    fn message(&self) -> String {\n        <Self as AlwaysFixableViolation>::message(self)\n    }\n\n",
+      "excerpt_sha256": "e89ade8749c87e7a96457430d3f95c2f2dcdb13d6b1b24805f09bf154125bd6f"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_linter/src/violation.rs",
+      "needle": "impl<V: AlwaysFixableViolation>",
+      "start": 101,
+      "end": 117,
+      "file_sha256": "45bc7e366198d241fe2456573acc8d68972d5b0c584f3b75c447f55c070f4f55",
+      "excerpt": "\n/// A blanket implementation.\nimpl<V: AlwaysFixableViolation> Violation for V {\n    const FIX_AVAILABILITY: FixAvailability = FixAvailability::Always;\n\n    fn message(&self) -> String {\n        <Self as AlwaysFixableViolation>::message(self)\n    }\n\n    fn fix_title(&self) -> Option<String> {\n        Some(<Self as AlwaysFixableViolation>::fix_title(self))\n    }\n\n    fn message_formats() -> &'static [&'static str] {\n        <Self as AlwaysFixableViolation>::message_formats()\n    }\n}\n",
+      "excerpt_sha256": "b09154d2bfb703c93cd35c96d5dc2a4bbff488213a42ff4b31fef0cd5998b4a7"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_macros/src/violation_metadata.rs",
+      "needle": "fn explain()",
+      "start": 37,
+      "end": 58,
+      "file_sha256": "62171c801bde6c918642e225a7447c0265f77ae72d430df664f06915f58fdb47",
+      "excerpt": "            }\n\n            fn explain() -> &'static str {\n                #docs\n            }\n\n            fn status() -> crate::codes::RuleStatus {\n                crate::codes::#status\n            }\n\n            fn category() -> crate::codes::Category {\n                #category\n            }\n\n            fn file() -> &'static str {\n                file!()\n            }\n\n            fn line() -> u32 {\n                line!()\n            }\n        }\n",
+      "excerpt_sha256": "347a1e1ec3436e24bb03d82137198d680dbce6777ccf7639292cb7f232cdc4e0"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_macros/src/violation_metadata.rs",
+      "needle": "fn get_docs(",
+      "start": 61,
+      "end": 82,
+      "file_sha256": "62171c801bde6c918642e225a7447c0265f77ae72d430df664f06915f58fdb47",
+      "excerpt": "\n/// Collect all doc comment attributes into a string\nfn get_docs(attrs: &[Attribute]) -> syn::Result<String> {\n    let mut explanation = String::new();\n    for attr in attrs {\n        if attr.path().is_ident(\"doc\") {\n            if let Some(lit) = parse_attr([\"doc\"], attr) {\n                let value = lit.value();\n                // `/// ` adds\n                let line = value.strip_prefix(' ').unwrap_or(&value);\n                explanation.push_str(line);\n                explanation.push('\\n');\n            } else {\n                return Err(Error::new_spanned(attr, \"unimplemented doc comment style\"));\n            }\n        }\n    }\n    Ok(explanation)\n}\n\n/// Extract the rule metadata attributes.\n///\n",
+      "excerpt_sha256": "e19c816d78cc1cb687dfee1f17214627c49608d5c9652cd0515fa297cacc553d"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_linter/src/registry.rs",
+      "needle": "pub fn url(",
+      "start": 353,
+      "end": 374,
+      "file_sha256": "0c8bfe1a0062a713ea0547926cf62698eca2962a80d03db0335ed63258e00ee7",
+      "excerpt": "\n    /// Return the URL for the rule documentation.\n    pub fn url(&self) -> String {\n        // Every rule has documentation. Calling `explanation()` here would retain all\n        // documentation strings in binaries that only need the URLs.\n        format!(\n            \"{}/rules/{name}\",\n            env!(\"CARGO_PKG_HOMEPAGE\"),\n            name = self.name()\n        )\n    }\n\n    pub fn name(&self) -> LintName {\n        let name: &'static str = self.into();\n        LintName::of(name)\n    }\n\n    /// Return the rule's name, followed by its code in parentheses when available.\n    ///\n    /// For example:\n    ///\n    /// ```text\n",
+      "excerpt_sha256": "15305578aa5b8b05cd108783c2788f6ab5a614238c4e7b81471f1da6c9a24322"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_linter/src/registry.rs",
+      "needle": "fn documentation()",
+      "start": 483,
+      "end": 504,
+      "file_sha256": "0c8bfe1a0062a713ea0547926cf62698eca2962a80d03db0335ed63258e00ee7",
+      "excerpt": "\n    #[test]\n    fn documentation() {\n        for rule in Rule::iter() {\n            assert!(\n                !rule.explanation().trim().is_empty(),\n                \"Rule {} is missing documentation\",\n                rule.name()\n            );\n        }\n    }\n\n    #[test]\n    fn rule_naming_convention() {\n        // The disallowed rule names are defined in a separate file so that they can also be picked up by add_rule.py.\n        let patterns: Vec<_> = include_str!(\"../resources/test/disallowed_rule_names.txt\")\n            .trim()\n            .split('\\n')\n            .map(|line| {\n                glob::Pattern::new(line).expect(\"malformed pattern in disallowed_rule_names.txt\")\n            })\n            .collect();\n",
+      "excerpt_sha256": "1bbba991ef3c71178521843fd8393b6ed00e574b29ae8e0459056aca9793d4ab"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_macros/src/map_codes.rs",
+      "needle": "pub fn explanation(",
+      "start": 485,
+      "end": 506,
+      "file_sha256": "1b624f734dd0f60a8bd410991ea759dc6b9945889f417dd117771815fed7c1f0",
+      "excerpt": "\n            /// Returns the documentation for this rule.\n            pub fn explanation(&self) -> &'static str {\n                use crate::ViolationMetadata;\n                match self { #rule_explanation_match_arms }\n            }\n\n            /// Returns the fix status of this rule.\n            pub const fn fixable(&self) -> crate::FixAvailability {\n                match self { #rule_fixable_match_arms }\n            }\n\n            pub fn status(&self) -> crate::codes::RuleStatus {\n                match self { #rule_status_match_arms }\n            }\n\n            pub fn category(&self) -> crate::codes::Category {\n                match self { #rule_category_match_arms }\n            }\n\n            pub fn file(&self) -> &'static str {\n                match self { #rule_file_match_arms }\n",
+      "excerpt_sha256": "466563efaa2612174141cadae88bf0571ab931de44b63383d0b252973f5d2af7"
+    },
+    {
+      "role": "after",
+      "path": "crates/ruff_linter/src/message/mod.rs",
+      "needle": "diagnostic.set_documentation_url",
+      "start": 129,
+      "end": 150,
+      "file_sha256": "de9a2e8e993620bd87aacb1bf2a2184134d12f5e98c6ea29a6ebb8db350883bc",
+      "excerpt": "        diagnostic.set_secondary_code(SecondaryCode::new(code.to_string()));\n    }\n    diagnostic.set_documentation_url(Some(rule.url()));\n\n    diagnostic\n}\n\nimpl FileResolver for EmitterContext<'_> {\n    fn path(&self, _file: File) -> &str {\n        unimplemented!(\"Expected a Ruff file for rendering a Ruff diagnostic\");\n    }\n\n    fn input(&self, _file: File) -> Input {\n        unimplemented!(\"Expected a Ruff file for rendering a Ruff diagnostic\");\n    }\n\n    fn notebook_index(&self, file: &UnifiedFile) -> Option<NotebookIndex> {\n        match file {\n            UnifiedFile::Ty(_) => {\n                unimplemented!(\"Expected a Ruff file for rendering a Ruff diagnostic\")\n            }\n            UnifiedFile::Ruff(file) => self.notebook_indexes.get(file.name()).cloned(),\n",
+      "excerpt_sha256": "75026dde138b0fa36e0e10044d807e19c6950518f7ea9601a43c1ad0511f3951"
+    }
+  ],
+  "selected_UnsafeFixes_text_matches_HEAD": true,
+  "selected_UnsafeFixes_text_sha256": "67c1ea0c93822e03789953516bc01f6d153b537e043c6d8a5d7d46fe25ced03e",
+  "not_native_rust_parse": true
+}

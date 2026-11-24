@@ -1,0 +1,117 @@
+{
+  "at": "2026-11-20T11:18:32.027925+00:00",
+  "cases": [
+    {
+      "keep": 1,
+      "before": {
+        "sample.1.txt": "6171546f06b1442e33fd7ec791f7b101a3cd9f7b2d1025a4a041d4c85797e9e3",
+        "sample.txt": "4a439bd650d3f47c0ab35ea41931e8e7ffc828a3c62e0c0f61a446254bfbe44b"
+      },
+      "after": {},
+      "events": [
+        {
+          "operation": "rename",
+          "from": "sample.txt",
+          "to": "sample.1.txt"
+        },
+        {
+          "operation": "remove",
+          "path": "sample.1.txt"
+        }
+      ],
+      "backup_count": 0,
+      "current_file_absent": true,
+      "expected_source_trace_matches": true
+    },
+    {
+      "keep": 2,
+      "before": {
+        "sample.2.txt": "fdc66ff3978855058eb26a5c02eb0b317bae4eb414e010b92fc14206f2c83dde",
+        "sample.1.txt": "6171546f06b1442e33fd7ec791f7b101a3cd9f7b2d1025a4a041d4c85797e9e3",
+        "sample.txt": "4a439bd650d3f47c0ab35ea41931e8e7ffc828a3c62e0c0f61a446254bfbe44b"
+      },
+      "after": {
+        "sample.1.txt": "4a439bd650d3f47c0ab35ea41931e8e7ffc828a3c62e0c0f61a446254bfbe44b"
+      },
+      "events": [
+        {
+          "operation": "rename",
+          "from": "sample.1.txt",
+          "to": "sample.2.txt"
+        },
+        {
+          "operation": "rename",
+          "from": "sample.txt",
+          "to": "sample.1.txt"
+        },
+        {
+          "operation": "remove",
+          "path": "sample.2.txt"
+        }
+      ],
+      "backup_count": 1,
+      "current_file_absent": true,
+      "expected_source_trace_matches": true
+    },
+    {
+      "keep": 5,
+      "before": {
+        "sample.3.txt": "91e90ce5bf70a310213cf176cb756ce18f5a394bfddb9d32c324f63f5b0bd8f7",
+        "sample.2.txt": "fdc66ff3978855058eb26a5c02eb0b317bae4eb414e010b92fc14206f2c83dde",
+        "sample.1.txt": "6171546f06b1442e33fd7ec791f7b101a3cd9f7b2d1025a4a041d4c85797e9e3",
+        "sample.5.txt": "94830ae881b08bf001155685cd18b8fe22288ba991541a48bc5aa5485ff8677f",
+        "sample.4.txt": "0f6b4809bdf5e25976a49fb935fd033c4e2808d90187ac028c9ea8e01fcf1733",
+        "sample.txt": "4a439bd650d3f47c0ab35ea41931e8e7ffc828a3c62e0c0f61a446254bfbe44b"
+      },
+      "after": {
+        "sample.3.txt": "fdc66ff3978855058eb26a5c02eb0b317bae4eb414e010b92fc14206f2c83dde",
+        "sample.2.txt": "6171546f06b1442e33fd7ec791f7b101a3cd9f7b2d1025a4a041d4c85797e9e3",
+        "sample.1.txt": "4a439bd650d3f47c0ab35ea41931e8e7ffc828a3c62e0c0f61a446254bfbe44b",
+        "sample.4.txt": "91e90ce5bf70a310213cf176cb756ce18f5a394bfddb9d32c324f63f5b0bd8f7"
+      },
+      "events": [
+        {
+          "operation": "rename",
+          "from": "sample.4.txt",
+          "to": "sample.5.txt"
+        },
+        {
+          "operation": "rename",
+          "from": "sample.3.txt",
+          "to": "sample.4.txt"
+        },
+        {
+          "operation": "rename",
+          "from": "sample.2.txt",
+          "to": "sample.3.txt"
+        },
+        {
+          "operation": "rename",
+          "from": "sample.1.txt",
+          "to": "sample.2.txt"
+        },
+        {
+          "operation": "rename",
+          "from": "sample.txt",
+          "to": "sample.1.txt"
+        },
+        {
+          "operation": "remove",
+          "path": "sample.5.txt"
+        }
+      ],
+      "backup_count": 4,
+      "current_file_absent": true,
+      "expected_source_trace_matches": true
+    }
+  ],
+  "source_function_executed": true,
+  "whole_public_module_imported": false,
+  "source_files_modified": false,
+  "synthetic_files_only": true,
+  "finding": "The selected revision removes backup number keep after shifting; only keep-1 backups remain in these three normal-path controls.",
+  "limitations": [
+    "No claim about all OS rename/error semantics, crash atomicity, concurrent writers or later upstream releases.",
+    "This observation does not change the frozen ADD action oracle or turn exposed source into holdout material."
+  ]
+}

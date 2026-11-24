@@ -1,0 +1,81 @@
+{
+  "model": "llama3.2:3b",
+  "stream": false,
+  "options": {
+    "temperature": 0,
+    "num_ctx": 8192,
+    "num_predict": 1800
+  },
+  "format": {
+    "type": "object",
+    "properties": {
+      "judgments": {
+        "type": "array",
+        "minItems": 8,
+        "maxItems": 8,
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "AX01",
+                "AX02",
+                "AX03",
+                "AX04",
+                "AX05",
+                "AX06",
+                "AX07",
+                "AX08"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "SUPPORTED",
+                "REFUTED",
+                "INSUFFICIENT"
+              ]
+            },
+            "reason_en": {
+              "type": "string"
+            },
+            "reason_pt": {
+              "type": "string"
+            },
+            "evidence_lines": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "id",
+            "status",
+            "reason_en",
+            "reason_pt",
+            "evidence_lines"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "judgments"
+    ],
+    "additionalProperties": false
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Use only the supplied licensed public source excerpts. Do not execute code. Return the required JSON only."
+    },
+    {
+      "role": "user",
+      "content": "{\"task\": \"Evaluate eight claims using only the provided selected Rust source. SUPPORTED means the source establishes the written claim. REFUTED means the source contradicts it. INSUFFICIENT means the selected source does not establish the claimed universal runtime or observed-test guarantee; do not pretend tests ran. Return exactly one record per ID in order, a concise grounded reason in English and Brazilian Portuguese and a physical source line range [start,end]. Preserve code identifiers, logical conditions and before/after order. Distinguish a correct label from the reason; the reason must agree with the label.\", \"revision\": \"36d38c4cf2766cd7313dd53d808f30546ee36b1e\", \"excerpts\": [{\"path\": \"axum/src/routing/mod.rs\", \"lines\": [158, 164], \"source\": \"158: impl<S> Router<S>\\n159: where\\n160:     S: Clone + Send + Sync + 'static,\\n161: {\\n162:     /// Create a new `Router`.\\n163:     ///\\n164:     /// Unless you add additional routes this will respond with `404 Not Found` to\"}, {\"path\": \"axum/src/routing/mod.rs\", \"lines\": [215, 252], \"source\": \"215:     #[doc = include_str!(\\\"../docs/routing/nest.md\\\")]\\n216:     #[doc(alias = \\\"scope\\\")] // Some other libs like actix-web use this term\\n217:     #[track_caller]\\n218:     pub fn nest(self, path: &str, router: Self) -> Self {\\n219:         if path.is_empty() || path == \\\"/\\\" {\\n220:             panic!(\\\"Nesting at the root is no longer supported. Use merge instead.\\\");\\n221:         }\\n222: \\n223:         let RouterInner {\\n224:             path_router,\\n225:             default_fallback: _,\\n226:             // we don't need to inherit the catch-all fallback. It is only used for CONNECT\\n227:             // requests with an empty path. If we were to inherit the catch-all fallback\\n228:             // it would end up matching `/{path}/*` which doesn't match empty paths.\\n229:             catch_all_fallback: _,\\n230:         } = router.into_inner();\\n231: \\n232:         tap_inner!(self, mut this => {\\n233:             panic_on_err!(this.path_router.nest(path, path_router));\\n234:         })\\n235:     }\\n236: \\n237:     /// Like [`nest`](Self::nest), but accepts an arbitrary `Service`.\\n238:     #[track_caller]\\n239:     pub fn nest_service<T>(self, path: &str, service: T) -> Self\\n240:     where\\n241:         T: Service<Request, Error = Infallible> + Clone + Send + Sync + 'static,\\n242:         T::Response: IntoResponse,\\n243:         T::Future: Send + 'static,\\n244:     {\\n245:         if path.is_empty() || path == \\\"/\\\" {\\n246:             panic!(\\\"Nesting at the root is no longer supported. Use fallback_service instead.\\\");\\n247:         }\\n248: \\n249:         tap_inner!(self, mut this => {\\n250:             panic_on_err!(this.path_router.nest_service(path, service));\\n251:         })\\n252:     }\"}], \"claims\": [{\"id\": \"AX01\", \"claim\": \"The selected Router::nest guard rejects an empty path OR the root slash path.\"}, {\"id\": \"AX02\", \"claim\": \"In Router::nest, the selected guard permits an empty path and only rejects the root slash.\"}, {\"id\": \"AX03\", \"claim\": \"The selected Router::nest_service root/empty-path panic text recommends merge.\"}, {\"id\": \"AX04\", \"claim\": \"The selected Router::nest_service where-clause includes T: Service<Request, Error = Infallible> + Clone + Send + Sync + static lifetime.\"}, {\"id\": \"AX05\", \"claim\": \"The selected Router::nest destructuring binds path_router while matching default_fallback and catch_all_fallback with underscore patterns.\"}, {\"id\": \"AX06\", \"claim\": \"Every non-empty non-root path is guaranteed to be registered successfully without any panic in the selected methods.\"}, {\"id\": \"AX07\", \"claim\": \"The Axum test suite passed during this evaluation.\"}, {\"id\": \"AX08\", \"claim\": \"In the selected Router::nest_service body, the root/empty-path guard occurs after its call to this.path_router.nest_service.\"}]}"
+    }
+  ]
+}

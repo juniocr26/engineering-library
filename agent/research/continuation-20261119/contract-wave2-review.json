@@ -1,0 +1,269 @@
+{
+  "status": "ALL_EIGHT_RESPONSES_REVIEWED",
+  "at": "2026-11-19T14:30:19.561833+00:00",
+  "neural_responses": 8,
+  "model_threads": {
+    "first_seven": 4,
+    "sdk": 1
+  },
+  "independent_families_within_wave": 6,
+  "new_family_claim_limit": "SDK same earlier family; all threeStarlette arms onefamily. Existing historicaldataset may contain these sourcefamilies, so this is not held-out transfer.",
+  "whole_response_approvals": 0,
+  "writer_acceptance_count": 8,
+  "reviews": [
+    {
+      "id": "opencv-shape-contract",
+      "queue_task": "FACT-016",
+      "family": "opencv-broadcast-shape",
+      "status": "INCOMPLETE_CONTRACT",
+      "critical": [],
+      "correct": [
+        "Right-to-left comparison and mismatch/unit-dimension rule described at high level"
+      ],
+      "omitted": [
+        "acn/bcn channel entries appended after spatial sizes",
+        "sizend roles and incremented dimension counts",
+        "loop stops when either index exhausted; unmatched leading entries not explicitly checked"
+      ],
+      "bilingual": "Both languages share omissions; PT transmissão is a poor translation for broadcasting. No claimed full approval.",
+      "writer_exit": 0,
+      "seconds": 56.31922135900004,
+      "raw_fact_count": 1,
+      "response_sha256": "73487513ccb7a0f03ef53fcdbb65d4b7bf21b8d46d94fb4e0449c58839011de2",
+      "source": {
+        "repository": "opencv",
+        "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+        "path": "modules/core/src/arithm.cpp",
+        "source_sha256": "bf7806de5806462038334fc5d1a6efc29cea8ce92faa22ae0f3691c1add3d987"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    },
+    {
+      "id": "redis-ttl-replies",
+      "queue_task": "FACT-014",
+      "family": "redis-ttl-replies",
+      "status": "REJECTED_CRITICAL_RETURN_AND_UNIT_ERRORS",
+      "critical": [
+        "Claims C function returns -2 or TTL although it sends replies and returns void",
+        "Misattributes conversion to output_abs and invents adjustment by500seconds; actual output_ms chooses ttl versus (ttl+500)/1000"
+      ],
+      "correct": [
+        "Missing-key and no-expiry cases mentioned"
+      ],
+      "omitted": [
+        "negative ttl clamped0",
+        "exact absolute expire versus expire-commandTimeSnapshot selection",
+        "sentinel reply-1 control flow"
+      ],
+      "bilingual": "Critical errors repeated in both languages.",
+      "writer_exit": 0,
+      "seconds": 69.07334053200066,
+      "raw_fact_count": 1,
+      "response_sha256": "d05834dfa4745912bf78241d56f67186085f9b506f745558b1602232544ce2e7",
+      "source": {
+        "repository": "redis",
+        "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+        "path": "src/expire.c",
+        "source_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    },
+    {
+      "id": "duckdb-boolean-factory",
+      "queue_task": "FACT-008",
+      "family": "duckdb-value-construction",
+      "status": "REJECTED_DECLARATION_ROLE_AND_PARTIAL_CONTRACT",
+      "critical": [
+        "Calls Value::BOOLEAN a constructor despite explicit Value return type; it is a factory function"
+      ],
+      "correct": [
+        "Stores provided boolean and sets nullfalse at high level",
+        "Selected LogicalType constructor initially sets nulltrue"
+      ],
+      "omitted": [
+        "exact LogicalType::BOOLEAN construction",
+        "field value_.boolean and explicit returnresult",
+        "type_(std::move(type)) constructor initialization"
+      ],
+      "bilingual": "Same role error/omissions in EN/PT. S2 repeated four times in raw output; writer deduplication does not create more evidence.",
+      "writer_exit": 0,
+      "seconds": 73.50283865799975,
+      "raw_fact_count": 5,
+      "response_sha256": "e458763e588aad5198f929e168e0dfba3f93a25f3f7fefe2cc8d277a0c5b1354",
+      "source": {
+        "repository": "duckdb",
+        "revision": "e41515de6f7efb19b43293ab49cb967cd64ab9f9",
+        "path": "src/common/types/value.cpp",
+        "source_sha256": "554a9a9eeb7d79a7a5ecad6b4cec611203eb24f70ee5ffb616016296d492701c"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    },
+    {
+      "id": "ruff-target-version",
+      "queue_task": "FACT-017",
+      "family": "ruff-format-version",
+      "status": "REJECTED_RESULT_DOMAIN",
+      "critical": [
+        "Describes target version of a Rust project; declared result is PythonVersion"
+      ],
+      "correct": [
+        "FormatterSettings ownership",
+        "path-based helper call and unresolved fallback at high level"
+      ],
+      "omitted": [
+        "exact is_match(path).unwrap_or(self.unresolved_target_version)",
+        "matching helper behavior is not supplied"
+      ],
+      "bilingual": "Equivalent wrong language domain in EN/PT; no invented numeric version.",
+      "writer_exit": 0,
+      "seconds": 41.58422147800047,
+      "raw_fact_count": 1,
+      "response_sha256": "85b0b1e203ec346883ef22d5b1f0d55963dc2d800301a59f32d62ad888470a3f",
+      "source": {
+        "repository": "ruff",
+        "revision": "0222c19dd8e0c9a927f2e47bf3774a108431da25",
+        "path": "crates/ruff_workspace/src/settings.rs",
+        "source_sha256": "1cd5c228eaefa5d798d70c049ae79ec378ffc0cb3cb2d44858eef49cbdd9eff0"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    },
+    {
+      "id": "starlette-thread-return",
+      "queue_task": "FACT-010",
+      "family": "starlette-background-thread-execution",
+      "status": "REJECTED_UNSUPPORTED_RUNTIME_AND_RETURN_OMISSION",
+      "critical": [
+        "Claims concurrent execution and no main-thread blocking from selected wrapper without imported helper implementation"
+      ],
+      "correct": [
+        "Names functools.partial and anyio.to_thread.run_sync",
+        "Mentions supplied arguments at high level"
+      ],
+      "omitted": [
+        "explicit return await and propagated result",
+        "keyword unpacking versus positional unpacking",
+        "no exception handler in selected body"
+      ],
+      "bilingual": "Both languages omit central return contract and repeat runtime guarantees. Motivates separate optional syntax-profile candidate, not prompt or neural-learning success.",
+      "writer_exit": 0,
+      "seconds": 46.61143168700073,
+      "raw_fact_count": 1,
+      "response_sha256": "8d3a68f72ab783fd27696b2d7f049af210f4ce7c4559d54cb1ed787c48c700f4",
+      "source": {
+        "repository": "starlette",
+        "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+        "path": "starlette/concurrency.py",
+        "source_sha256": "3e9e245d060ef39716c58ed754db7995c62f8581d4aaec8b82e09e73b84a2a83"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    },
+    {
+      "id": "starlette-background-caller",
+      "queue_task": "FACT-018",
+      "family": "starlette-background-thread-execution",
+      "status": "INCOMPLETE_CONTRACT",
+      "critical": [],
+      "correct": [
+        "List management, adding tasks, execution order and failure propagation at high level"
+      ],
+      "omitted": [
+        "list(tasks) if tasks else[]",
+        "add_task wraps BackgroundTask then appends without execution",
+        "sequential await task(), no catch/retry, implicitNone on normalcompletion",
+        "parent/helper internals absent"
+      ],
+      "bilingual": "Equivalent generic EN/PT prose; failure propagation is mentioned without precise control flow.",
+      "writer_exit": 0,
+      "seconds": 44.84118297900022,
+      "raw_fact_count": 1,
+      "response_sha256": "ae1442638f13619a2126e3e07770fb380887cddc4c1b0231e061714c04b98310",
+      "source": {
+        "repository": "starlette",
+        "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+        "path": "starlette/background.py",
+        "source_sha256": "0fe5e952915181406765e035b4783330e82e6dee8809564594e03830bd2ad53f"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    },
+    {
+      "id": "starlette-background-helpers",
+      "queue_task": "FACT-018",
+      "family": "starlette-background-thread-execution",
+      "status": "INCOMPLETE_HELPER_CONTRACT",
+      "critical": [],
+      "correct": [
+        "Distinguishes BackgroundTask and BackgroundTasks",
+        "Reports constructor/method names, is_async attribute and sequential parent iteration"
+      ],
+      "omitted": [
+        "stored func,args,kwargs and exact is_async_callable result",
+        "await self.func versus await run_in_threadpool with both unpackings",
+        "callback result discarded, normalNone",
+        "failure stops sequential loop; no catch/retry",
+        "listcopy/truthiness and wrap-then-append details"
+      ],
+      "bilingual": "Equivalent high-level prose; PT callable untranslated. Five facts include substantial repetition, no full response approval.",
+      "writer_exit": 0,
+      "seconds": 102.84377296299954,
+      "raw_fact_count": 5,
+      "response_sha256": "4043fefb0d92721891bc33fee68a6c75706804bf4c63bd55accadeb0ae21f532",
+      "source": {
+        "repository": "starlette",
+        "revision": "271c277da0ff64e2048a4d46ecc812b9d61db5f6",
+        "path": "starlette/background.py",
+        "source_sha256": "0fe5e952915181406765e035b4783330e82e6dee8809564594e03830bd2ad53f"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    },
+    {
+      "id": "sdk-contiguous-contract",
+      "queue_task": "FACT-009",
+      "family": "temporal-retry-policy-construction",
+      "status": "REJECTED_CRITICAL_ARITHMETIC_AND_GUARDS",
+      "critical": [
+        "Uses comment20ms despite code200ms",
+        "Says capped20ms and minimum, opposite max(timeout/10,200ms)",
+        "Invents earlier deadline selection; actual any strictlyfuture deadline overrides default, can be later than60s"
+      ],
+      "correct": [
+        "Initial200ms, default60s, coefficient2",
+        "Returns retry policy at high level"
+      ],
+      "omitted": [
+        "nonnilctx, deadlinepresent and strictlyfuture guards",
+        "setter order and timeout as expiration duration",
+        "no execution retry loop shown"
+      ],
+      "bilingual": "PT retry rendered retenção; both languages repeat arithmetic errors. Source packet also adds conflicting upstreamcomment, so no isolated card-merging effect.",
+      "writer_exit": 0,
+      "seconds": 257.469350116,
+      "raw_fact_count": 1,
+      "response_sha256": "1b12673ce863bc221d804e3d685c3fd7085b33ed68fa559e57e6750faa7df891",
+      "source": {
+        "repository": "sdk-go",
+        "revision": "7e0d845246d36fc7f62ade2af885554f94c29db9",
+        "path": "internal/internal_retry.go",
+        "source_sha256": "11501b16967758de71c2179f47fdb31e58f4f6be68a8f198cac03a6a1b06b93e"
+      },
+      "reviewer": "Codex source review, not owner approval",
+      "training_gold": false,
+      "publication": false
+    }
+  ],
+  "training_runs": 0,
+  "conclusion": "Literal-citation/schema acceptance did not establish factual accuracy. Preserve correct subfacts separately; none promoted to gold."
+}

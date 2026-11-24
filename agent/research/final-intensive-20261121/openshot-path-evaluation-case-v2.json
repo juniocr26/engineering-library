@@ -1,0 +1,389 @@
+{
+  "at": "2026-11-22T01:11:09.321034+00:00",
+  "task_id": "OPENSHOT_PATHS_PY_EVAL_01",
+  "upstream_identity": "OpenShot/openshot-qt",
+  "source_revision": "aa835d9377bdd7847ba7058874ca7e570e30eae6",
+  "language": "Python",
+  "role": "PROSPECTIVE_EVALUATION_ONLY_EXPOSURE_BOUNDED_NOT_CERTIFIED_HOLDOUT",
+  "status": "FROZEN_NOT_EXECUTED",
+  "request": "Write one complete bilingual technical reference chapter, English followed by pt-BR, for OpenShot path resolution at the exact supplied revision. Audience: maintainers of project/media import-export code. Required public API scope: absolute_media_path, relative_export_path, absolute_path_from_export, normalize_path, normalized_local_path, comparable_local_path, comparable_media_path and media_paths_equal. Explain the selected project/app/configuration/asset dependencies, precedence, empty values, token prefix dispatch, relative/absolute paths, URI boundaries, exception fallback, host-dependent path semantics, limits of existence/containment guarantees and relevant authored tests. Preserve exact identifiers and negation in both languages. Include one small illustrative code example per language with identical code bytes; do not claim execution. Include three corresponding FAQs in each language: do all helpers preserve content://, does path normalization prove existence/containment, and does comparing empty media paths yield equality? Cite actual supplied file names and line ranges near supported claims. Do not invent safety, runtime, filesystem, case-normalization or native Windows guarantees. Lifecycle action is ADD for this isolated evaluation chapter; do not edit the original repository. Distinguish source observation, authored test expectation and actual execution. Explicitly state uncertainties. No target source, tests or UI must be run or modified.",
+  "source_files": [
+    {
+      "name": "path_utils.py",
+      "path": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "bytes": 6845,
+      "sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4"
+    },
+    {
+      "name": "assets.py",
+      "path": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/assets.py",
+      "bytes": 5782,
+      "sha256": "9bb125f38056d45bed79b8f336935b9b065cd1317767c012d9961e896aa53264"
+    },
+    {
+      "name": "info.py",
+      "path": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/info.py",
+      "bytes": 12156,
+      "sha256": "a48f2adae464fa1d16da58efdc6c75130c9053b4446af6b2d3db0221428e1406"
+    },
+    {
+      "name": "app.py",
+      "path": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/app.py",
+      "bytes": 15806,
+      "sha256": "e514a7fb200d19df051aab1c0693353993f5d5e9b958f2bf0c611e5843d89131"
+    },
+    {
+      "name": "test_path_utils.py",
+      "path": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/tests/test_path_utils.py",
+      "bytes": 910,
+      "sha256": "e7cc8cabbd5f842a8becd0ea3b19873362c25793adbaa96affe5726268d2e267"
+    },
+    {
+      "name": "test_assets.py",
+      "path": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/tests/test_assets.py",
+      "bytes": 2754,
+      "sha256": "03b531e061c17f1b97c7de67f0f63ad222bc3d5f5590529dd0b33e7d8e3c0f49"
+    }
+  ],
+  "rights": "GPL-3.0-or-later header on implementation; COPYING snapshot retained. No training/publication/Gold authorization inferred.",
+  "exposure_audit": "openshot-path-evaluation-exposure-results-v1.json",
+  "independence_limits": "No selected symbol/path hits in bounded historical text corpus; repository metadata hits exist. Archives, external usage, pretraining and related source identity are not exhaustively certified. Same-agent reference preparation is not independent human review.",
+  "required_sections": [
+    "scope and revision",
+    "architecture/dependencies",
+    "API/behavior and error boundaries",
+    "examples and authored tests",
+    "three specified FAQ pairs",
+    "lifecycle and uncertainty"
+  ],
+  "evaluation_gates": "Unchanged documentation-done-v3.json G1-G9, all applicable; full declared scope retained. Source cards do not become automatic semantic acceptance.",
+  "model_execution_preconditions": [
+    "Authorized reachable local runtime and served model identity",
+    "Frozen exact request/source context, parameters and finite budget",
+    "Context-fit observation before accepting truncated input",
+    "Preserve raw response and original score before any correction"
+  ],
+  "reference_propositions": [
+    {
+      "id": "P01",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 37,
+      "end_line": 44,
+      "quote": "def _project_file_path(project_file=None):\n    \"\"\"Return the active project file path (if any).\"\"\"\n    if project_file:\n        return project_file\n    app = get_app()\n    if app and hasattr(app, \"project\"):\n        return getattr(app.project, \"current_filepath\", None)\n    return None\n",
+      "quote_sha256": "f49286ff8900681fbf9383813bcf8ca40277020bdd3917bf6dc8c8849e154bba",
+      "reference_proposition": "A truthy explicit project_file is returned before get_app is called; otherwise the current app project current_filepath is read if the app has a project, else None.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P02",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 47,
+      "end_line": 51,
+      "quote": "def _project_folder(project_file=None):\n    project_file = _project_file_path(project_file)\n    if project_file:\n        return os.path.dirname(project_file)\n    return info.HOME_PATH\n",
+      "quote_sha256": "987391f458e01f888e1996d66cc26bbe254407024a3de34a68d229673bae47b9",
+      "reference_proposition": "The project folder is dirname of the resolved truthy project file, or info.HOME_PATH when absent.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P03",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 61,
+      "end_line": 66,
+      "quote": "def absolute_media_path(path_value, project_file=None):\n    \"\"\"Resolve OpenShot-specific tokens and relative paths into absolute paths.\"\"\"\n    if not path_value:\n        return \"\"\n\n    normalized = path_value.replace(\"\\\\\", \"/\")\n",
+      "quote_sha256": "51141beba0e08c763780571b3a0da9dcc52164cb5faf91df196a558975348266",
+      "reference_proposition": "absolute_media_path returns an empty string for falsy input and converts backslashes to forward slashes before dispatch.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P04",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 68,
+      "end_line": 78,
+      "quote": "    if normalized.startswith(\"@emojis\"):\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(info.PATH, \"emojis\", \"color\", \"svg\", suffix))\n\n    if normalized.startswith(\"@transitions\"):\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(info.PATH, \"transitions\", suffix))\n\n    if normalized.startswith(\"@colors\"):\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(info.COLORS_PATH, suffix))\n",
+      "quote_sha256": "00564255d7aa3561ca82d46eeae5a0915bf85e22842165fc96f300f4168eb9ab",
+      "reference_proposition": "The @emojis, @transitions and @colors branches use startswith checks, suffix after the first slash, their selected info roots and normpath; exact-token validation is absent in these branches.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P05",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 80,
+      "end_line": 89,
+      "quote": "    if normalized.startswith(\"@assets\"):\n        project_file = _project_file_path(project_file)\n        assets_root = get_assets_path(project_file, create_paths=False)\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(assets_root, suffix))\n\n    if normalized.startswith(\"thumbnail/\"):\n        project_file = _project_file_path(project_file)\n        assets_root = get_assets_path(project_file, create_paths=False)\n        return os.path.normpath(os.path.join(assets_root, normalized.replace(\"thumbnail/\", \"thumbnail\" + os.sep)))\n",
+      "quote_sha256": "934b8c49fc29d9afec1a4a82e096a22d6cc5deaf017acf3b07eedae052b929f2",
+      "reference_proposition": "@assets and thumbnail/ resolve the project file and call get_assets_path with create_paths=False; the thumbnail branch retains its thumbnail component under the assets root.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P06",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 91,
+      "end_line": 95,
+      "quote": "    if os.path.isabs(normalized):\n        return os.path.normpath(normalized)\n\n    base_folder = _project_folder(project_file)\n    return os.path.normpath(os.path.join(base_folder, normalized))\n",
+      "quote_sha256": "8546188e30f53789ab5ac45dd07b614d298aa5a4f65f4706ea9dbd44993c86f3",
+      "reference_proposition": "An absolute normalized media input returns normpath directly; other inputs join the project folder. These selected helpers do not verify existence or enforce containment.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P07",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 98,
+      "end_line": 115,
+      "quote": "def relative_export_path(abs_path, export_folder):\n    \"\"\"Return path relative to export folder when possible.\"\"\"\n    if not abs_path:\n        return \"\"\n    try:\n        abs_norm = os.path.normpath(abs_path)\n        if not export_folder:\n            return abs_norm.replace(\"\\\\\", \"/\")\n        export_norm = os.path.normpath(export_folder)\n        if os.name == \"nt\":\n            src_drive = os.path.splitdrive(abs_norm)[0].lower()\n            dst_drive = os.path.splitdrive(export_norm)[0].lower()\n            if src_drive and dst_drive and src_drive != dst_drive:\n                return abs_norm.replace(\"\\\\\", \"/\")\n        rel_path = os.path.relpath(abs_norm, export_norm)\n        return rel_path.replace(\"\\\\\", \"/\")\n    except Exception:\n        return abs_path.replace(\"\\\\\", \"/\")\n",
+      "quote_sha256": "a26fd38c06e2bc8b9a46f84d927db4f35feb57e8eeb03f8007b88488c31d86cd",
+      "reference_proposition": "relative_export_path handles falsy input, missing export folder and Windows distinct nonempty drives; otherwise it uses relpath and slash conversion, and any Exception inside its try returns slash-converted original input.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P08",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 118,
+      "end_line": 134,
+      "quote": "def absolute_path_from_export(path_value, base_folder, project_file=None):\n    \"\"\"Resolve a relative path stored in an export back into an absolute path.\"\"\"\n    if not path_value:\n        return \"\"\n\n    normalized = path_value.replace(\"\\\\\", \"/\")\n\n    if normalized.startswith(\"@\"):\n        return absolute_media_path(normalized, project_file)\n\n    if os.path.isabs(normalized):\n        return os.path.normpath(normalized)\n\n    if not base_folder:\n        base_folder = _project_folder(project_file)\n\n    return os.path.normpath(os.path.join(base_folder, normalized))\n",
+      "quote_sha256": "ad60602b9d350b983d107fd5e7076131c3aff2032cf757bd71773b1c73feea57",
+      "reference_proposition": "absolute_path_from_export sends every @-prefixed input to absolute_media_path, returns normpath for absolute paths, and joins other paths to the supplied base_folder or fallback project folder.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P09",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 137,
+      "end_line": 146,
+      "quote": "def normalize_path(path_value):\n    \"\"\"Return a path string with POSIX separators (useful for XML).\"\"\"\n    if not path_value:\n        return \"\"\n    return path_value.replace(\"\\\\\", \"/\")\n\n\ndef _is_content_uri(path_value) -> bool:\n    \"\"\"Return True when path_value is an Android content:// URI.\"\"\"\n    return str(path_value).startswith(\"content://\")\n",
+      "quote_sha256": "4cab7326fe4613357ed39defa7eefa0db6f1ef739d28f56327bc0adabecfa260",
+      "reference_proposition": "normalize_path only replaces backslashes after the empty-input guard. The private URI predicate is case-sensitive str(path_value).startswith(content://).",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P10",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 149,
+      "end_line": 159,
+      "quote": "def normalized_local_path(path_value):\n    \"\"\"Return a normalized local filesystem path for storage/display.\n\n    URIs (e.g. Android content:// handles) are returned unchanged because\n    os.path operations are meaningless on opaque URI strings.\n    \"\"\"\n    if not path_value:\n        return \"\"\n    if _is_content_uri(path_value):\n        return path_value\n    return os.path.normpath(os.path.abspath(path_value))\n",
+      "quote_sha256": "f23ed5d616d0448dc985acaef55f60fa124a941a6264d2167a0ad91ff68c5e2f",
+      "reference_proposition": "normalized_local_path returns empty for falsy values, returns the original content:// input unchanged, and otherwise applies abspath then normpath.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P11",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 162,
+      "end_line": 170,
+      "quote": "def comparable_local_path(path_value):\n    \"\"\"Return a normalized path suitable for equality checks.\n\n    URIs are returned as-is (case-sensitive); local paths go through normcase.\n    \"\"\"\n    normalized = normalized_local_path(path_value)\n    if not normalized or _is_content_uri(normalized):\n        return normalized\n    return os.path.normcase(normalized)\n",
+      "quote_sha256": "180993f96aa41ca738bd2ceec50c0ac249a1d2aa145e5b817bbef9c42d9a899e",
+      "reference_proposition": "comparable_local_path preserves empty and content:// results; other local paths pass through host os.path.normcase. Universal lowercasing is not guaranteed.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P12",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 187,
+      "end_line": 199,
+      "quote": "def comparable_media_path(path_value, project_file=None):\n    \"\"\"Return a normalized absolute media path suitable for equality checks.\"\"\"\n    resolved = absolute_media_path(path_value, project_file)\n    if not resolved:\n        return \"\"\n    return os.path.normcase(os.path.normpath(resolved))\n\n\ndef media_paths_equal(path_a, path_b, project_file=None):\n    \"\"\"Compare two media paths after token expansion and platform normalization.\"\"\"\n    if not path_a or not path_b:\n        return False\n    return comparable_media_path(path_a, project_file) == comparable_media_path(path_b, project_file)\n",
+      "quote_sha256": "487355ee9f4e36c4b93f1dee08bae408354fe3ccee8730322f290d01a753b9f2",
+      "reference_proposition": "comparable_media_path resolves through absolute_media_path then normpath/normcase; media_paths_equal returns False if either original input is falsy, otherwise compares those resolved strings.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P13",
+      "file": "path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-prospective-source-snapshots-v1/src/classes/path_utils.py",
+      "file_sha256": "9b97f3bcb1c33a745540e410ef5ec082bde4220f8decaa64b316e75f08cd2af4",
+      "start_line": 61,
+      "end_line": 95,
+      "quote": "def absolute_media_path(path_value, project_file=None):\n    \"\"\"Resolve OpenShot-specific tokens and relative paths into absolute paths.\"\"\"\n    if not path_value:\n        return \"\"\n\n    normalized = path_value.replace(\"\\\\\", \"/\")\n\n    if normalized.startswith(\"@emojis\"):\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(info.PATH, \"emojis\", \"color\", \"svg\", suffix))\n\n    if normalized.startswith(\"@transitions\"):\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(info.PATH, \"transitions\", suffix))\n\n    if normalized.startswith(\"@colors\"):\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(info.COLORS_PATH, suffix))\n\n    if normalized.startswith(\"@assets\"):\n        project_file = _project_file_path(project_file)\n        assets_root = get_assets_path(project_file, create_paths=False)\n        suffix = _token_suffix(normalized)\n        return os.path.normpath(os.path.join(assets_root, suffix))\n\n    if normalized.startswith(\"thumbnail/\"):\n        project_file = _project_file_path(project_file)\n        assets_root = get_assets_path(project_file, create_paths=False)\n        return os.path.normpath(os.path.join(assets_root, normalized.replace(\"thumbnail/\", \"thumbnail\" + os.sep)))\n\n    if os.path.isabs(normalized):\n        return os.path.normpath(normalized)\n\n    base_folder = _project_folder(project_file)\n    return os.path.normpath(os.path.join(base_folder, normalized))\n",
+      "quote_sha256": "d1d39bcbf51beb1ae7072eb4c52e9bd7baaa1fe9f909d02f066a2509a4f73109",
+      "reference_proposition": "absolute_media_path has no content:// preservation branch; do not transfer the local-path URI contract to all media helpers.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P14",
+      "file": "assets.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/assets.py",
+      "file_sha256": "9bb125f38056d45bed79b8f336935b9b065cd1317767c012d9961e896aa53264",
+      "start_line": 34,
+      "end_line": 49,
+      "quote": "def get_assets_path(file_path=None, create_paths=True):\n    \"\"\"Get and/or create the current assets path. This path is used for thumbnail and blender files,\n    and is unique to each project. For example: `Project1.osp` would use `Project1_assets` folder.\"\"\"\n    if not file_path:\n        return info.ASSETS_PATH\n\n    # Android content:// handles are not local filesystem paths.\n    # Keep all project assets in the app's user storage directory instead.\n    if str(file_path).startswith(\"content://\"):\n        return info.USER_PATH\n\n    file_abs = os.path.abspath(str(file_path))\n    backup_abs = os.path.abspath(info.BACKUP_FILE)\n    recovery_abs = os.path.abspath(info.RECOVERY_PATH) + os.sep\n    if file_abs == backup_abs or file_abs.startswith(recovery_abs):\n        return info.USER_PATH\n",
+      "quote_sha256": "30b1196f6d20cfd2a91c0e897e3483d1df21d0fea22ad7ef9f1d34379cf78971",
+      "reference_proposition": "get_assets_path returns current info.ASSETS_PATH for missing file_path; content:// projects, the configured backup file and files under configured recovery prefix use info.USER_PATH.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P15",
+      "file": "assets.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/assets.py",
+      "file_sha256": "9bb125f38056d45bed79b8f336935b9b065cd1317767c012d9961e896aa53264",
+      "start_line": 54,
+      "end_line": 64,
+      "quote": "        asset_filename = os.path.splitext(os.path.basename(file_path))[0]\n        asset_folder_name = asset_filename[:248] + \"_assets\" #Windows max name size is 255. 248 = 255 - len(\"_assets\")\n        asset_path = os.path.join(os.path.dirname(file_path), asset_folder_name)\n\n        # Previous Assets File Name Convention.\n        # We can remove the 30_char variables after 05/27/2022\n        asset_folder_name_30_char = asset_filename[:30] + \"_assets\"\n        asset_path_30_char = os.path.join(os.path.dirname(file_path), asset_folder_name_30_char)\n\n        # Create asset folder, if necessary\n        if create_paths:\n",
+      "quote_sha256": "dcaf2dd2a5deedecb4c577684de5bbf7f42318df51f798d770f1f97eedf8eea0",
+      "reference_proposition": "Ordinary asset paths derive a project basename without its extension, truncated to 248 characters plus _assets, in the project directory. create_paths=False skips the creation/copy block; it does not validate existence.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P16",
+      "file": "assets.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/assets.py",
+      "file_sha256": "9bb125f38056d45bed79b8f336935b9b065cd1317767c012d9961e896aa53264",
+      "start_line": 64,
+      "end_line": 125,
+      "quote": "        if create_paths:\n            if not os.path.exists(asset_path):\n                if os.path.exists(asset_path_30_char):\n                    # Copy assets folder, if it follows the previous naming convention\n                    # must leave a copy for possible projects that shared the folder.\n                    try:\n                        shutil.copytree(asset_path_30_char, asset_path)\n                        log.info(\"Copying shortened asset folder. {}\".format(asset_path))\n                    except:\n                        log.error(\"Could not make a copy of assets folder\")\n                else:\n                    os.mkdir(asset_path)\n                    log.info(\"Asset dir created as {}\".format(asset_path))\n            else:\n                log.debug(\"Using existing asset folder {}\".format(asset_path))\n\n            # Create asset thumbnails folder\n            asset_thumbnails_folder = os.path.join(asset_path, \"thumbnail\")\n            if not os.path.exists(asset_thumbnails_folder):\n                os.mkdir(asset_thumbnails_folder)\n                log.info(\"New thumbnails folder: {}\".format(asset_thumbnails_folder))\n\n            # Create asset title folder\n            asset_titles_folder = os.path.join(asset_path, \"title\")\n            if not os.path.exists(asset_titles_folder):\n                os.mkdir(asset_titles_folder)\n                log.info(\"New titles folder: {}\".format(asset_titles_folder))\n\n            # Create asset blender folder\n            asset_blender_folder = os.path.join(asset_path, \"blender\")\n            if not os.path.exists(asset_blender_folder):\n                os.mkdir(asset_blender_folder)\n                log.info(\"New blender folder: {}\".format(asset_blender_folder))\n\n            # Create asset clipboard folder\n            asset_clipboard_folder = os.path.join(asset_path, \"clipboard\")\n            if not os.path.exists(asset_clipboard_folder):\n                os.mkdir(asset_clipboard_folder)\n                log.info(\"New clipboard folder: {}\".format(asset_clipboard_folder))\n\n            # Create asset ComfyUI output folder\n            asset_comfy_output_folder = os.path.join(asset_path, \"comfyui-output\")\n            if not os.path.exists(asset_comfy_output_folder):\n                os.mkdir(asset_comfy_output_folder)\n                log.info(\"New ComfyUI output folder: {}\".format(asset_comfy_output_folder))\n\n            # Create asset protobuf data folder\n            asset_protobuf_folder = os.path.join(asset_path, \"protobuf_data\")\n            if not os.path.exists(asset_protobuf_folder):\n                os.mkdir(asset_protobuf_folder)\n                log.info(\"New protobuf data folder: {}\".format(asset_protobuf_folder))\n\n            # Create asset optimized-preview folder\n            asset_proxy_folder = os.path.join(asset_path, \"optimized\")\n            if not os.path.exists(asset_proxy_folder):\n                os.mkdir(asset_proxy_folder)\n                log.info(\"New optimized folder: {}\".format(asset_proxy_folder))\n\n        return asset_path\n\n    except Exception as ex:\n        log.error(\"Error while getting/creating asset folder {}: {}\".format(asset_path, ex))\n",
+      "quote_sha256": "2a5b528db706c5ebafa0c02260dc2cf3b73eea534973e7273a7909e142f7448b",
+      "reference_proposition": "With create_paths=True the function can copy/create directories; exceptions in that try are logged. The selected call sites pass False. This is not a guarantee that the entire application has no filesystem side effects.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P17",
+      "file": "info.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/info.py",
+      "file_sha256": "a48f2adae464fa1d16da58efdc6c75130c9053b4446af6b2d3db0221428e1406",
+      "start_line": 48,
+      "end_line": 62,
+      "quote": "PATH = (os.path.dirname(os.path.abspath(sys.executable))\n        if getattr(sys, \"frozen\", False) and sys.platform != \"darwin\"\n        else os.path.dirname(os.path.dirname(os.path.realpath(__file__))))\nRESOURCES_PATH = os.path.join(PATH, \"resources\")\nPROFILES_PATH = os.path.join(PATH, \"profiles\")\nIMAGES_PATH = os.path.join(PATH, \"images\")\nEXPORT_PRESETS_PATH = os.path.join(PATH, \"presets\")\nCOLORS_PATH = os.path.join(PATH, \"colors\")\n\n# User paths\nHOME_PATH = os.path.join(os.path.expanduser(\"~\"))\nUSER_PATH = os.path.join(HOME_PATH, \".openshot_qt\")\nASSETS_PATH = USER_PATH\nBACKUP_PATH = os.path.join(USER_PATH)\nRECOVERY_PATH = os.path.join(USER_PATH, \"recovery\")\n",
+      "quote_sha256": "0dea092029776640738fc46f748804f9711272380515ecd7d9f7f378ed2d84b8",
+      "reference_proposition": "Selected initial PATH/COLORS_PATH/HOME_PATH/USER_PATH/ASSETS_PATH assignments explain dependency roots; treat them as current configuration values, not immutable constants.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P18",
+      "file": "info.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/info.py",
+      "file_sha256": "a48f2adae464fa1d16da58efdc6c75130c9053b4446af6b2d3db0221428e1406",
+      "start_line": 125,
+      "end_line": 147,
+      "quote": "def set_assets_path(path):\n    \"\"\"Retarget active project assets without changing the unsaved defaults.\"\"\"\n    global ASSETS_PATH\n    ASSETS_PATH = path\n    for name, folder in _asset_folders.items():\n        globals()[name] = os.path.join(path, folder)\n\n\ndef configure_asset_defaults(path):\n    \"\"\"Apply the startup preference, falling back if it cannot be used.\"\"\"\n    path = os.path.abspath(os.path.expanduser(path or USER_PATH))\n    try:\n        _check_assets_folder(path)\n        for folder in _asset_folders.values():\n            _check_assets_folder(os.path.join(path, folder))\n    except OSError:\n        path = USER_PATH\n        for folder in _asset_folders.values():\n            os.makedirs(os.path.join(path, folder), exist_ok=True)\n    set_assets_path(path)\n    for name in (\"ASSETS_PATH\", *_asset_folders):\n        _path_defaults[name] = globals()[name]\n    return path\n",
+      "quote_sha256": "f0cbbf6daa2d21d4aa90272c118e26f6dfcb87c9825f847df8a09ce64e895fe3",
+      "reference_proposition": "set_assets_path changes ASSETS_PATH and derived asset folders; configure_asset_defaults can alter defaults and create directories. The path_utils scope does not execute this initialization.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P19",
+      "file": "app.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/classes/app.py",
+      "file_sha256": "e514a7fb200d19df051aab1c0693353993f5d5e9b958f2bf0c611e5843d89131",
+      "start_line": 42,
+      "end_line": 44,
+      "quote": "def get_app():\n    \"\"\" Get the current QApplication instance of OpenShot \"\"\"\n    return QApplication.instance()\n",
+      "quote_sha256": "ba15cf0398926909f82882f5c4ce2f3e20d574730ffc1a523cd4eca8d9c3e9ab",
+      "reference_proposition": "get_app obtains QApplication.instance(); selected path helper resolution may therefore depend on application/project state.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P20",
+      "file": "test_path_utils.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/tests/test_path_utils.py",
+      "file_sha256": "e7cc8cabbd5f842a8becd0ea3b19873362c25793adbaa96affe5726268d2e267",
+      "start_line": 16,
+      "end_line": 28,
+      "quote": "\n\nclass PathUtilsTests(unittest.TestCase):\n    def test_windows_drive_paths_are_treated_as_local_paths(self):\n        path = r\"C:\\Projects\\example_assets\\title\\intro.svg\"\n\n        self.assertEqual(normalized_local_path(path), os.path.normpath(os.path.abspath(path)))\n        self.assertEqual(comparable_local_path(path), os.path.normcase(os.path.normpath(os.path.abspath(path))))\n\n    def test_content_uris_remain_opaque(self):\n        path = \"content://documents/tree/project.osp\"\n\n        self.assertEqual(normalized_local_path(path), path)\n",
+      "quote_sha256": "7c16e471ae999c986dfc43733c7fa84a3976a7ff6c22f61b5514f872b044206f",
+      "reference_proposition": "Two authored tests compare a Windows-looking input against current-host os.path operations and preserve a content URI; their source does not prove a native Windows run.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    },
+    {
+      "id": "P21",
+      "file": "test_assets.py",
+      "snapshot": "agent/research/final-intensive-20261121/openshot-path-context-snapshots-v1/src/tests/test_assets.py",
+      "file_sha256": "03b531e061c17f1b97c7de67f0f63ad222bc3d5f5590529dd0b33e7d8e3c0f49",
+      "start_line": 20,
+      "end_line": 58,
+      "quote": "class AssetsPathTests(unittest.TestCase):\n    def test_get_assets_path_uses_project_folder_for_windows_drive_paths(self):\n        with patch(\"classes.assets.info.USER_PATH\", \"/home/test/.openshot_qt\"), \\\n             patch(\"classes.assets.info.BACKUP_FILE\", \"/home/test/.openshot_qt/backup.osp\"), \\\n             patch(\"classes.assets.info.RECOVERY_PATH\", \"/home/test/.openshot_qt/recovery\"):\n            asset_path = get_assets_path(r\"C:\\Projects\\example.osp\", create_paths=False)\n\n        self.assertEqual(asset_path, r\"C:\\Projects\\example_assets\")\n\n    def test_get_assets_path_uses_user_path_for_backup_project(self):\n        with patch(\"classes.assets.info.USER_PATH\", \"/home/test/.openshot_qt\"), \\\n             patch(\"classes.assets.info.BACKUP_FILE\", \"/home/test/.openshot_qt/backup.osp\"), \\\n             patch(\"classes.assets.info.RECOVERY_PATH\", \"/home/test/.openshot_qt/recovery\"):\n            asset_path = get_assets_path(\"/home/test/.openshot_qt/backup.osp\", create_paths=False)\n\n        self.assertEqual(asset_path, \"/home/test/.openshot_qt\")\n\n    def test_get_assets_path_uses_user_path_for_recovery_project(self):\n        with patch(\"classes.assets.info.USER_PATH\", \"/home/test/.openshot_qt\"), \\\n             patch(\"classes.assets.info.BACKUP_FILE\", \"/home/test/.openshot_qt/backup.osp\"), \\\n             patch(\"classes.assets.info.RECOVERY_PATH\", \"/home/test/.openshot_qt/recovery\"):\n            asset_path = get_assets_path(\"/home/test/.openshot_qt/recovery/123/project.osp\", create_paths=False)\n\n        self.assertEqual(asset_path, \"/home/test/.openshot_qt\")\n\n    def test_get_assets_path_uses_user_path_for_content_uri_projects(self):\n        with patch(\"classes.assets.info.USER_PATH\", \"/home/test/.openshot_qt\"), \\\n             patch(\"classes.assets.info.BACKUP_FILE\", \"/home/test/.openshot_qt/backup.osp\"), \\\n             patch(\"classes.assets.info.RECOVERY_PATH\", \"/home/test/.openshot_qt/recovery\"):\n            asset_path = get_assets_path(\"content://documents/tree/project.osp\", create_paths=False)\n\n        self.assertEqual(asset_path, \"/home/test/.openshot_qt\")\n\n    def test_get_assets_path_creates_protobuf_data_folder(self):\n        with tempfile.TemporaryDirectory() as tmpdir:\n            project_path = os.path.join(tmpdir, \"example.osp\")\n            asset_path = get_assets_path(project_path, create_paths=True)\n\n            self.assertTrue(os.path.isdir(os.path.join(asset_path, \"protobuf_data\")))\n",
+      "quote_sha256": "59ac81e9fb8df37996383fb0786761a5d19c4a8718efbcdc16c44eda933f1d3c",
+      "reference_proposition": "Authored asset tests cover Windows-looking project name, backup, recovery, content URI and a creation case. They were inspected, not executed by this campaign.",
+      "review_method": "Same Codex agent read actual source/context; reference group may contain multiple conditions; not independent atomic metric."
+    }
+  ],
+  "adverse_reference_claims": [
+    {
+      "id": "N01",
+      "claim": "All path functions preserve content:// URIs unchanged.",
+      "expected": "CONTRADICTED",
+      "basis": "P10,P13"
+    },
+    {
+      "id": "N02",
+      "claim": "normpath proves the media file exists and remains inside the project directory.",
+      "expected": "UNSUPPORTED",
+      "basis": "P06"
+    },
+    {
+      "id": "N03",
+      "claim": "@emojis-not-a-token is rejected by exact token validation.",
+      "expected": "CONTRADICTED",
+      "basis": "P04"
+    },
+    {
+      "id": "N04",
+      "claim": "media_paths_equal(None, None) returns True.",
+      "expected": "CONTRADICTED",
+      "basis": "P12"
+    },
+    {
+      "id": "N05",
+      "claim": "comparable_local_path lowercases local paths on every platform.",
+      "expected": "UNSUPPORTED",
+      "basis": "P11"
+    },
+    {
+      "id": "N06",
+      "claim": "These tests passed on Windows during this campaign.",
+      "expected": "UNSUPPORTED",
+      "basis": "P20,P21"
+    },
+    {
+      "id": "N07",
+      "claim": "Every @ prefix is a recognized media asset token.",
+      "expected": "CONTRADICTED",
+      "basis": "P04,P08"
+    },
+    {
+      "id": "N08",
+      "claim": "get_assets_path always creates directories.",
+      "expected": "CONTRADICTED",
+      "basis": "P05,P15"
+    },
+    {
+      "id": "N09",
+      "claim": "relative_export_path always raises when relative conversion fails.",
+      "expected": "CONTRADICTED",
+      "basis": "P07"
+    },
+    {
+      "id": "N10",
+      "claim": "ASSETS_PATH can never change after import.",
+      "expected": "CONTRADICTED",
+      "basis": "P17,P18"
+    }
+  ],
+  "manual_reference_group_count_not_atomic": 21,
+  "training_eligible": false,
+  "owner_approved": false,
+  "publication_approved": false,
+  "gold": false,
+  "new_inference_calls": 0,
+  "target_source_executed": false
+}

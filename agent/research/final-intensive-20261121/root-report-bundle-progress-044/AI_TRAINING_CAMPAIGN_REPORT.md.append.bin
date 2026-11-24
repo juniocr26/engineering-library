@@ -1,0 +1,11 @@
+
+
+### Progresso intensivo 044 — falha real de empacotamento preservada e correção isolada
+
+O checkpoint 031 falhou antes da extração. Dois caminhos de dependência dos links do capítulo de dimensões continham componentes ../: eram arquivos regulares que resolviam para o artigo de animação dentro do repositório, mas seus nomes lexicais não eram admitidos pela proteção de extração. O arquivo de 103.841.407 bytes, manifesto e recibo de falha foram preservados. Nenhum consumidor foi executado nesse corte, e ele não conta como recuperação bem-sucedida nem fecha G9.
+
+O novo produtor isolado mantém os links e manifestos originais como evidência. Antes de ler uma dependência, resolve o caminho relativo, verifica confinamento à raiz e recusa caminho absoluto, escape, arquivo ausente ou folha simbólica. Os nomes no arquivo passam a usar caminhos canônicos, com deduplicação e registro dos aliases; a proteção original de extração continua ativa. Controles finitos verificaram um alias interno real e recusas de caminho absoluto, escape e ausência. Não representam prova contra corridas de filesystem, ataques gerais a symlinks ou durabilidade em falha de energia.
+
+Uma revisão anterior à execução do candidato v32 percebeu que a normalização antecipada perderia os registros de alias. O candidato não foi executado; sua versão foi preservada e o produtor v33 coleta o mapeamento na leitura dos manifestos. Será usado um novo checkpoint 032, sem sobrescrever o corte 031. A restauração efetiva ainda é necessária para aceitar o capítulo de dimensões.
+
+A revisão de outro alvo original, Rails request-methods, começou com a leitura integral do par e das respostas históricas. Sua identidade é actionpack 8.1.4 instalado e checksum de fonte, não um commit Git inventado. Ainda falta a aquisição delimitada e a revisão da fonte, sintaxe e recuperação. Nenhum método de requisição, servidor, suíte de aplicação ou modelo local foi executado. Os limites de pesquisa e aprovação continuam intactos; a campanha segue ativa.

@@ -1,0 +1,461 @@
+{
+  "at": "2026-11-21T17:13:27.106391+00:00",
+  "protocol": "source-only-fact-render-protocol-v1.json",
+  "task": "zod",
+  "method": "L",
+  "content_sha256": "306cafe377064fa01531111e8eaad84c610e2b1760388f89356c1711acdd094c",
+  "rows": [
+    {
+      "fact_id": "Z01",
+      "original_generated_pair": {
+        "en": "The synchronous returned arrow sets the async flag to false.",
+        "pt-BR": "A setura retornado sincrônica configura a flag async para falso."
+      },
+      "english_source_verdict": "SUPPORTED",
+      "pair_verdict": "INSUFFICIENT",
+      "reference": {
+        "claim_id": "Z01",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+        "source_lines": [
+          71,
+          72
+        ],
+        "expected_interpretation": {
+          "en": "The synchronous returned arrow creates ctx with async: false.",
+          "pt-BR": "A arrow síncrona retornada cria ctx com async: false."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "ENasyncfalse supported. PTsetura retornado sincrônica is malformed/nonstandard technical subject; owner/function relation is not clearly preserved. PairI, not fabricated sourceC. Ordinary falsoprose not an identifier-translation error.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z01",
+          "english_verdict": "SUPPORTED",
+          "pair_verdict": "INSUFFICIENT"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z02",
+      "original_generated_pair": {
+        "en": "The synchronous arrow calls the schema runner with the value and issues.",
+        "pt-BR": "A setura retornado sincrônica chama o runner de esquema com o valor e as issues."
+      },
+      "english_source_verdict": "SUPPORTED",
+      "pair_verdict": "INSUFFICIENT",
+      "reference": {
+        "claim_id": "Z02",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  const result = schema._zod.run({ value, issues: [] }, ctx);",
+        "source_lines": [
+          73,
+          73
+        ],
+        "expected_interpretation": {
+          "en": "The synchronous arrow calls schema._zod.run with { value, issues: [] } and ctx.",
+          "pt-BR": "A arrow síncrona chama schema._zod.run com { value, issues: [] } e ctx."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "ENpayloadvalue/issues broadly source-supported but omits exactschema._zod.run, emptyissues andctx. PTsetura again leaves unclear technical owner. Required reference coverage incomplete.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z02",
+          "english_verdict": "SUPPORTED",
+          "pair_verdict": "INSUFFICIENT"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z03",
+      "original_generated_pair": {
+        "en": "The synchronous Promise guard throws a ZodAsyncError.",
+        "pt-BR": "A setura de promise sincrônica lança uma erro de ZodAsyncError."
+      },
+      "english_source_verdict": "CONTRADICTED",
+      "pair_verdict": "CONTRADICTED",
+      "reference": {
+        "claim_id": "Z03",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+        "source_lines": [
+          74,
+          76
+        ],
+        "expected_interpretation": {
+          "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+          "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Original code names core.$ZodAsyncError; generatedZodAsyncError drops literal$ and qualifies a different identifier. Both languages have technical identifier mismatch; no guessedalias/runtimeclass identity.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z03",
+          "english_verdict": "CONTRADICTED",
+          "pair_verdict": "CONTRADICTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z04",
+      "original_generated_pair": {
+        "en": "The condition that selects the normal failure branch is the length of the issues array.",
+        "pt-BR": "A condição que seleciona a setura de falha normal é a length do array de issues."
+      },
+      "english_source_verdict": "SUPPORTED",
+      "pair_verdict": "INSUFFICIENT",
+      "reference": {
+        "claim_id": "Z04",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+        "source_lines": [
+          78,
+          78
+        ],
+        "expected_interpretation": {
+          "en": "At the normal return, truthy result.issues.length selects failure.",
+          "pt-BR": "No retorno normal, result.issues.length truthy seleciona failure."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "ENlength-of-issues condition is source-supported as ordinary ternary-condition explanation. PTsetura de falha obscures branch terminology. PairIfor unresolved bilingual role, ENnot scoredC.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z04",
+          "english_verdict": "SUPPORTED",
+          "pair_verdict": "INSUFFICIENT"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z05",
+      "original_generated_pair": {
+        "en": "The success flag is written in the no-issues literal as success: true.",
+        "pt-BR": "A flag de sucesso é escrita na literal sem issues como success: true."
+      },
+      "english_source_verdict": "SUPPORTED",
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "Z05",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+        "source_lines": [
+          78,
+          78
+        ],
+        "expected_interpretation": {
+          "en": "At the normal return with no issues, the literal has success: true.",
+          "pt-BR": "No retorno normal sem issues, o literal tem success: true."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "No-issues literal success:true preserved bothlanguages. Ordinary flagdesucesso prose does not translate the code literal success:true.",
+      "critical": false,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z05",
+          "english_verdict": "SUPPORTED",
+          "pair_verdict": "SUPPORTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z06",
+      "original_generated_pair": {
+        "en": "The error getter guards construction by checking if the error is undefined.",
+        "pt-BR": "A setura de erro guarda a construção ao verificar se o erro é indefinido."
+      },
+      "english_source_verdict": "CONTRADICTED",
+      "pair_verdict": "CONTRADICTED",
+      "reference": {
+        "claim_id": "Z06",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));",
+        "source_lines": [
+          87,
+          89
+        ],
+        "expected_interpretation": {
+          "en": "The error getter construction branch is guarded by !error.",
+          "pt-BR": "O ramo de construção no getter de error é condicionado por !error."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Construction is !error truthiness, not undefined-only check. Direct source predicate mismatch.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z06",
+          "english_verdict": "CONTRADICTED",
+          "pair_verdict": "CONTRADICTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z07",
+      "original_generated_pair": {
+        "en": "The error setter assigns the local error to the error property.",
+        "pt-BR": "A setura de erro atribui o erro local ao propriedade de erro."
+      },
+      "english_source_verdict": "CONTRADICTED",
+      "pair_verdict": "CONTRADICTED",
+      "reference": {
+        "claim_id": "Z07",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "    set error(e: errors.$ZodError) {\n      error = e;",
+        "source_lines": [
+          96,
+          97
+        ],
+        "expected_interpretation": {
+          "en": "The error setter assigns e to the local error.",
+          "pt-BR": "O setter de error atribui e à variável local error."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Source setter e→closureerror, not localerror→property. Direct assignment direction/owner mismatch.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z07",
+          "english_verdict": "CONTRADICTED",
+          "pair_verdict": "CONTRADICTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z08",
+      "original_generated_pair": {
+        "en": "The asynchronous arrow waits for the result to be resolved before returning.",
+        "pt-BR": "A setura retornado assíncrona espera pelo resultado ser resolvido antes de retornar."
+      },
+      "english_source_verdict": "INSUFFICIENT",
+      "pair_verdict": "INSUFFICIENT",
+      "reference": {
+        "claim_id": "Z08",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;",
+        "source_lines": [
+          111,
+          114
+        ],
+        "expected_interpretation": {
+          "en": "The asynchronous arrow awaits result when result instanceof Promise.",
+          "pt-BR": "A arrow assíncrona aguarda result quando result instanceof Promise."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Drops result instanceof Promise condition and states generic resolved-before-return. Selected guard supportsconditionalawait, not unconditional fulfillment or all thenables. Iwithout inventingruntimecounterexample. PTsetura also unclear.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z08",
+          "english_verdict": "INSUFFICIENT",
+          "pair_verdict": "INSUFFICIENT"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z09",
+      "original_generated_pair": {
+        "en": "The core _safeParse factory binding supplies the ZodRealError class.",
+        "pt-BR": "A fábrica de setura de core _safeParse fornece a classe de erro ZodRealError."
+      },
+      "english_source_verdict": "CONTRADICTED",
+      "pair_verdict": "CONTRADICTED",
+      "reference": {
+        "claim_id": "Z09",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);",
+        "source_lines": [
+          80,
+          80
+        ],
+        "expected_interpretation": {
+          "en": "The core safeParse binding supplies errors.$ZodRealError to _safeParse.",
+          "pt-BR": "O vínculo safeParse do core fornece errors.$ZodRealError a _safeParse."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Source exactclass errors.$ZodRealError, generatedZodRealError missing$ literal; preserve this technical identifier mismatch.",
+      "critical": true,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z09",
+          "english_verdict": "CONTRADICTED",
+          "pair_verdict": "CONTRADICTED"
+        }
+      ]
+    },
+    {
+      "fact_id": "Z10",
+      "original_generated_pair": {
+        "en": "The data property written in the no-issues literal is data: result.value.",
+        "pt-BR": "A propriedade de dados escrita na literal sem issues é data: result.value."
+      },
+      "english_source_verdict": "SUPPORTED",
+      "pair_verdict": "SUPPORTED",
+      "reference": {
+        "claim_id": "Z10",
+        "task": "zod",
+        "family": "colinhacks/zod",
+        "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+        "source_path": "packages/zod/src/v4/core/parse.ts",
+        "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+        "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+        "source_lines": [
+          78,
+          78
+        ],
+        "expected_interpretation": {
+          "en": "At the normal return with no issues, the literal has data: result.value.",
+          "pt-BR": "No retorno normal sem issues, o literal tem data: result.value."
+        },
+        "reference_verdict": "SUPPORTED",
+        "critical": true,
+        "reviewer": "Codex same campaign agent; static source semantic review",
+        "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+        "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+        "not_independent_holdout": true
+      },
+      "source_relationship_review": "Exact data:result.value preserved in bothlanguages.",
+      "critical": false,
+      "generated_atomic_propositions": [
+        {
+          "atom_id": "Z10",
+          "english_verdict": "SUPPORTED",
+          "pair_verdict": "SUPPORTED"
+        }
+      ]
+    }
+  ],
+  "structural_schema_errors": [],
+  "all_generated_claims_reviewed": true,
+  "all_required_claims_covered": false,
+  "bilingual_semantics_correct": false,
+  "critical_unsupported_claims": 8,
+  "critical_count_unit": "10source-fact pairs;4C4I, including3EN-supported/PT-unclear pairs. Different from English-only claims.",
+  "source_only_semantic_admission": false,
+  "required_ids_correct": [
+    "Z05",
+    "Z10"
+  ],
+  "required_pair_coverage": {
+    "present": 10,
+    "required": 10,
+    "supported_pairs": 2,
+    "contradicted_pairs": 4,
+    "insufficient_pairs": 4
+  },
+  "english_selected_proposition_metrics": {
+    "supported": 5,
+    "contradicted": 4,
+    "insufficient": 1,
+    "total": 10,
+    "supported_precision": 0.5,
+    "unsupported_rate": 0.5
+  },
+  "bilingual_pair_metrics": {
+    "supported": 2,
+    "contradicted": 4,
+    "insufficient": 4,
+    "total": 10,
+    "supported_precision": 0.2,
+    "unsupported_rate": 0.8,
+    "scope": "PTunresolvedsubject terminology is I, not a proven opposite source behavior. Do not pool with EN-only counts or count translation repeats as independent."
+  },
+  "complete_bounded_note_accepted": false,
+  "no_reference_change_after_predictions": true,
+  "reviewer": "Same campaign agent, source-only; ambiguous PT requires independent human review if later considered",
+  "training_excluded": true,
+  "owner_approved": false,
+  "gold": 0,
+  "optimizer_updates": 0
+}

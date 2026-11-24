@@ -1,0 +1,14 @@
+
+## Corte intensivo 020 — ACTIVE em 2026-11-22T02:33:27.971166+00:00
+
+O exame de formato corrigiu uma inferência que não deve ser feita: as bibliotecas libllama, libggml e libggml-base preservadas são imagens Mach-O x86_64. Python, Go e os observadores atuais são arm64. Os executáveis Ollama/llama-server são universais; a mensagem da fatia ativa não comprova a arquitetura ou ABI de bibliotecas vizinhas. A rota C-API dentro do processo arm64 está NO_GO por incompatibilidade de arquitetura e ABI não verificada. Nenhum dlopen incompatível ou modelo foi tentado. Isso não prova impossibilidade de toda rota local futura.
+
+O campo dinâmico heurístico do inventário inicial reconhecia só nomes .dylib. O recibo v2 passa a registrar o formato real: o CPU backend com extensão .so é um bundle Mach-O x86_64, não deve ser classificado como Linux ou não-biblioteca pelo sufixo. Símbolos CPU foram encontrados nesse bundle; sua presença não comprova carregamento, registro ou uso de inferência no processo atual. Todos os inventários anteriores permanecem preservados.
+
+A ajuda do executável documenta sockets Unix, e uma verificação própria de IPC local usou diretório temporário privado autorizado com modo 0700, sem endereço remoto, porta TCP, modelo ou mudança de política. O host recusou a operação AF_UNIX com PermissionError/EPERM. A recusa foi preservada em owned-unix-ipc-capability-observation-v1.json; não houve repetição por outro caminho, troca de permissões ou início de servidor/modelo. A existência de opção de CLI não comprova permissão do ambiente.
+
+As decisões por candidato ficam separadas: servidor Ollama anterior sem readiness por diretório de usuário/rede; servidor local por arquivo IPC não autorizado pelo host; incorporação direta arm64 incompatível com os dylibs x86_64 observados. Um eventual worker de outra arquitetura continua candidato não verificado, dependente de headers, compatibilidade e limites próprios; nenhuma instalação, emulação, carga ou geração foi iniciada a partir desta hipótese. Bibliotecas MLX nativas no app também não comprovam o ambiente Python MLX-LM ou viabilidade de LoRA.
+
+Os manifests e bibliotecas centrais seguem preservados. O classificador v6 distingue esses arquivos, símbolos, ajuda e recusas de um resultado de inferência. A exclusão Git dentro da pasta de pesquisa apenas evita descoberta automática dos dylibs copiados no Git normal; checkpoints continuam a incluí-los com hashes e modos. Fontes, protocolos, licenças e recusas não foram apagados. Nenhum arquivo instalado do app ou fonte de produção foi modificado.
+
+Este corte não oferece evidência de melhoria ou piora de pesos. Chamadas/tokens/tempo de inferência local e optimizer updates seguem zero. O custo de pesquisa GPT/Codex é outra população, sem conversão automática para custo monetário. A campanha segue ACTIVE, anterior a aproximadamente 12 horas, com MODEL_READY INSUFFICIENT_EVIDENCE e gates de treinamento NO_GO.

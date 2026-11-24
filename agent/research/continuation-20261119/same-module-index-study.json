@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-19T18:40:03.950118+00:00",
+  "status": "PRIVATE_SAME_MODULE_DIRECTORY_INDEX_VERIFIED_NOT_PRODUCTION_RESOLVER",
+  "protocol_sha256": "b621b2fed0b4029f8d0cf5f142534e78125596e6f0da11b793156e1be5747d36",
+  "implementation_sha256": "a28920ded1ee71b5779b523c851f4e14a851e9617b3e0133f0c85b13c97d98e3",
+  "controls": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0
+  },
+  "actual_declared_import_cases": 7,
+  "same_module_directory_mappings": 5,
+  "expected_cross_module_refusals": 2,
+  "additional_pinned_module_root_queries": 5,
+  "repositories": 5,
+  "module_files_verified": 34,
+  "pinned_tree_regular_paths": {
+    "chi": 111,
+    "go-image-optimizer": 154,
+    "prometheus": 1773,
+    "sdk-go": 700,
+    "sqlx": 25
+  },
+  "tree_index_hashes": {
+    "chi": "43c181474a4eb555c063162bf277037dd9f15e674eae810f47d99d36ebe7c498",
+    "go-image-optimizer": "e38d85a2957f89f9ff0a882236ef97efec1f7b806acb45d79dd3179a592ccde7",
+    "prometheus": "877221fd6762900024d0b7c29e43a3e910fe06fbd0e476d3aaa6216d2ae9f063",
+    "sdk-go": "5dee5417118704ce6fb4850116908ea5ff7f95c61f8646bb99a9d0c1d47d5dc4",
+    "sqlx": "ebb05746c325fe1b072e419badfcd57bff99957e64bf9eb5460c31b1bdadd9ac"
+  },
+  "results_sha256": "5dd7fc39f0934f1bc88b4c9f69c030e009642f588740dd7e619c88de0de19eee",
+  "findings": [
+    "The GIO backend module and juniorosa declaration map without treating remote juniocr26 as import authority.",
+    "SQLx reflectx, SDK backoff and Prometheus labels map to existing pinned same-module directories.",
+    "Chi example and SDK nested otel source imports of their repository root module safely refuse as cross-module.",
+    "Four module-root queries find regular Go source; GIO backend root has no Go files and safely refuses despite containing go.mod.",
+    "This proves bounded pinned-tree directory existence, not that any file set is a buildable package or that an imported identifier binds correctly."
+  ],
+  "excluded_semantics": [
+    "replace/go.work selection",
+    "vendor/module cache/external dependencies",
+    "build constraints/GOOS/GOARCH/cgo",
+    "package names/export/type/internal visibility",
+    "generated files/initialization/runtime helpers"
+  ],
+  "initial_harness_failure": "The initial experiment harness incorrectly expected every module-root query to map. The diagnostic correctly refused GIO backend because no regular Go file exists at that root. Initial script/log retained; no resolver code or production change was needed.",
+  "source_application_executed": false,
+  "source_packages_compiled": false,
+  "dependencies_downloaded": false,
+  "model_calls": 0,
+  "production_code_changed": false,
+  "tool_or_harness_routing": false,
+  "training_gold": false,
+  "originals_modified": false,
+  "artifacts": "private-research://continuation-20261119/same-module-index-study/",
+  "integration_decision": "Keep private diagnostic only. No production resolver or retrieval tool introduced. A future separately scoped design must address excluded semantics before use."
+}

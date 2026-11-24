@@ -1,0 +1,161 @@
+{
+  "at": "2026-11-21T16:00:28.394642+00:00",
+  "before_any_new_deletion_challenge_outcomes": true,
+  "extends": "scope-continuity-utility-protocol-v3.json",
+  "hypothesis": "Positive registry/function presence may still falsely support MODIFY if deletion or a later identity-registry assignment is ignored. Owner-qualified unrelated deletes/local shadows should retain useful maintenance decisions.",
+  "case_count": 6,
+  "cases": [
+    {
+      "id": "provider-deleted",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/provider-deleted/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/provider-deleted/selected-planner-input.json",
+      "packet_sha256": "d5167f9554b9150cc6fcd8302e30e989e77e1dbbbe60d67b4f9f51a3a1c4887f",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Provider name is explicitly deleted after its declaration; source identity marker does not establish a continuing current module binding.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 97,
+          "sha256": "c81354d0ad543dabfcb770b5b5039346b36532c8137f5c61704d1af286be6a2f"
+        }
+      ]
+    },
+    {
+      "id": "reexport-target-deleted",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/reexport-target-deleted/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/reexport-target-deleted/selected-planner-input.json",
+      "packet_sha256": "e6599d6f7db206aff26f504e6997887757719bbbde4e59cead95d9532e09c970",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Local import target is deleted in its provider module; a FunctionDef token is not sufficient binding evidence.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "export.py",
+          "kind": "file",
+          "bytes": 87,
+          "sha256": "b9373dde2af30a7e921251d5af68b6c4519d382d365978d3a18d4a6521bfbbff"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 36,
+          "sha256": "4045aef645078541bec2f197e03ee285408444dfdf628341a98b1fe34b8c6dc3"
+        }
+      ]
+    },
+    {
+      "id": "identity-registry-cleared-by-reassignment",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/identity-registry-cleared-by-reassignment/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/identity-registry-cleared-by-reassignment/selected-planner-input.json",
+      "packet_sha256": "1ee36f6e4d94608d75632505868f2647b62f0b912901e88d9c3ae6b8567765cd",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "The later literal registry assignment removes the identity mapping; the earlier assignment cannot self-certify current identity.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 96,
+          "sha256": "e88ca7a2c4985476a7d93c2673e3ff47d622ed865e9d4d38c76b28efe98f2d13"
+        }
+      ]
+    },
+    {
+      "id": "unrelated-module-delete",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/unrelated-module-delete/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/unrelated-module-delete/selected-planner-input.json",
+      "packet_sha256": "71cb13ae8a98a9ae982c24c34d69c891fbc02928660f86d336796e0f94f2e10b",
+      "reference_action": "MODIFY",
+      "reference_reason": "Deletion has a different target; unique module contract/provider and old citation mismatch remain source-supported.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 109,
+          "sha256": "8ee81898e33dba8a54d643ce1680b9f0f9bd4218b6258a5369fbcc3ea3569f27"
+        }
+      ]
+    },
+    {
+      "id": "function-local-registry-shadow",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/function-local-registry-shadow/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/function-local-registry-shadow/selected-planner-input.json",
+      "packet_sha256": "fd5763ebd59947a86809e49f49bebf15316b40a4dfab64517e68520855d8a2ff",
+      "reference_action": "MODIFY",
+      "reference_reason": "The local registry variable belongs to an unrelated function owner; it does not replace the module identity mapping.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 138,
+          "sha256": "465820feff6bd1d26c3f2a9cbe7a3173153f0831d112d9722e2b3747b14871ce"
+        }
+      ]
+    },
+    {
+      "id": "global-registry-rebind-unknown",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/global-registry-rebind-unknown/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-binding-deletion-v1/global-registry-rebind-unknown/selected-planner-input.json",
+      "packet_sha256": "56075da021d1b14a70f5bc32651c2926f26ae651c18d168c180f20e46965b17d",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "A function-level global declaration can change module identity; no unconditional current binding contract admitted.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 135,
+          "sha256": "86a4e8534fcbc441117afa99838dffe3bcaf1adf56b34cd81b842ea81510a908"
+        }
+      ]
+    }
+  ],
+  "frozen_prototype": "observe_scope_continuity_utility_v3.py",
+  "frozen_prototype_sha256": "c5f79057cfd806785f4a91807a28cd71f6591b224f20212d7ff6728dc6262b0d",
+  "conditions": [
+    "Unchanged production selected-file planner0.3.6",
+    "Existing V2 source filter",
+    "Unchanged V3 continuity utility observer"
+  ],
+  "scope": "New exposed owned-source lexical/binding challenge. Current identity needs more than an earlier registry/declaration token. Not real app/runtime evidence or an independent held-out evaluation.",
+  "no_V3_changes_before_results": true,
+  "reference_actions_not_changed_after_predictions": true,
+  "no_source_execution_or_permanent_tests": true,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

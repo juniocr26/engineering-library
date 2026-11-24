@@ -1,0 +1,327 @@
+[
+  {
+    "id": "F01",
+    "owner": "Dependant",
+    "source_path": "fastapi/dependencies/models.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+    "source_lines": [
+      53,
+      53
+    ],
+    "mechanically_derived_relation": {
+      "relation": "declared_class_field_default",
+      "field": {
+        "node": "Name",
+        "id": "use_cache"
+      },
+      "default": {
+        "node": "Constant",
+        "value": true,
+        "kind": null
+      }
+    }
+  },
+  {
+    "id": "F02",
+    "owner": "Dependant",
+    "source_path": "fastapi/dependencies/models.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+    "source_lines": [
+      55,
+      55
+    ],
+    "mechanically_derived_relation": {
+      "relation": "declared_class_field_default",
+      "field": {
+        "node": "Name",
+        "id": "scope"
+      },
+      "default": {
+        "node": "Constant",
+        "value": null,
+        "kind": null
+      }
+    }
+  },
+  {
+    "id": "F03",
+    "owner": "solve_dependencies",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "source_lines": [
+      700,
+      701
+    ],
+    "mechanically_derived_relation": {
+      "relation": "selected_guarded_assignment",
+      "guard": {
+        "node": "Compare",
+        "left": {
+          "node": "Name",
+          "id": "dependency_cache"
+        },
+        "ops": [
+          {
+            "node": "Is"
+          }
+        ],
+        "comparators": [
+          {
+            "node": "Constant",
+            "value": null,
+            "kind": null
+          }
+        ]
+      },
+      "assignment_target": {
+        "node": "Name",
+        "id": "dependency_cache"
+      },
+      "assigned_value": {
+        "node": "Dict",
+        "keys": [],
+        "values": []
+      },
+      "qualification": "If control reaches this selected guard; no universal runtime completion statement."
+    }
+  },
+  {
+    "id": "F04",
+    "owner": "solve_dependencies",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "source_lines": [
+      726,
+      737
+    ],
+    "mechanically_derived_relation": {
+      "relation": "written_awaited_recursive_call_keyword",
+      "callee": {
+        "node": "Name",
+        "id": "solve_dependencies"
+      },
+      "keyword": "dependency_cache",
+      "passed_value": {
+        "node": "Name",
+        "id": "dependency_cache"
+      }
+    }
+  },
+  {
+    "id": "F05",
+    "owner": "solve_dependencies",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "source_lines": [
+      746,
+      771
+    ],
+    "mechanically_derived_relation": {
+      "relation": "selected_guarded_assignment",
+      "guard": {
+        "node": "BoolOp",
+        "op": {
+          "node": "And"
+        },
+        "values": [
+          {
+            "node": "Attribute",
+            "value": {
+              "node": "Name",
+              "id": "sub_dependant"
+            },
+            "attr": "use_cache"
+          },
+          {
+            "node": "Compare",
+            "left": {
+              "node": "Name",
+              "id": "sub_dependant_cache_key"
+            },
+            "ops": [
+              {
+                "node": "In"
+              }
+            ],
+            "comparators": [
+              {
+                "node": "Name",
+                "id": "dependency_cache"
+              }
+            ]
+          }
+        ]
+      },
+      "assignment_target": {
+        "node": "Name",
+        "id": "solved"
+      },
+      "assigned_value": {
+        "node": "Subscript",
+        "value": {
+          "node": "Name",
+          "id": "dependency_cache"
+        },
+        "slice": {
+          "node": "Name",
+          "id": "sub_dependant_cache_key"
+        }
+      },
+      "qualification": "If control reaches this selected guard; no universal runtime completion statement."
+    }
+  },
+  {
+    "id": "F06",
+    "owner": "solve_dependencies",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "source_lines": [
+      774,
+      775
+    ],
+    "mechanically_derived_relation": {
+      "relation": "selected_guarded_assignment",
+      "guard": {
+        "node": "Compare",
+        "left": {
+          "node": "Name",
+          "id": "sub_dependant_cache_key"
+        },
+        "ops": [
+          {
+            "node": "NotIn"
+          }
+        ],
+        "comparators": [
+          {
+            "node": "Name",
+            "id": "dependency_cache"
+          }
+        ]
+      },
+      "assignment_target": {
+        "node": "Subscript",
+        "value": {
+          "node": "Name",
+          "id": "dependency_cache"
+        },
+        "slice": {
+          "node": "Name",
+          "id": "sub_dependant_cache_key"
+        }
+      },
+      "assigned_value": {
+        "node": "Name",
+        "id": "solved"
+      },
+      "qualification": "If control reaches this selected guard; no universal runtime completion statement."
+    }
+  },
+  {
+    "id": "F07",
+    "owner": "solve_dependencies",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "source_lines": [
+      774,
+      775
+    ],
+    "mechanically_derived_relation": {
+      "relation": "selected_local_guard_identifier_absence",
+      "guard": {
+        "node": "Compare",
+        "left": {
+          "node": "Name",
+          "id": "sub_dependant_cache_key"
+        },
+        "ops": [
+          {
+            "node": "NotIn"
+          }
+        ],
+        "comparators": [
+          {
+            "node": "Name",
+            "id": "dependency_cache"
+          }
+        ]
+      },
+      "identifier": "use_cache",
+      "present_as_name_or_attribute": false,
+      "qualification": "This selected guard only; no global cache lifetime or all earlier guards assertion."
+    }
+  },
+  {
+    "id": "F08",
+    "owner": "solve_dependencies",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "source_lines": [
+      687,
+      689
+    ],
+    "mechanically_derived_relation": {
+      "relation": "written_assert_expression",
+      "expression": {
+        "node": "Call",
+        "func": {
+          "node": "Name",
+          "id": "isinstance"
+        },
+        "args": [
+          {
+            "node": "Name",
+            "id": "request_astack"
+          },
+          {
+            "node": "Name",
+            "id": "AsyncExitStack"
+          }
+        ],
+        "keywords": []
+      },
+      "qualification": "Written assertion, not executed test/passing runtime guarantee."
+    }
+  },
+  {
+    "id": "F09",
+    "owner": "solve_dependencies",
+    "source_path": "fastapi/dependencies/utils.py",
+    "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+    "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+    "source_lines": [
+      691,
+      693
+    ],
+    "mechanically_derived_relation": {
+      "relation": "written_assert_expression",
+      "expression": {
+        "node": "Call",
+        "func": {
+          "node": "Name",
+          "id": "isinstance"
+        },
+        "args": [
+          {
+            "node": "Name",
+            "id": "function_astack"
+          },
+          {
+            "node": "Name",
+            "id": "AsyncExitStack"
+          }
+        ],
+        "keywords": []
+      },
+      "qualification": "Written assertion, not executed test/passing runtime guarantee."
+    }
+  }
+]

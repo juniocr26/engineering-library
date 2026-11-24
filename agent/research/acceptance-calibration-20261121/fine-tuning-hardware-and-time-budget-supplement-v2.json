@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-21T14:42:28.076317+00:00",
+  "fresh_hardware_observation": {
+    "command": [
+      "/usr/sbin/sysctl",
+      "-n",
+      "hw.memsize",
+      "hw.physicalcpu",
+      "machdep.cpu.brand_string"
+    ],
+    "host_permission": "Read-only escalation automatically approved after earlier sandboxdenial",
+    "observed_stdout": "17179869184\n10\nApple M1 Pro\n",
+    "exit_code": 0,
+    "ram_bytes": 17179869184,
+    "physical_cores": 10,
+    "cpu": "Apple M1 Pro",
+    "not_training_peak_or_free_ram": true
+  },
+  "inference_budget_observations": [
+    {
+      "method": "A",
+      "requests": 3,
+      "transport_success": 2,
+      "single_observed_cycle_wall_seconds_sum": 965.6854054589999,
+      "two_identical_duration_cycles_seconds_arithmetic": 1931.3708109179997,
+      "remaining_of_1800_before_any_training_scoring_preservation": -131.37081091799973,
+      "not_measured_repeat_or_future_native_forecast": true,
+      "returned_generated_tokens": 2294
+    },
+    {
+      "method": "B",
+      "requests": 10,
+      "transport_success": 10,
+      "single_observed_cycle_wall_seconds_sum": 632.7826293330008,
+      "two_identical_duration_cycles_seconds_arithmetic": 1265.5652586660017,
+      "remaining_of_1800_before_any_training_scoring_preservation": 534.4347413339983,
+      "not_measured_repeat_or_future_native_forecast": true,
+      "returned_generated_tokens": 1737
+    },
+    {
+      "method": "C",
+      "requests": 3,
+      "transport_success": 3,
+      "single_observed_cycle_wall_seconds_sum": 1259.5607358750008,
+      "two_identical_duration_cycles_seconds_arithmetic": 2519.1214717500015,
+      "remaining_of_1800_before_any_training_scoring_preservation": -719.1214717500015,
+      "not_measured_repeat_or_future_native_forecast": true,
+      "returned_generated_tokens": 3619
+    }
+  ],
+  "interpretation": "CurrentOllamaCPUinferenceepisodes illustrate why a30minwholepilotbudget cannot be assumed. TwiceobservedCcycle exceeds1800s even beforeoptimizer/scoring/preservation; A includesatransportfailure andcannotbea validatedscoredcycle. Bhasdifferentgranularity/cache/outputandisnotacausalspeedcomparison. Futuretrainablebase/nativeAppleSiliconruntime maydiffer substantially: these are arithmetic warnings,notvalidatedtraining/native forecasts.",
+  "required_before_launch": [
+    "Measure exactapprovednativebase/tokenizer/taskset baseline andadapterevaluationresources/timing.",
+    "Reserve600smaximumoptimizerinside1800stotal; reduce taskscopeonlywithfrozencriteriaandseparateownerapproval,neverdropfailedpairedoutcomes.",
+    "Firstmicropilotmaymeasureasmallsemanticbehaviorwithoutclaimingcompletechapterimprovement; its128/512etcactualtokenfitnotassumed.",
+    "No download/installation/adapter/trainingis authorizednow."
+  ],
+  "current_preservation_bytes": {
+    "research": 7323073,
+    "new_local_backups": 2903857,
+    "weights_copied": 0
+  },
+  "growth_planning": "Approximately16checkpointcuts over8h plus rawresponses/source/evidence metadata; estimate from currentmeasuredcut sizes,not a storagecap. Do notdelete historicalartifacts.",
+  "overall_fine_tuning": "NO-GO",
+  "all9gates_still_require_evidence": "fine-tuning-nine-gate-review-v1.json",
+  "gold": 0,
+  "optimizer_updates": 0,
+  "training_benchmark_executed": false
+}

@@ -1,0 +1,491 @@
+{
+  "at": "2026-11-20T13:54:16.897064+00:00",
+  "frozen_before_predictions": true,
+  "producer_sha256": "dff17f6e26bf55401de308d875ea6fe530c77958f5f1bb0d54861255738f4ab5",
+  "cases": [
+    {
+      "id": "new-note-empty-logical-slot",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "pass\n",
+        "current_source": "def api():\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "ADD"
+    },
+    {
+      "id": "added-explicit-parameter",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "unchanged-absent-parameter",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api():\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "vararg-name-present",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(*limit):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "kwarg-name-present",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(**limit):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "stable-tuple-parentheses",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(key, value):\n    return (key, value)\n",
+        "current_source": "def api(key, value):\n    return key, value\n",
+        "documentation": {
+          "en": "api returns the tuple key, value.",
+          "pt-br": "api retorna a tupla key, value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "tuple-order-changed",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(key, value):\n    return key, value\n",
+        "current_source": "def api(key, value):\n    return value, key\n",
+        "documentation": {
+          "en": "api returns the tuple key, value.",
+          "pt-br": "api retorna a tupla key, value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "MODIFY"
+    },
+    {
+      "id": "side-effect-before-tuple",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api(key, value):\n    return key, value\n",
+        "current_source": "def api(key, value):\n    helper()\n    return key, value\n",
+        "documentation": {
+          "en": "api returns the tuple key, value.",
+          "pt-br": "api retorna a tupla key, value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "bilingual-parameter-disagrees",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro other."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "foreign-document-selector",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "other has no limit parameter.",
+          "pt-br": "other não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "source-unavailable",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": false,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "incomplete-module-scope",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": false,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "known-dynamic-module-binding",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api():\n    return 1\nglobals()[\"api\"] = replacement\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "missing-current-symbol-never-removes",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def other():\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "extra-runtime-assertion",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter. It is thread safe.",
+          "pt-br": "api não possui parâmetro limit. É segura entre threads."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "one-empty-language",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "invalid-current-syntax",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(:\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "unadmitted-metadata-extension",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {
+          "current_path": "other.py"
+        }
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "tuple-global-names-unresolved",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api():\n    return key, value\n",
+        "documentation": {
+          "en": "api returns the tuple key, value.",
+          "pt-br": "api retorna a tupla key, value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "unrelated-import-does-not-execute",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "import os\n\ndef api(value):\n    return (value,)\n",
+        "current_source": "import os\n\ndef api(value):\n    return (value,)\n",
+        "documentation": {
+          "en": "api returns the tuple value.",
+          "pt-br": "api retorna a tupla value."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "keyword-is-not-parameter-token",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api(limit=None):\n    return 1\n",
+        "documentation": {
+          "en": "api has no class parameter.",
+          "pt-br": "api não possui parâmetro class."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "whitespace-is-not-certified-empty-slot",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "pass\n",
+        "current_source": "def api():\n    return 1\n",
+        "documentation": {
+          "en": " ",
+          "pt-br": " "
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "module-side-effect-is-not-executed",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\nopen(\"/tmp/el-closed-declaration-owned-noexec-20261120\", \"w\").write(\"must-not-execute\")\n",
+        "current_source": "def api():\n    return 1\nopen(\"/tmp/el-closed-declaration-owned-noexec-20261120\", \"w\").write(\"must-not-execute\")\n",
+        "documentation": {
+          "en": "api has no limit parameter.",
+          "pt-br": "api não possui parâmetro limit."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "NO-OP"
+    },
+    {
+      "id": "empty-slot-existing-source-not-new-declaration",
+      "packet": {
+        "id": "owned-claim",
+        "family": "owned-declaration-controls",
+        "language": "python",
+        "previous_source": "def api():\n    return 1\n",
+        "current_source": "def api():\n    return 1\n",
+        "documentation": {
+          "en": "",
+          "pt-br": ""
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.api",
+        "metadata": {}
+      },
+      "expected": "INCONCLUSIVE"
+    }
+  ],
+  "marker": "/tmp/el-closed-declaration-owned-noexec-20261120",
+  "scope": "Owned controlled observations;no permanent test/source application execution."
+}

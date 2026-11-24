@@ -1,0 +1,112 @@
+{
+  "at": "2026-11-21T18:30:47.955608+00:00",
+  "topic": "sqlx-in-expansion",
+  "family": "sqlx",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/sqlx-in-expansion/en.candidate.txt",
+      "sha256": "83416fddb29eb4c1cee6a9e12b82faa3ea2cc2c840ec1e535131bbeb016599cf",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/sqlx-in-expansion/pt-br.candidate.txt",
+      "sha256": "a8742f8d6dc4be4f3bc0f70296351322d3fc16ae84f3b15a8690b996a2a1264b",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "In tuple isquery/args/error notDBexecution; stack32capacityfastpathotherwiseallocatedlen(args), no cardinalityerror.",
+    "Valuerbeforeclassification/fastpath;flatcountsliceLengths+scalars, emptyexpandableslicerejectedbeforequeryscan.",
+    "asSliceForIn nil/exactslice/[]byteexception, Dereftypeonlyonepointerlayer, originalValueusedLen, no transparentpointerhandling guarantee.",
+    "No-slicepathreturnsoriginalquery/argsbeforecountchecks evenafterValuer; rewritescansquestionmarkbytesnotsqllexer, preservesorder and helperappendtypes.",
+    "Mismatcherrorsreturnemptyquery/nilargs unlike maphelperprefix; successbuf/newArgs/nil, normalhelpers/reflectiononly.",
+    "Actualrecoverybaselinefalse32cap/countclaims/byteexceptionomission confirmed. Historicalrestartreceipt retainsoneoldrequestwithoutresponse/unknowntokens andseparaterecoveryresponse; no newpowerloss/nativeapplicationproof."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sqlx/41dac167fdad5e3fd81d66cafba0951dc6823a30/bind.go",
+      "source_sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+      "source_path": "bind.go",
+      "source_lines": [
+        117,
+        137
+      ],
+      "exact_source_evidence": "func asSliceForIn(i interface{}) (v reflect.Value, ok bool) {\n\tif i == nil {\n\t\treturn reflect.Value{}, false\n\t}\n\n\tv = reflect.ValueOf(i)\n\tt := reflectx.Deref(v.Type())\n\n\t// Only expand slices\n\tif t.Kind() != reflect.Slice {\n\t\treturn reflect.Value{}, false\n\t}\n\n\t// []byte is a driver.Value type so it should not be expanded\n\tif t == reflect.TypeOf([]byte{}) {\n\t\treturn reflect.Value{}, false\n\n\t}\n\n\treturn v, true\n}",
+      "reviewed_interpretation": "Sliceclassification and originalValue.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sqlx/41dac167fdad5e3fd81d66cafba0951dc6823a30/bind.go",
+      "source_sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+      "source_path": "bind.go",
+      "source_lines": [
+        142,
+        192
+      ],
+      "exact_source_evidence": "func In(query string, args ...interface{}) (string, []interface{}, error) {\n\t// argMeta stores reflect.Value and length for slices and\n\t// the value itself for non-slice arguments\n\ttype argMeta struct {\n\t\tv      reflect.Value\n\t\ti      interface{}\n\t\tlength int\n\t}\n\n\tvar flatArgsCount int\n\tvar anySlices bool\n\n\tvar stackMeta [32]argMeta\n\n\tvar meta []argMeta\n\tif len(args) <= len(stackMeta) {\n\t\tmeta = stackMeta[:len(args)]\n\t} else {\n\t\tmeta = make([]argMeta, len(args))\n\t}\n\n\tfor i, arg := range args {\n\t\tif a, ok := arg.(driver.Valuer); ok {\n\t\t\tvar err error\n\t\t\targ, err = a.Value()\n\t\t\tif err != nil {\n\t\t\t\treturn \"\", nil, err\n\t\t\t}\n\t\t}\n\n\t\tif v, ok := asSliceForIn(arg); ok {\n\t\t\tmeta[i].length = v.Len()\n\t\t\tmeta[i].v = v\n\n\t\t\tanySlices = true\n\t\t\tflatArgsCount += meta[i].length\n\n\t\t\tif meta[i].length == 0 {\n\t\t\t\treturn \"\", nil, errors.New(\"empty slice passed to 'in' query\")\n\t\t\t}\n\t\t} else {\n\t\t\tmeta[i].i = arg\n\t\t\tflatArgsCount++\n\t\t}\n\t}\n\n\t// don't do any parsing if there aren't any slices;  note that this means\n\t// some errors that we might have caught below will not be returned.\n\tif !anySlices {\n\t\treturn query, args, nil\n\t}",
+      "reviewed_interpretation": "Metadataallocation/preparation/empty/no-slicepaths.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sqlx/41dac167fdad5e3fd81d66cafba0951dc6823a30/bind.go",
+      "source_sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+      "source_path": "bind.go",
+      "source_lines": [
+        194,
+        264
+      ],
+      "exact_source_evidence": "\tnewArgs := make([]interface{}, 0, flatArgsCount)\n\n\tvar buf strings.Builder\n\tbuf.Grow(len(query) + len(\", ?\")*flatArgsCount)\n\n\tvar arg, offset int\n\n\tfor i := strings.IndexByte(query[offset:], '?'); i != -1; i = strings.IndexByte(query[offset:], '?') {\n\t\tif arg >= len(meta) {\n\t\t\t// if an argument wasn't passed, lets return an error;  this is\n\t\t\t// not actually how database/sql Exec/Query works, but since we are\n\t\t\t// creating an argument list programmatically, we want to be able\n\t\t\t// to catch these programmer errors earlier.\n\t\t\treturn \"\", nil, errors.New(\"number of bindVars exceeds arguments\")\n\t\t}\n\n\t\targMeta := meta[arg]\n\t\targ++\n\n\t\t// not a slice, continue.\n\t\t// our questionmark will either be written before the next expansion\n\t\t// of a slice or after the loop when writing the rest of the query\n\t\tif argMeta.length == 0 {\n\t\t\toffset = offset + i + 1\n\t\t\tnewArgs = append(newArgs, argMeta.i)\n\t\t\tcontinue\n\t\t}\n\n\t\t// write everything up to and including our ? character\n\t\tbuf.WriteString(query[:offset+i+1])\n\n\t\tfor si := 1; si < argMeta.length; si++ {\n\t\t\tbuf.WriteString(\", ?\")\n\t\t}\n\n\t\tnewArgs = appendReflectSlice(newArgs, argMeta.v, argMeta.length)\n\n\t\t// slice the query and reset the offset. this avoids some bookkeeping for\n\t\t// the write after the loop\n\t\tquery = query[offset+i+1:]\n\t\toffset = 0\n\t}\n\n\tbuf.WriteString(query)\n\n\tif arg < len(meta) {\n\t\treturn \"\", nil, errors.New(\"number of bindVars less than number arguments\")\n\t}\n\n\treturn buf.String(), newArgs, nil\n}\n\nfunc appendReflectSlice(args []interface{}, v reflect.Value, vlen int) []interface{} {\n\tswitch val := v.Interface().(type) {\n\tcase []interface{}:\n\t\targs = append(args, val...)\n\tcase []int:\n\t\tfor i := range val {\n\t\t\targs = append(args, val[i])\n\t\t}\n\tcase []string:\n\t\tfor i := range val {\n\t\t\targs = append(args, val[i])\n\t\t}\n\tdefault:\n\t\tfor si := 0; si < vlen; si++ {\n\t\t\targs = append(args, v.Index(si).Interface())\n\t\t}\n\t}\n\n\treturn args",
+      "reviewed_interpretation": "Rewrite/errors/orderedappendhelper.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sqlx/41dac167fdad5e3fd81d66cafba0951dc6823a30/reflectx/reflect.go",
+      "source_sha256": "3de3b248e6b88566c09becf518b3b3c3e999ff5a9ae86dc170cea425fd01b9db",
+      "source_path": "reflectx/reflect.go",
+      "source_lines": [
+        231,
+        236
+      ],
+      "exact_source_evidence": "func Deref(t reflect.Type) reflect.Type {\n\tif t.Kind() == reflect.Ptr {\n\t\tt = t.Elem()\n\t}\n\treturn t\n}",
+      "reviewed_interpretation": "One typepointerindirection only.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "sqlx-in-expansion-recovery",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sqlx-in-expansion-recovery/raw-response.json",
+      "sha256": "138420a42281083cc5a5812a3ca581f0527fff6fe3d13a1b64327f751ddd0826",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sqlx-in-expansion-recovery/origin.json",
+      "origin_sha256": "280a75d1c52d7f13f2c292741d669283f9fab9325fc897ebac1c42c4e20e08bd"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

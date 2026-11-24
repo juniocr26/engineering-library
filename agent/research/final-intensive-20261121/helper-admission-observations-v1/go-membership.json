@@ -1,0 +1,47 @@
+{
+  "id": "go-membership",
+  "task": "cobra",
+  "path": "args.go",
+  "language": "go",
+  "selector": "OnlyValidArgs",
+  "claim_ids": [
+    "C02",
+    "C03"
+  ],
+  "expected": "ADMITTED_LEXICAL_UNIT",
+  "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+  "source_bytes": 4477,
+  "actual": "ADMITTED_LEXICAL_UNIT",
+  "error": null,
+  "extracted_intermediate_unit": {
+    "selector": "OnlyValidArgs",
+    "declaration_kind": "function",
+    "first_line": 51,
+    "last_line": 66,
+    "quote": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil\n}",
+    "quote_sha256": "4b06644f452a9753072c9ad5052a13225e3a07e15dcaa1568716b021b56b300e",
+    "producer": {
+      "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+      "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+      "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+      "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+      "version": "1.6.1"
+    },
+    "syntax_only": true,
+    "source_executed": false,
+    "runtime_bindings_verified": false,
+    "limitations": [
+      "Syntax-only Go declaration; module, build-tag, import, type and runtime binding resolution remain unverified."
+    ]
+  },
+  "admitted_quote_covers_reference_ids": [
+    "C02",
+    "C03"
+  ],
+  "uncovered_reference_ids": [],
+  "matches_frozen_status": true,
+  "matches_frozen_reason": true,
+  "wall_seconds": 0.09810220800000025,
+  "source_program_executed": false,
+  "runtime_bindings_verified": false
+}

@@ -1,0 +1,61 @@
+{
+  "at": "2026-11-20T12:44:11.948884+00:00",
+  "family": "jmespath/jmespath.py",
+  "previous_revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+  "current_revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+  "development_exposed": true,
+  "source_review_before_class_predictions": true,
+  "claims": [
+    {
+      "id": "cache-size",
+      "selector": "Parser._MAX_SIZE",
+      "old_written_literal": 128,
+      "new_written_literal": 512,
+      "expected_action": "MODIFY",
+      "scope": "Change the documented written class configuration; do not promise actual live occupancy or concurrency safety."
+    },
+    {
+      "id": "cache-policy",
+      "selector": "Parser.parse",
+      "old_written_facts": [
+        "lookup via self._CACHE.get(expression)",
+        "parse and insert before oversize check",
+        "call self._free_cache_entries() when len exceeds _MAX_SIZE"
+      ],
+      "new_written_facts": [
+        "lookup via self._CACHE[expression] inside KeyError handler",
+        "check len >= _MAX_SIZE before insertion",
+        "delete next(iter(self._CACHE)) inside three-exception handler",
+        "on eviction exception return parsed_result before insertion"
+      ],
+      "expected_action": "MODIFY",
+      "scope": "Written control-flow only; no LRU, thread-safety or successful eviction guarantee."
+    },
+    {
+      "id": "cache-helper-removal",
+      "selector": "Parser._free_cache_entries",
+      "expected_action": "INCONCLUSIVE",
+      "scope": "Absent direct member is not enough to remove a documentation section; relocation/inheritance/callers/full registry are not proved."
+    },
+    {
+      "id": "stable-facade",
+      "selector": "search",
+      "expected_action": "NO-OP",
+      "scope": "Only claim about written facade parameter names and options=None; chapter cache paragraph separately changes."
+    },
+    {
+      "id": "thread-safety",
+      "selector": "Parser.parse",
+      "expected_action": "INCONCLUSIVE",
+      "scope": "Exception handling and comments do not establish cache thread safety."
+    },
+    {
+      "id": "cache-lru",
+      "selector": "Parser.parse",
+      "expected_action": "INCONCLUSIVE",
+      "scope": "next(iter(dict)) eviction is not evidence of updating recency on hits; no runtime LRU guarantee."
+    }
+  ],
+  "training_exclusion": true,
+  "owner_approved": false
+}

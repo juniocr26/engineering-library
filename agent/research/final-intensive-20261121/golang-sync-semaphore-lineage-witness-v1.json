@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-22T01:22:19.225364+00:00",
+  "records": [
+    {
+      "request": "agent/research/continuation-20261120/go-build-context-real-v1/request.json",
+      "path": "internal/internal_workflow.go",
+      "source_sha256": "09dbd63c9682e8c167d8de1b39f5d2f3105d1a33c03b5a40c5305f6753516245",
+      "source_bytes": 66879,
+      "matches": [
+        "released more than held"
+      ],
+      "excerpts": [
+        {
+          "line": 2113,
+          "context": "func (s *semaphoreImpl) Release(n int64) {\n\ts.cur -= n\n\tif s.cur < 0 {\n\t\tpanic(\"Semaphore.Release() released more than held\")\n\t}\n}\n\nfunc incrementWorkflowTaskFailureCounter(metricsHandler metrics.Handler, failureReason string) {"
+        }
+      ]
+    },
+    {
+      "request": "agent/research/continuation-20261120/go-build-context-real-v1/request.json",
+      "path": "internal/tuning.go",
+      "source_sha256": "922c5f7d285232faf919f12c35028e25dc976ca4977724d00c74e9482754e699",
+      "source_bytes": 17391,
+      "matches": [
+        "golang.org/x/sync/semaphore"
+      ],
+      "excerpts": [
+        {
+          "line": 11,
+          "context": "\t\"time\"\n\n\tenumspb \"go.temporal.io/api/enums/v1\"\n\t\"golang.org/x/sync/semaphore\"\n\n\t\"go.temporal.io/sdk/internal/common/metrics\"\n\t\"go.temporal.io/sdk/log\"\n)"
+        }
+      ]
+    },
+    {
+      "request": "agent/research/continuation-20261120/go-build-context-real-v1/qualified-census-request.json",
+      "path": "internal/internal_workflow.go",
+      "source_sha256": "09dbd63c9682e8c167d8de1b39f5d2f3105d1a33c03b5a40c5305f6753516245",
+      "source_bytes": 66879,
+      "matches": [
+        "released more than held"
+      ],
+      "excerpts": [
+        {
+          "line": 2113,
+          "context": "func (s *semaphoreImpl) Release(n int64) {\n\ts.cur -= n\n\tif s.cur < 0 {\n\t\tpanic(\"Semaphore.Release() released more than held\")\n\t}\n}\n\nfunc incrementWorkflowTaskFailureCounter(metricsHandler metrics.Handler, failureReason string) {"
+        }
+      ]
+    },
+    {
+      "request": "agent/research/continuation-20261120/go-build-context-real-v1/qualified-census-request.json",
+      "path": "internal/tuning.go",
+      "source_sha256": "922c5f7d285232faf919f12c35028e25dc976ca4977724d00c74e9482754e699",
+      "source_bytes": 17391,
+      "matches": [
+        "golang.org/x/sync/semaphore"
+      ],
+      "excerpts": [
+        {
+          "line": 11,
+          "context": "\t\"time\"\n\n\tenumspb \"go.temporal.io/api/enums/v1\"\n\t\"golang.org/x/sync/semaphore\"\n\n\t\"go.temporal.io/sdk/internal/common/metrics\"\n\t\"go.temporal.io/sdk/log\"\n)"
+        }
+      ]
+    }
+  ],
+  "interpretation_pending_full_comparison": true,
+  "no_execution_inferred_from_request_alone": true
+}

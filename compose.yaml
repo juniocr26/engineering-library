@@ -1,0 +1,107 @@
+name: engineering-library
+services:
+  ollama:
+    image: ollama/ollama:0.40.16@sha256:910d0d8107b538fb0894e63163eb195de0cc7aefcbc666dc62d3b18f71124592
+    environment:
+      OLLAMA_NO_CLOUD: "1"
+    volumes:
+      - ./ollama:/root/.ollama
+    healthcheck:
+      test: [CMD, ollama, list]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 12
+  postgres:
+    image: postgres:18-bookworm
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/18/docker
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5499}:5432"
+    volumes:
+      - ./.dockerized-postgres:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: backend-development
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    init: true
+    environment:
+      HOME: /tmp
+      RAILS_ENV: development
+      BUNDLE_PATH: /app/backend/vendor/bundle
+      BUNDLE_FROZEN: "true"
+      CATALOG_ROOT: /docs
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Set SECRET_KEY_BASE}
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      # make docs owns only documentation/state; application sources stay read-only.
+      - ./docs:/docs
+      - ./backend:/app/backend
+      - ./agent:/agent:ro
+      - ..:/sources:ro
+      # Per-project docs/ write mounts are prepared by tools/prepare_docs_mounts.py.
+    tmpfs:
+      - /app/backend/tmp:mode=1777
+      - /app/backend/log:mode=1777
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-3098}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, ruby, -rnet/http, -e, 'exit(Net::HTTP.get_response(URI("http://127.0.0.1:3000/up")).code == "200" ? 0 : 1)']
+      interval: 5s
+      timeout: 3s
+      # Cold gem installation and Rails boot also run on Windows bind mounts.
+      start_period: 300s
+      retries: 30
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: frontend-development
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    init: true
+    environment:
+      HOME: /tmp
+      npm_config_cache: /tmp/npm-cache
+      BROWSER_BASE_URL: http://localhost:3000
+      BOOK_READER_URL: http://localhost:3000
+      BACKEND_URL: http://backend:3000
+      DOCUMENTATION_ROOT: /docs
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "${WATCHPACK_POLLING:-1000}"
+    volumes:
+      - ./docs/img:/docs/img:ro
+      - ./frontend:/app/frontend
+      # Explicit maintenance output and approved source input; no new service.
+      - ./docs:/docs
+      - ..:/sources:ro
+    # Dependencies use the source bind mount; only the build cache is ephemeral.
+    tmpfs:
+      - /app/frontend/.next:mode=1777
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3099}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, node, -e, 'fetch("http://127.0.0.1:3000").then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))']
+      interval: 10s
+      timeout: 8s
+      # Cold npm installation and Next.js compilation also use Windows shares.
+      start_period: 300s
+      retries: 20

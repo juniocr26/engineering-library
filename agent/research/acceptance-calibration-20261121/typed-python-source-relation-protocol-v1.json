@@ -1,0 +1,329 @@
+{
+  "at": "2026-11-21T17:01:01.928295+00:00",
+  "before_extractor_observations": true,
+  "hypothesis": "Owner-qualified Python AST relations can mechanically verify a narrow typed source proposition without treating matching source membership or an LLM rationale as semantic proof. This does not parse arbitrary English/PT or establish runtime semantics.",
+  "source_refs": [
+    {
+      "claim_id": "F01",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/models.py",
+      "source_file_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "exact_source_evidence": "    use_cache: bool = True",
+      "source_lines": [
+        53,
+        53
+      ],
+      "expected_interpretation": {
+        "en": "The selected class declares use_cache: bool = True.",
+        "pt-BR": "A classe selecionada declara use_cache: bool = True."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F02",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/models.py",
+      "source_file_sha256": "2625cfc0ccef4b101d295173f582e69f5c48b4cb939f859ed088c8f492ff0d93",
+      "exact_source_evidence": "    scope: Literal[\"function\", \"request\"] | None = None",
+      "source_lines": [
+        55,
+        55
+      ],
+      "expected_interpretation": {
+        "en": "The selected scope declaration has default None.",
+        "pt-BR": "A declaração selecionada de scope tem valor padrão None."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F03",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "    if dependency_cache is None:\n        dependency_cache = {}",
+      "source_lines": [
+        700,
+        701
+      ],
+      "expected_interpretation": {
+        "en": "When dependency_cache is None the local is assigned an empty dictionary.",
+        "pt-BR": "Quando dependency_cache é None, a variável local recebe um dicionário vazio."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F04",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        solved_result = await solve_dependencies(\n            request=request,\n            dependant=use_sub_dependant,\n            body=body,\n            background_tasks=background_tasks,\n            response=response,\n            dependency_overrides_provider=dependency_overrides_provider,\n            dependency_cache=dependency_cache,\n            async_exit_stack=async_exit_stack,\n            embed_body_fields=embed_body_fields,\n            _uses_scopes_cache=_uses_scopes_cache,\n        )",
+      "source_lines": [
+        726,
+        737
+      ],
+      "expected_interpretation": {
+        "en": "The written recursive solve_dependencies call passes dependency_cache=dependency_cache.",
+        "pt-BR": "A chamada recursiva escrita de solve_dependencies passa dependency_cache=dependency_cache."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F05",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        if sub_dependant.use_cache and sub_dependant_cache_key in dependency_cache:\n            solved = dependency_cache[sub_dependant_cache_key]",
+      "source_lines": [
+        746,
+        747
+      ],
+      "expected_interpretation": {
+        "en": "The reuse branch requires both use_cache and membership of the key in dependency_cache.",
+        "pt-BR": "O ramo de reutilização exige use_cache e a presença da chave em dependency_cache."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F06",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+      "source_lines": [
+        774,
+        775
+      ],
+      "expected_interpretation": {
+        "en": "If control reaches the write guard with the key absent, it assigns solved into dependency_cache.",
+        "pt-BR": "Se o controle alcança a condição de escrita com a chave ausente, atribui solved em dependency_cache."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F07",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "        if sub_dependant_cache_key not in dependency_cache:\n            dependency_cache[sub_dependant_cache_key] = solved",
+      "source_lines": [
+        774,
+        775
+      ],
+      "expected_interpretation": {
+        "en": "The selected write guard does not test use_cache.",
+        "pt-BR": "A condição selecionada de escrita não testa use_cache."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F08",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "    assert isinstance(request_astack, AsyncExitStack), (\n        \"fastapi_inner_astack not found in request scope\"\n    )",
+      "source_lines": [
+        687,
+        689
+      ],
+      "expected_interpretation": {
+        "en": "The selected source asserts isinstance(request_astack, AsyncExitStack).",
+        "pt-BR": "A fonte selecionada contém assert isinstance(request_astack, AsyncExitStack)."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "F09",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": "fastapi/dependencies/utils.py",
+      "source_file_sha256": "66cbee20e5684d435e7251e0afe7fb054d05ee5f07b3444548c2ebf20262d2b5",
+      "exact_source_evidence": "    assert isinstance(function_astack, AsyncExitStack), (\n        \"fastapi_function_astack not found in request scope\"\n    )",
+      "source_lines": [
+        691,
+        693
+      ],
+      "expected_interpretation": {
+        "en": "The selected source asserts isinstance(function_astack, AsyncExitStack).",
+        "pt-BR": "A fonte selecionada contém assert isinstance(function_astack, AsyncExitStack)."
+      },
+      "reference_verdict": "SUPPORTED",
+      "critical": true,
+      "reviewer": "Codex same campaign agent; static source semantic review",
+      "provenance": "Fresh read-only git show matches retained prior source snapshot; no upstream execution",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    },
+    {
+      "claim_id": "U-F",
+      "task": "fastapi",
+      "family": "fastapi/fastapi",
+      "source_revision": "05e6df7e906c3decba377c37548019973f40bf15",
+      "source_path": null,
+      "source_file_sha256": null,
+      "exact_source_evidence": "Selected source cards do not establish the requested universal or cross-request runtime contract. No project-wide negative proof claimed.",
+      "source_lines": null,
+      "expected_interpretation": {
+        "en": "Not established by the selected source; abstain from the universal runtime claim.",
+        "pt-BR": "Não; a seleção não estabelece cache único compartilhado entre requisições."
+      },
+      "reference_verdict": "INSUFFICIENT",
+      "critical": true,
+      "reviewer": "Codex same campaign agent",
+      "provenance": "Frozen scope-limitation control, not observed runtime counterexample.",
+      "dataset_role": "DEVELOPMENT_EXPOSED_TRAINING_EXCLUDED",
+      "not_independent_holdout": true
+    }
+  ],
+  "anchors": {
+    "F01": [
+      "Dependant",
+      53,
+      "AnnAssign"
+    ],
+    "F02": [
+      "Dependant",
+      55,
+      "AnnAssign"
+    ],
+    "F03": [
+      "solve_dependencies",
+      700,
+      "If"
+    ],
+    "F04": [
+      "solve_dependencies",
+      726,
+      "Assign"
+    ],
+    "F05": [
+      "solve_dependencies",
+      746,
+      "If"
+    ],
+    "F06": [
+      "solve_dependencies",
+      774,
+      "If"
+    ],
+    "F07": [
+      "solve_dependencies",
+      774,
+      "If"
+    ],
+    "F08": [
+      "solve_dependencies",
+      687,
+      "Assert"
+    ],
+    "F09": [
+      "solve_dependencies",
+      691,
+      "Assert"
+    ]
+  },
+  "derivation": [
+    "Parse hash-bound copied public source only; no imports/execution.",
+    "Require exact selected top-level class/function owner, anchor line and AST kind. Missing/ambiguous owner/anchor is INSUFFICIENT.",
+    "Derive typed declaration-default, guarded-assignment, awaited-call keyword, local guard identifier absence, and asserted-expression tuples from actual AST. Preserve exact source slice/span/hash for each.",
+    "Field/guard/dataflow/parameter/type roles remain distinct. AST shape is source syntax, not dynamic binding/runtime guarantee.",
+    "Compare independently supplied typed propositions only; arbitrary natural-language claim mapping is outside admitted scope. Contradictory known role tuple is CONTRADICTED; unsupported universal runtime/opaque role is INSUFFICIENT.",
+    "Fixed bilingual ledger prose is renderable only after exact typed/reference agreement and manual mapping review. Never certify arbitrary added FAQ or complete document with this checker alone."
+  ],
+  "challenge_plan": {
+    "positive": 9,
+    "negative": 9,
+    "unknown": 3,
+    "missing_owner": 2,
+    "missing_anchor": 2,
+    "wrong_file": 2,
+    "total": 27,
+    "negative_dimensions": [
+      "default_true_to_false",
+      "default_none_to_function",
+      "is_none_to_is_not_none",
+      "recursive_cache_to_scope_cache",
+      "reuse_and_to_or",
+      "write_solved_to_solved_result",
+      "absence_use_cache_to_present",
+      "assert_request_to_function",
+      "assert_AsyncExitStack_to_ExitStack"
+    ],
+    "unknowns": [
+      "process_wide_cache_all_share",
+      "process_wide_cache_none_share",
+      "all_callbacks_no_exceptions"
+    ],
+    "expected": {
+      "positive": "SUPPORTED",
+      "negative": "CONTRADICTED",
+      "unknown": "INSUFFICIENT",
+      "missing_owner": "INSUFFICIENT",
+      "missing_anchor": "INSUFFICIENT",
+      "wrong_file": "INSUFFICIENT"
+    }
+  },
+  "exposure": "Nine related FastAPI source propositions already manually reviewed and exposed to models. New mechanical observer; no holdout/no general semantic precision.25? Counts fixed27; no neural contribution.",
+  "critical_error_blocks_document": true,
+  "production_changes": false,
+  "permanent_tests_added": false,
+  "model_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

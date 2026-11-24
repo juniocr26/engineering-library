@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-21T18:19:46.045140+00:00",
+  "topic": "go-image-frontend-dimensions",
+  "family": "go-image-optimizer",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-frontend-dimensions/en.candidate.txt",
+      "sha256": "9f0e40863f1702fe9fd0d38df52a10fb32eef32ad7178493688601f370c6315f",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/go-image-frontend-dimensions/pt-br.candidate.txt",
+      "sha256": "07aef9de572c0785af4a475e8aca23b7389176a462a70bd04cc0e2df7e66d48c",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Type shapes not runtime validation; Number conversions before pixel-mode safe integer and bound guard.",
+    "Both entered dimensions validated before axis-specific aspect calculation; percentage/reduction path not universal safety.",
+    "dimensionError first !target is falsiness, not dimensional predicate; strict products32M/64M and string/null result, no throw.",
+    "Source diagrams/cross-links distinguish backend arithmetic and frontend calculation; no whole integration guarantee.",
+    "Original baseline positive-whole-number inference from error text confirmed against raw response."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-expansion-sources-v1/go-image-optimizer/48476de6e4450294b7769ab7af90805100bb21b5/frontend/app/components/image-resize/resize-options.ts",
+      "source_sha256": "881252126b6b188cecb0d4c71cd9457edd01afc595e806f1a538d27cd767a33a",
+      "source_path": "frontend/app/components/image-resize/resize-options.ts",
+      "source_lines": [
+        1,
+        53
+      ],
+      "exact_source_evidence": "export type ImageInfo = {\n  width: number;\n  height: number;\n  contentType: string;\n  format: string;\n  frameCount: number;\n};\n\nexport type ResizeOptions = {\n  mode: \"pixels\" | \"percentage\";\n  width: string;\n  height: string;\n  axis: \"width\" | \"height\";\n  reduction: number;\n  keepAspectRatio: boolean;\n};\n\nexport function targetDimensions(info: ImageInfo, options: ResizeOptions) {\n  let width = Number(options.width);\n  let height = Number(options.height);\n  if (\n    options.mode === \"pixels\" &&\n    (![width, height].every(Number.isSafeInteger) ||\n      width < 1 ||\n      height < 1 ||\n      width > 32_000_000 ||\n      height > 32_000_000)\n  ) {\n    return null;\n  }\n  if (options.mode === \"percentage\" || options.keepAspectRatio) {\n    let scale = (100 - options.reduction) / 100;\n    if (options.mode === \"pixels\") {\n      scale =\n        options.axis === \"height\" ? height / info.height : width / info.width;\n    }\n    width = Math.max(1, Math.round(info.width * scale));\n    height = Math.max(1, Math.round(info.height * scale));\n  }\n  return { width, height };\n}\n\nexport function dimensionError(\n  info: ImageInfo,\n  target: ReturnType<typeof targetDimensions>,\n) {\n  if (!target) return \"Enter a positive whole number for each dimension.\";\n  if (target.width * target.height > 32_000_000)\n    return \"The output must not exceed 32 million pixels.\";\n  if (target.width * target.height * info.frameCount > 64_000_000)\n    return \"This animation exceeds the output frame pixel limit.\";\n  return null;\n}",
+      "reviewed_interpretation": "Type declarations, candidate calculation, exact ordered message guards.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "go-image-optimizer-dimensionerror",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/go-image-optimizer-dimensionerror/raw-response.json",
+      "sha256": "cd9890e42bd77af58699428185c6f453a0c252a5918ee8b3d69600a4c013ccd1",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0,
+  "at_v2": "2026-11-21T18:33:17.730286+00:00",
+  "extends_exact_v1_sha256": "53e3d8ca3f181988746d31ea1b6274e20cba09ac02d40aeea46c9961e8c5d2b6",
+  "procedural_gap_resolution": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-procedural-gap-resolution-v1.json",
+  "procedural_gap_resolution_sha256": "b66a50175b08c330c442e14d161455034f5552ef1f0575bab33e0ad1f0868b57"
+}

@@ -1,0 +1,67 @@
+{
+  "at": "2026-11-21T23:55:18.948914+00:00",
+  "status": "PROPOSED_NOT_APPLIED",
+  "cause": "Historical Click Q002 retains question and plausible order prose but omits required helper and cites CK03 rather than CK02. IDs/identifiers alone can also pass deliberately false answers. Existing narrowly closed FAQ tools do not claim general prose verification; no new defect in those closed profiles is asserted.",
+  "evidence": {
+    "study": "faq-question-binding-results-v1.json",
+    "new_model_calls": 0,
+    "original_scores_unchanged": true
+  },
+  "proposed_future_boundary": "Caller-owned immutable EN/PT question registry and source-fact relation IDs before generic FAQ generation/rendering. Model answers remain untrusted; separate complete semantic/coverage/bilingual review required before technical readiness.",
+  "target_files_for_owner_design_review_only": [
+    {
+      "path": "backend/lib/documentation/command.rb",
+      "sha256": "086c11b2d10972111cfcfb23c49b70e67f4d30f1d5de39f768c46b23748cdb2b",
+      "changed": false
+    },
+    {
+      "path": "agent/tools/documentation_candidates.py",
+      "sha256": "18299e80481ed2ed3ea7bd96c30d9aaa089c4798c51a1a6ad2b110d8f43f6e3f",
+      "changed": false
+    },
+    {
+      "path": "agent/tools/documentation_faq.py",
+      "sha256": "d84374e91b1a90eeb8934d1d9ed342078dd3b9b7196c7af29c38fa9a5520bc00",
+      "changed": false
+    },
+    {
+      "path": "agent/tools/documentation_closed_faq.py",
+      "sha256": "9df0798a114ab90fb9817d9b9e2295edec241e8c2690b805f4aa63bffb8da401",
+      "changed": false
+    }
+  ],
+  "production_FAQ_profile_compatibility": "Do not broaden current operator-owned integer-return profiles or alter their lifecycle behavior without a separately approved design. Generic free FAQ integration is an explicit future scope decision.",
+  "expected_regressions": [
+    "Question text/ID substitution refused when exact question identity was frozen.",
+    "Wrong registered fact mapping refused even with physically valid citation.",
+    "Same-ID false answer retaining exact identifiers cannot receive semantic acceptance from binding alone.",
+    "Valid paraphrase outside literal policy routes to explicit separate review; do not advertise zero semantic false rejection.",
+    "Reordered intact records preserve question associations.",
+    "Duplicate JSON keys/IDs/missing records refuse without lossy repair.",
+    "PT negation/changed question cannot be hidden behind EN-only approval.",
+    "Every actual original request/output and proposed repaired candidate remain separate."
+  ],
+  "permanent_validation_paths_requiring_separate_authorization": [
+    {
+      "path": "agent/test/documentation_faq_test.py",
+      "exists": true
+    },
+    {
+      "path": "agent/test/documentation_candidates_test.py",
+      "exists": true
+    },
+    {
+      "path": "backend/test/offline/documentation_command_offline.rb",
+      "exists": true
+    }
+  ],
+  "risks": [
+    "Closed exact-string policy rejects valid paraphrases.",
+    "Correct fact IDs and tokens do not verify answer meaning.",
+    "Source relation registry is trusted input requiring contextual review; compromise defeats binding.",
+    "New generic pipeline must preserve ownership/history/approval semantics and not adopt human content silently."
+  ],
+  "owner_authorization": "Not requested during unattended campaign; separate explicit owner approval required before production/permanent tests/integration. Current research artifacts authorized.",
+  "production_changes": false,
+  "publication_or_training_approval": false
+}

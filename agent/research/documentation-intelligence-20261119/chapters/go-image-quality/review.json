@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-20T00:59:01.180967+00:00",
+  "chapter_id": "go-image-quality",
+  "source_repository": "go-image-optimizer",
+  "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "wrapper-default",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "lines": [
+        10,
+        38,
+        82,
+        84
+      ],
+      "review": "Noexplicitwrapperparams; receiverfieldandnamed82fallback; constructorinitializesfield."
+    },
+    {
+      "id": "sentinel-first",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "lines": [
+        114,
+        117
+      ],
+      "review": "value0returnsfallbackwithoutcheckingrangeof fallback."
+    },
+    {
+      "id": "remaining-range",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "lines": [
+        119,
+        128
+      ],
+      "review": "Negativevalue->1,>100->100,elsevalue endpoints included."
+    },
+    {
+      "id": "codec-boundary",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "lines": [
+        82,
+        96,
+        114,
+        128
+      ],
+      "review": "Sharednumerichelper doesnotprove equalcodecquality,size,reduction or successfulencoding."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "f13a1f6e1fd6fa4021c6430637016dc7068fbffefca3aec0e420e0e8f95e2dff",
+      "after_sha256": "eb88234876bcf5e4b290412064416816439085efe80514eb3e276593fa457bca",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -25,3 +25,31 @@\n The related methods `Compressor.webpQuality`, `Compressor.avifQuality` and `Compressor.heifQuality` use the same helper with their own receiver fields and named defaults. The file declares defaults of 82 for WebP and 60 for AVIF and HEIF. That parallel call structure supports a family-level source observation; it does not establish that the corresponding encoders interpret the numbers identically or produce equal visual quality.\n \n The inspected quality helper has no image input, error result, codec call or byte-size comparison. It does not prove a compression ratio, smaller output, preservation of metadata or successful decoding. A nearby source comment states an intention about visual similarity and size reduction for JPEG, but intention is not a measured runtime result. The application was not executed. This chapter corrects argument roles, constant provenance and branch boundaries while leaving encoder and imported-helper behavior outside its proof. EN/PT review remains separate from owner approval and any future decision to create training data.\n+\n+## Engineer FAQ\n+\n+<!-- reading-section: faq:zero-input-fallback -->\n+### Is fallback a minimum quality or a zero-input alternative?\n+\n+It is returned only by the first zero-value branch. That branch does not clamp the fallback itself. The JPEG wrapper supplies its known default; the generic helper permits a different fallback argument.\n+\n+<!-- reading-section: faq:inclusive-quality-boundaries -->\n+### Are quality values at 1 and 100 changed?\n+\n+Those endpoints do not satisfy the strict lower and upper comparisons and reach the unchanged-value return. The zero case has already returned before either comparison.\n+\n+<!-- reading-section: faq:no-codec-quality-equivalence -->\n+### Do these values prove compression ratio or equal quality across codecs?\n+\n+The selected helper only returns an integer. Encoder behavior, image content, output size and visual quality require other source and runtime evidence. Named defaults for different codecs do not establish equivalent perceptual results.\n+\n+| value | fallback | Source-derived result |\n+| --- | --- | --- |\n+| 0 | 82 | 82 |\n+| 0 | 140 | 140 |\n+| -5 | 82 | 1 |\n+| 1 | 82 | 1 |\n+| 100 | 82 | 100 |\n+| 101 | 82 | 100 |\n+\n+These rows illustrate the written integer branches, not executed codec tests. The second row specifically prevents an incorrect universal claim that every generic-helper result lies between 1 and 100.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "83e5a6a9844ded5e397f3f90e6cc112f6895b95ab714cd073c758eec237363de",
+      "after_sha256": "12a06530799f55f4c580b3a11cae4d21d650bd60395269b9f6636a227f76d227",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -25,3 +25,31 @@\n Os métodos relacionados `Compressor.webpQuality`, `Compressor.avifQuality` e `Compressor.heifQuality` usam o mesmo auxiliar com seus próprios campos e padrões nomeados. O arquivo declara padrões de 82 para WebP e 60 para AVIF e HEIF. Essa estrutura paralela de chamadas sustenta uma observação sobre a família na fonte; não estabelece que os codificadores interpretem os números de forma idêntica ou produzam a mesma qualidade visual.\n \n O auxiliar de qualidade inspecionado não tem entrada de imagem, resultado de erro, chamada de codec ou comparação de tamanhos em bytes. Não prova taxa de compressão, saída menor, preservação de metadados ou decodificação bem-sucedida. Um comentário próximo declara a intenção de semelhança visual e redução de tamanho para JPEG, mas intenção não é resultado medido em execução. A aplicação não foi executada. Este capítulo corrige papéis de argumentos, proveniência da constante e limites dos ramos, mantendo o comportamento dos codificadores e auxiliares importados fora de sua prova. A revisão EN/PT permanece separada da aprovação do proprietário e de uma futura decisão de criar dados de treinamento.\n+\n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:zero-input-fallback -->\n+### Fallback é uma qualidade mínima ou uma alternativa para entrada zero?\n+\n+Ele é retornado apenas pelo primeiro ramo de valor zero. Esse ramo não limita o próprio fallback. O wrapper JPEG fornece seu padrão conhecido; o helper genérico permite outro argumento de fallback.\n+\n+<!-- reading-section: faq:inclusive-quality-boundaries -->\n+### Valores de qualidade em 1 e 100 são alterados?\n+\n+Esses extremos não satisfazem as comparações estritas inferior e superior e alcançam o retorno do valor inalterado. O caso zero já retornou antes de ambas as comparações.\n+\n+<!-- reading-section: faq:no-codec-quality-equivalence -->\n+### Esses valores provam taxa de compressão ou qualidade igual entre codecs?\n+\n+O helper selecionado apenas retorna um inteiro. Comportamento do encoder, conteúdo da imagem, tamanho de saída e qualidade visual exigem outras evidências de fonte e execução. Padrões nomeados para codecs diferentes não estabelecem resultados perceptivos equivalentes.\n+\n+| value | fallback | Resultado derivado da fonte |\n+| --- | --- | --- |\n+| 0 | 82 | 82 |\n+| 0 | 140 | 140 |\n+| -5 | 82 | 1 |\n+| 1 | 82 | 1 |\n+| 100 | 82 | 100 |\n+| 101 | 82 | 100 |\n+\n+Essas linhas ilustram os ramos inteiros escritos, não testes executados de codecs. A segunda linha impede especificamente a afirmação universal incorreta de que todo resultado do helper genérico esteja entre 1 e 100.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.310079+00:00",
+    "canonical_question_ids": [
+      "zero-input-fallback",
+      "inclusive-quality-boundaries",
+      "no-codec-quality-equivalence"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/go-image-quality",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

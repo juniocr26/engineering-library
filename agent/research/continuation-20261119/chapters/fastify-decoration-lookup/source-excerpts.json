@@ -1,0 +1,187 @@
+{
+  "repository": "fastify",
+  "revision": "825d7722e4932a39193729997c76535d0a963b6b",
+  "source_executed": false,
+  "sources": [
+    {
+      "path": "lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "start_line": 1,
+      "end_line": 161,
+      "quote": "'use strict'\n\nconst {\n  kReply,\n  kRequest,\n  kState,\n  kHasBeenDecorated\n} = require('./symbols.js')\n\nconst {\n  FST_ERR_DEC_ALREADY_PRESENT,\n  FST_ERR_DEC_MISSING_DEPENDENCY,\n  FST_ERR_DEC_AFTER_START,\n  FST_ERR_DEC_REFERENCE_TYPE,\n  FST_ERR_DEC_DEPENDENCY_INVALID_TYPE,\n  FST_ERR_DEC_UNDECLARED\n} = require('./errors')\n\nfunction decorate (instance, name, fn, dependencies) {\n  if (Object.hasOwn(instance, name)) {\n    throw new FST_ERR_DEC_ALREADY_PRESENT(name)\n  }\n\n  checkDependencies(instance, name, dependencies)\n\n  if (fn && (typeof fn.getter === 'function' || typeof fn.setter === 'function')) {\n    Object.defineProperty(instance, name, {\n      get: fn.getter,\n      set: fn.setter\n    })\n  } else {\n    instance[name] = fn\n  }\n}\n\nfunction getInstanceDecorator (name) {\n  if (!checkExistence(this, name)) {\n    throw new FST_ERR_DEC_UNDECLARED(name, 'instance')\n  }\n\n  const decorator = this[name]\n  if (typeof decorator === 'function') {\n    return decorator.bind(this)\n  }\n\n  return decorator\n}\n\nfunction decorateConstructor (konstructor, name, fn, dependencies) {\n  const instance = konstructor.prototype\n  if (Object.hasOwn(instance, name) || hasKey(konstructor, name) || hasInstanceProperty(konstructor, name)) {\n    throw new FST_ERR_DEC_ALREADY_PRESENT(name)\n  }\n\n  konstructor[kHasBeenDecorated] = true\n  checkDependencies(konstructor, name, dependencies)\n\n  if (fn && (typeof fn.getter === 'function' || typeof fn.setter === 'function')) {\n    Object.defineProperty(instance, name, {\n      get: fn.getter,\n      set: fn.setter\n    })\n  } else if (typeof fn === 'function') {\n    instance[name] = fn\n  } else {\n    konstructor.props.push({ key: name, value: fn })\n  }\n}\n\nfunction checkReferenceType (name, fn) {\n  if (typeof fn === 'object' && fn && !(typeof fn.getter === 'function' || typeof fn.setter === 'function')) {\n    throw new FST_ERR_DEC_REFERENCE_TYPE(name, typeof fn)\n  }\n}\n\nfunction decorateFastify (name, fn, dependencies) {\n  assertNotStarted(this, name)\n  decorate(this, name, fn, dependencies)\n  return this\n}\n\nfunction checkExistence (instance, name) {\n  if (name) {\n    return name in instance || (instance.prototype && name in instance.prototype) || hasKey(instance, name)\n  }\n\n  return instance in this\n}\n\nfunction hasKey (fn, name) {\n  return fn.props ? fn.props.some(p => p.key === name) : false\n}\n\nfunction hasInstanceProperty (konstructor, name) {\n  let k = konstructor\n  while (k) {\n    if (k.instanceProperties && k.instanceProperties.has(name)) return true\n    k = k.parent\n  }\n  return false\n}\n\nfunction checkRequestExistence (name) {\n  if (name && hasKey(this[kRequest], name)) return true\n  if (name && hasInstanceProperty(this[kRequest], name)) return true\n  return checkExistence(this[kRequest].prototype, name)\n}\n\nfunction checkReplyExistence (name) {\n  if (name && hasKey(this[kReply], name)) return true\n  if (name && hasInstanceProperty(this[kReply], name)) return true\n  return checkExistence(this[kReply].prototype, name)\n}\n\nfunction checkDependencies (instance, name, deps) {\n  if (deps === undefined || deps === null) {\n    return\n  }\n\n  if (!Array.isArray(deps)) {\n    throw new FST_ERR_DEC_DEPENDENCY_INVALID_TYPE(name)\n  }\n\n  for (let i = 0; i !== deps.length; ++i) {\n    if (!checkExistence(instance, deps[i]) && !hasInstanceProperty(instance, deps[i])) {\n      throw new FST_ERR_DEC_MISSING_DEPENDENCY(deps[i])\n    }\n  }\n}\n\nfunction decorateReply (name, fn, dependencies) {\n  assertNotStarted(this, name)\n  checkReferenceType(name, fn)\n  decorateConstructor(this[kReply], name, fn, dependencies)\n  return this\n}\n\nfunction decorateRequest (name, fn, dependencies) {\n  assertNotStarted(this, name)\n  checkReferenceType(name, fn)\n  decorateConstructor(this[kRequest], name, fn, dependencies)\n  return this\n}\n\nfunction assertNotStarted (instance, name) {\n  if (instance[kState].started) {\n    throw new FST_ERR_DEC_AFTER_START(name)\n  }\n}\n\nmodule.exports = {\n  add: decorateFastify,\n  exist: checkExistence,\n  existRequest: checkRequestExistence,\n  existReply: checkReplyExistence,\n  dependencies: checkDependencies,\n  decorateReply,\n  decorateRequest,\n  getInstanceDecorator,\n  hasKey\n}\n",
+      "role": "Expanded correction evidence; not all of this full file was supplied to the original model baseline."
+    }
+  ],
+  "source_producer_results": [
+    {
+      "schema_version": 1,
+      "producer": "javascript-leading-guard-1.1.0",
+      "parser_version": "5.9.3",
+      "source_path": "lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "ir": {
+        "kind": "source-derived-leading-guard",
+        "lexical_selector": "checkRequestExistence",
+        "declaration_kind": "function",
+        "start_line": 103,
+        "end_line": 107,
+        "guard_line": 104,
+        "condition": "name && hasKey(this[kRequest], name)",
+        "return_expression": "true",
+        "directive_statements": 0,
+        "remaining_body_statements_unanalyzed": 2,
+        "quote": "function checkRequestExistence (name) {\n  if (name && hasKey(this[kRequest], name)) return true\n  if (name && hasInstanceProperty(this[kRequest], name)) return true\n  return checkExistence(this[kRequest].prototype, name)\n}\n",
+        "quote_sha256": "2144dd84df44a02c578aca137b3dd5d0f9623d728311e9c021194980f581ce18",
+        "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+        "source_executed": false
+      },
+      "explanations": {
+        "en": "Lexical source selector `checkRequestExistence`: after any string directives, the first body statement tests `name && hasKey(this[kRequest], name)`. Its true branch contains a return with expression `true`. The guard has no else branch. This records written synchronous-body syntax only. Remaining statements, parameter initialization, helper/getter effects, runtime ownership and normal completion are unverified.",
+        "pt-br": "Seletor lexical da fonte `checkRequestExistence`: após eventuais diretivas de string, a primeira instrução do corpo testa `name && hasKey(this[kRequest], name)`. Seu ramo verdadeiro contém um retorno com a expressão `true`. A guarda não tem ramo else. O registro se limita à sintaxe escrita do corpo síncrono. As instruções restantes, inicialização de parâmetros, efeitos de auxiliares/getters, vínculo em execução e conclusão normal não foram verificados."
+      },
+      "model_inference": false,
+      "source_executed": false,
+      "scope": "Leading guard syntax only; lexical owner is not generated/runtime binding; no type/helper/runtime verification",
+      "ordered_guard_chain": {
+        "profile": "ordered-synchronous-guard-chain-v1",
+        "lexical_selector": "checkRequestExistence",
+        "scope": "Ordered synchronous guard/return syntax; bindings, types, helpers, parameter effects and runtime completion unverified",
+        "source_path": "lib/decorate.js",
+        "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+        "quote_sha256": "2144dd84df44a02c578aca137b3dd5d0f9623d728311e9c021194980f581ce18",
+        "start_line": 103,
+        "end_line": 107,
+        "guards": [
+          {
+            "condition": "name && hasKey(this[kRequest], name)",
+            "return_expression": "true",
+            "line": 104
+          },
+          {
+            "condition": "name && hasInstanceProperty(this[kRequest], name)",
+            "return_expression": "true",
+            "line": 105
+          }
+        ],
+        "final_return_expression": "checkExistence(this[kRequest].prototype, name)",
+        "source_statement_order": [
+          "if-return",
+          "if-return",
+          "return"
+        ],
+        "parameter_initialization_analyzed": false,
+        "called_operations_analyzed": false,
+        "runtime_ownership_verified": false,
+        "source_executed": false,
+        "model_inference": false,
+        "explanations": {
+          "en": "Lexical source selector `checkRequestExistence`: after any string directives, the body contains ordered if-return guards and one final return. First, the source tests `name && hasKey(this[kRequest], name)`; its truthy branch contains a return with written expression `true`. Only if preceding tests complete falsy, the source tests `name && hasInstanceProperty(this[kRequest], name)`; its truthy branch contains a return with written expression `true`. If all tests complete falsy, the final statement contains a return with written expression `checkExistence(this[kRequest].prototype, name)`. No guard has an else. This is written synchronous-body syntax only; parameter initialization, name bindings, helper/getter effects, runtime ownership and normal completion remain unverified.",
+          "pt-br": "Seletor lexical da fonte `checkRequestExistence`: após eventuais diretivas de string, o corpo contém guardas if-return ordenadas e um retorno final. Primeiro, a fonte testa `name && hasKey(this[kRequest], name)`; seu ramo de valor lógico verdadeiro contém um retorno com a expressão escrita `true`. Somente se os testes anteriores terminarem com valor lógico falso, a fonte testa `name && hasInstanceProperty(this[kRequest], name)`; seu ramo de valor lógico verdadeiro contém um retorno com a expressão escrita `true`. Se todos os testes terminarem com valor lógico falso, a instrução final contém um retorno com a expressão escrita `checkExistence(this[kRequest].prototype, name)`. Nenhuma guarda tem else. Trata-se apenas da sintaxe escrita do corpo síncrono; inicialização de parâmetros, vínculos de nomes, efeitos de auxiliares/getters, vínculo em execução e conclusão normal permanecem sem verificação."
+        }
+      },
+      "identity": {
+        "node": "v24.22.0",
+        "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+        "producer_sha256": "9869a790fa9fd6e8e07d792433a93cc4c02b0ad0a29deff82bd5f7b909b23b24"
+      }
+    },
+    {
+      "schema_version": 1,
+      "producer": "javascript-leading-guard-1.1.0",
+      "parser_version": "5.9.3",
+      "source_path": "lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "ir": {
+        "kind": "source-derived-leading-guard",
+        "lexical_selector": "checkReplyExistence",
+        "declaration_kind": "function",
+        "start_line": 109,
+        "end_line": 113,
+        "guard_line": 110,
+        "condition": "name && hasKey(this[kReply], name)",
+        "return_expression": "true",
+        "directive_statements": 0,
+        "remaining_body_statements_unanalyzed": 2,
+        "quote": "function checkReplyExistence (name) {\n  if (name && hasKey(this[kReply], name)) return true\n  if (name && hasInstanceProperty(this[kReply], name)) return true\n  return checkExistence(this[kReply].prototype, name)\n}\n",
+        "quote_sha256": "879a4797c8947272cef3eb2825c99532616ac186145996ced4ee61b80ae0ae7f",
+        "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+        "source_executed": false
+      },
+      "explanations": {
+        "en": "Lexical source selector `checkReplyExistence`: after any string directives, the first body statement tests `name && hasKey(this[kReply], name)`. Its true branch contains a return with expression `true`. The guard has no else branch. This records written synchronous-body syntax only. Remaining statements, parameter initialization, helper/getter effects, runtime ownership and normal completion are unverified.",
+        "pt-br": "Seletor lexical da fonte `checkReplyExistence`: após eventuais diretivas de string, a primeira instrução do corpo testa `name && hasKey(this[kReply], name)`. Seu ramo verdadeiro contém um retorno com a expressão `true`. A guarda não tem ramo else. O registro se limita à sintaxe escrita do corpo síncrono. As instruções restantes, inicialização de parâmetros, efeitos de auxiliares/getters, vínculo em execução e conclusão normal não foram verificados."
+      },
+      "model_inference": false,
+      "source_executed": false,
+      "scope": "Leading guard syntax only; lexical owner is not generated/runtime binding; no type/helper/runtime verification",
+      "ordered_guard_chain": {
+        "profile": "ordered-synchronous-guard-chain-v1",
+        "lexical_selector": "checkReplyExistence",
+        "scope": "Ordered synchronous guard/return syntax; bindings, types, helpers, parameter effects and runtime completion unverified",
+        "source_path": "lib/decorate.js",
+        "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+        "quote_sha256": "879a4797c8947272cef3eb2825c99532616ac186145996ced4ee61b80ae0ae7f",
+        "start_line": 109,
+        "end_line": 113,
+        "guards": [
+          {
+            "condition": "name && hasKey(this[kReply], name)",
+            "return_expression": "true",
+            "line": 110
+          },
+          {
+            "condition": "name && hasInstanceProperty(this[kReply], name)",
+            "return_expression": "true",
+            "line": 111
+          }
+        ],
+        "final_return_expression": "checkExistence(this[kReply].prototype, name)",
+        "source_statement_order": [
+          "if-return",
+          "if-return",
+          "return"
+        ],
+        "parameter_initialization_analyzed": false,
+        "called_operations_analyzed": false,
+        "runtime_ownership_verified": false,
+        "source_executed": false,
+        "model_inference": false,
+        "explanations": {
+          "en": "Lexical source selector `checkReplyExistence`: after any string directives, the body contains ordered if-return guards and one final return. First, the source tests `name && hasKey(this[kReply], name)`; its truthy branch contains a return with written expression `true`. Only if preceding tests complete falsy, the source tests `name && hasInstanceProperty(this[kReply], name)`; its truthy branch contains a return with written expression `true`. If all tests complete falsy, the final statement contains a return with written expression `checkExistence(this[kReply].prototype, name)`. No guard has an else. This is written synchronous-body syntax only; parameter initialization, name bindings, helper/getter effects, runtime ownership and normal completion remain unverified.",
+          "pt-br": "Seletor lexical da fonte `checkReplyExistence`: após eventuais diretivas de string, o corpo contém guardas if-return ordenadas e um retorno final. Primeiro, a fonte testa `name && hasKey(this[kReply], name)`; seu ramo de valor lógico verdadeiro contém um retorno com a expressão escrita `true`. Somente se os testes anteriores terminarem com valor lógico falso, a fonte testa `name && hasInstanceProperty(this[kReply], name)`; seu ramo de valor lógico verdadeiro contém um retorno com a expressão escrita `true`. Se todos os testes terminarem com valor lógico falso, a instrução final contém um retorno com a expressão escrita `checkExistence(this[kReply].prototype, name)`. Nenhuma guarda tem else. Trata-se apenas da sintaxe escrita do corpo síncrono; inicialização de parâmetros, vínculos de nomes, efeitos de auxiliares/getters, vínculo em execução e conclusão normal permanecem sem verificação."
+        }
+      },
+      "identity": {
+        "node": "v24.22.0",
+        "parser_sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+        "producer_sha256": "9869a790fa9fd6e8e07d792433a93cc4c02b0ad0a29deff82bd5f7b909b23b24"
+      }
+    }
+  ],
+  "source_producer_scope": "Syntax-only optional packets; helper bodies and combined language semantics manually reviewed separately.",
+  "license": {
+    "notice_file": "agent/research/adaptive-20261118/chapters/source-licenses/fastify.LICENSE",
+    "sha256": "23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2",
+    "local_research_access_authorized": true,
+    "training_approved": false,
+    "publication_approved": false
+  },
+  "owned_language_probe": {
+    "source": "private-research://continuation-20261119/strict-receiver-language-probe.cjs",
+    "source_sha256": "8e9229b7666ba1384e439c01bdecb325cadd140e0bbdbac3fe54bd04ac424c17",
+    "result": {
+      "node": "v24.22.0",
+      "unbound_strict_call": "TypeError",
+      "explicitly_bound_object": true,
+      "binding_outer_does_not_bind_inner_plain_call": "TypeError",
+      "owned_synthetic_program_executed": true,
+      "external_application_source_executed": false,
+      "model_calls": 0
+    },
+    "scope": "Only owned synthetic strict-call/in-operator behavior executed; no inspected Fastify application/module executed."
+  },
+  "primary_language_sources": [
+    "https://tc39.es/ecma262/2026/multipage/ordinary-and-exotic-objects-behaviours.html#sec-ordinarycallbindthis",
+    "https://tc39.es/ecma262/2026/multipage/ecmascript-language-expressions.html#sec-relational-operators-runtime-semantics-evaluation"
+  ]
+}

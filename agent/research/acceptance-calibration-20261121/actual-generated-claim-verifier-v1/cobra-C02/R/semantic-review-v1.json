@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-21T17:42:37.607797+00:00",
+  "case": "cobra-C02",
+  "method": "R",
+  "frozen_reference": {
+    "id": "cobra-C02",
+    "task": "cobra",
+    "fact_id": "C02",
+    "original_pair": {
+      "en": "OnlyValidArgs performs membership checks when the Command has subcommands and there are arguments provided.",
+      "pt-BR": "A função OnlyValidArgs realiza verificações de pertencimento quando o Command tem subcomandos e há argumentos fornecidos."
+    },
+    "expected_verdict": "CONTRADICTED",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/cobra/L/semantic-review-v2.json",
+    "source_review_sha256": "a800c8fe570a6a88a120b8a60330cfe9d7e1a95d0d06848ce0b683ff6902513a",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "SUPPORTED",
+    "source_path": "args.go",
+    "source_role": "pinned_revision",
+    "evidence": "lines 52-64, 70-77, 89-93, 99-103, 109-113, 117-123, 129-135",
+    "reason": "The claim is supported by the source code, which explicitly states that OnlyValidArgs performs membership checks when the Command has subcommands and there are arguments provided. The code snippet shows the implementation of the OnlyValidArgs function, which iterates over the valid arguments and checks if each provided argument is in the valid arguments list. The function returns an error if any argument is not in the valid arguments list. This confirms that OnlyValidArgs performs membership checks as claimed."
+  },
+  "content_sha256": "2cbdcba75d26b22703e23bb0860f511ffff5d3388239edd53112349cff318e02",
+  "primary_raw_label_agreement": false,
+  "false_supported_on_known_negative": true,
+  "rationale_support_for_requested_claim": "CONTRADICTED",
+  "source_relationship_review": "ActualOnlyValidArgsmembershipblockisguardedbylen(cmd.ValidArgs)>0. GeneratedpairusesCommandsubcommands+providedargs, borrowinganotherfunctionrole. Rrepeatsthatwrongqualificationasexplicitcodeandacceptswholeclaimbecauseordinarymembershiploopisindeedpresent. Thattruepartialbodydoesnotprovethewrongguard. Broadline-listcitationacrossothervalidatorsdoesnotfixsourcerelationship.",
+  "evidence_form": "Physicallinerangesmixedacrossvalidators; noexactguardproof forsubcommandsclaim",
+  "paired_generic_V": "INSUFFICIENTblocksadmissionbutmisclassifiesnegative; seeVsemantic-review-v1.json. Do notattributeonepairedcaseasgeneralaccuracygain/decline.",
+  "end_to_end_label_and_rationale_supported": false,
+  "document_gate": "ManualsourcegatecontinuesREFUSED; criticSUPPORTEDcannotoverrideknowncontradictionorcreateownerGold.",
+  "reviewer": "Samecampaignagent, originalfrozenrefunchanged; not independenthuman",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

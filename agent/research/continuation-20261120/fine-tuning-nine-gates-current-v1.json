@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-20T12:55:04.364607+00:00",
+  "status": "NO_GO",
+  "training_prohibited_this_campaign": true,
+  "fully_satisfied": 0,
+  "total": 9,
+  "gates": [
+    {
+      "id": 1,
+      "name": "Compatible model and tokenizer",
+      "state": "BLOCKED",
+      "evidence": "Existing deployed GGUF verified; no compatible trainable checkpoint/tokenizer locally verified. Community MLX metadata pinned only; no weights fetched. Upstream config/tokenizer gated401."
+    },
+    {
+      "id": 2,
+      "name": "Approved targets and usage rights",
+      "state": "BLOCKED",
+      "evidence": "All305existing rows owner_approved/training_gold/training_use_approved false.396frozen references and13license records across11repositories verified; that is not training authorization."
+    },
+    {
+      "id": 3,
+      "name": "Independent evaluation data",
+      "state": "PARTIAL",
+      "evidence": "New public source families retained evaluation-only; JMESPath related Go dependency exposure declared. No certified neural holdout or frozen independent neural comparison."
+    },
+    {
+      "id": 4,
+      "name": "Hardware feasibility",
+      "state": "PARTIAL",
+      "evidence": "Fresh AppleM1Pro/16GiB/10CPU identity verified. MLX approach relevant; no measured training memory/throughput/thermal feasibility."
+    },
+    {
+      "id": 5,
+      "name": "Training framework",
+      "state": "BLOCKED",
+      "evidence": "13framework/tokenizer/training packages absent on hostPython3.14.7. Pinned MLX-LM source requiresPython>=3.11; declared minimum does not establish wheel compatibility on this host."
+    },
+    {
+      "id": 6,
+      "name": "Checkpoint and adapter persistence",
+      "state": "PARTIAL",
+      "evidence": "Pinned default framework source saves adapter weights; resume loads weights then creates fresh optimizer. Exact optimizer/RNG/data-position resume and crash durability not established. No adapters created."
+    },
+    {
+      "id": 7,
+      "name": "Bounded approved training budget",
+      "state": "BLOCKED",
+      "evidence": "No optimizer budget authorized. Future pilot stop/checkpoint/evaluation plan is research only; campaign explicitly prohibits training."
+    },
+    {
+      "id": 8,
+      "name": "Isolation and rollback",
+      "state": "PARTIAL",
+      "evidence": "Existing runtime/store unchanged and normalverificationpass; no compatible future training environment or adapter rollback validated."
+    },
+    {
+      "id": 9,
+      "name": "Reproducible evaluation and recovery",
+      "state": "PARTIAL",
+      "evidence": "Normal knowledge/store/runtime nowverified1964entries; sealed historical recovery440files preserved. Future trained-adapter evaluation/recovery,remote durability and coldboot not proved."
+    }
+  ],
+  "framework_revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "framework_source_url": "https://github.com/ml-explore/mlx-lm/tree/2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "training_steps": 0,
+  "framework_installed": false,
+  "weights_downloaded": false,
+  "owner_gold": 0
+}

@@ -1,0 +1,58 @@
+{
+  "frozen_at": "2026-11-21T00:47:30.008978+00:00",
+  "anchor": "    if _uses_scopes_cache is None:\n",
+  "source": "source-freeze-v1.json fastapi/dependencies/utils.py",
+  "cases": [
+    {
+      "id": "original",
+      "insert_before_anchor": "",
+      "expected": "OBSERVE"
+    },
+    {
+      "id": "walrus-rebinding",
+      "insert_before_anchor": "    if (dependency_cache := {}):\n        pass\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "for-target-rebinding",
+      "insert_before_anchor": "    for dependency_cache in [dependency_cache]:\n        pass\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "with-target-rebinding",
+      "insert_before_anchor": "    with synthetic_context() as dependency_cache:\n        pass\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "exception-target-rebinding",
+      "insert_before_anchor": "    try:\n        pass\n    except Exception as dependency_cache:\n        pass\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "import-alias-rebinding",
+      "insert_before_anchor": "    import synthetic_module as dependency_cache\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "match-capture-rebinding",
+      "insert_before_anchor": "    match None:\n        case dependency_cache:\n            pass\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "nested-definition-rebinding",
+      "insert_before_anchor": "    def dependency_cache():\n        pass\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "deletion",
+      "insert_before_anchor": "    del dependency_cache\n",
+      "expected": "REFUSE"
+    },
+    {
+      "id": "nested-class-rebinding",
+      "insert_before_anchor": "    class dependency_cache:\n        pass\n",
+      "expected": "REFUSE"
+    }
+  ],
+  "scope": "Development source-shape controls on public-derived in-memory data. No inspected application code executes."
+}

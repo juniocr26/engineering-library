@@ -1,0 +1,139 @@
+{
+  "at": "2026-11-20T11:27:40.835125+00:00",
+  "python": {
+    "command": "python3 -m unittest discover -s agent/test -p '*_test.py'",
+    "total": 312,
+    "documentation_methods": 278,
+    "existing_go_ast_python_methods": 34,
+    "baseline_explanation": "312 is a broader discovery of unchanged suites:278 documentation methods plus34 existing Go AST Python methods; no34new tests were authored. The34Python parser methods are not nativeGo primary/subtest counts.",
+    "final_seconds": 10.929,
+    "exit_code": 0,
+    "logs": [
+      "regression-after-physical-binding.stdout",
+      "regression-after-physical-binding.stderr"
+    ],
+    "files": [
+      {
+        "file": "agent/test/documentation_candidates_test.py",
+        "methods": 18,
+        "source_sha256": "8ee3dfd047dd32885f1122c34a54d406b43fcd3a26878d2d5a9832841eb02cb1"
+      },
+      {
+        "file": "agent/test/documentation_closed_faq_test.py",
+        "methods": 6,
+        "source_sha256": "7608d4e2eb8c84ff85efce38f658d29b2278a8faf1788c5b43a20e52cc354a95"
+      },
+      {
+        "file": "agent/test/documentation_conditional_faq_revision_test.py",
+        "methods": 20,
+        "source_sha256": "12db414950ff4b93c15d2b32affd2642e6af552ace4a2ef3080c152fd5dbcdbd"
+      },
+      {
+        "file": "agent/test/documentation_faq_test.py",
+        "methods": 20,
+        "source_sha256": "e6ed956257c0a043b1d9d175cd23661162a0089da4cdc48bbfbac60b5d6f9fff"
+      },
+      {
+        "file": "agent/test/documentation_go_binding_test.py",
+        "methods": 13,
+        "source_sha256": "da6180944838c6125d5af3ea8f2f0ce50f34d80c5a5f1d90e454d0cee6c77124"
+      },
+      {
+        "file": "agent/test/documentation_javascript_test.py",
+        "methods": 10,
+        "source_sha256": "2766a9a363cb7c524fd88601bc333ce41883b2e35c766df93eabb4cbfdf3a286"
+      },
+      {
+        "file": "agent/test/documentation_job_budget_test.py",
+        "methods": 26,
+        "source_sha256": "52b651eda6cb1d4cee58fe5bb7210e77822fca4ec669cfb0998d3b86158ac2f2"
+      },
+      {
+        "file": "agent/test/documentation_lifecycle_test.py",
+        "methods": 42,
+        "source_sha256": "9d0ad6a41799ddaf823ed6973f875b41abff649e5f0ddca15506e15398db80d7"
+      },
+      {
+        "file": "agent/test/documentation_maintenance_test.py",
+        "methods": 37,
+        "source_sha256": "d9314b2e40efbb5ee21f8a7d6fe9b10a8e6d628e76262c311d92682799d544ad"
+      },
+      {
+        "file": "agent/test/documentation_python_dependencies_test.py",
+        "methods": 29,
+        "source_sha256": "7a4a4864f96126fa7048b7cac6ecbf7bb46a556be54a66a40ebb85c3a5b61fd4"
+      },
+      {
+        "file": "agent/test/documentation_retrieval_test.py",
+        "methods": 42,
+        "source_sha256": "4fecd6a492428a0365548684e15b15d48589ce97eba285b3feae783faf9e69ea"
+      },
+      {
+        "file": "agent/test/documentation_revision_signals_test.py",
+        "methods": 15,
+        "source_sha256": "b1c89b02683419556e26737232f8f8b84d4c0c583e47effb87fa7ccda3b38a2d"
+      },
+      {
+        "file": "agent/test/go_source_ast_test.py",
+        "methods": 34,
+        "source_sha256": "439095446aac2f45b2d360b7c5e86224b2b229a00e0e161e43d9aa39558f8f3d"
+      }
+    ]
+  },
+  "ruby": {
+    "command": "docker exec -e RAILS_ENV=test -e DATABASE_URL=sqlite3::memory: -w /app/backend engineering-library-backend-1 bundle exec ruby -Itest -e 'Dir[\"test/offline/*_offline.rb\"].sort.each { |path| require_relative path }'",
+    "tests": 262,
+    "assertions": 1787,
+    "seconds": 21.893066,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "exit_code": 0,
+    "logs": [
+      "ruby-offline.stdout",
+      "ruby-offline.stderr"
+    ],
+    "database": "Existing offline helpers explicitly select in-memory SQLite; no production database preparation or entrypoint invoked."
+  },
+  "javascript": {
+    "command": "docker exec -e NODE_PATH=/app/frontend/node_modules -w /app/frontend engineering-library-frontend-1 node --test /sources/engineering-library/agent/test/javascript_ranges.test.cjs /sources/engineering-library/agent/test/javascript_contract_facts_test.cjs /sources/engineering-library/agent/test/javascript_leading_guard.test.cjs",
+    "tests": 101,
+    "passed": 101,
+    "failed": 0,
+    "skipped": 0,
+    "duration_ms": 607.715958,
+    "exit_code": 0,
+    "logs": [
+      "javascript-observers-mounted.stdout",
+      "javascript-observers-mounted.stderr"
+    ],
+    "prior_attempts": [
+      {
+        "logs": [
+          "javascript-observers.stdout",
+          "javascript-observers.stderr"
+        ],
+        "exit_code": 127,
+        "reason": "Incorrect /app/frontend cwd does not exist in backend; the failure did not establish Node availability. Subsequent command-v showed Node absent."
+      },
+      {
+        "logs": [
+          "javascript-observers-frontend.stdout",
+          "javascript-observers-frontend.stderr"
+        ],
+        "exit_code": 1,
+        "reason": "Incorrect /app/agent test path in frontend; corrected from inspected mounts. No tests ran on these attempts."
+      }
+    ]
+  },
+  "native_go": {
+    "status": "NOT_RERUN",
+    "reason": "No native Go source changed; host/backend Go not in PATH. Existing Go AST and binding Python consumers ran. Historical23primary+11subtests are not claimed as current execution."
+  },
+  "git_diff_check": {
+    "command": "git diff --check",
+    "exit_code": 0
+  },
+  "permanent_test_or_fixture_changes": false,
+  "model_factual_accuracy_proved_by_tests": false
+}

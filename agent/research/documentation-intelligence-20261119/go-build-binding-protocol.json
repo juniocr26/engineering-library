@@ -1,0 +1,47 @@
+{
+  "status": "DESIGN_AND_CONTROLS_FROZEN_BEFORE_IMPLEMENTATION",
+  "purpose": "Bounded build-aware package census and lexical predeclared min/max proof, not full Go type/import/runtime resolution",
+  "new_hypothesis": "The earlier mixed-package refusal included an ignored time generator. Official go/build selection under an explicit profile can exclude it while preserving real shadowing refusals.",
+  "source_execution": false,
+  "original_sources_written": false,
+  "production_routing_change": false,
+  "profiles": {
+    "GOOS": ["darwin", "linux"],
+    "GOARCH": "arm64",
+    "cgo": false,
+    "workspace": "Explicit frozen standalone module; no ambient go.work, module downloads or vendor replacement",
+    "compiler": "Existing preserved Go1.27.4 LinuxARM64 toolchain; exact identity checked before use",
+    "module_language": "Read declared go version; builtin min/max requires at leastGo1.21; no newer-than-toolchain module accepted"
+  },
+  "proof_requirements": [
+    "Complete frozen package Go-file census, exact source hashes and explicit build profile",
+    "Official go/build filtering, test exclusion and cgo-disabled selection",
+    "Selected function and source-file ownership unique",
+    "No package-level or conservative local declaration of the queried builtin name",
+    "Every unaliased import in the selected file has an exact registered source package-name census; never guess package name from path basename",
+    "Explicit alias shadows are refused; unresolved import sources remain inconclusive",
+    "Source/producer/profile/import-package identities participate in cache provenance",
+    "No type checking, service execution, numeric argument validity or whole-program success inferred"
+  ],
+  "controls": [
+    "Unshadowed predeclared call in owned package",
+    "Local variable, parameter, result and type-parameter shadowing",
+    "Package variable, constant, type and function shadowing in another active file",
+    "Same-named receiver method does not create a package binding",
+    "Explicit import alias shadows the builtin name",
+    "Unaliased import whose declared package name differs from its path basename",
+    "Missing registered import package remains inconclusive",
+    "Linux/Darwin filename and go:build selection differences",
+    "Ignored generator with package main does not contaminate a library census",
+    "Mixed active packages and duplicate selected functions refuse",
+    "Tests and cgo-only files excluded under the frozen profile",
+    "Invalid source, oversized input, duplicate JSON keys and unknown fields refuse",
+    "Dependency-only source changes alter the proof fingerprint",
+    "Qualified calls and absent requested bare calls do not become builtin facts"
+  ],
+  "real_development_family": "Temporal SDK7e0d845 internal/createDynamicServiceRetryPolicy plus exact backoff and preserved standard-library context/time packages",
+  "family_status": "Development-exposed previous failure, not independent holdout",
+  "model_calls_planned": 0,
+  "training_runs": 0,
+  "owner_approved": false
+}

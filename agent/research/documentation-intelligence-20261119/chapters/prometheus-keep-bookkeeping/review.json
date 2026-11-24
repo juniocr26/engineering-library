@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-20T00:26:46.768802+00:00",
+  "chapter_id": "prometheus-keep-bookkeeping",
+  "source_repository": "prometheus",
+  "revision": "b2a602494b65bda38316eabaef7e0d834a6814dd",
+  "full_file_sha256": "dfd42ba66fe546c3912a3d81caac2d9eb7bee7dc7b98b0932837d94aa86a5870",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "predicate-direction",
+      "first_line": 177,
+      "last_line": 183,
+      "review": "Contains supplied names ->callback return; not contained ->append deletion marker."
+    },
+    {
+      "id": "return-owner",
+      "first_line": 178,
+      "last_line": 185,
+      "review": "Callback return has no result; outer method returns receiver after Range normal completion."
+    },
+    {
+      "id": "preserved-state",
+      "first_line": 177,
+      "last_line": 185,
+      "review": "No clearing/dedup of del, no assignment to add/base, no undo of existing marker."
+    },
+    {
+      "id": "lookup-consumer",
+      "first_line": 204,
+      "last_line": 215,
+      "review": "Add/del/base lookup order is separately verified from actual Get body."
+    },
+    {
+      "id": "range-consumer",
+      "first_line": 218,
+      "last_line": 232,
+      "review": "Pending additions are visited by Range, not filtered by Keep body."
+    }
+  ],
+  "bilingual_review": "Full original texts and additions compared semantically; inline technical span sequence equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "0f034f316e8b9658511e46e8c0c269b68a502444df87489b185033d309d6cc9c",
+      "after_sha256": "d6df8cb1186986b22563397cdca5f4314061a770f2b683d03c1e58bddde2c9eb",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -26,5 +26,23 @@\n \n Under the ordinary behavior of the imported `slices.Contains` operation, an empty supplied name list does not contain any visited name, so each visited name reaches the deletion-bookkeeping append. Repeating a name in the supplied list does not create an additional callback invocation in this body. These are source-derived consequences of the written test and callback, not observed executions of Prometheus.\n \n-The excerpt does not establish `Range`'s internal iteration order, thread safety, asymptotic cost or the contents of a later materialized label set. The correction therefore says “visited base names” and “deletion bookkeeping” rather than claiming an executed global deletion. It reuses a completed local-agent baseline from this campaign, with no repeated inference. English and Portuguese preserve the same predicate, receiver, callback boundary and final result. The chapter remains a source-reviewed candidate pending owner approval, with retained license and notice files and no automatic training or publication authorization.\n+The excerpt does not establish `Range`'s internal iteration order, thread safety, asymptotic cost or the contents of a later materialized label set. The correction therefore says “visited base names” and “deletion bookkeeping” rather than claiming an executed global deletion. It reuses a completed local-agent baseline from the previous campaign, with no repeated inference. English and Portuguese preserve the same predicate, receiver, callback boundary and final result. The chapter remains a source-reviewed candidate pending owner approval, with retained license and notice files and no automatic training or publication authorization.\n \n+## Engineer FAQ\n+\n+<!-- reading-section: faq:keep-does-not-restore-deletion -->\n+### Can Keep restore a name already marked for deletion?\n+\n+For an included visited name, the callback returns without appending a new deletion marker. It does not remove an old marker from `b.del`. Preserving an inclusion test and undoing prior bookkeeping are different operations.\n+\n+<!-- reading-section: faq:keep-addition-preservation -->\n+### Will Keep remove an addition that was not in the supplied name list?\n+\n+The selected method visits the base and does not assign `b.add`. It cannot be documented as filtering pending additions from this body. The separately inspected `Builder.Range` visits pending additions after processing base labels against its copied state.\n+\n+<!-- reading-section: faq:callback-return-scope -->\n+### Why does an early return not stop the outer method?\n+\n+The return is inside the callback passed to the base traversal. After that traversal completes normally, the outer `Keep` still reaches `return b`. Callback completion, traversal completion and the outer pointer return must remain distinct in both languages.\n+\n+The additional `Builder.Get` source also shows why bookkeeping alone is not a complete result description: it checks pending additions before deletion markers and then the base getter. These consumer observations do not select a package build variant or execute Prometheus.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "b5d2bef06f4c4b3d618084362b4482d57d2a1ee4050a81bfaa99121567ee2245",
+      "after_sha256": "22fb03757604d380b69b77470cea0c961457df7e970d159a65fd3f55512db1d4",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -26,5 +26,23 @@\n \n Sob o comportamento comum da operação importada `slices.Contains`, uma lista de nomes recebida vazia não contém nenhum nome visitado, portanto cada nome visitado alcança o append de registro de exclusões. Repetir um nome na lista recebida não cria uma invocação adicional de callback neste corpo. Essas são consequências derivadas da fonte do teste e callback escritos, não execuções observadas do Prometheus.\n \n-O trecho não estabelece a ordem interna de iteração de `Range`, segurança entre threads, custo assintótico ou conteúdo de um conjunto de labels materializado posteriormente. Por isso, a correção diz “nomes base visitados” e “registro de exclusões”, em vez de afirmar uma exclusão global executada. Reutiliza um baseline concluído do agente local nesta campanha, sem repetir inferência. Inglês e português preservam o mesmo predicado, receptor, limite de callback e resultado final. O capítulo continua candidato revisado contra a fonte e pendente de aprovação do proprietário, com licença e avisos retidos e sem autorização automática para treinamento ou publicação.\n+O trecho não estabelece a ordem interna de iteração de `Range`, segurança entre threads, custo assintótico ou conteúdo de um conjunto de labels materializado posteriormente. Por isso, a correção diz “nomes base visitados” e “registro de exclusões”, em vez de afirmar uma exclusão global executada. Reutiliza um baseline concluído do agente local na campanha anterior, sem repetir inferência. Inglês e português preservam o mesmo predicado, receptor, limite de callback e resultado final. O capítulo continua candidato revisado contra a fonte e pendente de aprovação do proprietário, com licença e avisos retidos e sem autorização automática para treinamento ou publicação.\n \n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:keep-does-not-restore-deletion -->\n+### Keep pode restaurar um nome já marcado para exclusão?\n+\n+Para um nome visitado incluído, o callback retorna sem acrescentar uma nova marca de exclusão. Não remove uma marca antiga de `b.del`. Preservar um teste de inclusão e desfazer um registro anterior são operações distintas.\n+\n+<!-- reading-section: faq:keep-addition-preservation -->\n+### Keep removerá uma adição que não esteja na lista de nomes fornecida?\n+\n+O método selecionado visita a base e não atribui `b.add`. Esse corpo não permite documentá-lo como filtro de adições pendentes. O `Builder.Range` inspecionado separadamente visita as adições pendentes depois de processar os labels base contra seu estado copiado.\n+\n+<!-- reading-section: faq:callback-return-scope -->\n+### Por que um return antecipado não encerra o método externo?\n+\n+O return está dentro do callback passado ao percurso da base. Depois que esse percurso conclui normalmente, o `Keep` externo ainda alcança `return b`. Conclusão do callback, conclusão do percurso e retorno externo do ponteiro devem permanecer distintos nas duas línguas.\n+\n+A fonte adicional de `Builder.Get` também mostra por que apenas o registro de exclusões não descreve o resultado completo: ela verifica adições pendentes antes das marcas de exclusão e depois o getter da base. Essas observações dos consumidores não selecionam uma variante de build do pacote nem executam o Prometheus.\n"
+    }
+  ],
+  "faq_added": 3,
+  "source_context_expanded": [
+    "Builder.Get",
+    "Builder.Range"
+  ],
+  "examples_or_commands_added": 0,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "Source-reviewed syntax/conditional behavior; actual base implementation and build variants not resolved.",
+    "No owner approval or neural learning claim. Historical inference remains historical."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.319680+00:00",
+    "canonical_question_ids": [
+      "keep-does-not-restore-deletion",
+      "keep-addition-preservation",
+      "callback-return-scope"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/prometheus-keep-bookkeeping",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

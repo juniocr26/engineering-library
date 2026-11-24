@@ -1,0 +1,172 @@
+{
+  "family": "source-repository:sdk-go",
+  "source_atoms": [
+    {
+      "id": "SDK01",
+      "proposition": "Initial interval constant is200*time.Millisecond.",
+      "source_path": "internal/internal_retry.go",
+      "lines": [
+        12,
+        16
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK02",
+      "proposition": "Expiration default constant is60*time.Second.",
+      "source_path": "internal/internal_retry.go",
+      "lines": [
+        12,
+        16
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK03",
+      "proposition": "Comment20msdisagrees with200msconstantused bymaximumexpression.",
+      "source_path": "internal/internal_retry.go",
+      "lines": [
+        18,
+        31
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK04",
+      "proposition": "timeout startsatdefault andonlynonnilctx withokstrictfuturedeadline assigns expiration.Sub(now).",
+      "source_path": "internal/internal_retry.go",
+      "lines": [
+        22,
+        29
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK05",
+      "proposition": "Deadline-deriveddurationassignmenthasnominimumwith60s; missing/nonfuturepathleavesdefault conditionalnormalmethodscompletion.",
+      "source_path": "internal/internal_retry.go",
+      "lines": [
+        22,
+        29
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK06",
+      "proposition": "Maximumconfigurationexpressionismax(timeout/10,initialintervalconstant), not literal20ms.",
+      "source_path": "internal/internal_retry.go",
+      "lines": [
+        30,
+        31
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK07",
+      "proposition": "Functionconstructspolicy,setcoefficient/maximum/expiration,returnspolicywithoutretrylooporsleep.",
+      "source_path": "internal/internal_retry.go",
+      "lines": [
+        33,
+        38
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK08",
+      "proposition": "SetMaximumIntervaldirectlyassignsfield.",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "lines": [
+        94,
+        97
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK09",
+      "proposition": "SetExpirationIntervaldirectlyassignsfield.",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "lines": [
+        99,
+        102
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK10",
+      "proposition": "ComputeNextDelayfirstchecksmaximumattemptsandexpiration.",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "lines": [
+        109,
+        119
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK11",
+      "proposition": "Consumercomputesandclampsintervalagainstmaximumandremainingexpirationthenrejectstooshortinterval.",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "lines": [
+        121,
+        139
+      ],
+      "verdict": "SUPPORTED"
+    },
+    {
+      "id": "SDK12",
+      "proposition": "Consumerappliesjitterandreturnscalculatedduration, notserviceoperationinvocation/sleep.",
+      "source_path": "internal/common/backoff/retrypolicy.go",
+      "lines": [
+        141,
+        148
+      ],
+      "verdict": "SUPPORTED"
+    }
+  ],
+  "pair_notes": {
+    "future-deadline-not-sixty-second-cap": {
+      "source_atom_ids": [
+        "SDK02",
+        "SDK04",
+        "SDK05"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Strictfuture substitutionnotmin60s; responsequalifiesnormalcompletionofarbitrary suppliedContextmethods ratherthanguaranteeing theyneverpanic/block."
+    },
+    "initial-interval-comment-mismatch": {
+      "source_atom_ids": [
+        "SDK01",
+        "SDK03",
+        "SDK06"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Preserves20mscomment discrepancyinstead ofcopyingincorrectcommentascodebehavior."
+    },
+    "policy-configuration-not-retry-schedule": {
+      "source_atom_ids": [
+        "SDK07",
+        "SDK08",
+        "SDK09",
+        "SDK10",
+        "SDK11",
+        "SDK12"
+      ],
+      "verdict": "SUPPORTED",
+      "parity": "PASS",
+      "note": "Separatespolicyconfigurationanddelaycalculationfromserviceexecution/sleep/cancellation. Additionaloptionallexical-bindingprovenanceconfirmedbyactualretainedreceiptsandnewhash/scopeverification, withtwoexplicitGOOS/arm64profiles andvalidcompilation/sourcecensusconditions retained.",
+      "additional_evidence": "legacy-go-binding-scope-verification-v1.json"
+    }
+  },
+  "all_actual_EN_PT_answers_read_in_full": true,
+  "source_context_review": "Complete38-linecreatorand184-linepolicyconsumerread; no actualSDKapplication/tests/buildsexecuted. Maxbindingconditionalproofretained, notmisrepresentedastypes/runtime.",
+  "optional_binding_evidence": "207preservedfileshash/sizeverified;161moduleGopaths/blobIDsindependentlymatchpinnedGit (157internal+4backoff),2uniqueexplicitprofiles/4retainednative/containerobservations; stdlibandvalidbuildconditionsremain. Not207newexamplesornewtests.",
+  "source_only_pair_review_pass": true,
+  "full_universal_atomic_precision": null,
+  "reviewer": "Samecampaignagent staticpublicsource, not independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "model_calls": 0,
+  "optimizer_updates": 0
+}

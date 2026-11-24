@@ -1,0 +1,41 @@
+{
+  "go_version": "go1.27.4",
+  "parser_mode": "AllErrors|ParseComments|SkipObjectResolution",
+  "path": "selected.go",
+  "platform": "darwin/arm64",
+  "profile": "go-standard-parser-declarations-v1",
+  "source_executed": false,
+  "source_sha256": "40e7b7b01eb0363aad9930d3764880e3cf6f1f8aed6ad3fd918866ec34602729",
+  "syntax_only": true,
+  "units": [
+    {
+      "selector": "RequestLogger",
+      "declaration_kind": "function",
+      "symbol": "middleware.RequestLogger",
+      "start_line": 44,
+      "end_line": 59,
+      "quote": "func RequestLogger(f LogFormatter) func(next http.Handler) http.Handler {\n\treturn func(next http.Handler) http.Handler {\n\t\tfn := func(w http.ResponseWriter, r *http.Request) {\n\t\t\tentry := f.NewLogEntry(r)\n\t\t\tww := NewWrapResponseWriter(w, r.ProtoMajor)\n\n\t\t\tt1 := time.Now()\n\t\t\tdefer func() {\n\t\t\t\tentry.Write(ww.Status(), ww.BytesWritten(), ww.Header(), time.Since(t1), nil)\n\t\t\t}()\n\n\t\t\tnext.ServeHTTP(ww, WithLogEntry(r, entry))\n\t\t}\n\t\treturn http.HandlerFunc(fn)\n\t}\n}",
+      "declaration": "func RequestLogger(f LogFormatter) func(next http.Handler) http.Handler",
+      "function_type": "func(f LogFormatter) func(next http.Handler) http.Handler",
+      "factory": {
+        "callback_body_statements": 2,
+        "claim": "The outer body solely returns this function literal. Its body is not executed by that return expression; helper behavior and types are not verified.",
+        "outer_function_type": "func(f LogFormatter) func(next http.Handler) http.Handler",
+        "profile": "returned-function-literal-signature-v1",
+        "returned_literal_type": "func(next http.Handler) http.Handler"
+      },
+      "return_contract": {
+        "callback_body_analyzed": false,
+        "kind": "sole-return-function-literal",
+        "literal_signature": "func(next http.Handler) http.Handler"
+      }
+    }
+  ],
+  "producer": {
+    "source_sha256": "5aba7212db59b040276005b9c5473beff6ee9f84344438e1fd103abf21958c0e",
+    "binary_sha256": "e8f9dcaf694ee5069102b2fdf8558e686f7e57726308633233215b99425a7c82",
+    "manifest_sha256": "0cfc48a7a09d784ba94c2491b5d363a3854fa76b4e7a9209f058266a2b06128f",
+    "launcher_sha256": "15b728e6cb42350388739b11fd85abb5a1f2d31e7f8319dbb08f854ac41aca08",
+    "version": "1.6.1"
+  }
+}

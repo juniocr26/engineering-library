@@ -1,0 +1,21 @@
+"""Close three provenance-only review gaps using unchanged original receipts, not reruns."""
+from pathlib import Path
+import json,hashlib,datetime
+P=Path(__file__).resolve().parent;ROOT=P.parents[2];B=ROOT/'.local-backups/continuation-20261119/javascript-guard-chain-candidate'
+def sha(raw):return hashlib.sha256(raw).hexdigest()
+def read(name):return [json.loads(x) for x in (B/name).read_text().splitlines()]
+before=read('before-real.jsonl');after=read('candidate-real.jsonl');cli=read('final-real-cli.jsonl');rows=[]
+for old,new,actual in zip(before,after,cli,strict=True):
+ assert (old['repository'],old['revision'],old['selector'],old['source_sha256'])==(new['repository'],new['revision'],new['selector'],new['source_sha256'])==(actual['repository'],actual['revision'],actual['selector'],actual['source_sha256'])
+ a=old['result'];b=new['result'];c=json.loads(actual['stdout']);assert actual['exit']==0 and b==c
+ assert a['ir']==b['ir'] and a['explanations']==b['explanations'];assert 'ordered_guard_chain' not in a and 'ordered_guard_chain' in b
+ rows.append({'repository':old['repository'],'selector':old['selector'],'revision':old['revision'],'source_sha256':old['source_sha256'],'old_vs_candidate_IR_exact_equal':True,'old_vs_candidate_both_language_paragraph_bytes_equal':True,'final_original_CLI_result_matches_candidate':True,'original_parser_version':b['parser_version'],'no_new_program_execution':True})
+review_path=ROOT/'agent/research/continuation-20261119/contract-wave1-review-final.json';oldreviews=json.loads(review_path.read_text())['reviews'];chi=[]
+for name in ['chi-timeout','chi-recoverer']:
+ r=next(r for r in oldreviews if r['id']==name);raw=P/'original-public-chapter-provenance-captures-v1'/name/'raw-response.json';assert sha(raw.read_bytes())==r['response_sha256'];chi.append({'id':name,'response_sha256':r['response_sha256'],'reviewer':r['reviewer'],'bilingual_review_statement':r['bilingual'],'oldreview_at':r['at'],'current_original_capture_read_in_full':True})
+receipt={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'old_JS_files':[{'path':str(B/f),'sha256':sha((B/f).read_bytes())} for f in ['before-real.jsonl','candidate-real.jsonl','final-real-cli.jsonl']],'JS_parity_rows':rows,'chi_original_review':{'path':str(review_path.relative_to(ROOT)),'sha256':sha(review_path.read_bytes()),'rows':chi},'interpretation':'Specific historical review/parity statements now corroborated against retained original raw/IR/paragraph records. This is same-agent provenance verification, not independent-human certification; no inference/parser/test rerun and no old artifact modification.','new_model_calls':0,'source_execution':False,'gold':0}
+receipt_path=P/'original-public-chapter-procedural-gap-resolution-v1.json';receipt_path.write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n')
+for topic in ['chi-middleware','fastify-decoration-lookup','go-image-frontend-dimensions']:
+ folder=P/'original-public-chapter-body-review-v1'/topic;prior=folder/'body-semantic-review-v1.json';d=json.loads(prior.read_text());assert d['complete_document_outcome']=='INCOMPLETE_PROCEDURAL_REVIEW';d.update({'at_v2':datetime.datetime.now(datetime.timezone.utc).isoformat(),'extends_exact_v1_sha256':sha(prior.read_bytes()),'procedural_provenance_pending':[],'procedural_gap_resolution':str(receipt_path),'procedural_gap_resolution_sha256':sha(receipt_path.read_bytes()),'complete_document_outcome':'PASS_RESEARCH_REVIEW_SOURCE_ONLY','complete_document_accepted':True});d['dimension_scores']['factual correctness']=2;d['dimension_scores']['explicit limitations']=2
+ with (folder/'body-semantic-review-v2.json').open('x') as f:json.dump(d,f,indent=2,ensure_ascii=False);f.write('\n')
+print(json.dumps({'provenance_gaps_closed':3,'old_JS_cases_exact_parity':3,'old_review_bytes_unchanged':True,'new_execution':False}))

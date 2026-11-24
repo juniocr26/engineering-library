@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-21T17:31:41.434973+00:00",
+  "case": "fastapi-F05",
+  "method": "R",
+  "frozen_reference": {
+    "id": "fastapi-F05",
+    "task": "fastapi",
+    "fact_id": "F05",
+    "original_pair": {
+      "en": "The dependency_cache must be a dictionary and the sub_dependant_cache_key must be a string when reading from the cache.",
+      "pt-BR": "O dependency_cache deve ser uma dictionary e o sub_dependant_cache_key deve ser uma string quando lendo do cache."
+    },
+    "expected_verdict": "INSUFFICIENT",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/fastapi/L/semantic-review-v2.json",
+    "source_review_sha256": "f36ec3cec48c2976dfa0f4c0ce928dd74f60d2588446a74f57d9a00d56e6f9cb",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "fastapi/dependencies/utils.py @ 05e6df7e906c3decba377c37548019973f40bf15",
+    "source_role": "function",
+    "evidence": "The sub_dependant_cache_key must be a string when reading from the cache.",
+    "reason": "The claim is not supported by the provided source code. The source code does not explicitly state that the sub_dependant_cache_key must be a string when reading from the cache. The code does mention that the sub_dependant_cache_key is used to retrieve a value from the dependency_cache, but it does not specify that the key must be a string."
+  },
+  "content_sha256": "e6fc1b4ecc8117f682179319d59e35514485e15e5b64bf6b677dfc2e3557b6aa",
+  "primary_raw_label_agreement": true,
+  "rationale_support_for_requested_claim": "INSUFFICIENT",
+  "source_relationship_review": "CorrectIlabel and reasonappropriatelynoteslackofstring-keyrequirement; however evidencefieldassertsthatunsupportedclaimunqualified asifevidence. Preservegoodabstentionreason separatelyfromunsoundsourceevidencefield.",
+  "evidence_form": "UNSUPPORTED_CLAIM_ECHO_NOT_SOURCE_EVIDENCE",
+  "end_to_end_label_and_rationale_supported": false,
+  "grading_basis": "semantic-verifier-rationale-review-rubric-v1.json; evidence/reason additional unsupportedclaims remain defects despite correctclassification.",
+  "reviewer": "Samecampaignagent, frozenreferencesunchanged; notindependentowner/human",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

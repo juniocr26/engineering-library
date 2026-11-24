@@ -1,0 +1,310 @@
+{
+  "at": "2026-11-21T15:14:32.284290+00:00",
+  "task": "cobra",
+  "method": "E",
+  "content_sha256": "8485b0ae7a71cd9d7633107cdcfb71e593b8d172ade8d31a6dd6526455227814",
+  "raw_response_sha256": "59bba4ebe3256482a52162f383419ede137df4a2fa75f70001e257adea0a358b",
+  "lossless_factual_records": [
+    {
+      "claim_id": "NEW-E-cobra-C01",
+      "reference_id": "C01",
+      "original_generated_record": {
+        "id": "C01",
+        "question_en": "What is the PositionalArgs function signature?",
+        "answer_en": "func PositionalArgs(f func(cmd *Command, args []string) error)",
+        "question_pt-BR": "O que é a assinatura do função PositionalArgs?",
+        "answer_pt-BR": "func PositionalArgs(f func(cmd *Command, args []string) error)",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:22"
+      },
+      "original_json_object_path": "$/faq@0/0",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        22,
+        22
+      ],
+      "exact_source_evidence": "type PositionalArgs func(cmd *Command, args []string) error",
+      "expected_interpretation": {
+        "en": "PositionalArgs is a function type receiving *Command and []string and returning error.",
+        "pt-BR": "PositionalArgs é um tipo de função que recebe *Command e []string e retorna error."
+      },
+      "factual_verdict_en": "CONTRADICTED",
+      "bilingual_or_relevance_reason": "Invents a function PositionalArgs taking a callback. Source declares a defined function type, not that API function.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C02",
+      "reference_id": "C02",
+      "original_generated_record": {
+        "id": "C02",
+        "question_en": "When does OnlyValidArgs perform membership checks?",
+        "answer_en": "OnlyValidArgs performs membership checks when the command has subcommands and there are arguments provided.",
+        "question_pt-BR": "Quando OnlyValidArgs realiza verificações de membro?",
+        "answer_pt-BR": "OnlyValidArgs realiza verificações de membro quando o comando tem subcomandos e há argumentos fornecidos.",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:35"
+      },
+      "original_json_object_path": "$/faq@0/1",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        51,
+        65
+      ],
+      "exact_source_evidence": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+      "expected_interpretation": {
+        "en": "OnlyValidArgs performs membership validation only inside len(cmd.ValidArgs) > 0.",
+        "pt-BR": "OnlyValidArgs faz a validação de pertencimento somente dentro de len(cmd.ValidArgs) > 0."
+      },
+      "factual_verdict_en": "CONTRADICTED",
+      "bilingual_or_relevance_reason": "Subcommand/argument condition is not len(cmd.ValidArgs)>0; source line35 belongs to legacyArgs.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C03",
+      "reference_id": "C03",
+      "original_generated_record": {
+        "id": "C03",
+        "question_en": "How are descriptions separated from the allowlist entry?",
+        "answer_en": "Descriptions are separated from the allowlist entry by a tab character.",
+        "question_pt-BR": "Como as descrições são separadas da lista de permitidos?",
+        "answer_pt-BR": "As descrições são separadas da lista de permitidos por um caractere de tabulação.",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:54"
+      },
+      "original_json_object_path": "$/faq@0/2",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        55,
+        58
+      ],
+      "exact_source_evidence": "\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}",
+      "expected_interpretation": {
+        "en": "Allowlist entries are projected to the portion before the first tab.",
+        "pt-BR": "As entradas da lista permitida são projetadas para a parte anterior ao primeiro tab."
+      },
+      "factual_verdict_en": "SUPPORTED_WEAKER",
+      "bilingual_or_relevance_reason": "Tab separator is correct, but before-first-tab projection is omitted.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C04",
+      "reference_id": "C04",
+      "original_generated_record": {
+        "id": "C04",
+        "question_en": "What does constructing ExactArgs(n) return?",
+        "answer_en": "Constructing ExactArgs(n) returns a function that checks if the number of arguments is exactly n.",
+        "question_pt-BR": "O que construir ExactArgs(n) retorna?",
+        "answer_pt-BR": "Construir ExactArgs(n) retorna uma função que verifica se o número de argumentos é exatamente n.",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:108"
+      },
+      "original_json_object_path": "$/faq@0/3",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        107,
+        113
+      ],
+      "exact_source_evidence": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}",
+      "expected_interpretation": {
+        "en": "ExactArgs(n) returns a validator function.",
+        "pt-BR": "ExactArgs(n) retorna uma função validadora."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Factory returns a function, and that callback checks argument count. Split these propositions for atomic counting.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C05",
+      "reference_id": "C05",
+      "original_generated_record": {
+        "id": "C05",
+        "question_en": "What length condition does the returned ExactArgs callback reject?",
+        "answer_en": "The returned ExactArgs callback rejects a length condition of less than n or greater than n.",
+        "question_pt-BR": "Qual condição de comprimento o retorno do callback ExactArgs rejeita?",
+        "answer_pt-BR": "O retorno do callback ExactArgs rejeita uma condição de comprimento de menos de n ou maior que n.",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:110"
+      },
+      "original_json_object_path": "$/faq@0/4",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        108,
+        112
+      ],
+      "exact_source_evidence": "\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil",
+      "expected_interpretation": {
+        "en": "The returned ExactArgs validator rejects len(args) != n when invoked.",
+        "pt-BR": "O validador retornado por ExactArgs rejeita len(args) != n quando chamado."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "EN len<n or len>n is integer-equivalent to len!=n. PT retorno do callback is ambiguous about returned callback versus callback return value.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C06",
+      "reference_id": "C06",
+      "original_generated_record": {
+        "id": "C06",
+        "question_en": "In what order does MatchAll invoke supplied validators?",
+        "answer_en": "MatchAll invokes the supplied validators in the order they are passed.",
+        "question_pt-BR": "Em que ordem o MatchAll invoca os validadores fornecidos?",
+        "answer_pt-BR": "MatchAll invoca os validadores fornecidos em ordem que são passados.",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:129"
+      },
+      "original_json_object_path": "$/faq@0/5",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        127,
+        134
+      ],
+      "exact_source_evidence": "func MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil",
+      "expected_interpretation": {
+        "en": "MatchAll invokes its validators in the order of the supplied slice.",
+        "pt-BR": "MatchAll chama seus validadores na ordem do slice fornecido."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Supplied-validator order is correct in both languages.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C07",
+      "reference_id": "C07",
+      "original_generated_record": {
+        "id": "C07",
+        "question_en": "What happens at the first non-nil MatchAll validator error?",
+        "answer_en": "At the first non-nil MatchAll validator error, MatchAll returns the error.",
+        "question_pt-BR": "O que acontece no primeiro erro não nulo do MatchAll?",
+        "answer_pt-BR": "No primeiro erro não nulo do MatchAll, o MatchAll retorna o erro.",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:131"
+      },
+      "original_json_object_path": "$/faq@0/6",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        129,
+        131
+      ],
+      "exact_source_evidence": "\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err",
+      "expected_interpretation": {
+        "en": "MatchAll returns immediately at the first non-nil validator error.",
+        "pt-BR": "MatchAll retorna imediatamente no primeiro erro não nil de um validador."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Return at first non-nil error is correct. Ordinary PT não nulo is not treated as a renamed source identifier.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C08",
+      "reference_id": "C08",
+      "original_generated_record": {
+        "id": "C08",
+        "question_en": "What does ExactValidArgs(n) delegate to?",
+        "answer_en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "question_pt-BR": "O que o ExactValidArgs(n) delega?",
+        "answer_pt-BR": "O ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:143"
+      },
+      "original_json_object_path": "$/faq@0/7",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        142,
+        144
+      ],
+      "exact_source_evidence": "func ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}",
+      "expected_interpretation": {
+        "en": "ExactValidArgs(n) delegates to MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "pt-BR": "ExactValidArgs(n) delega para MatchAll(ExactArgs(n), OnlyValidArgs)."
+      },
+      "factual_verdict_en": "SUPPORTED",
+      "bilingual_or_relevance_reason": "Exact delegation expression is preserved.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C09",
+      "reference_id": "C09",
+      "original_generated_record": {
+        "id": "C09",
+        "question_en": "What deprecation status is written for ExactValidArgs?",
+        "answer_en": "ExactValidArgs is deprecated and should be used instead of MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "question_pt-BR": "Qual status de deprecacao é escrito para ExactValidArgs?",
+        "answer_pt-BR": "ExactValidArgs está deprecado e deve ser usado em vez de MatchAll(ExactArgs(n), OnlyValidArgs).",
+        "source": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e:141"
+      },
+      "original_json_object_path": "$/faq@0/8",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "source_lines": [
+        141,
+        141
+      ],
+      "exact_source_evidence": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead",
+      "expected_interpretation": {
+        "en": "The selected source comment marks ExactValidArgs deprecated.",
+        "pt-BR": "O comentário selecionado da fonte marca ExactValidArgs como deprecated."
+      },
+      "factual_verdict_en": "MIXED_SPLIT_INTO_ATOMS",
+      "bilingual_or_relevance_reason": "Deprecation status is correct, but the added replacement recommendation is reversed.",
+      "reviewer": "Same Codex campaign agent, source and raw EN/PT read without repair",
+      "critical_if_unsupported": true
+    },
+    {
+      "claim_id": "NEW-E-cobra-C09-RECOMMENDATION",
+      "parent_id": "C09",
+      "generated_interpretation": "ExactValidArgs is deprecated and should be used instead of MatchAll(ExactArgs(n), OnlyValidArgs).",
+      "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+      "source_path": "args.go",
+      "source_lines": [
+        141,
+        143
+      ],
+      "exact_source_evidence": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead\nfunc ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)",
+      "verdict": "CONTRADICTED",
+      "critical": true,
+      "note": "The correct deprecation-status clause does not certify its reversed recommendation."
+    }
+  ],
+  "duplicate_keys": [],
+  "selected_english_atomic_metrics": {
+    "supported": 8,
+    "contradicted": 3,
+    "insufficient": 0,
+    "denominator": 11,
+    "scope": "C04 factory/callback split and C09 status/recommendation split; PT C05 ambiguity is separate from EN precision."
+  },
+  "full_bilingual_atomic_precision": null,
+  "strict_individual_faq_pair_acceptance": null,
+  "whole_requested_faq_output": "REJECTED",
+  "reasons": [
+    "Invented API function signature C01",
+    "Wrong function guard C02",
+    "Reversed deprecation recommendation C09",
+    "Uncertainty question lacks answer",
+    "PT callback-level ambiguity C05"
+  ],
+  "uncertainty_control": "Question only, no answer; not abstention",
+  "preflight_note": "An earlier unexecuted heredoc had a brace SyntaxError; no annotation files or predictions changed before this script.",
+  "original_outputs_and_reference_answers_unchanged": true,
+  "not_general_model_accuracy": true,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

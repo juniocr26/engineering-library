@@ -1,0 +1,171 @@
+{
+  "at": "2026-11-21T18:43:14.125989+00:00",
+  "before_new_observations": true,
+  "trigger": "V5 registry NameLoad refusal does not obviously cover module namespace access via a resolved function attribute; reject apparent prior zero-falseMODIFY as general safety proof.",
+  "hypothesis": "Function.__globals__ namespace item mutation may evade V5 despite no ast.Call, no CONTRACTS NameLoad and one binding event per required name. Compare true readonly/unrelated-write controls rather than treating all attribute access as mutation.",
+  "primary_language_source": "https://docs.python.org/3.14/reference/datamodel.html#function.__globals__",
+  "language_rule_paraphrase": "A user-defined function exposes the dictionary for its defining module globals. Read-only attribute designation does not make referenced dictionary immutable. No runtime probe required or performed.",
+  "reference_boundary": "Same source-only identity/citation maintenance definition as prior registry deletion/rebinding controls; no generic runtime feature proof. Namespace mutations require INCONCLUSIVE, not automatic REMOVE.",
+  "cases": [
+    {
+      "id": "function-globals-registry-item-replacement",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-registry-item-replacement/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-registry-item-replacement/selected-planner-input.json",
+      "packet_sha256": "adb98b35e5430e22473d7b9a7d3cfe9129c7aaf5f13c5b1709cb4171f7d82a16",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Function __globals__ provides module namespace; item mutation changes selected registry mapping without a CONTRACTS Name Load or Store.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 187,
+          "sha256": "2fd80409c110de0db14e3efa1b5dc1703cb96965e384386c4f4cdb5998d76fe7"
+        }
+      ]
+    },
+    {
+      "id": "function-globals-registry-item-deletion",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-registry-item-deletion/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-registry-item-deletion/selected-planner-input.json",
+      "packet_sha256": "0a7bc5e4d7e4eca0edd08d0908d8afbb9bf115f7f468c53d51f6f666de01aeb8",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Deletion through function namespace removes logical identity marker without a CONTRACTS Name access.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 175,
+          "sha256": "62fd72ec2fef054284b3ff4a61ac9575adcb8a8ba0d64bb67557f397c5ca97de"
+        }
+      ]
+    },
+    {
+      "id": "function-globals-provider-replacement",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-provider-replacement/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-provider-replacement/selected-planner-input.json",
+      "packet_sha256": "284210a5ea0dcbfd5f032ff64b910e5f1cca4e93d893e595147dacae1be1d51f",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Module provider binding changes via namespace item write; one FunctionDef and no Name Store does not establish stable provider binding.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 166,
+          "sha256": "5b39cc4e0494f066d36ce7f712bc967418c5a41e9345dbe4a34c71b896c03fbd"
+        }
+      ]
+    },
+    {
+      "id": "function-globals-registry-reassignment",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-registry-reassignment/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-registry-reassignment/selected-planner-input.json",
+      "packet_sha256": "0298697acf6b1f8146176018b87cebe7173a6b8a6ca215eaa37592dac3999e07",
+      "reference_action": "INCONCLUSIVE",
+      "reference_reason": "Registry name is rebound through function namespace, invisible to lexical Name-event uniqueness.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 189,
+          "sha256": "f8d333314be098a09b788817a8107a6e579a2b2ceae3d0ed239ec6b7ff176669"
+        }
+      ]
+    },
+    {
+      "id": "function-globals-readonly-alias",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-readonly-alias/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-readonly-alias/selected-planner-input.json",
+      "packet_sha256": "353d599f2f9c3019c74c16e647cce29cea8179299b1cc7053d95fe5ca1aa4cbe",
+      "reference_action": "MODIFY",
+      "reference_reason": "Complete owned source merely obtains an unused module namespace reference; no mutation or target rebinding. Source citation maintenance remains supported, not runtime behavior.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 156,
+          "sha256": "7659a8ab755fd8126f2159050f168b521e8c61da169b948c77734f3fa3a7f967"
+        }
+      ]
+    },
+    {
+      "id": "function-globals-unrelated-write",
+      "source_root": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-unrelated-write/current",
+      "packet": "agent/research/acceptance-calibration-20261121/scope-function-namespace-v1/function-globals-unrelated-write/selected-planner-input.json",
+      "packet_sha256": "f6be51171b0e15639352ab2ab3a3135e30e86f3d8aba635ad8ba0a4e696434d7",
+      "reference_action": "MODIFY",
+      "reference_reason": "Written literal namespace key is unrelated to registry/provider names; complete owned source retains registered provider for citation maintenance. No runtime behavior certified.",
+      "files": [
+        {
+          "path": "api.py",
+          "kind": "file",
+          "bytes": 100,
+          "sha256": "3dc0f1b856a5fa2f9852b0c77051b3ac245c52f5132cfcdefa4943243d298c9f"
+        },
+        {
+          "path": "impl.py",
+          "kind": "file",
+          "bytes": 155,
+          "sha256": "e2d65e50e89aaf57b5b25f5397744394bffba4e315d25f6a4f8d599441894af4"
+        }
+      ]
+    }
+  ],
+  "frozen_observers": [
+    {
+      "path": "run_scope_acquisition_v1.py",
+      "sha256": "abebf5dd88282069fd3287959212766fe2e1e60b5c1df7a9ba0cdbf44a1f74e2"
+    },
+    {
+      "path": "compare_scope_binding_owners_v2.py",
+      "sha256": "63f25b90f999de6d37966da2062f3ecc86fddd41a8069b0197cd28635195b89a"
+    },
+    {
+      "path": "observe_scope_continuity_utility_v3.py",
+      "sha256": "c5f79057cfd806785f4a91807a28cd71f6591b224f20212d7ff6728dc6262b0d"
+    },
+    {
+      "path": "observe_scope_binding_census_v4.py",
+      "sha256": "97977469d750155285a169cc40c7a5ba228e0c4a7878b8eb83c3295349cb5a7f"
+    },
+    {
+      "path": "observe_scope_registry_profile_v5.py",
+      "sha256": "db4517a6864d80b0b16d59d1bfe7d6a452037a60065390ac35ab05acce27df7c"
+    }
+  ],
+  "no_source_execution": true,
+  "no_model_calls": true,
+  "no_permanent_tests": true,
+  "no_original_case_or_reference_edits": true,
+  "gold": 0,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-21T09:38:11.191759+00:00",
+  "hypothesis": "H77",
+  "protocol": "prometheus-remote-estimate-context-protocol-v1.json",
+  "revision": "80cd8d97bdfce88014a652d15723559d00a15902",
+  "status": "SOURCE_SCOPED_REMOTE_ESTIMATE_TRACE_COMPLETED",
+  "source_files": 8,
+  "source_cards": 16,
+  "findings": [
+    {
+      "claim": "API estimator passes API.Queryable and configured global scrape interval. Standard web API receives handler storage; server wiring previously frozen provides fanout storage.",
+      "evidence": [
+        "E12",
+        "E13",
+        "E14",
+        "H76cmd/prometheus/main.go:956,1080"
+      ],
+      "limit": "Existing selected standard server wiring, not arbitrary custom API/queryable configurations."
+    },
+    {
+      "claim": "Estimator counts series through ordinary queryable independently of optional sampling capability; fanout opens primary and secondary queriers. Remote storage builds client queriers and merges them.",
+      "evidence": [
+        "E01",
+        "E06",
+        "E08",
+        "E10"
+      ],
+      "limit": "No actual remote call made; required-matcher guard may make a given remote selector return no series without client.Read."
+    },
+    {
+      "claim": "Remote CostSamplingQueryable returns supported only if no configured queryables. A configured remote reader causes fanout sampling capability refusal, without removing ordinary series enumeration.",
+      "evidence": [
+        "E09",
+        "E10",
+        "E11"
+      ],
+      "limit": "Primary and all other secondary capabilities can independently refuse sampling too."
+    },
+    {
+      "claim": "Without sampler, every positive-series selector adds the same fallback annotation; effective interval remains supplied scrape interval and avgPointCost remains1.0 float unit. No-positive-series selector adds no such fallback in this branch.",
+      "evidence": [
+        "E02",
+        "E03",
+        "E05"
+      ],
+      "limit": "Not physical I/O, true histogram sizes or real per-target scrape timing; estimator arithmetic, no measured accuracy."
+    },
+    {
+      "claim": "Sampling unsupported errors fall back, but context canceled/deadline errors do not satisfy samplingUnsupported and remain errors through selected guards.",
+      "evidence": [
+        "E02",
+        "E04"
+      ]
+    },
+    {
+      "claim": "The global fallback annotation has identical error text; Annotations.Add uses that text as map key and Merge preserves key identity. Multiple fallback selectors therefore do not create one separately identifiable returned annotation each.",
+      "evidence": [
+        "E03",
+        "E15",
+        "E16"
+      ],
+      "documentation_disposition": "Qualify existing wording warning for each selector: branch adds on each positive selector, but annotation set deduplicates the identical warning. Do not promise warning count or selector-specific identity."
+    }
+  ],
+  "remaining_unresolved": [
+    "No remote server/client request executed; no actual config or network/data inspected.",
+    "No full remote-read transport, required-matchers, local/remote merge correctness or sample-accounting completeness audit.",
+    "Other docs on all duration statuses and all evaluator branches remain outside scope.",
+    "This is a selected-source review, not complete acceptance of three large existing documentation pages."
+  ],
+  "external_changes": 0,
+  "upstream_tests_executed": false,
+  "model_calls": 0,
+  "new_complete_chapter_or_lifecycle_scores": 0,
+  "owner_approved": false,
+  "training_eligible": false
+}

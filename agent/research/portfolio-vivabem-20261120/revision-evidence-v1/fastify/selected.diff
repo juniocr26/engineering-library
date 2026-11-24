@@ -1,0 +1,14 @@
+diff --git a/lib/route.js b/lib/route.js
+index 76af5551..edb84995 100644
+--- a/lib/route.js
++++ b/lib/route.js
+@@ -249,7 +249,8 @@ function buildRouting (options) {
+ 
+     const prefix = this[kRoutePrefix]
+ 
+-    if (path === '/' && prefix.length > 0 && opts.method !== 'HEAD') {
++    // Generated HEAD routes are already created for each path of their GET route
++    if (path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute) {
+       switch (opts.prefixTrailingSlash) {
+         case 'slash':
+           addNewRoute.call(this, { path, isFastify })

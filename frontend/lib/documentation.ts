@@ -1,0 +1,127 @@
+import { readdir, readFile, realpath } from 'node:fs/promises';
+import path from 'node:path';
+import { categoryLabels, type Language } from './i18n.ts';
+import { markdownUnits } from './markdown.ts';
+import { collectionPath, languageDirectory } from './catalog-paths.ts';
+import { documentHref, sourcePath } from './document-links.ts';
+const documentationRoot = () => process.env.DOCUMENTATION_ROOT ?? path.resolve(process.cwd(), '../docs');
+export type TocEntry = { id: string; number: string; title: string; href?: string; heading?: boolean; keepWithNext?: boolean; parentId?: string; documentId?: string; anchor?: string; depth?: number };
+
+const titleOf = (source: string, fallback: string) => source.match(/^#\s+(.+)$/m)?.[1]?.replace(/\s+—.*$/, '') ?? fallback;
+export async function documentationEntries(slug: string, language: Language): Promise<TocEntry[]> {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return [];
+  const root = documentationRoot();
+  let directory: string;
+  try { directory = await realpath(root);  } catch { return []; }
+  async function files(relative: string): Promise<string[]> {
+    try { const resolved = await realpath(path.join(directory, relative));
+      if (!resolved.startsWith(directory + path.sep)) return [];
+      const entries = await readdir(resolved, { withFileTypes: true });
+      return (await Promise.all(entries.filter(e => !e.isSymbolicLink()).map(async e => e.isDirectory() ? files(`${relative}/${e.name}`) : e.name.endsWith('.md') ? [`${relative}/${e.name}`] : []))).flat();
+    } catch { return []; }
+  }
+  const localized = await Promise.all((['en', 'pt-BR'] as const).map(async lang => {
+    const sources = new Map<string, { source: string; relative: string }>();
+    for (const physical of await files(`${slug}/${languageDirectory(lang)}`)) {
+      const relative = physical.slice(`${slug}/`.length);
+      if (relative === `${languageDirectory(lang)}/README.md` || relative === `${languageDirectory(lang)}/bio.md`) continue;
+      const source = (await collectionFile(slug, relative))?.toString('utf8');
+      if (source === undefined) continue;
+      // Navigation-only indexes contain a title, backlink and list of links. Preserve substantive indexes.
+      const substantive = source.split('\n').filter(line => line.trim() && !/^#\s|^\s*(?:[-*]\s+)?\[[^\]]+\]\([^)]+\)\s*$/.test(line));
+      if (relative.endsWith('/index.md') && !substantive.length) continue;
+      sources.set(relative.slice(`${languageDirectory(lang)}/`.length), { source, relative });
+    }
+    const relative = `${languageDirectory(lang)}/README.md`;
+    const readme = (await collectionFile(slug, relative))?.toString('utf8');
+    if (readme !== undefined) sources.set('README', { source: readme, relative });
+    return sources;
+  }));
+  const selected = localized[language === 'en' ? 0 : 1];
+  const alphabetical = (a: string, b: string) => a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : a < b ? -1 : a > b ? 1 : 0;
+  const ids = [...new Set(localized.flatMap(map => [...map.keys()]))]
+    .filter(id => id !== 'index.md' && id !== 'faq/study-guide.md')
+    .sort(alphabetical);
+  const groups = [...new Set(ids.map(id => id.split('/')[0]))].sort(alphabetical);
+  const result: TocEntry[] = [];
+  const entry = (id: string, heading = false): TocEntry => {
+    const doc = selected.get(id);
+    return { id, number: '', heading, title: doc ? titleOf(doc.source, id) : `${id} (${language === 'en' ? 'unavailable' : 'indisponível'})`, href: doc ? documentHref(slug, id, language) : undefined };
+  };
+  groups.forEach(group => {
+    const children = ids.filter(id => id.startsWith(`${group}/`));
+    if (group === 'faq') {
+      result.push({ ...entry('faq/index.md', true), title: 'FAQ' });
+      children.filter(id => id !== 'faq/index.md').forEach(id => result.push({ ...entry(id), parentId: 'faq/index.md', depth: 1 }));
+    }
+    else if (!children.length) result.push(entry(group, true));
+    else {
+      result.push({ id: `category:${group}`, number: '', title: categoryLabels[language][group] ?? group, heading: true, keepWithNext: true });
+      children.forEach(id => result.push({ ...entry(id), parentId: `category:${group}`, depth: 1 }));
+    }
+  });
+  // The same flat, ordered tree serves pagination, quick navigation and chapter order.
+  // Only actual AST headings enter the tree; the document title is already represented.
+  const tree = result.flatMap(document => {
+    const source = selected.get(document.id)?.source;
+    if (!source) return [document];
+    const headings = markdownUnits(source).filter(unit => unit.heading !== undefined);
+    const stack: { level: number; entry: TocEntry }[] = [
+      { level: 0, entry: document },
+    ];
+    const children: TocEntry[] = [];
+    headings.forEach((unit, index) => {
+      if (index === 0 && unit.headingDepth === 1) return;
+      const level = unit.headingDepth!;
+      while (stack.length > 1 && stack.at(-1)!.level >= level) stack.pop();
+      const parent = stack.at(-1)!;
+      // Verified section and question identities are shared across languages.
+      // Other headings keep their actual slug; never infer translation from position.
+      const key = !unit.readingAmbiguous && unit.navigationKey
+        ? unit.navigationKey : `heading:${unit.id}`;
+      const child: TocEntry = {
+        id: `${document.id}#${key}`, documentId: document.id, anchor: unit.id,
+        parentId: parent.entry.id, depth: (parent.entry.depth ?? (document.heading ? 0 : 1)) + 1,
+        number: '', title: unit.text,
+        href: documentHref(slug, document.id, language, unit.id),
+      };
+      // Repeated subheadings within canonical questions retain distinct targets.
+      if (children.some(entry => entry.id === child.id)) child.id += `:${unit.id}`;
+      children.push(child);
+      stack.push({ level, entry: child });
+    });
+    return [document, ...children];
+  });
+  const counters = new Map<string, number>();
+  const byId = new Map<string, TocEntry>();
+  for (const node of tree) {
+    const parent = node.parentId ? byId.get(node.parentId) : undefined;
+    const key = node.parentId ?? '@root';
+    const ordinal = (counters.get(key) ?? 0) + 1;
+    counters.set(key, ordinal);
+    node.number = parent ? `${parent.number}.${ordinal}` : `${ordinal}`;
+    node.depth = parent ? (parent.depth ?? 0) + 1 : 0;
+    byId.set(node.id, node);
+  }
+  return tree;
+}
+
+/** Every read resolves real paths; symlinks may not escape the selected project. */
+export async function collectionFile(slug: string, relative: string): Promise<Buffer | null> {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !relative || relative.split('/').some(part => !part || part === '.' || part === '..') || /[\\\0]/.test(relative)) return null;
+  try {
+    const base = await realpath(documentationRoot());
+    const physical = collectionPath(slug, relative);
+    const project = await realpath(path.join(base, slug));
+    if (!project.startsWith(base + path.sep)) return null;
+    const file = await realpath(path.join(base, physical));
+    if (!file.startsWith(project + path.sep)) return null;
+    return await readFile(file);
+  } catch { return null; }
+}
+
+export async function documentationSource(slug: string, id: string, language: Language) {
+  if (id !== 'README' && (!id.endsWith('.md') || id.startsWith('/') || /[\\\0]/.test(id) || id.split('/').some(part => part === '.' || part === '..' || !part))) return null;
+  const buffer = await collectionFile(slug, sourcePath(id, language));
+  return buffer?.toString('utf8') ?? null;
+}

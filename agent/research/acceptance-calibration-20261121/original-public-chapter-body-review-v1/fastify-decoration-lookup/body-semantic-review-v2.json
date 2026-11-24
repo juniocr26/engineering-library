@@ -1,0 +1,102 @@
+{
+  "at": "2026-11-21T18:19:46.011924+00:00",
+  "topic": "fastify-decoration-lookup",
+  "family": "fastify",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/fastify-decoration-lookup/en.candidate.txt",
+      "sha256": "73c08945e7761fd0b80f823f63720c630d1a0bd79af30c0c2a21b1b3650f36ea",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/fastify-decoration-lookup/pt-br.candidate.txt",
+      "sha256": "f1ea7f3c9441072f22f3bc488d4fa609ea331a61f4e258377c03cba95450c9d1",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Ordered request/reply guards, explicit prototype fallback, helper distinction and parent-field traversal accurate.",
+    "Falsiness branch instance in this reached through strict plain call conditionally raises TypeError; no actual Fastify execution asserted.",
+    "Public required string|symbol identifier distinct from internal kRequest symbol; concrete export/API wiring does not prove all receiver bindings.",
+    "Runtime getter/helper effects and uninspected Request.buildRequest body left outside evidence.",
+    "Original request source only request wrapper, actual baseline invented omitted-name false fallback."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/fastify/825d7722e4932a39193729997c76535d0a963b6b/lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "source_path": "lib/decorate.js",
+      "source_lines": [
+        82,
+        113
+      ],
+      "exact_source_evidence": "function checkExistence (instance, name) {\n  if (name) {\n    return name in instance || (instance.prototype && name in instance.prototype) || hasKey(instance, name)\n  }\n\n  return instance in this\n}\n\nfunction hasKey (fn, name) {\n  return fn.props ? fn.props.some(p => p.key === name) : false\n}\n\nfunction hasInstanceProperty (konstructor, name) {\n  let k = konstructor\n  while (k) {\n    if (k.instanceProperties && k.instanceProperties.has(name)) return true\n    k = k.parent\n  }\n  return false\n}\n\nfunction checkRequestExistence (name) {\n  if (name && hasKey(this[kRequest], name)) return true\n  if (name && hasInstanceProperty(this[kRequest], name)) return true\n  return checkExistence(this[kRequest].prototype, name)\n}\n\nfunction checkReplyExistence (name) {\n  if (name && hasKey(this[kReply], name)) return true\n  if (name && hasInstanceProperty(this[kReply], name)) return true\n  return checkExistence(this[kReply].prototype, name)\n}",
+      "reviewed_interpretation": "Helpers and ordered wrapper conditions/fallback.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/fastify/825d7722e4932a39193729997c76535d0a963b6b/lib/decorate.js",
+      "source_sha256": "d2b77abf8bbbb61286548a3188eb48f8d03a10308160b09e304c66d8e9fa6904",
+      "source_path": "lib/decorate.js",
+      "source_lines": [
+        151,
+        160
+      ],
+      "exact_source_evidence": "module.exports = {\n  add: decorateFastify,\n  exist: checkExistence,\n  existRequest: checkRequestExistence,\n  existReply: checkReplyExistence,\n  dependencies: checkDependencies,\n  decorateReply,\n  decorateRequest,\n  getInstanceDecorator,\n  hasKey",
+      "reviewed_interpretation": "Export aliases.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/fastify/825d7722e4932a39193729997c76535d0a963b6b/lib/symbols.js",
+      "source_sha256": "bddfadc6be13b7c28869ac052d499b0f400c6dacddc667500e3097cd7e6a4a6c",
+      "source_path": "lib/symbols.js",
+      "source_lines": [
+        29,
+        31
+      ],
+      "exact_source_evidence": "  // Request\n  kRequest: Symbol('fastify.Request'),\n  kRequestPayloadStream: Symbol('fastify.RequestPayloadStream'),",
+      "reviewed_interpretation": "Internal request symbol declaration.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "fastify-checkrequestexistence",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/fastify-checkrequestexistence/raw-response.json",
+      "sha256": "7ca28e395637d81928c8b3cb8a3369b9564fb4b4f4107d706f793c11786e2d3e",
+      "read_model_content_in_full": true,
+      "origin": "original-public-chapter-provenance-capture-results-v3.json"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0,
+  "at_v2": "2026-11-21T18:33:17.729813+00:00",
+  "extends_exact_v1_sha256": "219d2474f5e6b348c633524ad81a258d5ac077e1fa2e642afacb4430b608c17d",
+  "procedural_gap_resolution": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-procedural-gap-resolution-v1.json",
+  "procedural_gap_resolution_sha256": "b66a50175b08c330c442e14d161455034f5552ef1f0575bab33e0ad1f0868b57"
+}

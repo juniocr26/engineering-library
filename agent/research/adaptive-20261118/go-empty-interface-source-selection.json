@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-GO-EMPTY-INTERFACE-BOUNDARIES",
+  "at": "2026-11-19T01:01:56.899164+00:00",
+  "status": "INTEGRATED",
+  "runtime_consumer": "Command.source_units -> native_structure.ranges(go=True)",
+  "problem": "SQLx In, bindMapArgs and appendReflectSlice result types contain empty interface braces, previously mistaken for body boundaries and refused.",
+  "intervention": "Normalize only empty interface type tokens to an offset-preserving placeholder in the private body-search copy. Original source quotes and line offsets unchanged. Nonempty interfaces and anonymous structs remain unsupported.",
+  "before_after": {
+    "frozen_controls_before_pass": 9,
+    "frozen_controls_after_pass": 16,
+    "controls_total": 16,
+    "new_exact_real_definitions": 4,
+    "additional_tool_syntax_fixture": 1,
+    "repositories": [
+      "sqlx",
+      "chi",
+      "sdk-go"
+    ],
+    "ruby_runs": 173,
+    "ruby_assertions": 989,
+    "ruby_failures": 0,
+    "native_python_tests": 24,
+    "native_failures": 0,
+    "model_calls": 0
+  },
+  "intentional_scope_expansion": "Earlier callback test rejecting empty interface parameter types now covers nonempty interface members. Empty interfaces are explicitly supported, not silently accepted as arbitrary anonymous types.",
+  "limits": [
+    "Bounded lexical source-layout support, not a full Go parser/compiler/type verifier.",
+    "Receiver methods, generics, nonempty interfaces and anonymous structs remain refused.",
+    "SDK SideEffect transfer is a tool fixture, not production workflow runtime validation.",
+    "Availability of complete source does not establish correct LLM prose."
+  ],
+  "evidence": [
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-protocol.json",
+      "sha256": "d6b88475ac757a6614bb73675d580ef27d41c8896013aa789a0b8a7dd5f113f1"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-sqlx-results.json",
+      "sha256": "5ebd00eea9d5c59fe6c8fbe0663c238b759d1f0d99ef747312f289f3ec58b0dd"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-controls-protocol.json",
+      "sha256": "b6e27608982c7d2d924c1e51a035097a14f9253ba93e9e10fea3291960c7871a"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-controls-results.json",
+      "sha256": "00db9d39997c20e2024ad64d63e8c6738a2d1f72eec3084dbb5615ded57b05de"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-independent-transfer.json",
+      "sha256": "0c1b43ca5d7ad5133ba2c2e211bab71b9e32b82ed71c3b013d9351b942f5f828"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-real-consumer.jsonl",
+      "sha256": "0e93327a873a392ab5c37c2d1202cecc976f34b0efdb8012886d63c6b16e6aaa"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-all-tests.log",
+      "sha256": "b66635dc35f5786d2b264fc15fda25005c0ca79f36ad48f98a7e326103872051"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/go-empty-interface-native-tests.stderr",
+      "sha256": "84a7ab403af2322bcfe6ed0618c774e421b8a5f5727f8ebb8e27ca6605d61cd1"
+    }
+  ]
+}

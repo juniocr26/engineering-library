@@ -1,0 +1,111 @@
+{
+  "at": "2026-11-21T18:27:21.499426+00:00",
+  "topic": "ruff-target-version",
+  "family": "ruff",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/ruff-target-version/en.candidate.txt",
+      "sha256": "5cc31c9bbb136d62da3f73b943b15f194afdb8e44dbf8f44cc8d292952435dbc",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/ruff-target-version/pt-br.candidate.txt",
+      "sha256": "af65fcd22a8889ba7fc34a165660855dac2f6f40b24b0b5036a37af90b973867",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "RustimplementationreturnsPythonVersion, sharedborrowedreceiver/path, no formatter invocation.",
+    "PerfilehelperOptionfallbacknotBoolean/numericlatestdefault; constructor/configstageResult notresolverreturntype.",
+    "HelperemptylistNonebypassespathfilenameexpect; nonemptyiterexpectmaypanic evenmethodreturnsPythonVersion.",
+    "Compiledvectorfirstyieldedmatch withbasename/absolute/negation notconfigfiletextorder; globinternals notclaimed.",
+    "ActualoldbaselineRustprojectversiondomainerrorbothlangs confirmed; correcthelper/fallbacksubclaimsnotwholeapproval."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/ruff/0222c19dd8e0c9a927f2e47bf3774a108431da25/crates/ruff_workspace/src/settings.rs",
+      "source_sha256": "1cd5c228eaefa5d798d70c049ae79ec378ffc0cb3cb2d44858eef49cbdd9eff0",
+      "source_path": "crates/ruff_workspace/src/settings.rs",
+      "source_lines": [
+        185,
+        195
+      ],
+      "exact_source_evidence": "    /// The non-path-resolved Python version specified by the `target-version` input option.\n    ///\n    /// See [`FormatterSettings::resolve_target_version`] for a way to obtain the Python version for\n    /// a given file, while respecting the overrides in `per_file_target_version`.\n    pub unresolved_target_version: PythonVersion,\n    /// Path-specific overrides to `unresolved_target_version`.\n    ///\n    /// See [`FormatterSettings::resolve_target_version`] for a way to check a given [`Path`]\n    /// against these patterns, while falling back to `unresolved_target_version` if none of them\n    /// match.\n    pub per_file_target_version: CompiledPerFileTargetVersionList,",
+      "reviewed_interpretation": "StoredPythonVersion and compiledoverride types.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/ruff/0222c19dd8e0c9a927f2e47bf3774a108431da25/crates/ruff_workspace/src/settings.rs",
+      "source_sha256": "1cd5c228eaefa5d798d70c049ae79ec378ffc0cb3cb2d44858eef49cbdd9eff0",
+      "source_path": "crates/ruff_workspace/src/settings.rs",
+      "source_lines": [
+        260,
+        268
+      ],
+      "exact_source_evidence": "    ///\n    /// This method respects the per-file version overrides in\n    /// [`FormatterSettings::per_file_target_version`] and falls back on\n    /// [`FormatterSettings::unresolved_target_version`] if none of the override patterns match.\n    pub fn resolve_target_version(&self, path: &Path) -> PythonVersion {\n        self.per_file_target_version\n            .is_match(path)\n            .unwrap_or(self.unresolved_target_version)\n    }",
+      "reviewed_interpretation": "Exact resolver chain.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/ruff/0222c19dd8e0c9a927f2e47bf3774a108431da25/crates/ruff_linter/src/settings/types.rs",
+      "source_sha256": "de4bcea28a982a9c98951baf4404523ba2cafb27083e4d5e942639ea4f794121",
+      "source_path": "crates/ruff_linter/src/settings/types.rs",
+      "source_lines": [
+        827,
+        883
+      ],
+      "exact_source_evidence": "impl<T: std::fmt::Debug> CompiledPerFileList<T> {\n    /// Return an iterator over the entries in `self` that match the input `path`.\n    ///\n    /// `debug_label` is used for [`debug!`] messages explaining why certain patterns were matched.\n    pub(crate) fn iter_matches<'a, 'p>(\n        &'a self,\n        path: &'p Path,\n        debug_label: &'static str,\n    ) -> impl Iterator<Item = &'p T>\n    where\n        'a: 'p,\n    {\n        let file_name = path.file_name().expect(\"Unable to parse filename\");\n        let basename = Candidate::new(file_name);\n        let absolute = Candidate::new(path);\n        self.inner.iter().filter_map(move |entry| {\n            if entry.basename_matcher.is_match_candidate(&basename) {\n                if entry.negated {\n                    None\n                } else {\n                    debug!(\n                        \"{} for {:?} due to basename match on {:?}: {:?}\",\n                        debug_label,\n                        path,\n                        entry.basename_matcher.glob().regex(),\n                        entry.data\n                    );\n                    Some(&entry.data)\n                }\n            } else if entry.absolute_matcher.is_match_candidate(&absolute) {\n                if entry.negated {\n                    None\n                } else {\n                    debug!(\n                        \"{} for {:?} due to absolute match on {:?}: {:?}\",\n                        debug_label,\n                        path,\n                        entry.absolute_matcher.glob().regex(),\n                        entry.data\n                    );\n                    Some(&entry.data)\n                }\n            } else if entry.negated {\n                debug!(\n                    \"{} for {:?} due to negated pattern matching neither {:?} nor {:?}: {:?}\",\n                    debug_label,\n                    path,\n                    entry.basename_matcher.glob().regex(),\n                    entry.absolute_matcher.glob().regex(),\n                    entry.data\n                );\n                Some(&entry.data)\n            } else {\n                None\n            }\n        })\n    }",
+      "reviewed_interpretation": "Iterator pathfilenameexpect and entryselection.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-source-reacquisition-v1/ruff/0222c19dd8e0c9a927f2e47bf3774a108431da25/crates/ruff_linter/src/settings/types.rs",
+      "source_sha256": "de4bcea28a982a9c98951baf4404523ba2cafb27083e4d5e942639ea4f794121",
+      "source_path": "crates/ruff_linter/src/settings/types.rs",
+      "source_lines": [
+        974,
+        996
+      ],
+      "exact_source_evidence": "#[derive(CacheKey, Clone, Debug, Default)]\npub struct CompiledPerFileTargetVersionList(CompiledPerFileList<ast::PythonVersion>);\n\nimpl CompiledPerFileTargetVersionList {\n    /// Given a list of [`PerFileTargetVersion`] patterns, create a compiled set of globs.\n    ///\n    /// Returns an error if either of the glob patterns cannot be parsed.\n    pub fn resolve(per_file_versions: Vec<PerFileTargetVersion>) -> Result<Self> {\n        Ok(Self(CompiledPerFileList::resolve(\n            per_file_versions.into_iter().map(|version| version.0),\n        )?))\n    }\n\n    pub fn is_match(&self, path: &Path) -> Option<ast::PythonVersion> {\n        if self.0.is_empty() {\n            return None;\n        }\n\n        self.0\n            .iter_matches(path, \"Setting Python version\")\n            .next()\n            .copied()\n    }",
+      "reviewed_interpretation": "Compiledlist resolveResult and is_matchOption/emptyshortcut.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "ruff-target-version",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/ruff-target-version/raw-response.json",
+      "sha256": "85b0b1e203ec346883ef22d5b1f0d55963dc2d800301a59f32d62ad888470a3f",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/ruff-target-version/origin.json",
+      "origin_sha256": "573111be7db2a15b87b8352c859b0f1d22c4221335d7b0bbe783a393d708460f"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

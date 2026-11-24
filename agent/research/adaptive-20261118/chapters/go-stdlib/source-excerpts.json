@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "provider": "cached Go1.27.4 LinuxARM64 pinned image",
+  "image": "golang@sha256:0a5f7fe796599ff487605987432e7619ae45beeb2fba4c2ce0b907879932aebf",
+  "Git_revision": null,
+  "files": {
+    "cmp/cmp.go": {
+      "retained_path": "agent/research/adaptive-20261118/chapters/go-stdlib/source/cmp.go",
+      "size": 2063,
+      "sha256": "9d8e18366a1a20d2a1981b7f6a0fe53362e801d9ca20eeee56d65536124dd91b"
+    },
+    "slices/sort.go": {
+      "retained_path": "agent/research/adaptive-20261118/chapters/go-stdlib/source/sort.go",
+      "size": 6103,
+      "sha256": "e6cd273b637e7dd2f547596c22e6236b92ae9b376f31ceb7b3c3269dd60a38df"
+    },
+    "VERSION": {
+      "retained_path": "agent/research/adaptive-20261118/chapters/go-stdlib/source/VERSION",
+      "size": 35,
+      "sha256": "28ff77ac2178f2faca8a4f535e60b1738e397c9086b3ecfc18c9955abe75634a"
+    },
+    "LICENSE": {
+      "retained_path": "agent/research/adaptive-20261118/chapters/go-stdlib/source/LICENSE",
+      "size": 1453,
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+    }
+  },
+  "units": {
+    "Less": {
+      "path": "cmp/cmp.go",
+      "line": 28,
+      "end_line": 30,
+      "quote": "func Less[T Ordered](x, y T) bool {\n\treturn (isNaN(x) && !isNaN(y)) || x < y\n}\n",
+      "quote_sha256": "5bbfe0a0adfd4e3592d8e0df8c3298ff12b4303106ce1a44f34d417c385cd370",
+      "source_sha256": "9d8e18366a1a20d2a1981b7f6a0fe53362e801d9ca20eeee56d65536124dd91b",
+      "source_executed": false
+    },
+    "Compare": {
+      "path": "cmp/cmp.go",
+      "line": 40,
+      "end_line": 59,
+      "quote": "func Compare[T Ordered](x, y T) int {\n\txNaN := isNaN(x)\n\tyNaN := isNaN(y)\n\tif xNaN {\n\t\tif yNaN {\n\t\t\treturn 0\n\t\t}\n\t\treturn -1\n\t}\n\tif yNaN {\n\t\treturn +1\n\t}\n\tif x < y {\n\t\treturn -1\n\t}\n\tif x > y {\n\t\treturn +1\n\t}\n\treturn 0\n}\n",
+      "quote_sha256": "924c2b45d56eb596c5f6264c88567ef4517971b7e9ef8bbfb5db884cd1623108",
+      "source_sha256": "9d8e18366a1a20d2a1981b7f6a0fe53362e801d9ca20eeee56d65536124dd91b",
+      "source_executed": false
+    },
+    "isNaN": {
+      "path": "cmp/cmp.go",
+      "line": 63,
+      "end_line": 65,
+      "quote": "func isNaN[T Ordered](x T) bool {\n\treturn x != x\n}\n",
+      "quote_sha256": "e8e31dd108db02648e536b019a8a479e2ae79046fab250a97b3ba4477daf76a1",
+      "source_sha256": "9d8e18366a1a20d2a1981b7f6a0fe53362e801d9ca20eeee56d65536124dd91b",
+      "source_executed": false
+    },
+    "Or": {
+      "path": "cmp/cmp.go",
+      "line": 69,
+      "end_line": 77,
+      "quote": "func Or[T comparable](vals ...T) T {\n\tvar zero T\n\tfor _, val := range vals {\n\t\tif val != zero {\n\t\t\treturn val\n\t\t}\n\t}\n\treturn zero\n}\n",
+      "quote_sha256": "27adaf611638352175e0b67cd0c9cfef49692afa2ba646228b82d812619cc62a",
+      "source_sha256": "9d8e18366a1a20d2a1981b7f6a0fe53362e801d9ca20eeee56d65536124dd91b",
+      "source_executed": false
+    },
+    "BinarySearch": {
+      "path": "slices/sort.go",
+      "line": 126,
+      "end_line": 143,
+      "quote": "func BinarySearch[S ~[]E, E cmp.Ordered](x S, target E) (int, bool) {\n\t// Inlining is faster than calling BinarySearchFunc with a lambda.\n\tn := len(x)\n\t// Define x[-1] < target and x[n] >= target.\n\t// Invariant: x[i-1] < target, x[j] >= target.\n\ti, j := 0, n\n\tfor i < j {\n\t\th := int(uint(i+j) >> 1) // avoid overflow when computing h\n\t\t// i ≤ h < j\n\t\tif cmp.Less(x[h], target) {\n\t\t\ti = h + 1 // preserves x[i-1] < target\n\t\t} else {\n\t\t\tj = h // preserves x[j] >= target\n\t\t}\n\t}\n\t// i == j, x[i-1] < target, and x[j] (= x[i]) >= target  =>  answer is i.\n\treturn i, i < n && (x[i] == target || (isNaN(x[i]) && isNaN(target)))\n}\n",
+      "quote_sha256": "5bfe5b3b5d4056f07265f836b53e8e6702d496d0e7b1ea68db59eb6f07082113",
+      "source_sha256": "e6cd273b637e7dd2f547596c22e6236b92ae9b376f31ceb7b3c3269dd60a38df",
+      "source_executed": false
+    },
+    "MinFunc": {
+      "path": "slices/sort.go",
+      "line": 79,
+      "end_line": 90,
+      "quote": "func MinFunc[S ~[]E, E any](x S, cmp func(a, b E) int) E {\n\tif len(x) < 1 {\n\t\tpanic(\"slices.MinFunc: empty list\")\n\t}\n\tm := x[0]\n\tfor i := 1; i < len(x); i++ {\n\t\tif cmp(x[i], m) < 0 {\n\t\t\tm = x[i]\n\t\t}\n\t}\n\treturn m\n}\n",
+      "quote_sha256": "7dbc5a14f812f641544c7f1c938b6e0b5c8d6f42eab85d069e88a62e787266e0",
+      "source_sha256": "e6cd273b637e7dd2f547596c22e6236b92ae9b376f31ceb7b3c3269dd60a38df",
+      "source_executed": false
+    }
+  },
+  "source_executed": false
+}

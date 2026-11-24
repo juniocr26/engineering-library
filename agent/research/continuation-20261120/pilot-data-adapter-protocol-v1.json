@@ -1,0 +1,171 @@
+{
+  "at": "2026-11-20T20:44:09.481623+00:00",
+  "status": "FROZEN_BEFORE_SELECTED_PURE_ADAPTER_EXECUTION",
+  "hypothesis": "Exact upstream pure format/cache/concatenation adapters may enforce format differently from owner approval,record validity,token length or immutable lineage. Controlled native-shaped owned rows can reveal those boundaries before any future training.",
+  "source_path": "training-primary-sources-v1/mlx-lm--mlx_lm--tuner--datasets.py",
+  "source_sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689",
+  "git_blob": "92804bb9416064a30903fc79a16e5b9add3ef926",
+  "source_revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+  "selected_classes": [
+    "TextDataset",
+    "ChatDataset",
+    "CompletionsDataset",
+    "CacheDataset",
+    "ConcatenatedDataset"
+  ],
+  "selected_functions": [
+    "create_dataset"
+  ],
+  "cases": [
+    {
+      "id": "chat-unapproved-flags",
+      "expected_fields": {
+        "adapter": "ChatDataset",
+        "processed": true,
+        "approval_fields_consulted": false
+      }
+    },
+    {
+      "id": "completion-unapproved-flags",
+      "expected_fields": {
+        "adapter": "CompletionsDataset",
+        "processed": true
+      }
+    },
+    {
+      "id": "text-unapproved-flags",
+      "expected_fields": {
+        "adapter": "TextDataset",
+        "processed": true
+      }
+    },
+    {
+      "id": "text-mask-refusal",
+      "expected_fields": {
+        "error_type": "ValueError"
+      }
+    },
+    {
+      "id": "empty-input-format-dispatch",
+      "expected_fields": {
+        "error_type": "IndexError"
+      }
+    },
+    {
+      "id": "mixed-row-formats",
+      "expected_fields": {
+        "adapter": "ChatDataset",
+        "second_row_error": "KeyError"
+      }
+    },
+    {
+      "id": "last-user-not-refused",
+      "expected_fields": {
+        "processed": true,
+        "last_role": "user"
+      }
+    },
+    {
+      "id": "empty-messages-with-mask",
+      "expected_fields": {
+        "error_type": "IndexError"
+      }
+    },
+    {
+      "id": "cache-after-row-change",
+      "expected_fields": {
+        "processing_calls": 1,
+        "same_cached_object": true,
+        "first_length": 3,
+        "second_length": 3
+      }
+    },
+    {
+      "id": "cache-sort-proxy",
+      "expected_fields": {
+        "itemlen_values": [
+          1,
+          4
+        ],
+        "processed_lengths": [
+          11,
+          3
+        ],
+        "source_sort_indices": [
+          0,
+          1
+        ],
+        "token_length_sort_indices": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "concatenated-boundary-index",
+      "expected_fields": {
+        "declared_length": 5,
+        "index_len_returns": "B0"
+      }
+    },
+    {
+      "id": "concatenated-sequence-iteration",
+      "expected_fields": {
+        "declared_length": 5,
+        "iterated_length": 8,
+        "ids": [
+          "A0",
+          "A1",
+          "B0",
+          "B1",
+          "B2",
+          "B0",
+          "B1",
+          "B2"
+        ]
+      }
+    },
+    {
+      "id": "concatenated-shared-row-routing",
+      "expected_fields": {
+        "same_row_object": true,
+        "initial_origin": "A",
+        "held_origin_after_other_access": "B"
+      }
+    },
+    {
+      "id": "concatenated-metadata-mutation",
+      "expected_fields": {
+        "before_has_dataset_key": false,
+        "after_dataset_index": 0,
+        "returned_is_original": true
+      }
+    }
+  ],
+  "execution_scope": {
+    "allowed": "Only reviewed selected pure class/function AST bodies in isolated globals;no upstream module imports or file/network loaders.",
+    "annotations": "typing containers and an inert object annotation placeholder;no real PreTrainedTokenizer import or construction.",
+    "owned_interface_sink": "Own encode/apply_chat_template methods return tiny deterministic integer lists and record calls. Not a real tokenizer,template or vocabulary.",
+    "source_dataset_readers_and_training_functions_allowed": false,
+    "actual_tokenizer_mask_quality_or_compatibility_claim": false,
+    "framework_model_or_tensor_or_optimizer_creation_allowed": false,
+    "network_or_file_dataset_loading_allowed": false,
+    "max_owned_rows": 5,
+    "max_sequence_fallback_items_observed": 8,
+    "frozen305_accessed_or_changed": false
+  },
+  "source_execution_allowed_for_selected_pure_subset": true,
+  "upstream_module_or_MLX_Transformers_NumPy_YAML_import_allowed": false,
+  "real_tokenizer_loaded": false,
+  "training_steps": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "launch_allowed": false,
+  "interpretation_limits": [
+    "14 correlated owned scenarios,not independent realtraining accuracy.",
+    "Metadata flags are informative in these adapters;this is not an upstream authorization-security defect.",
+    "Cache sorting uses exercised dictionary length;no NumPy/MLX batch/loss/training throughput was run.",
+    "Out-of-range concatenated indexing and alias routing are owned consumer observations;no claim all actual loader paths or training loops hit them.",
+    "Actual frozen305 schema is different from owned native-shaped probe rows;none was exported or passed to a trainer."
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-21T06:07:19.741639+00:00",
+  "pair_freeze": "opencv-header-relocation-pair-freeze-v1.json",
+  "cards": [
+    {
+      "id": "OCMOVE-OLD-ORDINARY",
+      "revision": "babc669dba4c1f55a0acc904e47bf2186aa8f7d1",
+      "source_path": "modules/core/include/opencv2/core/base.hpp",
+      "line_start": 359,
+      "line_end": 359,
+      "source_quote": "#define CV_Assert( expr ) do { if(!!(expr)) ; else cv::error( cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__ ); } while(0)",
+      "quote_sha256": "bc81b387a47ea7b6cfb76331de48a17b1ed91bf7a5b71052fa63c488df19bcea"
+    },
+    {
+      "id": "OCMOVE-NEW-ORDINARY",
+      "revision": "f73560293f2c5e478f25766a4d085639956b0cbe",
+      "source_path": "modules/core/include/opencv2/core/exception.hpp",
+      "line_start": 198,
+      "line_end": 198,
+      "source_quote": "#define CV_Assert( expr ) do { if(!!(expr)) ; else cv::error( cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__ ); } while(0)",
+      "quote_sha256": "bc81b387a47ea7b6cfb76331de48a17b1ed91bf7a5b71052fa63c488df19bcea"
+    },
+    {
+      "id": "OCMOVE-OLD-CONDITIONAL",
+      "revision": "babc669dba4c1f55a0acc904e47bf2186aa8f7d1",
+      "source_path": "modules/core/include/opencv2/core/base.hpp",
+      "line_start": 315,
+      "line_end": 323,
+      "source_quote": "#ifdef CV_STATIC_ANALYSIS\n\n// In practice, some macro are not processed correctly (noreturn is not detected).\n// We need to use simplified definition for them.\n#define CV_Error(code, msg) do { (void)(code); (void)(msg); abort(); } while (0)\n#define CV_Error_(code, args) do { (void)(code); (void)(cv::format args); abort(); } while (0)\n#define CV_Assert( expr ) do { if (!(expr)) abort(); } while (0)\n\n#else // CV_STATIC_ANALYSIS",
+      "quote_sha256": "87b57f0be3a986525c23821872cc86f8c68363741433db23f7e21460d51952e0"
+    },
+    {
+      "id": "OCMOVE-NEW-CONDITIONAL",
+      "revision": "f73560293f2c5e478f25766a4d085639956b0cbe",
+      "source_path": "modules/core/include/opencv2/core/exception.hpp",
+      "line_start": 154,
+      "line_end": 162,
+      "source_quote": "#ifdef CV_STATIC_ANALYSIS\n\n// In practice, some macro are not processed correctly (noreturn is not detected).\n// We need to use simplified definition for them.\n#define CV_Error(code, msg) do { (void)(code); (void)(msg); abort(); } while (0)\n#define CV_Error_(code, args) do { (void)(code); (void)(cv::format args); abort(); } while (0)\n#define CV_Assert( expr ) do { if (!(expr)) abort(); } while (0)\n\n#else // CV_STATIC_ANALYSIS",
+      "quote_sha256": "87b57f0be3a986525c23821872cc86f8c68363741433db23f7e21460d51952e0"
+    },
+    {
+      "id": "OCMOVE-LEGACY-INCLUDE",
+      "revision": "f73560293f2c5e478f25766a4d085639956b0cbe",
+      "source_path": "modules/core/include/opencv2/core/base.hpp",
+      "line_start": 388,
+      "line_end": 396,
+      "source_quote": "} // cv\n\n#include \"opencv2/core/fwddecl.hpp\"\n#include \"opencv2/core/neon_utils.hpp\"\n#include \"opencv2/core/vsx_utils.hpp\"\n#include \"opencv2/core/exception.hpp\"\n#include \"opencv2/core/check.hpp\"\n\n#endif //OPENCV_CORE_BASE_HPP",
+      "quote_sha256": "4c2ad5c458ad0836473981e7013331be0c108004d3b73a59c389616e4ec5bb87"
+    },
+    {
+      "id": "OCMOVE-UMBRELLA-BEFORE",
+      "revision": "babc669dba4c1f55a0acc904e47bf2186aa8f7d1",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "line_start": 50,
+      "line_end": 55,
+      "source_quote": "#endif\n\n#include \"opencv2/core/cvdef.h\"\n#include \"opencv2/core/base.hpp\"\n#include \"opencv2/core/cvstd.hpp\"\n#include \"opencv2/core/traits.hpp\"",
+      "quote_sha256": "a072a86f90deef5955f77374dd223e9b40cb1d27e8cc876d4aa92c847da84585"
+    },
+    {
+      "id": "OCMOVE-UMBRELLA-AFTER",
+      "revision": "f73560293f2c5e478f25766a4d085639956b0cbe",
+      "source_path": "modules/core/include/opencv2/core.hpp",
+      "line_start": 50,
+      "line_end": 55,
+      "source_quote": "#endif\n\n#include \"opencv2/core/cvdef.h\"\n#include \"opencv2/core/base.hpp\"\n#include \"opencv2/core/cvstd.hpp\"\n#include \"opencv2/core/traits.hpp\"",
+      "quote_sha256": "a072a86f90deef5955f77374dd223e9b40cb1d27e8cc876d4aa92c847da84585"
+    },
+    {
+      "id": "OCMOVE-OLD-ERROR-API",
+      "revision": "babc669dba4c1f55a0acc904e47bf2186aa8f7d1",
+      "source_path": "modules/core/include/opencv2/core/base.hpp",
+      "line_start": 278,
+      "line_end": 312,
+      "source_quote": "    BORDER_ISOLATED    = 16 //!< Interpolation restricted within the ROI boundaries.\n};\n\n//! @} core_array\n\n//! @addtogroup core_utils\n//! @{\n\n/*! @brief Signals an error and raises the exception.\n\nBy default the function prints information about the error to stderr,\nthen it either stops if setBreakOnError() had been called before or raises the exception.\nIt is possible to alternate error processing by using redirectError().\n@param _code - error code (Error::Code)\n@param _err - error description\n@param _func - function name. Available only when the compiler supports getting it\n@param _file - source file name where the error has occurred\n@param _line - line number in the source file where the error has occurred\n@see CV_Error, CV_Error_, CV_Assert, CV_DbgAssert\n */\nCV_EXPORTS CV_NORETURN void error(int _code, const String& _err, const char* _func, const char* _file, int _line);\n\n/*! @brief Signals an error and terminate application.\n\nBy default the function prints information about the error to stderr, then it terminates application\nwith std::terminate. The function is designed for invariants check in functions and methods with\nnoexcept attribute.\n@param _code - error code (Error::Code)\n@param _err - error description\n@param _func - function name. Available only when the compiler supports getting it\n@param _file - source file name where the error has occurred\n@param _line - line number in the source file where the error has occurred\n@see CV_AssertTerminate\n */\nCV_EXPORTS CV_NORETURN void terminate(int _code, const String& _err, const char* _func, const char* _file, int _line) CV_NOEXCEPT;",
+      "quote_sha256": "0c5c93b9937bc94e4491e1be3bb6423d7c0693743a8f3139bf88a9edd2f62b9f"
+    },
+    {
+      "id": "OCMOVE-NEW-ERROR-API",
+      "revision": "f73560293f2c5e478f25766a4d085639956b0cbe",
+      "source_path": "modules/core/include/opencv2/core/exception.hpp",
+      "line_start": 105,
+      "line_end": 151,
+      "source_quote": "\n    std::string msg; ///< the formatted error message\n\n    Error::Code code; ///< error code @see CVStatus\n    std::string err; ///< error description\n    std::string func; ///< function name. Available only when the compiler supports getting it\n    std::string file; ///< source file name where the error has occurred\n    int line; ///< line number in the source file where the error has occurred\n};\n\n/*! @brief Signals an error and raises the exception.\n\nBy default the function prints information about the error to stderr,\nthen it either stops if cv::setBreakOnError() had been called before or raises the exception.\nIt is possible to alternate error processing by using #redirectError().\n@param exc the exception raisen.\n@deprecated drop this version\n */\nCV_EXPORTS CV_NORETURN void error(const Exception& exc);\n\n/*! @brief Signals an error and raises the exception.\n\nBy default the function prints information about the error to stderr,\nthen it either stops if setBreakOnError() had been called before or raises the exception.\nIt is possible to alternate error processing by using redirectError().\n@param _code - error code (Error::Code)\n@param _err - error description\n@param _func - function name. Available only when the compiler supports getting it\n@param _file - source file name where the error has occurred\n@param _line - line number in the source file where the error has occurred\n@see CV_Error, CV_Error_, CV_Assert, CV_DbgAssert\n */\nCV_EXPORTS CV_NORETURN void error(Error::Code _code, const String& _err, const char* _func, const char* _file, int _line);\n\n/*! @brief Signals an error and terminate application.\n\nBy default the function prints information about the error to stderr, then it terminates application\nwith std::terminate. The function is designed for invariants check in functions and methods with\nnoexcept attribute.\n@param _code - error code (Error::Code)\n@param _err - error description\n@param _func - function name. Available only when the compiler supports getting it\n@param _file - source file name where the error has occurred\n@param _line - line number in the source file where the error has occurred\n@see CV_AssertTerminate\n */\nCV_EXPORTS CV_NORETURN void terminate(Error::Code _code, const String& _err, const char* _func, const char* _file, int _line) CV_NOEXCEPT;",
+      "quote_sha256": "19fef7274044c2a9434957da4f54802788c2b559dd21628b930b5259da32563b"
+    }
+  ],
+  "ordinary_macro_bytes_equal": true,
+  "static_analysis_macro_bytes_equal": true,
+  "relevant_branch_markers_equal": true,
+  "after_base_contains_no_direct_CV_Assert_definition": true,
+  "after_base_explicitly_includes_exception_header": true,
+  "core_umbrella_includes_base_before_and_after": true,
+  "source_comment_or_commit_subject_not_used_as_equivalence_proof": true,
+  "finding": "Selected macro definitions relocated with identical definition lines and corresponding conditional branch markers. Include wiring remains written from core umbrella to base and then exception. A missing definition from partial base selection is not API removal.",
+  "not_proven": [
+    "Overall error API or binary/backward compatibility equivalence; surrounding declarations changed and this is not a full diff/runtime assessment.",
+    "Actual preprocessing or installed build configuration; selected include graph is source-only.",
+    "Universal exception behavior or third-party callbacks."
+  ],
+  "source_execution": false,
+  "model_calls": 0,
+  "training_gold": false
+}

@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-22T01:15:20.102135+00:00",
+  "scope": "New cross-artifact interpretation; no repeat of prior mask controls and no runtime/model/tokenizer execution.",
+  "eos_configuration": {
+    "gguf_declared_eos_id": 128009,
+    "candidate_tokenizer_eos_text": "<|eot_id|>",
+    "candidate_model_config_eos_ids": [
+      128001,
+      128008,
+      128009
+    ],
+    "ollama_declared_stop_texts": [
+      "<|start_header_id|>",
+      "<|end_header_id|>",
+      "<|eot_id|>"
+    ],
+    "ollama_stop_text_vocab_ids": [
+      {
+        "text": "<|start_header_id|>",
+        "id": 128006
+      },
+      {
+        "text": "<|end_header_id|>",
+        "id": 128007
+      },
+      {
+        "text": "<|eot_id|>",
+        "id": 128009
+      }
+    ],
+    "interpretation": "These are different configuration layers; neither union nor equality of effective runtime stopping may be inferred without actual loader/generation trace."
+  },
+  "chat_template_layers": {
+    "gguf_jinja_equal_candidate_jinja": true,
+    "ollama_template_blob": "ollama/models/blobs/sha256-966de95ca8a62200913e3f8bfbf84c8494536f1b94b49166851e76644e966396",
+    "ollama_template_sha256": "966de95ca8a62200913e3f8bfbf84c8494536f1b94b49166851e76644e966396",
+    "ollama_template_declares_today_date_literal": false,
+    "gguf_template_declares_today_date_literal": true,
+    "gguf_template_declares_bos_emission": true,
+    "ollama_blob_contains_begin_of_text_literal": false,
+    "interpretation": "Serialized Go and Jinja templates differ in syntax and literal branches. Do not infer final rendered BOS omission or prompt divergence without runtime renderer/tokenizer evidence."
+  },
+  "padding_cross_artifact": {
+    "gguf_vocab_zero": "!",
+    "gguf_finetune_pad_token_id": 128004,
+    "candidate_explicit_pad_token_configured": false,
+    "existing_trainer_zeros_source": "agent/research/acceptance-calibration-20261121/native-release-source-v1/mlx_lm/tuner/trainer.py:163",
+    "existing_index_projection_receipt": "agent/research/portfolio-vivabem-20261120/owned-loss-mask-index-review-v1.json",
+    "interpretation": "A named pad marker in vocab does not prove trainer uses it or excludes zero-filled positions from loss. Prior source-index finding remains historical; no new MLX loss/model observation."
+  },
+  "pilot_acceptance_addendum": [
+    "Archive actual served model digest and final rendered prompt/token IDs, not just matching Jinja metadata.",
+    "Freeze effective generation stop semantics for unchanged native base and adapter on the same loader/configuration.",
+    "Verify actual candidate tokenizer full vocab/merges/normalization, EOS handling and intended padding/mask with real tensors before any optimizer authorization.",
+    "Use unchanged native trainable base versus adapter for matched evaluation; Ollama GGUF and MLX4bit metadata do not establish an adapter-only comparison."
+  ],
+  "status": "STATIC_CORRESPONDENCES_AND_UNRESOLVED_RUNTIME_CONFOUNDS",
+  "fine_tuning_gates_promoted": 0,
+  "new_model_calls": 0,
+  "optimizer_updates": 0,
+  "training_eligible": false
+}

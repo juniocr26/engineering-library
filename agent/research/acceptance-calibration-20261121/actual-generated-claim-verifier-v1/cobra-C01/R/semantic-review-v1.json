@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-21T17:41:43.343276+00:00",
+  "case": "cobra-C01",
+  "method": "R",
+  "frozen_reference": {
+    "id": "cobra-C01",
+    "task": "cobra",
+    "fact_id": "C01",
+    "original_pair": {
+      "en": "The PositionalArgs function takes two arguments: a Command pointer and a slice of strings.",
+      "pt-BR": "A função PositionalArgs recebe dois argumentos: um ponteiro para Command e uma slice de strings."
+    },
+    "expected_verdict": "CONTRADICTED",
+    "source_review": "agent/research/acceptance-calibration-20261121/source-only-fact-render-v1/cobra/L/semantic-review-v2.json",
+    "source_review_sha256": "a800c8fe570a6a88a120b8a60330cfe9d7e1a95d0d06848ce0b683ff6902513a",
+    "reviewer": "Same campaign agent; exposed sources, not independenthuman"
+  },
+  "original_prediction": {
+    "verdict": "INSUFFICIENT",
+    "source_path": "args.go @ adbc8813901bba65827259daa8e22ff94ec1f30e",
+    "source_role": "factory",
+    "evidence": "The PositionalArgs function takes two arguments: a Command pointer and a slice of strings.",
+    "reason": "The claim is about the type and number of arguments the PositionalArgs function takes, but the source code only provides information about the function's behavior and does not explicitly state the number of arguments it takes. The source code also uses a factory pattern, where the function is defined as a function type, but it is not clear if it is a constructor or a function that takes arguments."
+  },
+  "content_sha256": "86eec18aa5f24e825559f640ff8ec6bef0b8be0af28644b11ad4a86f8d173f2a",
+  "primary_raw_label_agreement": false,
+  "rationale_support_for_requested_claim": "CONTRADICTED",
+  "source_relationship_review": "ExpectedCfortype-versus-callablefunctionrole. Rcallsitfactory/constructorandfalselysaysexplicitfunctiontypesignatureprovidesnonumberofarguments. Definedfunctiontypeisnotfactorycall. Sourceargorder/countvisible.",
+  "end_to_end_label_and_rationale_supported": false,
+  "admission_effect": "INSUFFICIENTstillblocksacceptanceofnegativeclaim; labeltaxonomyerrorseparatefromfalseSUPPORTED. SupportedF01isutilityfailure.",
+  "grading_basis": "semantic-verifier-rationale-review-rubric-v1.json; no rawlabel/referencechanges",
+  "reviewer": "Samecampaignagent, exposedsource, not independenthuman/owner",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

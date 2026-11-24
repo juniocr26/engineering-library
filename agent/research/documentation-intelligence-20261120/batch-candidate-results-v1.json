@@ -1,0 +1,203 @@
+{
+  "at": "2026-11-20T11:24:41.326869+00:00",
+  "cases": [
+    {
+      "id": "independent-add-modify",
+      "expected": "PREPARED",
+      "observed": "PREPARED",
+      "matches": true,
+      "originals_preserved": true,
+      "human_content_checks": {
+        "en": true,
+        "pt-br": true
+      },
+      "result": {
+        "status": "ISOLATED_CANDIDATE_PREPARED_PENDING_REVIEW",
+        "version": "0.1.5",
+        "repository": "owned-batch-candidate-lab",
+        "scope_kind": "owned-synthetic-project",
+        "operations": [
+          {
+            "claim_id": "sample.first",
+            "action": "MODIFY",
+            "source_file": "api.py",
+            "source_sha256": "b9a72815afefd7a386cf94bbf130e5dbb83f2f9410fbaa4e1061651910b9c144",
+            "previous_file": "api.py",
+            "previous_source_sha256": "c93964f2f1a0a4830af9825a21e281035e10b9694058f8913457e70df5a03dc4"
+          },
+          {
+            "claim_id": "sample.second",
+            "action": "ADD",
+            "source_file": "api.py",
+            "source_sha256": "b9a72815afefd7a386cf94bbf130e5dbb83f2f9410fbaa4e1061651910b9c144",
+            "previous_file": "api.py",
+            "previous_source_sha256": "c93964f2f1a0a4830af9825a21e281035e10b9694058f8913457e70df5a03dc4"
+          }
+        ],
+        "changed_documents": [
+          "en/guide.md",
+          "pt-br/guide.md"
+        ],
+        "candidate_created": true,
+        "inconclusive_claims": [],
+        "original_files_written": 0,
+        "model_calls": 0,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "training_gold": false,
+        "previous_revision": {
+          "kind": "sha256-source-inventory",
+          "digest": "b0a223ca68e5ba5b53624fd8c020f74eec8a6e97d532cd77a7e848a883f89f7a"
+        },
+        "current_revision": {
+          "kind": "sha256-source-inventory",
+          "digest": "8111860ce0959451c285429dd24586e48297a42e1727b4c923efa749b0e8e031"
+        },
+        "documentation_inventory_sha256": "0c6d2b55c9695671d460d8dc0651ae42baa9e9a6c456bb18d644cccb4f80bfcd",
+        "document_evidence": {
+          "en/guide.md": {
+            "version": "0.1.2",
+            "before_sha256": "fd6de129e67705300b897b2d0dfebb1d1c1343176c60aa8e60b89ab88305e7a3",
+            "candidate_sha256": "5064a38cd8e1ce464f01dec7578bc0f0613ea7978fd82d37e91d94c1e55b6896",
+            "changed": true,
+            "human_outside_managed_ranges_sha256": "c87da653912a0a3a3b40b225759c66856b173963efcff7119285d11707185465",
+            "history_required": true,
+            "operations": [
+              {
+                "claim_id": "sample.first",
+                "action": "MODIFY",
+                "changed": true,
+                "technical_recommendation": "MODIFY"
+              },
+              {
+                "claim_id": "sample.second",
+                "action": "ADD",
+                "changed": true,
+                "technical_recommendation": "ADD"
+              }
+            ],
+            "original_files_written": 0,
+            "owner_approved": false,
+            "training_gold": false,
+            "limitations": [
+              "In-memory candidate construction only; no active documentation is changed.",
+              "Caller must bind current source/document bytes to an approved frozen registry.",
+              "Link/navigation and live-source rechecks are separate preconditions before filesystem publication."
+            ]
+          },
+          "pt-br/guide.md": {
+            "version": "0.1.2",
+            "before_sha256": "9927fb2acae00290ab429cb9b067078bc09fcf0408148fb1a71efa11d24bcf94",
+            "candidate_sha256": "a229e40412012c072322be9deeb03c3c3d58cbf81cdfa997b27912de932bbdb1",
+            "changed": true,
+            "human_outside_managed_ranges_sha256": "c87da653912a0a3a3b40b225759c66856b173963efcff7119285d11707185465",
+            "history_required": true,
+            "operations": [
+              {
+                "claim_id": "sample.first",
+                "action": "MODIFY",
+                "changed": true,
+                "technical_recommendation": "MODIFY"
+              },
+              {
+                "claim_id": "sample.second",
+                "action": "ADD",
+                "changed": true,
+                "technical_recommendation": "ADD"
+              }
+            ],
+            "original_files_written": 0,
+            "owner_approved": false,
+            "training_gold": false,
+            "limitations": [
+              "In-memory candidate construction only; no active documentation is changed.",
+              "Caller must bind current source/document bytes to an approved frozen registry.",
+              "Link/navigation and live-source rechecks are separate preconditions before filesystem publication."
+            ]
+          }
+        },
+        "existing_broken_local_links": [],
+        "new_broken_local_links": [],
+        "fragment_links_not_semantically_verified": [],
+        "limitations": [
+          "Closed owned synthetic roots only; no general Git/module/build or semantic completeness claim.",
+          "Original Markdown is preserved; publication and training approval remain separate.",
+          "Current registered files are rehashed before and after construction; not an atomic filesystem snapshot.",
+          "Heading/fragment semantics are not certified by this Markdown-path check."
+        ],
+        "candidate_output_readback_verified": true,
+        "candidate_root_identity_rechecked": true,
+        "candidate_files_sha256": {
+          "en/guide.md": "5064a38cd8e1ce464f01dec7578bc0f0613ea7978fd82d37e91d94c1e55b6896",
+          "pt-br/guide.md": "a229e40412012c072322be9deeb03c3c3d58cbf81cdfa997b27912de932bbdb1"
+        },
+        "observed_seconds": 0.010605834002490155
+      }
+    },
+    {
+      "id": "duplicate-identity",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "matches": true,
+      "originals_preserved": true,
+      "human_content_checks": {},
+      "result": {
+        "reason": "duplicate logical claim",
+        "type": "WorkspaceRefused"
+      }
+    },
+    {
+      "id": "conflicting-operation",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "matches": true,
+      "originals_preserved": true,
+      "human_content_checks": {},
+      "result": {
+        "reason": "duplicate logical claim",
+        "type": "WorkspaceRefused"
+      }
+    },
+    {
+      "id": "stale-source-hash",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "matches": true,
+      "originals_preserved": true,
+      "human_content_checks": {},
+      "result": {
+        "reason": "workspace checksum changed: api.py",
+        "type": "WorkspaceRefused"
+      }
+    },
+    {
+      "id": "stale-document-hash",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "matches": true,
+      "originals_preserved": true,
+      "human_content_checks": {},
+      "result": {
+        "reason": "workspace checksum changed: en/guide.md",
+        "type": "WorkspaceRefused"
+      }
+    },
+    {
+      "id": "human-ownership-denied",
+      "expected": "REFUSED",
+      "observed": "REFUSED",
+      "matches": true,
+      "originals_preserved": true,
+      "human_content_checks": {},
+      "result": {
+        "reason": "human alignment required; markers alone grant no ownership",
+        "type": "CandidateRefused"
+      }
+    }
+  ],
+  "correct": 6,
+  "n": 6,
+  "model_calls": 0,
+  "active_documentation_modified": false,
+  "atomic_transaction_demonstrated": false
+}

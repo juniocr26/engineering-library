@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-21T13:40:04.601977+00:00",
+  "command": [
+    "docker",
+    "logs",
+    "--since",
+    "2026-11-21T13:32:00Z",
+    "--tail",
+    "250",
+    "engineering-library-ollama-1"
+  ],
+  "exit_code": 0,
+  "logs": [
+    {
+      "path": ".local-backups/acceptance-calibration-20261121/runtime-diagnostic-v1/stderr.log",
+      "sha256": "6d2b1b589d3f8501e69090ac7fe6d693ac9a0e65155d872585360aea0f9cf180",
+      "bytes": 12616
+    },
+    {
+      "path": ".local-backups/acceptance-calibration-20261121/runtime-diagnostic-v1/stdout.log",
+      "sha256": "34e838ad9a4b582ddd04f9d2e78a21f314103e4cfdf3b88f77af048ecc040e7f",
+      "bytes": 7270
+    }
+  ],
+  "diagnostic_lines": [
+    "[GIN] 2026/11/21 - 13:37:58 | 500 |    5m10s |      172.18.0.4 | POST     \"/api/chat\"",
+    "llama_context: constructing llama_context",
+    "llama_context: n_seq_max             = 1",
+    "llama_context: n_ctx                 = 8192",
+    "llama_context: n_ctx_seq             = 8192",
+    "llama_context: n_batch               = 1024",
+    "llama_context: n_ubatch              = 1024",
+    "llama_context: causal_attn           = 1",
+    "llama_context: flash_attn            = auto",
+    "llama_context: kv_unified            = false",
+    "llama_context: freq_base             = 500000.0",
+    "llama_context: freq_scale            = 1",
+    "llama_context: n_rs_seq              = 0",
+    "llama_context: n_outputs_max         = 1",
+    "llama_context: n_outputs_max_per_seq = 1",
+    "llama_context: n_ctx_seq (8192) < n_ctx_train (131072) -- the full capacity of the model will not be utilized",
+    "llama_context:        CPU  output buffer size =     0.49 MiB",
+    "srv    load_model: context checkpoints enabled, max = 32, min spacing = 8192",
+    "time=2026-11-21T13:32:55.323Z level=INFO source=sched.go:775 msg=\"loaded runners\" count=1"
+  ],
+  "no_configuration_changes_or_restart": true,
+  "first_request": "fastapi/A",
+  "first_request_outcome": "HTTP500; no response body preserved by urllib default exception path; do not infer semantic failure or rerun."
+}

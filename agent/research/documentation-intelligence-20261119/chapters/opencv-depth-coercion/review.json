@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-20T00:52:05.247881+00:00",
+  "chapter_id": "opencv-depth-coercion",
+  "source_repository": "opencv",
+  "revision": "5d0660acfed08650cafec4876b4792a369a20601",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "claims": [
+    {
+      "id": "equality-first",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        314,
+        316
+      ],
+      "review": "Equal depths return depth1 before flag/later tests."
+    },
+    {
+      "id": "integer-nesting",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        317,
+        318
+      ],
+      "review": "Both<=CV32S outer condition; inner bitwise combined !muldiv/both<=CV8S selectsCV16S elseCV32S."
+    },
+    {
+      "id": "size-fallback",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        319,
+        320
+      ],
+      "review": "Only remaining unequal case uses macro-size>4 bitwise OR; CV64F orCV32F; macro implementation not supplied."
+    },
+    {
+      "id": "caller-postprocessing",
+      "path": "modules/core/src/arithm.cpp",
+      "lines": [
+        550,
+        571
+      ],
+      "review": "Actual call site passes bool by branch, combines input working depth then dtype; later operation-specific promotion can bump working depth. Helper result not complete final array conversion."
+    }
+  ],
+  "bilingual_review": "Both original texts manually reviewed against source and each other; additions preserve source facts; inline technical span sequences equal.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "ec707961f0a2840d931c46ba1776610bbbbc0fd51fb5682ceee72c3688880a65",
+      "after_sha256": "8ecb5f88917fcc0e3a40afb4b3ec393c7a8f04f3b49957198a19d870c479216a",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -21,3 +21,22 @@\n ## What is returned, and what the baseline got wrong\n \n The function returns an integer depth code. It does not receive arrays, write output elements or perform the conversions represented by that code. The historical response put the smaller-depth test outside its actual parent branch, omitted the negated operation flag, and described a return rule that contradicted the nested smaller-result case. The correction restores the complete branch order in both languages. Original response bytes, source identity, exact quotation and the historical review are retained for comparison. This source-reviewed candidate is not a new independent transfer example or evidence that model weights improved.\n+\n+## Engineer FAQ and the actual call site\n+\n+<!-- reading-section: faq:type-helper-not-image-conversion -->\n+### Does this helper convert an image?\n+\n+It accepts two integer depth codes and a Boolean flag and returns one depth code. It has no image buffer or output-array parameter. Array allocation, element conversion and kernel execution require separate evidence.\n+\n+<!-- reading-section: faq:operation-flag-precedence -->\n+### Can the operation flag override equal depths?\n+\n+The equality condition is first and returns the first depth immediately. The negated flag is considered only inside the later unequal integer-boundary branch. Removing that nesting changes the documented decision tree.\n+\n+<!-- reading-section: faq:caller-working-type-adjustment -->\n+### Is the returned depth always the final working type of the caller?\n+\n+The additional call-site excerpt invokes the helper twice on its coercion paths, combining the input depths and then the requested output depth. It also contains later operation-specific working-depth adjustments. The helper's integer result must not be presented as the complete final array or kernel contract.\n+\n+This added caller evidence shows where false and true are supplied to the flag, without claiming that every public arithmetic API follows one universal path. Macro definitions, all supported depth values, build configuration and runtime backend selection remain outside the selected evidence. No OpenCV application was executed.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "28409f50eea7a8809ab885f5d6c7c131ece25a856d1433c8062ca5e1671320e0",
+      "after_sha256": "bf7baa5ec52c0cc0473fd7fb30c358b67cb3adef5f62ddd181a9544f3cf932f0",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -21,3 +21,22 @@\n ## O que é retornado e o que o baseline errou\n \n A função retorna um código inteiro de profundidade. Não recebe arrays, escreve elementos de saída ou realiza as conversões representadas por esse código. A resposta histórica colocou o teste de profundidades menores fora do desvio que realmente o contém, omitiu a flag negada da operação e descreveu uma regra de retorno que contradizia o caso aninhado do resultado menor. A correção restaura a ordem completa dos desvios nos dois idiomas. Bytes da resposta original, identidade do código, citação exata e revisão histórica ficam preservados para comparação. Este candidato revisado contra o código não é um novo exemplo independente de transferência nem evidência de melhoria dos pesos do modelo.\n+\n+## FAQ de engenharia e o ponto real de chamada\n+\n+<!-- reading-section: faq:type-helper-not-image-conversion -->\n+### Esse helper converte uma imagem?\n+\n+Ele recebe dois códigos inteiros de profundidade e uma flag booleana e retorna um código de profundidade. Não possui buffer de imagem ou parâmetro de array de saída. Alocação de arrays, conversão de elementos e execução de kernel exigem evidências separadas.\n+\n+<!-- reading-section: faq:operation-flag-precedence -->\n+### A flag da operação pode sobrepor profundidades iguais?\n+\n+A condição de igualdade vem primeiro e retorna imediatamente a primeira profundidade. A flag negada só é considerada dentro do desvio posterior de limites inteiros para entradas diferentes. Remover esse aninhamento altera a árvore de decisão documentada.\n+\n+<!-- reading-section: faq:caller-working-type-adjustment -->\n+### A profundidade retornada é sempre o tipo final de trabalho do chamador?\n+\n+O trecho adicional do ponto de chamada invoca o helper duas vezes em seus caminhos de coerção, combinando as profundidades de entrada e depois a profundidade de saída solicitada. Também contém ajustes posteriores da profundidade de trabalho específicos da operação. O resultado inteiro do helper não deve ser apresentado como contrato completo do array final ou kernel.\n+\n+Essa evidência adicional do chamador mostra onde false e true são fornecidos à flag, sem afirmar que toda API pública aritmética siga um caminho universal. Definições de macros, todos os valores de profundidade suportados, configuração de build e seleção do backend em execução permanecem fora da evidência selecionada. Nenhuma aplicação OpenCV foi executada.\n"
+    }
+  ],
+  "faq_added": 3,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external application execution or runtime guarantee.",
+    "Codex technical review is not independent human approval, publication or training authorization."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.311804+00:00",
+    "canonical_question_ids": [
+      "type-helper-not-image-conversion",
+      "operation-flag-precedence",
+      "caller-working-type-adjustment"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/opencv-depth-coercion",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

@@ -1,0 +1,7 @@
+"""Replay frozen closed-package type observations from restored binary/source packets."""
+from pathlib import Path
+import argparse,hashlib,json,subprocess
+parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);args=parser.parse_args();P=args.root/'agent/research/final-intensive-20261121';folder=P/'owned-go-type-relations-v1';protocol=json.loads((folder/'protocol.json').read_text());observed=json.loads((folder/'results.json').read_text());binary=P/'offline-go-type-observer-v1/observer';sha=lambda b:hashlib.sha256(b).hexdigest();assert sha(binary.read_bytes())==protocol['binary_sha256'];by_id={r['id']:r for r in observed['records']};matched=0
+for case in protocol['cases']:
+ raw=(folder/(case['id']+'.request.json')).read_bytes();request=json.loads(raw);assert request['files']==[{'path':'owned.go','source':case['source']}];run=subprocess.run([str(binary)],input=raw,capture_output=True,timeout=20);assert run.returncode==0;packet=json.loads(run.stdout);assert packet==by_id[case['id']]['packet'];assert not packet['source_executed'] and not packet['runtime_bindings_verified'] and not packet['partial_type_info_admitted'];matched+=1
+print(json.dumps({'matched_exact_packets':matched,'cases':len(protocol['cases']),'binary_hash_verified':True,'target_source_executed':False,'imports_resolved':False,'model_calls':0,'scope':'Local restored darwin/arm64 binary and owned closed-package sources; not clean toolchain rebuild, cross-platform runtime, project import graph or independent accuracy.'}))

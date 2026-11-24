@@ -1,0 +1,48 @@
+{
+  "at": "2026-11-20T11:21:33.941160+00:00",
+  "definitions": [
+    {
+      "id": "unchanged-owned-source",
+      "file": null,
+      "old": null,
+      "new": null,
+      "expected": "DERIVED"
+    },
+    {
+      "id": "protocol-base-removed",
+      "file": "client.py",
+      "old": "class JsonClient(Protocol):",
+      "new": "class JsonClient:",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "exception-binding-changed",
+      "file": "adapter.py",
+      "old": "except GatewayUnavailable as error:",
+      "new": "except GatewayUnavailable as another:",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "mapper-moved-into-try",
+      "file": "adapter.py",
+      "old": "                timeout=self._timeout,\n            )",
+      "new": "                timeout=self._timeout,\n            )\n            balance_from_payload(account_id, payload)",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "timeout-storage-changed",
+      "file": "adapter.py",
+      "old": "self._timeout = timeout",
+      "new": "self._timeout = 99.0",
+      "expected": "REFUSED"
+    },
+    {
+      "id": "mapper-argument-changed",
+      "file": "adapter.py",
+      "old": "return balance_from_payload(account_id, payload)",
+      "new": "return balance_from_payload(payload, account_id)",
+      "expected": "REFUSED"
+    }
+  ],
+  "scope": "Deliberate source mutations; development only; no source or fixture file changed."
+}

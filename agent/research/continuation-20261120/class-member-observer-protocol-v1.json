@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-20T12:43:14.253468+00:00",
+  "hypothesis": "A bounded direct class-member observer can expose cache configuration and method source hidden behind unchanged facade signatures, without executing classes or proving runtime behavior.",
+  "development_exposure": "JMESPath source already inspected; subsequent class observer findings are development-exposed.",
+  "limits": {
+    "source_bytes": 65536,
+    "ast_nodes": 16384,
+    "quote_bytes": 6144
+  },
+  "absent_member_means": "No direct written declaration only; inheritance, mutation, decorators and runtime namespace unresolved. Never REMOVE.",
+  "cases": [
+    {
+      "id": "literal-class-attribute",
+      "source": "class Cache:\n    SIZE = 4\n",
+      "selector": "Cache.SIZE",
+      "expected_status": "WRITTEN_CLASS_MEMBER",
+      "expected_literal": 4
+    },
+    {
+      "id": "method-with-helper",
+      "source": "class Cache:\n    def get(self, key):\n        return lookup(key)\n",
+      "selector": "Cache.get",
+      "expected_status": "WRITTEN_CLASS_MEMBER",
+      "expected_literal": null
+    },
+    {
+      "id": "duplicate-class",
+      "source": "class Cache:\n    SIZE=4\nclass Cache:\n    SIZE=5\n",
+      "selector": "Cache.SIZE",
+      "expected_status": "INCONCLUSIVE",
+      "expected_literal": null
+    },
+    {
+      "id": "duplicate-member",
+      "source": "class Cache:\n    SIZE=4\n    SIZE=5\n",
+      "selector": "Cache.SIZE",
+      "expected_status": "INCONCLUSIVE",
+      "expected_literal": null
+    },
+    {
+      "id": "nested-only-member",
+      "source": "class Cache:\n    class Inner:\n        SIZE=4\n",
+      "selector": "Cache.SIZE",
+      "expected_status": "NO_DIRECT_WRITTEN_MEMBER",
+      "expected_literal": null
+    },
+    {
+      "id": "inherited-unknown",
+      "source": "class Cache(External):\n    pass\n",
+      "selector": "Cache.SIZE",
+      "expected_status": "NO_DIRECT_WRITTEN_MEMBER",
+      "expected_literal": null
+    },
+    {
+      "id": "decorated-physical-method",
+      "source": "@external\nclass Cache:\n    def get(self):\n        return 1\n",
+      "selector": "Cache.get",
+      "expected_status": "WRITTEN_CLASS_MEMBER",
+      "expected_literal": null
+    },
+    {
+      "id": "compiler-invalid",
+      "source": "class Cache:\n    def get(self, self):\n        pass\n",
+      "selector": "Cache.get",
+      "expected_status": "INCONCLUSIVE",
+      "expected_literal": null
+    },
+    {
+      "id": "rebound-owner",
+      "source": "class Cache:\n    SIZE=4\nCache=external\n",
+      "selector": "Cache.SIZE",
+      "expected_status": "INCONCLUSIVE",
+      "expected_literal": null
+    },
+    {
+      "id": "nonliteral-class-value",
+      "source": "class Cache:\n    SIZE=external()\n",
+      "selector": "Cache.SIZE",
+      "expected_status": "WRITTEN_CLASS_MEMBER",
+      "expected_literal": null
+    }
+  ]
+}

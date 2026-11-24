@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-20T23:56:44.114712+00:00",
+  "status": "NO-GO",
+  "launch_allowed": false,
+  "training_authorized": false,
+  "optimizer_steps": 0,
+  "gates": [
+    {
+      "id": 1,
+      "requirement": "model/tokenizer",
+      "status": "BLOCKED",
+      "evidence": "Only deployed GGUF identity is verified in the existing manifest. No current compatible trainable checkpoint/tokenizer has been verified."
+    },
+    {
+      "id": 2,
+      "requirement": "approved targets and rights",
+      "status": "BLOCKED",
+      "evidence": "305 original records retained; owner gold remains zero. All current public evaluation families and private material excluded."
+    },
+    {
+      "id": 3,
+      "requirement": "independent evaluation",
+      "status": "PARTIAL",
+      "evidence": "Family grouping and frozen criteria exist. Metadata absence does not certify independent pretraining or exposure. No frozen owner-approved pilot evaluation split."
+    },
+    {
+      "id": 4,
+      "requirement": "hardware feasibility",
+      "status": "UNVERIFIED_CURRENT",
+      "evidence": "Host Darwin arm64 reobserved; historical M1 Pro/16GiB not remeasured. No training memory, throughput or thermal measurement."
+    },
+    {
+      "id": 5,
+      "requirement": "framework/environment",
+      "status": "BLOCKED",
+      "evidence": "Current Python3.14.7 import discovery found mlx, mlx_lm, transformers, tokenizers, torch and safetensors absent; no imports or installation."
+    },
+    {
+      "id": 6,
+      "requirement": "state persistence",
+      "status": "PARTIAL",
+      "evidence": "Existing source/evidence manifests do not prove optimizer, RNG and data-cursor recovery for a trained adapter. No adapter exists."
+    },
+    {
+      "id": 7,
+      "requirement": "pilot budget approval",
+      "status": "BLOCKED",
+      "evidence": "Proposed bounded pilot parameters are preparation only and have no launch authorization."
+    },
+    {
+      "id": 8,
+      "requirement": "isolation/rollback",
+      "status": "PARTIAL",
+      "evidence": "Current original sources/model retained; future training environment and exact adapter rollback not validated."
+    },
+    {
+      "id": 9,
+      "requirement": "evaluation/recovery reproducibility",
+      "status": "PARTIAL",
+      "evidence": "Current source quotation reconstruction succeeds. Neural independent evaluation, trained-adapter restoration and remote durability remain unproven."
+    }
+  ],
+  "pilot": {
+    "question": "Can a small LoRA adapter improve bilingual identifier preservation, bounded source support and warranted abstention over the same unadapted trainable model, without increasing critical factual errors?",
+    "not_claimed": "General architectural truth or independent verification; 16 updates cannot establish broad documentation competence.",
+    "model_selection": "Owner-approved compatible trainable base/tokenizer pinned by revision/hash, preferably corresponding to existing deployment. Quantization/conversion and tokenizer differences are explicit confounds. No model selection/download authorized here.",
+    "dataset": "Only separately owner-approved original synthetic or clearly licensed public training targets, grouped by source family/lineage and bilingual task. Exclude all current six public evaluation families, related dependencies, private Viva Bem and unapproved original 305 records. Minimum pilot review batch proposed: four bilingual task pairs; never assume approval.",
+    "baseline": "Freeze unadapted trainable base inference with identical tokenizer/template/prompt/source cut/sampling/token limits and hardware; compare adapter under same conditions. Existing production GGUF is a separate deployment baseline. Preserve deterministic source-first rendering as a non-neural reference, not a trained-model improvement.",
+    "proposed_limits": {
+      "optimizer_updates_max": 16,
+      "batch_size": 1,
+      "gradient_accumulation": 1,
+      "sequence_length_tokens_max": 512,
+      "lora_rank": 4,
+      "selected_transformer_layers": 2,
+      "optimizer_wall_minutes_max": 10,
+      "total_wall_minutes_max": 30,
+      "lora_modules": "Explicit approved exact module names after inspecting chosen base; never accept omitted/global defaults.",
+      "scale": "Must be verified against pinned framework semantics; no assumed alpha/rank convention."
+    },
+    "preflight": "Verify true tokenizer/template output and shifted loss mask; no supervised target may be lost to truncation, and padded targets must be excluded. Validate actual module counts/dtypes/shape/working-set feasibility before authorizing any update. Memory threshold and OS pressure response require owner-approved host-specific budget.",
+    "evaluation": "Freeze unseen source-family tasks and deliberately incorrect claims before launch. Score complete bilingual outputs, per-claim support, unsupported claims, critical errors, exact identifiers, parity and justified abstention with separate verifier. Report paired counts, not just percentages; do not use training examples as independent evaluation.",
+    "success_gate": "On the same frozen evaluation set: higher complete-output acceptance than unadapted baseline; no increase in critical factual errors or false verifier acceptance; identifier and language coverage nondecreasing. At least one complete output must pass all frozen dimensions. Tiny pilot results are feasibility evidence, not general accuracy.",
+    "stop_conditions": [
+      "Any unapproved/private/evaluation-only record admitted",
+      "Any critical false acceptance",
+      "No assistant target after tokenization/truncation",
+      "Memory-pressure threshold or wall budget exceeded",
+      "Nonfinite loss or incompatible tokenizer/model",
+      "Checkpoint unable to preserve required state"
+    ],
+    "preservation": "Pin base/tokenizer/framework/data/code/prompt hashes. Save adapters, metrics and raw outputs; preserve optimizer/RNG/data position if exact resume is claimed. If only weights were saved, label a later run as a new weights-initialized experiment, never exact resume. Keep original GGUF and all old artifacts untouched.",
+    "rollback": "A pilot adapter must not replace production. Restore original manifest/model/digest and demonstrate adapter disabled before any separately approved deployment. No fusion, upload, production switch or remote persistence is authorized.",
+    "owner_decisions": [
+      "Review/approve gold targets and rights",
+      "Approve model/tokenizer/framework and separate installation/download scope",
+      "Approve independent evaluation protocol and host resource budget",
+      "Authorize a specific future training run only after gates pass"
+    ]
+  },
+  "source_refs": "pilot-primary-source-review-v1.json",
+  "note": "Proposed constants are not executable configuration or automatic approval."
+}

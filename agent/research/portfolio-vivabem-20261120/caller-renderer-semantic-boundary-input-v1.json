@@ -1,0 +1,82 @@
+{
+  "caller_expected_sha256": "086c11b2d10972111cfcfb23c49b70e67f4d30f1d5de39f768c46b23748cdb2b",
+  "files": {
+    "args.go": "// Copyright 2013-2023 The Cobra Authors\n//\n// Licensed under the Apache License, Version 2.0 (the \"License\");\n// you may not use this file except in compliance with the License.\n// You may obtain a copy of the License at\n//\n//      http://www.apache.org/licenses/LICENSE-2.0\n//\n// Unless required by applicable law or agreed to in writing, software\n// distributed under the License is distributed on an \"AS IS\" BASIS,\n// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n// See the License for the specific language governing permissions and\n// limitations under the License.\n\npackage cobra\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\ntype PositionalArgs func(cmd *Command, args []string) error\n\n// legacyArgs validation has the following behaviour:\n// - root commands with no subcommands can take arbitrary arguments\n// - root commands with subcommands will do subcommand validity checking\n// - subcommands will always accept arbitrary arguments\nfunc legacyArgs(cmd *Command, args []string) error {\n\t// no subcommand, always take args\n\tif !cmd.HasSubCommands() {\n\t\treturn nil\n\t}\n\n\t// root command with subcommands, do subcommand checking.\n\tif !cmd.HasParent() && len(args) > 0 {\n\t\treturn fmt.Errorf(\"unknown command %q for %q%s\", args[0], cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t}\n\treturn nil\n}\n\n// NoArgs returns an error if any args are included.\nfunc NoArgs(cmd *Command, args []string) error {\n\tif len(args) > 0 {\n\t\treturn fmt.Errorf(\"unknown command %q for %q\", args[0], cmd.CommandPath())\n\t}\n\treturn nil\n}\n\n// OnlyValidArgs returns an error if there are any positional args that are not in\n// the `ValidArgs` field of `Command`\nfunc OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) > 0 {\n\t\t// Remove any description that may be included in ValidArgs.\n\t\t// A description is following a tab character.\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\treturn nil\n}\n\n// NoDuplicateArgs returns an error if there are any duplicate positional args.\nfunc NoDuplicateArgs(cmd *Command, args []string) error {\n\tseen := make(map[string]struct{}, len(args))\n\tfor _, arg := range args {\n\t\tif _, ok := seen[arg]; ok {\n\t\t\treturn fmt.Errorf(\"duplicate argument %q for %q\", arg, cmd.CommandPath())\n\t\t}\n\t\tseen[arg] = struct{}{}\n\t}\n\n\treturn nil\n}\n\n// ArbitraryArgs never returns an error.\nfunc ArbitraryArgs(cmd *Command, args []string) error {\n\treturn nil\n}\n\n// MinimumNArgs returns an error if there is not at least N args.\nfunc MinimumNArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) < n {\n\t\t\treturn fmt.Errorf(\"requires at least %d arg(s), only received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}\n}\n\n// MaximumNArgs returns an error if there are more than N args.\nfunc MaximumNArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) > n {\n\t\t\treturn fmt.Errorf(\"accepts at most %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}\n}\n\n// ExactArgs returns an error if there are not exactly n args.\nfunc ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}\n}\n\n// RangeArgs returns an error if the number of args is not within the expected range.\nfunc RangeArgs(min int, max int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) < min || len(args) > max {\n\t\t\treturn fmt.Errorf(\"accepts between %d and %d arg(s), received %d\", min, max, len(args))\n\t\t}\n\t\treturn nil\n\t}\n}\n\n// MatchAll allows combining several PositionalArgs to work in concert.\nfunc MatchAll(pargs ...PositionalArgs) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tfor _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t\treturn nil\n\t}\n}\n\n// ExactValidArgs returns an error if there are not exactly N positional args OR\n// there are any positional args that are not in the `ValidArgs` field of `Command`\n//\n// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead\nfunc ExactValidArgs(n int) PositionalArgs {\n\treturn MatchAll(ExactArgs(n), OnlyValidArgs)\n}\n"
+  },
+  "source_full_file_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+  "source_revision": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+  "cases": [
+    {
+      "id": "nonempty-membership",
+      "oracle_source_supported": true,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "OnlyValidArgs checks membership only inside the nonempty ValidArgs guard, then the written body returns nil.",
+        "pt-br": "OnlyValidArgs verifica pertencimento somente dentro da condição de ValidArgs não vazia; depois, o corpo escrito retorna nil."
+      }
+    },
+    {
+      "id": "empty-allowlist",
+      "oracle_source_supported": true,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "OnlyValidArgs reaches its nil return when ValidArgs is empty, without entering the membership validation block.",
+        "pt-br": "OnlyValidArgs alcança seu retorno nil quando ValidArgs está vazia, sem entrar no bloco de validação de pertencimento."
+      }
+    },
+    {
+      "id": "description-projection",
+      "oracle_source_supported": true,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "OnlyValidArgs removes the description after a tab from each ValidArgs entry before using stringInSlice for membership.",
+        "pt-br": "OnlyValidArgs remove a descrição após a tabulação de cada entrada de ValidArgs antes de usar stringInSlice para pertencimento."
+      }
+    },
+    {
+      "id": "written-error-branch",
+      "oracle_source_supported": true,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "OnlyValidArgs has a written fmt.Errorf return in the first failed stringInSlice lookup branch, before later loop iterations.",
+        "pt-br": "OnlyValidArgs possui um retorno escrito de fmt.Errorf no ramo da primeira consulta a stringInSlice que falha, antes de iterações posteriores."
+      }
+    },
+    {
+      "id": "false-empty-rejection",
+      "oracle_source_supported": false,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "OnlyValidArgs rejects every argument when ValidArgs is empty and therefore cannot reach its nil return in that case.",
+        "pt-br": "OnlyValidArgs rejeita todos os argumentos quando ValidArgs está vazia e, por isso, não pode alcançar seu retorno nil nesse caso."
+      }
+    },
+    {
+      "id": "unsupported-thread-guarantee",
+      "oracle_source_supported": false,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "OnlyValidArgs guarantees synchronized thread-safe execution and prevents all data races for concurrent commands.",
+        "pt-br": "OnlyValidArgs garante execução sincronizada e segura entre threads e impede todas as condições de corrida em comandos concorrentes."
+      }
+    },
+    {
+      "id": "translated-declaration",
+      "oracle_source_supported": false,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "SomenteArgumentosValidos performs membership checking inside the nonempty ValidArgs guard and returns nil afterwards.",
+        "pt-br": "SomenteArgumentosValidos verifica pertencimento dentro da condição de ValidArgs não vazia e retorna nil depois."
+      }
+    },
+    {
+      "id": "wrong-numeric-guard",
+      "oracle_source_supported": false,
+      "fact": {
+        "evidence_id": "S1",
+        "en": "OnlyValidArgs checks membership only when `len(cmd.ValidArgs) > 1`, so exactly one valid entry skips the check.",
+        "pt-br": "OnlyValidArgs verifica pertencimento somente quando `len(cmd.ValidArgs) > 1`; portanto, exatamente uma entrada válida evita a verificação."
+      }
+    }
+  ]
+}

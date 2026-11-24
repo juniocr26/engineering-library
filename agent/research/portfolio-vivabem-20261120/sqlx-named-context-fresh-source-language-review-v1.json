@@ -1,0 +1,269 @@
+{
+  "at": "2026-11-21T06:21:58.489370+00:00",
+  "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+  "fresh_files": [
+    {
+      "path": "LICENSE",
+      "sha256": "a0cc6c18255c47fad558e3a40ab10df927dd914156b267a819e073f8755991b3",
+      "bytes": 1077
+    },
+    {
+      "path": "bind.go",
+      "sha256": "e0509cb4222d4cc301cedde746bbe571c0ff8ca03803223b3f4931fa1f12df12",
+      "bytes": 6190
+    },
+    {
+      "path": "go.mod",
+      "sha256": "4cad583dccc4b0934674db7fc85c9c2c322ee58793366860aaea582f6591994d",
+      "bytes": 157
+    },
+    {
+      "path": "named.go",
+      "sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "bytes": 14477
+    },
+    {
+      "path": "named_context.go",
+      "sha256": "b5b18083947538835dc3e130d32038002ab8d5192bdfc56713162693bbc8ccc8",
+      "bytes": 4535
+    },
+    {
+      "path": "named_test.go",
+      "sha256": "bc69cfd2d06c27ec9e70b19377529e0a9e2a9fca0beaf44494eabcdc1ebe4a04",
+      "bytes": 12888
+    },
+    {
+      "path": "reflectx/reflect.go",
+      "sha256": "3de3b248e6b88566c09becf518b3b3c3e999ff5a9ae86dc170cea425fd01b9db",
+      "bytes": 12591
+    },
+    {
+      "path": "sqlx.go",
+      "sha256": "0d50c94347681cc196487d2c422ed254bfb9eeffacad7462d5219c9297ca5e36",
+      "bytes": 31526
+    },
+    {
+      "path": "sqlx_context.go",
+      "sha256": "f5a60cea20d9f5c34b8f8d2b18c1740bec06ec81505f1a9306491432ba84e1bb",
+      "bytes": 16127
+    }
+  ],
+  "fresh_source_cards": [
+    {
+      "id": "SQ-ENTRY",
+      "path": "named.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 410,
+      "line_end": 458,
+      "quote": "func BindNamed(bindType int, query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(bindType, query, arg, mapper())\n}\n\n// Named takes a query using named parameters and an argument and\n// returns a new query with a list of args that can be executed by\n// a database.  The return value uses the `?` bindvar.\nfunc Named(query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(QUESTION, query, arg, mapper())\n}\n\nfunc bindNamedMapper(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tt := reflect.TypeOf(arg)\n\tk := t.Kind()\n\tswitch {\n\tcase k == reflect.Map && t.Key().Kind() == reflect.String:\n\t\tm, ok := convertMapStringInterface(arg)\n\t\tif !ok {\n\t\t\treturn \"\", nil, fmt.Errorf(\"sqlx.bindNamedMapper: unsupported map type: %T\", arg)\n\t\t}\n\t\treturn bindMap(bindType, query, m)\n\tcase k == reflect.Array || k == reflect.Slice:\n\t\treturn bindArray(bindType, query, arg, m)\n\tdefault:\n\t\treturn bindStruct(bindType, query, arg, m)\n\t}\n}\n\n// NamedQuery binds a named query and then runs Query on the result using the\n// provided Ext (sqlx.Tx, sqlx.Db).  It works with both structs and with\n// map[string]interface{} types.\nfunc NamedQuery(e Ext, query string, arg interface{}) (*Rows, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Queryx(q, args...)\n}\n\n// NamedExec uses BindStruct to get a query executable by the driver and\n// then runs Exec on the result.  Returns an error from the binding\n// or the query execution itself.\nfunc NamedExec(e Ext, query string, arg interface{}) (sql.Result, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.Exec(q, args...)\n}",
+      "quote_sha256": "cdf14afbd3dbe37037a260a17aea44debd810d021e4deecde1381af8681bb567"
+    },
+    {
+      "id": "SQ-DISPATCH",
+      "path": "named.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 152,
+      "line_end": 194,
+      "quote": "func convertMapStringInterface(v interface{}) (map[string]interface{}, bool) {\n\tvar m map[string]interface{}\n\tmtype := reflect.TypeOf(m)\n\tt := reflect.TypeOf(v)\n\tif !t.ConvertibleTo(mtype) {\n\t\treturn nil, false\n\t}\n\treturn reflect.ValueOf(v).Convert(mtype).Interface().(map[string]interface{}), true\n\n}\n\nfunc bindAnyArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\tif maparg, ok := convertMapStringInterface(arg); ok {\n\t\treturn bindMapArgs(names, maparg)\n\t}\n\treturn bindArgs(names, arg, m)\n}\n\n// private interface to generate a list of interfaces from a given struct\n// type, given a list of names to pull out of the struct.  Used by public\n// BindStruct interface.\nfunc bindArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\t// grab the indirected value of arg\n\tvar v reflect.Value\n\tfor v = reflect.ValueOf(arg); v.Kind() == reflect.Ptr; {\n\t\tv = v.Elem()\n\t}\n\n\terr := m.TraversalsByNameFunc(v.Type(), names, func(i int, t []int) error {\n\t\tif len(t) == 0 {\n\t\t\treturn fmt.Errorf(\"could not find name %s in %#v\", names[i], arg)\n\t\t}\n\n\t\tval := reflectx.FieldByIndexesReadOnly(v, t)\n\t\targlist = append(arglist, val.Interface())\n\n\t\treturn nil\n\t})\n\n\treturn arglist, err\n}",
+      "quote_sha256": "1c31a876af6d5e4f347eadddba4e404c82ed2ee9902547c0afb2182b54ceceb4"
+    },
+    {
+      "id": "SQ-MAP-ERROR",
+      "path": "named.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 197,
+      "line_end": 225,
+      "quote": "func bindMapArgs(names []string, arg map[string]interface{}) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\tfor _, name := range names {\n\t\tval, ok := arg[name]\n\t\tif !ok {\n\t\t\treturn arglist, fmt.Errorf(\"could not find name %s in %#v\", name, arg)\n\t\t}\n\t\targlist = append(arglist, val)\n\t}\n\treturn arglist, nil\n}\n\n// bindStruct binds a named parameter query with fields from a struct argument.\n// The rules for binding field names to parameter names follow the same\n// conventions as for StructScan, including obeying the `db` struct tags.\nfunc bindStruct(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindAnyArgs(names, arg, m)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\treturn bound, arglist, nil\n}",
+      "quote_sha256": "19c6d927be9e072420342ea8787ec21e34ae47f859a64f9ea39859c81173c7cc"
+    },
+    {
+      "id": "SQ-ARRAY",
+      "path": "named.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 227,
+      "line_end": 312,
+      "quote": "var valuesReg = regexp.MustCompile(`\\)\\s*(?i)VALUES\\s*\\(`)\n\nfunc findMatchingClosingBracketIndex(s string) int {\n\tcount := 0\n\tfor i, ch := range s {\n\t\tif ch == '(' {\n\t\t\tcount++\n\t\t}\n\t\tif ch == ')' {\n\t\t\tcount--\n\t\t\tif count == 0 {\n\t\t\t\treturn i\n\t\t\t}\n\t\t}\n\t}\n\treturn 0\n}\n\nfunc fixBound(bound string, loop int) string {\n\tloc := valuesReg.FindStringIndex(bound)\n\t// defensive guard when \"VALUES (...)\" not found\n\tif len(loc) < 2 {\n\t\treturn bound\n\t}\n\n\topeningBracketIndex := loc[1] - 1\n\tindex := findMatchingClosingBracketIndex(bound[openingBracketIndex:])\n\t// defensive guard. must have closing bracket\n\tif index == 0 {\n\t\treturn bound\n\t}\n\tclosingBracketIndex := openingBracketIndex + index + 1\n\n\tvar buffer bytes.Buffer\n\n\tbuffer.WriteString(bound[0:closingBracketIndex])\n\tfor i := 0; i < loop-1; i++ {\n\t\tbuffer.WriteString(\",\")\n\t\tbuffer.WriteString(bound[openingBracketIndex:closingBracketIndex])\n\t}\n\tbuffer.WriteString(bound[closingBracketIndex:])\n\treturn buffer.String()\n}\n\n// bindArray binds a named parameter query with fields from an array or slice of\n// structs argument.\nfunc bindArray(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\t// do the initial binding with QUESTION;  if bindType is not question,\n\t// we can rebind it at the end.\n\tbound, names, err := compileNamedQuery([]byte(query), QUESTION)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\tarrayValue := reflect.ValueOf(arg)\n\tarrayLen := arrayValue.Len()\n\tif arrayLen == 0 {\n\t\treturn \"\", []interface{}{}, fmt.Errorf(\"length of array is 0: %#v\", arg)\n\t}\n\tvar arglist = make([]interface{}, 0, len(names)*arrayLen)\n\tfor i := 0; i < arrayLen; i++ {\n\t\telemArglist, err := bindAnyArgs(names, arrayValue.Index(i).Interface(), m)\n\t\tif err != nil {\n\t\t\treturn \"\", []interface{}{}, err\n\t\t}\n\t\targlist = append(arglist, elemArglist...)\n\t}\n\tif arrayLen > 1 {\n\t\tbound = fixBound(bound, arrayLen)\n\t}\n\t// adjust binding type if we weren't on question\n\tif bindType != QUESTION {\n\t\tbound = Rebind(bindType, bound)\n\t}\n\treturn bound, arglist, nil\n}\n\n// bindMap binds a named parameter query with a map of arguments.\nfunc bindMap(bindType int, query string, args map[string]interface{}) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindMapArgs(names, args)\n\treturn bound, arglist, err\n}",
+      "quote_sha256": "fc25795ac129482f12e6d20f5b014a4647ac402a8e73c2ebbe9020e2b0f83800"
+    },
+    {
+      "id": "SQ-COMPILER",
+      "path": "named.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 314,
+      "line_end": 405,
+      "quote": "// -- Compilation of Named Queries\n\n// Allow digits and letters in bind params;  additionally runes are\n// checked against underscores, meaning that bind params can have be\n// alphanumeric with underscores.  Mind the difference between unicode\n// digits and numbers, where '5' is a digit but '五' is not.\nvar allowedBindRunes = []*unicode.RangeTable{unicode.Letter, unicode.Digit}\n\n// FIXME: this function isn't safe for unicode named params, as a failing test\n// can testify.  This is not a regression but a failure of the original code\n// as well.  It should be modified to range over runes in a string rather than\n// bytes, even though this is less convenient and slower.  Hopefully the\n// addition of the prepared NamedStmt (which will only do this once) will make\n// up for the slightly slower ad-hoc NamedExec/NamedQuery.\n\n// compile a NamedQuery into an unbound query (using the '?' bindvar) and\n// a list of names.\nfunc compileNamedQuery(qs []byte, bindType int) (query string, names []string, err error) {\n\tnames = make([]string, 0, 10)\n\trebound := make([]byte, 0, len(qs))\n\n\tinName := false\n\tlast := len(qs) - 1\n\tcurrentVar := 1\n\tname := make([]byte, 0, 10)\n\n\tfor i, b := range qs {\n\t\t// a ':' while we're in a name is an error\n\t\tif b == ':' {\n\t\t\t// if this is the second ':' in a '::' escape sequence, append a ':'\n\t\t\tif inName && i > 0 && qs[i-1] == ':' {\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\tinName = false\n\t\t\t\tcontinue\n\t\t\t} else if inName {\n\t\t\t\terr = errors.New(\"unexpected `:` while reading named param at \" + strconv.Itoa(i))\n\t\t\t\treturn query, names, err\n\t\t\t}\n\t\t\tinName = true\n\t\t\tname = []byte{}\n\t\t} else if inName && i > 0 && b == '=' && len(name) == 0 {\n\t\t\trebound = append(rebound, ':', '=')\n\t\t\tinName = false\n\t\t\tcontinue\n\t\t\t// if we're in a name, and this is an allowed character, continue\n\t\t} else if inName && (unicode.IsOneOf(allowedBindRunes, rune(b)) || b == '_' || b == '.') && i != last {\n\t\t\t// append the byte to the name if we are in a name and not on the last byte\n\t\t\tname = append(name, b)\n\t\t\t// if we're in a name and it's not an allowed character, the name is done\n\t\t} else if inName {\n\t\t\tinName = false\n\t\t\t// if this is the final byte of the string and it is part of the name, then\n\t\t\t// make sure to add it to the name\n\t\t\tif i == last && unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\tname = append(name, b)\n\t\t\t}\n\t\t\t// add the string representation to the names list\n\t\t\tnames = append(names, string(name))\n\t\t\t// add a proper bindvar for the bindType\n\t\t\tswitch bindType {\n\t\t\t// oracle only supports named type bind vars even for positional\n\t\t\tcase NAMED:\n\t\t\t\trebound = append(rebound, ':')\n\t\t\t\trebound = append(rebound, name...)\n\t\t\tcase QUESTION, UNKNOWN:\n\t\t\t\trebound = append(rebound, '?')\n\t\t\tcase DOLLAR:\n\t\t\t\trebound = append(rebound, '$')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\tcase AT:\n\t\t\t\trebound = append(rebound, '@', 'p')\n\t\t\t\tfor _, b := range strconv.Itoa(currentVar) {\n\t\t\t\t\trebound = append(rebound, byte(b))\n\t\t\t\t}\n\t\t\t\tcurrentVar++\n\t\t\t}\n\t\t\t// add this byte to string unless it was not part of the name\n\t\t\tif i != last {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t} else if !unicode.IsOneOf(allowedBindRunes, rune(b)) {\n\t\t\t\trebound = append(rebound, b)\n\t\t\t}\n\t\t} else {\n\t\t\t// this is a normal byte and should just go onto the rebound query\n\t\t\trebound = append(rebound, b)\n\t\t}\n\t}\n\n\treturn string(rebound), names, err",
+      "quote_sha256": "dd167b9562fd21d577fc02759e7b9fef4959df4d4cadd061b2075f307a1cc2ae"
+    },
+    {
+      "id": "SQ-REGISTRY",
+      "path": "bind.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 15,
+      "line_end": 54,
+      "quote": "// Bindvar types supported by Rebind, BindMap and BindStruct.\nconst (\n\tUNKNOWN = iota\n\tQUESTION\n\tDOLLAR\n\tNAMED\n\tAT\n)\n\nvar defaultBinds = map[int][]string{\n\tDOLLAR:   {\"postgres\", \"pgx\", \"pq-timeouts\", \"cloudsqlpostgres\", \"ql\", \"nrpostgres\", \"cockroach\"},\n\tQUESTION: {\"mysql\", \"sqlite3\", \"nrmysql\", \"nrsqlite3\"},\n\tNAMED:    {\"oci8\", \"ora\", \"goracle\", \"godror\"},\n\tAT:       {\"sqlserver\", \"azuresql\"},\n}\n\nvar binds sync.Map\n\nfunc init() {\n\tfor bind, drivers := range defaultBinds {\n\t\tfor _, driver := range drivers {\n\t\t\tBindDriver(driver, bind)\n\t\t}\n\t}\n\n}\n\n// BindType returns the bindtype for a given database given a drivername.\nfunc BindType(driverName string) int {\n\titype, ok := binds.Load(driverName)\n\tif !ok {\n\t\treturn UNKNOWN\n\t}\n\treturn itype.(int)\n}\n\n// BindDriver sets the BindType for driverName to bindType.\nfunc BindDriver(driverName string, bindType int) {\n\tbinds.Store(driverName, bindType)\n}",
+      "quote_sha256": "494776dceeb4a829c9d296ad91c86d56ab34497ac89f0eede1bce8f73a239e5e"
+    },
+    {
+      "id": "SQ-REBIND",
+      "path": "bind.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 56,
+      "line_end": 89,
+      "quote": "// FIXME: this should be able to be tolerant of escaped ?'s in queries without\n// losing much speed, and should be to avoid confusion.\n\n// Rebind a query from the default bindtype (QUESTION) to the target bindtype.\nfunc Rebind(bindType int, query string) string {\n\tswitch bindType {\n\tcase QUESTION, UNKNOWN:\n\t\treturn query\n\t}\n\n\t// Add space enough for 10 params before we have to allocate\n\trqb := make([]byte, 0, len(query)+10)\n\n\tvar i, j int\n\n\tfor i = strings.Index(query, \"?\"); i != -1; i = strings.Index(query, \"?\") {\n\t\trqb = append(rqb, query[:i]...)\n\n\t\tswitch bindType {\n\t\tcase DOLLAR:\n\t\t\trqb = append(rqb, '$')\n\t\tcase NAMED:\n\t\t\trqb = append(rqb, ':', 'a', 'r', 'g')\n\t\tcase AT:\n\t\t\trqb = append(rqb, '@', 'p')\n\t\t}\n\n\t\tj++\n\t\trqb = strconv.AppendInt(rqb, int64(j), 10)\n\n\t\tquery = query[i+1:]\n\t}\n\n\treturn string(append(rqb, query...))",
+      "quote_sha256": "7a15bd45a6c8bc522f905bbe57525d02aba7c7aa5af345489aea4111477afc9c"
+    },
+    {
+      "id": "SQ-MAPPER",
+      "path": "sqlx.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 17,
+      "line_end": 49,
+      "quote": "// Although the NameMapper is convenient, in practice it should not\n// be relied on except for application code.  If you are writing a library\n// that uses sqlx, you should be aware that the name mappings you expect\n// can be overridden by your user's application.\n\n// NameMapper is used to map column names to struct field names.  By default,\n// it uses strings.ToLower to lowercase struct field names.  It can be set\n// to whatever you want, but it is encouraged to be set before sqlx is used\n// as name-to-field mappings are cached after first use on a type.\nvar NameMapper = strings.ToLower\nvar origMapper = reflect.ValueOf(NameMapper)\n\n// Rather than creating on init, this is created when necessary so that\n// importers have time to customize the NameMapper.\nvar mpr *reflectx.Mapper\n\n// mprMu protects mpr.\nvar mprMu sync.Mutex\n\n// mapper returns a valid mapper using the configured NameMapper func.\nfunc mapper() *reflectx.Mapper {\n\tmprMu.Lock()\n\tdefer mprMu.Unlock()\n\n\tif mpr == nil {\n\t\tmpr = reflectx.NewMapperFunc(\"db\", NameMapper)\n\t} else if origMapper != reflect.ValueOf(NameMapper) {\n\t\t// if NameMapper has changed, create a new mapper\n\t\tmpr = reflectx.NewMapperFunc(\"db\", NameMapper)\n\t\torigMapper = reflect.ValueOf(NameMapper)\n\t}\n\treturn mpr\n}",
+      "quote_sha256": "4a1f23229f69331cd095afe66d7ef2384cc9f9d5cbf08dc44a4627bc632deb34"
+    },
+    {
+      "id": "SQ-INTERFACE",
+      "path": "sqlx.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 76,
+      "line_end": 101,
+      "quote": "// Queryer is an interface used by Get and Select\ntype Queryer interface {\n\tQuery(query string, args ...interface{}) (*sql.Rows, error)\n\tQueryx(query string, args ...interface{}) (*Rows, error)\n\tQueryRowx(query string, args ...interface{}) *Row\n}\n\n// Execer is an interface used by MustExec and LoadFile\ntype Execer interface {\n\tExec(query string, args ...interface{}) (sql.Result, error)\n}\n\n// Binder is an interface for something which can bind queries (Tx, DB)\ntype binder interface {\n\tDriverName() string\n\tRebind(string) string\n\tBindNamed(string, interface{}) (string, []interface{}, error)\n}\n\n// Ext is a union interface which can bind, query, and exec, used by\n// NamedQuery and NamedExec.\ntype Ext interface {\n\tbinder\n\tQueryer\n\tExecer\n}",
+      "quote_sha256": "1652f7f238bee521ed256ad64af4030ede0c420229f287bda9612c0da6ba1165"
+    },
+    {
+      "id": "SQ-MAPPERFOR",
+      "path": "sqlx.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 146,
+      "line_end": 159,
+      "quote": "func mapperFor(i interface{}) *reflectx.Mapper {\n\tswitch i := i.(type) {\n\tcase DB:\n\t\treturn i.Mapper\n\tcase *DB:\n\t\treturn i.Mapper\n\tcase Tx:\n\t\treturn i.Mapper\n\tcase *Tx:\n\t\treturn i.Mapper\n\tdefault:\n\t\treturn mapper()\n\t}\n}",
+      "quote_sha256": "202e98690d2243569e7ef9415cb8ba57585a2e508fad2b3559b8a36f1bb6e2b1"
+    },
+    {
+      "id": "SQ-DBMETHODS",
+      "path": "sqlx.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 280,
+      "line_end": 315,
+      "quote": "\n// MapperFunc sets a new mapper for this db using the default sqlx struct tag\n// and the provided mapper function.\nfunc (db *DB) MapperFunc(mf func(string) string) {\n\tdb.Mapper = reflectx.NewMapperFunc(\"db\", mf)\n}\n\n// Rebind transforms a query from QUESTION to the DB driver's bindvar type.\nfunc (db *DB) Rebind(query string) string {\n\treturn Rebind(BindType(db.driverName), query)\n}\n\n// Unsafe returns a version of DB which will silently succeed to scan when\n// columns in the SQL result have no fields in the destination struct.\n// sqlx.Stmt and sqlx.Tx which are created from this DB will inherit its\n// safety behavior.\nfunc (db *DB) Unsafe() *DB {\n\treturn &DB{DB: db.DB, driverName: db.driverName, unsafe: true, Mapper: db.Mapper}\n}\n\n// BindNamed binds a query using the DB driver's bindvar type.\nfunc (db *DB) BindNamed(query string, arg interface{}) (string, []interface{}, error) {\n\treturn bindNamedMapper(BindType(db.driverName), query, arg, db.Mapper)\n}\n\n// NamedQuery using this DB.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (db *DB) NamedQuery(query string, arg interface{}) (*Rows, error) {\n\treturn NamedQuery(db, query, arg)\n}\n\n// NamedExec using this DB.\n// Any named placeholder parameters are replaced with fields from arg.\nfunc (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error) {\n\treturn NamedExec(db, query, arg)\n}",
+      "quote_sha256": "fa7782abcb4dba945093c5e0cd857e56a78e2b9ff42cd0967f3823d918976976"
+    },
+    {
+      "id": "SQ-CACHE",
+      "path": "reflectx/reflect.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 94,
+      "line_end": 113,
+      "quote": "func NewMapperFunc(tagName string, f func(string) string) *Mapper {\n\treturn &Mapper{\n\t\tcache:   make(map[reflect.Type]*StructMap),\n\t\ttagName: tagName,\n\t\tmapFunc: f,\n\t}\n}\n\n// TypeMap returns a mapping of field strings to int slices representing\n// the traversal down the struct to reach the field.\nfunc (m *Mapper) TypeMap(t reflect.Type) *StructMap {\n\tm.mutex.Lock()\n\tmapping, ok := m.cache[t]\n\tif !ok {\n\t\tmapping = getMapping(t, m.tagName, m.mapFunc, m.tagMapFunc)\n\t\tm.cache[t] = mapping\n\t}\n\tm.mutex.Unlock()\n\treturn mapping\n}",
+      "quote_sha256": "35ab7729e545ea5fdc059f6da670afba54067c71c60966dcd2939294cc9dcc33"
+    },
+    {
+      "id": "SQ-TRAVERSAL",
+      "path": "reflectx/reflect.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 181,
+      "line_end": 200,
+      "quote": "// TraversalsByNameFunc traverses the mapped names and calls fn with the index of\n// each name and the struct traversal represented by that name. Panics if t is not\n// a struct or Indirectable to a struct. Returns the first error returned by fn or nil.\nfunc (m *Mapper) TraversalsByNameFunc(t reflect.Type, names []string, fn func(int, []int) error) error {\n\tt = Deref(t)\n\tmustBe(t, reflect.Struct)\n\ttm := m.TypeMap(t)\n\tfor i, name := range names {\n\t\tfi, ok := tm.Names[name]\n\t\tif !ok {\n\t\t\tif err := fn(i, nil); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t} else {\n\t\t\tif err := fn(i, fi.Index); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}\n\t}\n\treturn nil",
+      "quote_sha256": "349f743dc830bd1e44ca94c0186195955df4357874ebe83736d35bb9158df7ca"
+    },
+    {
+      "id": "SQ-FIELD-ERROR",
+      "path": "reflectx/reflect.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 220,
+      "line_end": 250,
+      "quote": "// FieldByIndexesReadOnly returns a value for a particular struct traversal,\n// but is not concerned with allocating nil pointers because the value is\n// going to be used for reading and not setting.\nfunc FieldByIndexesReadOnly(v reflect.Value, indexes []int) reflect.Value {\n\tfor _, i := range indexes {\n\t\tv = reflect.Indirect(v).Field(i)\n\t}\n\treturn v\n}\n\n// Deref is Indirect for reflect.Types\nfunc Deref(t reflect.Type) reflect.Type {\n\tif t.Kind() == reflect.Ptr {\n\t\tt = t.Elem()\n\t}\n\treturn t\n}\n\n// -- helpers & utilities --\n\ntype kinder interface {\n\tKind() reflect.Kind\n}\n\n// mustBe checks a value against a kind, panicing with a reflect.ValueError\n// if the kind isn't that which is required.\nfunc mustBe(v kinder, expected reflect.Kind) {\n\tif k := v.Kind(); k != expected {\n\t\tpanic(&reflect.ValueError{Method: methodName(), Kind: k})\n\t}\n}",
+      "quote_sha256": "6135d5046702e4565069cf662d637115b21ad394ec054574a3360e4c676119b8"
+    },
+    {
+      "id": "SQ-TAG-CALLBACK",
+      "path": "reflectx/reflect.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 282,
+      "line_end": 319,
+      "quote": "func parseName(field reflect.StructField, tagName string, mapFunc, tagMapFunc mapf) (tag, fieldName string) {\n\t// first, set the fieldName to the field's name\n\tfieldName = field.Name\n\t// if a mapFunc is set, use that to override the fieldName\n\tif mapFunc != nil {\n\t\tfieldName = mapFunc(fieldName)\n\t}\n\n\t// if there's no tag to look for, return the field name\n\tif tagName == \"\" {\n\t\treturn \"\", fieldName\n\t}\n\n\t// if this tag is not set using the normal convention in the tag,\n\t// then return the fieldname..  this check is done because according\n\t// to the reflect documentation:\n\t//    If the tag does not have the conventional format,\n\t//    the value returned by Get is unspecified.\n\t// which doesn't sound great.\n\tif !strings.Contains(string(field.Tag), tagName+\":\") {\n\t\treturn \"\", fieldName\n\t}\n\n\t// at this point we're fairly sure that we have a tag, so lets pull it out\n\ttag = field.Tag.Get(tagName)\n\n\t// if we have a mapper function, call it on the whole tag\n\t// XXX: this is a change from the old version, which pulled out the name\n\t// before the tagMapFunc could be run, but I think this is the right way\n\tif tagMapFunc != nil {\n\t\ttag = tagMapFunc(tag)\n\t}\n\n\t// finally, split the options from the name\n\tparts := strings.Split(tag, \",\")\n\tfieldName = parts[0]\n\n\treturn tag, fieldName",
+      "quote_sha256": "c89c222c940093049e14388cf4a9741239e1522da2f13cfcfaa9bb462a9089d1"
+    },
+    {
+      "id": "SQ-MAPPING-CALL",
+      "path": "reflectx/reflect.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 342,
+      "line_end": 375,
+      "quote": "func getMapping(t reflect.Type, tagName string, mapFunc, tagMapFunc mapf) *StructMap {\n\tm := []*FieldInfo{}\n\n\troot := &FieldInfo{}\n\tqueue := []typeQueue{}\n\tqueue = append(queue, typeQueue{Deref(t), root, \"\"})\n\nQueueLoop:\n\tfor len(queue) != 0 {\n\t\t// pop the first item off of the queue\n\t\ttq := queue[0]\n\t\tqueue = queue[1:]\n\n\t\t// ignore recursive field\n\t\tfor p := tq.fi.Parent; p != nil; p = p.Parent {\n\t\t\tif tq.fi.Field.Type == p.Field.Type {\n\t\t\t\tcontinue QueueLoop\n\t\t\t}\n\t\t}\n\n\t\tnChildren := 0\n\t\tif tq.t.Kind() == reflect.Struct {\n\t\t\tnChildren = tq.t.NumField()\n\t\t}\n\t\ttq.fi.Children = make([]*FieldInfo, nChildren)\n\n\t\t// iterate through all of its fields\n\t\tfor fieldPos := 0; fieldPos < nChildren; fieldPos++ {\n\n\t\t\tf := tq.t.Field(fieldPos)\n\n\t\t\t// parse the tag and the target name using the mapping options for this field\n\t\t\ttag, name := parseName(f, tagName, mapFunc, tagMapFunc)\n",
+      "quote_sha256": "5b0652d839ad3874de5749d55a4e0bcb534d4bda19d5f609bd5c0b38e345d37d"
+    },
+    {
+      "id": "SQ-CONTEXT",
+      "path": "named_context.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 116,
+      "line_end": 133,
+      "quote": "func NamedQueryContext(ctx context.Context, e ExtContext, query string, arg interface{}) (*Rows, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.QueryxContext(ctx, q, args...)\n}\n\n// NamedExecContext uses BindStruct to get a query executable by the driver and\n// then runs Exec on the result.  Returns an error from the binding\n// or the query execution itself.\nfunc NamedExecContext(ctx context.Context, e ExtContext, query string, arg interface{}) (sql.Result, error) {\n\tq, args, err := bindNamedMapper(BindType(e.DriverName()), query, arg, mapperFor(e))\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn e.ExecContext(ctx, q, args...)\n}",
+      "quote_sha256": "08ca3469f15189451fa0a0b547d08f095fa5899b18ae8ad89c0f155aaabf46d9"
+    },
+    {
+      "id": "SQ-CTX-INTERFACE",
+      "path": "sqlx_context.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 26,
+      "line_end": 48,
+      "quote": "type QueryerContext interface {\n\tQueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)\n\tQueryxContext(ctx context.Context, query string, args ...interface{}) (*Rows, error)\n\tQueryRowxContext(ctx context.Context, query string, args ...interface{}) *Row\n}\n\n// PreparerContext is an interface used by PreparexContext.\ntype PreparerContext interface {\n\tPrepareContext(ctx context.Context, query string) (*sql.Stmt, error)\n}\n\n// ExecerContext is an interface used by MustExecContext and LoadFileContext\ntype ExecerContext interface {\n\tExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)\n}\n\n// ExtContext is a union interface which can bind, query, and exec, with Context\n// used by NamedQueryContext and NamedExecContext.\ntype ExtContext interface {\n\tbinder\n\tQueryerContext\n\tExecerContext\n}",
+      "quote_sha256": "cf52051722cef0f41d663c7948891987fdb9c2abe1a0873877551b5480926e34"
+    },
+    {
+      "id": "SQ-TEST-COMPILER",
+      "path": "named_test.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 9,
+      "line_end": 121,
+      "quote": "func TestCompileQuery(t *testing.T) {\n\ttable := []struct {\n\t\tQ, R, D, T, N string\n\t\tV             []string\n\t}{\n\t\t// basic test for named parameters, invalid char ',' terminating\n\t\t{\n\t\t\tQ: `INSERT INTO foo (a,b,c,d) VALUES (:name, :age, :first, :last)`,\n\t\t\tR: `INSERT INTO foo (a,b,c,d) VALUES (?, ?, ?, ?)`,\n\t\t\tD: `INSERT INTO foo (a,b,c,d) VALUES ($1, $2, $3, $4)`,\n\t\t\tT: `INSERT INTO foo (a,b,c,d) VALUES (@p1, @p2, @p3, @p4)`,\n\t\t\tN: `INSERT INTO foo (a,b,c,d) VALUES (:name, :age, :first, :last)`,\n\t\t\tV: []string{\"name\", \"age\", \"first\", \"last\"},\n\t\t},\n\t\t// This query tests a named parameter ending the string as well as numbers\n\t\t{\n\t\t\tQ: `SELECT * FROM a WHERE first_name=:name1 AND last_name=:name2`,\n\t\t\tR: `SELECT * FROM a WHERE first_name=? AND last_name=?`,\n\t\t\tD: `SELECT * FROM a WHERE first_name=$1 AND last_name=$2`,\n\t\t\tT: `SELECT * FROM a WHERE first_name=@p1 AND last_name=@p2`,\n\t\t\tN: `SELECT * FROM a WHERE first_name=:name1 AND last_name=:name2`,\n\t\t\tV: []string{\"name1\", \"name2\"},\n\t\t},\n\t\t{\n\t\t\tQ: `SELECT \"::foo\" FROM a WHERE first_name=:name1 AND last_name=:name2`,\n\t\t\tR: `SELECT \":foo\" FROM a WHERE first_name=? AND last_name=?`,\n\t\t\tD: `SELECT \":foo\" FROM a WHERE first_name=$1 AND last_name=$2`,\n\t\t\tT: `SELECT \":foo\" FROM a WHERE first_name=@p1 AND last_name=@p2`,\n\t\t\tN: `SELECT \":foo\" FROM a WHERE first_name=:name1 AND last_name=:name2`,\n\t\t\tV: []string{\"name1\", \"name2\"},\n\t\t},\n\t\t{\n\t\t\tQ: `SELECT 'a::b::c' || first_name, '::::ABC::_::' FROM person WHERE first_name=:first_name AND last_name=:last_name`,\n\t\t\tR: `SELECT 'a:b:c' || first_name, '::ABC:_:' FROM person WHERE first_name=? AND last_name=?`,\n\t\t\tD: `SELECT 'a:b:c' || first_name, '::ABC:_:' FROM person WHERE first_name=$1 AND last_name=$2`,\n\t\t\tT: `SELECT 'a:b:c' || first_name, '::ABC:_:' FROM person WHERE first_name=@p1 AND last_name=@p2`,\n\t\t\tN: `SELECT 'a:b:c' || first_name, '::ABC:_:' FROM person WHERE first_name=:first_name AND last_name=:last_name`,\n\t\t\tV: []string{\"first_name\", \"last_name\"},\n\t\t},\n\t\t{\n\t\t\tQ: `SELECT @name := \"name\", :age, :first, :last`,\n\t\t\tR: `SELECT @name := \"name\", ?, ?, ?`,\n\t\t\tD: `SELECT @name := \"name\", $1, $2, $3`,\n\t\t\tN: `SELECT @name := \"name\", :age, :first, :last`,\n\t\t\tT: `SELECT @name := \"name\", @p1, @p2, @p3`,\n\t\t\tV: []string{\"age\", \"first\", \"last\"},\n\t\t},\n\t\t/* This unicode awareness test sadly fails, because of our byte-wise worldview.\n\t\t * We could certainly iterate by Rune instead, though it's a great deal slower,\n\t\t * it's probably the RightWay(tm)\n\t\t{\n\t\t\tQ: `INSERT INTO foo (a,b,c,d) VALUES (:あ, :b, :キコ, :名前)`,\n\t\t\tR: `INSERT INTO foo (a,b,c,d) VALUES (?, ?, ?, ?)`,\n\t\t\tD: `INSERT INTO foo (a,b,c,d) VALUES ($1, $2, $3, $4)`,\n\t\t\tN: []string{\"name\", \"age\", \"first\", \"last\"},\n\t\t},\n\t\t*/\n\t}\n\n\tfor _, test := range table {\n\t\tqr, names, err := compileNamedQuery([]byte(test.Q), QUESTION)\n\t\tif err != nil {\n\t\t\tt.Error(err)\n\t\t}\n\t\tif qr != test.R {\n\t\t\tt.Errorf(\"expected %s, got %s\", test.R, qr)\n\t\t}\n\t\tif len(names) != len(test.V) {\n\t\t\tt.Errorf(\"expected %#v, got %#v\", test.V, names)\n\t\t} else {\n\t\t\tfor i, name := range names {\n\t\t\t\tif name != test.V[i] {\n\t\t\t\t\tt.Errorf(\"expected %dth name to be %s, got %s\", i+1, test.V[i], name)\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\tqd, _, _ := compileNamedQuery([]byte(test.Q), DOLLAR)\n\t\tif qd != test.D {\n\t\t\tt.Errorf(\"\\nexpected: `%s`\\ngot:      `%s`\", test.D, qd)\n\t\t}\n\n\t\tqt, _, _ := compileNamedQuery([]byte(test.Q), AT)\n\t\tif qt != test.T {\n\t\t\tt.Errorf(\"\\nexpected: `%s`\\ngot:      `%s`\", test.T, qt)\n\t\t}\n\n\t\tqq, _, _ := compileNamedQuery([]byte(test.Q), NAMED)\n\t\tif qq != test.N {\n\t\t\tt.Errorf(\"\\nexpected: `%s`\\ngot:      `%s`\\n(len: %d vs %d)\", test.N, qq, len(test.N), len(qq))\n\t\t}\n\t}\n}\n\ntype Test struct {\n\tt *testing.T\n}\n\nfunc (t Test) Error(err error, msg ...interface{}) {\n\tt.t.Helper()\n\tif err != nil {\n\t\tif len(msg) == 0 {\n\t\t\tt.t.Error(err)\n\t\t} else {\n\t\t\tt.t.Error(msg...)\n\t\t}\n\t}\n}\n\nfunc (t Test) Errorf(err error, format string, args ...interface{}) {\n\tt.t.Helper()\n\tif err != nil {\n\t\tt.t.Errorf(format, args...)\n\t}",
+      "quote_sha256": "a13b87856e5c3c92fccf099a7c8a20138ac08c0bfdd80eef34c56063ca3dfbed"
+    },
+    {
+      "id": "SQ-TEST-SKIP",
+      "path": "named_test.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 124,
+      "line_end": 132,
+      "quote": "func TestEscapedColons(t *testing.T) {\n\tt.Skip(\"not sure it is possible to support this in general case without an SQL parser\")\n\tvar qs = `SELECT * FROM testtable WHERE timeposted BETWEEN (now() AT TIME ZONE 'utc') AND\n\t(now() AT TIME ZONE 'utc') - interval '01:30:00') AND name = '\\'this is a test\\'' and id = :id`\n\t_, _, err := compileNamedQuery([]byte(qs), DOLLAR)\n\tif err != nil {\n\t\tt.Error(\"Didn't handle colons correctly when inside a string\")\n\t}\n}",
+      "quote_sha256": "49bb28b75896a753a672525a52ac62c31ef07e28b778d57d935891a6dbe8ed45"
+    },
+    {
+      "id": "SQ-TEST-ARRAY",
+      "path": "named_test.go",
+      "revision": "41dac167fdad5e3fd81d66cafba0951dc6823a30",
+      "line_start": 305,
+      "line_end": 339,
+      "quote": "func TestFixBounds(t *testing.T) {\n\ttable := []struct {\n\t\tname, query, expect string\n\t\tloop                int\n\t}{\n\t\t{\n\t\t\tname:   `named syntax`,\n\t\t\tquery:  `INSERT INTO foo (a,b,c,d) VALUES (:name, :age, :first, :last)`,\n\t\t\texpect: `INSERT INTO foo (a,b,c,d) VALUES (:name, :age, :first, :last),(:name, :age, :first, :last)`,\n\t\t\tloop:   2,\n\t\t},\n\t\t{\n\t\t\tname:   `mysql syntax`,\n\t\t\tquery:  `INSERT INTO foo (a,b,c,d) VALUES (?, ?, ?, ?)`,\n\t\t\texpect: `INSERT INTO foo (a,b,c,d) VALUES (?, ?, ?, ?),(?, ?, ?, ?)`,\n\t\t\tloop:   2,\n\t\t},\n\t\t{\n\t\t\tname:   `named syntax w/ trailer`,\n\t\t\tquery:  `INSERT INTO foo (a,b,c,d) VALUES (:name, :age, :first, :last) ;--`,\n\t\t\texpect: `INSERT INTO foo (a,b,c,d) VALUES (:name, :age, :first, :last),(:name, :age, :first, :last) ;--`,\n\t\t\tloop:   2,\n\t\t},\n\t\t{\n\t\t\tname:   `mysql syntax w/ trailer`,\n\t\t\tquery:  `INSERT INTO foo (a,b,c,d) VALUES (?, ?, ?, ?) ;--`,\n\t\t\texpect: `INSERT INTO foo (a,b,c,d) VALUES (?, ?, ?, ?),(?, ?, ?, ?) ;--`,\n\t\t\tloop:   2,\n\t\t},\n\t\t{\n\t\t\tname:   `not found test`,\n\t\t\tquery:  `INSERT INTO foo (a,b,c,d) (:name, :age, :first, :last)`,\n\t\t\texpect: `INSERT INTO foo (a,b,c,d) (:name, :age, :first, :last)`,\n\t\t\tloop:   2,\n\t\t},",
+      "quote_sha256": "74c01e09fde2de89a8d7fa0f61b06155c0d2c5737ef5810435e81f90fb82513e"
+    }
+  ],
+  "native_declarations_fresh_quote_verified": 37,
+  "source_execution": false,
+  "database_operations": false,
+  "literal_multisets_equal": true,
+  "literal_occurrences_each": 53,
+  "example_bytes_equal_both_languages_and_owned_source": true,
+  "example_syntax_only": true,
+  "example_not_executed_or_typechecked": true,
+  "actual_documents": [
+    {
+      "language": "en",
+      "path": "agent/research/portfolio-vivabem-20261120/sqlx-named-context-candidate-v2/en.md",
+      "sha256": "f0bedc01e280f4271f35f0b1f5f2ebbee7a2c20cab7d536cc8d93a6eb35a5a02",
+      "bytes": 10718,
+      "inline_literal_occurrences": 53,
+      "FAQ_questions": 6
+    },
+    {
+      "language": "pt-BR",
+      "path": "agent/research/portfolio-vivabem-20261120/sqlx-named-context-candidate-v2/pt-BR.md",
+      "sha256": "0b130d8a14e83e722ab80110f8900d485ddc89993e2c7d061c8f96f3704d8a4d",
+      "bytes": 11957,
+      "inline_literal_occurrences": 53,
+      "FAQ_questions": 6
+    }
+  ],
+  "checks_not_general_semantic_proof": true
+}

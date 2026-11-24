@@ -1,0 +1,85 @@
+{
+  "at": "2026-11-21T03:05:37.587278+00:00",
+  "extends": [
+    "fine-tuning-pilot-proposal-v1.json",
+    "fine-tuning-resource-readiness-supplement-v2.json"
+  ],
+  "status": "NO-GO",
+  "launch_allowed": false,
+  "training_authorized": false,
+  "optimizer_steps": 0,
+  "evidence_driven_design_risks": [
+    {
+      "risk": "Syntactically valid or true standalone answers can be attached to the wrong method/question.",
+      "evidence": [
+        "answerbank-comparison-review-v1.json",
+        "answer-label-comparison-review-v1.json",
+        "single-question-routing-review-v1.json"
+      ],
+      "future_pilot_requirement": "Measure semantic question-to-fact association, not just JSON/ID validity. Permute labels/order on authorized future examples; hold out matched facts under changed labels."
+    },
+    {
+      "risk": "Verifier labels can disagree with their own reason and source.",
+      "evidence": [
+        "verifier-canaries-v1/review-v1.json",
+        "revision-judgment-review-v1.json"
+      ],
+      "future_pilot_requirement": "Score complete label+grounded reason+source-link+bilingual record, separately from labels. Do not teach universal truth certification."
+    },
+    {
+      "risk": "Source syntax does not imply application/runtime guarantees.",
+      "evidence": [
+        "fastapi-request-context-complete-review-v2.json",
+        "starlette-cast-cross-context-review-v1.json"
+      ],
+      "future_pilot_requirement": "Targets explicitly distinguish source statement, controlled observation and unverified integration. No training on current evaluation-only examples."
+    }
+  ],
+  "data_proposal_not_dataset_creation": {
+    "proposed_max_training_examples": 16,
+    "required_gold_state": "Every target separately owner-approved for training, with rights/source lineage and bilingual review",
+    "current_owner_gold": 0,
+    "current_campaign_material_training_use": false,
+    "current_evaluation_families_excluded": [
+      "Cobra",
+      "FastAPI/Starlette",
+      "Zod",
+      "Chi",
+      "Fastify",
+      "Click",
+      "Axum"
+    ],
+    "private_VivaBem_material_excluded": true,
+    "future_independent_evaluation": "Reserve fresh authorized source families/tasks and freeze owner-reviewed reference before any pilot tuning. Current OpenRA metadata reserve is not an approved pilot split or pretraining holdout certification."
+  },
+  "baseline_requirement": "Use the same verified trainable checkpoint/tokenizer/framework/precision for base versus adapter comparison. Existing Q4GGUF local responses are diagnostic context, not a matched causal fine-tuning baseline.",
+  "unchanged_execution_bounds": {
+    "optimizer_updates_max": 16,
+    "microbatch": 1,
+    "gradient_accumulation": 1,
+    "sequence_length": 512,
+    "lora_rank": 4,
+    "target_layers": 2,
+    "exact_target_module_paths": "UNRESOLVED until compatible trainable base is verified; no permissive fallback",
+    "optimizer_time_minutes_max": 10,
+    "total_pilot_time_minutes_max": 30
+  },
+  "success_proposal": {
+    "primary": "At least one complete held-out documentation/FAQ task accepted under unchanged source and bilingual criteria, while outperforming matched-base complete acceptance on a frozen owner-approved evaluation set.",
+    "nonregression": [
+      "No increase in critical unsupported guarantees, unsafe removals, identifier drift or wrong-method answer links.",
+      "Report exact numerators/denominators, source-family grouping, uncertainty and all failures.",
+      "Do not infer general accuracy or an independent truth verifier from a tiny pilot."
+    ],
+    "if_baseline_already_accepts_all": "Do not claim learning from tied acceptance; require a measurable pre-frozen improvement dimension or report inconclusive."
+  },
+  "preservation_and_rollback": "Keep original trainable base/tokenizer hashes immutable, archive step0/adapter/checkpoint/config/RNG/input/reference/result hashes and restore verification. Existing serving GGUF and current datasets remain untouched.",
+  "readiness_blockers": [
+    "Gold0 and no training permission",
+    "Unverified trainable checkpoint/tokenizer/rights",
+    "No installed/validated compatible native framework",
+    "No measured training peak/free unified memory",
+    "No approved independent pilot split or exact target-module inspection"
+  ],
+  "no_commands_or_optimizers_authored": true
+}

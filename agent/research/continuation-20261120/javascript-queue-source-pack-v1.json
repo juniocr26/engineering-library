@@ -1,0 +1,534 @@
+{
+  "typescript_version": "5.9.3",
+  "node": "v24.22.0",
+  "units": {
+    "limit:types:LimitFunction": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+      "first_line": 3,
+      "last_line": 32,
+      "quote": "export interface LimitFunction {\n\t/**\n\tThe number of promises that are currently running.\n\t*/\n\treadonly activeCount: number;\n\n\t/**\n\tThe number of promises that are waiting to run (i.e. their internal `fn` was not called yet).\n\t*/\n\treadonly pendingCount: number;\n\n\t/**\n\tDiscard pending promises that are waiting to run.\n\n\tThis might be useful if you want to teardown the queue at the end of your program's lifecycle or discard any function calls referencing an intermediary state of your app.\n\n\tNote: This does not cancel promises that are already running.\n\t*/\n\tclearQueue: () => void;\n\n\t/**\n\t@param fn - Promise-returning/async function.\n\t@param arguments - Any arguments to pass through to `fn`. Support for passing arguments on to the `fn` is provided in order to be able to avoid creating unnecessary closures. You probably don't need this optimization unless you're pushing a lot of functions.\n\t@returns The promise returned by calling `fn(...arguments)`.\n\t*/\n\t<Arguments extends unknown[], ReturnType>(\n\t\tfn: (...arguments: Arguments) => PromiseLike<ReturnType> | ReturnType,\n\t\t...arguments: Arguments\n\t): Promise<ReturnType>;\n}\n",
+      "quote_sha256": "c2aed43fc1f5df698536de96c778409e215b4011483fbf10d0f51616b579e04c",
+      "source_executed_during_extraction": false
+    },
+    "limit:types:LimitFunction.activeCount": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+      "first_line": 7,
+      "last_line": 7,
+      "quote": "\treadonly activeCount: number;\n",
+      "quote_sha256": "5723e3ecf86b550cfd67b597983d1e8419e0d3067723b423e2edab07c60c0594",
+      "source_executed_during_extraction": false
+    },
+    "limit:types:LimitFunction.pendingCount": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+      "first_line": 12,
+      "last_line": 12,
+      "quote": "\treadonly pendingCount: number;\n",
+      "quote_sha256": "52974add2936b0d9f94bcad4561224e9e7dd4678fee9fdaea2c83db9901d58cc",
+      "source_executed_during_extraction": false
+    },
+    "limit:types:LimitFunction.clearQueue": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+      "first_line": 21,
+      "last_line": 21,
+      "quote": "\tclearQueue: () => void;\n",
+      "quote_sha256": "c51d8b4eb1888964eb02b2cbdbb8d62ec0a5decbbce35839ae3f8193401ac5d6",
+      "source_executed_during_extraction": false
+    },
+    "limit:types:LimitFunction.call": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+      "first_line": 28,
+      "last_line": 31,
+      "quote": "\t<Arguments extends unknown[], ReturnType>(\n\t\tfn: (...arguments: Arguments) => PromiseLike<ReturnType> | ReturnType,\n\t\t...arguments: Arguments\n\t): Promise<ReturnType>;\n",
+      "quote_sha256": "044263498665a601628c9ae02ccbabc08f103c4021cedaa0793c0456e3c7a700",
+      "source_executed_during_extraction": false
+    },
+    "limit:types:pLimit": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "098ef3f011cfadd9e4ff013dd051a39545536793ecbb92da1b3c32b808a7c114",
+      "first_line": 40,
+      "last_line": 40,
+      "quote": "export default function pLimit(concurrency: number): LimitFunction;\n",
+      "quote_sha256": "04814dfc8609ed23e3a4cbfe7c8a81fcef4fbf5379a8051709a672aba3c30939",
+      "source_executed_during_extraction": false
+    },
+    "limit:queue-import": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 1,
+      "last_line": 1,
+      "quote": "import Queue from 'yocto-queue';\n",
+      "quote_sha256": "2b8f84ffd2d0ede20eb0f2d24e8ce534aa34041ce069c1ee23e6a8a485b45a9d",
+      "source_executed_during_extraction": false
+    },
+    "limit:factory": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 3,
+      "last_line": 68,
+      "quote": "export default function pLimit(concurrency) {\n\tif (!((Number.isInteger(concurrency) || concurrency === Number.POSITIVE_INFINITY) && concurrency > 0)) {\n\t\tthrow new TypeError('Expected `concurrency` to be a number from 1 and up');\n\t}\n\n\tconst queue = new Queue();\n\tlet activeCount = 0;\n\n\tconst next = () => {\n\t\tactiveCount--;\n\n\t\tif (queue.size > 0) {\n\t\t\tqueue.dequeue()();\n\t\t}\n\t};\n\n\tconst run = async (fn, resolve, args) => {\n\t\tactiveCount++;\n\n\t\tconst result = (async () => fn(...args))();\n\n\t\tresolve(result);\n\n\t\ttry {\n\t\t\tawait result;\n\t\t} catch {}\n\n\t\tnext();\n\t};\n\n\tconst enqueue = (fn, resolve, args) => {\n\t\tqueue.enqueue(run.bind(undefined, fn, resolve, args));\n\n\t\t(async () => {\n\t\t\t// This function needs to wait until the next microtask before comparing\n\t\t\t// `activeCount` to `concurrency`, because `activeCount` is updated asynchronously\n\t\t\t// when the run function is dequeued and called. The comparison in the if-statement\n\t\t\t// needs to happen asynchronously as well to get an up-to-date value for `activeCount`.\n\t\t\tawait Promise.resolve();\n\n\t\t\tif (activeCount < concurrency && queue.size > 0) {\n\t\t\t\tqueue.dequeue()();\n\t\t\t}\n\t\t})();\n\t};\n\n\tconst generator = (fn, ...args) => new Promise(resolve => {\n\t\tenqueue(fn, resolve, args);\n\t});\n\n\tObject.defineProperties(generator, {\n\t\tactiveCount: {\n\t\t\tget: () => activeCount,\n\t\t},\n\t\tpendingCount: {\n\t\t\tget: () => queue.size,\n\t\t},\n\t\tclearQueue: {\n\t\t\tvalue: () => {\n\t\t\t\tqueue.clear();\n\t\t\t},\n\t\t},\n\t});\n\n\treturn generator;\n}\n",
+      "quote_sha256": "eedbaf5d72c80acd438817a36ef99d189482aa33d61a77febd0c071d0aa88df0",
+      "source_executed_during_extraction": false
+    },
+    "limit:validation": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 4,
+      "last_line": 6,
+      "quote": "\tif (!((Number.isInteger(concurrency) || concurrency === Number.POSITIVE_INFINITY) && concurrency > 0)) {\n\t\tthrow new TypeError('Expected `concurrency` to be a number from 1 and up');\n\t}\n",
+      "quote_sha256": "d642583f2dbae01f0b986d9ca67057ace7eb40bac063f5311ca089fb3bbc6fd3",
+      "source_executed_during_extraction": false
+    },
+    "limit:queue": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 8,
+      "last_line": 8,
+      "quote": "\tconst queue = new Queue();\n",
+      "quote_sha256": "acb7d30a7ff42e3edf602cbecd6d9cac6eb4761b954bbac5ce4f6534eaaee45e",
+      "source_executed_during_extraction": false
+    },
+    "limit:activeCount": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 9,
+      "last_line": 9,
+      "quote": "\tlet activeCount = 0;\n",
+      "quote_sha256": "bbcb7d3ba8684a35f74846d0e37c759215c4d3bac30e27e62e483549a2121d7b",
+      "source_executed_during_extraction": false
+    },
+    "limit:next": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 11,
+      "last_line": 17,
+      "quote": "\tconst next = () => {\n\t\tactiveCount--;\n\n\t\tif (queue.size > 0) {\n\t\t\tqueue.dequeue()();\n\t\t}\n\t};\n",
+      "quote_sha256": "8ed468ab1599fb14470eccfde263fd17fe7f35cb147821b03420bf1105696fce",
+      "source_executed_during_extraction": false
+    },
+    "limit:run": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 19,
+      "last_line": 31,
+      "quote": "\tconst run = async (fn, resolve, args) => {\n\t\tactiveCount++;\n\n\t\tconst result = (async () => fn(...args))();\n\n\t\tresolve(result);\n\n\t\ttry {\n\t\t\tawait result;\n\t\t} catch {}\n\n\t\tnext();\n\t};\n",
+      "quote_sha256": "924a4515e997e1f3ada5a4970a69c30f366ac6910ab6fddebf61d1fb3af3fac4",
+      "source_executed_during_extraction": false
+    },
+    "limit:enqueue": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 33,
+      "last_line": 47,
+      "quote": "\tconst enqueue = (fn, resolve, args) => {\n\t\tqueue.enqueue(run.bind(undefined, fn, resolve, args));\n\n\t\t(async () => {\n\t\t\t// This function needs to wait until the next microtask before comparing\n\t\t\t// `activeCount` to `concurrency`, because `activeCount` is updated asynchronously\n\t\t\t// when the run function is dequeued and called. The comparison in the if-statement\n\t\t\t// needs to happen asynchronously as well to get an up-to-date value for `activeCount`.\n\t\t\tawait Promise.resolve();\n\n\t\t\tif (activeCount < concurrency && queue.size > 0) {\n\t\t\t\tqueue.dequeue()();\n\t\t\t}\n\t\t})();\n\t};\n",
+      "quote_sha256": "e3d8be8d5310461cf21b38d083adaa60b0dcbb470ead97fba3732db3af5758a6",
+      "source_executed_during_extraction": false
+    },
+    "limit:generator": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 49,
+      "last_line": 51,
+      "quote": "\tconst generator = (fn, ...args) => new Promise(resolve => {\n\t\tenqueue(fn, resolve, args);\n\t});\n",
+      "quote_sha256": "0f5d830f7e3cf157b7d3054326f59ffc4be15e3bb47f8c3127d3dffd9a6c527f",
+      "source_executed_during_extraction": false
+    },
+    "limit:defined-properties": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 53,
+      "last_line": 65,
+      "quote": "\tObject.defineProperties(generator, {\n\t\tactiveCount: {\n\t\t\tget: () => activeCount,\n\t\t},\n\t\tpendingCount: {\n\t\t\tget: () => queue.size,\n\t\t},\n\t\tclearQueue: {\n\t\t\tvalue: () => {\n\t\t\t\tqueue.clear();\n\t\t\t},\n\t\t},\n\t});\n",
+      "quote_sha256": "2cc8775c710e6d0c236d775ac645214017c465b90f7f711644e53a6849835b30",
+      "source_executed_during_extraction": false
+    },
+    "limit:return": {
+      "path": "index.js",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "f80d1e76df221c95ac831ed00ad0aac83496fd0b2bc98d3d0e4296e6e8f6b2e9",
+      "first_line": 67,
+      "last_line": 67,
+      "quote": "\treturn generator;\n",
+      "quote_sha256": "0d15805d9fa32b352e6ae5c1a76339cc794512aad56f1a32c6775f607d9f5ffd",
+      "source_executed_during_extraction": false
+    },
+    "limit:license": {
+      "path": "license",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "first_line": 1,
+      "last_line": 9,
+      "quote": "MIT License\n\nCopyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n",
+      "quote_sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "source_executed_during_extraction": false
+    },
+    "limit:manifest": {
+      "path": "package.json",
+      "repository": "sindresorhus/p-limit",
+      "revision": "38a6773e552d24f4c9eb2d79d57b6cff017c587d",
+      "source_sha256": "71b014415b5b254af73a26d5ffdb0757f919587de66b7984567aff2167c1d5d6",
+      "first_line": 1,
+      "last_line": 54,
+      "quote": "{\n\t\"name\": \"p-limit\",\n\t\"version\": \"4.0.0\",\n\t\"description\": \"Run multiple promise-returning & async functions with limited concurrency\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/p-limit\",\n\t\"funding\": \"https://github.com/sponsors/sindresorhus\",\n\t\"author\": {\n\t\t\"name\": \"Sindre Sorhus\",\n\t\t\"email\": \"sindresorhus@gmail.com\",\n\t\t\"url\": \"https://sindresorhus.com\"\n\t},\n\t\"type\": \"module\",\n\t\"exports\": \"./index.js\",\n\t\"engines\": {\n\t\t\"node\": \"^12.20.0 || ^14.13.1 || >=16.0.0\"\n\t},\n\t\"scripts\": {\n\t\t\"test\": \"xo && ava && tsd\"\n\t},\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"index.d.ts\"\n\t],\n\t\"keywords\": [\n\t\t\"promise\",\n\t\t\"limit\",\n\t\t\"limited\",\n\t\t\"concurrency\",\n\t\t\"throttle\",\n\t\t\"throat\",\n\t\t\"rate\",\n\t\t\"batch\",\n\t\t\"ratelimit\",\n\t\t\"task\",\n\t\t\"queue\",\n\t\t\"async\",\n\t\t\"await\",\n\t\t\"promises\",\n\t\t\"bluebird\"\n\t],\n\t\"dependencies\": {\n\t\t\"yocto-queue\": \"^1.0.0\"\n\t},\n\t\"devDependencies\": {\n\t\t\"ava\": \"^3.15.0\",\n\t\t\"delay\": \"^5.0.0\",\n\t\t\"in-range\": \"^3.0.0\",\n\t\t\"random-int\": \"^3.0.0\",\n\t\t\"time-span\": \"^5.0.0\",\n\t\t\"tsd\": \"^0.17.0\",\n\t\t\"xo\": \"^0.44.0\"\n\t}\n}\n",
+      "quote_sha256": "71b014415b5b254af73a26d5ffdb0757f919587de66b7984567aff2167c1d5d6",
+      "source_executed_during_extraction": false
+    },
+    "queue:types:Queue": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "first_line": 1,
+      "last_line": 54,
+      "quote": "export default class Queue<ValueType> implements Iterable<ValueType> {\n\t/**\n\tThe size of the queue.\n\t*/\n\treadonly size: number;\n\n\t/**\n\tTiny queue data structure.\n\n\tThe instance is an [`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols), which means you can iterate over the queue front to back with a \u201cfor\u2026of\u201d loop, or use spreading to convert the queue to an array. Don't do this unless you really need to though, since it's slow.\n\n\t@example\n\t```\n\timport Queue from 'yocto-queue';\n\n\tconst queue = new Queue();\n\n\tqueue.enqueue('\ud83e\udd84');\n\tqueue.enqueue('\ud83c\udf08');\n\n\tconsole.log(queue.size);\n\t//=> 2\n\n\tconsole.log(...queue);\n\t//=> '\ud83e\udd84 \ud83c\udf08'\n\n\tconsole.log(queue.dequeue());\n\t//=> '\ud83e\udd84'\n\n\tconsole.log(queue.dequeue());\n\t//=> '\ud83c\udf08'\n\t```\n\t*/\n\tconstructor();\n\n\t[Symbol.iterator](): IterableIterator<ValueType>;\n\n\t/**\n\tAdd a value to the queue.\n\t*/\n\tenqueue(value: ValueType): void;\n\n\t/**\n\tRemove the next value in the queue.\n\n\t@returns The removed value or `undefined` if the queue is empty.\n\t*/\n\tdequeue(): ValueType | undefined;\n\n\t/**\n\tClear the queue.\n\t*/\n\tclear(): void;\n}\n",
+      "quote_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "source_executed_during_extraction": false
+    },
+    "queue:types:Queue.size": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "first_line": 5,
+      "last_line": 5,
+      "quote": "\treadonly size: number;\n",
+      "quote_sha256": "c25566fad9828175b86caa4c02c1a99a2993da682242830a95ddd0695bd7b1a5",
+      "source_executed_during_extraction": false
+    },
+    "queue:types:Queue.unnamed": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "first_line": 34,
+      "last_line": 34,
+      "quote": "\tconstructor();\n",
+      "quote_sha256": "35badc4e426341654a5371ace59f3b88b5ca979be58dea9633a6c42d7999879c",
+      "source_executed_during_extraction": false
+    },
+    "queue:types:Queue.[Symbol.iterator]": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "first_line": 36,
+      "last_line": 36,
+      "quote": "\t[Symbol.iterator](): IterableIterator<ValueType>;\n",
+      "quote_sha256": "737d4bd0b44678b811f6965ee5282884d4a723fda6eb82078092cbe4ee8add1b",
+      "source_executed_during_extraction": false
+    },
+    "queue:types:Queue.enqueue": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "first_line": 41,
+      "last_line": 41,
+      "quote": "\tenqueue(value: ValueType): void;\n",
+      "quote_sha256": "fd8c24129a69e6c726054a3a1b5edd0ac9e713b3264e8eb76c6fa2560149aeaa",
+      "source_executed_during_extraction": false
+    },
+    "queue:types:Queue.dequeue": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "first_line": 48,
+      "last_line": 48,
+      "quote": "\tdequeue(): ValueType | undefined;\n",
+      "quote_sha256": "6ae49365ec3227ae19af2c990c9bcad6abc3a06012e4957552cc4aacbe2cf036",
+      "source_executed_during_extraction": false
+    },
+    "queue:types:Queue.clear": {
+      "path": "index.d.ts",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "7a14038f896ae0d32445e21931862bcfc257440135eb807b84b8974decbe2aca",
+      "first_line": 53,
+      "last_line": 53,
+      "quote": "\tclear(): void;\n",
+      "quote_sha256": "717539f781bb566abc49c7a17d15c18d984ab86897f25090b4c1aa7396036965",
+      "source_executed_during_extraction": false
+    },
+    "queue:Node": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 6,
+      "last_line": 13,
+      "quote": "class Node {\n\tvalue;\n\tnext;\n\n\tconstructor(value) {\n\t\tthis.value = value;\n\t}\n}\n",
+      "quote_sha256": "e201db4af0a56ff033817ea2544e7b4b3696851e62edec2bdb9d1d0e53afb3ba",
+      "source_executed_during_extraction": false
+    },
+    "queue:Node.constructor": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 10,
+      "last_line": 12,
+      "quote": "\tconstructor(value) {\n\t\tthis.value = value;\n\t}\n",
+      "quote_sha256": "63516cab515cb2b9d3b7836a09a5036a2c4b6aea9c82ed375d821638f46ee853",
+      "source_executed_during_extraction": false
+    },
+    "queue:Queue": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 15,
+      "last_line": 67,
+      "quote": "export default class Queue {\n\t#head;\n\t#tail;\n\t#size;\n\n\tconstructor() {\n\t\tthis.clear();\n\t}\n\n\tenqueue(value) {\n\t\tconst node = new Node(value);\n\n\t\tif (this.#head) {\n\t\t\tthis.#tail.next = node;\n\t\t\tthis.#tail = node;\n\t\t} else {\n\t\t\tthis.#head = node;\n\t\t\tthis.#tail = node;\n\t\t}\n\n\t\tthis.#size++;\n\t}\n\n\tdequeue() {\n\t\tconst current = this.#head;\n\t\tif (!current) {\n\t\t\treturn;\n\t\t}\n\n\t\tthis.#head = this.#head.next;\n\t\tthis.#size--;\n\t\treturn current.value;\n\t}\n\n\tclear() {\n\t\tthis.#head = undefined;\n\t\tthis.#tail = undefined;\n\t\tthis.#size = 0;\n\t}\n\n\tget size() {\n\t\treturn this.#size;\n\t}\n\n\t* [Symbol.iterator]() {\n\t\tlet current = this.#head;\n\n\t\twhile (current) {\n\t\t\tyield current.value;\n\t\t\tcurrent = current.next;\n\t\t}\n\t}\n}\n",
+      "quote_sha256": "b8d79bbb98f935a76df199a73b371e6e6132ee30c0bb4a5a0050b77cf5b43934",
+      "source_executed_during_extraction": false
+    },
+    "queue:Queue.constructor": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 20,
+      "last_line": 22,
+      "quote": "\tconstructor() {\n\t\tthis.clear();\n\t}\n",
+      "quote_sha256": "13da143eddb10734e0259574d35b4c1b4c57d3879779071e2e213ca8ae10724d",
+      "source_executed_during_extraction": false
+    },
+    "queue:Queue.enqueue": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 24,
+      "last_line": 36,
+      "quote": "\tenqueue(value) {\n\t\tconst node = new Node(value);\n\n\t\tif (this.#head) {\n\t\t\tthis.#tail.next = node;\n\t\t\tthis.#tail = node;\n\t\t} else {\n\t\t\tthis.#head = node;\n\t\t\tthis.#tail = node;\n\t\t}\n\n\t\tthis.#size++;\n\t}\n",
+      "quote_sha256": "9f6bdb3d1f4db24a4319e0c17069c64a718045c392c2116b17ca8ca3f148032b",
+      "source_executed_during_extraction": false
+    },
+    "queue:Queue.dequeue": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 38,
+      "last_line": 47,
+      "quote": "\tdequeue() {\n\t\tconst current = this.#head;\n\t\tif (!current) {\n\t\t\treturn;\n\t\t}\n\n\t\tthis.#head = this.#head.next;\n\t\tthis.#size--;\n\t\treturn current.value;\n\t}\n",
+      "quote_sha256": "d936f312c39d5c35f877234b2e4b86e3d598a5883b49961a7dd2214a53090a7b",
+      "source_executed_during_extraction": false
+    },
+    "queue:Queue.clear": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 49,
+      "last_line": 53,
+      "quote": "\tclear() {\n\t\tthis.#head = undefined;\n\t\tthis.#tail = undefined;\n\t\tthis.#size = 0;\n\t}\n",
+      "quote_sha256": "2561775a70d7d8aca9ba46267ffd6ff86fb595e9e347fab731866643621175bd",
+      "source_executed_during_extraction": false
+    },
+    "queue:Queue.size": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 55,
+      "last_line": 57,
+      "quote": "\tget size() {\n\t\treturn this.#size;\n\t}\n",
+      "quote_sha256": "6618279d2d9f607035496b0a22b7e3d4502ada0ea124ad35797d4399d2ad254c",
+      "source_executed_during_extraction": false
+    },
+    "queue:Queue.[Symbol.iterator]": {
+      "path": "index.js",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "617c9b04fec118622b0bb8eb1e126b08236799461a223bcc59274a54b110d3ed",
+      "first_line": 59,
+      "last_line": 66,
+      "quote": "\t* [Symbol.iterator]() {\n\t\tlet current = this.#head;\n\n\t\twhile (current) {\n\t\t\tyield current.value;\n\t\t\tcurrent = current.next;\n\t\t}\n\t}\n",
+      "quote_sha256": "05ff611c64a8bde2c1057b142c3b7ef4b86140c7dec7500243cc44160cbbfb8f",
+      "source_executed_during_extraction": false
+    },
+    "queue:license": {
+      "path": "license",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "first_line": 1,
+      "last_line": 9,
+      "quote": "MIT License\n\nCopyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n",
+      "quote_sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "source_executed_during_extraction": false
+    },
+    "queue:manifest": {
+      "path": "package.json",
+      "repository": "sindresorhus/yocto-queue",
+      "revision": "2e57f8c95e5e1f40379c6f85d18aee962662eb22",
+      "source_sha256": "22a9628bb56b9f0ffc23d1dcfafeb04c01da4208ab20d782b4934db7ed0d9cc3",
+      "first_line": 1,
+      "last_line": 46,
+      "quote": "{\n\t\"name\": \"yocto-queue\",\n\t\"version\": \"1.0.0\",\n\t\"description\": \"Tiny queue data structure\",\n\t\"license\": \"MIT\",\n\t\"repository\": \"sindresorhus/yocto-queue\",\n\t\"funding\": \"https://github.com/sponsors/sindresorhus\",\n\t\"author\": {\n\t\t\"name\": \"Sindre Sorhus\",\n\t\t\"email\": \"sindresorhus@gmail.com\",\n\t\t\"url\": \"https://sindresorhus.com\"\n\t},\n\t\"type\": \"module\",\n\t\"exports\": \"./index.js\",\n\t\"engines\": {\n\t\t\"node\": \">=12.20\"\n\t},\n\t\"scripts\": {\n\t\t\"//test\": \"xo && ava && tsd\",\n\t\t\"test\": \"ava && tsd\"\n\t},\n\t\"files\": [\n\t\t\"index.js\",\n\t\t\"index.d.ts\"\n\t],\n\t\"keywords\": [\n\t\t\"queue\",\n\t\t\"data\",\n\t\t\"structure\",\n\t\t\"algorithm\",\n\t\t\"queues\",\n\t\t\"queuing\",\n\t\t\"list\",\n\t\t\"array\",\n\t\t\"linkedlist\",\n\t\t\"fifo\",\n\t\t\"enqueue\",\n\t\t\"dequeue\",\n\t\t\"data-structure\"\n\t],\n\t\"devDependencies\": {\n\t\t\"ava\": \"^3.15.0\",\n\t\t\"tsd\": \"^0.17.0\",\n\t\t\"xo\": \"^0.44.0\"\n\t}\n}\n",
+      "quote_sha256": "22a9628bb56b9f0ffc23d1dcfafeb04c01da4208ab20d782b4934db7ed0d9cc3",
+      "source_executed_during_extraction": false
+    }
+  },
+  "facts": {
+    "limiter": {
+      "factory": "pLimit",
+      "parameter": "concurrency",
+      "imported_default_binding": "Queue",
+      "imported_specifier": "yocto-queue",
+      "export_mode": "default function declaration",
+      "source_only": true
+    },
+    "limit:manifest": {
+      "name": "p-limit",
+      "version": "4.0.0",
+      "description": "Run multiple promise-returning & async functions with limited concurrency",
+      "license": "MIT",
+      "repository": "sindresorhus/p-limit",
+      "funding": "https://github.com/sponsors/sindresorhus",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "https://sindresorhus.com"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "test": "xo && ava && tsd"
+      },
+      "files": [
+        "index.js",
+        "index.d.ts"
+      ],
+      "keywords": [
+        "promise",
+        "limit",
+        "limited",
+        "concurrency",
+        "throttle",
+        "throat",
+        "rate",
+        "batch",
+        "ratelimit",
+        "task",
+        "queue",
+        "async",
+        "await",
+        "promises",
+        "bluebird"
+      ],
+      "dependencies": {
+        "yocto-queue": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "delay": "^5.0.0",
+        "in-range": "^3.0.0",
+        "random-int": "^3.0.0",
+        "time-span": "^5.0.0",
+        "tsd": "^0.17.0",
+        "xo": "^0.44.0"
+      }
+    },
+    "queue": {
+      "helper_class": "Node",
+      "default_class": "Queue",
+      "source_only": true
+    },
+    "queue:manifest": {
+      "name": "yocto-queue",
+      "version": "1.0.0",
+      "description": "Tiny queue data structure",
+      "license": "MIT",
+      "repository": "sindresorhus/yocto-queue",
+      "funding": "https://github.com/sponsors/sindresorhus",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "https://sindresorhus.com"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "engines": {
+        "node": ">=12.20"
+      },
+      "scripts": {
+        "//test": "xo && ava && tsd",
+        "test": "ava && tsd"
+      },
+      "files": [
+        "index.js",
+        "index.d.ts"
+      ],
+      "keywords": [
+        "queue",
+        "data",
+        "structure",
+        "algorithm",
+        "queues",
+        "queuing",
+        "list",
+        "array",
+        "linkedlist",
+        "fifo",
+        "enqueue",
+        "dequeue",
+        "data-structure"
+      ],
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "tsd": "^0.17.0",
+        "xo": "^0.44.0"
+      }
+    }
+  },
+  "source_executed_during_extraction": false,
+  "runtime_bindings_certified": false,
+  "at": "2026-11-20T17:22:39.423131+00:00",
+  "all_physical_units_verified": true,
+  "owner_approved": false,
+  "training_excluded": true
+}

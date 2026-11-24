@@ -1,0 +1,239 @@
+{
+  "at": "2026-11-20T14:40:52.201297+00:00",
+  "frozen_before_predictions": true,
+  "scope": "Owned synthetic mutations only; no permanent tests or source fixtures modified.",
+  "source_executed": false,
+  "model_calls": 0,
+  "rows": [
+    {
+      "id": "original-owned-architecture",
+      "expected": "DERIVED",
+      "reason": "Existing reviewed fixed source shape.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n    def __init__(self, client: JsonClient, token: str, timeout: float = 2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n            )\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable(\"gateway unavailable\") from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "try-client-call-lazy-lambda",
+      "expected": "REFUSED",
+      "reason": "Lexically nested client call is not the direct expression evaluated by the protected assignment.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = lambda: self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "0ee3b091268999d6810a8054d391c7f13c67b17880e6537046c1f54acbffb795",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "try-client-call-dead-expression",
+      "expected": "REFUSED",
+      "reason": "Unreachable client call must not certify the documented client-call exception boundary.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = None if True else self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "28804aef8ff9e5db07b3cedd6ea08487421501e52ec8facefe37cb7f6ed2d905",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "translation-raise-nested-definition",
+      "expected": "REFUSED",
+      "reason": "Nested function is not an executed handler raise.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n\n            def never_called():\n                raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "10b5ec3a1f889ee87b4c907c10a35c0947671106d17ef32eddaae337ef651473",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "translation-raise-dead-conditional",
+      "expected": "REFUSED",
+      "reason": "Dead conditional does not execute the documented raise.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            if False:\n                raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "b34bae67e1a4591b763cf653743ecef0b8ebbd05079bfdc6655d2ce33a481d53",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "translation-raise-after-return",
+      "expected": "REFUSED",
+      "reason": "Unconditional return precedes the claimed translation raise.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            return None\n            raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "53bf24615ed1c0b0ec9a8ea38d691bf5220b639676b4bf645da1c0853f99cf12",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "translation-raise-empty-loop",
+      "expected": "REFUSED",
+      "reason": "Empty loop never reaches its lexically nested raise.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            for unused in ():\n                raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "897b08bddbd20e00ce39a0f3c104d0ddded617657f02ced94ebfdc5fde1b9c8e",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "catch-import-rebound",
+      "expected": "REFUSED",
+      "reason": "Imported exception identity is overwritten before the class declaration.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\nGatewayUnavailable = ValueError\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "62b02c2f3b3096a6a8cc53e24a937979124cff918975d331d12bc833d862b156",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "raised-import-rebound",
+      "expected": "REFUSED",
+      "reason": "Imported translated exception identity is overwritten before the class declaration.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\nBalanceUnavailable = ValueError\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "08e172443ad46cbea6118f7fd94f8cf52e28fbccbdc22d30fc67e871730e1eef",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "mapper-import-rebound",
+      "expected": "REFUSED",
+      "reason": "Imported mapper identity is overwritten before the class declaration.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\nbalance_from_payload = print\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "35260d1234080443511b60e143d7be2f8bf980c4a8ff77c0a5a0ca83223106b3",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "protocol-import-rebound",
+      "expected": "REFUSED",
+      "reason": "Written Protocol base resolves to overwritten local binding in the source sequence.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\nProtocol = object\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "from client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n    def __init__(self, client: JsonClient, token: str, timeout: float = 2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or \"/\" in account_id:\n            raise ValueError(\"invalid account identifier\")\n        try:\n            payload = self._client.get(\n                f\"/sandbox/accounts/{account_id}/balance\",\n                headers={\"Authorization\": f\"Bearer {self._token}\"},\n                timeout=self._timeout,\n            )\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable(\"gateway unavailable\") from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "ff6be72818647e3b7bfaec1150786eaa106155cf9b3366906b02119de04f70e8",
+        "adapter.py": "5491f53048281a541575e0e3e994df4cb6eb8817f32389605d69940160c91389",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    },
+    {
+      "id": "harmless-module-docstring",
+      "expected": "DERIVED",
+      "reason": "A source docstring does not change bindings or the reviewed statement shape.",
+      "sources": {
+        "domain.py": "from dataclasses import dataclass\nfrom typing import Protocol\n\n@dataclass(frozen=True)\nclass Balance:\n    account_id: str\n    available_minor: int\n    currency: str\n\nclass BalanceUnavailable(RuntimeError):\n    pass\n\nclass BalancePort(Protocol):\n    def read(self, account_id: str) -> Balance:\n        ...\n",
+        "client.py": "from typing import Mapping, Protocol\n\nclass GatewayUnavailable(RuntimeError):\n    pass\n\nclass JsonClient(Protocol):\n    def get(self, path: str, *, headers: dict[str, str], timeout: float) -> Mapping[str, object]:\n        ...\n",
+        "adapter.py": "\"\"\"Owned module documentation.\"\"\"\nfrom client import GatewayUnavailable, JsonClient\nfrom domain import Balance, BalanceUnavailable\nfrom mapping import balance_from_payload\n\nclass BalanceAdapter:\n\n    def __init__(self, client: JsonClient, token: str, timeout: float=2.0):\n        self._client = client\n        self._token = token\n        self._timeout = timeout\n\n    def read(self, account_id: str) -> Balance:\n        if not account_id or '/' in account_id:\n            raise ValueError('invalid account identifier')\n        try:\n            payload = self._client.get(f'/sandbox/accounts/{account_id}/balance', headers={'Authorization': f'Bearer {self._token}'}, timeout=self._timeout)\n        except GatewayUnavailable as error:\n            raise BalanceUnavailable('gateway unavailable') from error\n        return balance_from_payload(account_id, payload)\n",
+        "mapping.py": "from typing import Mapping\nfrom domain import Balance\n\ndef balance_from_payload(account_id: str, payload: Mapping[str, object]) -> Balance:\n    amount = payload[\"available_minor\"]\n    currency = payload[\"currency\"]\n    if type(amount) is not int:\n        raise ValueError(\"available_minor must be an integer\")\n    if not isinstance(currency, str) or len(currency) != 3:\n        raise ValueError(\"currency must have three characters\")\n    return Balance(account_id=account_id, available_minor=amount, currency=currency)\n",
+        "service.py": "from domain import BalancePort\n\nclass BalanceService:\n    def __init__(self, port: BalancePort):\n        self._port = port\n\n    def summary(self, account_id: str) -> dict[str, object]:\n        balance = self._port.read(account_id)\n        return {\"account\": balance.account_id, \"available_minor\": balance.available_minor, \"currency\": balance.currency}\n"
+      },
+      "source_sha256": {
+        "domain.py": "18507de43d467e74c5313892b017f3656baf740da3caadbbf9b420c8c240d164",
+        "client.py": "b61f31e8d83e0c28c5f322c7a20d424ac8341cb75a661119cf8957c6c1b28caa",
+        "adapter.py": "f198f631fb09c1dd138272d3e78708770170be206261717c72bd6d25d9e4208f",
+        "mapping.py": "677ca2d9ac94b12aa6befd79de9a52d6c2fc18cf5eb7eec32e6f40a9818f4a8b",
+        "service.py": "44a3b5cde414fbc1850f5d0a1f6cfddef279e6deb9975f1e6c67ef0a537d5523"
+      }
+    }
+  ],
+  "baseline_observer_sha256": "7bff69a1ed122ce4712c8baedb3b9a8312e174dd17872354671bd935126c6940",
+  "baseline_compiler_sha256": "97852d5a90c50d53f1fdcb5a01f6a333cf82799f3121f7dbd2b2cd925403d124"
+}

@@ -1,0 +1,21 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common="""
+
+### Progresso intensivo 058 — capítulo interno: atribuições, fontes datadas e recibos
+
+O capítulo interno documentation-agent-contracts continua em revisão integral, separado dos23tópicos públicos originais e sem aprovação técnica final. Os registros de progresso históricos confirmam9seções generated-unreviewed com exit0 e3rejected com exit1; a montagem posterior do rascunho não transforma as recusas em sucesso. As40respostas EN/PT e36cartões de fonte foram lidos. As atribuições sobre skill_context, model_recovery_lock, prepare_model_request, snapshots/rename, limite de resposta Research, ordenação de conjuntos e placeholders correspondem às respostas efetivas, com limites de responsabilidade dos métodos preservados. O novo recibo agent-contracts-core-historical-review-observations-v1.json registra essa conferência parcial, sem promover nenhuma resposta inteira.
+
+A fonte do capítulo combina bytes históricos1.9.39/project1.0.7, o núcleo commit45c3cd0 e ferramentas opcionais posteriores. A comparação de132referências encontrou129iguais e3diferentes no estado atual, não três perdas de evidência: os15arquivos opcionais exatos foram recuperados do TAR operacional v7 com SHAab6fd71e975b0a83c0485f0a816972f7ee19117e0b55ae6d8d8b0d5e914a8678. Os originais atuais não foram alterados. O recibo agent-contracts-dated-source-recovery-v1.json mantém a recuperação; agent-contracts-optional-static-review-observations-v1.json registra15arquivos e intervalos efetivamente lidos. Não certifica trechos nativos ainda não relidos ou que a palavra current no capítulo histórico represente o HEAD de22novembro.
+
+Os seis logs datados macOS/Linux vinculados aos cortes v4/v6/v7 tiveram hash e contagem terminal conferidos:238/271/278testes respectivamente. Isso é correspondência de recibos históricos, com zero nova execução dessas suítes. A auditoria agent-contracts-optional-receipt-population-audit-v1.json recalculou9casos helper=6FOUND+3INCONCLUSIVE,12cachetools=8FOUND+4INCONCLUSIVE,16FAQs=1ADD+2MODIFY+3NO-OP+10INCONCLUSIVE, cinco seletores estruturais=2mudanças+2iguais+1não estabelecido com ação documental nula, e5recusas+1candidato válido no estudo de readback. Os seis pares de FAQ não inconclusivos retêm a ressalva de binding em execução em ambos idiomas. Nenhum desses números constitui taxa neural geral ou independência humana.
+
+A revisão estática confirma os contratos delimitados do planner0.3.5, helper0.1.3, candidates0.1.2 e maintenance0.1.4 no corte histórico, incluindo igualdade de conjuntos, JSON estrito, cópias por operação, vínculo físico de NO-OP, conferência de conteúdo/identidades/metadata de candidato e preservação após recusa. O resultado durável pode existir antes de uma recusa final; existência de arquivo não prova sucesso. A observação do backend/Makefile mostra a entrada ordinária selecionando Ruby Command/ProjectCommand, sem despacho das APIs opcionais nessa entrada. Não é auditoria global de todas as integrações.
+
+Às06:42UTC a campanha aproxima8horas efetivas desde22:42:45UTC, sem somar campanha anterior e sem fingir12horas. Restam o fechamento das dependências/recibos desse capítulo interno, explicitação temporal onde necessária, novo checkpoint recuperável e reconciliações finais. Zero nova chamada local, execução de optimizer ou mudança de pesos; nenhuma publicação, aprovação do proprietário ou Gold. Os novos artefatos ainda posteriores ao checkpoint042 precisam de recuperação própria antes de qualquer aceitação G9.
+"""
+j=p/'root-report-bundle-progress-058';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v58.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

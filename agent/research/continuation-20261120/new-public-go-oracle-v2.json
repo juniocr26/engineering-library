@@ -1,0 +1,91 @@
+{
+  "at": "2026-11-20T12:42:35.869978+00:00",
+  "frozen_before_predictions": true,
+  "source_family": "twpayne/go-geom",
+  "cases": [
+    {
+      "id": "go-geom-35c4f48-NewPoint",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/35c4f489de5a7c7ff43af07e02c07a121fbd6a70/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "NewPoint",
+      "expected_function_type": "func(l Layout) *Point",
+      "expected_sole_return_expression": "NewPointFlat(l, make([]float64, l.Stride()))",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Written return expression only; imported types/helper completion unresolved."
+    },
+    {
+      "id": "go-geom-35c4f48-NewPointEmpty",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/35c4f489de5a7c7ff43af07e02c07a121fbd6a70/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "NewPointEmpty",
+      "expected_function_type": "func(l Layout) *Point",
+      "expected_sole_return_expression": "NewPointFlat(l, nil)",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Written return expression only; imported types/helper completion unresolved."
+    },
+    {
+      "id": "go-geom-35c4f48-(*Point).Area",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/35c4f489de5a7c7ff43af07e02c07a121fbd6a70/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "Point.Area",
+      "expected_function_type": "func() float64",
+      "expected_sole_return_expression": "0",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Written return expression only; imported types/helper completion unresolved."
+    },
+    {
+      "id": "go-geom-35c4f48-(*Point).Clone",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/35c4f489de5a7c7ff43af07e02c07a121fbd6a70/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "Point.Clone",
+      "expected_function_type": "func() *Point",
+      "expected_sole_return_expression": "deriveClonePoint(g)",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Clone naming and comment do not prove no-alias deep copy; derived helper evidence is missing."
+    },
+    {
+      "id": "go-geom-ccb5701-NewPoint",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/ccb5701a505df08114edca6b19efaf9d3f01fc8d/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "NewPoint",
+      "expected_function_type": "func(l Layout) *Point",
+      "expected_sole_return_expression": "NewPointFlat(l, make([]float64, l.Stride()))",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Written return expression only; imported types/helper completion unresolved."
+    },
+    {
+      "id": "go-geom-ccb5701-NewPointEmpty",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/ccb5701a505df08114edca6b19efaf9d3f01fc8d/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "NewPointEmpty",
+      "expected_function_type": "func(l Layout) *Point",
+      "expected_sole_return_expression": "NewPointFlat(l, nil)",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Written return expression only; imported types/helper completion unresolved."
+    },
+    {
+      "id": "go-geom-ccb5701-(*Point).Area",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/ccb5701a505df08114edca6b19efaf9d3f01fc8d/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "Point.Area",
+      "expected_function_type": "func() float64",
+      "expected_sole_return_expression": "0",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Written return expression only; imported types/helper completion unresolved."
+    },
+    {
+      "id": "go-geom-ccb5701-(*Point).Clone",
+      "source_path": "new-public-sources-v1/twpayne--go-geom/ccb5701a505df08114edca6b19efaf9d3f01fc8d/point.go",
+      "source_sha256": "0501ecd459f7f84d75c83ecc4f702497babc902df679a66cc8a0fa6b14e3243c",
+      "selector": "Point.Clone",
+      "expected_function_type": "func() *Point",
+      "expected_sole_return_expression": "deriveClonePoint(g)",
+      "runtime_semantics_verified": false,
+      "semantic_warning": "Clone naming and comment do not prove no-alias deep copy; derived helper evidence is missing."
+    }
+  ],
+  "training_exclusion": true,
+  "task": "written signature and sole return syntax; not lifecycle or semantic correctness",
+  "supersedes": "new-public-go-oracle-v1.json",
+  "correction": "Harness used unsupported pointer punctuation; public API accepts Point.Area and Point.Clone. Expected source signatures/return expressions remain unchanged. Original failures retained as harness admission failures, not source comprehension outcomes."
+}

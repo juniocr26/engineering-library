@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-21T11:23:25.520475+00:00",
+  "hypothesis": "H102reporting: explicit precision/recall of SUPPORTED verdicts on same four frozen Prometheus claims can differ from exact-label accuracy and from strict grounded bilingual-record acceptance. Preserve all denominators, no new inference/adjudication.",
+  "inputs": [
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-warning-judgment-protocol-v1.json",
+      "sha256": "379de90d95a11ab49219d3fb515c357a868d539d6f648b2cf87587a94316092b"
+    },
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-warning-judgment-review-v1.json",
+      "sha256": "b2159ce906a1fe808fd46eebfa45bbe8fb0be37d2f19ce2c440c35afbe5b7853"
+    },
+    {
+      "path": "agent/research/portfolio-vivabem-20261120/prometheus-warning-schema-review-v1.json",
+      "sha256": "f37a1df24dbae9d63b8cd54df912270e0ffc6505ba47702f8decf0622833fc43"
+    }
+  ],
+  "definitions": {
+    "SUPPORTED_verdict_precision": "expectedSUPPORTED and actualSUPPORTED / all actualSUPPORTED",
+    "false_claim_fraction_among_SUPPORTED": "expectedCONTRADICTED and actualSUPPORTED / all actualSUPPORTED; verifier false admissions, not arbitrary generated prose unsupported-claim rate",
+    "SUPPORTED_verdict_recall": "expectedSUPPORTED and actualSUPPORTED / all expectedSUPPORTED",
+    "contradicted_false_acceptance": "expectedCONTRADICTED and actualSUPPORTED / all expectedCONTRADICTED",
+    "strict_supported_precision": "expectedSUPPORTED and actualSUPPORTED and originalstrict_bilingual_recordTrue / all actualSUPPORTED",
+    "strict_all_record_acceptance": "originalstrict_bilingual_recordTrue / all4records",
+    "exact_labels": "actual==frozenexpected /4"
+  },
+  "zero_denominator": "null",
+  "scope": [
+    "Three observed conditions on same4claims (H82source-only,H82pluscounterexample,H91schema);not12independentcases or generalaccuracy.",
+    "Alloraclesmustmatchoriginal09:49protocol;no relabeling.",
+    "No claim that label-correct rationale is correct; strictrecord outcomes inherited, not new semantic review.",
+    "Task-specificmanualchapter219groupsnotatomicclaims;keepthisverifierprecisionpopulationseparate."
+  ],
+  "new_model_calls": 0,
+  "source_execution": false,
+  "owner_approved": false,
+  "gold": false
+}

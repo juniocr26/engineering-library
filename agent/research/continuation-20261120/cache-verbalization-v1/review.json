@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-20T13:02:31.020885+00:00",
+  "disposition": "REJECTED_NOT_TRAINING_GOLD",
+  "response_sha256": "19e49767ad7c9eb9385386309762e27cd28d84ea0d24b69f14f5e19bacb4fcd4",
+  "json_parse_valid": true,
+  "outer_closed_shape": true,
+  "three_items": true,
+  "id_counts": {
+    "C1": 2,
+    "C2": 1
+  },
+  "all_unique_required_ids": false,
+  "missing_ids": [
+    "C3"
+  ],
+  "done": true,
+  "done_reason": "stop",
+  "truncated": false,
+  "reviews": [
+    {
+      "index": 0,
+      "claim_id": "C1",
+      "verdict": "INCOMPLETE_AND_OVERSCOPED_IN_ISOLATION",
+      "finding": "Value512 matches source, but sentence asserts maximum cache size without naming written Parser._MAX_SIZE or preserving written-vs-runtime scope in the same claim. A second duplicated C1 contains a scope caveat, so do not count this as two completed facts.",
+      "bilingual_meaning": "Same numerical capacity assertion in EN/PT; lexical identifiers omitted."
+    },
+    {
+      "index": 1,
+      "claim_id": "C1",
+      "verdict": "VERIFIED_PARTIAL_SCOPE_STATEMENT_DUPLICATE_ID",
+      "finding": "Correctly states written assignment is not measured occupancy guarantee, but duplicatesC1 and does not address another required fact.",
+      "bilingual_meaning": "Scope caveat materially agrees; Portuguese phrasing awkward but does not add a runtime guarantee."
+    },
+    {
+      "index": 2,
+      "claim_id": "C2",
+      "verdict": "INCORRECT_BILINGUAL_IDENTIFIERS_AND_INCOMPLETE_CONTRACT",
+      "finding": "English names the three catch classes without namespaces, but omits expression enrichment and re-raise. Portuguese invents ErroLexer,ErroExpressaoIncompleta,ErroParse in place of exact exception symbols. Full Parser._do_parse owner omitted.",
+      "bilingual_meaning": "Code identifiers differ; fails exact preservation."
+    }
+  ],
+  "complete_requested_fact_pairs": 0,
+  "partial_scope_pair": 1,
+  "neural_improvement_demonstrated": false,
+  "model_calls": 1,
+  "retry_authorized": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_exclusion": true,
+  "source_family": "jmespath/jmespath.py",
+  "comparison": "Different task/source from prior wallet-adapter rejection. Two rejected prompted observations are not a paired causal model-quality comparison.",
+  "future_direction": "Use closed deterministic templates for known source facts; a schema that permits repeated enum IDs cannot enforce complete coverage. Do not equate JSON validity with factual accuracy."
+}

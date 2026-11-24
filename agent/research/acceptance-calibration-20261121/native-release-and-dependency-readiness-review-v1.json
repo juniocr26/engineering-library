@@ -1,0 +1,109 @@
+{
+  "at": "2026-11-21T19:25:23.425054+00:00",
+  "findings": [
+    {
+      "id": "NATIVE-META-01",
+      "finding": "PyPI MLX0.32.3 declares regular cp314-cp314 macOS arm64 wheels for14/15/26 and Darwin mlx-metal==0.32.3. Metal declares py3-none macOS arm64wheels. Host regularCPython3.14.7arm64runtimeOS27.0.1; sysconfigbuildtarget26 is distinct. No wheel bytes installed/imported or ABI/Metal check.",
+      "gate": 6
+    },
+    {
+      "id": "NATIVE-META-02",
+      "finding": "Released mlx-lm0.32.2 requiresmlx>=0.32.2 and transformers>=5.7.0; pinned Git requiresmlx>=0.32.3 and addsdefaultPillow. Exact release distribution cannot be equated to newerGitcommit. Source sdist449827bytes SHA2561af8a92f6a141c3e2bf5b0369ac4464203a8e2189c47b9e40d3e921e5b3a1fe9 verified declaration; selected source text only, no setup/import/install.",
+      "gate": 6
+    },
+    {
+      "id": "NATIVE-META-03",
+      "finding": "Transformers5.7.0 requireshub>=1.5,<2 and tokenizers>=0.22.0,<=0.23.0. Tokenizers0.22.0 requireshub<1.0: impossible intersection for that floor version. Published0.22.1/0.22.2 requirehub>=0.16.4,<2, giving nonempty declared hub intersection[1.5,2). This is one dependency edge only, not a resolved full lock or installation approval.",
+      "gate": 6
+    },
+    {
+      "id": "NATIVE-META-04",
+      "finding": "PyPI tokenizers0.23.0 endpoint404 and latest0.23.3 declaration do not mean0.23.0exists or0.23.3isallowed by Transformers5.7.0<=0.23.0. Stable0.23.1/2/3 metadata was preserved for census context but lies outside that upper bound.0.22.1/2 cp39-abi3 macOS11arm64wheel declarations are metadata availability, not import/tokenizer proof.",
+      "gate": 6
+    },
+    {
+      "id": "NATIVE-META-05",
+      "finding": "Released trainer/datasets byte-identical to pinnedGit, so static masking/default/truncation/validation-before-update findings apply to those exact source bytes. This does not execute either framework.",
+      "gate": 5
+    },
+    {
+      "id": "NATIVE-META-06",
+      "finding": "Released Llama attention constructs q/v nn.Linear fromhidden3072 to24*128=3072 and8*128=1024 for candidate declaredconfig. This supports hypothetical rank4Q/V40960params/layer, not actual trainable inventory, memory/optimizer fit, selected layers or native baseline.",
+      "gate": 1
+    },
+    {
+      "id": "NATIVE-META-07",
+      "finding": "Pinned Git adapter remapping can collapse two legacy prefixes onto one current layer/place key, retaining later same-shape metadata before provided-key validation; no expected-key completeness enforced. Eight JSON-only metadata controls observed without tensors/adapters/nativeimports. Released0.32.2 lacks that remapping: do not attribute newer collision mechanism to release.",
+      "gate": 8
+    },
+    {
+      "id": "NATIVE-META-08",
+      "finding": "Loader partial-key validation and strict=False cannot independently demonstrate exact adapter identity/recovery. Future preflight requires one-to-one original-to-current mapping, all exactexpected names/shapes/dtypes, collision/missing/extra refusals, exact base/tokenizer/template/framework hash binding, adapter artifact hash, and separately approved optimizer/step/RNGpersistence semantics. No such native restore or pilot authorized.",
+      "gate": 8
+    }
+  ],
+  "source_identity_pairs": [
+    {
+      "path": "mlx_lm/tuner/trainer.py",
+      "released_and_git_bytes_identical": true,
+      "sha256": "0b6027fdb11803e951ceee52c83a81f82daa922ea8c6b7ca6888953461064e8e"
+    },
+    {
+      "path": "mlx_lm/tuner/datasets.py",
+      "released_and_git_bytes_identical": true,
+      "sha256": "dcd675376d68d1813261c8389236b586b16b9a58a5ea80be8eb535bb9d0e9689"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "native-wheel-metadata-receipt-v1.json",
+      "sha256": "a5b10ec285e71071e643578003ab0505f94e6a6b59278deea2e7511f9bead0e7"
+    },
+    {
+      "path": "native-wheel-metadata-supplement-v4.json",
+      "sha256": "70e989a8e123d22f022a2a1c836b9064ec6e1925569d2692990a2a2e52d75fb3"
+    },
+    {
+      "path": "native-tokenizers-dependency-range-metadata-v1.json",
+      "sha256": "647335947cf1228dd7746584d3699aeec42f34538028c705766caf19db8168e8"
+    },
+    {
+      "path": "native-tokenizers-upper-bound-404-v1.json",
+      "sha256": "d41b9aee4885618795ae39e9ad2f303c22a6e229a029f52485b0bf5859a26a5a"
+    },
+    {
+      "path": "native-release-source-freeze-v1.json",
+      "sha256": "b3d67fb6a922714aee5076abc961dcb3d65cb2c28b7ea4f86755750a03c4d1f7"
+    },
+    {
+      "path": "native-release-source-supplement-v2.json",
+      "sha256": "c1f5baa7d770879af25eda8b6ab02e4d238e91bb69f7661e6d4cb6f3b389aee6"
+    },
+    {
+      "path": "native-adapter-name-metadata-protocol-v1.json",
+      "sha256": "b646697bea8f4b62b9c852900ad8b396e75e48061b8e3f1c2816c8592bed145e"
+    },
+    {
+      "path": "native-adapter-name-metadata-results-v1.json",
+      "sha256": "3a5cd98b61163abceba4e9ddf7997a40f72c2b2fb55bf80f73741ceeafc769a5"
+    }
+  ],
+  "primary_sources": [
+    "https://pypi.org/pypi/mlx/0.32.3/json",
+    "https://pypi.org/pypi/mlx-metal/0.32.3/json",
+    "https://pypi.org/pypi/transformers/5.7.0/json",
+    "https://pypi.org/pypi/tokenizers/0.22.1/json",
+    "https://pypi.org/pypi/tokenizers/0.22.2/json",
+    "https://pypi.org/pypi/mlx-lm/0.32.2/json",
+    "https://github.com/ml-explore/mlx-lm/tree/1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0"
+  ],
+  "all_nine_gates_still_NO_GO": true,
+  "binary_wheels_downloaded": 0,
+  "small_source_sdist_downloaded": 1,
+  "framework_installs": 0,
+  "model_weights_downloaded": 0,
+  "native_framework_or_tokenizer_executions": 0,
+  "adapters": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

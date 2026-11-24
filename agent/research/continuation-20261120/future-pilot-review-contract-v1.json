@@ -1,0 +1,131 @@
+{
+  "at": "2026-11-20T14:52:36.288462+00:00",
+  "status": "NON_EXECUTABLE_FUTURE_OWNER_REVIEW_PROPOSAL",
+  "launch_allowed": false,
+  "training_prohibited_in_current_campaign": true,
+  "purpose": "First bounded technical feasibility/persistence pilot for source-grounded bilingual fact targets; no claimed general quality improvement.",
+  "required_future_authorizations": [
+    "Framework environment installation with pinned compatible wheels",
+    "Explicit model and tokenizer acquisition/license acceptance",
+    "Specific source-reviewed training targets promoted individually by owner",
+    "Optimizer budget, isolation and persistence protocol",
+    "Any trainer patch or additional permanent test scaffolding"
+  ],
+  "unresolved_launch_inputs": {
+    "trainable_model_root": null,
+    "trainable_model_sha256_manifest": null,
+    "tokenizer_sha256_manifest": null,
+    "framework_environment_lock": null,
+    "owner_gold_manifest": null,
+    "frozen_evaluation_manifest": null,
+    "actual_memory_preflight": null,
+    "resolved_training_mask_proof": null,
+    "adapter_persistence_contract": null
+  },
+  "conditional_configuration": {
+    "framework_family": "MLX-LM",
+    "reviewed_source_revision": "2d4df8d94a80c0f9f8794e54fafee08728b04fc6",
+    "fine_tune_type": "lora",
+    "num_layers": 2,
+    "batch_size": 1,
+    "iters": 16,
+    "grad_accumulation_steps": 1,
+    "maximum_normal_written_optimizer_updates": 16,
+    "max_seq_length": 512,
+    "grad_checkpoint": true,
+    "learning_rate": 1e-05,
+    "optimizer": "adam",
+    "lora_parameters": {
+      "rank": 4,
+      "dropout": 0.0,
+      "scale": 8.0
+    },
+    "mask_prompt": true,
+    "seed": 42,
+    "steps_per_report": 1,
+    "steps_per_eval": 4,
+    "val_batches": 2,
+    "save_every": 4,
+    "resume_adapter_file": null,
+    "trust_remote_code": false,
+    "distributed_training": false,
+    "framework_defaults_not_adopted": [
+      "default model/data repositories",
+      "16 layers",
+      "1000 iterations",
+      "batch 4",
+      "sequence length2048",
+      "mask_prompt false"
+    ]
+  },
+  "data_admission": {
+    "minimum_owner_approved_train_rows": 16,
+    "minimum_owner_approved_validation_rows": 4,
+    "training_task": "One final assistant bilingual fact-pair response grounded in bounded source evidence; no whole-chapter truncation.",
+    "all_rows_require": [
+      "Exact approved source/evidence/target hashes",
+      "Explicit source rights/privacy/review status",
+      "Final assistant message exists and contains nonempty owner-approved target",
+      "Actual tokenizer/template compatibility, complete sequence <=512tokens, no truncation",
+      "Prompt/full-token prefix equality and an accurately located target interval",
+      "At least one genuine supervised assistant token; padding/EOS policy reviewed",
+      "No paired-language, chapter/FAQ or shared-source-family leakage between train/validation/evaluation"
+    ],
+    "group_split_unit": "Complete repository/source ancestry group with chapter/FAQ lineage retained; no random language-row split.",
+    "evaluation_only_families_excluded_from_training": [
+      "boltons development evaluation",
+      "jmespath/jmespath.py",
+      "lukeed/totalist",
+      "twpayne/go-geom",
+      "un33k/python-slugify",
+      "all current model responses/rejected candidates"
+    ],
+    "owner_gold_available_now": 0,
+    "automatic_promotion": false
+  },
+  "resource_limits_proposed_not_measured": {
+    "overall_pilot_wall_minutes": 30,
+    "optimizer_phase_wall_minutes": 10,
+    "maximum_optimizer_updates": 16,
+    "maximum_sequence_tokens": 512,
+    "minimum_free_disk_GiB_before_start": 8,
+    "stop_if_free_disk_GiB_below": 4,
+    "stop_if_framework_peak_memory_GiB_above": 8,
+    "stop_if_process_physical_footprint_GiB_above": 10,
+    "stop_if_swap_growth_GiB_above": 1,
+    "stop_on_os_critical_memory_pressure": true,
+    "measurement_note": "MLX allocation, process footprint and unified OS memory overlap; do not add them together. Thresholds are conservative proposed stop bounds, not verified feasibility.",
+    "on_slow_execution": "Stop at wall bound with measured tokens/sec and saved artifacts; do not escalate rank/layers/context/iterations or retry automatically."
+  },
+  "acceptance": [
+    "All nine gates explicitly satisfied before any launch",
+    "Zero nonfinite losses and zero zero-target/padding-target batches after separately validated mask resolution",
+    "Only intended adapter tensors trainable; base and deployed model/runtime manifests unchanged",
+    "At most16normal optimizer updates and wall/memory bounds respected",
+    "Periodic/final adapter exact bytes hashed and archived with source/config/data/tokenizer/environment manifests",
+    "Adapter reloaded in a fresh isolated process and evaluated after the last optimizer update",
+    "Held-out comparison uses identical prompts/tokenizer/decoding/output cap and base-versus-adapter identity checks",
+    "Every factual result reviewed with abstentions, semantic/code-identifier errors and language equivalence recorded separately",
+    "No publication, default runtime switch, automatic gold promotion or deletion of rejected runs"
+  ],
+  "persistence": {
+    "default_upstream_checkpoint": "Weights-only continuation; no exact optimizer/RNG/dataloader/partial-gradient recovery claim.",
+    "unattended_fallback": "If exact-state persistence is not separately implemented/validated/authorized, the pilot is non-resumable; interruption preserves all artifacts and requires a new explicitly authorized run rather than automatic weights-only resume.",
+    "keep": [
+      "All adapter checkpoints, including rejected/partial",
+      "Raw metrics, stdout/stderr and failure receipts",
+      "Pinned exact source/config/environment/data manifests",
+      "Pre/post base-model and deployment identity proofs",
+      "Fresh-process evaluation and recovery receipts"
+    ],
+    "never": [
+      "Overwrite original GGUF",
+      "Fuse/replace deployed model",
+      "Delete historical adapters to save space",
+      "Treat final in-loop validation as final-adapter validation when an optimizer update follows"
+    ]
+  },
+  "no_executor_emitted": true,
+  "training_steps_executed": 0,
+  "source_arithmetic_audit": "training-arithmetic-audit-v1.json"
+}

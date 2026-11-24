@@ -1,0 +1,36 @@
+diff --git a/agent/tools/documentation_retrieval.py b/agent/tools/documentation_retrieval.py
+index ed7b1db3..6b4cfcf0 100644
+--- a/agent/tools/documentation_retrieval.py
++++ b/agent/tools/documentation_retrieval.py
+@@ -18,7 +18,7 @@ import threading
+ 
+ from documentation_workspace import directory, read, relative_path, same_root, write_new, WorkspaceRefused
+ 
+-VERSION = "0.1.3"
++VERSION = "0.1.5"
+ LOADED_IMPLEMENTATION_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+ LOADED_WORKSPACE_SHA256 = hashlib.sha256(Path(__file__).with_name("documentation_workspace.py").read_bytes()).hexdigest()
+ MAX_SOURCE = 65536
+@@ -95,12 +95,22 @@ def validate_unit(unit, raw, selector, language):
+             raise RetrievalRefused("Python evidence byte offsets differ")
+         if unit["declaration_kind"] not in ("function", "async-function") or type(unit["decorated"]) is not bool:
+             raise RetrievalRefused("invalid Python declaration metadata")
++        # Matching physical bytes do not establish that a cached range is the
++        # complete callable requested, or that its declaration metadata agrees.
++        expected = python_unit(raw.decode("utf-8", errors="strict"), selector)
++        if canonical(unit) != canonical(expected):
++            raise RetrievalRefused("Python evidence differs from complete selected lexical callable")
+     elif language == "go":
+         lines = raw.split(b"\n")
+         if not 1 <= first <= last <= len(lines) or b"\n".join(lines[first-1:last]) != quoted:
+             raise RetrievalRefused("Go evidence differs from exact physical source")
+         if unit["declaration_kind"] not in ("function", "method"):
+             raise RetrievalRefused("invalid Go callable declaration kind")
++        # Physical bytes alone cannot establish the selected declaration or
++        # producer metadata. The verified native parser inspects source only.
++        expected = extract(raw.decode("utf-8", errors="strict"), selector, "go")
++        if canonical(unit) != canonical(expected):
++            raise RetrievalRefused("Go evidence differs from complete selected lexical callable")
+     else:
+         raise RetrievalRefused("unsupported evidence language")
+     if not isinstance(unit["limitations"], list) or not all(isinstance(item, str) for item in unit["limitations"]):

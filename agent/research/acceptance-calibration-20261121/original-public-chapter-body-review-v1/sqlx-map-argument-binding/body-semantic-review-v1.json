@@ -1,0 +1,99 @@
+{
+  "at": "2026-11-21T18:30:18.198791+00:00",
+  "topic": "sqlx-map-argument-binding",
+  "family": "sqlx",
+  "scope": "Full actual EN/PT prose read; selected source witnesses and historical response claims checked. Qualitative whole-prose review, not exhaustive independently atomized precision. No unchanged old semantic score overwritten.",
+  "documents": [
+    {
+      "language": "en",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/sqlx-map-argument-binding/en.candidate.txt",
+      "sha256": "bd9cfc3954f3a21a8e99cbb78d12226e949390ad2f9b37950e3cfdf8bddafb78",
+      "read_in_full": true
+    },
+    {
+      "language": "pt-br",
+      "path": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-body-review-v1/sqlx-map-argument-binding/pt-br.candidate.txt",
+      "sha256": "3bfd50108b77246d5adbafeb8051b99f6d6817b5ba7bd7e9fa82f10375a835ce",
+      "read_in_full": true
+    }
+  ],
+  "selected_review_observations": [
+    "Orderednames/mapvalue roles, zero-lengthcapacityallocation notpopulatedarray.",
+    "Comma-okpresence independentnil/zero/falsevalue; nilmapread andemptynamesproperordinaryGoqualifications.",
+    "Missingname returnsaccumulatedprefixplusfmt.Errorf beforelatervalues; duplicatespreserved/readsonly/noglobaldeepcopyorconcurrencyguarantee.",
+    "bindAnyArgsmaprouteandbindStructemptyquery/emptyargsonerror distinguishhelperpartialreturn.",
+    "Actualoldbaselinecorrecthighlevelmapaccumulation butmissingprefix/nilpresence/duplicates/emptyfacts; correctiondoesnotinvent SQLexecution."
+  ],
+  "source_witnesses": [
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sqlx/41dac167fdad5e3fd81d66cafba0951dc6823a30/named.go",
+      "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "source_path": "named.go",
+      "source_lines": [
+        163,
+        168
+      ],
+      "exact_source_evidence": "func bindAnyArgs(names []string, arg interface{}, m *reflectx.Mapper) ([]interface{}, error) {\n\tif maparg, ok := convertMapStringInterface(arg); ok {\n\t\treturn bindMapArgs(names, maparg)\n\t}\n\treturn bindArgs(names, arg, m)\n}",
+      "reviewed_interpretation": "Mapconversion delegation.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sqlx/41dac167fdad5e3fd81d66cafba0951dc6823a30/named.go",
+      "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "source_path": "named.go",
+      "source_lines": [
+        197,
+        208
+      ],
+      "exact_source_evidence": "func bindMapArgs(names []string, arg map[string]interface{}) ([]interface{}, error) {\n\targlist := make([]interface{}, 0, len(names))\n\n\tfor _, name := range names {\n\t\tval, ok := arg[name]\n\t\tif !ok {\n\t\t\treturn arglist, fmt.Errorf(\"could not find name %s in %#v\", name, arg)\n\t\t}\n\t\targlist = append(arglist, val)\n\t}\n\treturn arglist, nil\n}",
+      "reviewed_interpretation": "Complete mapbindingfunction.",
+      "source_only": true
+    },
+    {
+      "source_snapshot": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-faq-remaining-public-sources-v1/sqlx/41dac167fdad5e3fd81d66cafba0951dc6823a30/named.go",
+      "source_sha256": "21d5c630ab4b4a5749ec06bada1032c25820379114624733012a8a70e04213d0",
+      "source_path": "named.go",
+      "source_lines": [
+        213,
+        225
+      ],
+      "exact_source_evidence": "func bindStruct(bindType int, query string, arg interface{}, m *reflectx.Mapper) (string, []interface{}, error) {\n\tbound, names, err := compileNamedQuery([]byte(query), bindType)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\targlist, err := bindAnyArgs(names, arg, m)\n\tif err != nil {\n\t\treturn \"\", []interface{}{}, err\n\t}\n\n\treturn bound, arglist, nil\n}",
+      "reviewed_interpretation": "Callerdisc ardsonerror distinction.",
+      "source_only": true
+    }
+  ],
+  "historical_captures_reviewed": [
+    {
+      "id": "sqlx-bind-map",
+      "raw_response": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sqlx-bind-map/raw-response.json",
+      "sha256": "cfc226f242d1649de90834e1b6c2c4e69df31e6ee2a8175e98996acdda277d7f",
+      "read_model_content_in_full": true,
+      "origin": "/Users/juniorosa/Documents/Projetos/Projeto VivaBem/engineering-library/agent/research/acceptance-calibration-20261121/original-public-chapter-provenance-captures-v1/sqlx-bind-map/origin.json",
+      "origin_sha256": "26a10458747653ca618d7b2f1b22ba6ebfa77980ea89f2198b4fd0b99d851e9f"
+    }
+  ],
+  "new_findings": [],
+  "procedural_provenance_pending": [],
+  "dimension_scores": {
+    "factual correctness": 2,
+    "relevant completeness": 2,
+    "architecture and dependencies": 2,
+    "API contracts": 2,
+    "errors and exceptions": 2,
+    "existing tests and actual execution status": 2,
+    "examples and commands": 2,
+    "EN/PT-BR equivalence": 2,
+    "FAQ correctness": 2,
+    "citation relevance": 2,
+    "explicit limitations": 2
+  },
+  "complete_document_outcome": "PASS_RESEARCH_REVIEW_SOURCE_ONLY",
+  "complete_document_accepted": true,
+  "EN_PT_source_contract_parity": "No additional material source-contract divergence found in full bilingual body reading; specific procedural findings apply to both unless stated",
+  "no_upstream_execution": true,
+  "reviewer": "Same campaign agent; not independent owner or human certification",
+  "owner_approved": false,
+  "training_gold": false,
+  "training_use_approved": false,
+  "optimizer_updates": 0
+}

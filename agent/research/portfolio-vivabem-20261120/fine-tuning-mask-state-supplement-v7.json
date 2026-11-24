@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-21T09:14:04.929047+00:00",
+  "extends": [
+    "fine-tuning-pilot-proposal-v1.json",
+    "fine-tuning-public-framework-mapping-supplement-v6.json"
+  ],
+  "source_preflight_review": "public-framework-mask-state-review-v1.json",
+  "status": "NO-GO",
+  "launch_allowed": false,
+  "training_authorized": false,
+  "optimizer_steps": 0,
+  "correction_to_v6": "The prior sketch was never invoked and is not authorization. Its trainFalse/nullmodel/dataplaceholders must NOT be described as programmatic loading guards:the selectedCLI fillsNone defaults andloads model/data beforecheckingtrain/test. KeepV6unchangedasdatedevidence;thisrecord supersedesthat guard interpretation.",
+  "planning_parameters_NOT_A_CLI_CONFIG": {
+    "method": "LoRA only,notfull/DoRA",
+    "target_blocks": "Last2ofverified28layercompatiblecheckpoint:logicalindices26,27",
+    "target_relative_modules": [
+      "self_attn.q_proj",
+      "self_attn.v_proj"
+    ],
+    "rank": 4,
+    "dropout": 0.0,
+    "direct_scale_design_choice": 1.0,
+    "expected_modules": 4,
+    "expected_A_B_arrays": 8,
+    "conditional_elements": 81920,
+    "optimizer_updates_max": 16,
+    "batch_size": 1,
+    "gradient_accumulation": 1,
+    "sequence_length_max": 512,
+    "learning_rate_design_choice": 1e-05,
+    "seed_design_choice": 0,
+    "adapter_save_cadence_design_choice": 4,
+    "optimizer_minutes_max": 10,
+    "total_minutes_max": 30
+  },
+  "mandatory_mask_and_data_gates": [
+    "Owner-approvedrights-clearedtrainingrecords andseparate matchedfrozeneval,Goldcurrently0.",
+    "Explicitapprovedprompt/completionorfinalassistantchat schema,actualtokenizer/templateprefixalignment and fullsequence nontruncation.",
+    "Independentreal-tokenmaskaudit:excludeallprompt/padding,includeentiretarget/EOSasperapprovedtemplate,positivevalidtargetcount. No stockmaskflagguarantee.",
+    "Verifiedloss/batchingmechanism andpre-updatefinite-lossguard underseparatecode/runtimeauthorization;otherwiseNoGo.",
+    "BeforeframeworkCLI/model/datasetentry:approvedexplicitlocalpaths/hashes/configs,network/defaultfallbackpolicyandresourceauthorization;missingartifactmeansstop,nofallback."
+  ],
+  "mandatory_state_gates": [
+    "Run-specificimmutableoutputdirectory;preserveoriginal/latest/numberedadapterfiles/manifests/logs,neverreuseoldtrainingoutputdirectoryforrestartediterations.",
+    "Validateall8expectedadapterarrays/names/shapes/dtypes/base/tokenizer/configkeys;provided-subsettensorloadingisnotenough.",
+    "Exactresume requiresverifiedoptimizer/scheduler/RNG/allrelevantdata-cursor/iteration/gradientstate,notonlyadapterweights andseed. Ifonlyweightsrestored,labela new weights-initializedexperiment.",
+    "Selectedsource-toolfullcapsulereplayH69doesnotverifytrainedmodelstate. No adapter or optimizerstate exists inthiscampaign."
+  ],
+  "runtime_and_rights_gates_unchanged": [
+    "Compatibletrainablebase/tokenizer/frameworkenvironment/rights remainunverified.",
+    "Actualtrainableinventory/working-set/memorypeak/rollback/matchedindependentevaluationstillunverified.",
+    "No installs,modelweightdownloads,frameworkimports,tokenization,optimizersortrainingauthorized here."
+  ],
+  "future_unattended_fallback": "Anyfailed/missingprerequisite meansNO-GO beforeentrypoint;preserveevidence andstop,no mid-runquestion/noautomaticbudget/model/data/targetwidening.",
+  "not_a_training_execution_prompt": true
+}

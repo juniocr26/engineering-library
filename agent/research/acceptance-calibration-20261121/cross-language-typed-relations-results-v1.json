@@ -1,0 +1,1195 @@
+{
+  "at": "2026-11-21T19:13:23.252664+00:00",
+  "protocol": "cross-language-typed-relations-protocol-v1.json",
+  "claims_sha256": "731646b6b62baaa4028b867f4742c81bbca36ebf9ef28c6507f98783fb6c3f85",
+  "source_proofs": [
+    {
+      "task": "cobra",
+      "source_sha256": "15b870d1e8a0a10341675ddee8e20bef92a21883257b6b3b11110944a573a2e7",
+      "raw_observer_output_sha256": "4707fde2139c6df8bd056c8b132cc5b4ec4ae4156fab197bad3365879790b79a",
+      "extracted_relations": 9,
+      "all_AST_fragments_located_in_recorded_physical_spans": true
+    },
+    {
+      "task": "zod",
+      "source_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "raw_observer_output_sha256": "c572ad42733e454e879f381745e81e17396893439a4389e449e55fa1e1e5695a",
+      "extracted_relations": 10,
+      "all_AST_fragments_located_in_recorded_physical_spans": true
+    }
+  ],
+  "records": [
+    {
+      "request": {
+        "id": "C01-supported",
+        "task": "cobra",
+        "relation_id": "C01",
+        "owner": "PositionalArgs",
+        "requested_normalized_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C01",
+        "owner": "PositionalArgs",
+        "normalized_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+        "first_line": 22,
+        "last_line": 22,
+        "exact_ast_source": "PositionalArgs func(cmd *Command, args []string) error"
+      }
+    },
+    {
+      "request": {
+        "id": "C01-opposite",
+        "task": "cobra",
+        "relation_id": "C01",
+        "owner": "PositionalArgs",
+        "requested_normalized_relation": "func PositionalArgs(cmd *Command, args []string) error",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C01",
+        "owner": "PositionalArgs",
+        "normalized_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+        "first_line": 22,
+        "last_line": 22,
+        "exact_ast_source": "PositionalArgs func(cmd *Command, args []string) error"
+      }
+    },
+    {
+      "request": {
+        "id": "C01-missing-owner",
+        "task": "cobra",
+        "relation_id": "C01",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C01",
+        "owner": "PositionalArgs",
+        "normalized_relation": "type PositionalArgs func(cmd *Command, args []string) error",
+        "first_line": 22,
+        "last_line": 22,
+        "exact_ast_source": "PositionalArgs func(cmd *Command, args []string) error"
+      }
+    },
+    {
+      "request": {
+        "id": "C02-supported",
+        "task": "cobra",
+        "relation_id": "C02",
+        "owner": "OnlyValidArgs",
+        "requested_normalized_relation": "len(cmd.ValidArgs) > 0",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C02",
+        "owner": "OnlyValidArgs",
+        "normalized_relation": "len(cmd.ValidArgs) > 0",
+        "first_line": 52,
+        "last_line": 52,
+        "exact_ast_source": "len(cmd.ValidArgs) > 0"
+      }
+    },
+    {
+      "request": {
+        "id": "C02-opposite",
+        "task": "cobra",
+        "relation_id": "C02",
+        "owner": "OnlyValidArgs",
+        "requested_normalized_relation": "cmd.HasSubCommands() && len(args) > 0",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C02",
+        "owner": "OnlyValidArgs",
+        "normalized_relation": "len(cmd.ValidArgs) > 0",
+        "first_line": 52,
+        "last_line": 52,
+        "exact_ast_source": "len(cmd.ValidArgs) > 0"
+      }
+    },
+    {
+      "request": {
+        "id": "C02-missing-owner",
+        "task": "cobra",
+        "relation_id": "C02",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "len(cmd.ValidArgs) > 0",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C02",
+        "owner": "OnlyValidArgs",
+        "normalized_relation": "len(cmd.ValidArgs) > 0",
+        "first_line": 52,
+        "last_line": 52,
+        "exact_ast_source": "len(cmd.ValidArgs) > 0"
+      }
+    },
+    {
+      "request": {
+        "id": "C03-supported",
+        "task": "cobra",
+        "relation_id": "C03",
+        "owner": "OnlyValidArgs",
+        "requested_normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C03",
+        "owner": "OnlyValidArgs",
+        "normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+        "first_line": 57,
+        "last_line": 57,
+        "exact_ast_source": "strings.SplitN(v, \"\\t\", 2)[0]"
+      }
+    },
+    {
+      "request": {
+        "id": "C03-opposite",
+        "task": "cobra",
+        "relation_id": "C03",
+        "owner": "OnlyValidArgs",
+        "requested_normalized_relation": "strings.SplitN(v, \"\\t\", 2)[1]",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C03",
+        "owner": "OnlyValidArgs",
+        "normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+        "first_line": 57,
+        "last_line": 57,
+        "exact_ast_source": "strings.SplitN(v, \"\\t\", 2)[0]"
+      }
+    },
+    {
+      "request": {
+        "id": "C03-missing-owner",
+        "task": "cobra",
+        "relation_id": "C03",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C03",
+        "owner": "OnlyValidArgs",
+        "normalized_relation": "strings.SplitN(v, \"\\t\", 2)[0]",
+        "first_line": 57,
+        "last_line": 57,
+        "exact_ast_source": "strings.SplitN(v, \"\\t\", 2)[0]"
+      }
+    },
+    {
+      "request": {
+        "id": "C04-supported",
+        "task": "cobra",
+        "relation_id": "C04",
+        "owner": "ExactArgs",
+        "requested_normalized_relation": "VALIDATOR_FUNCTION",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C04",
+        "owner": "ExactArgs",
+        "normalized_relation": "VALIDATOR_FUNCTION",
+        "first_line": 108,
+        "last_line": 113,
+        "exact_ast_source": "return func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C04-opposite",
+        "task": "cobra",
+        "relation_id": "C04",
+        "owner": "ExactArgs",
+        "requested_normalized_relation": "VALIDATION_ERROR_IMMEDIATELY",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C04",
+        "owner": "ExactArgs",
+        "normalized_relation": "VALIDATOR_FUNCTION",
+        "first_line": 108,
+        "last_line": 113,
+        "exact_ast_source": "return func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C04-missing-owner",
+        "task": "cobra",
+        "relation_id": "C04",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "VALIDATOR_FUNCTION",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C04",
+        "owner": "ExactArgs",
+        "normalized_relation": "VALIDATOR_FUNCTION",
+        "first_line": 108,
+        "last_line": 113,
+        "exact_ast_source": "return func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C05-supported",
+        "task": "cobra",
+        "relation_id": "C05",
+        "owner": "ExactArgs",
+        "requested_normalized_relation": "len(args) != n",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C05",
+        "owner": "ExactArgs",
+        "normalized_relation": "len(args) != n",
+        "first_line": 109,
+        "last_line": 109,
+        "exact_ast_source": "len(args) != n"
+      }
+    },
+    {
+      "request": {
+        "id": "C05-opposite",
+        "task": "cobra",
+        "relation_id": "C05",
+        "owner": "ExactArgs",
+        "requested_normalized_relation": "len(args) == n",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C05",
+        "owner": "ExactArgs",
+        "normalized_relation": "len(args) != n",
+        "first_line": 109,
+        "last_line": 109,
+        "exact_ast_source": "len(args) != n"
+      }
+    },
+    {
+      "request": {
+        "id": "C05-missing-owner",
+        "task": "cobra",
+        "relation_id": "C05",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "len(args) != n",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C05",
+        "owner": "ExactArgs",
+        "normalized_relation": "len(args) != n",
+        "first_line": 109,
+        "last_line": 109,
+        "exact_ast_source": "len(args) != n"
+      }
+    },
+    {
+      "request": {
+        "id": "C06-supported",
+        "task": "cobra",
+        "relation_id": "C06",
+        "owner": "MatchAll",
+        "requested_normalized_relation": "SUPPLIED_SLICE_ORDER",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C06",
+        "owner": "MatchAll",
+        "normalized_relation": "SUPPLIED_SLICE_ORDER",
+        "first_line": 129,
+        "last_line": 133,
+        "exact_ast_source": "for _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C06-opposite",
+        "task": "cobra",
+        "relation_id": "C06",
+        "owner": "MatchAll",
+        "requested_normalized_relation": "REVERSE_SLICE_ORDER",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C06",
+        "owner": "MatchAll",
+        "normalized_relation": "SUPPLIED_SLICE_ORDER",
+        "first_line": 129,
+        "last_line": 133,
+        "exact_ast_source": "for _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C06-missing-owner",
+        "task": "cobra",
+        "relation_id": "C06",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "SUPPLIED_SLICE_ORDER",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C06",
+        "owner": "MatchAll",
+        "normalized_relation": "SUPPLIED_SLICE_ORDER",
+        "first_line": 129,
+        "last_line": 133,
+        "exact_ast_source": "for _, parg := range pargs {\n\t\t\tif err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C07-supported",
+        "task": "cobra",
+        "relation_id": "C07",
+        "owner": "MatchAll",
+        "requested_normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C07",
+        "owner": "MatchAll",
+        "normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+        "first_line": 130,
+        "last_line": 132,
+        "exact_ast_source": "if err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C07-opposite",
+        "task": "cobra",
+        "relation_id": "C07",
+        "owner": "MatchAll",
+        "requested_normalized_relation": "CONTINUE_ALL_AND_RETURN_NIL",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C07",
+        "owner": "MatchAll",
+        "normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+        "first_line": 130,
+        "last_line": 132,
+        "exact_ast_source": "if err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C07-missing-owner",
+        "task": "cobra",
+        "relation_id": "C07",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C07",
+        "owner": "MatchAll",
+        "normalized_relation": "RETURN_ERROR_IMMEDIATELY",
+        "first_line": 130,
+        "last_line": 132,
+        "exact_ast_source": "if err := parg(cmd, args); err != nil {\n\t\t\t\treturn err\n\t\t\t}"
+      }
+    },
+    {
+      "request": {
+        "id": "C08-supported",
+        "task": "cobra",
+        "relation_id": "C08",
+        "owner": "ExactValidArgs",
+        "requested_normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C08",
+        "owner": "ExactValidArgs",
+        "normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+        "first_line": 143,
+        "last_line": 143,
+        "exact_ast_source": "MatchAll(ExactArgs(n), OnlyValidArgs)"
+      }
+    },
+    {
+      "request": {
+        "id": "C08-opposite",
+        "task": "cobra",
+        "relation_id": "C08",
+        "owner": "ExactValidArgs",
+        "requested_normalized_relation": "MatchAll(OnlyValidArgs, ExactArgs(n))",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C08",
+        "owner": "ExactValidArgs",
+        "normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+        "first_line": 143,
+        "last_line": 143,
+        "exact_ast_source": "MatchAll(ExactArgs(n), OnlyValidArgs)"
+      }
+    },
+    {
+      "request": {
+        "id": "C08-missing-owner",
+        "task": "cobra",
+        "relation_id": "C08",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C08",
+        "owner": "ExactValidArgs",
+        "normalized_relation": "MatchAll(ExactArgs(n), OnlyValidArgs)",
+        "first_line": 143,
+        "last_line": 143,
+        "exact_ast_source": "MatchAll(ExactArgs(n), OnlyValidArgs)"
+      }
+    },
+    {
+      "request": {
+        "id": "C09-supported",
+        "task": "cobra",
+        "relation_id": "C09",
+        "owner": "ExactValidArgs",
+        "requested_normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "C09",
+        "owner": "ExactValidArgs",
+        "normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+        "first_line": 141,
+        "last_line": 141,
+        "exact_ast_source": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead"
+      }
+    },
+    {
+      "request": {
+        "id": "C09-opposite",
+        "task": "cobra",
+        "relation_id": "C09",
+        "owner": "ExactValidArgs",
+        "requested_normalized_relation": "ACTIVE_RECOMMENDED_REPLACEMENT_FOR_MATCHALL",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "C09",
+        "owner": "ExactValidArgs",
+        "normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+        "first_line": 141,
+        "last_line": 141,
+        "exact_ast_source": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead"
+      }
+    },
+    {
+      "request": {
+        "id": "C09-missing-owner",
+        "task": "cobra",
+        "relation_id": "C09",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "C09",
+        "owner": "ExactValidArgs",
+        "normalized_relation": "DEPRECATED_USE_MATCHALL_COMPOSITION",
+        "first_line": 141,
+        "last_line": 141,
+        "exact_ast_source": "// Deprecated: use MatchAll(ExactArgs(n), OnlyValidArgs) instead"
+      }
+    },
+    {
+      "request": {
+        "id": "Z01-supported",
+        "task": "zod",
+        "relation_id": "Z01",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "false",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z01",
+        "owner": "_safeParse",
+        "normalized_relation": "false",
+        "first_line": 72,
+        "last_line": 72,
+        "exact_ast_source": "_ctx ? { ..._ctx, async: false } : { async: false }"
+      }
+    },
+    {
+      "request": {
+        "id": "Z01-opposite",
+        "task": "zod",
+        "relation_id": "Z01",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "true",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z01",
+        "owner": "_safeParse",
+        "normalized_relation": "false",
+        "first_line": 72,
+        "last_line": 72,
+        "exact_ast_source": "_ctx ? { ..._ctx, async: false } : { async: false }"
+      }
+    },
+    {
+      "request": {
+        "id": "Z01-missing-owner",
+        "task": "zod",
+        "relation_id": "Z01",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "false",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z01",
+        "owner": "_safeParse",
+        "normalized_relation": "false",
+        "first_line": 72,
+        "last_line": 72,
+        "exact_ast_source": "_ctx ? { ..._ctx, async: false } : { async: false }"
+      }
+    },
+    {
+      "request": {
+        "id": "Z02-supported",
+        "task": "zod",
+        "relation_id": "Z02",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "{ value, issues: [] }, ctx",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z02",
+        "owner": "_safeParse",
+        "normalized_relation": "{ value, issues: [] }, ctx",
+        "first_line": 73,
+        "last_line": 73,
+        "exact_ast_source": "schema._zod.run({ value, issues: [] }, ctx)"
+      }
+    },
+    {
+      "request": {
+        "id": "Z02-opposite",
+        "task": "zod",
+        "relation_id": "Z02",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "schema, value, _ctx",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z02",
+        "owner": "_safeParse",
+        "normalized_relation": "{ value, issues: [] }, ctx",
+        "first_line": 73,
+        "last_line": 73,
+        "exact_ast_source": "schema._zod.run({ value, issues: [] }, ctx)"
+      }
+    },
+    {
+      "request": {
+        "id": "Z02-missing-owner",
+        "task": "zod",
+        "relation_id": "Z02",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "{ value, issues: [] }, ctx",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z02",
+        "owner": "_safeParse",
+        "normalized_relation": "{ value, issues: [] }, ctx",
+        "first_line": 73,
+        "last_line": 73,
+        "exact_ast_source": "schema._zod.run({ value, issues: [] }, ctx)"
+      }
+    },
+    {
+      "request": {
+        "id": "Z03-supported",
+        "task": "zod",
+        "relation_id": "Z03",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "throw new core.$ZodAsyncError()",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z03",
+        "owner": "_safeParse",
+        "normalized_relation": "throw new core.$ZodAsyncError()",
+        "first_line": 75,
+        "last_line": 75,
+        "exact_ast_source": "throw new core.$ZodAsyncError();"
+      }
+    },
+    {
+      "request": {
+        "id": "Z03-opposite",
+        "task": "zod",
+        "relation_id": "Z03",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "throw new core.$ZodError()",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z03",
+        "owner": "_safeParse",
+        "normalized_relation": "throw new core.$ZodAsyncError()",
+        "first_line": 75,
+        "last_line": 75,
+        "exact_ast_source": "throw new core.$ZodAsyncError();"
+      }
+    },
+    {
+      "request": {
+        "id": "Z03-missing-owner",
+        "task": "zod",
+        "relation_id": "Z03",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "throw new core.$ZodAsyncError()",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z03",
+        "owner": "_safeParse",
+        "normalized_relation": "throw new core.$ZodAsyncError()",
+        "first_line": 75,
+        "last_line": 75,
+        "exact_ast_source": "throw new core.$ZodAsyncError();"
+      }
+    },
+    {
+      "request": {
+        "id": "Z04-supported",
+        "task": "zod",
+        "relation_id": "Z04",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "result.issues.length",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z04",
+        "owner": "_safeParse",
+        "normalized_relation": "result.issues.length",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "result.issues.length"
+      }
+    },
+    {
+      "request": {
+        "id": "Z04-opposite",
+        "task": "zod",
+        "relation_id": "Z04",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "!result.issues.length",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z04",
+        "owner": "_safeParse",
+        "normalized_relation": "result.issues.length",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "result.issues.length"
+      }
+    },
+    {
+      "request": {
+        "id": "Z04-missing-owner",
+        "task": "zod",
+        "relation_id": "Z04",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "result.issues.length",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z04",
+        "owner": "_safeParse",
+        "normalized_relation": "result.issues.length",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "result.issues.length"
+      }
+    },
+    {
+      "request": {
+        "id": "Z05-supported",
+        "task": "zod",
+        "relation_id": "Z05",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "true",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z05",
+        "owner": "_safeParse",
+        "normalized_relation": "true",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "success: true"
+      }
+    },
+    {
+      "request": {
+        "id": "Z05-opposite",
+        "task": "zod",
+        "relation_id": "Z05",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "false",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z05",
+        "owner": "_safeParse",
+        "normalized_relation": "true",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "success: true"
+      }
+    },
+    {
+      "request": {
+        "id": "Z05-missing-owner",
+        "task": "zod",
+        "relation_id": "Z05",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "true",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z05",
+        "owner": "_safeParse",
+        "normalized_relation": "true",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "success: true"
+      }
+    },
+    {
+      "request": {
+        "id": "Z06-supported",
+        "task": "zod",
+        "relation_id": "Z06",
+        "owner": "failure",
+        "requested_normalized_relation": "!error",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z06",
+        "owner": "failure",
+        "normalized_relation": "!error",
+        "first_line": 88,
+        "last_line": 88,
+        "exact_ast_source": "!error"
+      }
+    },
+    {
+      "request": {
+        "id": "Z06-opposite",
+        "task": "zod",
+        "relation_id": "Z06",
+        "owner": "failure",
+        "requested_normalized_relation": "error === null",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z06",
+        "owner": "failure",
+        "normalized_relation": "!error",
+        "first_line": 88,
+        "last_line": 88,
+        "exact_ast_source": "!error"
+      }
+    },
+    {
+      "request": {
+        "id": "Z06-missing-owner",
+        "task": "zod",
+        "relation_id": "Z06",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "!error",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z06",
+        "owner": "failure",
+        "normalized_relation": "!error",
+        "first_line": 88,
+        "last_line": 88,
+        "exact_ast_source": "!error"
+      }
+    },
+    {
+      "request": {
+        "id": "Z07-supported",
+        "task": "zod",
+        "relation_id": "Z07",
+        "owner": "failure",
+        "requested_normalized_relation": "error = e",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z07",
+        "owner": "failure",
+        "normalized_relation": "error = e",
+        "first_line": 97,
+        "last_line": 97,
+        "exact_ast_source": "error = e"
+      }
+    },
+    {
+      "request": {
+        "id": "Z07-opposite",
+        "task": "zod",
+        "relation_id": "Z07",
+        "owner": "failure",
+        "requested_normalized_relation": "error = new Err(e)",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z07",
+        "owner": "failure",
+        "normalized_relation": "error = e",
+        "first_line": 97,
+        "last_line": 97,
+        "exact_ast_source": "error = e"
+      }
+    },
+    {
+      "request": {
+        "id": "Z07-missing-owner",
+        "task": "zod",
+        "relation_id": "Z07",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "error = e",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z07",
+        "owner": "failure",
+        "normalized_relation": "error = e",
+        "first_line": 97,
+        "last_line": 97,
+        "exact_ast_source": "error = e"
+      }
+    },
+    {
+      "request": {
+        "id": "Z08-supported",
+        "task": "zod",
+        "relation_id": "Z08",
+        "owner": "_safeParseAsync",
+        "requested_normalized_relation": "result = await result",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z08",
+        "owner": "_safeParseAsync",
+        "normalized_relation": "result = await result",
+        "first_line": 114,
+        "last_line": 114,
+        "exact_ast_source": "result = await result"
+      }
+    },
+    {
+      "request": {
+        "id": "Z08-opposite",
+        "task": "zod",
+        "relation_id": "Z08",
+        "owner": "_safeParseAsync",
+        "requested_normalized_relation": "return result without awaiting",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z08",
+        "owner": "_safeParseAsync",
+        "normalized_relation": "result = await result",
+        "first_line": 114,
+        "last_line": 114,
+        "exact_ast_source": "result = await result"
+      }
+    },
+    {
+      "request": {
+        "id": "Z08-missing-owner",
+        "task": "zod",
+        "relation_id": "Z08",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "result = await result",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z08",
+        "owner": "_safeParseAsync",
+        "normalized_relation": "result = await result",
+        "first_line": 114,
+        "last_line": 114,
+        "exact_ast_source": "result = await result"
+      }
+    },
+    {
+      "request": {
+        "id": "Z09-supported",
+        "task": "zod",
+        "relation_id": "Z09",
+        "owner": "safeParse",
+        "requested_normalized_relation": "errors.$ZodRealError",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z09",
+        "owner": "safeParse",
+        "normalized_relation": "errors.$ZodRealError",
+        "first_line": 80,
+        "last_line": 80,
+        "exact_ast_source": "_safeParse(errors.$ZodRealError)"
+      }
+    },
+    {
+      "request": {
+        "id": "Z09-opposite",
+        "task": "zod",
+        "relation_id": "Z09",
+        "owner": "safeParse",
+        "requested_normalized_relation": "errors.$ZodError",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z09",
+        "owner": "safeParse",
+        "normalized_relation": "errors.$ZodRealError",
+        "first_line": 80,
+        "last_line": 80,
+        "exact_ast_source": "_safeParse(errors.$ZodRealError)"
+      }
+    },
+    {
+      "request": {
+        "id": "Z09-missing-owner",
+        "task": "zod",
+        "relation_id": "Z09",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "errors.$ZodRealError",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z09",
+        "owner": "safeParse",
+        "normalized_relation": "errors.$ZodRealError",
+        "first_line": 80,
+        "last_line": 80,
+        "exact_ast_source": "_safeParse(errors.$ZodRealError)"
+      }
+    },
+    {
+      "request": {
+        "id": "Z10-supported",
+        "task": "zod",
+        "relation_id": "Z10",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "result.value",
+        "expected": "SUPPORTED"
+      },
+      "observed_verdict": "SUPPORTED",
+      "reason": "EXACT_SELECTED_AST_ROLE_RELATION",
+      "actual_relation": {
+        "id": "Z10",
+        "owner": "_safeParse",
+        "normalized_relation": "result.value",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "data: result.value"
+      }
+    },
+    {
+      "request": {
+        "id": "Z10-opposite",
+        "task": "zod",
+        "relation_id": "Z10",
+        "owner": "_safeParse",
+        "requested_normalized_relation": "value",
+        "expected": "CONTRADICTED"
+      },
+      "observed_verdict": "CONTRADICTED",
+      "reason": "SELECTED_AST_ROLE_RELATION_DIFFERS",
+      "actual_relation": {
+        "id": "Z10",
+        "owner": "_safeParse",
+        "normalized_relation": "result.value",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "data: result.value"
+      }
+    },
+    {
+      "request": {
+        "id": "Z10-missing-owner",
+        "task": "zod",
+        "relation_id": "Z10",
+        "owner": "__missing_owner__",
+        "requested_normalized_relation": "result.value",
+        "expected": "INSUFFICIENT"
+      },
+      "observed_verdict": "INSUFFICIENT",
+      "reason": "MISSING_OR_DIFFERENT_REQUESTED_LEXICAL_OWNER",
+      "actual_relation": {
+        "id": "Z10",
+        "owner": "_safeParse",
+        "normalized_relation": "result.value",
+        "first_line": 78,
+        "last_line": 78,
+        "exact_ast_source": "data: result.value"
+      }
+    }
+  ],
+  "matrix_reference_rows_observed_columns": {
+    "SUPPORTED": {
+      "SUPPORTED": 19,
+      "CONTRADICTED": 0,
+      "INSUFFICIENT": 0
+    },
+    "CONTRADICTED": {
+      "SUPPORTED": 0,
+      "CONTRADICTED": 19,
+      "INSUFFICIENT": 0
+    },
+    "INSUFFICIENT": {
+      "SUPPORTED": 0,
+      "CONTRADICTED": 0,
+      "INSUFFICIENT": 19
+    }
+  },
+  "matches": 57,
+  "cases": 57,
+  "scope": "57 controlled typed requests over19already-exposed selected source relations. Exact finite AST role/owner interface; not natural-language semantic accuracy, generic source resolver, native source execution or neural gain. Manual normalization includes role labels for callbacks/order/deprecation.",
+  "typed_supported_precision": {
+    "numerator": 19,
+    "denominator": 19
+  },
+  "false_support_on_negative_controls": {
+    "numerator": 0,
+    "denominator": 38
+  },
+  "full_document_approval_from_this_checker": false,
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

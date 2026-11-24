@@ -1,0 +1,11 @@
+--- agent/research/portfolio-vivabem-20261120/sqlx-named-context-candidate-v2/en.md
++++ agent/research/final-intensive-20261121/sqlx-named-context-candidate-v3/en.md
+@@ -6,7 +6,7 @@
+ 
+ ## Public entry points and the execution boundary
+ 
+-Package `Named` calls `bindNamedMapper` using `QUESTION` and the package mapper (`named.go:417-435`). It returns a query string, positional arguments and an error; it has no database handle from which to select a driver format. Package `BindNamed` accepts an explicit binding type and is marked deprecated in the selected source. The similarly named `DB.BindNamed` method instead uses the database object's driver name and mapper (`sqlx.go:300-303`). These entry points must not be conflated.
++Package `Named` calls `bindNamedMapper` using `QUESTION` and the package mapper (`named.go:417-435`). It returns a query string, positional arguments and an error; it has no database handle from which to select a driver format. Package `BindNamed` accepts an explicit binding type and is marked deprecated in the selected source. Evidence: `named.go:408-412`. The similarly named `DB.BindNamed` method instead uses the database object's driver name and mapper (`sqlx.go:300-303`). These entry points must not be conflated.
+ 
+ The `DB.NamedExec` and `DB.NamedQuery` convenience methods forward to the package wrappers (`sqlx.go:305-315`). Those wrappers use `BindType(e.DriverName())` and `mapperFor(e)`, return a binding error before their selected executor call, then delegate to `e.Exec` or `e.Queryx` (`named.go:441-458`). They are execution APIs, not merely formatting helpers. The `Ext` interface composes binding, querying and execution capabilities (`sqlx.go:89-101`); this source does not determine the concrete driver's effects or results.
+ 

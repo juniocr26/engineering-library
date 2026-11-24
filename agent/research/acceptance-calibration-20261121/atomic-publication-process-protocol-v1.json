@@ -1,0 +1,132 @@
+{
+  "at": "2026-11-21T20:56:01.813160+00:00",
+  "before_observations": true,
+  "hypothesis": "Stagingcompletebytesbeforeatomicno-overwritehardlinkpublicationpreventsfinalnamefrompointingtopartialbytesunderactualprocessstops. Currentwrite_newbaselineisunchangedactualELcode. Noclaimoffulljobtransaction/powerloss/Windows/nativeadapterrecovery.",
+  "cases": [
+    {
+      "id": "current_workspace-before_write",
+      "variant": "current_workspace",
+      "phase": "before_write",
+      "expected_exit_code": 91,
+      "expected_final_state": "PARTIAL"
+    },
+    {
+      "id": "current_workspace-mid_write",
+      "variant": "current_workspace",
+      "phase": "mid_write",
+      "expected_exit_code": 91,
+      "expected_final_state": "PARTIAL"
+    },
+    {
+      "id": "current_workspace-after_file_fsync",
+      "variant": "current_workspace",
+      "phase": "after_file_fsync",
+      "expected_exit_code": 91,
+      "expected_final_state": "FULL_PAYLOAD"
+    },
+    {
+      "id": "current_workspace-after_parent_fsync",
+      "variant": "current_workspace",
+      "phase": "after_parent_fsync",
+      "expected_exit_code": 91,
+      "expected_final_state": "FULL_PAYLOAD"
+    },
+    {
+      "id": "current_workspace-normal",
+      "variant": "current_workspace",
+      "phase": "normal",
+      "expected_exit_code": 0,
+      "expected_final_state": "FULL_PAYLOAD"
+    },
+    {
+      "id": "current_workspace-existing-file",
+      "variant": "current_workspace",
+      "phase": "normal",
+      "preexisting": "file",
+      "expected_exit_code": 17,
+      "expected_final_state": "PREEXISTING_BYTES"
+    },
+    {
+      "id": "current_workspace-existing-symlink",
+      "variant": "current_workspace",
+      "phase": "normal",
+      "preexisting": "symlink",
+      "expected_exit_code": 17,
+      "expected_final_state": "SYMLINK_RETAINED"
+    },
+    {
+      "id": "owned_stage_link-before_write",
+      "variant": "owned_stage_link",
+      "phase": "before_write",
+      "expected_exit_code": 91,
+      "expected_final_state": "ABSENT"
+    },
+    {
+      "id": "owned_stage_link-mid_write",
+      "variant": "owned_stage_link",
+      "phase": "mid_write",
+      "expected_exit_code": 91,
+      "expected_final_state": "ABSENT"
+    },
+    {
+      "id": "owned_stage_link-after_file_fsync",
+      "variant": "owned_stage_link",
+      "phase": "after_file_fsync",
+      "expected_exit_code": 91,
+      "expected_final_state": "ABSENT"
+    },
+    {
+      "id": "owned_stage_link-after_parent_fsync",
+      "variant": "owned_stage_link",
+      "phase": "after_parent_fsync",
+      "expected_exit_code": 91,
+      "expected_final_state": "FULL_PAYLOAD"
+    },
+    {
+      "id": "owned_stage_link-normal",
+      "variant": "owned_stage_link",
+      "phase": "normal",
+      "expected_exit_code": 0,
+      "expected_final_state": "FULL_PAYLOAD"
+    },
+    {
+      "id": "owned_stage_link-existing-file",
+      "variant": "owned_stage_link",
+      "phase": "normal",
+      "preexisting": "file",
+      "expected_exit_code": 17,
+      "expected_final_state": "PREEXISTING_BYTES"
+    },
+    {
+      "id": "owned_stage_link-existing-symlink",
+      "variant": "owned_stage_link",
+      "phase": "normal",
+      "preexisting": "symlink",
+      "expected_exit_code": 17,
+      "expected_final_state": "SYMLINK_RETAINED"
+    },
+    {
+      "id": "owned_stage_link-after_link",
+      "variant": "owned_stage_link",
+      "phase": "after_link",
+      "expected_exit_code": 91,
+      "expected_final_state": "FULL_PAYLOAD"
+    }
+  ],
+  "single_cases": 15,
+  "race": "TwoexistingPythonchildrenpublishdifferentbodiesintosameownfinalname; exactlyone0andone17, finalequalsonefullbody, bothstagefilesretained. Winnernotpredetermined.",
+  "body_text": "Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. Owned nonprivate file-publication marker. ",
+  "production_source": {
+    "path": "agent/tools/documentation_workspace.py",
+    "sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604"
+  },
+  "worker_sha256": "3e9e95c1595e555dd8674945723d7c690c967d3f2a68ebcc92f59aead9cd98f0",
+  "observer_sha256": "e22707baa27e88c4fc6e0b3f99a93fd3bb1fd27c21b3256a0b21d4c68042f83b",
+  "no_source_program_execution": true,
+  "only_own_workspace_module_imported": true,
+  "no_permanent_tests": true,
+  "artifacts": "Everypartial/staged/orphan/collisionbodyretained; nocleanupdeletion or retry.",
+  "preflight_construction_failure": "FirstinlinebuilderhadaSyntaxErrorfrommissingwhitespacebeforeelse91; parsingfailedbeforeanyprotocol/controlwriteorchildprocess. Correctedbeforefreeze; noexperimentretry.",
+  "gold": 0,
+  "optimizer_updates": 0
+}

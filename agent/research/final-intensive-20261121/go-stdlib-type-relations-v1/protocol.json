@@ -1,0 +1,99 @@
+{
+  "at": "2026-11-22T01:54:17.464524+00:00",
+  "hypothesis": "Frozen actual SDK export data lets go/types distinguish package aliases, local shadowing, promoted imported methods, interface declarations and constants; identity/type errors must not admit partial relation facts.",
+  "binary_sha256": "f54288b65852f6ea4f5479aef2b5e450e7feff015a900da2fd8b8ecb49257dba",
+  "SDK_manifest_sha256": "2e4aa526ced5697cc3bcfc164fdd2fa7cfdaf75ce25df46da9a7babd872303b6",
+  "cases": [
+    {
+      "id": "context-import-alias",
+      "source": "package owned\nimport c \"context\"\nfunc Derive(p c.Context)(c.Context,c.CancelFunc){return c.WithCancel(p)}\n",
+      "status": "TYPECHECKED_FROZEN_STDLIB_PACKAGE",
+      "qualified": [
+        "context:WithCancel",
+        "context:Context",
+        "context:CancelFunc"
+      ]
+    },
+    {
+      "id": "local-shadows-import-alias",
+      "source": "package owned\nimport c \"context\"\ntype Local struct{}\nfunc(Local) WithCancel()int{return 7}\nfunc Read(c Local)int{return c.WithCancel()}\nvar _ c.Context\n",
+      "status": "TYPECHECKED_FROZEN_STDLIB_PACKAGE",
+      "qualified": [
+        "context:Context"
+      ],
+      "forbidden_qualified": [
+        "context:WithCancel"
+      ],
+      "selection_name": "WithCancel",
+      "object_contains": "Local"
+    },
+    {
+      "id": "promoted-imported-pointer-method",
+      "source": "package owned\nimport \"bytes\"\nimport \"io\"\ntype Box struct{bytes.Buffer}\nvar _ io.Reader=(*Box)(nil)\nfunc Read(b *Box,p []byte)(int,error){return b.Read(p)}\n",
+      "status": "TYPECHECKED_FROZEN_STDLIB_PACKAGE",
+      "qualified": [
+        "bytes:Buffer",
+        "io:Reader"
+      ],
+      "selection_name": "Read",
+      "object_contains": "bytes.Buffer"
+    },
+    {
+      "id": "imported-value-interface-mismatch",
+      "source": "package owned\nimport \"bytes\"\nimport \"io\"\nvar _ io.Reader=bytes.Buffer{}\n",
+      "status": "INCONCLUSIVE_TYPE_ERRORS"
+    },
+    {
+      "id": "imported-interface-not-concrete",
+      "source": "package owned\nimport \"io\"\nfunc Read(r io.Reader,p []byte)(int,error){return r.Read(p)}\n",
+      "status": "TYPECHECKED_FROZEN_STDLIB_PACKAGE",
+      "qualified": [
+        "io:Reader"
+      ],
+      "selection_name": "Read",
+      "object_contains": "io.Reader"
+    },
+    {
+      "id": "correct-name-wrong-argument",
+      "source": "package owned\nimport c \"context\"\nvar _,_=c.WithCancel(7)\n",
+      "status": "INCONCLUSIVE_TYPE_ERRORS"
+    },
+    {
+      "id": "unregistered-import-refused",
+      "source": "package owned\nimport \"example.invalid/application\"\nvar _ application.Value\n",
+      "status": "REFUSED"
+    },
+    {
+      "id": "registered-export-hash-mismatch",
+      "source": "package owned\nimport \"context\"\nvar _ context.Context\n",
+      "status": "INCONCLUSIVE_IMPORT_IDENTITY",
+      "corrupt_registered_hash": "context"
+    },
+    {
+      "id": "qualified-constant-not-call",
+      "source": "package owned\nimport \"bytes\"\nvar N=bytes.MinRead\n",
+      "status": "TYPECHECKED_FROZEN_STDLIB_PACKAGE",
+      "qualified": [
+        "bytes:MinRead"
+      ],
+      "object_prefix": "const bytes.MinRead"
+    },
+    {
+      "id": "provided-build-tag-files-not-auto-filtered",
+      "files": [
+        {
+          "path": "only_windows.go",
+          "source": "//go:build windows\n\npackage owned\nfunc Platform()int{return 1}\n"
+        },
+        {
+          "path": "not_windows.go",
+          "source": "//go:build !windows\n\npackage owned\nfunc Platform()int{return 2}\n"
+        }
+      ],
+      "status": "INCONCLUSIVE_TYPE_ERRORS",
+      "scope": "Observer checks explicitly supplied files; this result is not a broken upstream package or Windows build result."
+    }
+  ],
+  "profile": "Go1.27.1darwin/arm64 SDK exports; target package language go1.24, explicitly provided files, no automatic build-tag resolution.",
+  "scope": "Ten related owned DEVELOPMENT controls, not independent docs/neural benchmark or runtime call graph."
+}

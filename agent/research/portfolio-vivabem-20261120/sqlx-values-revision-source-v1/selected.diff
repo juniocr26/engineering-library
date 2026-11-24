@@ -1,0 +1,19 @@
+diff --git a/named.go b/named.go
+index 58bedd5..728aa04 100644
+--- a/named.go
++++ b/named.go
+@@ -242,13 +242,13 @@ func findMatchingClosingBracketIndex(s string) int {
+ 	return 0
+ }
+ 
+ func fixBound(bound string, loop int) string {
+ 	loc := valuesReg.FindStringIndex(bound)
+ 	// defensive guard when "VALUES (...)" not found
+-	if len(loc) < 1 {
++	if len(loc) < 2 {
+ 		return bound
+ 	}
+ 
+ 	openingBracketIndex := loc[1] - 1
+ 	index := findMatchingClosingBracketIndex(bound[openingBracketIndex:])
+ 	// defensive guard. must have closing bracket

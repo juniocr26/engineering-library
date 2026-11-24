@@ -1,0 +1,74 @@
+{
+  "at": "2026-11-21T07:42:48.967194+00:00",
+  "revision": "0222c19dd8e0c9a927f2e47bf3774a108431da25",
+  "queries": [
+    {
+      "arguments": [
+        "grep",
+        "-n",
+        "-E",
+        "trait (Violation|AlwaysFixableViolation)|enum FixAvailability|struct (Diagnostic|DiagnosticGuard)|fn (set_fix|try_set_fix)",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25",
+        "--",
+        "crates/ruff_linter/src",
+        "crates/ruff_db/src"
+      ],
+      "returncode": 0,
+      "matching_lines": [
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_db/src/diagnostic/mod.rs:29:pub struct Diagnostic {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_db/src/diagnostic/mod.rs:384:    pub fn set_fix(&mut self, fix: Fix) {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_db/src/diagnostic/mod.rs:499:struct DiagnosticInner {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_db/src/diagnostic/mod.rs:1604:pub struct DiagnosticMessage(Box<str>);",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_db/src/diagnostic/render.rs:2790:    pub(super) struct DiagnosticBuilder<'e> {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_db/src/diagnostic/render/junit.rs:123:struct DiagnosticWithLocation<'a> {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_db/src/diagnostic/stylesheet.rs:62:pub struct DiagnosticStylesheet {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/checkers/ast/mod.rs:3796:pub(crate) struct DiagnosticGuard<'a, 'b> {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/checkers/ast/mod.rs:3899:    pub(crate) fn set_fix(&mut self, fix: Fix) {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/checkers/ast/mod.rs:3914:    pub(crate) fn try_set_fix(&mut self, func: impl FnOnce() -> anyhow::Result<Fix>) {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/test.rs:40:pub(crate) struct DiagnosticsDiff {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/violation.rs:15:pub enum FixAvailability {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/violation.rs:31:pub trait ViolationMetadata {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/violation.rs:52:pub trait Violation: ViolationMetadata + Sized {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/violation.rs:90:pub trait AlwaysFixableViolation: ViolationMetadata {"
+      ],
+      "bounded_output_preview_only": false
+    },
+    {
+      "arguments": [
+        "grep",
+        "-n",
+        "-F",
+        ".applies(",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25",
+        "--",
+        "crates/ruff_linter/src",
+        "crates/ruff/src"
+      ],
+      "returncode": 0,
+      "matching_lines": [
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff/src/printer.rs:287:                    .is_some_and(|fix| fix.applies(required_applicability));",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff/src/printer.rs:532:                if fix.applies(unsafe_fixes.required_applicability()) {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/fix/mod.rs:42:                .is_some_and(|fix| fix.applies(required_applicability))"
+      ],
+      "bounded_output_preview_only": false
+    },
+    {
+      "arguments": [
+        "grep",
+        "-n",
+        "-E",
+        "enum UnsafeFixes|fn required_applicability",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25",
+        "--",
+        "crates"
+      ],
+      "returncode": 0,
+      "matching_lines": [
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/settings/types.rs:130:pub enum UnsafeFixes {",
+        "0222c19dd8e0c9a927f2e47bf3774a108431da25:crates/ruff_linter/src/settings/types.rs:162:    pub fn required_applicability(&self) -> Applicability {"
+      ],
+      "bounded_output_preview_only": false
+    }
+  ],
+  "scope": "Publicsourcepath/signature/callsite discovery;notfulltype/macro/runtimeproof,noglobalabsenceclaimfromboundedquery."
+}

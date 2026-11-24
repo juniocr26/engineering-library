@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-20T21:06:47.721320+00:00",
+  "status": "CORRECTED_DUPLICATE_API_EXPECTATION_BEFORE_CANDIDATE",
+  "source": "package owned\n\nfunc Selected(value int) int {\n\treturn value + 1\n}\n\nfunc Other(value int) int {\n\treturn value + 9\n}\n\ntype One struct{}\ntype Two struct{}\n\nfunc (One) Selected(value int) int {\n\treturn value + 2\n}\n\nfunc (Two) Selected(value int) int {\n\treturn value + 7\n}\n",
+  "source_sha256": "8df33b3bede73a61859c8326245a5703c324b2e4675f93d576fae57ef03ad477",
+  "current_tool_sha256": "4d69c21fb17bd94c0134c44d86d879655e33d2268a0385220d3702899f85e60b",
+  "cases": [
+    {
+      "id": "valid-function",
+      "selector": "owned.Selected",
+      "mutation": "none",
+      "expected_status": "DUPLICATE"
+    },
+    {
+      "id": "valid-method",
+      "selector": "One.Selected",
+      "mutation": "none",
+      "expected_status": "DUPLICATE"
+    },
+    {
+      "id": "substituted-other-function",
+      "selector": "owned.Selected",
+      "mutation": "other-callable",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "body-only",
+      "selector": "owned.Selected",
+      "mutation": "body-only",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "whole-module",
+      "selector": "owned.Selected",
+      "mutation": "whole-module",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "false-kind",
+      "selector": "owned.Selected",
+      "mutation": "kind",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "false-producer",
+      "selector": "owned.Selected",
+      "mutation": "producer",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "false-limitations",
+      "selector": "owned.Selected",
+      "mutation": "limitations",
+      "expected_status": "REFUSED"
+    },
+    {
+      "id": "other-receiver-method",
+      "selector": "One.Selected",
+      "mutation": "other-receiver",
+      "expected_status": "REFUSED"
+    }
+  ],
+  "hypothesis": "Current Go cache validation may accept a coordinated owned cached quote and receipt that matches real physical bytes but not the selected complete callable or verified producer. Native existing Go AST re-derivation should distinguish these without source execution.",
+  "scope": "Owned cache/receipt editing only, not evidence of external compromise or runtime Go identity. Valid source is parsed by preexisting verified native binary, never compiled or executed.",
+  "source_executed": false,
+  "permanent_tests_changed": false,
+  "model_calls": 0,
+  "extends": "helper-go-cached-unit-oracle-v1.json",
+  "correction": "Two valid readbacks expect DUPLICATE, not FOUND; existing API suppresses second quote injection. Seven invalid inputs still expect REFUSED. V1 and raw baseline remain preserved."
+}

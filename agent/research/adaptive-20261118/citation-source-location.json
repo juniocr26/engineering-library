@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "learning_id": "ADAPT18-CITATION-SOURCE-LOCATION",
+  "at": "2026-11-18T22:51:56.026972+00:00",
+  "status": "INTEGRATED",
+  "scope": "Unstaged local Engineering Library candidate; owner review required before commit. No remote artifact availability implied.",
+  "problem": "Identical method text in separate owners was cited at the first textual occurrence instead of the selected AST source line.",
+  "baseline": {
+    "caller": "1.9.19",
+    "incorrect_real_source_cases": 7,
+    "projects": [
+      "starlette",
+      "click"
+    ],
+    "new_regression_tests_failed": 4,
+    "new_regression_tests_total": 5
+  },
+  "change": "Validate that the exact source quotation starts at its typed in-range selected line; render that line. Never locate a selected unit by first global quote occurrence.",
+  "runtime_consumer": "Documentation::Command#validate_and_render; both Command and SectionCommand workflows",
+  "verified": {
+    "caller": "1.9.20",
+    "real_source_cases_correct": 7,
+    "languages": [
+      "en",
+      "pt-br"
+    ],
+    "existing_plus_new_tests": 148,
+    "assertions": 827,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "evidence": [
+    {
+      "artifact": "private-research://adaptive-20261118/citation-location-protocol.json",
+      "sha256": "4306d4c1dd4a128ee1cb5839749f3a5f47ec7766df7dc121ad02369cea3a71dd"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/citation-location-baseline.jsonl",
+      "sha256": "d45c8292b93f2fa533418f78f62e07c9d1d2a371dac497083d631cca90ea9773"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/citation-location-after.jsonl",
+      "sha256": "c04c9437e7fe8c3f1b1dcbfe577484a102a38407598e50ad4ff7f325529e26bb"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/citation-permanent-tests-before.log",
+      "sha256": "0e9a12b493e61785e313eebad340a323498ffdbe9d9e54a705c89e21f185f3f5"
+    },
+    {
+      "artifact": "private-research://adaptive-20261118/citation-all-tests-final.log",
+      "sha256": "acdc1711ed52c4c0deb91872f483caafe461522484ed8fb92261919828f9fcce"
+    }
+  ],
+  "regression_test": "backend/test/offline/documentation_citation_spans_offline.rb",
+  "fixture_alignment": "Two preexisting ownership fixtures now provide correct source line metadata; their positive/negative ownership assertions were preserved.",
+  "limitations": [
+    "Citation identity is not prose semantic verification.",
+    "Identical source bytes at an arbitrary supplied line do not independently prove an untrusted owner hint; collectors remain responsible for AST ownership.",
+    "No neural weights changed.",
+    "Full evidence is retained privately and is not automatically inference context."
+  ]
+}

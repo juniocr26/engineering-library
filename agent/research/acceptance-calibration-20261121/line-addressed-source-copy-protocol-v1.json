@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-21T19:15:00.074072+00:00",
+  "before_predictions": true,
+  "question": "Can explicit physical line addressing preserve exact source bytes when source-to-relation/prose generation failed?",
+  "hypothesis": "Line-addressed copying removes semantic interpretation requirements. Exact copying may succeed without supporting any claim of semantic understanding, source discovery, bilingual prose or complete notes. Failures further narrow basic serialization/attention boundary.",
+  "model": "llama3.2:3b",
+  "model_digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+  "calls": [
+    {
+      "task": "fastapi",
+      "method": "W",
+      "request": "agent/research/acceptance-calibration-20261121/line-addressed-source-copy-v1/fastapi/W/request.json",
+      "request_sha256": "6e393b7b3ce65a6f9cad52dc098b0b0b278cb07235469a51dc3d0de3306c6ab3"
+    },
+    {
+      "task": "cobra",
+      "method": "W",
+      "request": "agent/research/acceptance-calibration-20261121/line-addressed-source-copy-v1/cobra/W/request.json",
+      "request_sha256": "260b53b8a4e727f191edd86e03ce5a4eecf930218f9551341e75c327d7966dcd"
+    },
+    {
+      "task": "zod",
+      "method": "W",
+      "request": "agent/research/acceptance-calibration-20261121/line-addressed-source-copy-v1/zod/W/request.json",
+      "request_sha256": "12b43260a67c95bba48360cd346dccba95d238d97507aade1814e3ad16399f57"
+    }
+  ],
+  "transport_timeout_seconds": 900,
+  "reference": "line-addressed-source-copy-reference-v1.json",
+  "reference_sha256": "9acf47a8ab5161ee40c9b2a69d77a2a9b6b42712342a227b0dabd25369fc4463",
+  "primary_metric": "9 exact full source line strings, including indentation; no newline terminator or number prefix. Missing/changed whitespace is failure under exact-byte criterion.",
+  "secondary_metric": "Whitespace-stripped code equality descriptive only; never substitutes primary acceptance.",
+  "stop": "First HTTP/timeout/length/invalid JSON/schema failure halts batch, no retries.",
+  "limits": "Three development-exposed source families; operator supplies explicit addresses. Nine distinct target lines not independent document/language trials. No complete document requested and none can be accepted.",
+  "owner_approved": false,
+  "gold": 0,
+  "optimizer_updates": 0
+}

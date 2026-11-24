@@ -1,0 +1,182 @@
+{
+  "at": "2026-11-22T03:06:39.705469+00:00",
+  "topic": "go-image-compression-flow",
+  "version": "isolated_attribution_correction_v1",
+  "documents": [
+    {
+      "language": "en",
+      "path": "agent/research/final-intensive-20261121/go-image-compression-attribution-candidate-v1/en.md",
+      "sha256": "2b6d771ca1452921fedea23dde9f9b70428183552d3cf6f576e42c0ea1c27d5b"
+    },
+    {
+      "language": "pt-BR",
+      "path": "agent/research/final-intensive-20261121/go-image-compression-attribution-candidate-v1/pt-BR.md",
+      "sha256": "27f9bea26f2448b19c6d94e16baa4025f685208edce6f1c58893bd47ce07b1d7"
+    }
+  ],
+  "source_claim_groups": [
+    {
+      "id": "P1",
+      "meaning": "Constructor stores supplied interface; no runtime composition or encoding occurs there.",
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "lines": [
+        31,
+        44
+      ],
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same campaign agent"
+    },
+    {
+      "id": "P2",
+      "meaning": "Empty input branch precedes both ctx.Err calls and interface compression.",
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "lines": [
+        46,
+        57
+      ],
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same campaign agent"
+    },
+    {
+      "id": "P3",
+      "meaning": "Non-nil compressor error discards result; second ctx.Err error also returns zero Result; final success returns result,nil.",
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "lines": [
+        55,
+        65
+      ],
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same campaign agent"
+    },
+    {
+      "id": "P4",
+      "meaning": "Compressor interface receives bytes only, not context; surrounding checks do not prove mid-codec interruption or rollback.",
+      "path": "backend/internal/application/imagecompression/usecase.go",
+      "lines": [
+        31,
+        65
+      ],
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same campaign agent"
+    },
+    {
+      "id": "P5",
+      "meaning": "Detection error returns before8-format switch; HEIF additionally receives detected.ContentType.",
+      "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+      "lines": [
+        40,
+        66
+      ],
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same campaign agent"
+    },
+    {
+      "id": "P6",
+      "meaning": "Router explicitly constructs NewUseCase(NewCompressor()) and registers POST images/compress with ProcessImage.",
+      "path": "backend/internal/infrastructure/http/router.go",
+      "lines": [
+        19,
+        24
+      ],
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same campaign agent"
+    },
+    {
+      "id": "P7",
+      "meaning": "Returned handler calls Execute(request context,uploadedbytes), routes nonnil errors to helper, writes successdata later.",
+      "path": "backend/internal/infrastructure/http/handler/compress_image/handler.go",
+      "lines": [
+        82,
+        99
+      ],
+      "verdict": "SUPPORTED_SCOPED_STATIC",
+      "reviewer": "Same campaign agent"
+    }
+  ],
+  "negative_controls": [
+    {
+      "id": "N1",
+      "claim": "Compressor receives context through this interface.",
+      "verdict": "CONTRADICTED",
+      "method": "Same-agent source/reference adjudication, not automatic prediction."
+    },
+    {
+      "id": "N2",
+      "claim": "Context error after successful Compress returns computed data.",
+      "verdict": "CONTRADICTED",
+      "method": "Same-agent source/reference adjudication, not automatic prediction."
+    },
+    {
+      "id": "N3",
+      "claim": "Compressor result-plus-error is returned unchanged.",
+      "verdict": "CONTRADICTED",
+      "method": "Same-agent source/reference adjudication, not automatic prediction."
+    },
+    {
+      "id": "N4",
+      "claim": "The written router composition proves an actually running object.",
+      "verdict": "INSUFFICIENT",
+      "method": "Same-agent source/reference adjudication, not automatic prediction."
+    },
+    {
+      "id": "N5",
+      "claim": "Both historical neural arms omitted the second context check.",
+      "verdict": "CONTRADICTED",
+      "method": "Same-agent source/reference adjudication, not automatic prediction."
+    },
+    {
+      "id": "N6",
+      "claim": "Structural rejection means every output source claim was false.",
+      "verdict": "CONTRADICTED",
+      "method": "Same-agent source/reference adjudication, not automatic prediction."
+    }
+  ],
+  "gates": {
+    "G1": {
+      "status": "PASS",
+      "basis": "Exact original/candidate/witness/source hashes and same Git revision; unknown historical effective server digest explicitly retained."
+    },
+    "G2": {
+      "status": "PASS",
+      "basis": "Full source/body/FAQ claims read; corrected historical attribution now preserves caller second-check mention and helper omission."
+    },
+    "G3": {
+      "status": "PASS",
+      "basis": "Actual application/interface/dispatcher/router/handler bodies read, including explicit construction versus runtime distinction; codecs/error-helper mapping excluded before evaluation."
+    },
+    "G4": {
+      "status": "PASS",
+      "basis": "Full original bounded declared chapter,threeFAQs and composition diagram retained; only historical attribution sentence corrected."
+    },
+    "G5": {
+      "status": "PASS",
+      "basis": "Exact written flow and diagram checked manually at static level; no target code/tests/network/Mermaid rendering claimed."
+    },
+    "G6": {
+      "status": "PASS",
+      "basis": "Full EN/PT clauses, guards, results, route,context boundaries and corrected attribution compared; same technical meanings within scope."
+    },
+    "G7": {
+      "status": "PASS",
+      "basis": "MODIFY explanatory attribution, NO-OP source implementation; not actual revision evolution, REMOVE or target application edit."
+    },
+    "G8": {
+      "status": "PASS",
+      "basis": "Separate fresh source acquisition, exact request/response trace adjudication and six adverse source challenges; same-agent review, not independent human certification."
+    },
+    "G9": {
+      "status": "INCONCLUSIVE",
+      "basis": "New corrected pair/context/witness closure not yet operationally restored."
+    }
+  },
+  "technical_status": "INCONCLUSIVE_RECOVERY_PENDING",
+  "neural_contribution": false,
+  "original_dataset_status_edited": false,
+  "owner_approved": false,
+  "publication_approved": false,
+  "training_gold": false,
+  "source_binding_correction": {
+    "prior": "go-image-compression-corrected-complete-review-v1.json",
+    "reason": "P7 range84-99 omitted the actual Execute call at82; corrected82-99 before recovery/technical promotion. Actual chapter prose unchanged."
+  }
+}

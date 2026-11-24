@@ -1,0 +1,17 @@
+import json
+from pathlib import Path
+from report_bundle_append_v1 import prepare,apply,REPORTS
+p=Path(__file__).resolve().parent;root=p.parents[2]
+common='''
+
+### Final intensive progress 034 — unchanged original configuration target accepted
+
+The exact original Go Image configuration EN/PT pair was read in full against fresh pinned config/main/server source, preserved historical caller/helper responses and selected existing SDKos.Getenv/fmt.Errorf contracts. Four actual Go files were syntax-parsed with gofmt; upstream tests/server/app not executed. A failed query for config/config_test.go remains a failed named path, not evidence that no configuration tests exist. Source errors,defaultempty behavior,zeroConfigfailure return,range/endpoints,Addrdelegation and static entry-point/serverconsumer are supported. Caller historical loaded-value-plus-error contradiction and helper3identicalrangeentries are confirmed; WRITTEN_UNREVIEWED is not technical acceptance. No textual correction was needed for this original pair.
+
+Checkpoint024 restored3524regularfiles with hashes/modes and25finite replay groups, including exact original documents,6source files,2historical responses,4syntax replays and3SDKsource/license snapshots under the new configuration consumer. All four root reports reconstructed exactly after its postnote. `go-image-configuration-complete-review-v2.json` records allG1–G9PASS for the bounded manual original target; owner/publication/Goldremainfalse. Population auditv5 now describes18related bilingual chapter-version pairs:15accepted,1citationgap,2original attribution failures; helpermaintenance separate. Requested16metricregistryv4 retains null generalized rates and0/0newlocalneuraltrials.
+
+Current target-correspondence receiptv2 now finds8exactaccepted-parentdocumentreferences among297nonprivateoriginalrows (2chapterrows+6FAQs),188differentreferences and101withoutselecteddirectfields;8privaterows excluded and7originalfilehashes unchanged. Even an exact parentdocumentmatch does not approve each inlineFAQanswer, whole targetbundle or training use. A separate six-inlineFAQ protocol is frozen for that question. Ownerreviewbatchv5 retains primary3 plus supplemental5 publicpairs, with original bytes,default-deny source-family/dependency exclusions and no Gold/publication/owner approval. Campaign remains active; no localmodelcalls,optimizerupdates or production/permanenttest/external edits.
+'''
+j=p/'root-report-bundle-progress-034';prepare(root,j,{n:common.encode() for n in REPORTS});out=apply(root,j);assert out['status']=='APPLIED_OR_ALREADY_APPLIED'
+with (p/'root-report-append-receipt-v34.json').open('x') as f:json.dump({'bundle':str(j.relative_to(root)),'outcome':out},f,indent=2);f.write('\n')
+print(out['status'])

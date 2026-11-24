@@ -1,0 +1,98 @@
+{
+  "at": "2026-11-20T00:24:55.921033+00:00",
+  "chapter_id": "chi-middleware",
+  "source_repository": "chi",
+  "revision": "c64ed7d6635f33a8b2feaff7dcfa55677023ac7d",
+  "original_status": "VERIFIED_WITH_LIMITATIONS",
+  "candidate_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approved": false,
+  "gold": false,
+  "source_program_executed": false,
+  "full_original_EN_PT_read": true,
+  "source_git_identity_receipt": "../../chapter-source-reverification.json",
+  "claims": [
+    {
+      "id": "factory",
+      "path": "middleware/timeout.go",
+      "first_line": 32,
+      "last_line": 48,
+      "review": "Outer return is a middleware function; request callback is deferred until handler invocation."
+    },
+    {
+      "id": "context-order",
+      "path": "middleware/timeout.go",
+      "first_line": 35,
+      "last_line": 44,
+      "review": "WithTimeout, defer cancel then deadline check, WithContext then direct next.ServeHTTP."
+    },
+    {
+      "id": "no-forced-interruption",
+      "path": "middleware/timeout.go",
+      "first_line": 32,
+      "last_line": 48,
+      "review": "No goroutine/select forcibly interrupting the handler; selected body only."
+    },
+    {
+      "id": "recover-order",
+      "path": "middleware/recoverer.go",
+      "first_line": 22,
+      "last_line": 49,
+      "review": "Deferred function registered before direct next call; its body runs during enclosing return/unwind."
+    },
+    {
+      "id": "abort-handler",
+      "path": "middleware/recoverer.go",
+      "first_line": 26,
+      "last_line": 31,
+      "review": "ErrAbortHandler branch re-panics before later logging/status."
+    },
+    {
+      "id": "logging-selection",
+      "path": "middleware/recoverer.go",
+      "first_line": 33,
+      "last_line": 38,
+      "review": "Non-nil GetLogEntry result selects Panic, otherwise PrintPrettyStack; helper implementation unverified."
+    },
+    {
+      "id": "status-condition",
+      "path": "middleware/recoverer.go",
+      "first_line": 40,
+      "last_line": 42,
+      "review": "Exact Connection value comparison conditions status write; no guaranteed client body/status."
+    }
+  ],
+  "bilingual_review": "Both full texts manually compared; all inline technical spans remain equal. Cleanup registration/execution correction made in both languages.",
+  "changes": [
+    {
+      "language": "en",
+      "before_sha256": "25fd100086702cd1909d2aa693a8f33f3f37aaef04de98da01ce0312dc2255c3",
+      "after_sha256": "8586f3445191b6a04469809b5b20fef20c990c4fd335ccc8a39c6ded74c2db26",
+      "diff": "--- original/en.md\n+++ candidate/en.md\n@@ -34,10 +34,27 @@\n \n A proposed text guard recognized the observed phrase about handling a panic before the next handler. It also matched a valid synthetic source in which an immediately invoked inner function owns the defer and completes recovery before the outer function calls the next handler. Both source snippets contain defer and a next-handler call, but their enclosing function scopes differ.\n \n-The candidate was therefore rejected without changing production validation. A future bounded AST proof would have to identify the exact enclosing callback, the deferred call and its arguments, and the direct call whose order is being described. Matching a few words in prose and source is insufficient. This rejected experiment is retained in `../../defer-guard-candidate.json`.\n+The candidate was therefore rejected without changing production validation. A future bounded AST proof would have to identify the exact enclosing callback, the deferred call and its arguments, and the direct call whose order is being described. Matching a few words in prose and source is insufficient. This rejected experiment is retained in `../../../continuation-20261119/defer-guard-candidate.json`.\n \n ## Review boundaries and source authority\n \n The full baseline responses were reviewed in both languages. The Recoverer response also invented other logging events and repeated unsupported variable descriptions. Writer acceptance was not treated as factual acceptance. The corrected chapter preserves valid source observations while refusing to infer helper implementation details, guaranteed client outcomes or concurrency safety.\n \n The language rule about deferred invocation was checked against the [Go specification](https://go.dev/ref/spec#Defer_statements). The project implementations are [timeout.go](https://github.com/go-chi/chi/blob/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/timeout.go) and [recoverer.go](https://github.com/go-chi/chi/blob/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/recoverer.go) at the frozen revision. Upstream license provenance is preserved with the private source snapshots. No upstream program or middleware server was executed for this review.\n+\n+## Engineer FAQ\n+\n+<!-- reading-section: faq:timeout-construction -->\n+### Does constructing Timeout start a request or a goroutine?\n+\n+No request callback is invoked by the selected outer return. `Timeout` returns a middleware factory; applying it to a handler returns the wrapped handler. The selected callback has no goroutine that forcibly stops the next handler. Deadline cooperation still depends on that handler.\n+\n+<!-- reading-section: faq:panic-response -->\n+### Will every panic produce an HTTP 500 response?\n+\n+The branch for `http.ErrAbortHandler` re-panics before logging or the later status operation. For another recovered value, the selected status call is conditional on `r.Header.Get(\"Connection\") != \"Upgrade\"`. Earlier response writes and logging-helper failures are outside a guaranteed client-result claim.\n+\n+<!-- reading-section: faq:helper-boundary -->\n+### Why keep the helper boundary explicit?\n+\n+`GetLogEntry`, `logEntry.Panic` and `PrintPrettyStack` are distinct calls. This chapter reviews their selection at the call site; it does not claim a verified logging backend, durability guarantee or request-wide observability design.\n"
+    },
+    {
+      "language": "pt-br",
+      "before_sha256": "079530f489ceb3fc37d846c31d0421ab71070406cb5639aa51a9bb29fc96b95b",
+      "after_sha256": "c769cbf927c79b2ee3356e7c701c740ca5a7e855d2f93f3b0bcf113c038734bd",
+      "diff": "--- original/pt-br.md\n+++ candidate/pt-br.md\n@@ -34,10 +34,27 @@\n \n Uma proposta de guard textual reconheceu a frase observada sobre tratar um panic antes do próximo handler. Ela também correspondeu a uma fonte sintética válida na qual uma função interna invocada imediatamente possui o defer e conclui a recuperação antes de a função externa chamar o próximo handler. Os dois trechos contêm defer e uma chamada ao próximo handler, mas os escopos das funções envolventes são diferentes.\n \n-Por isso, o candidato foi rejeitado sem alterar a validação de produção. Uma futura prova delimitada por AST precisaria identificar o callback envolvente exato, a chamada adiada e seus argumentos, além da chamada direta cuja ordem está sendo descrita. Encontrar algumas palavras na prosa e na fonte é insuficiente. O experimento rejeitado está preservado em `../../defer-guard-candidate.json`.\n+Por isso, o candidato foi rejeitado sem alterar a validação de produção. Uma futura prova delimitada por AST precisaria identificar o callback envolvente exato, a chamada adiada e seus argumentos, além da chamada direta cuja ordem está sendo descrita. Encontrar algumas palavras na prosa e na fonte é insuficiente. O experimento rejeitado está preservado em `../../../continuation-20261119/defer-guard-candidate.json`.\n \n ## Limites da revisão e autoridade da fonte\n \n As respostas completas do baseline foram revisadas nas duas línguas. A resposta de Recoverer também inventou outros eventos de logging e repetiu descrições de variáveis sem sustentação. A aceitação pelo writer não foi tratada como aceitação factual. O capítulo corrigido preserva observações válidas da fonte e evita inferir implementações de auxiliares, resultados garantidos ao cliente ou segurança de concorrência.\n \n A regra da linguagem sobre invocação adiada foi conferida na [especificação de Go](https://go.dev/ref/spec#Defer_statements). As implementações do projeto estão em [timeout.go](https://github.com/go-chi/chi/blob/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/timeout.go) e [recoverer.go](https://github.com/go-chi/chi/blob/c64ed7d6635f33a8b2feaff7dcfa55677023ac7d/middleware/recoverer.go), na revisão congelada. A procedência da licença upstream está preservada com os snapshots privados da fonte. Nenhum programa upstream ou servidor desses middlewares foi executado para esta revisão.\n+\n+## FAQ de engenharia\n+\n+<!-- reading-section: faq:timeout-construction -->\n+### Construir Timeout inicia uma requisição ou goroutine?\n+\n+O retorno externo selecionado não invoca o callback de requisição. `Timeout` retorna uma fábrica de middleware; aplicá-la a um handler retorna o handler envolvido. O callback selecionado não possui goroutine que interrompa à força o próximo handler. A cooperação com o prazo ainda depende desse handler.\n+\n+<!-- reading-section: faq:panic-response -->\n+### Todo panic produzirá uma resposta HTTP 500?\n+\n+O ramo de `http.ErrAbortHandler` executa panic novamente antes do logging ou da operação posterior de status. Para outro valor recuperado, a chamada de status selecionada depende de `r.Header.Get(\"Connection\") != \"Upgrade\"`. Escritas anteriores da resposta e falhas dos helpers de logging impedem garantir o resultado recebido pelo cliente.\n+\n+<!-- reading-section: faq:helper-boundary -->\n+### Por que explicitar o limite dos helpers?\n+\n+`GetLogEntry`, `logEntry.Panic` e `PrintPrettyStack` são chamadas distintas. Este capítulo revisa sua seleção no local da chamada; não afirma ter verificado um backend de logging, garantia de durabilidade ou projeto de observabilidade de toda a requisição.\n"
+    }
+  ],
+  "faq_added": 3,
+  "examples_or_commands_added": 0,
+  "critical_factual_regressions_detected": 0,
+  "limits": [
+    "No external middleware program/server executed; runtime/client guarantees not established.",
+    "Technical review is Codex source review, not independent human or publication approval."
+  ],
+  "faq_navigation_supplement": {
+    "at": "2026-11-20T01:53:54.287366+00:00",
+    "canonical_question_ids": [
+      "timeout-construction",
+      "panic-response",
+      "helper-boundary"
+    ],
+    "review": "EN/PT questions and source-reviewed answers manually matched by intent before assigning reader-supported reading-section comments.",
+    "prior_candidate_preserved": ".local-backups/documentation-intelligence-20261119/chapter-candidates-before-faq-identities/chi-middleware",
+    "reader_ui_changed": false,
+    "owner_approved": false
+  }
+}

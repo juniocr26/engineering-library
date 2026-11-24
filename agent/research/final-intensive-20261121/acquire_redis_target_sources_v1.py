@@ -1,0 +1,15 @@
+from pathlib import Path
+import json,hashlib,datetime,subprocess
+p=Path(__file__).resolve().parent;root=p.parents[2];ledger=json.loads((p/'repository-action-ledger-v11.json').read_text());r=next(r for r in ledger['records'] if r['repository'].lower()=='redis');repo=r['absolute_path'];revision='1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb';assert r['preexisting_head']==revision
+protocol={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'repository':repo,'revision':revision,'required_source_scope':['Fullsrc/expire.c snapshot; read checkAlreadyExpired, containingexpireGenericCommand selectedearlierguards/callerbranches, ttlGenericCommand/fourwrappers.','Fullsrc/server.c/header snapshots for exact commandTimeSnapshot body, millisecondtypedef/root-executionfield/currentclient/loading/masterhost/mask declarations; no fullserversemantics claim.','Rootlicense filenames and exact notices atsamepin. Namedexpiry-helper declaration context may be inspected ifneeded, withoutclaimingunreviewedkeylookup/storage/wiredelivery behavior.','Exact originalbaseline REDIS-EXPIRED-GUARD plusredis-ttl-replies requests/rawresponses; active-expiry studies aredifferentfunction andcannotbe substituted.','CurrentCrawtokenlexingonly, notwholeRediscompilation/linking/server/testexecution. No sourcefabrication/stubs to forcecompilation.','Originalexpiryhistoricalattributionoverstatementmustbe adjudicated literally; preserveoriginal plusfullbilingualcorrectionifconfirmed.'],'candidate_contract':'redis-original-targets-preflight-v1.json','source_or_model_execution':False,'owner_questions':0}
+with (p/'redis-targets-source-protocol-v1.json').open('x') as f:json.dump(protocol,f,indent=2);f.write('\n')
+folder=p/'redis-targets-source-context-v1';folder.mkdir();commands=[];records=[]
+def run(argv):
+ x=subprocess.run(argv,capture_output=True,timeout=30);commands.append({'command':argv,'exit_code':x.returncode,'stdout':x.stdout.decode() if 'ls-tree' in argv else None,'stderr':x.stderr.decode()});return x
+prefix=['git','--no-optional-locks','-C',repo];tree=run(prefix+['ls-tree','--name-only',revision]);assert tree.returncode==0;license_names=[n for n in tree.stdout.decode().splitlines() if any(k in n.upper() for k in ['LICENSE','COPYING'])]
+for path in ['src/expire.c','src/server.c','src/server.h']+license_names:
+ x=run(prefix+['show',revision+':'+path])
+ if x.returncode:continue
+ f=folder/path;f.parent.mkdir(parents=True,exist_ok=True);f.open('xb').write(x.stdout);records.append({'source_path':path,'saved_path':str(f.relative_to(root)),'bytes':len(x.stdout),'sha256':hashlib.sha256(x.stdout).hexdigest()})
+with (p/'redis-targets-source-acquisition-v1.json').open('x') as f:json.dump({'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'commands':commands,'records':records,'external_writes':False,'source_or_tests_executed':False,'license_filenames':license_names},f,indent=2);f.write('\n')
+print(json.dumps({'files':len(records),'license_filenames':license_names,'failed_commands':sum(c['exit_code']!=0 for c in commands)}))

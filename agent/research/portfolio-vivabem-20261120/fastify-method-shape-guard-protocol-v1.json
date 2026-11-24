@@ -1,0 +1,111 @@
+{
+  "at": "2026-11-21T03:10:33.104501+00:00",
+  "hypothesis": "H28: the old Fastify prefix-root guard compares opts.method strictly to the string HEAD; an array containing HEAD is not equivalent to that string. The revised generated-marker guard therefore needs explicitly typed documentation, not an all-HEAD generalization.",
+  "family": "fastify/fastify",
+  "source_revision_pair": "revision-freeze-v1.json",
+  "source_conditions": "fastify-revision-parser-stdout-v1.json",
+  "safety_scope": "Evaluate only the two exact parser-extracted Boolean expressions in an empty VM context after AST whitelist (operators/literals/three known property accesses), with owned plain JSON strings/arrays/booleans. No source module import, Fastify construction/startup, tests, environment/config/data/files/network access by inspected expression.",
+  "authorization_basis": "Same user section8bounded-observation/section14research-evidence scope; public copied pure expressions only, independently preflighted and external repositories read-only.",
+  "acceptance": "All16guard results match pre-frozen table; distinguish actual string comparison from array membership and do not claim every synthetic combination is reachable through real route registration.",
+  "cases": [
+    {
+      "id": "string-HEAD-explicit",
+      "path": "/",
+      "prefix": "/p",
+      "opts": {
+        "method": "HEAD",
+        "isGeneratedHeadRoute": false
+      },
+      "before": false,
+      "after": true
+    },
+    {
+      "id": "array-HEAD-explicit",
+      "path": "/",
+      "prefix": "/p",
+      "opts": {
+        "method": [
+          "HEAD"
+        ],
+        "isGeneratedHeadRoute": false
+      },
+      "before": true,
+      "after": true
+    },
+    {
+      "id": "array-GET-HEAD-explicit",
+      "path": "/",
+      "prefix": "/p",
+      "opts": {
+        "method": [
+          "GET",
+          "HEAD"
+        ],
+        "isGeneratedHeadRoute": false
+      },
+      "before": true,
+      "after": true
+    },
+    {
+      "id": "string-GET-explicit",
+      "path": "/",
+      "prefix": "/p",
+      "opts": {
+        "method": "GET",
+        "isGeneratedHeadRoute": false
+      },
+      "before": true,
+      "after": true
+    },
+    {
+      "id": "string-HEAD-generated",
+      "path": "/",
+      "prefix": "/p",
+      "opts": {
+        "method": "HEAD",
+        "isGeneratedHeadRoute": true
+      },
+      "before": false,
+      "after": false
+    },
+    {
+      "id": "array-HEAD-marked-generated-synthetic",
+      "path": "/",
+      "prefix": "/p",
+      "opts": {
+        "method": [
+          "HEAD"
+        ],
+        "isGeneratedHeadRoute": true
+      },
+      "before": true,
+      "after": false
+    },
+    {
+      "id": "empty-prefix",
+      "path": "/",
+      "prefix": "",
+      "opts": {
+        "method": "HEAD",
+        "isGeneratedHeadRoute": false
+      },
+      "before": false,
+      "after": false
+    },
+    {
+      "id": "non-root-path",
+      "path": "/x",
+      "prefix": "/p",
+      "opts": {
+        "method": "GET",
+        "isGeneratedHeadRoute": false
+      },
+      "before": false,
+      "after": false
+    }
+  ],
+  "limits": "Owned expression observations, not full routing execution, independent project tests, method normalization proof or universal route validity. Prior H14Boolean abstraction remains preserved; its method_is_HEAD means exact string equality, not array membership.",
+  "owner_approved": false,
+  "training_gold": false,
+  "no_training": true
+}

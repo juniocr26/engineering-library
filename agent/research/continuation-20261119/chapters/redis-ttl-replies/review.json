@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-19T18:30:41.912897+00:00",
+  "status": "CODEX_SOURCE_REVIEWED_PENDING_OWNER_APPROVAL",
+  "repository": "redis",
+  "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+  "baseline": "redis-ttl-replies",
+  "baseline_response_sha256": "d05834dfa4745912bf78241d56f67186085f9b506f745558b1602232544ce2e7",
+  "baseline_review": {
+    "id": "redis-ttl-replies",
+    "queue_task": "FACT-014",
+    "family": "redis-ttl-replies",
+    "status": "REJECTED_CRITICAL_RETURN_AND_UNIT_ERRORS",
+    "critical": [
+      "Claims C function returns -2 or TTL although it sends replies and returns void",
+      "Misattributes conversion to output_abs and invents adjustment by500seconds; actual output_ms chooses ttl versus (ttl+500)/1000"
+    ],
+    "correct": [
+      "Missing-key and no-expiry cases mentioned"
+    ],
+    "omitted": [
+      "negative ttl clamped0",
+      "exact absolute expire versus expire-commandTimeSnapshot selection",
+      "sentinel reply-1 control flow"
+    ],
+    "bilingual": "Critical errors repeated in both languages.",
+    "writer_exit": 0,
+    "seconds": 69.07334053200066,
+    "raw_fact_count": 1,
+    "response_sha256": "d05834dfa4745912bf78241d56f67186085f9b506f745558b1602232544ce2e7",
+    "source": {
+      "repository": "redis",
+      "revision": "1a9eb051aa243f9d0e5a8a8afa6c4801bf52a9fb",
+      "path": "src/expire.c",
+      "source_sha256": "bc94073c50db488ebabf4141d9ef0763087020ecdae5a4037ee7f2db550ef22d"
+    },
+    "reviewer": "Codex source review, not owner approval",
+    "training_gold": false,
+    "publication": false
+  },
+  "source_excerpts_sha256": "978b09bc6957cd7c333e6b534dd8db2934d59c00a18bd1ed8e4d3315d9cf6bdf",
+  "inline_code_span_sequences_equal": true,
+  "inline_spans_per_language": 15,
+  "license_notices": [
+    {
+      "path": "agent/research/continuation-20261119/source-licenses/redis.LICENSE.txt",
+      "sha256": "4a0e416b9537688f30dfe69ddaceb2ca64d96b7df02a0a6760d376890ddc4e40"
+    }
+  ],
+  "source_program_executed": false,
+  "training_gold": false,
+  "publication": false,
+  "chapters": {
+    "en": {
+      "sha256": "bc3097e8fda2ee83a33435cf44cd786c31670841eb1288689742398bdb4c9979",
+      "words": 520
+    },
+    "pt-br": {
+      "sha256": "4edcb6cdd295357cda63d97205da8966946265cbe61a0154b74981c914971192",
+      "words": 553
+    }
+  }
+}

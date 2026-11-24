@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-21T03:51:57.111008+00:00",
+  "hypothesis": "H34: changing cached helper subprocess error from escaping exception to REFUSED changes optional JobBoundRetrieval durable job completion, even when both preserve helper journal/no-quote/no-retry boundaries. Demonstrate this downstream semantic difference before recommending an API change.",
+  "source_hashes": {
+    "agent/tools/documentation_retrieval.py": "9d47bb40012eb119fc33fe606b0ff37007ac4c9b34d4f6fa45101e72f5e37e7d",
+    "agent/tools/documentation_job_budget.py": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7"
+  },
+  "implementations": [
+    "unchangedHelper0.1.5",
+    "prior-isolated-outer-handler-candidate"
+  ],
+  "phases": [
+    "cached",
+    "fresh"
+  ],
+  "cases": 4,
+  "criteria": [
+    "Owned Go declaration, separate owned helper/source/job directories only, baseline syntax parser not source execution.",
+    "Fixed injected TimeoutExpired isolates integration delivery, no claim of actual parser outage from these4cases.",
+    "Cached baseline exception -> job UNKNOWN_COMPLETION with durable reservation/no completion; retry same job ID must not dispatch again.",
+    "Cached candidate REFUSED -> job COMPLETED/REFUSED record; retry DUPLICATE_COMPLETED, no dispatch or quote.",
+    "Fresh extraction fault -> helper durable INCONCLUSIVE and job COMPLETED/INCONCLUSIVE in both; duplicate job request no re-extraction.",
+    "All completed helper bytes remain unchanged on cached faults; every durable reservation/completion artifact preserved; source files untouched.",
+    "Do not equate completed job accounting with successful retrieval, factual acceptance, Ruby integration or owner approval."
+  ],
+  "Ruby_command_invoked": false,
+  "production_changed": false,
+  "permanent_tests_changed": false,
+  "training_gold": false
+}

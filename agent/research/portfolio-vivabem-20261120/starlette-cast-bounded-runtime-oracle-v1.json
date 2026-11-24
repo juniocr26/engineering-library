@@ -1,0 +1,165 @@
+{
+  "at": "2026-11-21T02:54:55.807355+00:00",
+  "key": "OWNED_KEY",
+  "cases": [
+    {
+      "id": "none-cast",
+      "value": "abc",
+      "cast_registry_key": "none",
+      "before_expected": {
+        "type": "str",
+        "value": "abc"
+      },
+      "after_expected": {
+        "type": "str",
+        "value": "abc"
+      }
+    },
+    {
+      "id": "none-value",
+      "value": null,
+      "cast_registry_key": "int",
+      "before_expected": {
+        "type": "NoneType",
+        "value": null
+      },
+      "after_expected": {
+        "type": "NoneType",
+        "value": null
+      }
+    },
+    {
+      "id": "bool-true",
+      "value": "TRUE",
+      "cast_registry_key": "bool",
+      "before_expected": {
+        "type": "bool",
+        "value": true
+      },
+      "after_expected": {
+        "type": "bool",
+        "value": true
+      }
+    },
+    {
+      "id": "bool-false",
+      "value": "0",
+      "cast_registry_key": "bool",
+      "before_expected": {
+        "type": "bool",
+        "value": false
+      },
+      "after_expected": {
+        "type": "bool",
+        "value": false
+      }
+    },
+    {
+      "id": "bool-invalid",
+      "value": "unknown",
+      "cast_registry_key": "bool",
+      "before_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid bool."
+      },
+      "after_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid bool."
+      }
+    },
+    {
+      "id": "int-valid",
+      "value": "7",
+      "cast_registry_key": "int",
+      "before_expected": {
+        "type": "int",
+        "value": 7
+      },
+      "after_expected": {
+        "type": "int",
+        "value": 7
+      }
+    },
+    {
+      "id": "int-invalid",
+      "value": "bad",
+      "cast_registry_key": "int",
+      "before_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid int."
+      },
+      "after_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid int."
+      }
+    },
+    {
+      "id": "missing-callable-name",
+      "value": "bad",
+      "cast_registry_key": "owned-instance",
+      "before_expected": {
+        "error": "AttributeError",
+        "message_contains": "__name__"
+      },
+      "after_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid OwnedInvalidCallable."
+      }
+    },
+    {
+      "id": "named-value-error",
+      "value": "bad",
+      "cast_registry_key": "owned-named",
+      "before_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid owned_named_invalid."
+      },
+      "after_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid owned_named_invalid."
+      }
+    },
+    {
+      "id": "named-type-error",
+      "value": "bad",
+      "cast_registry_key": "owned-type",
+      "before_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid owned_type_invalid."
+      },
+      "after_expected": {
+        "error": "ValueError",
+        "message_contains": "Not a valid owned_type_invalid."
+      }
+    },
+    {
+      "id": "runtime-callback-error",
+      "value": "bad",
+      "cast_registry_key": "owned-runtime",
+      "before_expected": {
+        "error": "RuntimeError",
+        "message_contains": "owned-callback-runtime"
+      },
+      "after_expected": {
+        "error": "RuntimeError",
+        "message_contains": "owned-callback-runtime"
+      }
+    },
+    {
+      "id": "name-lookup-runtime-error",
+      "value": "bad",
+      "cast_registry_key": "owned-name-lookup",
+      "before_expected": {
+        "error": "RuntimeError",
+        "message_contains": "owned-name-lookup"
+      },
+      "after_expected": {
+        "error": "RuntimeError",
+        "message_contains": "owned-name-lookup"
+      }
+    }
+  ],
+  "expected_observations": 24,
+  "frozen_before_execution": true,
+  "scope": "Owned bounded inputs, correlated development controls, not24independent public project tests."
+}

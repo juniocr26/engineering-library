@@ -1,0 +1,80 @@
+{
+  "at": "2026-11-20T03:36:29.500144+00:00",
+  "status": "PASSED_DURABLE_HELPER_JOB_DEVELOPMENT_DEMONSTRATIONS",
+  "implementation_version": "0.1.0",
+  "implementation_sha256": "9e9c27af34ee0bd60efbbef94ca6932a39f723c93544273564643bfac5b7deb7",
+  "workspace_sha256": "0bfc4c447c999eda21bbb580e2a3d9d808e90b59b09c1ac8f6025482f3dc0604",
+  "demonstrations": [
+    {
+      "case": "restart-and-duplicate",
+      "tool_instances": 4,
+      "helper_dispatches": 2,
+      "statuses": [
+        "COMPLETED",
+        "COMPLETED",
+        "BUDGET_EXHAUSTED",
+        "DUPLICATE_COMPLETED"
+      ],
+      "duplicate_quote_exposed": false
+    },
+    {
+      "case": "interrupted-reservation",
+      "statuses": [
+        "UNKNOWN_COMPLETION",
+        "COMPLETED",
+        "BUDGET_EXHAUSTED"
+      ],
+      "uncertain_request_replayed": false,
+      "independent_remaining_allowance_used": true
+    },
+    {
+      "case": "late-completion-virtual-clock",
+      "status": "LATE_COMPLETION_REVIEW_REQUIRED",
+      "quote_exposed": false,
+      "virtual_clock_control_not_actual_elapsed_20minutes": true
+    },
+    {
+      "case": "audit-write-failure",
+      "statuses": [
+        "UNKNOWN_COMPLETION",
+        "UNKNOWN_COMPLETION"
+      ],
+      "quote_exposed": false,
+      "replayed": false
+    },
+    {
+      "case": "six-concurrent-processes",
+      "processes": 6,
+      "global_maximum_steps": 2,
+      "durable_reservations": 2,
+      "helper_dispatches": 2,
+      "statuses": [
+        "REFUSED",
+        "COMPLETED",
+        "REFUSED",
+        "COMPLETED",
+        "BUDGET_EXHAUSTED",
+        "BUDGET_EXHAUSTED"
+      ],
+      "budget_exceeded": false
+    }
+  ],
+  "source_files_unchanged": 1,
+  "model_calls": 0,
+  "source_executed": false,
+  "runtime_bindings_verified": false,
+  "production_routing_changed": false,
+  "mcp_server_started": false,
+  "training_runs": 0,
+  "owner_approved": false,
+  "limits": [
+    "Optional coordinator only: direct helper callers retain their old per-instance budgets.",
+    "Bounds helper calls and conservative quote reservations, not model tokens or all external effects.",
+    "POSIX local process locks are not a distributed lock or verified Windows implementation.",
+    "Trusted operator-owned journal required: hashes are not signatures and cannot detect a consistent whole-journal rollback.",
+    "Wall-clock rollback is detected relative to surviving records; a manipulated OS clock is not cryptographically trusted.",
+    "Late/unknown results are retained for reconciliation without automatically retrying or releasing consumed allowance.",
+    "No hard real-time dispatch/cancellation guarantee is claimed; a deadline can expire while an already-started worker runs.",
+    "Six competing processes demonstrate budget safety, not guaranteed progress or a measured throughput improvement."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments_in_identity": false,
+  "selected_owners": {
+    "ExactArgs": {
+      "first_line": 110,
+      "last_line": 117,
+      "normalized_owner_sha256": "e05373a9f2c501657009c7b7a76442937b4f9b51951feff248523f58b27c80d8",
+      "normalized_owner_source": "func ExactArgs(n int) PositionalArgs {\n\treturn func(cmd *Command, args []string) error {\n\t\tif len(args) != n {\n\t\t\treturn fmt.Errorf(\"accepts %d arg(s), received %d\", n, len(args))\n\t\t}\n\t\treturn nil\n\t}\n}"
+    },
+    "OnlyValidArgs": {
+      "first_line": 51,
+      "last_line": 69,
+      "normalized_owner_sha256": "58ae4c721458197aa8dbc47572cca489344d412b7fc4e26df072f76520776a65",
+      "normalized_owner_source": "func OnlyValidArgs(cmd *Command, args []string) error {\n\tif len(cmd.ValidArgs) \u003e 0 {\n\n\t\tvalidArgs := make([]string, 0, len(cmd.ValidArgs))\n\t\tfor _, v := range cmd.ValidArgs {\n\t\t\tvalidArgs = append(validArgs, strings.SplitN(v, \"\\t\", 2)[0])\n\t\t}\n\t\tfor _, v := range args {\n\t\t\tif !stringInSlice(v, validArgs) {\n\t\t\t\treturn fmt.Errorf(\"invalid argument %q for %q%s\", v, cmd.CommandPath(), cmd.findSuggestions(args[0]))\n\t\t\t}\n\t\t}\n\t}\n\tif len(args) \u003e 0 \u0026\u0026 !stringInSlice(args[0], []string{\"outside\"}) {\n\t\treturn fmt.Errorf(\"owned outside-guard membership\")\n\t}\n\treturn nil\n}"
+    }
+  },
+  "semantic_admission": false,
+  "source_sha256": "dcc7dde3d5d1bf370efe7b49990acd932c10b4e9053ac38abad00daa7f299400",
+  "typechecked": false,
+  "upstream_executed": false
+}

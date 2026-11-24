@@ -1,0 +1,25 @@
+--- historical/pt-BR.md
++++ new-local-pin/pt-BR.md
+@@ -1,6 +1,6 @@
+ # Wrappers de resposta do Chi: capacidades e contabilização compartilhada
+ 
+-Candidato de desenvolvimento limitado à fonte, sem aprovação do proprietário. Revisão `9f8adb1aabaa8a91180a821111d3f8e668d1c0bf`, `middleware/wrap_writer.go` e `middleware/wrap_writer_test.go`. A fonte foi lida e analisada sintaticamente; o programa e os testes do Chi não foram executados. Este capítulo descreve a implementação escrita selecionada, sem abranger todo o comportamento do servidor.
++Candidato de desenvolvimento limitado à fonte, sem aprovação do proprietário. Revisão `c64ed7d6635f33a8b2feaff7dcfa55677023ac7d`, `middleware/wrap_writer.go` e `middleware/wrap_writer_test.go`. A fonte foi lida e analisada sintaticamente; o programa e os testes do Chi não foram executados. Este capítulo descreve a implementação escrita selecionada, sem abranger todo o comportamento do servidor.
+ 
+ ## Seleção e arquitetura
+ 
+@@ -50,6 +50,14 @@
+ 
+ **O `ReadFrom` direto sempre confirma um cabeçalho do wrapper antes da leitura?** Não. O método atual selecionado registra o estado depois da chamada delegada somente sob sua condição de contagem positiva/cabeçalho não registrado. Isso não garante comportamento em execução do writer original. [S5,H1]
+ 
++## Manutenção entre as revisões locais selecionadas
++
++O novo alvo local `c64ed7d6635f33a8b2feaff7dcfa55677023ac7d` tem `9f8adb1aabaa8a91180a821111d3f8e668d1c0bf` como pai direto. A comparação completa das árvores adiciona somente `middleware/request_size_test.go`. A implementação do writer, seus testes selecionados, a declaração do módulo e a licença são idênticos byte a byte. Os contextos selecionados de chamadores léxicos em `middleware/logger.go`, `middleware/middleware_test.go` e `middleware/wrap_writer_readfrom_test.go` também permanecem iguais. Essa é uma comparação delimitada de fonte, não uma prova de que todo chamador dinâmico ou comportamento em execução permaneça igual.
++
++O novo teste declara quatro casos de tabela para `RequestSize`: corpo menor, corpo exatamente no limite, corpo um byte acima e corpo vazio. Nesse teste escrito, o handler chama `io.ReadAll` e escreve `http.StatusRequestEntityTooLarge` no caminho de erro. A implementação de `RequestSize` já existe na revisão pai; seu corpo selecionado atribui `http.MaxBytesReader` a `r.Body` e delega ao handler, sem uma chamada explícita a `WriteHeader`. As assertions adicionadas não representam uma capacidade nova do wrapper nem observações de testes aprovados. Evidências: `middleware/request_size.go:9–17`; `middleware/request_size_test.go:14–61` no novo pin.
++
++O capítulo original fixado historicamente não precisa mudar para continuar válido na revisão que declara. Esta versão isolada tem como alvo explícito o novo pin local, portanto atualiza sua proveniência; não afirma mudança no comportamento do wrapper. H1 continua sendo o `04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9` mais antigo explicitamente selecionado, e não o pai imediato do novo alvo. Nenhum teste do projeto fonte foi executado.
++
+ ## Evidências e limites
+ 
+ S1: fonte, linhas 15–44. S2: 46–81. S3: 83–128. S4: 130–148. S5: 211–229. S6: 203–209 e 231–248. T1: testes, linhas 116–134. T2: 136–174. T3: 181–198. T4: 204–220. T5: 21–114. H1: mesmo caminho da fonte em `04f7f55a7b5ddb2ecd79a8d813b2256c1113b8a9`, `httpFancyWriter.ReadFrom`, congelado separadamente. Snapshots e seleções sintáticas nativas foram preservados junto deste candidato. Sem dados privados, alterações externas, execução do projeto, aprovação do proprietário ou promoção a gold de treinamento.

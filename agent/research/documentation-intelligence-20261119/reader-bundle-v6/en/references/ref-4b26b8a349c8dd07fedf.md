@@ -1,0 +1,612 @@
+# Evidence record: body-claim-bundles-v1 / manifest.json
+
+This is a dated raw research artifact. Findings and rejected model outputs retain their recorded status. Reading the record does not approve publication or training.
+
+SHA-256: `4b26b8a349c8dd07fedfb46c5751cdfb351b95c296e2b6b42884846a0ab0cc01`. Original bytes: `19294`.
+
+Original path: `agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/manifest.json`.
+
+<!-- reading-section:reference:4b26b8a349c8dd07fedf:consumers -->
+## Referenced by
+
+- [Per-chapter evidence review](../reviews/body-claims.md)
+
+<!-- reading-section:reference:4b26b8a349c8dd07fedf:artifact -->
+## Original artifact
+
+The fenced contents reproduce the exact UTF-8 artifact; a display-only terminal newline is added if the original lacks one.
+
+<!-- artifact-body:4b26b8a349c8dd07fedfb46c5751cdfb351b95c296e2b6b42884846a0ab0cc01:start -->
+````json
+{
+  "at": "2026-11-20T07:53:15.957445+00:00",
+  "schema": "bounded-per-chapter-review-index-v1",
+  "status": "DERIVED_EXACT_PARTITION_PENDING_OWNER_REVIEW",
+  "parent_ledger": {
+    "path": "agent/research/documentation-intelligence-20261119/chapter-body-claim-alignment-v7.json",
+    "sha256": "2d176a08a79051b11715cb43d8493494c8cd1ad09ddb39795623493094e3cc7a",
+    "bytes": 1200914
+  },
+  "files": [
+    {
+      "chapter": "chi-middleware",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/chi-middleware.json",
+      "sha256": "ba277f163afa88dd9a4d0d11c8440f2ace0573ca42722206e3ad7bef4aeae367",
+      "bytes": 51706,
+      "prose_groups": 16,
+      "language_spans": 32,
+      "source_span_ids": [
+        "source-span-104",
+        "source-span-105",
+        "source-span-106",
+        "source-span-107",
+        "source-span-108",
+        "source-span-109",
+        "source-span-110",
+        "source-span-111",
+        "source-span-112"
+      ],
+      "source_spans_in_this_bundle": 9
+    },
+    {
+      "chapter": "chi-throttle-workflow",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/chi-throttle-workflow.json",
+      "sha256": "217dac8bca6bd6a934872661f1b116ceb3a587a3b60c58becaa1766c610280c8",
+      "bytes": 56877,
+      "prose_groups": 14,
+      "language_spans": 28,
+      "source_span_ids": [
+        "source-span-113",
+        "source-span-114",
+        "source-span-115",
+        "source-span-116",
+        "source-span-117",
+        "source-span-118",
+        "source-span-119",
+        "source-span-120",
+        "source-span-121",
+        "source-span-122",
+        "source-span-123",
+        "source-span-124",
+        "source-span-125",
+        "source-span-126",
+        "source-span-127",
+        "source-span-128",
+        "source-span-129",
+        "source-span-130",
+        "source-span-131"
+      ],
+      "source_spans_in_this_bundle": 19
+    },
+    {
+      "chapter": "documentation-agent-contracts",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/documentation-agent-contracts.json",
+      "sha256": "7ef7ca72f8a2da907fc4e1b3b8a5117b672aae230d43cf5261c222802f04b149",
+      "bytes": 275591,
+      "prose_groups": 29,
+      "language_spans": 58,
+      "source_span_ids": [
+        "source-span-220",
+        "source-span-221",
+        "source-span-222",
+        "source-span-223",
+        "source-span-224",
+        "source-span-225",
+        "source-span-226",
+        "source-span-227",
+        "source-span-228",
+        "source-span-229",
+        "source-span-230",
+        "source-span-231",
+        "source-span-232",
+        "source-span-233",
+        "source-span-234",
+        "source-span-235",
+        "source-span-236",
+        "source-span-237",
+        "source-span-238",
+        "source-span-239",
+        "source-span-240",
+        "source-span-241",
+        "source-span-242",
+        "source-span-243",
+        "source-span-244",
+        "source-span-245",
+        "source-span-246",
+        "source-span-247",
+        "source-span-248",
+        "source-span-249",
+        "source-span-250",
+        "source-span-251",
+        "source-span-252",
+        "source-span-253",
+        "source-span-254",
+        "source-span-255",
+        "source-span-256",
+        "source-span-257",
+        "source-span-258",
+        "source-span-259",
+        "source-span-260",
+        "source-span-261",
+        "source-span-262",
+        "source-span-263",
+        "source-span-264",
+        "source-span-265",
+        "source-span-266",
+        "source-span-267",
+        "source-span-268",
+        "source-span-269",
+        "source-span-270",
+        "source-span-271",
+        "source-span-272",
+        "source-span-273",
+        "source-span-274",
+        "source-span-275",
+        "source-span-276"
+      ],
+      "source_spans_in_this_bundle": 57
+    },
+    {
+      "chapter": "duckdb-boolean-factory",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/duckdb-boolean-factory.json",
+      "sha256": "d6126a19478f8b6a4d79c9acd206d40e204f1cf3acf8a090989fd2c038aaad9c",
+      "bytes": 29922,
+      "prose_groups": 10,
+      "language_spans": 20,
+      "source_span_ids": [
+        "source-span-139",
+        "source-span-140",
+        "source-span-141",
+        "source-span-142",
+        "source-span-143",
+        "source-span-144"
+      ],
+      "source_spans_in_this_bundle": 6
+    },
+    {
+      "chapter": "fastify-decoration-lookup",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/fastify-decoration-lookup.json",
+      "sha256": "e0ed53ba47f671fcaa0a29d49fd1a8a5e528361e84953bf3a94b9e29fbff158e",
+      "bytes": 52954,
+      "prose_groups": 15,
+      "language_spans": 30,
+      "source_span_ids": [
+        "source-span-088",
+        "source-span-089",
+        "source-span-090",
+        "source-span-091",
+        "source-span-092",
+        "source-span-093",
+        "source-span-094",
+        "source-span-095",
+        "source-span-096",
+        "source-span-097",
+        "source-span-098",
+        "source-span-099",
+        "source-span-100",
+        "source-span-101",
+        "source-span-102",
+        "source-span-103"
+      ],
+      "source_spans_in_this_bundle": 16
+    },
+    {
+      "chapter": "go-image-animation",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/go-image-animation.json",
+      "sha256": "f6a26c5377b2efd65b40caffad5c51567f1c8894319de68e3646b1d4dd94a09c",
+      "bytes": 36804,
+      "prose_groups": 9,
+      "language_spans": 18,
+      "source_span_ids": [
+        "source-span-159",
+        "source-span-160",
+        "source-span-161",
+        "source-span-162",
+        "source-span-163",
+        "source-span-164",
+        "source-span-165",
+        "source-span-166",
+        "source-span-167",
+        "source-span-168",
+        "source-span-169"
+      ],
+      "source_spans_in_this_bundle": 11
+    },
+    {
+      "chapter": "go-image-compression-flow",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/go-image-compression-flow.json",
+      "sha256": "4a6ac931570432cdf2da1dd2094ec20db5fa388dcc48831f0d7af9950e69e912",
+      "bytes": 39896,
+      "prose_groups": 10,
+      "language_spans": 20,
+      "source_span_ids": [
+        "source-span-067",
+        "source-span-068",
+        "source-span-069",
+        "source-span-070",
+        "source-span-071",
+        "source-span-072",
+        "source-span-073",
+        "source-span-074",
+        "source-span-075",
+        "source-span-076",
+        "source-span-077"
+      ],
+      "source_spans_in_this_bundle": 11
+    },
+    {
+      "chapter": "go-image-configuration",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/go-image-configuration.json",
+      "sha256": "c54e162696f1ab8581b4b1046f1618d7fa51736bfd29ad97907fff1673e073e6",
+      "bytes": 31864,
+      "prose_groups": 9,
+      "language_spans": 18,
+      "source_span_ids": [
+        "source-span-170",
+        "source-span-171",
+        "source-span-172",
+        "source-span-173",
+        "source-span-174",
+        "source-span-175",
+        "source-span-176",
+        "source-span-177"
+      ],
+      "source_spans_in_this_bundle": 8
+    },
+    {
+      "chapter": "go-image-dimensions",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/go-image-dimensions.json",
+      "sha256": "5b343dc3a5a210fb3e14a4a8cb54556d3c46759cb667c40c3810c3dfcb387cd7",
+      "bytes": 34385,
+      "prose_groups": 9,
+      "language_spans": 18,
+      "source_span_ids": [
+        "source-span-159",
+        "source-span-162",
+        "source-span-163",
+        "source-span-165",
+        "source-span-178",
+        "source-span-179",
+        "source-span-180",
+        "source-span-181",
+        "source-span-182"
+      ],
+      "source_spans_in_this_bundle": 9
+    },
+    {
+      "chapter": "go-image-frontend-dimensions",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/go-image-frontend-dimensions.json",
+      "sha256": "61451d9979f23bcbde213ceff7ae13750b8ad8567c15d9d47791ec1004f912a5",
+      "bytes": 41099,
+      "prose_groups": 11,
+      "language_spans": 22,
+      "source_span_ids": [
+        "source-span-078",
+        "source-span-079",
+        "source-span-080",
+        "source-span-081",
+        "source-span-082",
+        "source-span-083",
+        "source-span-084",
+        "source-span-085",
+        "source-span-086",
+        "source-span-087"
+      ],
+      "source_spans_in_this_bundle": 10
+    },
+    {
+      "chapter": "go-image-quality",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/go-image-quality.json",
+      "sha256": "2d20fb9f86894adb8d58aedbc9423ebb07950a8bb4fb5d5324a500ce78c94b77",
+      "bytes": 34561,
+      "prose_groups": 9,
+      "language_spans": 18,
+      "source_span_ids": [
+        "source-span-183",
+        "source-span-184",
+        "source-span-185",
+        "source-span-186",
+        "source-span-187",
+        "source-span-188",
+        "source-span-189",
+        "source-span-190",
+        "source-span-191",
+        "source-span-192"
+      ],
+      "source_spans_in_this_bundle": 10
+    },
+    {
+      "chapter": "opencv-depth-coercion",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/opencv-depth-coercion.json",
+      "sha256": "2f8f88a69def65057f0cdf5330959f8db336321d2828b03a04f1cc9bb1d4ec39",
+      "bytes": 24238,
+      "prose_groups": 7,
+      "language_spans": 14,
+      "source_span_ids": [
+        "source-span-149",
+        "source-span-150",
+        "source-span-151",
+        "source-span-152"
+      ],
+      "source_spans_in_this_bundle": 4
+    },
+    {
+      "chapter": "opencv-shape-contract",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/opencv-shape-contract.json",
+      "sha256": "81f49fed7497830d5dea4fef79c15878e003519e9cb36524203b2db09d20c5ee",
+      "bytes": 29894,
+      "prose_groups": 10,
+      "language_spans": 20,
+      "source_span_ids": [
+        "source-span-153",
+        "source-span-154",
+        "source-span-155",
+        "source-span-156",
+        "source-span-157",
+        "source-span-158"
+      ],
+      "source_spans_in_this_bundle": 6
+    },
+    {
+      "chapter": "owned-adapter",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/owned-adapter.json",
+      "sha256": "caa72e58166502761d06cae148e78d575afb00cae3bd6e4427f77936ff29ff3c",
+      "bytes": 42854,
+      "prose_groups": 12,
+      "language_spans": 24,
+      "source_span_ids": [
+        "source-span-025",
+        "source-span-026",
+        "source-span-027",
+        "source-span-028",
+        "source-span-029",
+        "source-span-030",
+        "source-span-031",
+        "source-span-032",
+        "source-span-033",
+        "source-span-034"
+      ],
+      "source_spans_in_this_bundle": 10
+    },
+    {
+      "chapter": "prometheus-builder",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/prometheus-builder.json",
+      "sha256": "f1e16db1738b0c025533c3aeb3abdbc40455c1e1ca959e864ab9d7f383f29a40",
+      "bytes": 38701,
+      "prose_groups": 13,
+      "language_spans": 26,
+      "source_span_ids": [
+        "source-span-132",
+        "source-span-133",
+        "source-span-134",
+        "source-span-135",
+        "source-span-136"
+      ],
+      "source_spans_in_this_bundle": 5
+    },
+    {
+      "chapter": "prometheus-keep-bookkeeping",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/prometheus-keep-bookkeeping.json",
+      "sha256": "51cdb1654ef716caa16183a6021ba566801486cd3a6185200c189780928c0a50",
+      "bytes": 27280,
+      "prose_groups": 10,
+      "language_spans": 20,
+      "source_span_ids": [
+        "source-span-137",
+        "source-span-138"
+      ],
+      "source_spans_in_this_bundle": 2
+    },
+    {
+      "chapter": "rails-request-methods",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/rails-request-methods.json",
+      "sha256": "1ffd42d580ea0960fce633a037e5578cc34c74015636f3ece8159242dd235e8a",
+      "bytes": 46291,
+      "prose_groups": 11,
+      "language_spans": 22,
+      "source_span_ids": [
+        "source-span-193",
+        "source-span-194",
+        "source-span-195",
+        "source-span-196",
+        "source-span-197",
+        "source-span-198",
+        "source-span-199",
+        "source-span-200",
+        "source-span-201",
+        "source-span-202",
+        "source-span-203"
+      ],
+      "source_spans_in_this_bundle": 11
+    },
+    {
+      "chapter": "redis-expiry-predicate",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/redis-expiry-predicate.json",
+      "sha256": "620f5ea59e22d695a36583bd63de9b0b7e8b86267536c8646d63a45fbbdafa7a",
+      "bytes": 29634,
+      "prose_groups": 7,
+      "language_spans": 14,
+      "source_span_ids": [
+        "source-span-035",
+        "source-span-036",
+        "source-span-037",
+        "source-span-038",
+        "source-span-039",
+        "source-span-040",
+        "source-span-041",
+        "source-span-042"
+      ],
+      "source_spans_in_this_bundle": 8
+    },
+    {
+      "chapter": "redis-ttl-replies",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/redis-ttl-replies.json",
+      "sha256": "60bc42754a09461e750aaf026eef5368175b038d6fde7e153a105de4c8245348",
+      "bytes": 36179,
+      "prose_groups": 11,
+      "language_spans": 22,
+      "source_span_ids": [
+        "source-span-039",
+        "source-span-043",
+        "source-span-044",
+        "source-span-045",
+        "source-span-046",
+        "source-span-047",
+        "source-span-048",
+        "source-span-049",
+        "source-span-050"
+      ],
+      "source_spans_in_this_bundle": 9
+    },
+    {
+      "chapter": "ruff-target-version",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/ruff-target-version.json",
+      "sha256": "f75aa7917efe5e8ca1fcc77f32a9cf86aad45c4ce487ba6bf2e401d06a8981e0",
+      "bytes": 31259,
+      "prose_groups": 10,
+      "language_spans": 20,
+      "source_span_ids": [
+        "source-span-145",
+        "source-span-146",
+        "source-span-147",
+        "source-span-148"
+      ],
+      "source_spans_in_this_bundle": 4
+    },
+    {
+      "chapter": "sdk-dynamic-retry-policy",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/sdk-dynamic-retry-policy.json",
+      "sha256": "29378821b60e849575584623034147039e74fe298bf3fe7767f76a5ca8dca1c6",
+      "bytes": 45184,
+      "prose_groups": 12,
+      "language_spans": 24,
+      "source_span_ids": [
+        "source-span-014",
+        "source-span-015",
+        "source-span-016",
+        "source-span-017",
+        "source-span-018",
+        "source-span-019",
+        "source-span-020",
+        "source-span-021",
+        "source-span-022",
+        "source-span-023",
+        "source-span-024"
+      ],
+      "source_spans_in_this_bundle": 11
+    },
+    {
+      "chapter": "sqlx-in-expansion",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/sqlx-in-expansion.json",
+      "sha256": "0ad85b2892885044a788d49247a8448d8763c4f1195799043eb13afa384175a7",
+      "bytes": 53003,
+      "prose_groups": 14,
+      "language_spans": 28,
+      "source_span_ids": [
+        "source-span-051",
+        "source-span-052",
+        "source-span-053",
+        "source-span-054",
+        "source-span-055",
+        "source-span-056",
+        "source-span-057",
+        "source-span-058",
+        "source-span-059",
+        "source-span-060",
+        "source-span-061",
+        "source-span-062",
+        "source-span-063",
+        "source-span-064",
+        "source-span-065",
+        "source-span-066"
+      ],
+      "source_spans_in_this_bundle": 16
+    },
+    {
+      "chapter": "sqlx-map-argument-binding",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/sqlx-map-argument-binding.json",
+      "sha256": "69c839e29e46fd6413de957ad43d635d5af6379c0d5dbe267144e076a096f8e8",
+      "bytes": 33997,
+      "prose_groups": 11,
+      "language_spans": 22,
+      "source_span_ids": [
+        "source-span-065",
+        "source-span-204",
+        "source-span-205",
+        "source-span-206",
+        "source-span-207",
+        "source-span-208",
+        "source-span-209"
+      ],
+      "source_spans_in_this_bundle": 7
+    },
+    {
+      "chapter": "starlette-server-error-flow",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/starlette-server-error-flow.json",
+      "sha256": "81dbf9223d58221efac3bd5c73acd2c2417cb47e3b062df51dd60f7dfb174019",
+      "bytes": 45831,
+      "prose_groups": 12,
+      "language_spans": 24,
+      "source_span_ids": [
+        "source-span-001",
+        "source-span-002",
+        "source-span-003",
+        "source-span-004",
+        "source-span-005",
+        "source-span-006",
+        "source-span-007",
+        "source-span-008",
+        "source-span-009",
+        "source-span-010",
+        "source-span-011",
+        "source-span-012",
+        "source-span-013"
+      ],
+      "source_spans_in_this_bundle": 13
+    },
+    {
+      "chapter": "starlette-task-and-iteration",
+      "path": "agent/research/documentation-intelligence-20261119/body-claim-bundles-v1/chapters/starlette-task-and-iteration.json",
+      "sha256": "f3e42f2088fa6fdb4bc447cc4fc43a1ac03a6f11f46004a0bb20f5ccb0428228",
+      "bytes": 42524,
+      "prose_groups": 11,
+      "language_spans": 22,
+      "source_span_ids": [
+        "source-span-009",
+        "source-span-210",
+        "source-span-211",
+        "source-span-212",
+        "source-span-213",
+        "source-span-214",
+        "source-span-215",
+        "source-span-216",
+        "source-span-217",
+        "source-span-218",
+        "source-span-219"
+      ],
+      "source_spans_in_this_bundle": 11
+    }
+  ],
+  "chapter_bundles": 25,
+  "prose_groups": 292,
+  "language_spans": 584,
+  "unique_source_span_ids": 276,
+  "maximum_bundle_bytes": 275591,
+  "per_bundle_limit_bytes": 1048576,
+  "parent_ledger_exceeds_single_reader_artifact_limit": true,
+  "full_parent_hash_not_embedded_in_each_child": true,
+  "document_text_changed": false,
+  "active_catalog_changed": false,
+  "production_ui_changed": false,
+  "model_calls": 0,
+  "new_training_records": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "limits": [
+    "Partitioning does not add independentfacts, chaptercount ortrainingexamples.",
+    "Bytebounds and exactobjectequality do not prove natural-language entailment orsource/runtimecompleteness.",
+    "These are localreview proposals; no catalogimport, publication or readerUI change is authorized by this manifest."
+  ]
+}
+````
+<!-- artifact-body:4b26b8a349c8dd07fedfb46c5751cdfb351b95c296e2b6b42884846a0ab0cc01:end -->

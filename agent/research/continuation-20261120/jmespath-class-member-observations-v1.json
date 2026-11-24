@@ -1,0 +1,780 @@
+{
+  "at": "2026-11-20T12:44:40.842634+00:00",
+  "development_exposed": true,
+  "rows": [
+    {
+      "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+      "selector": "Parser._MAX_SIZE",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 37,
+          "last_line": 38,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1345,
+          "quote_byte_end": 1389,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+        "source_sha256": "fddbb041c94e262f30bfedd5cb70a6eaa98f8110f1fdc1099f773258d93d99eb",
+        "selector": "Parser._MAX_SIZE",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 76,
+          "last_line": 76,
+          "quote": "    _MAX_SIZE = 128\n",
+          "quote_sha256": "b950c6f30f8ce20436c72973e4655de1da74d5372f7037f3169835009bd29fb8",
+          "quote_byte_start": 2242,
+          "quote_byte_end": 2262,
+          "complete_member": true
+        },
+        "member_kind": "class-assignment",
+        "written_value": {
+          "kind": "literal",
+          "type": "int",
+          "value": 128
+        }
+      }
+    },
+    {
+      "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+      "selector": "Parser.parse",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 37,
+          "last_line": 38,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1345,
+          "quote_byte_end": 1389,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+        "source_sha256": "fddbb041c94e262f30bfedd5cb70a6eaa98f8110f1fdc1099f773258d93d99eb",
+        "selector": "Parser.parse",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 84,
+          "last_line": 92,
+          "quote": "    def parse(self, expression):\n        cached = self._CACHE.get(expression)\n        if cached is not None:\n            return cached\n        parsed_result = self._do_parse(expression)\n        self._CACHE[expression] = parsed_result\n        if len(self._CACHE) > self._MAX_SIZE:\n            self._free_cache_entries()\n        return parsed_result\n",
+          "quote_sha256": "937ebddd2e0cc1b339e220c48df8f197058928c28cb6aeaebc27b6ba06f21757",
+          "quote_byte_start": 2435,
+          "quote_byte_end": 2783,
+          "complete_member": true
+        },
+        "member_kind": "method",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self",
+            "expression"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            },
+            "expression": {
+              "kind": "required"
+            }
+          },
+          "annotations": {
+            "self": null,
+            "expression": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "written_calls_scope": "Lexical subtree includes nested/deferred bodies; no execution, ordering or call-target resolution claim.",
+        "method_decorators": [],
+        "calls_written": [
+          {
+            "line": 85,
+            "expression": "self._CACHE.get(expression)"
+          },
+          {
+            "line": 88,
+            "expression": "self._do_parse(expression)"
+          },
+          {
+            "line": 90,
+            "expression": "len(self._CACHE)"
+          },
+          {
+            "line": 91,
+            "expression": "self._free_cache_entries()"
+          }
+        ]
+      }
+    },
+    {
+      "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+      "selector": "Parser._free_cache_entries",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 37,
+          "last_line": 38,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1345,
+          "quote_byte_end": 1389,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+        "source_sha256": "fddbb041c94e262f30bfedd5cb70a6eaa98f8110f1fdc1099f773258d93d99eb",
+        "selector": "Parser._free_cache_entries",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 491,
+          "last_line": 493,
+          "quote": "    def _free_cache_entries(self):\n        for key in random.sample(list(self._CACHE.keys()), int(self._MAX_SIZE / 2)):\n            self._CACHE.pop(key, None)\n",
+          "quote_sha256": "90fab901131c5193f05e5d0e35299d3466381ae22c027917651f1a60c5582f29",
+          "quote_byte_start": 17896,
+          "quote_byte_end": 18055,
+          "complete_member": true
+        },
+        "member_kind": "method",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            }
+          },
+          "annotations": {
+            "self": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "written_calls_scope": "Lexical subtree includes nested/deferred bodies; no execution, ordering or call-target resolution claim.",
+        "method_decorators": [],
+        "calls_written": [
+          {
+            "line": 492,
+            "expression": "random.sample(list(self._CACHE.keys()), int(self._MAX_SIZE / 2))"
+          },
+          {
+            "line": 492,
+            "expression": "list(self._CACHE.keys())"
+          },
+          {
+            "line": 492,
+            "expression": "int(self._MAX_SIZE / 2)"
+          },
+          {
+            "line": 493,
+            "expression": "self._CACHE.pop(key, None)"
+          },
+          {
+            "line": 492,
+            "expression": "self._CACHE.keys()"
+          }
+        ]
+      }
+    },
+    {
+      "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+      "selector": "Parser._do_parse",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 37,
+          "last_line": 38,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1345,
+          "quote_byte_end": 1389,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+        "source_sha256": "fddbb041c94e262f30bfedd5cb70a6eaa98f8110f1fdc1099f773258d93d99eb",
+        "selector": "Parser._do_parse",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 94,
+          "last_line": 105,
+          "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+          "quote_sha256": "143372f69faa7c59bff832aabc1b52d5b59fd3b3243a02daf92a3fafaf863a59",
+          "quote_byte_start": 2784,
+          "quote_byte_end": 3192,
+          "complete_member": true
+        },
+        "member_kind": "method",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self",
+            "expression"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            },
+            "expression": {
+              "kind": "required"
+            }
+          },
+          "annotations": {
+            "self": null,
+            "expression": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "written_calls_scope": "Lexical subtree includes nested/deferred bodies; no execution, ordering or call-target resolution claim.",
+        "method_decorators": [],
+        "calls_written": [
+          {
+            "line": 96,
+            "expression": "self._parse(expression)"
+          },
+          {
+            "line": 101,
+            "expression": "e.set_expression(expression)"
+          }
+        ]
+      }
+    },
+    {
+      "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+      "selector": "ParsedResult.search",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 501,
+          "last_line": 503,
+          "quote": "@with_repr_method\nclass ParsedResult(object):\n    def __init__(self, expression, parsed):\n",
+          "quote_sha256": "95015c590ed7d92e3d912233bb3a373db64f3ad9d2ab1ec7adc2a9296dd70261",
+          "quote_byte_start": 18176,
+          "quote_byte_end": 18266,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "e600d11e5d4e90b0d7f67882756fffc90a52eb36",
+        "source_sha256": "fddbb041c94e262f30bfedd5cb70a6eaa98f8110f1fdc1099f773258d93d99eb",
+        "selector": "ParsedResult.search",
+        "class_decorators": [
+          "with_repr_method"
+        ],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 507,
+          "last_line": 510,
+          "quote": "    def search(self, value, options=None):\n        interpreter = visitor.TreeInterpreter(options)\n        result = interpreter.visit(self.parsed, value)\n        return result\n",
+          "quote_sha256": "490893ffceaea59c0c065e292d343b5c80361b99cde72c6d04278f29750f3586",
+          "quote_byte_start": 18333,
+          "quote_byte_end": 18508,
+          "complete_member": true
+        },
+        "member_kind": "method",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self",
+            "value",
+            "options"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            },
+            "value": {
+              "kind": "required"
+            },
+            "options": {
+              "kind": "literal",
+              "type": "NoneType",
+              "value": null
+            }
+          },
+          "annotations": {
+            "self": null,
+            "value": null,
+            "options": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "written_calls_scope": "Lexical subtree includes nested/deferred bodies; no execution, ordering or call-target resolution claim.",
+        "method_decorators": [],
+        "calls_written": [
+          {
+            "line": 508,
+            "expression": "visitor.TreeInterpreter(options)"
+          },
+          {
+            "line": 509,
+            "expression": "interpreter.visit(self.parsed, value)"
+          }
+        ]
+      }
+    },
+    {
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "selector": "Parser._MAX_SIZE",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 35,
+          "last_line": 36,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1330,
+          "quote_byte_end": 1374,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+        "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+        "selector": "Parser._MAX_SIZE",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 74,
+          "last_line": 74,
+          "quote": "    _MAX_SIZE = 512\n",
+          "quote_sha256": "c7c6ea155d80df80a06dbc31c85e41f5aee2284b3041452ffc92a24aea1341d3",
+          "quote_byte_start": 2227,
+          "quote_byte_end": 2247,
+          "complete_member": true
+        },
+        "member_kind": "class-assignment",
+        "written_value": {
+          "kind": "literal",
+          "type": "int",
+          "value": 512
+        }
+      }
+    },
+    {
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "selector": "Parser.parse",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 35,
+          "last_line": 36,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1330,
+          "quote_byte_end": 1374,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+        "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+        "selector": "Parser.parse",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 82,
+          "last_line": 103,
+          "quote": "    def parse(self, expression):\n        try:\n            return self._CACHE[expression]\n        except KeyError:\n            pass\n        parsed_result = self._do_parse(expression)\n        if len(self._CACHE) >= self._MAX_SIZE:\n            try:\n                del self._CACHE[next(iter(self._CACHE))]\n            except (KeyError, StopIteration, RuntimeError):\n                # KeyError - Another thread else already deleted the key.\n                # RuntimeError - Another modified the cache.\n                # StopIteration - (Unlikely) Cache is empty.\n                #\n                # If we encounter an error we should NOT be adding to the\n                # cache.  To ensure we do not exceed self._MAX_SIZE, we\n                # can only add to the cache if we successfully removed\n                # an element from the cache, otherwise this can grow\n                # unbounded.\n                return parsed_result\n        self._CACHE[expression] = parsed_result\n        return parsed_result\n",
+          "quote_sha256": "174478eb4aa062f8e25958a5aac3877f9aaaf2fd94f486537aa10492940be6ab",
+          "quote_byte_start": 2420,
+          "quote_byte_end": 3426,
+          "complete_member": true
+        },
+        "member_kind": "method",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self",
+            "expression"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            },
+            "expression": {
+              "kind": "required"
+            }
+          },
+          "annotations": {
+            "self": null,
+            "expression": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "written_calls_scope": "Lexical subtree includes nested/deferred bodies; no execution, ordering or call-target resolution claim.",
+        "method_decorators": [],
+        "calls_written": [
+          {
+            "line": 87,
+            "expression": "self._do_parse(expression)"
+          },
+          {
+            "line": 88,
+            "expression": "len(self._CACHE)"
+          },
+          {
+            "line": 90,
+            "expression": "next(iter(self._CACHE))"
+          },
+          {
+            "line": 90,
+            "expression": "iter(self._CACHE)"
+          }
+        ]
+      }
+    },
+    {
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "selector": "Parser._free_cache_entries",
+      "result": {
+        "status": "NO_DIRECT_WRITTEN_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 35,
+          "last_line": 36,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1330,
+          "quote_byte_end": 1374,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+        "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+        "selector": "Parser._free_cache_entries",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ]
+      }
+    },
+    {
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "selector": "Parser._do_parse",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 35,
+          "last_line": 36,
+          "quote": "class Parser(object):\n    BINDING_POWER = {\n",
+          "quote_sha256": "9ac2f94ee0e99acf9cb315f5957087cd0f568c48f8778a1b365515d4b6e8e33b",
+          "quote_byte_start": 1330,
+          "quote_byte_end": 1374,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+        "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+        "selector": "Parser._do_parse",
+        "class_decorators": [],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 105,
+          "last_line": 116,
+          "quote": "    def _do_parse(self, expression):\n        try:\n            return self._parse(expression)\n        except exceptions.LexerError as e:\n            e.expression = expression\n            raise\n        except exceptions.IncompleteExpressionError as e:\n            e.set_expression(expression)\n            raise\n        except exceptions.ParseError as e:\n            e.expression = expression\n            raise\n",
+          "quote_sha256": "143372f69faa7c59bff832aabc1b52d5b59fd3b3243a02daf92a3fafaf863a59",
+          "quote_byte_start": 3427,
+          "quote_byte_end": 3835,
+          "complete_member": true
+        },
+        "member_kind": "method",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self",
+            "expression"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            },
+            "expression": {
+              "kind": "required"
+            }
+          },
+          "annotations": {
+            "self": null,
+            "expression": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "written_calls_scope": "Lexical subtree includes nested/deferred bodies; no execution, ordering or call-target resolution claim.",
+        "method_decorators": [],
+        "calls_written": [
+          {
+            "line": 107,
+            "expression": "self._parse(expression)"
+          },
+          {
+            "line": 112,
+            "expression": "e.set_expression(expression)"
+          }
+        ]
+      }
+    },
+    {
+      "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+      "selector": "ParsedResult.search",
+      "result": {
+        "status": "WRITTEN_CLASS_MEMBER",
+        "version": "0.0.2-research",
+        "source_executed": false,
+        "runtime_bindings_verified": false,
+        "training_gold": false,
+        "owner_approved": false,
+        "publication_authorized": false,
+        "scope": "DIRECT_WRITTEN_CLASS_MEMBER_NOT_RUNTIME_ATTRIBUTE",
+        "producer_sha256": "2877ebe659441a9ed19089b52324f5c26614cb25dccda6fbcdcd12294bc34cda",
+        "class_header_evidence": {
+          "first_line": 508,
+          "last_line": 510,
+          "quote": "@with_repr_method\nclass ParsedResult(object):\n    def __init__(self, expression, parsed):\n",
+          "quote_sha256": "95015c590ed7d92e3d912233bb3a373db64f3ad9d2ab1ec7adc2a9296dd70261",
+          "quote_byte_start": 18659,
+          "quote_byte_end": 18749,
+          "complete_class": false,
+          "purpose": "Written class owner, decorators, bases and keywords; may include first member line."
+        },
+        "source_path": "jmespath/parser.py",
+        "revision": "6ff419a8b171d055a9bfc6904605bceb8b7a80ef",
+        "source_sha256": "5630d0379ca349ee467f973d227700e84e18c55473621254697059ada0ec5137",
+        "selector": "ParsedResult.search",
+        "class_decorators": [
+          "with_repr_method"
+        ],
+        "class_bases": [
+          "object"
+        ],
+        "class_keywords": [],
+        "runtime_limitations": [
+          "Direct written members only; decorators, metaclasses, imports, inheritance and later mutations unresolved.",
+          "No absence-based retirement, no runtime cache bound or thread-safety guarantee."
+        ],
+        "evidence": {
+          "first_line": 514,
+          "last_line": 517,
+          "quote": "    def search(self, value, options=None):\n        interpreter = visitor.TreeInterpreter(options)\n        result = interpreter.visit(self.parsed, value)\n        return result\n",
+          "quote_sha256": "490893ffceaea59c0c065e292d343b5c80361b99cde72c6d04278f29750f3586",
+          "quote_byte_start": 18816,
+          "quote_byte_end": 18991,
+          "complete_member": true
+        },
+        "member_kind": "method",
+        "signature": {
+          "positional_only": [],
+          "positional_or_keyword": [
+            "self",
+            "value",
+            "options"
+          ],
+          "keyword_only": [],
+          "vararg": null,
+          "kwarg": null,
+          "defaults": {
+            "self": {
+              "kind": "required"
+            },
+            "value": {
+              "kind": "required"
+            },
+            "options": {
+              "kind": "literal",
+              "type": "NoneType",
+              "value": null
+            }
+          },
+          "annotations": {
+            "self": null,
+            "value": null,
+            "options": null
+          },
+          "return_annotation": null,
+          "annotation_or_default_executed": false
+        },
+        "written_calls_scope": "Lexical subtree includes nested/deferred bodies; no execution, ordering or call-target resolution claim.",
+        "method_decorators": [],
+        "calls_written": [
+          {
+            "line": 515,
+            "expression": "visitor.TreeInterpreter(options)"
+          },
+          {
+            "line": 516,
+            "expression": "interpreter.visit(self.parsed, value)"
+          }
+        ]
+      }
+    }
+  ],
+  "no_runtime_execution": true
+}

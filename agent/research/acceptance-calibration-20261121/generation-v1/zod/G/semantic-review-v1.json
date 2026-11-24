@@ -1,0 +1,244 @@
+{
+  "at": "2026-11-21T15:21:45.632609+00:00",
+  "task": "zod",
+  "method": "G",
+  "content_sha256": "ef4a5e0d51a9a0131473baac9fa74e482ea6352755b5a1985053448e41235fb6",
+  "claims": [
+    {
+      "claim_id": "NEW-G-zod-Z01",
+      "reference_id": "Z01",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        71,
+        72
+      ],
+      "exact_source_evidence": "export const _safeParse: (_Err: $ZodErrorClass) => $SafeParse = (_Err) => (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: false } : { async: false };",
+      "expected_interpretation": {
+        "en": "The synchronous returned arrow creates ctx with async: false.",
+        "pt-BR": "A arrow síncrona retornada cria ctx com async: false."
+      },
+      "selected_behavior_verdict_en": "SUPPORTED",
+      "manual_reason": "EN false async flag correct; PT flag identity unclear/malformed.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z02",
+      "reference_id": "Z02",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        73,
+        73
+      ],
+      "exact_source_evidence": "  const result = schema._zod.run({ value, issues: [] }, ctx);",
+      "expected_interpretation": {
+        "en": "The synchronous arrow calls schema._zod.run with { value, issues: [] } and ctx.",
+        "pt-BR": "A arrow síncrona chama schema._zod.run com { value, issues: [] } e ctx."
+      },
+      "selected_behavior_verdict_en": "INSUFFICIENT",
+      "manual_reason": "Value/issues description omits payload-object and ctx argument roles.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z03",
+      "reference_id": "Z03",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        74,
+        76
+      ],
+      "exact_source_evidence": "  if (result instanceof Promise) {\n    throw new core.$ZodAsyncError();\n  }",
+      "expected_interpretation": {
+        "en": "The synchronous arrow explicitly throws core.$ZodAsyncError under result instanceof Promise.",
+        "pt-BR": "A arrow síncrona lança explicitamente core.$ZodAsyncError sob result instanceof Promise."
+      },
+      "selected_behavior_verdict_en": "SUPPORTED",
+      "manual_reason": "Synchronous Promise-guard error class correct, although unqualified identifier/citations weaker.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z04",
+      "reference_id": "Z04",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return, truthy result.issues.length selects failure.",
+        "pt-BR": "No retorno normal, result.issues.length truthy seleciona failure."
+      },
+      "selected_behavior_verdict_en": "SUPPORTED",
+      "manual_reason": "Nonempty issues condition correct.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z05",
+      "reference_id": "Z05",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has success: true.",
+        "pt-BR": "No retorno normal sem issues, o literal tem success: true."
+      },
+      "selected_behavior_verdict_en": "SUPPORTED",
+      "manual_reason": "True success flag correct.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z06",
+      "reference_id": "Z06",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        87,
+        89
+      ],
+      "exact_source_evidence": "    get error() {\n      if (!error) {\n        error = new Err(issues.map((iss) => util.finalizeIssue(iss, ctx, core.config())));",
+      "expected_interpretation": {
+        "en": "The error getter construction branch is guarded by !error.",
+        "pt-BR": "O ramo de construção no getter de error é condicionado por !error."
+      },
+      "selected_behavior_verdict_en": "CONTRADICTED",
+      "manual_reason": "Getter guard is !closure-local error, not issues array.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z07",
+      "reference_id": "Z07",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        96,
+        97
+      ],
+      "exact_source_evidence": "    set error(e: errors.$ZodError) {\n      error = e;",
+      "expected_interpretation": {
+        "en": "The error setter assigns e to the local error.",
+        "pt-BR": "O setter de error atribui e à variável local error."
+      },
+      "selected_behavior_verdict_en": "INSUFFICIENT",
+      "manual_reason": "Says local error is assigned, but omits source incoming parameter e; required dataflow not conveyed.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z08",
+      "reference_id": "Z08",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        111,
+        114
+      ],
+      "exact_source_evidence": "export const _safeParseAsync: (_Err: $ZodErrorClass) => $SafeParseAsync = (_Err) => async (schema, value, _ctx) => {\n  const ctx: schemas.ParseContextInternal = _ctx ? { ..._ctx, async: true } : { async: true };\n  let result = schema._zod.run({ value, issues: [] }, ctx);\n  if (result instanceof Promise) result = await result;",
+      "expected_interpretation": {
+        "en": "The asynchronous arrow awaits result when result instanceof Promise.",
+        "pt-BR": "A arrow assíncrona aguarda result quando result instanceof Promise."
+      },
+      "selected_behavior_verdict_en": "SUPPORTED",
+      "manual_reason": "Await under guard conveyed; no universal fulfillment claim inferred from waits-for-promise wording.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z09",
+      "reference_id": "Z09",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        80,
+        80
+      ],
+      "exact_source_evidence": "export const safeParse: $SafeParse = /* @__PURE__*/ _safeParse(errors.$ZodRealError);",
+      "expected_interpretation": {
+        "en": "The core safeParse binding supplies errors.$ZodRealError to _safeParse.",
+        "pt-BR": "O vínculo safeParse do core fornece errors.$ZodRealError a _safeParse."
+      },
+      "selected_behavior_verdict_en": "SUPPORTED",
+      "manual_reason": "Selected core error factory class correct.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    },
+    {
+      "claim_id": "NEW-G-zod-Z10",
+      "reference_id": "Z10",
+      "source_revision": "2a343ed2a4ffbea73fb83862ee1e317662292481",
+      "source_path": "packages/zod/src/v4/core/parse.ts",
+      "source_file_sha256": "855bda0c95d79be1562fb1f48db4eefb7697276675b7debeb389aaba1b61e9e6",
+      "source_lines": [
+        78,
+        78
+      ],
+      "exact_source_evidence": "  return result.issues.length ? failure(_Err, result.issues, ctx) : ({ success: true, data: result.value } as any);",
+      "expected_interpretation": {
+        "en": "At the normal return with no issues, the literal has data: result.value.",
+        "pt-BR": "No retorno normal sem issues, o literal tem data: result.value."
+      },
+      "selected_behavior_verdict_en": "SUPPORTED",
+      "manual_reason": "EN parsed result data correct; PT valor pardo changes meaning and fails semantic equivalence.",
+      "critical_if_false": true,
+      "generated_interpretation_provenance": "Original full model-content.txt retained with hash; no repair, invalid Cobra text read directly."
+    }
+  ],
+  "selected_english_atomic_metrics": {
+    "supported": 7,
+    "contradicted": 1,
+    "insufficient": 2,
+    "denominator": 10,
+    "extra_atom": "Selected ten behavior entries only; vague FAQ purpose and procedural omissions assessed separately."
+  },
+  "full_bilingual_precision": null,
+  "complete_note": "REJECTED",
+  "reasons": [
+    "Getter predicate false",
+    "Required runner/setter dataflow incomplete",
+    "PT parsed value translated into valor pardo",
+    "Placeholder path:lines citations include wrong branch lines",
+    "error_boundaries is only a locator",
+    "Limitations nested under faq and required tests/examples disclaimers absent"
+  ],
+  "uncertainty_control": "Explicit insufficient evidence for universal async fulfillment in both languages; justified coarse abstention.",
+  "bilingual": "Both present; PT malformed identities and Z10 semantic error",
+  "dimensions": {
+    "factual correctness": 0,
+    "relevant completeness": 0,
+    "architecture and dependencies": 1,
+    "API contracts": 1,
+    "errors and exceptions": 1,
+    "existing tests and actual execution status": 0,
+    "examples and commands": 0,
+    "EN/PT-BR equivalence": 0,
+    "FAQ correctness": 1,
+    "citation relevance": 0,
+    "explicit limitations": 1
+  },
+  "reviewer": "Same campaign Codex agent, not independent owner/human",
+  "owner_approved": false,
+  "training_gold": false,
+  "optimizer_updates": 0
+}

@@ -1,0 +1,289 @@
+{
+  "at": "2026-11-21T19:07:54.476517+00:00",
+  "protocol_sha256": "b646697bea8f4b62b9c852900ad8b396e75e48061b8e3f1c2816c8592bed145e",
+  "observer_sha256": "6ae2389679af7a9959f126812c079bb0fa4a5993cdd3565d930d437a70c0ca0b",
+  "observations": [
+    {
+      "id": "one-legacy",
+      "ordered_mapping_events": [
+        {
+          "original": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "first"
+        }
+      ],
+      "retained_metadata": {
+        "model.layers.0.self_attn.q_proj.lora_a": {
+          "name": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "first"
+        }
+      },
+      "projected_provided_key_validation_errors": [],
+      "missing_allowed_keys_not_checked_by_source": [
+        "model.layers.0.self_attn.v_proj.lora_a"
+      ],
+      "source_projected_accepts_provided_metadata": true,
+      "preregistered_source_projection": "one matching current key, provided-shape validation empty; missing V not checked"
+    },
+    {
+      "id": "two-colliding-legacy",
+      "ordered_mapping_events": [
+        {
+          "original": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "first"
+        },
+        {
+          "original": "other.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": true,
+          "retained_label": "second"
+        }
+      ],
+      "retained_metadata": {
+        "model.layers.0.self_attn.q_proj.lora_a": {
+          "name": "other.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "second"
+        }
+      },
+      "projected_provided_key_validation_errors": [],
+      "missing_allowed_keys_not_checked_by_source": [
+        "model.layers.0.self_attn.v_proj.lora_a"
+      ],
+      "source_projected_accepts_provided_metadata": true,
+      "preregistered_source_projection": "one matching current key retains second label; provided-shape validation empty"
+    },
+    {
+      "id": "current-and-legacy",
+      "ordered_mapping_events": [
+        {
+          "original": "model.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "current"
+        },
+        {
+          "original": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "legacy"
+        }
+      ],
+      "retained_metadata": {
+        "model.layers.0.self_attn.q_proj.lora_a": {
+          "name": "model.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "current"
+        },
+        "legacy.layers.0.self_attn.q_proj.lora_a": {
+          "name": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "legacy"
+        }
+      },
+      "projected_provided_key_validation_errors": [
+        {
+          "name": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "error": "unknown_parameter"
+        }
+      ],
+      "missing_allowed_keys_not_checked_by_source": [
+        "model.layers.0.self_attn.v_proj.lora_a"
+      ],
+      "source_projected_accepts_provided_metadata": false,
+      "preregistered_source_projection": "current key presence prevents remapping legacy; unknown legacy rejected"
+    },
+    {
+      "id": "distinct-layers",
+      "ordered_mapping_events": [
+        {
+          "original": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "zero"
+        },
+        {
+          "original": "legacy.layers.1.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.1.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "one"
+        }
+      ],
+      "retained_metadata": {
+        "model.layers.0.self_attn.q_proj.lora_a": {
+          "name": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "zero"
+        },
+        "model.layers.1.self_attn.q_proj.lora_a": {
+          "name": "legacy.layers.1.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "one"
+        }
+      },
+      "projected_provided_key_validation_errors": [],
+      "missing_allowed_keys_not_checked_by_source": [],
+      "source_projected_accepts_provided_metadata": true,
+      "preregistered_source_projection": "two distinct current keys retained"
+    },
+    {
+      "id": "ambiguous-allowed-place",
+      "ordered_mapping_events": [
+        {
+          "original": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "one"
+        }
+      ],
+      "retained_metadata": {
+        "legacy.layers.0.self_attn.q_proj.lora_a": {
+          "name": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "one"
+        }
+      },
+      "projected_provided_key_validation_errors": [
+        {
+          "name": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "error": "unknown_parameter"
+        }
+      ],
+      "missing_allowed_keys_not_checked_by_source": [
+        "model.layers.0.self_attn.q_proj.lora_a",
+        "othermodel.layers.0.self_attn.q_proj.lora_a"
+      ],
+      "source_projected_accepts_provided_metadata": false,
+      "preregistered_source_projection": "ambiguous candidate leaves legacy unknown; rejected"
+    },
+    {
+      "id": "missing-expected-key",
+      "ordered_mapping_events": [
+        {
+          "original": "model.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "onlyq"
+        }
+      ],
+      "retained_metadata": {
+        "model.layers.0.self_attn.q_proj.lora_a": {
+          "name": "model.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            3072,
+            4
+          ],
+          "inert_payload_label": "onlyq"
+        }
+      },
+      "projected_provided_key_validation_errors": [],
+      "missing_allowed_keys_not_checked_by_source": [
+        "model.layers.0.self_attn.v_proj.lora_a"
+      ],
+      "source_projected_accepts_provided_metadata": true,
+      "preregistered_source_projection": "provided-shape validation empty despite missing V"
+    },
+    {
+      "id": "wrong-shape",
+      "ordered_mapping_events": [
+        {
+          "original": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "wrong"
+        }
+      ],
+      "retained_metadata": {
+        "model.layers.0.self_attn.q_proj.lora_a": {
+          "name": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            4,
+            3072
+          ],
+          "inert_payload_label": "wrong"
+        }
+      },
+      "projected_provided_key_validation_errors": [
+        {
+          "name": "model.layers.0.self_attn.q_proj.lora_a",
+          "error": "shape_mismatch"
+        }
+      ],
+      "missing_allowed_keys_not_checked_by_source": [
+        "model.layers.0.self_attn.v_proj.lora_a"
+      ],
+      "source_projected_accepts_provided_metadata": false,
+      "preregistered_source_projection": "matched key has wrong shape; rejected"
+    },
+    {
+      "id": "collision-second-wrong-shape",
+      "ordered_mapping_events": [
+        {
+          "original": "legacy.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": false,
+          "retained_label": "first"
+        },
+        {
+          "original": "other.layers.0.self_attn.q_proj.lora_a",
+          "mapped": "model.layers.0.self_attn.q_proj.lora_a",
+          "overwrites_prior": true,
+          "retained_label": "second"
+        }
+      ],
+      "retained_metadata": {
+        "model.layers.0.self_attn.q_proj.lora_a": {
+          "name": "other.layers.0.self_attn.q_proj.lora_a",
+          "shape": [
+            4,
+            3072
+          ],
+          "inert_payload_label": "second"
+        }
+      },
+      "projected_provided_key_validation_errors": [
+        {
+          "name": "model.layers.0.self_attn.q_proj.lora_a",
+          "error": "shape_mismatch"
+        }
+      ],
+      "missing_allowed_keys_not_checked_by_source": [
+        "model.layers.0.self_attn.v_proj.lora_a"
+      ],
+      "source_projected_accepts_provided_metadata": false,
+      "preregistered_source_projection": "second retained but wrong shape rejected"
+    }
+  ],
+  "interpretation": "Two distinct legacy prefixes with the same layer/place map onto one current key; dictionary assignment silently retains the later metadata label. Same-shaped duplicates pass the subsequent provided-key/shape loop in this source projection. The loop also does not require every allowed key. This is a static source-derived metadata risk, not a native MLX adapter-load observation.",
+  "exact_version_limit": "New pinned Git loader only. Released mlx-lm0.32.2 lacks this remapping and collision mechanism; do not transfer it to release.",
+  "native_packages_imported": 0,
+  "upstream_code_executed": 0,
+  "tensors_or_adapter_files_created": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

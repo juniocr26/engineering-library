@@ -1,0 +1,68 @@
+{
+  "at": "2026-11-21T09:14:04.929047+00:00",
+  "status": "SOURCE_ONLY_PREFLIGHT_FINDINGS_NOT_RUNTIME_VALIDATION",
+  "framework_commit": "1bf8da05a1ef30a3eb2e8a634180be6557fd3ca0",
+  "source_cards": "public-framework-mask-state-source-cards-v1.json",
+  "bound_source_units": 14,
+  "findings": [
+    {
+      "id": "M1",
+      "topic": "Prompt masking",
+      "source": "ChatDataset.process/CompletionsDataset.process/create_dataset",
+      "fact": "The offset is the length of a separately templated prefix. Chat masking targets the final-message suffix, not every assistant turn;the selected body does not require the final role to be assistant. Rawtextformatrejectsmask_promptTrue.",
+      "preflight": "Requireapprovedrecordschema/finalassistant/nonemptytarget andverifyactualtoken-prefixalignment;mask_promptTruealone is not assistant-only proof."
+    },
+    {
+      "id": "M2",
+      "topic": "Batching and truncation",
+      "source": "iterate_batches",
+      "fact": "Lengths are truncated token-list lengths;offsets are not adjusted. Batch width is one plus a rounded32multiple,capped bymax_seq_length;array padding is zero-filled. Longer sequences generate a warning thentruncate.",
+      "preflight": "Requirewholeprompt+target fit and retainednonempty realtargettokens;target-only rawcounts163/101/137 are insufficient."
+    },
+    {
+      "id": "M3",
+      "topic": "Selected loss index boundary",
+      "source": "default_loss plusiterate_batches;owned-indexobservations",
+      "fact": "Causalstepsstart1;source mask isoffset<=step<=truncatedlength. In owned padded examples this admits a first zero-filled padding target. One ownedcase haspositive projectedntoks butnoreal target;one haszero projecteddenominator afterentiretargettruncation.",
+      "preflight": "Independently validate onlyrealnonpadding completion positions and nonzero denominator before any futureupdate. NoMLXloss/NaN/runtimebug/failureratewasobserved."
+    },
+    {
+      "id": "S1",
+      "topic": "Adapter checkpoint payload",
+      "source": "train andtrain_model",
+      "fact": "Periodic/final selected saves passflattenedtrainableparameters tosave_safetensors. Numbered adapter files andlatestadapter arewritten;configsaveoccursbeforeoptimizerinitialization. Inmemorystatecontainsmodel/optimizer/MLXRNG,butthatstate list isnot the selected serializedpayload.",
+      "preflight": "Do notcallthese adapter-only snapshots exactoptimizer/RNG/datacursor resume. Customexternalcallbacks/wrappersnotaudited;no globalclaim aboutallframeworkcapabilities."
+    },
+    {
+      "id": "S2",
+      "topic": "Resume path",
+      "source": "train_model/load_adapter_weights/train",
+      "fact": "SelectedCLIloadsadapterweights beforeconstructingnewoptimizer;train loop/countersstartanew. Loaderchecksprovidednames/shapes butselectedbodydoesnotrequireall expectedadapterleaves beforestrictFalse load.",
+      "preflight": "Validateexactexpectedtensorinventory/base/tokenizer/config/hashes. Labelweightsinitializedcontinuationasnewrununlessfullstate independentlypreserved/restored."
+    },
+    {
+      "id": "S3",
+      "topic": "Seeds",
+      "source": "run/train_model/iterate_batches",
+      "fact": "NormalCLIrun seedsNumPy;train_model seedsMLX. This isnotproof ofbitexactresume or restoredRNG/cursor;do not claimNumPyisunseededfromisolatedtrain_modelinspection."
+    },
+    {
+      "id": "A1",
+      "topic": "CLI authorization boundary",
+      "source": "main/run/load_dataset",
+      "fact": "DefaultsfillNonearguments. runloadsmodelanddatasets beforetrain/testmodebranch;nonexistentlocaldatapathcanselectHuggingFacefallback.",
+      "preflight": "trainFalse/nullplaceholders are notexecutionguards. Do notinvokeCLI atall underthiscampaign.Noapprovedlocalartifacts meansstop beforeframeworkentrypoint;noautomaticremote/defaultmodel/datasetfallback."
+    }
+  ],
+  "owned_projection": "owned-loss-mask-index-observations-v1.json",
+  "actual_framework_imports": 0,
+  "actual_tokenizer_or_model_loads": 0,
+  "optimizer_steps": 0,
+  "owner_gold": 0,
+  "launch_allowed": false,
+  "scope_limits": [
+    "Staticselectedpinnedcallchainplusownedintegerarithmetic;notactualtokenizer/prefix/paddingloss,frameworktrainingorcheckpointrestore.",
+    "No publicframework filesmodified,upstreamtestsorapplicationexecuted.",
+    "No currentprivateVivaBemdata/model requests/trainingrecordsused."
+  ]
+}

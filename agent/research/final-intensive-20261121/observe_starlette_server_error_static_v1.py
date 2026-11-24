@@ -1,0 +1,18 @@
+import ast,json,hashlib,datetime,sys
+from pathlib import Path
+p=Path(__file__).resolve().parent;root=p.parents[2];folder=p/'starlette-server-error-source-context-v1';receipt=json.loads((p/'starlette-server-error-source-acquisition-v1.json').read_text());records=[]
+for edge in receipt['records']:
+ if edge['source_path'].endswith('.py'):
+  f=root/edge['saved_path'];raw=f.read_bytes();assert hashlib.sha256(raw).hexdigest()==edge['sha256'];tree=ast.parse(raw.decode(),filename=edge['source_path']);records.append({'path':edge['source_path'],'saved_path':edge['saved_path'],'sha256':edge['sha256'],'syntax':'PARSED_AST_ONLY','top_level_declarations':[{'kind':type(n).__name__,'name':n.name,'lines':[n.lineno,n.end_lineno]} for n in tree.body if isinstance(n,(ast.ClassDef,ast.FunctionDef,ast.AsyncFunctionDef))]})
+errors=ast.parse((folder/'starlette/middleware/errors.py').read_text());cls=next(n for n in errors.body if isinstance(n,ast.ClassDef) and n.name=='ServerErrorMiddleware');call=next(n for n in cls.body if isinstance(n,ast.AsyncFunctionDef) and n.name=='__call__');wrapped=next(n for n in call.body if isinstance(n,ast.AsyncFunctionDef) and n.name=='_send');tr=next(n for n in call.body if isinstance(n,ast.Try));handler=tr.handlers[0];selected={'method_owner':'ServerErrorMiddleware.__call__','method_lines':[call.lineno,call.end_lineno],'return_annotation':ast.unparse(call.returns),'non_http_first_test':ast.unparse(call.body[0].test),'non_http_delegation':ast.unparse(call.body[0].body[0]),'wrapped_send_body':[(type(n).__name__,n.lineno) for n in wrapped.body],'catch_type':ast.unparse(handler.type),'catch_name':handler.name,'except_body_order':[(type(n).__name__,n.lineno) for n in handler.body],'try_finalbody_count':len(tr.finalbody),'last_except_statement':ast.unparse(handler.body[-1]),'scope':'Exact selected syntax structure, not free-prose semantic verification, runtime behavior or catchallBaseException claim.'}
+ref=json.loads((root/'.local-backups/documentation-intelligence-20261119/dataset-v4-reference-blobs/sha256/4545e1191a9e3290414a0480ac274f886feb2896f3dcb9e60bc73beacfdd906f').read_text());quotes=[]
+for file in ref['sources']:
+ raw=(folder/file['path']).read_bytes();assert hashlib.sha256(raw).hexdigest()==file['full_file_sha256']
+ for span in file['ranges']:
+  quote=b''.join(raw.splitlines(keepends=True)[span['first_line']-1:span['last_line']]);assert quote.decode()==span['quote'];quotes.append({'path':file['path'],'lines':[span['first_line'],span['last_line']],'quote_sha256':hashlib.sha256(quote).hexdigest()})
+links=[]
+for lang in ['en','pt-br']:
+ doc=root/'agent/research/documentation-intelligence-20261119/chapters/starlette-server-error-flow'/(lang+'.md');target=doc.parent/'source-excerpts.json';assert '(source-excerpts.json)' in doc.read_text();assert hashlib.sha256(target.read_bytes()).hexdigest()=='4545e1191a9e3290414a0480ac274f886feb2896f3dcb9e60bc73beacfdd906f';links.append({'document':str(doc.relative_to(root)),'document_sha256':hashlib.sha256(doc.read_bytes()).hexdigest(),'relative_link':'source-excerpts.json','resolved_target':str(target.relative_to(root)),'target_sha256':hashlib.sha256(target.read_bytes()).hexdigest()})
+out={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'python_version':sys.version,'records':records,'selected_ast_relations':selected,'exact_source_range_bindings':quotes,'logical_original_document_links':links,'source_program_or_tests_executed':False,'model_calls':0}
+with (p/'starlette-server-error-static-observations-v1.json').open('x') as f:json.dump(out,f,indent=2);f.write('\n')
+print(json.dumps({'parsed_files':len(records),'exact_ranges':len(quotes),'local_links':len(links),'AST':selected}))

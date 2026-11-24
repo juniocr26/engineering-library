@@ -1,0 +1,117 @@
+{
+  "at": "2026-11-21T23:43:04.726668+00:00",
+  "checkpoint": 6,
+  "archive": ".local-backups/final-intensive-20261121/checkpoint-006/research-reports-and-selected-dependencies.tar.gz",
+  "archive_sha256": "661acab2f0c8e68c2d086fbd43bfef7580fbf85fad23e7356466cef70bacd470",
+  "archive_bytes": 7893880,
+  "input_manifest": ".local-backups/final-intensive-20261121/checkpoint-006/input-manifest.json",
+  "input_manifest_sha256": "37a4f8f4758084255630a2d1929b20807b0bf5a6370e69b562dd74ca5064acb9",
+  "regular_files_restored_and_hash_verified": 478,
+  "file_modes_verified": true,
+  "restored_root": "/private/tmp/el-final-006-kjepiq46",
+  "consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import binding_envelope_v1 as v; a=json.loads((p/\"trusted-binding-anchor-v1.json\").read_text());root=p.parents[2];out={k:v.validate(v.canonical(x),x,root) for k,x in a.items()};print(json.dumps(out));assert all(not r for r in out.values())",
+      "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"fastapi\": [], \"cobra\": [], \"zod\": []}\n",
+    "stderr": ""
+  },
+  "exception_scope_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);sys.path.insert(0,str(p));import observe_exception_scope_v2 as v; protocol=json.loads((p/\"exception-scope-protocol-v2.json\").read_text());rows=[v.flags((p/c[\"helper\"]).read_text(),(p/c[\"job\"]).read_text())[0]==c[\"expected\"] for c in protocol[\"cases\"]];print(json.dumps({\"matched\":sum(rows),\"cases\":len(rows)}));assert all(rows)",
+      "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"matched\": 8, \"cases\": 8}\n",
+    "stderr": ""
+  },
+  "helper_admission_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-c",
+      "from pathlib import Path;import json,sys; p=Path(sys.argv[1]);root=p.parents[2];sys.path.insert(0,str(root/\"agent/tools\"));import documentation_retrieval as h; protocol=json.loads((p/\"helper-admission-protocol-v1.json\").read_text());observations=[]\nfor c in protocol[\"tasks\"]:\n raw=(p/\"reacquired-public-sources\"/c[\"task\"]/c[\"path\"]).read_bytes()\n try:\n  unit=h.extract(raw.decode(),c[\"selector\"],c[\"language\"]);h.validate_unit(unit,raw,c[\"selector\"],c[\"language\"]);status=\"ADMITTED_LEXICAL_UNIT\"\n except Exception as error: status=\"REFUSED\"\n observations.append(status==c[\"expected\"])\nprint(json.dumps({\"matched\":sum(observations),\"cases\":len(observations)}));assert all(observations)",
+      "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"matched\": 8, \"cases\": 8}\n",
+    "stderr": ""
+  },
+  "zod_jsc_parser_consumer_replay": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/observe_zod_jsc_syntax_v1.py",
+      "--root",
+      "/private/tmp/el-final-006-kjepiq46",
+      "--stdout-only"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"at\": \"2026-11-21T23:43:04.640472+00:00\", \"protocol_sha256\": \"38ae698f3a43344e1b544ee6fb9d5f94b9f34b3b6db41921b093968b2e90e5c3\", \"parser_sha256\": \"3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675\", \"runtime\": \"/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore\", \"observations\": {\"typescript\": \"5.9.3\", \"cases\": [{\"id\": \"en\", \"source\": \"const result = safeParse(schema, input);\\nif (result.success) {\\n  const data = result.data;\\n  void data;\\n} else {\\n  const error = result.error;\\n  void error;\\n}\\n\", \"document_sha256\": \"07a12eb080c080ff1f17853e32ecf32ccec68e60fffdc3ba7fd26a13e8fe0729\", \"code_sha256\": \"b205d32eba5ccfbd5eaf857608dc7efb82e5bd9d6b324991f3514c1bb0d09b15\", \"expected_zero_diagnostics\": true, \"diagnostics\": [], \"matched\": true}, {\"id\": \"pt-BR\", \"source\": \"const result = safeParse(schema, input);\\nif (result.success) {\\n  const data = result.data;\\n  void data;\\n} else {\\n  const error = result.error;\\n  void error;\\n}\\n\", \"document_sha256\": \"22c42bef28d2f575750c206c43a275c4dabdd186fca615690cfe9bc1fe2eea06\", \"code_sha256\": \"b205d32eba5ccfbd5eaf857608dc7efb82e5bd9d6b324991f3514c1bb0d09b15\", \"expected_zero_diagnostics\": true, \"diagnostics\": [], \"matched\": true}, {\"id\": \"owned-malformed-negative\", \"source\": \"const result = ;\\n\", \"expected_zero_diagnostics\": false, \"diagnostics\": [{\"code\": 1109, \"message\": \"Expression expected.\"}], \"matched\": true}]}, \"node_used\": false, \"target_source_executed\": false, \"typechecked\": false, \"module_resolution\": false, \"new_installations\": false, \"scope\": \"Evaluate existing TypeScript compiler library and owned parser harness only. Parse candidate text as data; no target execution, imports, typecheck, host file access from JS, external network, packages, emit or installations.\"}\n",
+    "stderr": ""
+  },
+  "raylib_owned_fragment_replays": [
+    {
+      "id": "valid-text-api",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/valid-text-api.c"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "matched": true
+    },
+    {
+      "id": "wrong-callback-signature",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/wrong-callback-signature.c"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/wrong-callback-signature.c:4:52: error: incompatible function pointer types passing 'int (int)' to parameter of type 'LoadFileTextCallback' (aka 'char *(*)(const char *)') [-Wincompatible-function-pointer-types]\n    4 | void install_wrong(void) { SetLoadFileTextCallback(wrong_loader); }\n      |                                                    ^~~~~~~~~~~~\n/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src/raylib.h:1140:57: note: passing argument to parameter 'callback' here\n 1140 | RLAPI void SetLoadFileTextCallback(LoadFileTextCallback callback);  // Set custom file text data loader\n      |                                                         ^\n1 error generated.\n",
+      "matched": true
+    },
+    {
+      "id": "invented-text-api",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-fsyntax-only",
+        "-Werror",
+        "-I",
+        "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-source-v1/src",
+        "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/invented-text-api.c"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "/private/tmp/el-final-006-kjepiq46/agent/research/final-intensive-20261121/raylib-evaluation-owned-examples-v1/invented-text-api.c:3:35: error: call to undeclared function 'LoadFileTextGuaranteed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n    3 | void invented(const char *name) { LoadFileTextGuaranteed(name); }\n      |                                   ^\n1 error generated.\n",
+      "matched": true
+    }
+  ],
+  "scope": "Local checkpoint and finite receipt-integrity consumer replay only. Not clean clone, model/optimizer, remote backup, Windows, crash durability or semantic correctness.",
+  "self_cut": "This receipt and manifest are outside own archive; later checkpoint can include earlier receipt. No infinite self-hash closure.",
+  "active_campaign": true,
+  "neural_calls": 0,
+  "optimizer_updates": 0,
+  "gold": 0
+}

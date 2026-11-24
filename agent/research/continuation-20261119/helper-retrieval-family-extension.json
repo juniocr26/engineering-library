@@ -1,0 +1,80 @@
+{
+  "status": "FROZEN_DESIGN_EXTENSION_NOT_EXECUTED",
+  "at": "2026-11-19T14:45:13.708690+00:00",
+  "parent_proposal": "helper-retrieval-proposal.json",
+  "parent_sha256": "7ae5145182de05bd70fb1675f80462fb6cb602e6b2c9c7fff26575165f30b2c4",
+  "second_family": {
+    "id": "GIO-JPEG-QUALITY-WITH-CONSTANT",
+    "family": "go-image-processing-pipeline",
+    "conservative_split_group": "repository:go-image-optimizer",
+    "repository": "go-image-optimizer",
+    "revision": "48476de6e4450294b7769ab7af90805100bb21b5",
+    "path": "backend/internal/infrastructure/imaging/compress/compressor.go",
+    "source_sha256": "2242eeb01976ccd58e3fbdddc8ae5fdd239b1d4117f975fa06c31e8b2665c51e",
+    "initial_context": [
+      {
+        "start_line": 13,
+        "end_line": 13,
+        "quote": "\tDefaultJPEGQuality = 82\n",
+        "quote_sha256": "31a5f56b9963ca043807a857dadfe9f5cadc7f3ded75fadde5541537e114ef42"
+      },
+      {
+        "start_line": 82,
+        "end_line": 84,
+        "quote": "func (c Compressor) jpegQuality() int {\n\treturn clampQuality(c.JPEGQuality, DefaultJPEGQuality)\n}\n",
+        "quote_sha256": "40a796fc67f101c3c3609aca0be7edd156651c41da2c825e88326457c46de3df"
+      }
+    ],
+    "allowed_retrieval": {
+      "qualified_symbol": "compress.clampQuality",
+      "excerpt": {
+        "start_line": 114,
+        "end_line": 128,
+        "quote": "func clampQuality(value, fallback int) int {\n\tif value == 0 {\n\t\treturn fallback\n\t}\n\n\tif value < 1 {\n\t\treturn 1\n\t}\n\n\tif value > 100 {\n\t\treturn 100\n\t}\n\n\treturn value\n}\n",
+        "quote_sha256": "e1e23083457c508c2080ffe45f57b4cb92fa77d2cd9e67a8691c0b91f50d947c"
+      }
+    },
+    "baseline_expected_boundary": "May state call and provided numeric default; helperimplementation unknown untilretrieved.",
+    "complete_criteria": [
+      "wrapperexactconfiguredfield andfallbackconstant82",
+      "zero firstargument returnsfallbackimmediately, nofallbackclamping",
+      "negativevalue=>1,above100=>100,remainingnonzero unchanged",
+      "generichelperfallback may beoutside1..100, wrapperfallback isknown82",
+      "retaincallerreturn andconstantfacts whileaddinghelperfacts",
+      "sourcecorrectcitations/ownership, exactEN/PTconditions, noencoderruntimeguarantees"
+    ],
+    "prior_experiment": "Existinggio-quality-caller/helpers lackconstant inbothpackets andcannot be relabeled as this exactbaseline. They remaindevelopmentdiagnostics, no successfultoolretrievalclaimed."
+  },
+  "independence": "Two repositoryfamilies PrometheusBuilder andGoImageQuality; allsiblings withinfamily. Bothalreadyobserved developmentcontracts, notheldoutnoveltransfer.",
+  "shared_schemas": "Parentclosedinput/outputschemas and14adversarialcases applyunchanged, plus familyregistryentryproposed only.",
+  "additional_cases": [
+    {
+      "id": "F15",
+      "input": "Toolreturnhasrightsymbol andquote butsource_id belongstootherrepository",
+      "expected": "DENIEDorINVALID_OUTPUT;no sourcecontextintegration"
+    },
+    {
+      "id": "F16",
+      "input": "Helperquotecorrectbutoriginalconstant/callerfactsdisappearfromfinalanswer",
+      "expected": "Rejectcompletecontract despite successfulretrieval"
+    },
+    {
+      "id": "F17",
+      "input": "OnlyGoImagepairsimprove;Prometheusremainswrong",
+      "expected": "Reportfamily-localgain, no crosstwofamilyimprovementclaim"
+    },
+    {
+      "id": "F18",
+      "input": "CandidatefamilyoverlapspriorreservedAxumorapprovalnotpresent",
+      "expected": "Refuse developmentgeneration; preserve pending case andcontinueindependentwork"
+    }
+  ],
+  "no_model_calls": true,
+  "no_new_server_plugin_harness_or_routing": true,
+  "implementation_requires_separate_decision": true,
+  "pre_execution_review": {
+    "at": "2026-11-19T14:45:36.038586+00:00",
+    "correction": "Initial manual constantline12 was comment, corrected toline13 before anyexecution; priorproposalbytes preservedprivately. Assertconstantwrittenvalue inquote.",
+    "prior_sha256": "9b1e4a5097c82b7eebdf8a2733a6f244b223413e0608915887c2b3df26501140"
+  }
+}

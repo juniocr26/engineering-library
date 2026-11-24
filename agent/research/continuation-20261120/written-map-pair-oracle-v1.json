@@ -1,0 +1,478 @@
+{
+  "at": "2026-11-20T20:57:11.806168+00:00",
+  "status": "FROZEN_BEFORE_NEW_ROLE_AWARE_OBSERVER",
+  "hypothesis": "An explicit closed written-literal-pair grammar with polarity can distinguish map direction from annotation/negation roles. It must preserve unsupported shapes and avoid the previously rejected naive colon-pair guard.",
+  "cases": [
+    {
+      "id": "correct-written-pair",
+      "packet": {
+        "id": "correct-written-pair",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "reversed-written-pair",
+      "packet": {
+        "id": "reversed-written-pair",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `BetaError: AlphaError`.",
+          "pt-br": "f escreve o par literal de retorno `BetaError: AlphaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "negative-reversed-written-pair",
+      "packet": {
+        "id": "negative-reversed-written-pair",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f does not write the literal return pair `BetaError: AlphaError`.",
+          "pt-br": "f não escreve o par literal de retorno `BetaError: AlphaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "negative-present-written-pair",
+      "packet": {
+        "id": "negative-present-written-pair",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f does not write the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f não escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "true-annotation-unmapped",
+      "packet": {
+        "id": "true-annotation-unmapped",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "The parameter annotation is `BetaError: AlphaError`.",
+          "pt-br": "A anotação do parâmetro é `BetaError: AlphaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "runtime-return-claim-unmapped",
+      "packet": {
+        "id": "runtime-return-claim-unmapped",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f always returns actual exception classes `AlphaError: BetaError`.",
+          "pt-br": "f sempre retorna classes reais de exceção `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "paired-polarity-disagreement",
+      "packet": {
+        "id": "paired-polarity-disagreement",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f não escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "translated-pair-name",
+      "packet": {
+        "id": "translated-pair-name",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `ErroAlpha: ErroBeta`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "conditional-return",
+      "packet": {
+        "id": "conditional-return",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    if BetaError:\n        return {AlphaError: BetaError}\n    return {}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "indirect-return",
+      "packet": {
+        "id": "indirect-return",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    values = {AlphaError: BetaError}\n    return values\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "unpacked-return",
+      "packet": {
+        "id": "unpacked-return",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {**other, AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "called-value",
+      "packet": {
+        "id": "called-value",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError()}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "duplicate-lexical-key",
+      "packet": {
+        "id": "duplicate-lexical-key",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError, AlphaError: AlphaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "oversized-literal",
+      "packet": {
+        "id": "oversized-literal",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "def f():\n    return {Key0: Value0, Key1: Value1, Key2: Value2, Key3: Value3, Key4: Value4, Key5: Value5, Key6: Value6, Key7: Value7, Key8: Value8, Key9: Value9, Key10: Value10, Key11: Value11, Key12: Value12, Key13: Value13, Key14: Value14, Key15: Value15, Key16: Value16, Key17: Value17, Key18: Value18, Key19: Value19, Key20: Value20, Key21: Value21, Key22: Value22, Key23: Value23, Key24: Value24, Key25: Value25, Key26: Value26, Key27: Value27, Key28: Value28, Key29: Value29, Key30: Value30, Key31: Value31, Key32: Value32}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "local-import-prefix",
+      "packet": {
+        "id": "local-import-prefix",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "def f():\n    import errors\n    return {errors.Alpha: errors.Beta}\n",
+        "current_source": "def f():\n    import errors\n    return {errors.Alpha: errors.Beta}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `errors.Alpha: errors.Beta`.",
+          "pt-br": "f escreve o par literal de retorno `errors.Alpha: errors.Beta`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "format-and-pair-order",
+      "packet": {
+        "id": "format-and-pair-order",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError, BetaError: AlphaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return { BetaError : AlphaError, AlphaError : BetaError }\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "pair-removed-to-complete-empty-literal",
+      "packet": {
+        "id": "pair-removed-to-complete-empty-literal",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "negative-pair-added",
+      "packet": {
+        "id": "negative-pair-added",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f does not write the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f não escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "MODIFY"
+    },
+    {
+      "id": "async-outside-profile",
+      "packet": {
+        "id": "async-outside-profile",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\nasync def f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "decorated-outside-profile",
+      "packet": {
+        "id": "decorated-outside-profile",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\n@owned_decorator\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "duplicate-function-name",
+      "packet": {
+        "id": "duplicate-function-name",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n\ndef f():\n    return {}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    },
+    {
+      "id": "new-correct-current-pair-noop",
+      "packet": {
+        "id": "new-correct-current-pair-noop",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {BetaError: AlphaError}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `BetaError: AlphaError`.",
+          "pt-br": "f escreve o par literal de retorno `BetaError: AlphaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "NO-OP"
+    },
+    {
+      "id": "literal-string-value-outside-profile",
+      "packet": {
+        "id": "literal-string-value-outside-profile",
+        "family": "owned-written-map-pairs",
+        "language": "python",
+        "previous_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: BetaError}\n",
+        "current_source": "class AlphaError(Exception):\n    pass\nclass BetaError(Exception):\n    pass\n\ndef f(BetaError: AlphaError):\n    return {AlphaError: \"BetaError\"}\n",
+        "documentation": {
+          "en": "f writes the literal return pair `AlphaError: BetaError`.",
+          "pt-br": "f escreve o par literal de retorno `AlphaError: BetaError`."
+        },
+        "complete_scope": true,
+        "source_available": true,
+        "positive_retirement_evidence": null,
+        "logical_contract_id": "owned.f",
+        "metadata": {}
+      },
+      "expected_action": "INCONCLUSIVE"
+    }
+  ],
+  "required_scope": "Only complete lexical function body containing optional bounded local imports and one direct literal Dict return,0..32 Name/Attribute pairs,unique lexical keys. Written syntax only,not actual class identities or runtime dict contents.",
+  "unmapped_prose_policy": "Existing closed helper fallback may be inconclusive;never treat a colon alone as a mapping assertion.",
+  "no_retirement": true,
+  "source_executed": false,
+  "production_files_or_schema_modified": false,
+  "permanent_tests_modified": false,
+  "model_calls": 0,
+  "owner_approved": false,
+  "training_gold": false,
+  "training_excluded": true,
+  "comparison": "New owned development controls and later exposed HTTPXsource follow-up;not independent neural accuracy."
+}
