@@ -1,21 +1,20 @@
 # Direção futura e questões de projeto
 
-## Status
+[Índice de arquitetura](index.md) · [Implementação atual](current-implementation.md)
 
-API de catálogo somente leitura, livro Markdown interno, busca no projeto e anotações compartilhadas estão implementados. O [estado atual](current-state.md) descreve suas fronteiras. Propostas remanescentes tratam de geração documental automatizada, inferência e política de acesso público/privado; o roadmap antigo do scaffold é histórico.
+<!-- reading-section: future-direction-1 -->
+## Base implementada
 
-## Interface de leitura
+Já existem catálogo, leitor bilíngue, busca, anotações compartilhadas, rascunhos Ollama locais, acesso ao filesystem do host, ciclo explícito de projetos e publicação recuperável. Propostas anteriores de introduzir inferência local são históricas. O gerador normal produz resumos limitados, não todos os capítulos de um livro revisado.
 
-Seleção de projeto, capítulos bilíngues, páginas medidas, expansões de código e favoritos lógicos já existem. Próximos passos devem partir de comportamento concreto e evidências, sem propor reconstruir todo o leitor como funcionalidade ausente. A arquitetura atual dispensa API Rails separada de Markdown bruto: Next lê a coleção local delimitada. A implementação não comprova implantação em produção nem certificação completa de acessibilidade.
+<!-- reading-section: future-direction-2 -->
+## Qualidade e avaliação
 
-## IA local e geração incremental
+A próxima campanha de qualidade deve ser delimitada separadamente pelo proprietário. Verificações atuais de evidência/schema/propriedade não estabelecem verdade semântica, tradução equivalente, cobertura útil ou qualidade editorial final. Alterações propostas em prompts, skills, datasets, modelos ou fine-tuning precisam de evidência e autorização próprias. Preserve pesquisa, checkpoints e aprendizado existentes; não se afirma fine-tuning neural concluído.
 
-Um fluxo proposto é: descobrir repositórios autorizados pelo proprietário nas duas coleções configuradas → inspecionar documentação segura e código relevante → identificar entradas alteradas → propor mudanças documentais com evidências → validar equivalência/navegação → revisar e publicar deliberadamente. É um esboço, não um agente instalado nem framework de automação. Hashes de fontes e revisões inspecionadas podem apoiar detecção de mudanças; um hash diferente não determina sozinho o impacto semântico. Preservar notas humanas e IDs de perguntas/ADRs; comparar antes de reescrever.
+<!-- reading-section: future-direction-3 -->
+## Acesso e portabilidade
 
-Inferência local oferece proximidade dos dados e operação offline, mas consome CPU/RAM e exige gestão de modelo/runtime. APIs comerciais podem reduzir processamento local, ao custo de transferência externa, cobrança e dependência de serviço. Nenhum provedor está integrado. Modelo, quantização, tamanho de contexto, velocidade de inferência e hardware mínimo não foram escolhidos nem medidos. Pesos, KV cache, contexto, concorrência e overhead influenciam memória. Medir tarefas seguras representativas no host real antes de escolher um modelo.
+A instalação tem anotações compartilhadas e gerenciamento local de desenvolvimento, não identidade pública. Política de produção, exposição externa e propriedade individual exigiriam desenho explícito. Adapter Windows nativo não está implementado; o ambiente documentado é WSL2. Cobertura mais ampla, integração de recuperação e garantias de desempenho são questões para validar, não aceitações atuais.
 
-## Consistência e separação pública/privada
-
-Um adaptador de ingestão deve impor raízes permitidas sem atravessar symlinks externos, excluir credenciais/dados/backups e distinguir código implementado, evidência datada, justificativa documentada e melhoria proposta. São proteções propostas, não uma fronteira de segurança implantada. O catálogo documental atual é privado. Para a versão pública separada planejada, separar entradas, saídas e política de acesso privadas dos artefatos públicos; não presumir que um modelo consegue remover segredos de forma confiável. Uma citação permite rastrear, mas não estabelece veracidade por si só.
-
-Desafios abertos: divergência entre código e documentação; marcos históricos conflitantes; significado da tradução além da equivalência de caminhos; links/âncoras Markdown robustos; revisão de alucinações; preservação de material autoral; recursos limitados de inferência; publicação segura. Próxima ordem sugerida: manter catálogo/leitor existentes → resolver lacunas observadas de uso/evidência → delimitar experimentos de ingestão/inferência. É planejamento, sem compromisso de lançamento.
+Veja [decisões e compromissos](decisions.md) e [limitações do MakeDocs](../training/local-documentation-command.md). Preserve relatórios datados como histórico, sem transformar resultados antigos em verificações atuais.

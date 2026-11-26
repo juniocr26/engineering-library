@@ -1,6 +1,6 @@
 import 'server-only';
 import type { Language } from './i18n';
-export type Project = { id?: string; slug: string; name: string; description: string; categories?: { name: string; url: string }[] };
+export type Project = { id?: string; browserReference?: string; slug: string; name: string; description: string; categories?: { name: string; url: string }[] };
 export type CatalogPage = { projects: Project[]; pagination: { page: number; total_pages: number; total_projects: number; page_size: number } };
 export const backend = process.env.BACKEND_URL ?? 'http://backend:3000';
 export async function catalogRequest<T>(path: string, language: Language): Promise<T> {

@@ -1,13 +1,13 @@
-# Contrato de configuração sem valores
+# Contrato de configuração sem valores privados
 
-Revisado em 04/11/2026 por declarações do código, sem abrir dotenv, credenciais, dados runtime ou arquivos de assinatura. Exigências por funcionalidade diferem de requisitos de boot. Referência env() sozinha não torna uma variável globalmente obrigatória.
+[Referência de ambiente](index.md) · [Operação e recuperação](../operations/runtime-and-recovery.md)
 
-| Chave / entrada | Contrato |
-| --- | --- |
-| `POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, SECRET_KEY_BASE` | Exigidos pelo Compose existente; valores privados da instalação |
-| `FRONTEND_PORT, BACKEND_PORT, POSTGRES_PORT` | Bindings opcionais do host: defaults 3099/3098/5499 em loopback |
-| `LOCAL_UID, LOCAL_GID` | Identidade opcional de desenvolvimento default 1000:1000; não implica reparo recursivo |
-| `CATALOG_ROOT, DOCUMENTATION_ROOT` | Montagens catálogo/leitor; Compose fornece localizações nos containers |
+A configuração atual tem três consumidores: interpolação Compose, processos nos containers e adapter POSIX no host. Eles não compartilham automaticamente todas as variáveis. Uma declaração no código não torna uma entrada globalmente obrigatória.
 
+- Compose exige usuário/senha/banco PostgreSQL e segredo Rails, com portas padrão loopback. O launcher preserva `.env` existente.
+- Caminhos nos containers identificam biblioteca/agente montados e endpoints internos. Não são caminhos de origem do host apresentados ao usuário.
+- Referências do host são relativas ao checkout da biblioteca. O adapter verifica identidade e limita aquisição/publicação; mudar mounts não é o fluxo normal de cadastro.
+- Identidades aprovadas de modelo/skills limitam a geração. Limites, cobertura e publicação não comprovam aceitação editorial ou fine-tuning concluído.
+- Startup executa preparação do banco e sincronização do catálogo. Use análise somente leitura quando mutações no banco estiverem fora do escopo.
 
-Use configuração/guia de ambiente/runbook existentes para alterações operacionais. Nunca cole valores privados no catálogo, copie ambiente efetivo ou execute atualizador mutante como verificação documental. Nenhum arquivo de ambiente, variável, esquema ou serviço foi alterado.
+As [tabelas de ambiente](index.md) registram defaults, faixas e consumidores atuais. Valores efetivos privados, credenciais e caminhos particulares da máquina não pertencem à documentação. Revisões datadas permanecem históricas; os contratos atuais do código prevalecem.

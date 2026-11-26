@@ -1,3 +1,4 @@
+import { validProjectDirectory } from './catalog-paths.ts';
 import { collectionPath, languageDirectory } from './catalog-paths.ts';
 import type { Language } from './i18n.ts';
 
@@ -29,17 +30,17 @@ export function resolveDocumentLink(project: string, document: string, language:
     const target = href.startsWith(repository)
       ? new URL(`https://reader.invalid/workspace/engineering-library/docs/${href.slice(repository.length)}`)
       : github ? new URL(`https://reader.invalid/workspace/${github[1]}/${github[2]}`)
-      : new URL(href, `https://reader.invalid/workspace/engineering-library/docs/${collectionPath(project, sourcePath(document, language))}`);
+      : new URL(href, `https://reader.invalid/workspace/engineering-library/docs/${collectionPath(project, sourcePath(document, language)).split('/').map(encodeURIComponent).join('/')}`);
     const pathname = decodeURIComponent(target.pathname);
     if (/[\\\0]/.test(pathname)) return undefined;
     const prefix = '/workspace/engineering-library/docs/';
     const physical = pathname.startsWith(prefix) ? pathname.slice(prefix.length) : '';
-    if (/^[a-z0-9-]+\/(?:img|(?:en|pt-br)\/img)\/.+\.(png|jpe?g|gif|webp|svg)$/i.test(physical)) return `/api/shared-assets/${physical.split('/').map(encodeURIComponent).join('/')}`;
-    const local = physical.match(/^([a-z0-9-]+)\/(en|pt-br)\/(.+)$/);
+    if (/^[^/]+\/(?:img|(?:en|pt-br)\/img)\/.+\.(png|jpe?g|gif|webp|svg)$/i.test(physical)) return `/api/shared-assets/${physical.split('/').map(encodeURIComponent).join('/')}`;
+    const local = physical.match(/^([^/]+)\/(en|pt-br)\/(.+)$/);
     const peer = !physical ? pathname.match(/^\/workspace\/([a-z0-9-]+)\/(.+)$/) : null;
     const slug = local?.[1] ?? peer?.[1];
     const relative = local ? `${local[2]}/${local[3]}` : peer?.[2];
-    if (!slug || !relative || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return undefined;
+    if (!slug || !relative || !validProjectDirectory(slug)) return undefined;
     if (image) return /\.(png|jpe?g|gif|webp|svg)$/i.test(relative) ? `/api/document-assets/${[slug, ...relative.split('/')].map(encodeURIComponent).join('/')}` : undefined;
     let id: string; let lang = language;
     if (peer && (relative === 'README.md' || relative === 'README.pt-BR.md')) {

@@ -2,17 +2,26 @@ require_relative '../../../lib/documentation/catalog'
 require_relative '../../../lib/documentation/catalog_management'
 module Catalog
   class Sync
-    def self.call
-      if Documentation::Locations.new(Files.root).state.join('removal.pending.json').exist?
+    def self.call(recover: true, wait: true)
+      if recover
         manager = Documentation::CatalogManagement.new(Files.root)
-        manager.lock { manager.recover_removal }
+        begin
+          return manager.lock(wait: wait) do
+            manager.recover_removal
+            call(recover: false)
+          end
+        rescue ArgumentError => error
+          # Reads retain the last validated index while an operation owns the lock.
+          return { deferred: true } if !wait && error.message == 'Another catalog operation is running'
+          raise
+        end
       end
       entries = []
       errors = []
       catalog = Documentation::Catalog.new(Files.root)
       registered = catalog.read.fetch('projects').select { |entry| entry['enabled'] }.index_by { |entry| entry['slug'] }
       Files.root.children.sort.each do |directory|
-        next unless directory.directory? && !directory.symlink? && Files::SLUG.match?(directory.basename.to_s)
+        next unless directory.directory? && !directory.symlink? && Documentation::Catalog::PROJECT_DIRECTORY.match?(directory.basename.to_s)
         next unless directory.join("en/bio.md").file? || directory.join("pt-br/bio.md").file?
         slug = directory.basename.to_s
         next if registered && !registered.key?(slug)
@@ -34,6 +43,19 @@ module Catalog
       CatalogProject.transaction do
         CatalogProject.connection.execute("SELECT pg_advisory_xact_lock(68712401)")
         entries.each do |attributes|
+          occupied = CatalogProject.find_by(slug: attributes[:slug])
+          if occupied && occupied.stable_id != attributes[:stable_id]
+            raise ArgumentError, 'Conflicting active catalog identities' if entries.any? { |entry| entry[:stable_id] == occupied.stable_id }
+            # Retain the retired identity without reserving a newly registered directory forever.
+            prefix = "retired-#{occupied.id}-#{Digest::SHA256.hexdigest(occupied.stable_id)[0, 16]}"
+            retired = prefix
+            suffix = 0
+            while CatalogProject.exists?(slug: retired)
+              suffix += 1
+              retired = "#{prefix}-#{suffix}"
+            end
+            occupied.update!(slug: retired, active: false)
+          end
           record = CatalogProject.find_or_initialize_by(stable_id: attributes[:stable_id])
           record.assign_attributes(attributes.merge(active: true))
           record.save! if record.new_record? || record.changed?

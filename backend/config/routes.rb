@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
   namespace :api do
     get 'catalog_management', to: 'catalog_management#show'
-    get 'catalog_management/directories', to: 'catalog_management#directories'
     get 'catalog_management/:id', to: 'catalog_management#show'
-    post 'catalog_management/:action_name', to: 'catalog_management#create', constraints: { action_name: /add|update|remove/ }
+    post 'catalog_management/:action_name', to: 'catalog_management#create', constraints: { action_name: /add|update|remove|acknowledge/ }
     resources :annotations, only: [:index]
     if Rails.env.development?
       get 'note_demos', to: 'note_demos#index'
@@ -12,7 +11,7 @@ Rails.application.routes.draw do
     resources :notes, only: [:index, :create, :update, :destroy]
     resources :highlights, only: [:index, :create, :update, :destroy]
     resources :bookmarks, only: [:index, :create, :destroy]
-    resources :projects, only: [:index, :show] do
+    resources :projects, only: [:index, :show], constraints: { id: /[^\/]+/ }, format: false do
       get :icon, on: :member
     end
   end
@@ -20,7 +19,7 @@ Rails.application.routes.draw do
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  get "up" => "runtime_health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
   # root "posts#index"

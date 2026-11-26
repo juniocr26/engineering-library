@@ -8,3 +8,5 @@
 - [Referências de código incorporadas](source-references.md)
 
 - [Engineering Library: catálogo privado, leitor e anotações compartilhadas](current-implementation.md)
+
+- [Decisões arquiteturais e compromissos](decisions.md)

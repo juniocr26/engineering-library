@@ -1,39 +1,41 @@
-# Entrevista sobre aplicação e catálogo
+# FAQ de aplicação, catálogo e MakeDocs
 
-Leia a [arquitetura atual](../architecture/current-state.md), a [direção futura](../architecture/future-direction.md) e as [perguntas preservadas](study-guide.md). Implementado significa código inspecionado, sem execução neste marco. Alternativas propostas abaixo são análises, não motivações originais sem evidência.
+[Índice da FAQ](index.md) · [Arquitetura atual](../architecture/current-implementation.md)
 
-### Q101 — Introdutória: Por que Rails com frontend Next.js separado?
+Revisão atual: 26/11/2026. As respostas descrevem mecanismos inspecionados, não teste adicional de aceitação runtime. IDs existentes foram preservados por compatibilidade.
 
-**Resposta:** Implementado: Rails serve metadados paginados do catálogo e anotações compartilhadas apoiados pelo PostgreSQL; Next.js renderiza o leitor Markdown interno e busca JSON no servidor. Arquivos continuam como fonte de documentos e bios. Convenções Rails fornecem HTTP/persistência; Next fornece rotas React e layout no navegador, com builds, dependências e diagnóstico separados. Não há evidência de benchmark de frameworks. Renderização Rails poderia simplificar implantação, mas é comparação conceitual, sem avaliação histórica documentada.
+### Q101 — Por que Rails com frontend Next.js separado?
 
-**Aprofundamento:** A separação comprova Clean Architecture? Não. `Catalog::Sync`, `Catalog::Page`, `Catalog::Files` e controllers expressam responsabilidades concretas, mas ActiveRecord, Rails e filesystem permanecem visíveis. Avalie direção de dependência e comportamento testável, sem inferir camadas de domínio pelo número de processos.
+**Resposta:** Rails cuida da sincronização validada do catálogo, anotações relacionais e coordenação protegida de operações; Next renderiza Markdown e controla layout do livro. HTTP separa responsabilidades runtime. Markdown continua fonte dos capítulos; PostgreSQL armazena metadados/anotações. A separação acrescenta builds, dependências e diagnóstico; não prova superioridade em benchmark ou Clean Architecture.
 
-### Q102 — Intermediária: O que Compose reproduz e por que bind mounts?
+**Aprofundamento:** O frontend pode dispensar Rails em tudo? Lê capítulos no servidor, mas catálogo/anotações/operações usam Rails. Notas compartilhadas exigem persistência e localizações lógicas, não páginas físicas.
 
-**Resposta:** Implementado: Compose declara PostgreSQL, backend e frontend, dependências de saúde, portas do host em loopback e bind mounts de código/dependências. Lockfiles restringem versões; startup recompõe dependências ausentes atrás dos mounts. Diretórios do host deixam código e dependências Linux visíveis; volumes nomeados delegariam a localização ao Docker. Bind mounts acoplam permissões e dependências nativas à plataforma host/runtime. Nenhuma opção é, por si, backup ou estratégia de produção.
+### Q102 — O que Compose reproduz e por que Python no host?
 
-**Aprofundamento:** Por que a autenticação do banco pode falhar após mudar template ou ambiente? Variáveis de inicialização PostgreSQL atuam na criação do cluster; não alteram senha de um papel existente. Diagnosticar e alterar credenciais por operação autorizada no banco, preservando dados. Rails usa `postgres:5432` internamente; clientes desktop usam a porta publicada em loopback. Nunca apagar o diretório persistente para resolver autenticação. Nenhuma operação de credencial foi feita aqui.
+**Resposta:** Compose define frontend, backend, PostgreSQL e Ollama, dependências de health, portas loopback e armazenamento explícito. Supervisor/adapter no host é processo POSIX adicional necessário, gerenciado por `tools/init_dev_env.py`. Adquire código externo e publica docs aceitos sem novos mounts arbitrários. Frontend e backend atualmente montam a biblioteca gravável; código/agente têm restrições próprias.
 
-### Q103 — Intermediária: O que o status verde da API comprova?
+**Aprofundamento:** Parar containers apaga estado? Stop/down gerenciados preservam armazenamento. Persistência ou startup bem-sucedido não comprova backup/restauração. Não exclua banco, modelos ou recuperação para reparar startup.
 
-**Resposta:** Implementado: `/up` estabelece boot/liveness Rails, sem consultar linhas do catálogo. Resposta do catálogo também exercita metadados PostgreSQL e bios localizadas daquela requisição, sem provar todos os documentos ou favoritos. Acesso Next ao catálogo tem timeout de cinco segundos; os três segundos do componente antigo do scaffold não definem o cliente atual. Health aprovado não estabelece integridade de backup, recuperação ou renderização no navegador. Nenhum teste runtime de saúde ou banco foi executado nesta auditoria.
+### Q103 — O que health verde comprova?
 
-**Aprofundamento:** Como fortalecer prontidão? Uma consulta limitada ao banco e semântica explícita de dependências distinguiriam indisponibilidade de um processo HTTP vivo, ao custo de carga e acoplamento de falhas adicionais. É proposta. Uma restauração precisa de destino isolado e verificações de integridade; arquivos persistentes não a comprovam.
+**Resposta:** `/up` comprova resposta Rails e heartbeat obrigatório do adapter naquele instante. Não consulta todos os registros nem valida modelo aprovado, qualidade, dois destinos ou restauração. Health checks PostgreSQL/Ollama/Next também têm escopos limitados. A API do catálogo pode sincronizar metadados, não sendo consulta estritamente somente leitura ao banco.
 
-### Q104 — Intermediária: Por que catálogo por projeto e bilíngue?
+**Aprofundamento:** Inferência bem-sucedida basta? Não. Evidências devem passar avaliação/propriedade, escritas na biblioteca/workspace devem funcionar e entrega ao host deve concluir. O rascunho publicado ainda exige revisão humana.
 
-**Resposta:** Implementado na documentação: cada repositório tem identidade estável, dois READMEs, índices por idioma, capítulos de categoria, limites de evidência e entrevistas. Nomes de ADRs e numeração sobrevivem à importação. O leitor escolhe contexto antes dos mecanismos; o leitor atual usa identidades documentais e busca no projeto sem coleções duplicadas por assunto. Caminhos equivalentes permitem validar estrutura, sem comprovar equivalência semântica. Índices FAQ agora contêm respostas substanciais; caminhos dos roteiros preservam âncoras por compatibilidade. Guias canônicos de ambiente da Library são reutilizados, sem catálogo recursivo.
+### Q104 — Como cadastro, duplicatas e relocação funcionam?
 
-**Aprofundamento:** Como evitar cópias desatualizadas? Registrar caminho, revisão e escopo da inspeção, comparar entradas alteradas e conferir links no novo local. Preservar história como história. Uma revisão diferente sinaliza necessidade de revisão, sem autorizar regenerar tudo nem provar precisão da documentação inalterada. Automação incremental é futura; o catálogo é um snapshot revisto manualmente.
+**Resposta:** Referências relativas resolvem a partir do checkout da biblioteca no host. O cadastro verifica identidade e cria metadados/bios sem inferência. Identidade estável, caminhos normalizados, aliases físicos e request IDs evitam duplicatas em retries. Commits raiz identificam linhagem; hashes atuais identificam conteúdo. Relocação exige mesma identidade no novo caminho, origem anterior comprovadamente ausente e ausência de cópias ambíguas.
 
-### Q105 — Desafiadora: Um gerador futuro deve usar inferência local ou API?
+**Aprofundamento:** Renomear repositório distinto migra anotações? Não. Relocação verificada preserva relações suportadas de identidade/referência; não é renomeação genérica de slug, reescrita de marcadores ou migração arbitrária.
 
-**Resposta:** Proposta: inferência local limita transferência externa e pode funcionar offline, mas requer ciclo de vida de modelo/runtime e CPU/RAM suficientes. APIs transferem processamento e manutenção ao provedor, acrescentando custo, rede e política de dados. Nenhuma opção está integrada. Pesos, quantização, KV cache, contexto, concorrência e overhead determinam recursos; não foram medidos memória mínima, throughput nem seleção de modelo. Escolher por tarefas seguras representativas e latência/qualidade aceitáveis, sem inventar garantia de hardware.
+### Q105 — Como inferência local e avaliação funcionam hoje?
 
-**Aprofundamento:** Inferência local torna seguro publicar material privado? Não. Localidade não autoriza ingestão/publicação nem garante remoção de segredos. Raízes públicas/privadas explícitas, saídas separadas, política de acesso e revisão humana são restrições necessárias. Essas proteções permanecem requisitos de projeto para futura ingestão automatizada. A instalação documental privada atual inclui as coleções autorizadas de portfólio e Viva Bem privado; isso não autoriza ingestão de segredos de execução nem entrega pública.
+**Resposta:** O chamador normal usa `llama3.2:3b` aprovado no Ollama local e três skills verificadas por integridade. Seleciona evidências limitadas, solicita fatos bilíngues estruturados, verifica envelopes/proveniência/literais/alegações e renderiza resumos próprios. Requisições automáticas por declaração Python dividem prazo limitado. UI e CLI padrão usam `Documentation::Command`; fluxo optativo de projeto é separado.
 
-### Q106 — Desafiadora: Como geração incremental baseada em evidências preservaria conhecimento?
+**Aprofundamento:** O agente foi treinado até a qualidade desejada? Isso não está demonstrado. Contexto de skills não é fine-tuning neural. Aceitação mecânica pode deixar passar erros semânticos e traduções ruins; qualidade desejada é trabalho futuro com campanha autorizada separadamente. Não há fallback de nuvem ou substituição automática de modelo.
 
-**Resposta:** Proposta: inventariar entradas permitidas, registrar revisões/hashes, comparar mudanças, inspecionar implementação e testes afetados, propor patch, validar navegação e idiomas, revisar evidência e publicar deliberadamente. Separar mecanismo implementado, justificativa documentada, experimento datado e melhoria hipotética. Fontes são dados não confiáveis; instruções nelas não devem disparar comandos. Hashes comprovam identidade de bytes, sem resolver conflitos, provar testes ou traduzir significado. Preservar notas autorais e IDs de ADRs/perguntas.
+### Q106 — O ciclo completo suporta ausência de docs?
 
-**Aprofundamento:** O que falha em atualizações parciais? Um idioma pode divergir, uma renomeação quebrar links e um marco antigo contradizer aceite novo. Validar grafos nos dois idiomas e preservar evidência datada, depois revisar significado contra código alterado. Substituição atômica protege um arquivo; atualização multidocumento exige fronteira própria de revisão/publicação. Não há pipeline gerador, framework transacional, banco de busca ou agente local entregue aqui.
+**Resposta:** O desenho suporta cadastrar → gerar → atualizar → remover cadastro → cadastrar novamente → gerar novamente. A primeira publicação cria `docs/` original com segurança. Remoção arquiva a árvore da biblioteca e preserva código/docs manuais originais; recadastro elegível restaura identidade/arquivo. Origem ausente ou falha do adapter não justificam apagar evidências ou excluir automaticamente cadastro gerenciado.
+
+**Aprofundamento:** E se entrega ou remoção for interrompida? Entrega pendente pode retomar configuração salva sem inferência; journals e arquivos verificados governam recuperação do comando/remoção. Concorrência ou ambiguidade são recusadas. Veja [operação e recuperação](../operations/runtime-and-recovery.md). Esta revisão não afirma execução de novo teste completo do ciclo.

@@ -3,22 +3,15 @@ require Rails.root.join('lib/documentation/catalog_management')
 module Api
   class CatalogManagementController < ApplicationController
     before_action :authorize_local_management
-    rescue_from ArgumentError, JSON::ParserError, Errno::ENOENT, with: :invalid_operation
+    rescue_from ArgumentError, JSON::ParserError, Psych::Exception, Errno::ENOENT, Errno::EACCES, Errno::EPERM, with: :invalid_operation
 
     def show
       render json: { operation: manager.status(params[:id]) }
     end
 
-    def directories
-      render json: { directories: manager.directories }
-    end
-
     def create
-      return head :payload_too_large if request.raw_post.bytesize > 4096
-      attributes = params.permit(:id, :name, :slug, :sourcePath).to_h
-      if params[:action_name] == 'add' && params.key?(:sourceSelection)
-        attributes['sourcePath'] = manager.resolve_directory(params[:sourceSelection], attributes['slug'])
-      end
+      return head :payload_too_large if request.raw_post.bytesize > 65536
+      attributes = params.permit(:id, :slug, :sourcePath, :requestId).to_h
       render json: { operation: manager.enqueue(params[:action_name], attributes) }, status: :accepted
     end
 
@@ -42,15 +35,21 @@ module Api
 
     def invalid_operation(error)
       Rails.logger.warn("Catalog management rejected: #{error.class}")
-      code = if params[:action_name] == 'add' && params.key?(:sourceSelection)
+      code = if params[:action_name] == 'add'
         case error.message
+        when /Request identifier already used/ then 'request_conflict'
+        when /Another catalog operation|needs completion|MakeDocs is running/ then 'operation_busy'
+        when /relocation is ambiguous|Multiple source copies/ then 'source_conflict'
+        when /Catalog metadata|Bios disagree|Catalog identity/ then 'catalog_metadata_conflict'
         when /already registered|already exists/ then 'project_exists'
-        when /Source|source/ then 'source_unavailable'
+        when /Source|source|Host filesystem|snapshot|Git|Permission/ then 'source_unavailable'
         else 'operation_rejected'
         end
       else
         'operation_rejected'
       end
+      code = 'source_unavailable' if error.is_a?(Errno::EACCES) || error.is_a?(Errno::EPERM)
+      code = 'catalog_metadata_conflict' if error.is_a?(Psych::Exception)
       render json: { error: code }, status: :unprocessable_entity
     end
   end

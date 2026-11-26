@@ -1,6 +1,6 @@
 module Api
   class ProjectsController < ApplicationController
-    before_action -> { Catalog::Sync.call if Catalog::Files.root.join('.catalog.json').exist? || Catalog::Files.root.join('.catalog.json').symlink? }, only: [:show, :icon]
+    before_action -> { Catalog::Sync.call(wait: false) if Catalog::Files.root.join('.catalog.json').exist? || Catalog::Files.root.join('.catalog.json').symlink? }, only: [:show, :icon]
     rescue_from ArgumentError, Errno::ENOENT, Psych::Exception, with: :catalog_unavailable
     def index
       result = Catalog::Page.call(params[:page])

@@ -1,3 +1,4 @@
+import { validProjectDirectory } from '../../../../lib/catalog-paths.ts';
 import { realpath, readFile } from 'node:fs/promises';
 import path from 'node:path';
 const documentationRoot = () => process.env.DOCUMENTATION_ROOT ?? path.resolve(process.cwd(), '../docs');
@@ -8,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pat
   const mime = types[parts.at(-1)?.split('.').at(-1)?.toLowerCase() ?? ''];
   if (!mime) return new Response(null, { status: 404 });
   try {
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(parts[0]) || !(parts[1] === 'img' || (['en', 'pt-br'].includes(parts[1]) && parts[2] === 'img'))) return new Response(null, { status: 404 });
+    if (!validProjectDirectory(parts[0]) || !(parts[1] === 'img' || (['en', 'pt-br'].includes(parts[1]) && parts[2] === 'img'))) return new Response(null, { status: 404 });
     const catalog = await realpath(documentationRoot());
     const project = await realpath(path.join(catalog, parts[0]));
     if (!project.startsWith(catalog + path.sep)) return new Response(null, { status: 404 });

@@ -17,3 +17,5 @@
 - [navigation-audit](validation/navigation-audit.md)
 
 - [2026-11-04: documentation modernization / modernização documental](documentation-modernization-2026-11-04.md)
+
+- [Runtime, filesystem publication and recovery](runtime-and-recovery.md)

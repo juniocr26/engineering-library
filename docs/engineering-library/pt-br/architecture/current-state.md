@@ -1,55 +1,41 @@
 # Engineering Library: arquitetura atual
 
-## Layout documental — 29/10/2026
+[Índice de arquitetura](index.md) · [Implementação detalhada](current-implementation.md)
 
-Rails e Next.js resolvem as coleções a partir da raiz docs. O idioma da API/leitor permanece `pt-BR`; seu diretório físico é `pt-br`. Não há alteração de schema nem dos identificadores persistidos de anotações.
+<!-- reading-section: current-state-1 -->
+## Estrutura documental
 
-| Content / Conteúdo | Path / Caminho |
+Referência atual: 26/11/2026, código `246f58be`. Engineering Library é repositório privado da Viva Bem para uso interno autorizado. Afirmações históricas de scaffold ou anteriores ao Ollama não descrevem a implementação atual.
+
+| Conteúdo | Caminho relativo ao checkout |
 | --- | --- |
-| English chapters | `docs/<slug>/en/` |
-| Capítulos em português | `docs/<slug>/pt-br/` |
-| Shared images / Imagens compartilhadas | `docs/<slug>/img/` |
-| Localized images / Imagens por idioma | `docs/<slug>/en/img/`, `docs/<slug>/pt-br/img/` |
-| Approved source snapshots / Snapshots aprovados | `docs/<slug>/en/links/` |
+| Capítulos ingleses | `docs/<slug>/en/` |
+| Capítulos em português brasileiro | `docs/<slug>/pt-br/` |
+| Imagens comuns / localizadas | `docs/<slug>/img/`, diretórios `img/` por idioma |
+| Catálogo aprovado de referências de código | `docs/<slug>/en/links/` |
+| Metadados de cadastro | `docs/.catalog.json` e bios localizadas |
+| Operação/recuperação privada | `backend/storage/makedocs/` |
 
-`CATALOG_ROOT` e `DOCUMENTATION_ROOT` apontam para `/docs` no Compose. O bind mount documental do backend acompanha essa raiz; volumes de banco, credenciais e portas da aplicação permanecem iguais. Este checkout parceiro-vivabem é privado. Coleções do produto privado não podem ser copiadas para o portfólio público separado.
+O idioma de API `pt-BR` corresponde ao diretório `pt-br`. PostgreSQL armazena metadados/anotações compartilhadas; Markdown contém os capítulos. Rails e Next usam `/docs` no Compose, atualmente gravável nos dois serviços. Identidades de anotações são lógicas, não páginas físicas.
 
-Revisão estática do código: 2026-10-19. Esta página descreve a árvore atual; descrições históricas do scaffold foram superadas. [Frontend em formato de livro e catálogo](../guides/book-frontend.md) detalha o leitor.
-
-## Propósito e limites da evidência
-
-A biblioteca mantém explicações de engenharia, FAQs e evidências em dois idiomas. Markdown em `docs/` define documentos e bios. Rails serve metadados e anotações compartilhadas; Next.js renderiza o livro interno. Foram examinados código e definições de testes, sem iniciar serviços ou executar testes dependentes de banco. Não se estabelece implantação em produção, capacidade medida ou agente de IA.
-
+<!-- reading-section: current-state-2 -->
 ## Base implementada
 
-`backend/config/routes.rb` expõe `GET /api/projects`, `GET /api/projects/:id`, ícones e listagem/criação/exclusão de favoritos, além de `/up`. `CatalogProject` e `Bookmark` possuem schema PostgreSQL, validações e índices reais. `/up` indica boot do Rails; não consulta o catálogo nem comprova prontidão do PostgreSQL.
+Next.js fornece catálogo, paginação física, capítulos, busca, diagramas e referências aprovadas de código. Rails fornece metadados paginados, notas/destaques/marcadores compartilhados e gerenciamento protegido em desenvolvimento. PostgreSQL persiste esses registros. Não existem contas pessoais nem conjuntos privados de anotações por usuário.
 
-`Catalog::Sync` percorre diretórios, valida concordância de identidade/nome entre bios e duplicidade de IDs estáveis antes das escritas. Um advisory lock transacional serializa atualizações no banco; registros são encontrados por `stable_id`, renomeados por slug e desativados quando ausentes. Registros inalterados evitam escrita. Erros de validação preservam o último índice válido. A transação não congela arquivos: mantenha-os estáveis durante a sincronização. Editar documentos Markdown dispensa ingestão no banco; editar metadados exige `catalog:sync` explícito.
+Estão implementados pipeline Ollama local, cadastro explícito, relocação verificada, retries idempotentes, remoção preservadora, adapter supervisionado no host e publicação recuperável de rascunhos em dois destinos. UI e CLI normais reutilizam o mesmo comando. `/up` verifica resposta Rails e adapter obrigatório; não certifica integridade do banco ou qualidade semântica.
 
-`Catalog::Page` seleciona registros ativos em páginas fixas de cinco, na ordem determinística `lower(display_name) COLLATE "C", stable_id`. Paginação por offset é simples e apoiada por índice, mas não forma snapshot entre requisições durante mudanças. Next busca JSON no servidor com `cache: 'no-store'` e timeout de cinco segundos. Sua leitura dos arquivos da coleção é separada da API de metadados Rails.
+<!-- reading-section: current-state-3 -->
+## Evidências e limites abertos
 
-`compose.yaml` define PostgreSQL, Rails e Next. Portas são publicadas em loopback. Dados PostgreSQL usam `.dockerized-postgres` do host: persistência, sem backup validado. Rails recebe a coleção documental somente para leitura; frontend tem `/docs` gravável para manutenção explícita de snapshots e o workspace `/sources` somente para leitura. Diretórios de dependências/build são bind mounts de desenvolvimento. Dependências de health na partida não implementam recuperação automática da aplicação diante de toda falha posterior.
+MakeDocs está operacional; cobertura, redação factual e tradução ainda têm limitações e exigem revisão. Não implica aceitação integral do livro, endurecimento de produção, RAG universal ou fine-tuning neural concluído. Esta revisão analisa código e não reexecuta geração ou treinamento.
 
-## Responsabilidades e trade-offs
+Consulte [arquitetura detalhada](current-implementation.md), [desenvolvimento](../guides/application-development.md), [pipeline MakeDocs](../training/local-documentation-command.md), [recuperação](../operations/runtime-and-recovery.md), [decisões](decisions.md) e [FAQ](../faq/application-and-catalog.md). Auditorias datadas permanecem em [operações](../operations/index.md).
 
-Rails controla metadados indexados, paginação do catálogo e persistência de favoritos. Next controla Markdown, ordem lógica dos documentos e paginação física medida no navegador. Conteúdo de arquivos e metadados do banco têm fronteiras de consistência diferentes. `Catalog::Files.read` resolve caminhos reais dentro do projeto validado; `collectionFile` aplica verificações próprias no Next. Nenhuma delas constitui sandbox livre de corrida em filesystem hostil.
-
-Engineering Library usa um conjunto local compartilhado de anotações PostgreSQL, organizado por projeto, documento e idioma, sem contas, sessões ou perfis de leitor. Navegadores independentes leem e alteram as mesmas anotações. GET retorna token CSRF da aplicação com expiração; mutações exigem `X-Annotation-CSRF` e o proxy Next verifica Origin. O idioma continua obrigatório. Âncoras lógicas independem de páginas físicas; sua existência é conferida ao navegar, com aviso explícito para posição indisponível.
-
-## Contrato do catálogo
-
-Navegação: Biblioteca → Projeto → Idioma → Categoria → Documento. `documentationEntries` une IDs relativos dos dois idiomas, ordena deterministicamente, omite índices apenas navegacionais e mantém índices substanciais. Traduções ausentes não têm destino. `reading-order.ts` deriva vizinhos das mesmas entradas. Páginas físicas dependem de fontes, diagramas, imagens e viewport; URLs/favoritos usam documento/âncora lógica, sem persistir números físicos.
-
-Respostas técnicas ficam diretamente em `faq/index.md`. Caminhos `study-guide.md` e âncoras anteriores permanecem por compatibilidade. Expansões de código usam snapshots aprovados endereçados por conteúdo, sem leitura arbitrária de repositórios irmãos em runtime; veja [referências de código](source-references.md). Adicionar links de código não aprova nem regenera seus snapshots automaticamente.
-
-## Segurança e evidência pendente
-
-Este catálogo privado centraliza documentação das duas coleções autorizadas de portfólio e Viva Bem privado. As anotações compartilhadas destinam-se a esta instalação local; não há autenticação de contas ou autorização de biblioteca privada. Validação CSRF e verificações de origem protegem mutações do navegador sem estabelecer identidade de usuário. Rejeição de padrões SVG e triagem de snapshots são medidas defensivas, sem garantia genérica de sanitização.
-
-O validador atual verifica links locais, âncoras, idiomas, IDs Q, títulos preservados e alcance. Não comprova tradução, paginação runtime, URLs externas ou prontidão de implantação. Definições de testes cobrem sincronização, paginação, travessia de caminhos, acesso compartilhado e separação por idioma e CSRF; ler esses testes não significa executá-los.
-
-Evidências: `backend/app/services/catalog/{files,sync,page,presenter}.rb`, `backend/app/controllers/api/{projects,bookmarks}_controller.rb`, `backend/db/schema.rb`, `backend/test/models/catalog_test.rb`, `backend/test/integration/{catalog_api,bookmarks_api}_test.rb`, `frontend/lib/{catalog,documentation,document-links}.ts` e `compose.yaml`. Veja [escopo da auditoria e pendências](../operations/documentation-audit-2026-10-19.md).
-
+<!-- reading-section: shared-annotation-migration -->
 ## Migração de anotações compartilhadas
+
+Registro histórico preservado da revisão anterior; as contagens não são nova medição do banco.
+
 
 Em 20/10/2026, o banco local manteve 60 notas, 60 destaques e 12 marcações durante a migração em duas fases. IDs, corpos, trechos e chaves estrangeiras são preservados. Em conflitos de chave de seed, o menor ID mantém a chave canônica; os seguintes recebem o prefixo determinístico `__legacy_demo__<id>:`. Continuam identificados para limpeza, sem mesclar notas distintas. A migração é irreversível porque a propriedade removida não pode ser reconstruída. Faça backup restrito antes de aplicá-la. Notas sem destaque mantêm âncoras independentes; listas combinadas usam chaves estrangeiras explícitas, sem inferir vínculos por texto idêntico.

@@ -3,6 +3,7 @@ require_relative 'catalog'
 require 'fileutils'
 require 'time'
 require 'rbconfig'
+require 'yaml'
 
 module Documentation
   class CatalogManagement
@@ -17,9 +18,15 @@ module Documentation
       @jobs.mkpath
     end
 
-    def lock(wait: false)
+    def lock(wait: false, timeout: nil)
       File.open(@runtime.join('management.lock'), File::RDWR | File::CREAT | File::NOFOLLOW, 0o600) do |file|
-        raise ArgumentError, 'Another catalog operation is running' unless file.flock(File::LOCK_EX | (wait ? 0 : File::LOCK_NB))
+        acquired = file.flock(File::LOCK_EX | (wait ? 0 : File::LOCK_NB))
+        deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + timeout if timeout && !wait
+        while !acquired && deadline && Process.clock_gettime(Process::CLOCK_MONOTONIC) < deadline
+          sleep 0.02
+          acquired = file.flock(File::LOCK_EX | File::LOCK_NB)
+        end
+        raise ArgumentError, 'Another catalog operation is running' unless acquired
         yield
       end
     end
@@ -42,11 +49,26 @@ module Documentation
 
     def status(id = nil)
       if id.nil?
-        path = @jobs.children.select { |p| p.basename.to_s.match?(/\A[0-9a-f]{32}\.json\z/) }.max_by(&:mtime)
+        paths = @jobs.children.select { |p| p.basename.to_s.match?(/\A[0-9a-f]{32}\.json\z/) && !p.symlink? }.sort_by(&:mtime).reverse
+        path = paths.find { |p| data = JSON.parse(p.read); !TERMINAL.include?(data['state']) || data['delivery'] == 'pending' } ||
+          paths.find { |p| data = JSON.parse(p.read); data['removalReason'] == 'source_missing' && !data['notificationAcknowledged'] } || paths.first
         return nil unless path
         id = path.basename('.json').to_s
       end
       job = read_job(id)
+      receipt = @jobs.join(id + '.removal.json')
+      if job['action'] == 'remove' && %w[queued running interrupted].include?(job['state']) && receipt.file? && !receipt.symlink?
+        record = JSON.parse(receipt.read)
+        archive = @jobs.join(id + '.removed')
+        completed = record['job'] == id && record['slug'] == job.dig('entry', 'slug') && record['archive'] == id + '.removed' &&
+          archive.directory? && !archive.symlink? && record['archive_sha256'] == document_tree_hash(archive) &&
+          !@catalog.read['projects'].any? { |entry| entry['id'] == job['projectId'] } && !@catalog.root.join(record['slug']).exist?
+        if completed
+          job.merge!('state' => 'completed', 'phase' => 'completed')
+          job.delete('error')
+          save(job)
+        end
+      end
       unless TERMINAL.include?(job['state'])
         begin
           Process.kill(0, job.fetch('pid'))
@@ -59,7 +81,12 @@ module Documentation
           save(job)
         end
       end
-      job.slice('id', 'action', 'projectId', 'state', 'phase', 'error', 'updatedAt')
+      result = job.slice('id', 'action', 'projectId', 'state', 'phase', 'error', 'updatedAt', 'delivery', 'removalReason', 'notificationAcknowledged', 'coverage', 'review', 'outcome')
+      result['projectName'] = job.dig('entry', 'name')
+      result['projectSlug'] = job.dig('entry', 'slug')
+      result['browserReference'] = job.dig('entry', 'browserReference') if job.dig('entry', 'sourceKind') == 'browser'
+      result['directory'] = job.dig('entry', 'slug') if result['browserReference']
+      result
     end
 
     def boot_identity
@@ -68,67 +95,16 @@ module Documentation
       'local'
     end
 
-    def directory_candidates
-      data = @catalog.read
-      @catalog.source_roots(data).each_with_index.flat_map do |(prefix, root), index|
-        begin
-          next [] unless root.directory? && !root.symlink? && root.readable? && root.executable?
-          root.children.sort.filter_map do |source|
-            name = source.basename.to_s
-            reference = prefix + '/' + name
-            next unless @catalog.portable_source?(reference, data['sourceRoots']) && source.directory? && !source.symlink?
-            next unless source.join('.git').exist? && !source.join('.git').symlink?
-            candidate = { 'directory' => name, 'collection' => index + 1, 'status' => 'unavailable' }
-            begin
-              fingerprint = @catalog.identity(source)
-              existing = data['projects'].find { |entry| entry['sourceIdentity'] == fingerprint || entry['sourcePath'] == reference }
-              slug = existing ? existing['slug'] : name.unicode_normalize(:nfkd).gsub(/\p{Mn}/, '').downcase.gsub(/[^a-z0-9]+/, '-').gsub(/\A-|-(?=\z)/, '')[0, 100].to_s.sub(/-\z/, '')
-              candidate.merge!('id' => Digest::SHA256.hexdigest(JSON.generate([reference, fingerprint])),
-                'name' => existing ? existing['name'] : name, 'slug' => slug,
-                'sourcePath' => reference, 'sourceIdentity' => fingerprint)
-              if existing && existing['enabled']
-                candidate['status'] = 'registered'
-              else
-                documentation_destination({ 'slug' => slug }, source)
-                candidate['status'] = 'ready'
-              end
-            rescue ArgumentError, SystemCallError, IOError
-              candidate['status'] = 'unavailable'
-            end
-            candidate
-          end
-        rescue SystemCallError, IOError
-          []
-        end
-      end
-    end
-
-    def directories
-      directory_candidates.map { |candidate| candidate.slice('id', 'directory', 'collection', 'name', 'slug', 'status') }
-    end
-
-    def resolve_directory(id, slug)
-      raise ArgumentError, 'Invalid directory selection' unless id.is_a?(String) && id.match?(/\A[0-9a-f]{64}\z/)
-      raise ArgumentError, 'Invalid slug' unless slug.is_a?(String) && slug.size <= 100 && Catalog::SLUG.match?(slug)
-      candidate = directory_candidates.find { |item| item['id'] == id }
-      raise ArgumentError, 'Source unavailable' unless candidate
-      raise ArgumentError, 'Project already registered' if candidate['status'] == 'registered'
-      raise ArgumentError, 'Source documentation mount unavailable' unless candidate['status'] == 'ready'
-      source = @catalog.locate(candidate).first
-      documentation_destination({ 'slug' => slug }, source)
-      candidate.fetch('sourcePath')
-    end
-
     def documentation_destination(entry, source)
       slug = entry.fetch('slug')
-      raise ArgumentError, 'Invalid slug' unless slug.is_a?(String) && Catalog::SLUG.match?(slug)
-      destination = Pathname.new('/project-docs').join(slug)
+      raise ArgumentError, 'Invalid slug' unless slug.is_a?(String) && Catalog::PROJECT_DIRECTORY.match?(slug)
+      destination = @catalog.host_filesystem.snapshot?(source) ? source.join('docs') : Pathname.new(ENV.fetch('DOCS_DESTINATIONS', '/project-docs')).join(slug)
       destination = source.join('docs') unless destination.exist? || destination.symlink?
       library_source = @catalog.library_source?(source)
       destination = @catalog.root.join(slug) if library_source
       direct = destination == source.join('docs')
       ready = !destination.symlink? && if !destination.exist?
-        direct && source.writable?
+        (direct && source.writable?) || (library_source && @catalog.root.writable?)
       else
         destination.directory? && destination.writable? && (library_source || direct || File.identical?(destination, source.join('docs')))
       end
@@ -136,12 +112,42 @@ module Documentation
       destination
     end
 
+    def acknowledge(id)
+      lock(wait: true) do
+        job = read_job(id)
+        raise ArgumentError, 'Notification unavailable' unless TERMINAL.include?(job['state']) && job['removalReason'] == 'source_missing'
+        job['notificationAcknowledged'] = true
+        save(job)
+        status(id)
+      end
+    end
+
     def enqueue(action, attributes)
+      return acknowledge(attributes['id']) if action == 'acknowledge'
       raise ArgumentError, 'Invalid operation' unless %w[add update remove].include?(action)
+      return register_project(attributes) if action == 'add'
+      request_id = attributes['requestId']
+      raise ArgumentError, 'Invalid request identifier' if request_id && !(request_id.is_a?(String) && JOB_ID.match?(request_id))
       lock do
         recover_removal
+        if request_id && job_path(request_id).exist?
+          previous = read_job(request_id)
+          raise ArgumentError, 'Request identifier already used' unless previous['action'] == action && previous['projectId'] == attributes['id']
+          return status(request_id)
+        end
         latest = status
-        raise ArgumentError, 'Another catalog operation needs completion' if latest && !TERMINAL.include?(latest['state'])
+        if latest && latest['delivery'] == 'pending' && action == 'update' && latest['projectId'] == attributes['id']
+          pending = read_job(latest.fetch('id'))
+          config = JSON.parse(@jobs.join(pending['id'] + '.config.json').read)
+          source = Pathname.new(config.fetch('projects').first.fetch('source'))
+          @catalog.host_filesystem.publish(source)
+          pending.merge!('delivery' => 'completed', 'state' => 'completed', 'phase' => 'completed')
+          pending.delete('error')
+          pending.delete('errorDetail')
+          save(pending)
+          return status(pending.fetch('id'))
+        end
+        raise ArgumentError, 'Another catalog operation needs completion' if latest && (!TERMINAL.include?(latest['state']) || latest['delivery'] == 'pending')
         # An interrupted removal must be reconciled before accepting another mutation.
         data = @catalog.read
         if action == 'add'
@@ -163,9 +169,16 @@ module Documentation
           end
         else
           entry = data['projects'].find { |p| p['id'] == attributes['id'] }
-          raise ArgumentError, 'Unknown project' unless entry
+          unless entry
+            previous = @jobs.children.find do |path|
+              next false unless path.basename.to_s.match?(/\A[0-9a-f]{32}\.removal\.json\z/) && !path.symlink?
+              JSON.parse(JSON.parse(path.read).fetch('catalogBefore')).fetch('projects').any? { |item| item['id'] == attributes['id'] }
+            end if action == 'remove'
+            return { 'id' => previous.basename('.removal.json').to_s, 'state' => 'completed', 'phase' => 'completed' } if previous
+            raise ArgumentError, 'Unknown project'
+          end
         end
-        job = { 'id' => SecureRandom.hex(16), 'action' => action, 'projectId' => entry['id'], 'entry' => entry, 'state' => 'queued', 'phase' => 'queued', 'boot' => boot_identity }
+        job = { 'id' => request_id || SecureRandom.hex(16), 'action' => action, 'projectId' => entry['id'], 'entry' => entry, 'state' => 'queued', 'phase' => 'queued', 'boot' => boot_identity }
         save(job)
         log = @jobs.join(job['id'] + '.log')
         File.open(log, File::WRONLY | File::CREAT | File::EXCL | File::NOFOLLOW, 0o600) do |output|
@@ -176,6 +189,143 @@ module Documentation
         end
         job.slice('id', 'state', 'phase')
       end
+    end
+
+    def register_project(attributes)
+      request_id = attributes['requestId']
+      raise ArgumentError, 'Invalid request identifier' if request_id && !(request_id.is_a?(String) && JOB_ID.match?(request_id))
+      reference = @catalog.relative_source_reference(attributes['sourcePath'])
+      lock(timeout: 2) do
+        if request_id && job_path(request_id).exist?
+          previous = read_job(request_id)
+          raise ArgumentError, 'Request identifier already used' unless previous['action'] == 'add' && previous['requestedSourcePath'] == reference
+          return status(request_id)
+        end
+        recover_removal
+        latest = status
+        raise ArgumentError, 'Another catalog operation needs completion' if latest && (!TERMINAL.include?(latest['state']) || latest['delivery'] == 'pending')
+        source, fingerprint, = @catalog.locate('sourcePath' => reference)
+        data = @catalog.read
+        existing = data['projects'].find { |item| item['sourceIdentity'] == fingerprint }
+        if existing
+          same = existing['sourcePath'] == reference
+          unless same
+            same = if @catalog.host_filesystem.snapshot?(source)
+              @catalog.host_filesystem.same_source?(existing['sourcePath'], reference, fingerprint)
+            else
+              begin
+                File.identical?(@catalog.locate(existing).first, source)
+              rescue Errno::ENOENT
+                false
+              end
+            end
+          end
+          if same
+            documentation_destination(existing, source)
+            ensure_registration_bios(existing)
+            @catalog.change do |current|
+              item = current['projects'].find { |entry| entry['id'] == existing['id'] }
+              raise ArgumentError, 'Project changed during registration' unless item == existing
+              item['enabled'] = true
+            end unless existing['enabled']
+            return complete_registration(existing.merge('enabled' => true), request_id, reference, 'already_registered')
+          end
+          relocate_project(existing, source, fingerprint, reference)
+          current = @catalog.read['projects'].find { |entry| entry['id'] == existing['id'] }
+          return complete_registration(current, request_id, reference, 'relocated')
+        end
+        slug = source.basename.to_s
+        raise ArgumentError, 'Invalid project directory' unless Catalog::PROJECT_DIRECTORY.match?(slug) && slug.bytesize <= 255
+        name = slug.split(/[-_ ]+/).map { |word| word.match?(/[A-Z]/) ? word : word.capitalize }.join(' ')[0, 120]
+        entry = { 'id' => "project-#{SecureRandom.hex(12)}", 'slug' => slug, 'name' => name,
+          'sourcePath' => reference, 'enabled' => true }
+        entry.merge!('sourceIdentity' => fingerprint, 'sourceDirectory' => source.basename.to_s)
+        documentation_destination(entry, source)
+        data = @catalog.read
+        raise ArgumentError, 'Project already registered' if data['projects'].any? { |p| p['slug'].downcase == slug.downcase || p['sourcePath'] == reference || p['sourceIdentity'] == fingerprint }
+        target = @catalog.root.join(slug)
+        raise ArgumentError, 'Documentation already exists' if target.exist? || target.symlink?
+        restored = removed_entry(slug, fingerprint)
+        entry['id'] = restored['id'] if restored
+        begin
+          if restored
+            raise ArgumentError, 'Invalid recovery archive' unless restored['archive'].match?(/\A[0-9a-f]{32}\.removed\z/)
+            archive = @jobs.join(restored['archive'])
+            raise ArgumentError, 'Missing recovery archive' unless archive.directory? && !archive.symlink?
+            document_tree(archive)
+            FileUtils.copy_entry(archive, target)
+          end
+          ensure_registration_bios(entry)
+          @catalog.change { |current| current['projects'] << entry }
+        rescue StandardError
+          FileUtils.remove_entry(target) if target.directory? && !@catalog.read['projects'].any? { |p| p['id'] == entry['id'] }
+          raise
+        end
+        complete_registration(entry, request_id, reference, restored ? 'restored' : 'registered')
+      end
+    end
+
+    def ensure_registration_bios(entry)
+      target = @catalog.root.join(entry.fetch('slug'))
+      raise ArgumentError, 'Catalog metadata directory is unsafe' if target.symlink? || (target.exist? && !target.directory?)
+      existing = {}
+      %w[en pt-br].each do |language|
+        bio = target.join(language, 'bio.md')
+        bio.parent.ascend { |part| raise ArgumentError, 'Catalog metadata directory is unsafe' if part.symlink? }
+        raise ArgumentError, 'Catalog metadata is unsafe' if bio.symlink?
+        next unless bio.exist?
+        raise ArgumentError, 'Catalog metadata is invalid' unless bio.file? && bio.size <= 65536
+        front = bio.read.match(/\A---\r?\n(.*?)\r?\n---\r?\n(.+)\z/m)
+        metadata = front && YAML.safe_load(front[1], permitted_classes: [], aliases: false)
+        raise ArgumentError, 'Catalog metadata identity differs' unless metadata.is_a?(Hash) && metadata['id'] == entry['id']
+        existing[language] = metadata
+      end
+      name = existing.empty? ? entry['name'] : existing.values.first['name']
+      %w[en pt-br].each do |language|
+        next if existing.key?(language)
+        directory = target.join(language)
+        directory.mkpath
+        description = language == 'en' ? 'Source documentation generated by MakeDocs.' : 'Documentação do código gerada pelo MakeDocs.'
+        name_line = name.nil? ? '' : "name: #{JSON.generate(name)}\n"
+        @catalog.atomic(directory.join('bio.md'), "---\nid: #{entry['id']}\n#{name_line}---\n#{description}\n")
+      end
+    end
+
+    def complete_registration(entry, request_id, reference, outcome)
+      synchronize_index
+      job = { 'id' => request_id || SecureRandom.hex(16), 'action' => 'add', 'projectId' => entry.fetch('id'),
+        'entry' => entry, 'requestedSourcePath' => reference, 'outcome' => outcome,
+        'state' => 'completed', 'phase' => 'completed' }
+      save(job)
+      status(job.fetch('id'))
+    end
+
+    def relocate_project(entry, source, fingerprint, reference)
+      File.open(@runtime.join('command.lock'), File::RDWR | File::CREAT | File::NOFOLLOW, 0o600) do |file|
+        raise ArgumentError, 'MakeDocs is running; relocation deferred' unless file.flock(File::LOCK_EX | File::LOCK_NB)
+        relocate_source_reference(entry, source, fingerprint, reference)
+      end
+    end
+
+    def relocate_source_reference(entry, source, fingerprint, reference)
+      raise ArgumentError, 'Project already registered' if entry['sourcePath'] == reference
+      raise ArgumentError, 'Relocation changes the project directory; host preparation required' unless source.basename.to_s == entry['slug'] && (!entry['sourceDirectory'] || source.basename.to_s == entry['sourceDirectory'])
+      raise ArgumentError, 'Previous source is accessible or unavailable; relocation is ambiguous' unless @catalog.confirmed_missing?(entry, relocating: true)
+      unless @catalog.host_filesystem.snapshot?(source)
+        matches = @catalog.identity_locations(fingerprint)
+        raise ArgumentError, 'Multiple source copies or unresolved identity; relocation is ambiguous' unless matches.size == 1 && File.identical?(matches.first, source)
+      end
+      documentation_destination(entry, source)
+      @catalog.change do |data|
+        current = data['projects'].find { |item| item['id'] == entry['id'] }
+        raise ArgumentError, 'Project changed during relocation' unless current == entry
+        raise ArgumentError, 'Project already registered' if data['projects'].any? { |item| item['id'] != entry['id'] && (item['sourcePath'] == reference || item['sourceIdentity'] == fingerprint) }
+        actual = @catalog.host_filesystem.snapshot?(source) ? @catalog.host_filesystem.inspect_source(reference, fingerprint).fetch('identity') : @catalog.identity(source)
+        raise ArgumentError, 'Source changed during relocation' unless actual == fingerprint && @catalog.confirmed_missing?(entry, relocating: true)
+        documentation_destination(entry, source)
+        current['sourcePath'] = reference
+      end
+      { 'id' => SecureRandom.hex(16), 'state' => 'completed', 'phase' => 'completed', 'projectId' => entry['id'] }
     end
 
     def removed_entry(slug, fingerprint)
@@ -218,6 +368,10 @@ module Documentation
     end
 
     def generate(job, entry)
+      if job['action'] == 'update' && @catalog.confirmed_missing?(entry)
+        remove(job, entry, removal_reason: 'source_missing')
+        return
+      end
       source = job['action'] == 'add' ? @catalog.locate(entry).first : @catalog.reconcile(entry)
       if job['action'] == 'add'
         @catalog.change do |data|
@@ -240,7 +394,7 @@ module Documentation
       config = @jobs.join(job['id'] + '.config.json')
       @catalog.atomic(config, JSON.generate('projects' => [{ 'slug' => entry['slug'], 'source' => source.to_s, 'destination' => destination.to_s }]))
       phase(job, 'starting')
-      env = { 'DOCS_LIBRARY' => @catalog.root.to_s }
+      env = { 'DOCS_LIBRARY' => @catalog.root.to_s, 'DOCS_HOST_DEFER_DELIVERY' => '1' }
       code = nil
       Open3.popen2e(env, RbConfig.ruby, File.join(__dir__, 'command.rb'), '--config', config.to_s, '--project', entry['slug']) do |input, output, child|
         input.close
@@ -250,6 +404,10 @@ module Documentation
           begin
             event = JSON.parse(line)
             stage = event['status']
+            if event['project'] == entry['slug'] && event['coverage']
+              job['coverage'] = event['coverage']
+              job['review'] = event['review']
+            end
             phase(job, stage) if event['project'] == entry['slug'] && %w[validating-ownership evidence-collected generating publishing written no-op error].include?(stage)
           rescue JSON::ParserError
             nil
@@ -258,6 +416,19 @@ module Documentation
         code = child.value.exitstatus
       end
       raise ArgumentError, 'MakeDocs rejected the operation; inspect private operation log' unless code == 0
+      manifest = @state.join(entry['slug'] + '.json')
+      if manifest.file? && !manifest.symlink?
+        ownership = JSON.parse(manifest.read)
+        job['coverage'] = ownership['coverage']
+        job['review'] = 'draft'
+      end
+      if @catalog.host_filesystem.snapshot?(source)
+        job['delivery'] = 'pending'
+        phase(job, 'publishing')
+        @catalog.host_filesystem.publish(source)
+        job['delivery'] = 'completed'
+        save(job)
+      end
       if job['action'] == 'add'
         # New bios are metadata, not an alternative document generator.
         %w[en pt-br].each do |language|
@@ -275,12 +446,21 @@ module Documentation
       end
     end
 
-    def recover_removal
+    def recover_removal(command_locked: false)
+      pending = @state.join('removal.pending.json')
+      return unless pending.exist? || pending.symlink?
+      File.open(@runtime.join('command.lock'), File::RDWR | File::CREAT | File::NOFOLLOW, 0o600) do |file|
+        raise ArgumentError, 'MakeDocs is running' unless command_locked || file.flock(File::LOCK_EX | File::LOCK_NB)
+        recover_removal_journal
+      end
+    end
+
+    def recover_removal_journal
       pending = @state.join('removal.pending.json')
       return unless pending.exist? || pending.symlink?
       raise ArgumentError, 'Unsafe removal journal' if pending.symlink?
       journal = JSON.parse(pending.read)
-      raise ArgumentError, 'Invalid removal journal' unless JOB_ID.match?(journal.fetch('job')) && Catalog::SLUG.match?(journal.fetch('slug')) && journal['archive'] == journal['job'] + '.removed'
+      raise ArgumentError, 'Invalid removal journal' unless JOB_ID.match?(journal.fetch('job')) && Catalog::PROJECT_DIRECTORY.match?(journal.fetch('slug')) && journal['archive'] == journal['job'] + '.removed'
       archive = @jobs.join(journal['archive'])
       directory = @catalog.root.join(journal['slug'])
       raise ArgumentError, 'Unsafe removal recovery paths' if archive.symlink? || directory.symlink?
@@ -293,7 +473,16 @@ module Documentation
       elsif !registered && sealed
         restore_removed_directory(archive, directory) if directory.exist?
         FileUtils.remove_entry(directory) if directory.exist?
+        synchronize_index
         @catalog.atomic(@jobs.join(journal['job'] + '.removal.json'), pending.read)
+        if job_path(journal['job']).file?
+          recovered = read_job(journal['job'])
+          raise ArgumentError, 'Removal journal differs from operation' unless recovered['action'] == 'remove' && recovered.dig('entry', 'slug') == journal['slug']
+          recovered.merge!('state' => 'completed', 'phase' => 'completed')
+          recovered.delete('error')
+          recovered.delete('errorDetail')
+          save(recovered)
+        end
       else
         raise ArgumentError, 'Ambiguous removal recovery; preserve both paths'
       end
@@ -320,26 +509,61 @@ module Documentation
       raise ArgumentError, 'Removal recovery checksum mismatch' unless document_tree_hash(archive) == document_tree_hash(directory)
     end
 
-    def remove(job, entry)
+    def synchronize_index
+      return unless @catalog.locations.main
+      require_relative '../../config/environment'
+      ::Catalog::Sync.call(recover: false)
+    end
+
+    def remove_missing(entry)
+      lock do
+        recover_removal(command_locked: true)
+        current = @catalog.read.fetch('projects').find { |item| item['id'] == entry['id'] }
+        return unless current
+        raise ArgumentError, 'Source absence no longer confirmed' unless @catalog.confirmed_missing?(current)
+        job = { 'id' => SecureRandom.hex(16), 'action' => 'remove', 'projectId' => current['id'],
+          'entry' => current, 'state' => 'running', 'phase' => 'validating', 'boot' => boot_identity }
+        save(job)
+        begin
+          remove(job, current, command_locked: true, removal_reason: 'source_missing')
+          job['state'] = 'completed'
+          phase(job, 'completed')
+        rescue StandardError => error
+          job.merge!('state' => 'error', 'error' => 'operation_failed', 'errorDetail' => "#{error.class}: #{error.message}")
+          phase(job, 'error')
+          raise
+        end
+      end
+    end
+
+    def remove(job, entry, command_locked: false, removal_reason: nil)
       File.open(@runtime.join('command.lock'), File::RDWR | File::CREAT | File::NOFOLLOW, 0o600) do |command_lock|
-        raise ArgumentError, 'MakeDocs is running' unless command_lock.flock(File::LOCK_EX | File::LOCK_NB)
-        raise ArgumentError, 'MakeDocs recovery pending' if @state.join(entry['slug'] + '.pending.json').exist?
-        directory = @catalog.root.join(entry.fetch('slug'))
-        raise ArgumentError, 'Unsafe documentation directory' unless directory.directory? && !directory.symlink? && directory.realpath.dirname == @catalog.root
-        directory.find { |path| raise ArgumentError, 'Linked documentation cannot be removed automatically' if path.symlink? }
+        raise ArgumentError, 'MakeDocs is running' unless command_locked || command_lock.flock(File::LOCK_EX | File::LOCK_NB)
+        raise ArgumentError, 'MakeDocs recovery pending' if @state.join(entry['slug'] + '.pending.json').exist? || @state.join(entry['slug'] + '.pending.json').symlink?
+        slug = entry.fetch('slug')
+        raise ArgumentError, 'Unsafe project directory' unless Catalog::PROJECT_DIRECTORY.match?(slug) && slug.downcase != 'img'
+        directory = @catalog.root.join(slug)
+        raise ArgumentError, 'Unsafe documentation directory' if directory.symlink? || directory.dirname != @catalog.root || (directory.exist? && (!directory.directory? || directory.realpath.dirname != @catalog.root))
+        directory.find { |path| raise ArgumentError, 'Linked documentation cannot be removed automatically' if path.symlink? } if directory.exist?
         # Preserve a complete rollback copy and the removal journal as private history.
         archive = @jobs.join(job['id'] + '.removed')
         pending = @state.join('removal.pending.json')
         before = @catalog.path.read
         @catalog.atomic(pending, JSON.generate('job' => job['id'], 'slug' => entry['slug'], 'catalogBefore' => before, 'archive' => archive.basename.to_s))
+        job['removalReason'] = removal_reason if removal_reason
         phase(job, 'removing')
-        expected = document_tree_hash(directory)
-        FileUtils.copy_entry(directory, archive)
-        raise ArgumentError, 'Documentation changed during removal backup' unless document_tree_hash(archive) == expected && document_tree_hash(directory) == expected
+        if directory.exist?
+          expected = document_tree_hash(directory)
+          FileUtils.copy_entry(directory, archive)
+          raise ArgumentError, 'Documentation changed during removal backup' unless document_tree_hash(archive) == expected && document_tree_hash(directory) == expected
+        else
+          archive.mkpath
+          expected = document_tree_hash(archive)
+        end
         journal = JSON.parse(pending.read).merge('archive_sha256' => expected)
         @catalog.atomic(pending, JSON.generate(journal))
         begin
-          FileUtils.remove_entry(directory)
+          FileUtils.remove_entry(directory) if directory.exist?
           @catalog.change { |data| data['projects'].reject! { |p| p['id'] == entry['id'] } }
         rescue StandardError
           if @catalog.read['projects'].any? { |p| p['id'] == entry['id'] }
@@ -349,6 +573,7 @@ module Documentation
           raise
         end
         # The hidden recovery archive is outside the served library. Source and agent state stay intact.
+        synchronize_index
         @catalog.atomic(@jobs.join(job['id'] + '.removal.json'), pending.read)
         File.unlink(pending)
       end
@@ -356,6 +581,13 @@ module Documentation
   end
 end
 
-if $PROGRAM_NAME == __FILE__
-  Documentation::CatalogManagement.new.perform(ARGV.fetch(0))
+
+
+if $PROGRAM_NAME == __FILE__ && !Thread.current[:documentation_management_worker_running]
+  Thread.current[:documentation_management_worker_running] = true
+  begin
+    Documentation::CatalogManagement.new.perform(ARGV.fetch(0))
+  ensure
+    Thread.current[:documentation_management_worker_running] = false
+  end
 end

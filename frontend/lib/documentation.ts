@@ -1,3 +1,4 @@
+import { validProjectDirectory } from './catalog-paths.ts';
 import { readdir, readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { categoryLabels, type Language } from './i18n.ts';
@@ -9,7 +10,7 @@ export type TocEntry = { id: string; number: string; title: string; href?: strin
 
 const titleOf = (source: string, fallback: string) => source.match(/^#\s+(.+)$/m)?.[1]?.replace(/\s+—.*$/, '') ?? fallback;
 export async function documentationEntries(slug: string, language: Language): Promise<TocEntry[]> {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return [];
+  if (!validProjectDirectory(slug)) return [];
   const root = documentationRoot();
   let directory: string;
   try { directory = await realpath(root);  } catch { return []; }
@@ -108,7 +109,7 @@ export async function documentationEntries(slug: string, language: Language): Pr
 
 /** Every read resolves real paths; symlinks may not escape the selected project. */
 export async function collectionFile(slug: string, relative: string): Promise<Buffer | null> {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !relative || relative.split('/').some(part => !part || part === '.' || part === '..') || /[\\\0]/.test(relative)) return null;
+  if (!validProjectDirectory(slug) || !relative || relative.split('/').some(part => !part || part === '.' || part === '..') || /[\\\0]/.test(relative)) return null;
   try {
     const base = await realpath(documentationRoot());
     const physical = collectionPath(slug, relative);

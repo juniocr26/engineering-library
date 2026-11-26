@@ -6,19 +6,19 @@ Technical questions, detailed answers and follow-ups are available directly on t
 
 [Cross-project technical questions](cross-project-boundaries.md): atomicity, architecture, resource costs, security, testing and recovery.
 
-## Current source review — 2026-10-19
+## Review provenance
 
-The answers below were checked against selected current source and test definitions. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
+Q001–Q005 retain the 2026-10-19 review; Q101–Q106 were updated against source on 2026-11-26. No sibling application tests or services were executed. See the [scope and evidence record](../operations/documentation-audit-2026-10-19.md).
 
 ## Engineering Library interview
 
-> Source review — 2026-10-19: the current tree implements a Rails catalog API, PostgreSQL catalog records and shared annotations, plus an internal Next.js Markdown reader. The former documentation-only/scaffold description is superseded. No AI agent is implemented. See [current architecture](../architecture/current-state.md).
+> Current baseline — 2026-11-26: local MakeDocs/Ollama and managed host publication are implemented. Generated content remains a draft; desired quality and neural fine-tuning are not established. See [current architecture](../architecture/current-implementation.md).
 
 These conceptual comparisons do not imply runtime integration. Implemented facts, general theory and hypothetical alternatives are explicitly separated.
 
 ### Q001 — Introductory: What is Engineering Library responsible for?
 
-**Answer:** Implemented: this repository maintains bilingual project documentation and serves it through a Next.js book reader backed by a Rails catalog API. PostgreSQL persists indexed project identity/visibility and shared annotation locations; Markdown remains the source for document bodies and localized bios. `Catalog::Sync` validates both bios before serializing database writes inside a transaction with a PostgreSQL advisory lock. The catalog endpoint pages active projects, while Next reads scoped collection Markdown on the server. This is an implemented local application, with no claim of production deployment, payment flow or AI ingestion.
+**Answer:** Implemented: this repository maintains bilingual project documentation and serves it through a Next.js book reader backed by a Rails catalog API. PostgreSQL persists indexed project identity/visibility and shared annotation locations; Markdown remains the source for document bodies and localized bios. `Catalog::Sync` validates both bios before serializing database writes inside a transaction with a PostgreSQL advisory lock. The catalog endpoint pages active projects, while Next reads scoped collection Markdown on the server. This is an implemented local application, with no claim of production deployment, payment flow or full-project AI acceptance.
 
 Follow-up: Why retain old interview answers instead of replacing them with dossiers? Answers teach reasoning and failure analysis, while dossiers explain mechanisms; both are required. Stable additional Q IDs preserve old numbering and bilingual alignment. Follow-up: What is the cost of self-contained explanations? Shared facts are repeated between project docs and library, so source review and explicit gaps must maintain consistency. Links alone would reduce duplication but fail the interview requirement. Semantic accuracy remains manual review; a successful link check cannot prove an answer is true.
 
@@ -49,38 +49,38 @@ Existing [application FAQ path](application-and-catalog.md) remains available. T
 
 Read [current architecture](../architecture/current-state.md), [future direction](../architecture/future-direction.md) and the [retained questions](study-guide.md). Implemented means inspected source, not execution in this milestone. Proposed alternatives below are analysis, not the author's undocumented original motivation.
 
-### Q101 — Introductory: Why Rails with a separate Next.js frontend?
+### Q101 — Why Rails with a separate Next.js frontend?
 
-**Answer:** Implemented: Rails serves paginated catalog metadata and shared annotations backed by PostgreSQL; Next.js renders the internal Markdown reader and obtains catalog JSON on the server. Files remain the source for document bodies and bios. Rails conventions supply HTTP/persistence structure while Next provides React routing and browser layout, at the cost of separate builds, dependencies and failure diagnosis. There is no evidence of framework benchmarking. A Rails-rendered alternative could simplify deployment, but remains a conceptual comparison rather than a documented historical evaluation.
+**Answer:** Rails handles validated catalog synchronization, relational annotations and guarded operation coordination; Next renders Markdown and manages browser book layout. HTTP separates their runtime responsibilities. Markdown remains the chapter source of truth, while PostgreSQL stores metadata and annotations. The separation adds builds, dependencies and diagnostic boundaries; it does not prove a benchmark win or Clean Architecture.
 
-**Follow-up:** Does separation prove Clean Architecture? No. Current `Catalog::Sync`, `Catalog::Page`, `Catalog::Files` and controllers express concrete responsibilities, but ActiveRecord, Rails and filesystem concerns remain visible. Judge boundaries by dependency direction and testable behavior, not by process count or empty domain layers.
+**Follow-up:** Can the frontend bypass Rails for every feature? It reads chapters on the server, but catalog/annotations/operations use Rails. Shared notes need persistence and logical locations rather than physical page numbers.
 
-### Q102 — Intermediate: What does Compose reproduce, and why bind mounts?
+### Q102 — What does Compose reproduce, and why is Python needed on the host?
 
-**Answer:** Implemented: Compose declares PostgreSQL, backend and frontend, health dependencies, loopback host ports and source/dependency bind mounts. Lockfiles constrain dependency versions; startup reconstructs missing dependencies behind mounts. Host directories make source and installed Linux dependencies visible, while named volumes would let Docker manage storage location. Bind mounts couple permissions and native dependencies to the host/runtime platform. Neither pattern is inherently a backup or production rollout strategy.
+**Answer:** Compose defines frontend, backend, PostgreSQL and Ollama, health dependencies, loopback ports and explicit storage scopes. The host supervisor/adapter is an additional required POSIX process managed by `tools/init_dev_env.py`. It safely acquires external sources and publishes accepted docs without arbitrary new source mounts. Frontend and backend currently mount library docs writable; source/agent mounts have separate restrictions.
 
-**Follow-up:** Why can database authentication fail after changing the template or environment? PostgreSQL initialization variables apply when creating a new cluster; they do not rotate an existing role's password. Diagnose and change credentials through an authorized database operation, preserving data. Rails uses `postgres:5432` internally; desktop clients use the loopback published port. Never delete the persistent directory to resolve authentication. No credential operation was performed here.
+**Follow-up:** Does stopping containers erase state? Normal managed stop/down preserves persistent storage. Neither bind persistence nor a successful start proves backup/restore integrity. Do not delete database, model or recovery directories to repair startup.
 
-### Q103 — Intermediate: What does the green API status actually prove?
+### Q103 — What does a green health status prove?
 
-**Answer:** Implemented: `/up` establishes Rails boot/liveness and does not query catalog rows. A successful catalog response also exercises selected PostgreSQL metadata and localized bio reads for that request, without proving every document or bookmark path is usable. Next catalog access has a five-second timeout; do not apply the old scaffold component's three-second health request to the current catalog client. A passing health response cannot establish backup integrity, recoverability or browser rendering. No runtime health or database test was executed in this audit.
+**Answer:** `/up` proves Rails response and required adapter heartbeat readiness at that moment. It does not query all catalog records or validate the approved model, generation quality, both publication destinations or restore integrity. Individual PostgreSQL/Ollama/Next health checks have similarly bounded purposes. Catalog API access can synchronize metadata, so it is not a strictly read-only DB probe.
 
-**Follow-up:** How would you strengthen readiness? A bounded database check and explicit dependency semantics could distinguish unavailable dependencies from a live HTTP process, at additional dependency load and failure coupling. That is proposed work. A restore drill needs an isolated target and data-integrity checks; persistent files alone cannot establish it.
+**Follow-up:** Is inference success sufficient? No. Evidence must pass evaluation and ownership checks, library/staged writes must succeed, and required host delivery must complete. A published draft still needs human review.
 
-### Q104 — Intermediate: Why make the catalog project-first and bilingual?
+### Q104 — How are registration, duplicate prevention and relocation handled?
 
-**Answer:** Implemented in documentation: each repository has stable project identity, two READMEs, language indexes, category chapters, evidence limits and interview pages. ADR filenames and question numbering survive import. Readers select context before studying mechanisms; the current reader uses document identities and project search without duplicate subject collections. Matching language paths enable structural parity checks but do not establish semantic equivalence. FAQ indexes now contain substantive answers; compatibility guide paths retain their existing anchors. Existing canonical Library environment guides are reused rather than copied into a recursive catalog.
+**Answer:** Relative references resolve from the library checkout on the host. Registration verifies source identity and creates metadata/bios without inference. Stable identity, normalized paths, physical aliases and request IDs prevent duplicate retries. Git root-commit identity describes lineage; current file hashes describe content. Relocation requires the same identity at a new path, the previous source confirmed missing and no ambiguous copies.
 
-**Follow-up:** How prevent stale copies? Record source path, revision and review scope, compare changed inputs and inspect links against their new location. Preserve historical evidence as historical. A changed revision is a signal for review, not permission to regenerate every document or proof that unchanged documentation is accurate. Incremental automation is future work; this catalog is a manually reviewed snapshot.
+**Follow-up:** Does changing an unrelated repository's name migrate annotations? No. Verified source relocation preserves supported identity/reference relationships; it is not a generic slug rename, bookmark rewrite or arbitrary metadata migration.
 
-### Q105 — Challenging: Should a future generator use local inference or an API?
+### Q105 — How do local inference and evaluation work today?
 
-**Answer:** Proposed: local inference limits external data transfer and can work offline but requires model/runtime lifecycle and sufficient CPU/RAM. APIs shift compute and model maintenance to a provider while adding cost, network dependency and data-transfer policy. Neither is integrated. Weight size, quantization, KV cache, context length, concurrency and runtime overhead affect resource demand; no specific memory minimum, throughput or model selection has been measured. Choose using representative safe workloads and acceptable latency/quality rather than inventing a hardware guarantee.
+**Answer:** The normal caller uses approved `llama3.2:3b` through local Ollama and three integrity-checked skills. It selects bounded source evidence, requests bilingual structured facts, verifies model envelopes/provenance/literals/claims, then renders owned summaries. Automatic Python declaration requests share a bounded deadline. UI and default CLI use `Documentation::Command`; an opt-in project workflow is separate.
 
-**Follow-up:** Can local inference make private material safe to publish? No. Locality does not authorize ingestion or publication and does not guarantee redaction. Explicit public/private roots, separate outputs, access policy and human review are required design constraints. Those safeguards remain design requirements for future automated ingestion. The current private documentation installation includes both authorized portfolio and private Viva Bem collections; this does not authorize ingestion of runtime secrets or public release.
+**Follow-up:** Is the agent trained to the desired quality? That is not established. Skill context is not neural fine-tuning. Mechanical acceptance can miss semantic mistakes and poor translations; desired quality remains future work requiring a separately authorized campaign. No cloud fallback or automatic replacement model is used.
 
-### Q106 — Challenging: How would evidence-based incremental generation preserve knowledge?
+### Q106 — Can the full registration lifecycle work without existing docs?
 
-**Answer:** Proposed: inventory allowed inputs, record revisions/hashes, compare changes, inspect affected implementation and test definitions, propose a patch, validate navigation and language coverage, then review the evidence and publish deliberately. Separate implemented mechanism, documented rationale, dated experiment and hypothetical improvement in the text. Source content is untrusted data, so embedded instructions must not trigger commands. Hashes establish byte identity; they cannot resolve conflicting claims, prove test success or translate meaning. Preserve author notes, ADR IDs and question numbering.
+**Answer:** The design supports register → generate → update → remove registration → register again → generate again. First publication creates original `docs/` safely. Removal archives the library tree and preserves original source/manual docs, while eligible re-registration restores stable identity/archive. Source disappearance or adapter failure does not justify deleting evidence or automatically dropping a managed registration.
 
-**Follow-up:** What fails under partial updates? One language can drift, a source rename can break links, and an old milestone can contradict a new acceptance report. Validate both language graphs and retain dated evidence, then review technical meaning against the changed code. Atomic file replacement could protect one write, but a multi-document update needs its own review/publication boundary. No generation pipeline, transaction framework, search database or local agent is delivered here.
+**Follow-up:** What if delivery or removal is interrupted? Pending delivery can be resumed from the saved config without inference; journals and verified archives govern command/removal recovery. Concurrent or ambiguous state fails closed. See [runtime and recovery](../operations/runtime-and-recovery.md). This source review is not a claim that a new complete lifecycle test was executed.

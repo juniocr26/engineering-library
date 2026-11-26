@@ -55,9 +55,9 @@ python3 -B tools/check_catalog.py
 git diff --check
 ```
 
-Compose mounts documentation at `/docs` (Rails read-only; frontend writable for explicit snapshot generation); Rails uses `CATALOG_ROOT=/docs`. Dependencies stay in images and the frontend uses a `.next` tmpfs. Outside Docker, the catalog defaults to the repository `docs` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; use `npm run build:check` inside the existing frontend.
+Compose mounts documentation at `/docs` (Rails and frontend writable; source/agent mounts have separate restrictions); Rails uses `CATALOG_ROOT=/docs`. Development dependencies are physical bind-mounted installs verified by the entrypoints; the frontend uses a `.next` tmpfs. Outside Docker, the catalog defaults to the repository `docs` sibling of Rails; `CATALOG_ROOT` can override it for tests. Tests use the separate Rails test database. Do not run build and the development server concurrently in the same `.next` directory; use `npm run build:check` inside the existing frontend.
 
-Current limits: no documentation editing, authentication or cross-device bookmark synchronization. API downtime produces a localized retry state. The document reader resolves repository Markdown with scoped filesystem reads and preserves project/language navigation.
+Current limits: no arbitrary documentation editing or personal-account authentication; annotations are shared by the installation. API downtime produces a localized retry state. The document reader resolves repository Markdown with scoped filesystem reads and preserves project/language navigation.
 
 Browser smoke checks (existing frontend running; browser tooling is included):
 

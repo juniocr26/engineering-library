@@ -1,53 +1,59 @@
-# ENV — engineering-library
+# Ambiente e configuração
 
-[Project index](../index.md)
+[Índice do projeto](../index.md) · [Contrato de configuração](configuration-contract.md)
 
-Referência verificada em 2026-10-18 a partir dos arquivos locais seguros. Valores reais de `.env` não foram usados nesta referência. Exemplos com segredos usam `<secret>`. Não publique senhas, tokens ou URLs com credenciais; preserve credenciais do cluster existente. Variáveis do shell podem sobrepor o arquivo de ambiente do Compose.
+Revisado em declarações públicas em 26/11/2026. `.env` local, chaves de gerenciamento e ambientes efetivos dos containers não são entradas documentais. Os exemplos não contêm credenciais. Variáveis do shell podem prevalecer na interpolação Compose; nunca publique configuração efetiva com segredos em uma issue.
 
-## Entradas do Docker Compose
+<!-- reading-section: index-1 -->
+## Entradas do Compose e da aplicação
 
-Cada linha descreve o comportamento **na interpolação Compose**, antes da aplicação. `:-` aplica o padrão tanto na ausência como no vazio; `:?` rejeita ambos. Um padrão vazio é intencionalmente permitido nessa camada. A aceitação final pelo consumidor é detalhada abaixo.
+| Variável | Consumidor e default | Comportamento importante |
+| --- | --- | --- |
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Inicialização PostgreSQL e conexão Rails | Compose recusa ausência/vazio; inicialização não troca credenciais de cluster existente. |
+| `SECRET_KEY_BASE` | Rails | Compose recusa ausência/vazio; mantenha privado. |
+| `POSTGRES_PORT`, `BACKEND_PORT`, `FRONTEND_PORT` | Portas loopback do host: `5499`, `3098`, `3099` | Ausência/vazio usam defaults; portas internas continuam 5432/3000/3000. |
+| `LOCAL_UID`, `LOCAL_GID` | Usuário backend/frontend: `1000:1000` | Geração de ambiente Linux usa UID/GID atual; ambiente existente é preservado. |
+| `WATCHPACK_POLLING` | Watcher de desenvolvimento: `1000` | Compose aplica default em ausência/vazio. |
+| `CATALOG_ROOT`, `DOCUMENTATION_ROOT` | Catálogo Rails e leitor Next: `/docs` no Compose | Raiz das coleções, não pasta de um idioma/projeto. |
+| `BACKEND_URL` | Servidor Next: `http://backend:3000` | Endereço interno; vazio explícito em execução direta não é fallback utilizável. |
+| `POSTGRES_HOST` | Rails: `postgres` | Configuração fixa porta interna 5432; não usa a porta publicada do host. |
+| `RAILS_MAX_THREADS` | Pool Rails/Puma | Default do pool é 5; do Puma é 3. Revise ambos antes de ajustar. |
+| `DOCS_HOST_REQUIRED` | Backend: `1` no Compose | Exige adapter no startup e em `/up`; não é controle de autenticação de produção. |
+| `OLLAMA_NO_CLOUD` | Ollama: `1` no Compose | Política local; não há porta Ollama publicada por padrão. |
 
-[Configuração fonte](../../../../compose.yaml)
+Execução direta difere da interpolação Compose. Consultas Ruby/JavaScript frequentemente preservam vazio explícito, enquanto `${NAME:-default}` aplica default em ausência ou vazio. `DATABASE_URL` de produção existe na configuração Rails, mas o stack fornecido executa desenvolvimento; sua presença não estabelece procedimento de produção.
 
-| Variável | Responsabilidade / consumidor | Obrigatória | Ausente | Vazia | Exemplo seguro / padrão | Evidência |
-| --- | --- | --- | --- | --- | --- | --- |
-| `POSTGRES_USER` | Conexão e inicialização PostgreSQL / banco e backend | sim | erro Compose | erro Compose | `Set POSTGRES_USER` | L6 |
-| `POSTGRES_PASSWORD` | Conexão e inicialização PostgreSQL / banco e backend | sim | erro Compose | erro Compose | `<secret>` | L7 |
-| `POSTGRES_DB` | Conexão e inicialização PostgreSQL / banco e backend | sim | erro Compose | erro Compose | `Set POSTGRES_DB` | L8 |
-| `POSTGRES_PORT` | Porta de rede / Compose e serviço correspondente | não | padrão | padrão | `5499` | L11 |
-| `LOCAL_UID` | Permissões de arquivos / build ou usuário do container | não | padrão | padrão | `1000` | L21 |
-| `LOCAL_GID` | Permissões de arquivos / build ou usuário do container | não | padrão | padrão | `1000` | L21 |
-| `SECRET_KEY_BASE` | secret key base | sim | erro Compose | erro Compose | `<secret>` | L28 |
-| `BACKEND_PORT` | Porta de rede / Compose e serviço correspondente | não | padrão | padrão | `3098` | L37 |
-| `FRONTEND_PORT` | Porta de rede / Compose e serviço correspondente | não | padrão | padrão | `3099` | L59 |
+<!-- reading-section: index-2 -->
+## Chamador padrão de documentação
 
-## Consumidores e diferenças fora do Compose
+Estas entradas pertencem a `Documentation::Command`. Exportar no shell do host não as transfere automaticamente a um container ativo; overrides apenas na CLI não alteram jobs do frontend. São controles existentes, não recomendação para modificar modelo ou configuração aprovada do agente.
 
-| Variável | Consumidor | Ausente / padrão | Vazia (execução direta) | Fonte |
-| --- | --- | --- | --- | --- |
-| `POSTGRES_HOST` | Rails DB | postgres | host vazio passado ao adaptador; sem fallback ENV | [database.yml](../../../../backend/config/database.yml) |
-| `POSTGRES_USER` | Rails DB | KeyError (obrigatória) | usuário vazio passado ao adaptador; autenticação pode falhar | [database.yml](../../../../backend/config/database.yml) |
-| `POSTGRES_PASSWORD` | Rails DB | KeyError (obrigatória) | senha vazia passada ao adaptador; Compose rejeita | [database.yml](../../../../backend/config/database.yml) |
-| `POSTGRES_DB` | Rails DB | KeyError (obrigatória) | banco vazio passado ao adaptador; Compose rejeita | [database.yml](../../../../backend/config/database.yml) |
-| `RAILS_MAX_THREADS` | Rails/Puma | pool do banco 5; Puma 3 | vazio preservado; contagem de threads inválida | [puma.rb](../../../../backend/config/puma.rb) |
-| `PORT` | Puma | 3000 | vazio preservado; CLI -p 3000 tem precedência no Docker | [puma.rb](../../../../backend/config/puma.rb) |
-| `PIDFILE` | Puma | não definido | Ruby considera vazio verdadeiro; caminho vazio passado ao Puma | [puma.rb](../../../../backend/config/puma.rb) |
-| `DATABASE_URL` | Rails production | nil; configuração compartilhada permanece | URL vazia preservada no ERB; resolução do adaptador não verificada | [database.yml](../../../../backend/config/database.yml) |
-| `BACKEND_URL` | API de catálogo no servidor Next | http://backend:3000 | vazio é mantido; fetch falha e catálogo mostra indisponibilidade | [frontend/lib/catalog.ts](../../../../frontend/lib/catalog.ts) |
-| `SECRET_KEY_BASE` | Rails / Compose | erro Compose | Compose error; use generated secret, never publish | [compose.yaml](../../../../compose.yaml) |
-| `CI` | Rails tests | eager_load false | present? false; valor não vazio habilita eager loading | [environments/test.rb](../../../../backend/config/environments/test.rb) |
-| `RAILS_ENV` | Rails runtime | Compose define development | execução direta fora do Compose: comportamento do framework não verificado | [compose.yaml](../../../../compose.yaml) |
-| `BUNDLE_GEMFILE` | Ruby boot | backend/Gemfile | Ruby ||= preserva vazio; seleção de arquivo pode falhar | [boot.rb](../../../../backend/config/boot.rb) |
+| Variável | Default | Faixa ou comportamento |
+| --- | --- | --- |
+| `DOCS_MODEL` | `llama3.2:3b` | Deve corresponder à identidade aprovada e ao digest Ollama. |
+| `DOCS_OLLAMA` | `http://ollama:11434` | Endpoint local existente. |
+| `DOCS_CONTEXT` | `skills` | `skills` ou `baseline` explícito; fluxo normal carrega três skills aprovadas. |
+| `DOCS_TRANSPORT` | `chat` | `chat` ou `generate`. |
+| `DOCS_EVIDENCE_MODE` | `declarations` | `raw`, `declarations` ou `structural`; validação varia por modo. |
+| `DOCS_CONTEXT_TOKENS` | `16384` | Inteiro 4096–16384. |
+| `DOCS_MODEL_THREADS` | Não definida | Inteiro opcional 1–16. |
+| `DOCS_REQUEST_TIMEOUT` | `1800` segundos | Inteiro 60–1800; requisições automáticas por declaração dividem o prazo total. |
+| `DOCS_FACT_LIMIT` | `4` | Inteiro 1–5; resumo limitado, não número de capítulos nem cobertura completa. |
+| `DOCS_RESEARCH` | `offline` | Pesquisa opcional separada; não implica internet/RAG automático. |
+| `DOCS_LIBRARY`, `DOCS_AGENT`, `DOCS_SOURCES`, `DOCS_DESTINATIONS` | `/docs`, `/agent`, `/sources`, `/project-docs` | Defaults do container; seleção também respeita catálogo/configuração e snapshots. |
+| `DOCS_HOST_EXCHANGE` | Troca privada `filesystem/host` da instalação principal | Diretório interno compartilhado; não substitua por caminhos públicos arbitrários. |
+| `DOCS_HOST_DEFER_DELIVERY` | Não definida | Coordenador define `1` no filho e realiza a entrega ao host. |
 
-As variáveis sem marcação obrigatória são opcionais. Valores vazios de host/usuário/banco não têm fallback Ruby: são passados ao adaptador e podem causar falha de conexão. `BACKEND_URL` vazio causa falha da consulta e exibe indisponibilidade; sua ausência usa o endereço interno. `RAILS_MAX_THREADS` e `PORT` vazios não são suportados como números. `CI` vazio desativa eager loading. `DATABASE_URL` em produção exige validação específica do adaptador; não foi inventado um fallback.
+O worker tem entradas próprias de aquisição: `DOCS_HOST_FILE_BYTES` (32 MiB, máximo 128 MiB), `DOCS_HOST_SOURCE_BYTES` (512 MiB, máximo 8 GiB), `DOCS_HOST_DOCS_BYTES` (128 MiB, máximo 1 GiB), `DOCS_HOST_ENTRIES` (200.000, máximo 2.000.000) e `DOCS_HOST_FILES` (100.000, máximo 200.000). Todas devem ser positivas. São lidas pelo worker no host, não pelo modelo/navegador. Alterar variável no container não configura esse processo do host.
 
-`POSTGRES_PORT=5499` é exclusivamente a porta publicada no host; Rails usa `postgres:5432`. Compose fixa `BACKEND_URL=http://backend:3000`, `RAILS_ENV=development`, `CATALOG_ROOT=/docs` (Rails), `DOCUMENTATION_ROOT=/docs` (Next.js), `PGDATA=/var/lib/postgresql/18/docker`, `HOME=/tmp`, `BUNDLE_PATH=/app/backend/vendor/bundle`, `BUNDLE_FROZEN=true`, `npm_config_cache=/tmp/npm-cache` e `NEXT_TELEMETRY_DISABLED=1`; essas configurações não são novas entradas de `.env`. Dependências e cache usam diretórios graváveis. O fetch Next ocorre no servidor, portanto não exige mudança de CORS. `POSTGRES_DB` só inicializa bancos em clusters novos. Veja [migração](../operations/database-migration.md).
+<!-- reading-section: index-3 -->
+## Exemplo seguro de instalação
 
-## Raízes dos arquivos do catálogo — 2026-10-19
+```sh
+# Helper existente cria .env privado somente se ausente e inicia o runtime gerenciado.
+python3 -B tools/init_dev_env.py up -d --build --wait --wait-timeout 600
+```
 
-`CATALOG_ROOT` seleciona opcionalmente o diretório Rails; o padrão é `../docs` relativo à raiz Rails. `DOCUMENTATION_ROOT` seleciona a coleção Next; o padrão usa o mesmo caminho irmão relativo ao diretório de execução. Compose fixa esta última em `/docs` e mantém a coleção somente leitura no Rails e gravável no frontend para manutenção explícita. Override vazio é mantido, sem fallback; use diretório explícito válido ou omita a variável. Os caminhos devem apontar para a mesma coleção privada pretendida. Não autorizam leitura runtime de fontes dos repositórios irmãos. `BACKEND_URL` acessa o catálogo no servidor com timeout de cinco segundos; liveness `/up` tem contrato separado.
+O launcher não é ferramenta de rotação de segredos. Não sobrescreva ambiente existente, exclua banco ou substitua modelo/skills para passar no startup. Veja [desenvolvimento](../guides/application-development.md), [MakeDocs](../training/local-documentation-command.md) e [recuperação](../operations/runtime-and-recovery.md).
 
-No frontend existente, Compose define `BROWSER_BASE_URL=http://localhost:3000` e `BOOK_READER_URL=http://localhost:3000`. A imagem define `PLAYWRIGHT_MODULE=/opt/browser/node_modules/playwright` e `PLAYWRIGHT_BROWSERS_PATH=/opt/playwright`. `PLAYWRIGHT_EXECUTABLE_PATH` só é necessário para selecionar outro executável dentro do container. Essas variáveis não exigem Node ou navegador no host.
-
-- [Configuration / Configuração](configuration-contract.md)
+Fontes: `.env.example`, `compose.yaml`, `backend/config/database.yml`, `backend/config/puma.rb`, `backend/lib/documentation/command.rb`, `backend/lib/documentation/host_filesystem.rb`, `frontend/lib/catalog.ts`, `tools/init_dev_env.py` e `tools/host_filesystem.py`.

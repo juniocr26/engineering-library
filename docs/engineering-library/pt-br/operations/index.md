@@ -13,3 +13,5 @@
 - [catalog-review](catalog-review.md)
 
 - [2026-11-04: documentation modernization / modernização documental](documentation-modernization-2026-11-04.md)
+
+- [Operação, publicação no filesystem e recuperação](runtime-and-recovery.md)

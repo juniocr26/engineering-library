@@ -1,0 +1,21 @@
+# architecture — rust-event-relay
+
+[Índice do projeto](../index.md)
+
+- [Semântica de falhas e transações - Marco 1.8](failure-and-transactions.md)
+- [Marco 2.1 — Publisher RabbitMQ e gestão de processos](milestone-2-1.md)
+- [Marco 2.2 — Estado de entrega e posse de eventos](milestone-2-2.md)
+- [Marco 2.3 — Operações PostgreSQL de posse da entrega](milestone-2-3.md)
+- [Marco 2.4 — Orquestração do caso de uso de entrega](milestone-2-4.md)
+- [Marco 2.5 — Composição e operação do worker](milestone-2-5.md)
+- [Marco 2.6 — Experimentos integrados de recuperação](milestone-2-6.md)
+- [Marco 3.1 — Política durável de falhas e contratos de recuperação](milestone-3-1.md)
+- [Marco 3.2 — Estado durável de retry e transições PostgreSQL](milestone-3-2.md)
+- [Marco 3.3 — Integração da política durável de falhas](milestone-3-3.md)
+- [Marco 3.4 — Descoberta limitada e isolamento seguro](milestone-3-4.md)
+- [Marco 3.5 — Replay autorizado, idempotente e auditável](milestone-3-5.md)
+- [Marco 4.1 — Contratos do consumidor de estoque](milestone-4-1.md)
+- [Marco 4.2 — persistência atômica de estoque no PostgreSQL](milestone-4-2.md)
+- [Marco 4.3 — Consumidor RabbitMQ e quarentena confirmada](milestone-4-3.md)
+- [Arquitetura atual — escopo local final](overview.md)
+- [Abstração de persistência — Marco 1.5](persistence-contracts.md)

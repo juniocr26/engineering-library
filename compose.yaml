@@ -29,6 +29,9 @@ services:
       timeout: 3s
       retries: 20
   backend:
+    extends:
+      file: ./backend/storage/makedocs/filesystem/mounts.json
+      service: backend
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -41,6 +44,7 @@ services:
       BUNDLE_PATH: /app/backend/vendor/bundle
       BUNDLE_FROZEN: "true"
       CATALOG_ROOT: /docs
+      DOCS_HOST_REQUIRED: "1"
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Set SECRET_KEY_BASE}
       POSTGRES_HOST: postgres
       POSTGRES_USER: ${POSTGRES_USER}

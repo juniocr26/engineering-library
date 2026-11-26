@@ -1,21 +1,20 @@
 # Future direction and open design questions
 
-## Status
+[Architecture index](index.md) · [Current implementation](current-implementation.md)
 
-The read-only catalog API, internal Markdown book reader, project search and shared annotations are implemented. The [current state](current-state.md) describes their boundaries. Remaining proposals concern automated documentation generation, inference and private/public access policy; the older scaffold roadmap is historical.
+<!-- reading-section: future-direction-1 -->
+## Implemented baseline
 
-## Reading interface
+Catalog, bilingual reader, search, shared annotations, local Ollama drafting, host filesystem access, explicit lifecycle management and recoverable publication already exist. Earlier proposals to introduce local inference are historical. The normal generator produces bounded source summaries, not every chapter in a reviewed engineering book.
 
-Project selection, bilingual chapter discovery, measured reading pages, source disclosures and logical bookmarks already exist. Remaining work must be derived from concrete reader behavior and test evidence, not a proposal to build the whole reader again. A separate raw-Markdown Rails API is not required by the current design: Next reads the scoped local collection. No production deployment or complete accessibility certification is inferred from this implementation.
+<!-- reading-section: future-direction-2 -->
+## Quality and evaluation
 
-## Local AI and incremental generation
+The next quality campaign should be scoped separately by the owner. Current evidence/schema/ownership checks do not establish semantic truth, equivalent translation, useful coverage or final editorial quality. Any proposed prompt, skill, dataset, model or fine-tuning change needs its own evidence and authorization. Existing research, checkpoints and learning artifacts must be preserved; no completed neural fine-tuning is claimed here.
 
-A proposed workflow is: discover owner-authorized repositories in both configured collections → inspect safe documentation and relevant source → identify changed inputs → propose evidence-linked documentation changes → validate parity/navigation → review and publish deliberately. This is a design outline, not an installed agent or automation framework. Source hashes and inspected revisions can support change detection, but a changed hash alone cannot identify semantic impact. Preserve human notes and stable question/ADR IDs; compare before rewriting.
+<!-- reading-section: future-direction-3 -->
+## Access and portability
 
-Local inference offers data locality and offline operation but consumes CPU/RAM and requires model/runtime management. Commercial APIs can reduce local compute burden but introduce external data transfer, cost and service dependency. Neither provider is integrated. No model, quantization, context length, inference speed or hardware minimum has been selected or measured. Model weights, KV cache, context, concurrency and runtime overhead all affect memory. Benchmark representative safe tasks on the actual host before selecting a model.
+The installation has shared annotations and local development management, not a public identity system. A production access policy, external exposure and user-specific ownership would need explicit design. Native Windows adapter support is not implemented; the documented Windows execution environment is WSL2. Broader source coverage, retrieval integration and performance guarantees remain questions to validate, not current acceptance claims.
 
-## Knowledge consistency and public/private separation
-
-An ingestion adapter should enforce allowed roots without traversing external symlinks, exclude credentials/storage/backups and distinguish implemented code, dated evidence, documented rationale and proposed improvements. These are proposed safeguards, not a deployed security boundary. The current documentation catalog is private. For the separate planned public version, separate private inputs, outputs and access policy from public artifacts; never assume a model can reliably redact secrets. A source citation supports traceability but does not establish truth by itself.
-
-Open challenges: source/document drift; conflicting historical milestones; translated meaning versus path parity; robust Markdown links/anchors; review of model hallucinations; preserving authored material; bounded inference resources; and safe publication. Suggested next order is maintain the existing catalog/reader → resolve measured usability and evidence gaps → separately scope ingestion/inference experiments. This is planning, not a release commitment.
+See [decisions and tradeoffs](decisions.md) and [MakeDocs limitations](../training/local-documentation-command.md). Retain dated reports as historical evidence instead of silently reclassifying their results as current verification.

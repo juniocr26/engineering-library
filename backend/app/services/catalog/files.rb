@@ -1,5 +1,6 @@
 require "yaml"
 require "json"
+require_relative "../../../lib/documentation/catalog"
 require_relative '../../../lib/documentation/locations'
 module Catalog
   class Files
@@ -9,7 +10,7 @@ module Catalog
       Pathname.new(ENV.fetch("CATALOG_ROOT", Rails.root.join("../docs").to_s)).realpath
     end
     def self.read(slug, relative, encoding: "UTF-8")
-      raise ArgumentError, "Invalid project identifier" unless SLUG.match?(slug)
+      raise ArgumentError, "Invalid project identifier" unless Documentation::Catalog::PROJECT_DIRECTORY.match?(slug)
       raise ArgumentError, "Invalid relative path" if Pathname.new(relative).absolute? || relative.split("/").include?("..")
       base = root.join(slug).realpath
       raise ArgumentError, "Outside catalog" unless base.to_s.start_with?(root.to_s + "/")
@@ -35,7 +36,7 @@ module Catalog
       source.scan(/^[-*] \[([^\]]+)\]\(([a-zA-Z0-9_-]+)\/index\.md\)/).filter_map do |label, category|
         begin
           read(slug, "#{language.downcase}/#{category}/index.md")
-          { name: label, url: "/projects/#{slug}/docs/#{category}/index.md?lang=#{language}" }
+          { name: label, url: "/projects/#{ERB::Util.url_encode(slug)}/docs/#{category}/index.md?lang=#{language}" }
         rescue Errno::ENOENT, ArgumentError
           nil
         end

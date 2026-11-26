@@ -10,3 +10,5 @@
 - [source-reference-verification](source-reference-verification.md)
 
 - [Engineering Library: private catalog, reader and shared annotations](current-implementation.md)
+
+- [Architecture decisions and tradeoffs](decisions.md)

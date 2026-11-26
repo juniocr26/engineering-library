@@ -130,7 +130,9 @@ margin:14px 0 18px}
 .catalog-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .catalog-icon:hover,.catalog-icon:focus-visible{background:#fae7bb8c;color:#302116}
 .catalog-icon:focus-visible,.catalog-dialog :focus-visible{outline:2px solid #173d5c;outline-offset:2px}
-.catalog-add{text-align:center;margin:12px 0 4px}
+.paper:has(.catalog-add){display:flex}
+.content:has(>.catalog-add){display:flex;flex-direction:column;width:100%}
+.catalog-add{order:1;align-self:flex-end;text-align:right;margin:auto 0 0;padding-top:12px}
 .catalog-add button{border-color:#85552850;cursor:pointer;color:#503725;background:#f5deb123;font:inherit}
 .catalog-dialog{inset:0;margin:auto;width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:clamp(18px,4vw,32px);box-sizing:border-box;color:#302116;background:#e8d7ac url('/assets/manuscript/parchment/aged-fibers.webp') center/cover;border:2px solid #836139;box-shadow:0 20px 80px #24170699;font:inherit}
 .catalog-dialog::backdrop{background:#24170699}
@@ -142,7 +144,33 @@ margin:14px 0 18px}
 .catalog-dialog-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
 .catalog-dialog-actions button{border:1px solid #836139;min-height:44px;color:#302116;background:#e5d0a2;font:inherit;cursor:pointer}
 .catalog-dialog button:disabled{opacity:.6;cursor:default}
+.catalog-path-label{display:flex;align-items:center;gap:.5rem;margin-top:.8rem}
+.catalog-path-label label{margin:0}
+.catalog-path-help{display:inline-flex;align-items:center;justify-content:center;width:1.5rem;height:1.5rem;padding:0;border:1px solid #836139;border-radius:50%;color:#594128;background:#e5d0a2;font:inherit;cursor:pointer}
+.catalog-path-help:hover{color:#302116;background:#f4e4bf}
+.catalog-relative-help{width:min(600px,calc(100vw - 32px))}
+.catalog-path-explanation{padding-left:1.25rem;line-height:1.5}
+.catalog-directory-diagram{margin:1rem 0;padding:clamp(8px,2vw,16px);border:1px solid #92764c;background:#fbf0d655}
+.catalog-directory-diagram figcaption{line-height:1.5;margin-bottom:.75rem}
+.catalog-directory-tree,.catalog-directory-tree ul{list-style:none;margin:0;padding-left:1rem}
+.catalog-directory-tree{padding-left:0;font-size:.9rem}
+.catalog-directory-tree li{position:relative;padding:.35rem 0 .35rem .75rem;overflow-wrap:anywhere}
+.catalog-directory-tree ul>li{border-left:1px solid #92764c}
+.catalog-directory-tree ul>li::before{content:'';position:absolute;top:.95rem;left:0;width:.5rem;border-top:1px solid #92764c}
+.catalog-directory-tree small{display:block;margin:.25rem 0 0 1.25rem;line-height:1.5}
+.catalog-directory-tree code{display:block;overflow-wrap:anywhere}
+.catalog-directory-start{background:#cfb37a66;color:#173d5c}
+.catalog-folder{position:relative;display:inline-block;width:.85rem;height:.6rem;margin-right:.4rem;border:1px solid #836139;border-radius:1px;background:#ddc089;vertical-align:baseline}
+.catalog-folder::before{content:'';position:absolute;left:-1px;top:-.25rem;width:.4rem;height:.2rem;border:1px solid #836139;border-bottom:0;border-radius:2px 2px 0 0;background:#ddc089}
 .catalog-progress progress{width:100%;height:12px;accent-color:#836139}
+.catalog-operation{display:flex;align-items:center;gap:7px;margin-top:5px;color:#66452b;font-size:.85em;line-height:1.4;overflow-wrap:anywhere}
+.catalog-operation svg{flex:0 0 18px;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;animation:catalog-processing 2s linear infinite}
+.catalog-operation--deleting svg{transform-origin:50% 75%;animation:catalog-deleting 1.8s ease-in-out infinite}
+.catalog-operation--paused svg{animation:none}
+.catalog-icon:disabled{opacity:.5;cursor:default}
+@keyframes catalog-processing{to{transform:rotate(360deg)}}
+@keyframes catalog-deleting{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}60%{transform:rotate(7deg)}}
+@media(prefers-reduced-motion:reduce){.catalog-operation svg{animation:none}}
 @media(pointer:coarse){.catalog-icon{width:44px;height:44px}.catalog-entry .project{min-height:88px}}
 .projects{display:flex;
 flex-direction:column;

@@ -1,25 +1,22 @@
 # Engineering Library
 
-## Docker execution
+> Private Viva Bem application for authorized internal use. Preserve source and internal-document confidentiality.
 
-Run shell commands from this repository root. Node.js, npm, Ruby, Bundler, Rails and PostgreSQL clients execute inside containers; the host needs Docker with Compose. No host installation of these runtimes is required. `exec` requires a running service and uses `/app/frontend` or `/app/backend`; Build verification copies source into a temporary directory inside the existing frontend container to preserve the running server cache.
+[Project index](index.md) · [Português brasileiro](../pt-br/README.md) · [Repository overview](../../../README.md)
 
-For bootstrap, copy `.env.example` to `.env` and fill in private credentials, or use the optional host Python generator below; existing `.env` is preserved by the generator. Host Python 3.10+ is an optional exception: `python3 tools/init_dev_env.py` generates credentials; documentation validators use only the standard library; `tools/check_docker_startup.py` orchestrates Docker and probes host ports. Install Python only if choosing those host tools. Its presence is not assumed.
+The application provides a Rails/PostgreSQL catalog and shared annotations, a Next.js bilingual book reader and local Ollama draft generation. Markdown owns chapter bodies; database records own metadata and shared notes/highlights/bookmarks. The host adapter handles registered source acquisition and verified publication to original project documentation.
 
-Playwright 1.58.2, Chromium and system dependencies are installed in `frontend-development`, outside the application dependency target. Rebuild with `docker compose up -d --build --wait --wait-timeout 300`. Browsers running in frontend access `http://localhost:3000`, the same container's internal port; host browsers use `http://localhost:3099`. Other containers use `http://frontend:3000`. Demo scripts remain restricted to loopback.
+<!-- reading-section: README-1 -->
+## Reading order
 
-Other catalog projects document their source repositories, rather than operational commands for this installation; this policy does not claim additional Docker support for those projects. Older validation results are historical.
+1. [Current architecture and source map](architecture/current-implementation.md)
+2. [Development and Docker](guides/application-development.md)
+3. [Configuration](env/index.md)
+4. [MakeDocs and evaluation](training/local-documentation-command.md)
+5. [Runtime and recovery](operations/runtime-and-recovery.md)
+6. [Decisions and limits](architecture/decisions.md)
+7. [Technical FAQ](faq/index.md)
 
-
-<!-- collection entry -->
-## Engineering Library collection
-
-[Library](../../index.md) | [English](index.md) | [Português brasileiro](../pt-br/index.md) | [Interview](faq/index.md) | [Provenance](operations/source-review.md)
-
-Bilingual engineering knowledge and interview library with a Rails/Next.js/PostgreSQL development scaffold. Includes a book-themed bilingual frontend and a PostgreSQL-backed catalog API; the internal Markdown reader supports measured pagination, search, chapters and shared PostgreSQL bookmarks.
+MakeDocs is operational but generated content remains a draft. Desired factual/translation quality and completed neural fine-tuning are not established. Startup requires POSIX host Python and Docker Compose; use the managed commands in the development guide. Dated reports remain evidence of their original review scope, not current full acceptance.
 
 [Project bio](bio.md)
-
-## Local dependency sources
-
-Docker development installs physical sources in `frontend/node_modules` and `backend/vendor/bundle`, using the existing services and lockfiles. See [installation, refresh and VS Code limitations](guides/application-development.md#local-dependency-sources-docker-development). Runtime execution stays in Docker.

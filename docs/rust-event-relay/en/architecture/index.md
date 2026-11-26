@@ -1,0 +1,21 @@
+# architecture — rust-event-relay
+
+[Project index](../index.md)
+
+- [Failure and transaction semantics - Milestone 1.8](failure-and-transactions.md)
+- [Milestone 2.1 — RabbitMQ publisher and process management](milestone-2-1.md)
+- [Milestone 2.2 — Delivery state and event ownership](milestone-2-2.md)
+- [Milestone 2.3 — PostgreSQL delivery ownership operations](milestone-2-3.md)
+- [Milestone 2.4 — Delivery use-case orchestration](milestone-2-4.md)
+- [Milestone 2.5 — Worker composition and operation](milestone-2-5.md)
+- [Milestone 2.6 — Integrated recovery experiment plan](milestone-2-6.md)
+- [Milestone 3.1 — Durable failure policy and recovery contracts](milestone-3-1.md)
+- [Milestone 3.2 — Durable retry state and PostgreSQL transitions](milestone-3-2.md)
+- [Milestone 3.3 — Durable failure policy integration](milestone-3-3.md)
+- [Milestone 3.4 — Bounded poison discovery and safe isolation](milestone-3-4.md)
+- [Milestone 3.5 — Authorized, idempotent and auditable replay](milestone-3-5.md)
+- [Milestone 4.1 — Inventory consumer contracts](milestone-4-1.md)
+- [Milestone 4.2 — atomic PostgreSQL inventory persistence](milestone-4-2.md)
+- [Milestone 4.3 — RabbitMQ consumer and confirmed quarantine](milestone-4-3.md)
+- [Current architecture — final local portfolio scope](overview.md)
+- [Persistence abstraction — Milestone 1.5](persistence-contracts.md)

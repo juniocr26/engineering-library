@@ -1,3 +1,4 @@
+import { validProjectDirectory } from './catalog-paths.ts';
 import { collectionPath } from './catalog-paths.ts';
 import { sourcePath } from './document-links.ts';
 import type { Language } from './i18n.ts';
@@ -16,7 +17,7 @@ export function sourceTarget(project: string, document: string, language: Langua
       file = match[3]; revision = match[2]; hash = url.hash;
     } else {
       if (/^[a-z][\w+.-]*:|^\//i.test(href)) return null;
-      const url = new URL(href, `https://reader.invalid/workspace/engineering-library/docs/${collectionPath(project, sourcePath(document, language))}`);
+      const url = new URL(href, `https://reader.invalid/workspace/engineering-library/docs/${collectionPath(project, sourcePath(document, language)).split('/').map(encodeURIComponent).join('/')}`);
       const decoded = decodeURIComponent(url.pathname);
       const collection = `/workspace/engineering-library/docs/${project}/`;
       const repository = `/workspace/${project}/`;
@@ -34,7 +35,7 @@ export function sourceTarget(project: string, document: string, language: Langua
   } catch { return null; }
 }
 export function canonicalSourceKey(project: string, relative: string, revision?: string) {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(project) || !relative || relative.startsWith('/') || /[\\\0]/.test(relative) || relative.split('/').some(part => !part || part === '.' || part === '..')) throw new Error('Invalid canonical source identity');
+  if (!validProjectDirectory(project) || !relative || relative.startsWith('/') || /[\\\0]/.test(relative) || relative.split('/').some(part => !part || part === '.' || part === '..')) throw new Error('Invalid canonical source identity');
   return JSON.stringify([project, relative, revision ?? null]);
 }
 export type SourceReference = SourceTarget & { sourceKey?: string; project?: string; id: string; href: string; language: string; status: 'available' | 'unapproved' | 'missing' | 'excluded' | 'revision-mismatch'; lines?: string[]; fingerprint?: string };

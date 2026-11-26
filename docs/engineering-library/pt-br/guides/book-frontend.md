@@ -52,9 +52,9 @@ python3 -B tools/check_catalog.py
 git diff --check
 ```
 
-O Compose monta documentação em `/docs` (Rails em leitura; frontend com escrita para geração explícita de snapshots); Rails usa `CATALOG_ROOT=/docs`. Dependências ficam nas imagens e o frontend usa tmpfs `.next`. Fora do Docker, o caminho padrão é `docs`, irmão do Rails; `CATALOG_ROOT` permite substituição nos testes. Os testes usam o banco Rails de teste separado. Não execute build e servidor de desenvolvimento simultaneamente no mesmo `.next`; use `npm run build:check` dentro do frontend existente.
+Compose monta a documentação em `/docs`, gravável para Rails e frontend; código/agente têm restrições separadas. Rails usa `CATALOG_ROOT=/docs`. Dependências de desenvolvimento são instalações físicas nos bind mounts verificadas pelos entrypoints; `.next` usa tmpfs. Fora do Docker, o catálogo usa o `docs` do repositório por padrão. O banco de testes é separado. Não execute build e servidor no mesmo `.next`; use `npm run build:check` no frontend existente.
 
-Limites atuais: sem edição de documentação, autenticação ou sincronização de marcações entre dispositivos. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor resolve arquivos Markdown com escopo validado e preserva navegação por projeto e idioma.
+Limites atuais: sem edição arbitrária de documentação ou autenticação de contas pessoais; anotações são compartilhadas pela instalação. Indisponibilidade da API mostra erro localizado com nova tentativa. O leitor resolve arquivos Markdown com escopo validado e preserva navegação por projeto e idioma.
 
 Verificação no navegador (frontend existente ativo; Playwright e Chromium incluídos na imagem):
 

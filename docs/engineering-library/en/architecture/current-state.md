@@ -1,55 +1,41 @@
 # Engineering Library: current architecture
 
-## Documentation layout — 2026-10-29
+[Architecture index](index.md) · [Detailed implementation](current-implementation.md)
 
-Rails and Next.js now resolve collections from the docs root. The API/reader language remains `pt-BR`; its filesystem directory is `pt-br`. No schema or stored annotation identifiers change.
+<!-- reading-section: current-state-1 -->
+## Documentation layout
 
-| Content / Conteúdo | Path / Caminho |
+Current baseline: 2026-11-26, source `246f58be`. Engineering Library is a private Viva Bem repository for authorized internal use. Historical scaffold and pre-Ollama statements do not describe the current implementation.
+
+| Content | Checkout-relative path |
 | --- | --- |
 | English chapters | `docs/<slug>/en/` |
-| Capítulos em português | `docs/<slug>/pt-br/` |
-| Shared images / Imagens compartilhadas | `docs/<slug>/img/` |
-| Localized images / Imagens por idioma | `docs/<slug>/en/img/`, `docs/<slug>/pt-br/img/` |
-| Approved source snapshots / Snapshots aprovados | `docs/<slug>/en/links/` |
+| Brazilian Portuguese chapters | `docs/<slug>/pt-br/` |
+| Shared / localized images | `docs/<slug>/img/`, language `img/` directories |
+| Approved source disclosure catalog | `docs/<slug>/en/links/` |
+| Registration metadata | `docs/.catalog.json` and localized bios |
+| Private operation/recovery data | `backend/storage/makedocs/` |
 
-`CATALOG_ROOT` and `DOCUMENTATION_ROOT` point to `/docs` in Compose. The backend documentation bind mount follows that root; database volumes, credentials and application ports are unchanged. This is a private parceiro-vivabem checkout. Private product collections must not be copied to the separate public portfolio.
+API language `pt-BR` maps to directory `pt-br`. PostgreSQL stores metadata and shared annotations; Markdown owns chapter bodies. Rails and Next use `/docs` in Compose, currently writable for both services. Existing annotation identities are logical, not physical book page numbers.
 
-Static source review: 2026-10-19. This page describes the current working tree; historical scaffold descriptions are superseded. [Book frontend and catalog](../guides/book-frontend.md) describes the reader in greater detail.
-
-## Purpose and evidence boundary
-
-The Library maintains bilingual engineering explanations, project FAQs and source evidence. Markdown in `docs/` owns document bodies and bios. Rails serves catalog metadata and shared annotations; Next.js renders the internal book reader. Source and test definitions were inspected, without starting services or executing database-backed tests. No production deployment, measured capacity or AI agent is established.
-
+<!-- reading-section: current-state-2 -->
 ## Implemented foundation
 
-`backend/config/routes.rb` exposes `GET /api/projects`, `GET /api/projects/:id`, the project icon endpoint, bookmark list/create/delete and `/up`. `CatalogProject` and `Bookmark` have real PostgreSQL schema, validations and indexes. `/up` indicates Rails boot health; it does not query the catalog or certify PostgreSQL readiness.
+Next.js supplies catalog, measured book pagination, chapter navigation, search, diagrams and approved source disclosures. Rails supplies paginated catalog metadata, shared notes/highlights/bookmarks and guarded development management. PostgreSQL persists those relational records. There are no personal accounts or private per-user annotation datasets.
 
-`Catalog::Sync` scans catalog directories, validates localized bio identity/name agreement and duplicate stable IDs before writes. A transaction-scoped advisory lock serializes database updates; records are matched by `stable_id`, renamed by slug and deactivated when absent. Unchanged records avoid writes. Validation failure retains the last valid database index. The transaction does not snapshot files: keep catalog files stable while synchronizing. Markdown document edits do not require database ingestion; metadata edits need explicit `catalog:sync`.
+The local Ollama pipeline, explicit registration, verified relocation, idempotent retries, removal preservation, supervised host filesystem adapter and recoverable two-destination draft publication are implemented. The normal UI and CLI reuse the same documentation command. `/up` checks Rails response plus required host adapter readiness; it does not certify database integrity or semantic output quality.
 
-`Catalog::Page` selects active records with fixed page size five and deterministic `lower(display_name) COLLATE "C", stable_id` order. Offset pagination is simple and index-supported but is not a snapshot across requests during catalog changes. Next fetches catalog JSON server-side with `cache: 'no-store'` and a five-second timeout. Its collection filesystem reader is separate from the Rails metadata API.
+<!-- reading-section: current-state-3 -->
+## Evidence and open limits
 
-`compose.yaml` defines PostgreSQL, Rails and Next. Ports bind to loopback. PostgreSQL data uses `.dockerized-postgres` on the host; this is persistence, not a verified backup. Rails receives the documentation collection read-only; frontend has writable `/docs` for explicit snapshot maintenance and a read-only `/sources` workspace mount. Dependency/build directories remain development bind mounts. Startup health dependencies do not implement automatic application-level recovery after every dependency failure.
+MakeDocs is operational, while source coverage, factual wording and translation quality remain limited and require review. No full-book acceptance, production hardening, universal RAG or completed neural fine-tuning is implied. This documentation review uses current source analysis and does not rerun generation or training.
 
-## Responsibilities and trade-offs
+Use the [detailed architecture](current-implementation.md), [development guide](../guides/application-development.md), [MakeDocs pipeline](../training/local-documentation-command.md), [recovery guide](../operations/runtime-and-recovery.md), [decisions](decisions.md) and [technical FAQ](../faq/application-and-catalog.md). Dated audits remain available in [operations](../operations/index.md).
 
-Rails owns indexed metadata, catalog pagination and bookmark persistence. Next owns Markdown rendering, logical document order and browser-measured physical pagination. Filesystem content and database metadata are different consistency boundaries. `Catalog::Files.read` resolves real paths within a validated project; `collectionFile` applies its own scoped checks on the Next side. Neither check is a race-free adversarial filesystem sandbox.
-
-Engineering Library uses one shared local PostgreSQL annotation dataset, organized by project, document and language, without accounts, sessions or reader profiles. Independent browsers read and mutate the same annotations. GET returns an expiring application CSRF token; mutations require `X-Annotation-CSRF`, and the Next proxy verifies Origin. Language remains mandatory. Logical anchors are independent of physical pages; their existence is checked when navigating, with an explicit unavailable-location fallback.
-
-## Catalog contract
-
-Navigation is Library → Project → Language → Category → Document. `documentationEntries` merges relative IDs across both languages, sorts deterministically, excludes navigation-only indexes and retains substantive ones. Missing translations have no destination. `reading-order.ts` derives neighboring document routes from those same entries. Physical page counts depend on fonts, diagrams, images and viewport measurements; URLs/bookmarks retain logical document/anchor identities instead of physical page numbers.
-
-Technical FAQ answers live directly in `faq/index.md`. Existing `study-guide.md` paths and heading anchors remain compatibility references. Source disclosures use approved content-addressed snapshots, not arbitrary sibling-repository reads at runtime; see [embedded source references](source-references.md). Adding source links does not automatically approve or regenerate their snapshots.
-
-## Security and unresolved evidence
-
-This private catalog centralizes documentation from both authorized portfolio and private Viva Bem collections. Shared annotations are intended for this local installation; there is no account authentication or private-library authorization. CSRF validation and same-origin checks protect browser mutations without establishing user identity. SVG rejection patterns and source-snapshot screening are defense measures, not general sanitization guarantees.
-
-The current catalog validator checks local links, anchors, language paths, question IDs, retained headings and reachability. It cannot establish translation accuracy, runtime pagination, external URL reachability or deployment readiness. Application test definitions cover catalog synchronization, pagination, path traversal, shared access and language separation and CSRF; reading those tests is not executing them.
-
-Evidence: `backend/app/services/catalog/{files,sync,page,presenter}.rb`, `backend/app/controllers/api/{projects,bookmarks}_controller.rb`, `backend/db/schema.rb`, `backend/test/models/catalog_test.rb`, `backend/test/integration/{catalog_api,bookmarks_api}_test.rb`, `frontend/lib/{catalog,documentation,document-links}.ts` and `compose.yaml`. See [audit scope and remaining work](../operations/documentation-audit-2026-10-19.md).
-
+<!-- reading-section: shared-annotation-migration -->
 ## Shared annotation migration
+
+Historical record retained from the earlier review; row counts are not a fresh database measurement.
+
 
 On 2026-10-20, the local database retained 60 notes, 60 highlights and 12 bookmarks through the expand/contract migration. Existing IDs, note bodies, ranges and foreign keys are preserved. Conflicting seed keys keep the earliest ID canonical and rename later keys with a deterministic `__legacy_demo__<id>:` prefix. They remain explicitly tagged for cleanup; no distinct notes are merged. The migration is irreversible because removed ownership cannot be reconstructed. Take a restricted database backup before applying it. Notes without highlights remain independently anchored; combined lists use explicit foreign-key relationships instead of guessing by identical text.
